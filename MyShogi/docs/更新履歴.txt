@@ -1,4 +1,15 @@
 ﻿
+
+■　2018/05/08
+
+- Model/Network , Model/TimeMan , Model/Shogi フォルダ追加
+- Model/Shogi/sfen フォルダ追加
+- Model/Shogi/ShogiType.cs追加
+	- ここに、駒・手番・盤面の型定義を行う。
+- Model/Shogi/sfen/SfenUtil.cs追加
+	- この設計が良いのかどうかについて考え中。
+
+
 ■　2018/05/07
 
 - 製作開始
@@ -6,6 +17,7 @@
 	- C#で開発していく
 	- WhaleWatcherのソースコードを参考に作っていく
 		- 作者のえびふらいさんとライセンス契約
+		- cf. https://github.com/ebifrier/Ragnarok
 	- 素材はマイナビさんに用意してもらう
 
 - Model/View/Utilフォルダを用意。

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 
-namespace MyShogi.Model
+namespace MyShogi.Model.Network
 {
     /// <summary>
     /// CSAプロトコルでやりとりするサーバーへの接続情報

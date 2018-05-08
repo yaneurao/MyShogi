@@ -1,2 +1,19 @@
-# MyShogi
-マイナビさんから発売するやねうら王の将棋用GUIです。ライセンスについては考え中。とりま、画面素材以外はGPLv3。
+﻿
+# About this project
+
+MyShogi is an open source GUI for computer Shogi engine.
+
+MyShogiは、オープンソースの将棋ソフト用GUIです。
+
+# 使い方
+
+USIプロトコル対応の将棋エンジンが使えます。// 以下、書きかけ
+
+# 謝辞
+
+// 書きかけ
+
+# ライセンス
+
+// 考え中
+

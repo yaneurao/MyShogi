@@ -22,6 +22,7 @@ namespace MyShogi
 
         private void button1_Click(object sender, EventArgs e)
         {
+
 #if false
             // serialization test
 

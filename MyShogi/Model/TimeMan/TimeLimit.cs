@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.Serialization;
 
-namespace MyShogi.Model
+namespace MyShogi.Model.TimeMan
 {
 #if false
     /// <summary>
