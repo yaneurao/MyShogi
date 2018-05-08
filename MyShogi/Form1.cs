@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.IO;
+using MyShogi.Model.Shogi;
 
 namespace MyShogi
 {
@@ -22,6 +23,8 @@ namespace MyShogi
 
         private void button1_Click(object sender, EventArgs e)
         {
+            Piece p = Piece.GOLD;
+            Console.WriteLine(p.Pretty());
 
 #if false
             // serialization test

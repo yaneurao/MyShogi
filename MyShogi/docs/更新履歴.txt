@@ -2,6 +2,16 @@
 
 ■　2018/05/08
 
+- Pieceまわり、extension methodで書き直す。
+- Color.csを用意。
+- Piece.csを用意。
+	- なるべく、やねうら王に合わせる。
+- Rank.cs追加
+- File.cs追加
+- Pretty()で日本語文字列として表示できるようにしておく。
+- IsOk()で正常な範囲にあるかを判定できるようにしておく。
+
+
 - Model/Network , Model/TimeMan , Model/Shogi フォルダ追加
 - Model/Shogi/sfen フォルダ追加
 - Model/Shogi/ShogiType.cs追加

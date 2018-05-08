@@ -32,14 +32,14 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         public static string PieceToSfen(Piece p)
         {
-            var c = SfenPieceList[p.RawType.ToInt()];
+            var c = SfenPieceList[p.RawPieceType().ToInt()];
 
             // 後手であれば小文字
-            if (p.Color == Color.WHITE)
+            if (p.PieceColor() == Color.WHITE)
                 c = char.ToLower(c);
 
             // 成り駒ならば先頭に"+"
-            return (p.Promote ? "+" : "") + c;
+            return (p.IsPromote() ? "+" : "") + c;
         }
     }
 
