@@ -61,6 +61,25 @@
             return PIECE_KANJI[piece.ToInt()];
         }
 
+        private const string USI_PIECE = ". P L N S B R G K +P+L+N+S+B+R+G+.p l n s b r g k +p+l+n+s+b+r+g+k";
+
+        /// <summary>
+        /// USI文字列に変換する。
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <returns></returns>
+        public static string ToUSI(this Piece piece)
+        {
+            if (!piece.IsOk())
+                return "??";
+
+            int p = piece.ToInt();
+
+            // 末尾の人力trim
+            int length = (USI_PIECE[p * 2 + 1] == ' ') ? 1 : 2;
+            return USI_PIECE.Substring(p * 2, length);
+        }
+
         /// <summary>
         /// pが先手の駒であるか、後手の駒であるかを返す。
         /// p==EMPTYの場合、先手の駒扱いをする。

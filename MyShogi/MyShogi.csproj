@@ -58,6 +58,8 @@
     <Compile Include="Model\Shogi\Piece.cs" />
     <Compile Include="Model\Shogi\Rank.cs" />
     <Compile Include="Model\Shogi\sfen\SfenUtil.cs" />
+    <Compile Include="Model\Shogi\Square.cs" />
+    <Compile Include="Model\Shogi\Util.cs" />
     <Compile Include="Model\TimeMan\TimeLimit.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

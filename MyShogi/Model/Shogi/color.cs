@@ -38,6 +38,16 @@
         }
 
         /// <summary>
+        /// int型に変換する。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static int ToInt(this Color c)
+        {
+            return (int)c;
+        }
+
+        /// <summary>
         /// 手番を相手の手番に変更する。
         /// </summary>
         /// <param name="color"></param>

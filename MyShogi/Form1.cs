@@ -25,6 +25,12 @@ namespace MyShogi
         {
             Piece p = Piece.GOLD;
             Console.WriteLine(p.Pretty());
+            Console.WriteLine(p.ToUSI());
+
+            Square sq = Square.SQ_56;
+            //Console.WriteLine(sq.ToFile().ToUSI() + sq.ToRank().ToUSI());
+            Console.WriteLine(sq.ToUSI());
+            Console.WriteLine(sq.Pretty());
 
 #if false
             // serialization test

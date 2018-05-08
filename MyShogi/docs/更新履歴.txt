@@ -1,4 +1,14 @@
 ﻿
+■　2018/05/09
+
+- File,RankなどにIsOk() , ToInt() , Pretty() , ToUSI()を実装する。
+- Model.Shogi
+	- Util.cs追加。
+		- CanPromote()など追加
+	- Square.cs追加
+		- やねうら王を元に実装
+- Rank,FileのPretty()修正。
+
 
 ■　2018/05/08
 

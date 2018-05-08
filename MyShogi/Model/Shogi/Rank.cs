@@ -23,11 +23,32 @@
         /// Rankを綺麗に出力する(USI形式ではない)
         /// 日本語文字での表示になる。例 → 八
         /// </summary>
-        /// <param name="f"></param>
+        /// <param name="r"></param>
         /// <returns></returns>
-        public static string Pretty(this Rank f)
+        public static string Pretty(this Rank r)
         {
-            return "一二三四五六七八九".Substring((int)f * 2, 2);
+            // C#では全角1文字が1つのcharなので注意。
+            return "一二三四五六七八九".Substring(r.ToInt(), 1);
+        }
+
+        /// <summary>
+        /// USI文字列に変換する。
+        /// </summary>
+        /// <param name="r"></param>
+        /// <returns></returns>
+        public static string ToUSI(this Rank r)
+        {
+            return new string((char)((int)'a' + r.ToInt()), 1);
+        }
+
+        /// <summary>
+        /// int型への変換子
+        /// </summary>
+        /// <param name="r"></param>
+        /// <returns></returns>
+        public static int ToInt(this Rank r)
+        {
+            return (int)r;
         }
 
         /// <summary>

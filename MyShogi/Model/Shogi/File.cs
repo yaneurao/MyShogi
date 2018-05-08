@@ -27,7 +27,29 @@
         /// <returns></returns>
         public static string Pretty(this File f)
         {
-            return "１２３４５６７８９".Substring((int)f * 2, 2);
+            // C#では全角1文字が1つのcharなので注意。
+            return "１２３４５６７８９".Substring(f.ToInt(),1);
+        }
+
+        /// <summary>
+        /// USI文字列へ変換する。
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public static string ToUSI(this File f)
+        {
+            return new string((char)((int)'1' + f.ToInt()),1);
+        }
+
+
+        /// <summary>
+        /// int型への変換子
+        /// </summary>
+        /// <param name="f"></param>
+        /// <returns></returns>
+        public static int ToInt(this File f)
+        {
+            return (int)f;
         }
 
         /// <summary>
