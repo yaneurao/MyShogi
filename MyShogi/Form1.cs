@@ -32,6 +32,15 @@ namespace MyShogi
             Console.WriteLine(sq.ToUSI());
             Console.WriteLine(sq.Pretty());
 
+            Move m = Util.MakeMove(Square.SQ_56, Square.SQ_45);
+            Console.WriteLine(m.ToUSI());
+
+            Move m2 = Util.MakeMoveDrop(Piece.SILVER, Square.SQ_45);
+            Console.WriteLine(m2.ToUSI());
+
+            Move m3 = Util.MakeMovePromote(Square.SQ_84, Square.SQ_83);
+            Console.WriteLine(m3.ToUSI());
+
 #if false
             // serialization test
 

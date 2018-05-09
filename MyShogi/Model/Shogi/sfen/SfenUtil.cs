@@ -32,7 +32,7 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         public static string PieceToSfen(Piece p)
         {
-            var c = SfenPieceList[p.RawPieceType().ToInt()];
+            var c = SfenPieceList[(int)p.RawPieceType().ToInt()];
 
             // 後手であれば小文字
             if (p.PieceColor() == Color.WHITE)

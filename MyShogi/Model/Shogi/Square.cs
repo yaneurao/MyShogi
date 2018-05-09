@@ -1,4 +1,6 @@
-﻿namespace MyShogi.Model.Shogi
+﻿using System;
+
+namespace MyShogi.Model.Shogi
 {
     /// <summary>
     /// 盤上の升を表現する型
@@ -69,15 +71,15 @@
             File.FILE_9, File.FILE_9, File.FILE_9, File.FILE_9, File.FILE_9, File.FILE_9, File.FILE_9, File.FILE_9, File.FILE_9,
             File.NB, // 玉が盤上にないときにこの位置に移動させることがあるので
         };
-        
+
         /// <summary>
-        /// int型に変換する。
+        /// UInt32型に変換する。
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
-        public static int ToInt(this Square sq)
+        public static UInt32 ToInt(this Square sq)
         {
-            return (int)sq;
+            return (UInt32)sq;
         }
 
         /// <summary>
@@ -157,5 +159,34 @@
         {
             return sq.ToFile().ToUSI() + sq.ToRank().ToUSI();
         }
+    }
+
+    /// <summary>
+    /// Model.Shogi用のヘルパークラス
+    /// </summary>
+    public static partial class Util
+    {
+        /// <summary>
+        // 移動元、もしくは移動先の升sqを与えたときに、そこが成れるかどうかを判定する。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="fromOrTo"></param>
+        /// <returns></returns>
+        public static bool CanPromote(Color c, Square fromOrTo)
+        {
+            return CanPromote(c, fromOrTo.ToRank());
+        }
+
+        /// <summary>
+        /// 筋と段から升を表す値を返す。
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="r"></param>
+        /// <returns></returns>
+        public static Square MakeSquare(File f, Rank r)
+        {
+            return (Square)(f.ToInt() * 9 + r.ToInt());
+        }
+
     }
 }

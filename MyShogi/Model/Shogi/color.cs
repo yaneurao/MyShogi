@@ -1,9 +1,11 @@
-﻿namespace MyShogi.Model.Shogi
+﻿using System;
+
+namespace MyShogi.Model.Shogi
 {
     /// <summary>
     /// 先手・後手という手番を表す定数
     /// </summary>
-    public enum Color : int
+    public enum Color : UInt32
     {
         BLACK = 0,
         WHITE = 1,
@@ -38,13 +40,13 @@
         }
 
         /// <summary>
-        /// int型に変換する。
+        /// UInt32型に変換する。
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public static int ToInt(this Color c)
+        public static UInt32 ToInt(this Color c)
         {
-            return (int)c;
+            return (UInt32)c;
         }
 
         /// <summary>
@@ -54,7 +56,7 @@
         /// <returns></returns>
         public static Color Flip(this Color color)
         {
-            return (Color)((int)color ^ 1);
+            return (Color)(color.ToInt() ^ 1);
         }
 
     }

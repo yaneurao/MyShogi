@@ -1,4 +1,7 @@
-﻿namespace MyShogi.Model.Shogi
+﻿using System;
+using System.Diagnostics;
+
+namespace MyShogi.Model.Shogi
 {
     /// <summary>
     /// 駒を表す定数
@@ -20,7 +23,7 @@
     /// DRAGON     : 龍
     /// QUEEN      : 成金(この駒は無いのでQUEENを当ててある)
     /// </remarks>
-    public enum Piece : int
+    public enum Piece : UInt32
     {
         NO_PIECE, PAWN, LANCE, KNIGHT, SILVER, BISHOP, ROOK, GOLD,
         KING, PRO_PAWN, PRO_LANCE, PRO_KNIGHT, PRO_SILVER, HORSE, DRAGON, QUEEN,
@@ -73,10 +76,10 @@
             if (!piece.IsOk())
                 return "??";
 
-            int p = piece.ToInt();
+            var p = (int)piece.ToInt();
 
             // 末尾の人力trim
-            int length = (USI_PIECE[p * 2 + 1] == ' ') ? 1 : 2;
+            var length = (USI_PIECE[p * 2 + 1] == ' ') ? 1 : 2;
             return USI_PIECE.Substring(p * 2, length);
         }
 
@@ -94,7 +97,7 @@
         /// </summary>
         public static Piece PieceType(this Piece piece)
         {
-            return ((Piece)((int)piece & ~(int)Piece.WHITE));
+            return ((Piece)((UInt32)piece & ~(UInt32)Piece.WHITE));
         }
 
         /// <summary>
@@ -104,7 +107,7 @@
         /// </summary>
         public static Piece RawPieceType(this Piece piece)
         {
-            return (Piece)((int)piece & 7);
+            return (Piece)(piece.ToInt() & 7);
         }
 
         /// <summary>
@@ -112,16 +115,16 @@
         /// </summary>
         public static bool IsPromote(this Piece piece)
         {
-            return ((int)piece & (int)Piece.PROMOTE) != 0;
+            return (piece.ToInt() & Piece.PROMOTE.ToInt()) != 0;
         }
 
         /// <summary>
-        /// pieceをintの値で取り出したいときに用いる。
+        /// pieceをUInt32の値で取り出したいときに用いる。
         /// </summary>
         /// <returns></returns>
-        public static int ToInt(this Piece piece)
+        public static UInt32 ToInt(this Piece piece)
         {
-            return (int)piece;
+            return (UInt32)piece;
         }
 
         /// <summary>
@@ -131,9 +134,28 @@
         /// <returns></returns>
         public static Color Flip(this Color color)
         {
-            return (Color)((int)color ^ 1);
+            return (Color)(color.ToInt() ^ 1);
         }
 
+    }
+
+    /// <summary>
+    /// Model.Shogi用のヘルパークラス
+    /// </summary>
+    public static partial class Util
+    {
+        /// <summary>
+        /// pcとして先手の駒を渡し、cが後手なら後手の駒を返す。cが先手なら先手の駒のまま。
+        /// pcとしてNO_PIECEは渡してはならない。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="pt"></param>
+        /// <returns></returns>
+        public static Piece MakePiece(Color c, Piece pt)
+        {
+            Debug.Assert(pt.PieceColor() == Color.BLACK && pt != Piece.NO_PIECE);
+            return (Piece)((c.ToInt() << 4) + pt.ToInt());
+        }
     }
 
 }

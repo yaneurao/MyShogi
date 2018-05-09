@@ -1,6 +1,13 @@
 ﻿
 ■　2018/05/09
 
+
+- 指し手を表現する Move.cs追加
+- Model.Shogi.Utilクラスをpartialに変更。それぞれのファイルに個別に書く。
+	- Util.cs削除
+- 各クラスのToInt()はUInt32で統一する。
+
+
 - File,RankなどにIsOk() , ToInt() , Pretty() , ToUSI()を実装する。
 - Model.Shogi
 	- Util.cs追加。
