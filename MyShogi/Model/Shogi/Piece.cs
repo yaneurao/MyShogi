@@ -50,18 +50,30 @@ namespace MyShogi.Model.Shogi
             return Piece.ZERO <= piece && piece < Piece.NB;
         }
 
+        // "□"(四角)は文字フォントによっては半分の幅しかない。"口"(くち)にする。
+        private static readonly string[] PIECE_KANJI = {
+                " 口"," 歩"," 香"," 桂"," 銀"," 角"," 飛"," 金"," 玉"," と"," 杏"," 圭"," 全"," 馬"," 龍"," 菌"," 王",
+                      "^歩","^香","^桂","^銀","^角","^飛","^金","^玉","^と","^杏","^圭","^全","^馬","^龍","^菌","^王" };
+
         /// <summary>
         /// 日本語の文字列にする。
+        /// 盤面表示用なので2文字から成る。
         /// </summary>
         /// <param name="piece"></param>
         /// <returns></returns>
         public static string Pretty(this Piece piece)
         {
-            // "□"(四角)は文字フォントによっては半分の幅しかない。"口"(くち)にする。
-            string[] PIECE_KANJI = {
-                " 口"," 歩"," 香"," 桂"," 銀"," 角"," 飛"," 金"," 玉"," と"," 杏"," 圭"," 全"," 馬"," 龍"," 菌"," 王",
-          "^歩","^香","^桂","^銀","^角","^飛","^金","^玉","^と","^杏","^圭","^全","^馬","^龍","^菌","^王" };
             return PIECE_KANJI[piece.ToInt()];
+        }
+
+        /// <summary>
+        /// 手駒などを表示する用なのでpretty()とは異なり、漢字1文字で出力する。
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <returns></returns>
+        public static char Pretty2(this Piece piece)
+        {
+            return PIECE_KANJI[piece.ToInt()][1];
         }
 
         private const string USI_PIECE = ". P L N S B R G K +P+L+N+S+B+R+G+.p l n s b r g k +p+l+n+s+b+r+g+k";
@@ -163,7 +175,7 @@ namespace MyShogi.Model.Shogi
         /// <summary>
         /// USIの駒文字列(1バイト文字列)
         /// </summary>
-        private static readonly string USI_MAIN_PIECE = "PLNSBRGK";
+        public static readonly string USI_MAIN_PIECE = "PLNSBRGK";
 
         /// <summary>
         /// USI文字列の1バイト駒をPieceに変換する。

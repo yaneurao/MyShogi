@@ -63,6 +63,22 @@ namespace MyShogi.Model.Shogi
         {
             return (File)(c - '1');
         }
+    }
 
+    public static partial class Util
+    {
+        /// <summary>
+        /// 筋を表現するUSI文字列をFileに変換する
+        /// 変換できないときはFile.NBが返る。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static File FromUsiFile(char c)
+        {
+            File f = (File)((int)c - (int)'1');
+            if (!f.IsOk())
+                f = File.NB;
+            return f;
+        }
     }
 }

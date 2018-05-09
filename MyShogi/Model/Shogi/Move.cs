@@ -58,7 +58,7 @@ namespace MyShogi.Model.Shogi
         public static string Pretty(this Move m)
         {
             if (m.IsDrop())
-                return m.To().Pretty() + m.DroppedPiece().Pretty() + "打";
+                return m.To().Pretty() + m.DroppedPiece().Pretty2() + "打";
             else
                 return m.From().Pretty() + m.To().Pretty() + (m.IsPromote() ? "成" : "");
         }
@@ -83,9 +83,9 @@ namespace MyShogi.Model.Shogi
         {
             if (!m.IsOk())
                 return ((m == Move.RESIGN) ? "resign" :
-                        (m == Move.WIN) ? "win" :
-                        (m == Move.NULL) ? "null" :
-                        (m == Move.NONE) ? "none" :
+                        (m == Move.WIN   ) ? "win" :
+                        (m == Move.NULL  ) ? "null" :
+                        (m == Move.NONE  ) ? "none" :
                     "");
 
             else if (m.IsDrop())
@@ -171,6 +171,45 @@ namespace MyShogi.Model.Shogi
         public static Move MakeMoveDrop(Piece pt, Square to)
         {
             return (Move)(to.ToInt() + (pt.ToInt() << 7) + Move.DROP.ToInt());
+        }
+
+        /// <summary>
+        /// USIの指し手文字列からMoveに変換
+        /// 変換できないときはMove.NONEが返る。
+        /// 盤面を考慮していないので指し手の合法性は考慮しない。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static Move FromUsiMove(string str)
+        {
+            // さすがに3文字以下の指し手はおかしいだろ。
+            if (str.Length <= 3)
+                return Move.NONE;
+
+            Square to = Util.FromUsiSquare(str[2], str[3]);
+            if (!to.IsOk())
+                return Move.NONE;
+
+            bool promote = str.Length == 5 && str[4] == '+';
+            bool drop = str[1] == '*';
+
+            Move move = Move.NONE;
+            if (!drop)
+            {
+                Square from = Util.FromUsiSquare(str[0], str[1]);
+                if (from.IsOk())
+                    move = promote ? Util.MakeMovePromote(from, to) : Util.MakeMove(from, to);
+            }
+            else
+            {
+                for (int i = 0; i < 7; ++i)
+                    if (USI_MAIN_PIECE[i] == str[0])
+                    {
+                        move = Util.MakeMoveDrop((Piece)(i+1), to);
+                        break;
+                    }
+            }
+            return move;
         }
     }
 

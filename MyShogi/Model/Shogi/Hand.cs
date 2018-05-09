@@ -74,10 +74,7 @@ namespace MyShogi.Model.Shogi
                 if (c != 0)
                 {
                     // 1枚なら枚数は出力しない。2枚以上なら枚数を最初に出力
-                    // PRETTY_JPが指定されているときは、枚数は後ろに表示。
-
-                    // [1]は、先手の駒をPretty()に渡したとき先頭に空白が入るのでそれを除去するため
-                    sb.Append(pr.Pretty()[1]);
+                    sb.Append(pr.Pretty2());
                     if (c != 1)
                         sb.Append(c.ToString());
                     sb.Append(" ");

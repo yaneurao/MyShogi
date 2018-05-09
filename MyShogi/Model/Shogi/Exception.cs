@@ -11,6 +11,14 @@ namespace MyShogi.Model.Shogi
     /// </summary>
     public class SfenException : Exception
     {
+        public SfenException(){ } 
+
         public SfenException(string msg) : base(msg) { }
+
+        public SfenException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
     }
+
 }

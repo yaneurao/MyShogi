@@ -83,6 +83,20 @@ namespace MyShogi.Model.Shogi
             // このcastにおいて、VC++2015ではwarning C4800が出る。
             return (0x1c00007u & (1u << (int)((c.ToInt() << 4) + fromOrToRank.ToInt()))) != 0;
         }
+
+        /// <summary>
+        /// 段を表現するUSI文字列をRankに変換する
+        /// 変換できないときはRank.NBが返る。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static Rank FromUsiRank(char c)
+        {
+            Rank r = (Rank)((int)c - (int)'a');
+            if (!r.IsOk())
+                r = Rank.NB;
+            return r;
+        }
     }
 
 }

@@ -134,6 +134,8 @@ namespace MyShogi.Model.Shogi
 
         /// <summary>
         /// sfen文字列でこのクラスを初期化する
+        /// 
+        /// 読み込みに失敗した場合、SfenException例外が投げられる。
         /// </summary>
         /// <param name="sfen"></param>
         public void SetSfen(string sfen)

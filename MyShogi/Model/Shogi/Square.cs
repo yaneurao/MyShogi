@@ -188,5 +188,21 @@ namespace MyShogi.Model.Shogi
             return (Square)(f.ToInt() * 9 + r.ToInt());
         }
 
+        /// <summary>
+        /// USIの升表現文字列をSquare型に変換する
+        /// 変換できないときはSquare.NBが返る。
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static Square FromUsiSquare(char c1 , char c2)
+        {
+            File f = Util.FromUsiFile(c1);
+            Rank r = Util.FromUsiRank(c2);
+
+            if (!f.IsOk() || !r.IsOk())
+                return Square.NB;
+
+            return MakeSquare(f, r);
+        }
     }
 }

@@ -43,6 +43,12 @@ namespace MyShogi
             Move m3 = Util.MakeMovePromote(Square.SQ_84, Square.SQ_83);
             Console.WriteLine(m3.ToUsi());
 
+            Move m4 = Util.FromUsiMove("8h2b+");
+            Console.WriteLine(m4.Pretty());
+
+            Move m5 = Util.FromUsiMove("G*3b");
+            Console.WriteLine(m5.Pretty());
+
             Hand h = Hand.ZERO;
             h.Add(Piece.PAWN, 5);
             h.Add(Piece.KNIGHT, 1);
@@ -53,6 +59,11 @@ namespace MyShogi
             var pos = new Position();
             pos.SetSfen(Position.SFEN_HIRATE);
             Console.WriteLine(pos.ToUsi());
+
+            // 指し手生成祭りの局面
+            pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
+            Console.WriteLine(pos.ToUsi());
+
 
 #if false
             // serialization test

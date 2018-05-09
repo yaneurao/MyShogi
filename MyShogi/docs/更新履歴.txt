@@ -2,6 +2,18 @@
 
 ■　2018/05/10
 
+- Util.FromUsiMove()追加
+- SfenExceptionのコンストラクタ追加
+- Util.FromUsiMove()追加
+	- 関連するUtil.FromUsiSquare()など追加
+	- Util.FromUsiFile()
+	- Util.FromUsiRank()
+- Util.Pretty2(this Move)用意
+
+- 指し手生成を書かないといけないのか…
+	- これ、Search()関数を書けばC#版のやねうら王が完成するのでは…。しんどすぎ
+
+
 - Position::ToUsi() , SetSfen()追加
 	- Position::SetSfen()で平手の初期局面をセットして、ToUsi()でUSI文字列になることを確認した。
 - Exception.cs追加。
