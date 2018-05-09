@@ -69,8 +69,34 @@ namespace MyShogi.Model.Shogi
         /// <returns></returns>
         public string Pretty()
         {
-            // あとで実装する
-            return "";
+            var sb = new StringBuilder();
+
+            for (Rank r = Rank.RANK_1; r <= Rank.RANK_9; ++r)
+            {
+                for (File f = File.FILE_9; f >= File.FILE_1; --f)
+                {
+                    sb.Append(PieceOn(Util.MakeSquare(f, r)).Pretty());
+                }
+                sb.AppendLine();
+            }
+
+            // 手番
+            sb.Append("【"+sideToMove.Pretty() + "番】 ");
+
+            // 手駒
+            for (Color c = Color.ZERO; c < Color.NB; ++c)
+            {
+                sb.Append(c.Pretty() + ":");
+                sb.Append(hand[c.ToInt()].Pretty());
+                sb.Append("   ");
+            }
+            sb.AppendLine();
+
+            // USI文字列出力
+            sb.Append("sfen : ");
+            sb.AppendLine(ToUsi());
+
+            return sb.ToString();
         }
 
         /// <summary>
@@ -190,7 +216,7 @@ namespace MyShogi.Model.Shogi
 
                     piece = piece + (promoted ? Piece.PROMOTE.ToInt() : 0);
 
-                    board[Util.MakeSquare( f , r).ToInt()] = piece;
+                    PutPiece(Util.MakeSquare( f , r) , piece);
                     f -= 1;
                     promoted = false;
                 }
@@ -198,7 +224,6 @@ namespace MyShogi.Model.Shogi
 
             if (f.ToInt() >= 0)
                 throw new SfenException("SFEN形式の" + r.ToString() + "段の駒数が合いません。");
-
 
             // --- 持ち駒を読み込む
 
@@ -263,10 +288,56 @@ namespace MyShogi.Model.Shogi
         /// <summary>
         /// 指し手で盤面を1手進める
         /// </summary>
-        /// <param name="move"></param>
-        public void DoMove(Move move)
+        /// <param name="m"></param>
+        public void DoMove(Move m)
         {
+            // ----------------------
+            //    盤面の更新処理
+            // ----------------------
 
+            // 移動先の升
+            Square to = m.To();
+            if (!to.IsOk())
+                throw new PositionException("DoMoveでtoが範囲外");
+
+            if (m.IsDrop())
+            {
+                // --- 駒打ち
+
+                // 盤上にその駒を置く。
+                Piece pt = m.DroppedPiece();
+                if (pt < Piece.PAWN || Piece.GOLD < pt || hand[sideToMove.ToInt()].Count(pt) == 0)
+                    throw new PositionException("Position.DoMove()で持っていない手駒" + pt.Pretty2() + "を打とうとした");
+
+                PutPiece(to, Util.MakePiece(sideToMove,pt));
+                hand[sideToMove.ToInt()].Sub(pt);
+            }
+            else
+            {
+                // -- 駒の移動
+
+                Square from = m.From();
+                Piece pc = RemovePiece(from);
+
+                // 移動先の升にある駒
+
+                Piece to_pc = PieceOn(to);
+                if (to_pc != Piece.NO_PIECE)
+                {
+                    // 駒取り
+
+                    // 自分の手駒になる
+                    Piece rp = to_pc.RawPieceType();
+                    if (!(Piece.PAWN <= rp && rp <= Piece.GOLD))
+                        throw new PositionException("Position.DoMove()で取れない駒を取った(玉取り？)");
+
+                    hand[sideToMove.ToInt()].Add(rp);
+                }
+
+                PutPiece(to, pc);
+            }
+
+            sideToMove.Flip();
         }
 
         /// <summary>
@@ -276,6 +347,36 @@ namespace MyShogi.Model.Shogi
         public void UndoMove(Move move)
         {
 
+        }
+
+        /// <summary>
+        /// 盤面上のsqの升にpcを置く。
+        /// そこが空き升でなければ例外を投げる
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="pr"></param>
+        private void PutPiece(Square sq, Piece pc)
+        {
+            if (!sq.IsOk() || board[sq.ToInt()] != Piece.NO_PIECE)
+                throw new PositionException("PutPiece(" + sq.Pretty() + "," + pc.Pretty() +")に失敗しました。");
+
+            board[sq.ToInt()] = pc;
+        }
+
+        /// <summary>
+        /// 盤上のsqの升から駒を取り除く。sqにあった駒が返る。
+        /// そこに駒がなければ例外を投げる
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        private Piece RemovePiece(Square sq)
+        {
+            if (!sq.IsOk() || board[sq.ToInt()] == Piece.NO_PIECE)
+                throw new PositionException("RemovePieceに失敗しました。");
+
+            Piece pc = board[sq.ToInt()];
+            board[sq.ToInt()] = Piece.NO_PIECE;
+            return pc;
         }
     }
 }

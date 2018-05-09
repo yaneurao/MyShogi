@@ -49,6 +49,8 @@ namespace MyShogi
             Move m5 = Util.FromUsiMove("G*3b");
             Console.WriteLine(m5.Pretty());
 
+            Move m6 = Util.FromUsiMove("7g7f");
+
             Hand h = Hand.ZERO;
             h.Add(Piece.PAWN, 5);
             h.Add(Piece.KNIGHT, 1);
@@ -59,10 +61,14 @@ namespace MyShogi
             var pos = new Position();
             pos.SetSfen(Position.SFEN_HIRATE);
             Console.WriteLine(pos.ToUsi());
+            Console.WriteLine(pos.Pretty());
+            pos.DoMove(m6);
+            Console.WriteLine(pos.Pretty());
 
             // 指し手生成祭りの局面
             pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
             Console.WriteLine(pos.ToUsi());
+            Console.WriteLine(pos.Pretty());
 
 
 #if false
@@ -75,6 +81,11 @@ namespace MyShogi
             var json = Encoding.UTF8.GetString(ms.ToArray());
             MessageBox.Show(json);
 #endif
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

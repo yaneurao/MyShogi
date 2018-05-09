@@ -64,9 +64,9 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        public static Color Flip(this Color color)
+        public static void Flip(ref this Color color)
         {
-            return (Color)(color.ToInt() ^ 1);
+            color = (Color)(color.ToInt() ^ 1);
         }
 
     }

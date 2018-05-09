@@ -2,6 +2,16 @@
 
 ■　2018/05/10
 
+- Position::DoMove()実装
+	- これを実装するのにLegal()を実装する必要がある。
+	- そのためにさらにBitboardや利きなど一連の処理が必要。
+	- とりあえずLegal()判定なしにDoMove()だけ実装する。
+	- 76歩でDoMove()出来るところまでは確認出来た。
+- Position.PutPiece()追加
+- Flip(this Color)をFlip(ref this Color)に変更。
+- Position::Pretty()追加
+
+
 - Util.FromUsiMove()追加
 - SfenExceptionのコンストラクタ追加
 - Util.FromUsiMove()追加
