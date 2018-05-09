@@ -1,6 +1,11 @@
 ﻿
 ■　2018/05/09
 
+- 手駒を表現する Hand.cs追加
+	- extension methodでrefを使いたい。これはC# 7.2の機能らしく、buildをC# 7.2に変更。
+		- cf. C# 7.2へ言語バージョンを変更したい!!! http://it-mio.com/?p=163
+	- HandのToUSI()まで実装完了
+
 
 - 指し手を表現する Move.cs追加
 - Model.Shogi.Utilクラスをpartialに変更。それぞれのファイルに個別に書く。

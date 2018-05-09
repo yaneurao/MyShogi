@@ -41,6 +41,13 @@ namespace MyShogi
             Move m3 = Util.MakeMovePromote(Square.SQ_84, Square.SQ_83);
             Console.WriteLine(m3.ToUSI());
 
+            Hand h = Hand.ZERO;
+            h.Add(Piece.PAWN, 5);
+            h.Add(Piece.KNIGHT, 1);
+            Console.WriteLine(h.Pretty());
+            Console.WriteLine(h.ToUSI(Model.Shogi.Color.BLACK));
+            Console.WriteLine(h.ToUSI(Model.Shogi.Color.WHITE));
+
 #if false
             // serialization test
 
