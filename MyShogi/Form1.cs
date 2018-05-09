@@ -26,6 +26,8 @@ namespace MyShogi
             Piece p = Piece.GOLD;
             Console.WriteLine(p.Pretty());
             Console.WriteLine(p.ToUSI());
+            Piece p2 = Util.MakePiecePromote(Model.Shogi.Color.WHITE, p);
+            Console.WriteLine(p2.ToUSI());
 
             Square sq = Square.SQ_56;
             //Console.WriteLine(sq.ToFile().ToUSI() + sq.ToRank().ToUSI());

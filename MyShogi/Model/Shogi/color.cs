@@ -40,6 +40,16 @@ namespace MyShogi.Model.Shogi
         }
 
         /// <summary>
+        /// USI形式で手番を出力する
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static string ToUSI(this Color c)
+        {
+            return (c == Color.BLACK) ? "b" : "w";
+        }
+
+        /// <summary>
         /// UInt32型に変換する。
         /// </summary>
         /// <param name="c"></param>

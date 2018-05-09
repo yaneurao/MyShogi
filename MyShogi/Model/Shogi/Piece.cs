@@ -126,17 +126,6 @@ namespace MyShogi.Model.Shogi
         {
             return (UInt32)piece;
         }
-
-        /// <summary>
-        /// 手番を相手の手番に変更する。
-        /// </summary>
-        /// <param name="color"></param>
-        /// <returns></returns>
-        public static Color Flip(this Color color)
-        {
-            return (Color)(color.ToInt() ^ 1);
-        }
-
     }
 
     /// <summary>
@@ -149,12 +138,26 @@ namespace MyShogi.Model.Shogi
         /// pcとしてNO_PIECEは渡してはならない。
         /// </summary>
         /// <param name="c"></param>
-        /// <param name="pt"></param>
+        /// <param name="pc"></param>
         /// <returns></returns>
-        public static Piece MakePiece(Color c, Piece pt)
+        public static Piece MakePiece(Color c, Piece pc)
         {
-            Debug.Assert(pt.PieceColor() == Color.BLACK && pt != Piece.NO_PIECE);
-            return (Piece)((c.ToInt() << 4) + pt.ToInt());
+            Debug.Assert(pc.PieceColor() == Color.BLACK && pc != Piece.NO_PIECE);
+            return (Piece)((c.ToInt() << 4) + pc.ToInt());
+        }
+
+        /// <summary>
+        /// 成り駒を返す。
+        /// pcとして先手の駒を渡し、cが後手なら後手の駒(の成り駒)を返す。cが先手なら先手の駒(の成り駒)のまま。
+        /// pcとしてNO_PIECEは渡してはならない。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="pc"></param>
+        /// <returns></returns>
+        public static Piece MakePiecePromote(Color c, Piece pc)
+        {
+            Debug.Assert(pc.PieceColor() == Color.BLACK && pc != Piece.NO_PIECE && !pc.IsPromote());
+            return (Piece)((c.ToInt() << 4) + pc.ToInt() + Piece.PROMOTE.ToInt());
         }
     }
 

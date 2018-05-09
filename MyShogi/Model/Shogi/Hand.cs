@@ -36,9 +36,6 @@ namespace MyShogi.Model.Shogi
         {
             var sb = new StringBuilder();
 
-            // 手駒を1枚でも出力したか
-            bool found = false;
-
             // 手駒の出力順はUSIプロトコルでは規定されていないが、
             // USI原案によると、飛、角、金、銀、桂、香、歩の順である。
             // sfen文字列を一意にしておかないと定跡データーをsfen文字列で書き出したときに
@@ -52,16 +49,13 @@ namespace MyShogi.Model.Shogi
                 if (c == 0)
                     continue;
 
-                // 手駒が1枚でも見つかった
-                found = true;
-
                 // その種類の駒の枚数。1ならば出力を省略
                 if (c != 1)
                     sb.Append(c.ToString());
 
                 sb.Append(Util.MakePiece(color, piece).ToUSI());
             }
-            return (found ? sb.ToString()+" " : "- ");
+            return sb.ToString();
         }
 
         /// <summary>

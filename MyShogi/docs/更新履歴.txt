@@ -1,5 +1,12 @@
 ﻿
+
 ■　2018/05/09
+
+- 盤面を表現するPosition.csを追加
+	- とりあえず構造体だけ用意
+	- Bitboardも必要なのでは…
+- 間違えてPieceExtensionsにColorのFlip()を入れていたの削除
+
 
 - 手駒を表現する Hand.cs追加
 	- extension methodでrefを使いたい。これはC# 7.2の機能らしく、buildをC# 7.2に変更。
