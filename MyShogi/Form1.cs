@@ -25,30 +25,34 @@ namespace MyShogi
         {
             Piece p = Piece.GOLD;
             Console.WriteLine(p.Pretty());
-            Console.WriteLine(p.ToUSI());
+            Console.WriteLine(p.ToUsi());
             Piece p2 = Util.MakePiecePromote(Model.Shogi.Color.WHITE, p);
-            Console.WriteLine(p2.ToUSI());
+            Console.WriteLine(p2.ToUsi());
 
             Square sq = Square.SQ_56;
             //Console.WriteLine(sq.ToFile().ToUSI() + sq.ToRank().ToUSI());
-            Console.WriteLine(sq.ToUSI());
+            Console.WriteLine(sq.ToUsi());
             Console.WriteLine(sq.Pretty());
 
             Move m = Util.MakeMove(Square.SQ_56, Square.SQ_45);
-            Console.WriteLine(m.ToUSI());
+            Console.WriteLine(m.ToUsi());
 
             Move m2 = Util.MakeMoveDrop(Piece.SILVER, Square.SQ_45);
-            Console.WriteLine(m2.ToUSI());
+            Console.WriteLine(m2.ToUsi());
 
             Move m3 = Util.MakeMovePromote(Square.SQ_84, Square.SQ_83);
-            Console.WriteLine(m3.ToUSI());
+            Console.WriteLine(m3.ToUsi());
 
             Hand h = Hand.ZERO;
             h.Add(Piece.PAWN, 5);
             h.Add(Piece.KNIGHT, 1);
             Console.WriteLine(h.Pretty());
-            Console.WriteLine(h.ToUSI(Model.Shogi.Color.BLACK));
-            Console.WriteLine(h.ToUSI(Model.Shogi.Color.WHITE));
+            Console.WriteLine(h.ToUsi(Model.Shogi.Color.BLACK));
+            Console.WriteLine(h.ToUsi(Model.Shogi.Color.WHITE));
+
+            var pos = new Position();
+            pos.SetSfen(Position.SFEN_HIRATE);
+            Console.WriteLine(pos.ToUsi());
 
 #if false
             // serialization test

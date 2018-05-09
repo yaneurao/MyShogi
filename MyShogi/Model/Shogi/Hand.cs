@@ -9,7 +9,7 @@ namespace MyShogi.Model.Shogi
     /// 歩の枚数を8bit、香、桂、銀、角、飛、金を4bitずつで持つ。
     /// こうすると16進数表示したときに綺麗に表示される。(なのはのアイデア)
     /// </summary>
-    public enum Hand : UInt32
+    public enum Hand : Int32
     {
         ZERO = 0,
     }
@@ -32,7 +32,7 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         /// <param name="hand"></param>
         /// <returns></returns>
-        public static string ToUSI(this Hand hand , Color color)
+        public static string ToUsi(this Hand hand , Color color)
         {
             var sb = new StringBuilder();
 
@@ -53,7 +53,7 @@ namespace MyShogi.Model.Shogi
                 if (c != 1)
                     sb.Append(c.ToString());
 
-                sb.Append(Util.MakePiece(color, piece).ToUSI());
+                sb.Append(Util.MakePiece(color, piece).ToUsi());
             }
             return sb.ToString();
         }
@@ -87,13 +87,13 @@ namespace MyShogi.Model.Shogi
         }
 
         /// <summary>
-        /// UInt32型に変換する。
+        /// Int32型に変換する。
         /// </summary>
         /// <param name="hand"></param>
         /// <returns></returns>
-        public static UInt32 ToInt(this Hand hand)
+        public static Int32 ToInt(this Hand hand)
         {
-            return (UInt32)hand;
+            return (Int32)hand;
         }
 
         /// <summary>
@@ -137,7 +137,7 @@ namespace MyShogi.Model.Shogi
         /// <param name="c"></param>
         public static void Add(this ref Hand hand, Piece pr, int c = 1)
         {
-            hand = (Hand)(hand.ToInt() + (UInt32)PIECE_TO_HAND[pr.ToInt()] * c);
+            hand = (Hand)(hand.ToInt() + (Int32)PIECE_TO_HAND[pr.ToInt()] * c);
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace MyShogi.Model.Shogi
         /// <param name="c"></param>
         public static void Sub(this ref Hand hand, Piece pr, int c = 1)
         {
-            hand = (Hand)(hand.ToInt() - (UInt32)PIECE_TO_HAND[pr.ToInt()] * c);
+            hand = (Hand)(hand.ToInt() - (Int32)PIECE_TO_HAND[pr.ToInt()] * c);
         }
 
     }

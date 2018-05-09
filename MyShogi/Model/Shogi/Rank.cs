@@ -6,7 +6,7 @@ namespace MyShogi.Model.Shogi
     /// 段を表現する型
     /// 例) RANK_4なら4段目。
     /// </summary>
-    public enum Rank : UInt32
+    public enum Rank : Int32
     {
         RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_9, NB, ZERO = 0
     };
@@ -38,19 +38,19 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         /// <param name="r"></param>
         /// <returns></returns>
-        public static string ToUSI(this Rank r)
+        public static string ToUsi(this Rank r)
         {
-            return new string((char)((UInt32)'a' + r.ToInt()), 1);
+            return new string((char)((Int32)'a' + r.ToInt()), 1);
         }
 
         /// <summary>
-        /// UInt32型への変換子
+        /// Int32型への変換子
         /// </summary>
         /// <param name="r"></param>
         /// <returns></returns>
-        public static UInt32 ToInt(this Rank r)
+        public static Int32 ToInt(this Rank r)
         {
-            return (UInt32)r;
+            return (Int32)r;
         }
 
         /// <summary>

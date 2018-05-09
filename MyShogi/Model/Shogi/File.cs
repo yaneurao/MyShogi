@@ -6,7 +6,7 @@ namespace MyShogi.Model.Shogi
     /// 将棋の「筋」(列)を表現する型
     /// 例) FILE_3なら3筋。
     /// </summary>
-    public enum File : UInt32
+    public enum File : Int32
     {
         FILE_1, FILE_2, FILE_3, FILE_4, FILE_5, FILE_6, FILE_7, FILE_8, FILE_9, NB , ZERO = 0
     };
@@ -38,20 +38,20 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        public static string ToUSI(this File f)
+        public static string ToUsi(this File f)
         {
-            return new string((char)((UInt32)'1' + f.ToInt()),1);
+            return new string((char)((Int32)'1' + f.ToInt()),1);
         }
 
 
         /// <summary>
-        /// UInt32型への変換子
+        /// Int32型への変換子
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        public static UInt32 ToInt(this File f)
+        public static Int32 ToInt(this File f)
         {
-            return (UInt32)f;
+            return (Int32)f;
         }
 
         /// <summary>

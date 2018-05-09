@@ -23,7 +23,7 @@ namespace MyShogi.Model.Shogi
     /// DRAGON     : 龍
     /// QUEEN      : 成金(この駒は無いのでQUEENを当ててある)
     /// </remarks>
-    public enum Piece : UInt32
+    public enum Piece : Int32
     {
         NO_PIECE, PAWN, LANCE, KNIGHT, SILVER, BISHOP, ROOK, GOLD,
         KING, PRO_PAWN, PRO_LANCE, PRO_KNIGHT, PRO_SILVER, HORSE, DRAGON, QUEEN,
@@ -71,7 +71,7 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         /// <param name="piece"></param>
         /// <returns></returns>
-        public static string ToUSI(this Piece piece)
+        public static string ToUsi(this Piece piece)
         {
             if (!piece.IsOk())
                 return "??";
@@ -97,7 +97,7 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         public static Piece PieceType(this Piece piece)
         {
-            return ((Piece)((UInt32)piece & ~(UInt32)Piece.WHITE));
+            return ((Piece)((Int32)piece & ~(Int32)Piece.WHITE));
         }
 
         /// <summary>
@@ -119,12 +119,12 @@ namespace MyShogi.Model.Shogi
         }
 
         /// <summary>
-        /// pieceをUInt32の値で取り出したいときに用いる。
+        /// pieceをInt32の値で取り出したいときに用いる。
         /// </summary>
         /// <returns></returns>
-        public static UInt32 ToInt(this Piece piece)
+        public static Int32 ToInt(this Piece piece)
         {
-            return (UInt32)piece;
+            return (Int32)piece;
         }
     }
 
@@ -159,6 +159,29 @@ namespace MyShogi.Model.Shogi
             Debug.Assert(pc.PieceColor() == Color.BLACK && pc != Piece.NO_PIECE && !pc.IsPromote());
             return (Piece)((c.ToInt() << 4) + pc.ToInt() + Piece.PROMOTE.ToInt());
         }
+
+        /// <summary>
+        /// USIの駒文字列(1バイト文字列)
+        /// </summary>
+        private static readonly string USI_MAIN_PIECE = "PLNSBRGK";
+
+        /// <summary>
+        /// USI文字列の1バイト駒をPieceに変換する。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static Piece FromUsiPiece(char c)
+        {
+            var c2 = char.ToUpper(c);
+
+            for (int i = 0; i < 8; ++i)
+                if (USI_MAIN_PIECE[i] == c2)
+                    return (Piece)(Piece.PAWN.ToInt() + i + ((c==c2) ? 0 : Piece.WHITE.ToInt()) );
+
+            // 見つからず
+            return Piece.NO_PIECE;
+        }
+
     }
 
 }

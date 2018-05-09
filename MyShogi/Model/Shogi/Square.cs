@@ -73,13 +73,13 @@ namespace MyShogi.Model.Shogi
         };
 
         /// <summary>
-        /// UInt32型に変換する。
+        /// Int32型に変換する。
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
-        public static UInt32 ToInt(this Square sq)
+        public static Int32 ToInt(this Square sq)
         {
-            return (UInt32)sq;
+            return (Int32)sq;
         }
 
         /// <summary>
@@ -155,9 +155,9 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
-        public static string ToUSI(this Square sq)
+        public static string ToUsi(this Square sq)
         {
-            return sq.ToFile().ToUSI() + sq.ToRank().ToUSI();
+            return sq.ToFile().ToUsi() + sq.ToRank().ToUsi();
         }
     }
 

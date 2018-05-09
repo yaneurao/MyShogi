@@ -70,13 +70,13 @@
     </Compile>
     <Compile Include="Model\Network\CsaConnectData.cs" />
     <Compile Include="Model\Shogi\Color.cs" />
+    <Compile Include="Model\Shogi\Exception.cs" />
     <Compile Include="Model\Shogi\File.cs" />
     <Compile Include="Model\Shogi\Hand.cs" />
     <Compile Include="Model\Shogi\Move.cs" />
     <Compile Include="Model\Shogi\Piece.cs" />
     <Compile Include="Model\Shogi\Position.cs" />
     <Compile Include="Model\Shogi\Rank.cs" />
-    <Compile Include="Model\Shogi\sfen\SfenUtil.cs" />
     <Compile Include="Model\Shogi\Square.cs" />
     <Compile Include="Model\TimeMan\TimeLimit.cs" />
     <Compile Include="Program.cs" />

@@ -46,9 +46,9 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         /// <param name="m"></param>
         /// <returns></returns>
-        public static UInt32 ToInt(this Move m)
+        public static Int32 ToInt(this Move m)
         {
-            return (UInt32)m;
+            return (Int32)m;
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace MyShogi.Model.Shogi
         /// <summary>
         /// 指し手をUSI形式の文字列にする。
         /// </summary>
-        public static string ToUSI(this Move m)
+        public static string ToUsi(this Move m)
         {
             if (!m.IsOk())
                 return ((m == Move.RESIGN) ? "resign" :
@@ -89,10 +89,10 @@ namespace MyShogi.Model.Shogi
                     "");
 
             else if (m.IsDrop())
-                return m.DroppedPiece().ToUSI() + "*" + m.To().ToUSI();
+                return m.DroppedPiece().ToUsi() + "*" + m.To().ToUsi();
 
             else
-                return m.From().ToUSI() + m.To().ToUSI() + (m.IsPromote() ? "+" : "");
+                return m.From().ToUsi() + m.To().ToUsi() + (m.IsPromote() ? "+" : "");
         }
 
         /// <summary>

@@ -1,5 +1,17 @@
 ﻿
 
+■　2018/05/10
+
+- Position::ToUsi() , SetSfen()追加
+	- Position::SetSfen()で平手の初期局面をセットして、ToUsi()でUSI文字列になることを確認した。
+- Exception.cs追加。
+	- SfenException追加
+- Util::FromUSI()追加
+- ToUSI()をToUsi()とリネーム。
+- ToInt()の型、UInt32ではなくInt32に変更する。
+- Model/Shogi/SfenUtil.cs削除
+
+
 ■　2018/05/09
 
 - 盤面を表現するPosition.csを追加
