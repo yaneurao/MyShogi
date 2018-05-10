@@ -63,6 +63,13 @@ namespace MyShogi.Model.Shogi
             Console.WriteLine(pos.ToUsi());
             Console.WriteLine(pos.Pretty());
 
+            var rand = new PRNG(1234);
+            Console.WriteLine(rand.Rand());
+            Console.WriteLine(rand.Rand());
+            Console.WriteLine(rand.Rand());
+
+            var key_side = Zobrist.side;
+            Console.WriteLine(key_side.ToString());
 #if false
             // serialization test
 

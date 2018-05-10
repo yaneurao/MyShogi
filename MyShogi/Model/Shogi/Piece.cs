@@ -33,6 +33,8 @@ namespace MyShogi.Model.Shogi
 
         ZERO = 0,    // Pieceの開始番号
         NB = 32,     // Pieceの終端を表す 
+
+        HAND_NB = KING,   // 手駒になる駒種の最大+1
     };
 
     /// <summary>

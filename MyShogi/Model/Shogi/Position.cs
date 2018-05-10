@@ -6,6 +6,24 @@ using System.Text;
 namespace MyShogi.Model.Shogi
 {
     /// <summary>
+    /// Position(局面)の付随情報を格納する構造体
+    /// </summary>
+    public class StateInfo
+    {
+        /// <summary>
+        /// 現在の局面のhash key
+        /// </summary>
+        public HASH_KEY Key;
+
+        /// <summary>
+        /// 一手前の局面へのポインタ
+        /// previous == null であるとき、これ以上辿れない
+        /// これを辿ることで千日手判定などを行う。
+        /// </summary>
+        public StateInfo previous;
+    }
+
+    /// <summary>
     /// 盤面を表現するクラス
     /// </summary>
     public class Position
@@ -32,8 +50,28 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         private Square[] kingSquare = new Square[Color.NB.ToInt()];
 
-        // 初期局面からの手数(初期局面 == 1)
+        /// <summary>
+        /// 初期局面からの手数(初期局面 == 1)
+        /// </summary>
         private int gamePly = 1;
+
+        /// <summary>
+        /// 局面の付随情報
+        /// st.previousで1手前の局面の情報が得られるので千日手判定などに用いる
+        /// </summary>
+        private StateInfo st;
+
+        /// <summary>
+        /// 局面の付随情報
+        /// st.previousで1手前の局面の情報が得られるので千日手判定などに用いる
+        /// </summary>
+        public StateInfo State() { return st; }
+
+        /// <summary>
+        /// 現局面のhash key。
+        /// </summary>
+        /// <returns></returns>
+        public HASH_KEY Key() { return st.Key; }
 
         // -------------------------------------------------------------------------
 
@@ -98,8 +136,9 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         public static readonly string[] SFENS_OF_BOARDTYPE =
         {
-            SFEN_HIRATE , SFEN_HANDICAP_KYO , SFEN_HANDICAP_RIGHT_KYO , SFEN_HANDICAP_KAKU , SFEN_HANDICAP_HISYA ,
-            SFEN_HANDICAP_HISYA_KYO , SFEN_HANDICAP_2 , SFEN_HANDICAP_3 , SFEN_HANDICAP_4 , SFEN_HANDICAP_5 , SFEN_HANDICAP_LEFT_5 ,
+            SFEN_HIRATE , SFEN_HANDICAP_KYO , SFEN_HANDICAP_RIGHT_KYO , SFEN_HANDICAP_KAKU ,
+            SFEN_HANDICAP_HISYA , SFEN_HANDICAP_HISYA_KYO ,
+            SFEN_HANDICAP_2 , SFEN_HANDICAP_3 , SFEN_HANDICAP_4 , SFEN_HANDICAP_5 , SFEN_HANDICAP_LEFT_5 ,
             SFEN_HANDICAP_6 , SFEN_HANDICAP_8 , SFEN_HANDICAP_10
         };
 
@@ -147,6 +186,9 @@ namespace MyShogi.Model.Shogi
                 sb.Append("   ");
             }
             sb.AppendLine();
+
+            // HashKey
+            //sb.AppendLine(Key().Pretty());
 
             // USI文字列出力
             sb.Append("sfen : ");
@@ -222,6 +264,11 @@ namespace MyShogi.Model.Shogi
         /// <param name="sfen"></param>
         public void SetSfen(string sfen)
         {
+            st = new StateInfo()
+            {
+                previous = null
+            };
+
             var split = sfen.Split(
                 new char[] { ' ' },
                 StringSplitOptions.RemoveEmptyEntries);
@@ -357,6 +404,14 @@ namespace MyShogi.Model.Shogi
             if (!to.IsOk())
                 throw new PositionException("DoMoveでtoが範囲外");
 
+            // StateInfoの更新
+            var newSt = new StateInfo
+            {
+                previous = st,
+                Key = st.Key
+            };
+            st = newSt;
+
             if (m.IsDrop())
             {
                 // --- 駒打ち
@@ -405,6 +460,8 @@ namespace MyShogi.Model.Shogi
         {
 
         }
+
+        // -------------------------------------------------------------------------
 
         /// <summary>
         /// 盤面上のsqの升にpcを置く。

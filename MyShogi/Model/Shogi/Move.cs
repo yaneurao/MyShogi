@@ -58,9 +58,9 @@ namespace MyShogi.Model.Shogi
         public static string Pretty(this Move m)
         {
             if (m.IsDrop())
-                return m.To().Pretty() + m.DroppedPiece().Pretty2() + "打";
+                return string.Format("{0}{1}打",m.To().Pretty() , m.DroppedPiece().Pretty2());
             else
-                return m.From().Pretty() + m.To().Pretty() + (m.IsPromote() ? "成" : "");
+                return string.Format("{0}{1}{2}",m.From().Pretty() , m.To().Pretty() , m.IsPromote() ? "成" : "");
         }
 
         /// <summary>
@@ -70,9 +70,9 @@ namespace MyShogi.Model.Shogi
         public static string Pretty(this Move m, Piece movedPieceType)
         {
             if (m.IsDrop())
-                return m.To().Pretty() + movedPieceType.Pretty() + "打";
+                return string.Format("{0}{1}打" , m.To().Pretty() , movedPieceType.Pretty() );
             else
-                return m.To().Pretty() + movedPieceType.Pretty() + (m.IsPromote() ? "成" : "");
+                return string.Format("{0}{1}{2}",m.To().Pretty() , movedPieceType.Pretty() , m.IsPromote() ? "成" : "");
 
         }
 
@@ -83,16 +83,16 @@ namespace MyShogi.Model.Shogi
         {
             if (!m.IsOk())
                 return ((m == Move.RESIGN) ? "resign" :
-                        (m == Move.WIN   ) ? "win" :
-                        (m == Move.NULL  ) ? "null" :
-                        (m == Move.NONE  ) ? "none" :
+                        (m == Move.WIN) ? "win" :
+                        (m == Move.NULL) ? "null" :
+                        (m == Move.NONE) ? "none" :
                     "");
 
             else if (m.IsDrop())
-                return m.DroppedPiece().ToUsi() + "*" + m.To().ToUsi();
+                return string.Format("{0}*{1}", m.DroppedPiece().ToUsi(), m.To().ToUsi());
 
             else
-                return m.From().ToUsi() + m.To().ToUsi() + (m.IsPromote() ? "+" : "");
+                return string.Format("{0}{1}{2}",m.From().ToUsi() , m.To().ToUsi() , m.IsPromote() ? "+" : "");
         }
 
         /// <summary>
