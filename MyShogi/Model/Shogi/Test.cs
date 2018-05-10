@@ -46,11 +46,14 @@ namespace MyShogi.Model.Shogi
             Console.WriteLine(h.ToUsi(Model.Shogi.Color.WHITE));
 
             var pos = new Position();
+#if false
+            // 駒落ちの局面のテスト
             pos.InitBoard(BoardType.Handicap2); // 2枚落ち
             Console.WriteLine(pos.Pretty());
 
             pos.InitBoard(BoardType.Handicap10); // 10枚落ち
             Console.WriteLine(pos.Pretty());
+#endif
 
             pos.SetSfen(Position.SFEN_HIRATE);
             Console.WriteLine(pos.ToSfen());
@@ -58,21 +61,28 @@ namespace MyShogi.Model.Shogi
             pos.DoMove(m6);
             Console.WriteLine(pos.Pretty());
 
+#if false
+            // sfen化して、setしてhash keyが変わらないかのテスト
             //pos.SetSfen(pos.ToSfen());
             //Console.WriteLine(pos.Pretty());
+#endif
 
             // 指し手生成祭りの局面
             pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
             Console.WriteLine(pos.ToSfen());
             Console.WriteLine(pos.Pretty());
 
+#if false
+            // 乱数テスト
             var rand = new PRNG(1234);
             Console.WriteLine(rand.Rand());
             Console.WriteLine(rand.Rand());
             Console.WriteLine(rand.Rand());
 
-            var key_side = Zobrist.side;
+            var key_side = Zobrist.Side;
             Console.WriteLine(key_side.ToString());
+#endif
+
 #if false
             // serialization test
 

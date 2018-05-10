@@ -66,10 +66,32 @@ namespace MyShogi.Model.Shogi
     // 局面のhash keyを求めるときに用いるZobrist key
     public static class Zobrist
     {
-        public static HASH_KEY zero;                          // ゼロ(==0)
-        public static HASH_KEY side;                          // 手番(==1)
-        public static HASH_KEY[,] psq = new HASH_KEY[Square.NB_PLUS1.ToInt(),Piece.NB.ToInt()];	// 駒pcが盤上sqに配置されているときのZobrist Key
-	    public static HASH_KEY[,] hand = new HASH_KEY[Color.NB.ToInt(),Piece.HAND_NB.ToInt()];	// c側の手駒prが一枚増えるごとにこれを加算するZobristKey
+        public static HASH_KEY Zero;                          // ゼロ(==0)
+        public static HASH_KEY Side;                          // 手番(==1)
+        private static HASH_KEY[,] psq = new HASH_KEY[Square.NB_PLUS1.ToInt(),Piece.NB.ToInt()];	// 駒pcが盤上sqに配置されているときのZobrist Key
+	    private static HASH_KEY[,] hand = new HASH_KEY[Color.NB.ToInt(),Piece.HAND_NB.ToInt()];	// c側の手駒prが一枚増えるごとにこれを加算するZobristKey
+
+        /// <summary>
+        /// sqの升にpcがあるときのZobrist Key
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="pc"></param>
+        /// <returns></returns>
+        public static HASH_KEY Psq(Square sq , Piece pc)
+        {
+            return psq[sq.ToInt(), pc.ToInt()];
+        }
+
+        /// <summary>
+        /// c側の手駒hand_pcがあるときのZobrist Key
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="hand_pc"></param>
+        /// <returns></returns>
+        public static HASH_KEY Hand(Color c , Piece hand_pc)
+        {
+            return hand[c.ToInt(), hand_pc.ToInt()];
+        }
 
         // static constructorで初期化するの、筋が良くないのでは…。
         /*
@@ -88,8 +110,8 @@ namespace MyShogi.Model.Shogi
             var rng = new PRNG(20151225); // 開発開始日 == 電王トーナメント2015,最終日
 
             // 手番としてbit0を用いる。それ以外はbit0を使わない。これをxorではなく加算して行ってもbit0は汚されない。
-            SET_HASH(ref side, 1, 0, 0, 0);
-            SET_HASH(ref zero, 0, 0, 0, 0);
+            SET_HASH(ref Side, 1, 0, 0, 0);
+            SET_HASH(ref Zero, 0, 0, 0, 0);
 
             // 64bit hash keyは256bit hash keyの下位64bitという解釈をすることで、256bitと64bitのときとでhash keyの下位64bitは合致するようにしておく。
             // これは定跡DBなどで使うときにこの性質が欲しいからである。
@@ -131,6 +153,7 @@ namespace MyShogi.Model.Shogi
             h.p1 = b;
 
             // 残り128bitは使用しない
+            // 128bitで足りないなら、もしかしたら使うかも
         }
     }
 }

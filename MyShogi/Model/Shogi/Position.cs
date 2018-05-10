@@ -424,15 +424,20 @@ namespace MyShogi.Model.Shogi
                 if (pt < Piece.PAWN || Piece.GOLD < pt || Hand(sideToMove).Count(pt) == 0)
                     throw new PositionException("Position.DoMove()で持っていない手駒" + pt.Pretty2() + "を打とうとした");
 
-                PutPiece(to, Util.MakePiece(sideToMove,pt));
+                Piece pc = Util.MakePiece(sideToMove, pt);
+                PutPiece(to, pc);
                 Hand(sideToMove).Sub(pt);
+
+                // hash keyの更新
+                st.Key -= Zobrist.Hand(sideToMove,pt);
+                st.Key += Zobrist.Psq(to,pc);
             }
             else
             {
                 // -- 駒の移動
 
                 Square from = m.From();
-                Piece pc = RemovePiece(from);
+                Piece moved_pc = RemovePiece(from);
 
                 // 移動先の升にある駒
 
@@ -442,17 +447,29 @@ namespace MyShogi.Model.Shogi
                     // 駒取り
 
                     // 自分の手駒になる
-                    Piece rp = to_pc.RawPieceType();
-                    if (!(Piece.PAWN <= rp && rp <= Piece.GOLD))
+                    Piece pr = to_pc.RawPieceType();
+                    if (!(Piece.PAWN <= pr && pr <= Piece.GOLD))
                         throw new PositionException("Position.DoMove()で取れない駒を取った(玉取り？)");
 
-                    Hand(sideToMove).Add(rp);
+                    Hand(sideToMove).Add(pr);
+
+                    // 捕獲された駒が盤上から消えるので局面のhash keyを更新する
+                    st.Key -= Zobrist.Psq(to, to_pc);
+                    st.Key += Zobrist.Hand(sideToMove,pr);
                 }
 
-                PutPiece(to, pc);
+                Piece moved_after_pc = (Piece)(moved_pc.ToInt() + (m.IsPromote() ? Piece.PROMOTE.ToInt() : 0));  
+                PutPiece(to, moved_pc);
+
+                // fromにあったmoved_pcがtoにmoved_after_pcとして移動した。
+                st.Key -= Zobrist.Psq(from, moved_pc      );
+                st.Key += Zobrist.Psq(to  , moved_after_pc);
             }
 
             sideToMove.Flip();
+
+            // Zobrist.sideはp1==0が保証されているのでこれで良い
+            st.Key.p0 ^= Zobrist.Side.p0;
         }
 
         /// <summary>
@@ -484,15 +501,15 @@ namespace MyShogi.Model.Shogi
             //set_check_info < false > (si);
 
             // --- hash keyの計算
-            si.Key = sideToMove == Color.BLACK ? Zobrist.zero : Zobrist.side;
+            si.Key = sideToMove == Color.BLACK ? Zobrist.Zero : Zobrist.Side;
             for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
             {
                 var pc = PieceOn(sq);
-                si.Key += Zobrist.psq[sq.ToInt(),pc.ToInt()];
+                si.Key += Zobrist.Psq(sq,pc);
             }
             for (Color c = Color.ZERO; c < Color.NB; ++c)
                 for (Piece pr = Piece.PAWN; pr < Piece.HAND_NB; ++pr)
-                    si.Key += Zobrist.hand[c.ToInt(),pr.ToInt()] * Hand(c).Count(pr); // 手駒はaddにする(差分計算が楽になるため)
+                    si.Key += Zobrist.Hand(c,pr) * Hand(c).Count(pr); // 手駒はaddにする(差分計算が楽になるため)
         }
 
         /// <summary>

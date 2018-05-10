@@ -1,6 +1,5 @@
 ﻿
 - ToDo
-	- Position::SetSfen()とDoMove()にHashが反映するようにした
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::legal() , undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
@@ -8,6 +7,11 @@
 
 
 ■　2018/05/11
+
+
+- Position::SetSfen()とDoMove()にHashが反映するようにした
+- Position::DoMoveでPromote考慮していなかったの修正。
+- Zobristの配列に直接アクセスしないように変更。
 
 
 - Position.Keyは128bit型にしておく。
