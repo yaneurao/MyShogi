@@ -69,6 +69,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\Network\CsaConnectData.cs" />
+    <Compile Include="Model\Shogi\BoardType.cs" />
     <Compile Include="Model\Shogi\Color.cs" />
     <Compile Include="Model\Shogi\Exception.cs" />
     <Compile Include="Model\Shogi\File.cs" />

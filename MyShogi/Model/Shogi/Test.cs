@@ -46,7 +46,10 @@ namespace MyShogi.Model.Shogi
             Console.WriteLine(h.ToUsi(Model.Shogi.Color.WHITE));
 
             var pos = new Position();
-            pos.init();
+            pos.InitBoard(BoardType.Handicap2); // 2枚落ち
+            Console.WriteLine(pos.Pretty());
+
+            pos.InitBoard(BoardType.Handicap10); // 10枚落ち
             Console.WriteLine(pos.Pretty());
 
             pos.SetSfen(Position.SFEN_HIRATE);
