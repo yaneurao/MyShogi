@@ -459,7 +459,7 @@ namespace MyShogi.Model.Shogi
                 }
 
                 Piece moved_after_pc = (Piece)(moved_pc.ToInt() + (m.IsPromote() ? Piece.PROMOTE.ToInt() : 0));  
-                PutPiece(to, moved_pc);
+                PutPiece(to, moved_after_pc);
 
                 // fromにあったmoved_pcがtoにmoved_after_pcとして移動した。
                 st.Key -= Zobrist.Psq(from, moved_pc      );
@@ -479,6 +479,54 @@ namespace MyShogi.Model.Shogi
         public void UndoMove(Move move)
         {
 
+        }
+
+        /// <summary>
+        /// USIのpositionコマンドの"position"以降を解釈してその局面にする
+        /// "position [sfen <sfenstring> | startpos ] moves <move1> ... <movei>"
+        /// 
+        /// 解釈で失敗した場合、例外が飛ぶ
+        /// </summary>
+        /// <param name="pos_cmd"></param>
+        public void UsiPositionCmd(string pos_cmd)
+        {
+            // スペースをセパレータとして分離する
+            var split = pos_cmd.Split(
+                new char[] { ' ' },
+                StringSplitOptions.RemoveEmptyEntries);
+
+            // どうなっとるねん..
+            if (split.Length == 0)
+                return;
+
+            // 現在の指し手が書かれている場所 split[cur_pos]
+            var cur_pos = 1;
+            if (split[0] == "sfen")
+            {
+                // "sfen ... moves ..."形式かな..
+                // movesの手前までをくっつけてSetSfen()する
+                while( cur_pos < split.Length && split[cur_pos] != "moves")
+                {
+                    ++cur_pos;
+                }
+
+                if (!(cur_pos== 4 || cur_pos == 5))
+                    throw new PositionException("Position.UsiPositionCmd()に渡された文字列にmovesが出てこない");
+
+                if (cur_pos == 4)
+                    SetSfen(string.Format("{0} {1} {2}", split[1], split[2], split[3]));
+                else // if (cur_pos == 5)
+                    SetSfen(string.Format("{0} {1} {2} {3}", split[1], split[2], split[3], split[4]));
+
+            } else if (split[0] == "startpos")
+            {
+                SetSfen(SFEN_HIRATE);
+            }
+
+            // "moves"以降の文字列をUSIの指し手と解釈しながら、局面を進める。
+            if (cur_pos < split.Length && split[cur_pos] == "moves")
+                for (int i = cur_pos + 1; i < split.Length; ++i)
+                    DoMove(Util.FromUsiMove(split[i]));
         }
 
         // -------------------------------------------------------------------------

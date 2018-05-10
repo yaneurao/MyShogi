@@ -46,6 +46,12 @@ namespace MyShogi.Model.Shogi
             Console.WriteLine(h.ToUsi(Model.Shogi.Color.WHITE));
 
             var pos = new Position();
+            //pos.UsiPositionCmd("startpos moves 7g7f 3c3d 8h3c+");
+
+            pos.UsiPositionCmd("sfen lnsgkgsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1 moves 5a6b 7g7f 3a3b");
+
+            Console.WriteLine(pos.Pretty());
+
 #if false
             // 駒落ちの局面のテスト
             pos.InitBoard(BoardType.Handicap2); // 2枚落ち
@@ -55,11 +61,13 @@ namespace MyShogi.Model.Shogi
             Console.WriteLine(pos.Pretty());
 #endif
 
+#if false
             pos.SetSfen(Position.SFEN_HIRATE);
             Console.WriteLine(pos.ToSfen());
             Console.WriteLine(pos.Pretty());
             pos.DoMove(m6);
             Console.WriteLine(pos.Pretty());
+#endif
 
 #if false
             // sfen化して、setしてhash keyが変わらないかのテスト

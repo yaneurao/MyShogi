@@ -9,6 +9,14 @@
 ■　2018/05/11
 
 
+- USIの"position"を解釈するコード書く。
+	- UsiPositionCmd()
+	- "position startpos moves 7g7f 3c3d 8h3c+"
+		- やねうら王のhash keyと一致した。
+	- "position sfen lnsgkgsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1 moves 5a6b 7g7f 3a3b"
+		- やねうら王のhash keyと一致した。
+
+
 - Position::SetSfen()とDoMove()にHashが反映するようにした
 - Position::DoMoveでPromote考慮していなかったの修正。
 - Zobristの配列に直接アクセスしないように変更。
@@ -30,6 +38,7 @@
 	
 
 ■　2018/05/10
+
 
 - Model/BoardType.cs追加
 	- LabelDescriptionのAttributeが必要。あとで考える
@@ -86,6 +95,7 @@
 
 ■　2018/05/09
 
+
 - 盤面を表現するPosition.csを追加
 	- とりあえず構造体だけ用意
 	- Bitboardも必要なのでは…
@@ -115,6 +125,7 @@
 
 ■　2018/05/08
 
+
 - Pieceまわり、extension methodで書き直す。
 - Color.csを用意。
 - Piece.csを用意。
@@ -134,6 +145,7 @@
 
 
 ■　2018/05/07
+
 
 - 製作開始
 	- Visual Studio 2017でビルドが出来るようにする
