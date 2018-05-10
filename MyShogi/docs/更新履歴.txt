@@ -1,10 +1,6 @@
 ﻿
 - ToDo
-	- Position.Key()がやねうら王のそれと同じ値になるところまで確認
-	- Position.Keyは128bit型にしておく。
-	- Position::ZobristHashの値をやねうら王に合うように実装
-		- Position::SetSfen()とDoMove()にHashが反映するようにした
-
+	- Position::SetSfen()とDoMove()にHashが反映するようにした
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::legal() , undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
@@ -12,6 +8,15 @@
 
 
 ■　2018/05/11
+
+
+- Position.Keyは128bit型にしておく。
+- Position::set_state()をやねうら王から移植
+- Position::ZobristHashの値をやねうら王に合うように実装
+- Position.SetSfen()のあとKey()がやねうら王のそれと同じ値になるところまで確認
+- Position.ToUsi()、sfenなのか、そこまでの手順を含むのかよくわからなくて良くないな…。
+	- Position.ToSfen()にリネームする。
+
 
 - stringの直接的な連結、なるべく避けてString.Format()を使うようにする
 - Misc.cs追加

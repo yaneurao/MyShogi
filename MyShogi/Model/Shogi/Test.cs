@@ -53,14 +53,17 @@ namespace MyShogi.Model.Shogi
             Console.WriteLine(pos.Pretty());
 
             pos.SetSfen(Position.SFEN_HIRATE);
-            Console.WriteLine(pos.ToUsi());
+            Console.WriteLine(pos.ToSfen());
             Console.WriteLine(pos.Pretty());
             pos.DoMove(m6);
             Console.WriteLine(pos.Pretty());
 
+            //pos.SetSfen(pos.ToSfen());
+            //Console.WriteLine(pos.Pretty());
+
             // 指し手生成祭りの局面
             pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
-            Console.WriteLine(pos.ToUsi());
+            Console.WriteLine(pos.ToSfen());
             Console.WriteLine(pos.Pretty());
 
             var rand = new PRNG(1234);

@@ -36,6 +36,31 @@ namespace MyShogi.Model.Shogi
             // 16進数16桁×2で表現
             return string.Format("{0,0:X16}:{1,0:X16}", p0, p1);
         }
+
+        public static HASH_KEY operator +(HASH_KEY c1, HASH_KEY c2)
+        {
+            HASH_KEY h;
+            h.p0 = c1.p0 + c2.p0;
+            h.p1 = c1.p1 + c2.p1;
+            return h;
+        }
+
+        public static HASH_KEY operator -(HASH_KEY c1, HASH_KEY c2)
+        {
+            HASH_KEY h;
+            h.p0 = c1.p0 - c2.p0;
+            h.p1 = c1.p1 - c2.p1;
+            return h;
+        }
+
+        public static HASH_KEY operator *(HASH_KEY c1, int n)
+        {
+            HASH_KEY h;
+            h.p0 = c1.p0 * (UInt64)n;
+            h.p1 = c1.p1 * (UInt64)n;
+            return h;
+        }
+
     }
 
     // 局面のhash keyを求めるときに用いるZobrist key

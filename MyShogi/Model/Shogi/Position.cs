@@ -188,20 +188,20 @@ namespace MyShogi.Model.Shogi
             sb.AppendLine();
 
             // HashKey
-            //sb.AppendLine(Key().Pretty());
+            sb.AppendLine(Key().Pretty());
 
             // USI文字列出力
             sb.Append("sfen : ");
-            sb.AppendLine(ToUsi());
+            sb.AppendLine(ToSfen());
 
             return sb.ToString();
         }
 
         /// <summary>
-        /// USI形式で盤面を出力する。
+        /// SFEN形式で盤面を出力する。
         /// </summary>
         /// <returns></returns>
-        public string ToUsi()
+        public string ToSfen()
         {
             var sb = new StringBuilder();
 
@@ -386,6 +386,9 @@ namespace MyShogi.Model.Shogi
             }
 
             // これをもって読み込みが成功したと言える。
+
+            // StateInfoの更新
+            SetState(st);
         }
 
 
@@ -462,6 +465,35 @@ namespace MyShogi.Model.Shogi
         }
 
         // -------------------------------------------------------------------------
+        // 以下、private methods
+        // -------------------------------------------------------------------------
+
+        /// <summary>
+        /// StateInfoの値を初期化する。
+        /// やねうら王から移植
+        /// </summary>
+        /// <param name="si"></param>
+        private void SetState(StateInfo si)
+        {
+            // --- bitboard
+
+            // この局面で自玉に王手している敵駒
+            //st->checkersBB = attackers_to(~sideToMove, king_square(sideToMove));
+
+            // 王手情報の初期化
+            //set_check_info < false > (si);
+
+            // --- hash keyの計算
+            si.Key = sideToMove == Color.BLACK ? Zobrist.zero : Zobrist.side;
+            for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
+            {
+                var pc = PieceOn(sq);
+                si.Key += Zobrist.psq[sq.ToInt(),pc.ToInt()];
+            }
+            for (Color c = Color.ZERO; c < Color.NB; ++c)
+                for (Piece pr = Piece.PAWN; pr < Piece.HAND_NB; ++pr)
+                    si.Key += Zobrist.hand[c.ToInt(),pr.ToInt()] * Hand(c).Count(pr); // 手駒はaddにする(差分計算が楽になるため)
+        }
 
         /// <summary>
         /// 盤面上のsqの升にpcを置く。
