@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -39,14 +38,34 @@ namespace MyShogi.Model.Shogi
         // -------------------------------------------------------------------------
 
         /// <summary>
-        /// 盤面上、sqの升にある駒を返す。
+        /// 盤面上、sqの升にある駒の参照
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
-        Piece PieceOn(Square sq)
+        public ref Piece PieceOn(Square sq)
         {
             Debug.Assert(sq.IsOk());
-            return board[sq.ToInt()];
+            return ref board[sq.ToInt()];
+        }
+
+        /// <summary>
+        /// c側の手駒の参照
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public ref Hand Hand(Color c)
+        {
+            return ref hand[c.ToInt()];
+        }
+
+        /// <summary>
+        /// c側の玉のSquareへの参照
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public ref Square KingSquare(Color c)
+        {
+            return ref kingSquare[c.ToInt()];
         }
 
         // -------------------------------------------------------------------------
@@ -59,8 +78,8 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         public void init()
         {
-            //sideToMove = Color.BLACK;
-            //gamePly = 1;
+            // 平手で初期化
+            SetSfen(SFEN_HIRATE);
         }
 
         /// <summary>
@@ -87,7 +106,7 @@ namespace MyShogi.Model.Shogi
             for (Color c = Color.ZERO; c < Color.NB; ++c)
             {
                 sb.Append(c.Pretty() + ":");
-                sb.Append(hand[c.ToInt()].Pretty());
+                sb.Append(Hand(c).Pretty());
                 sb.Append("   ");
             }
             sb.AppendLine();
@@ -140,7 +159,7 @@ namespace MyShogi.Model.Shogi
             bool found = false;
             for (Color c = Color.BLACK; c <= Color.WHITE; ++c)
             {
-                var h = hand[c.ToInt()];
+                var h = Hand(c);
                 var s = h.ToUsi(c);
 
                 if (!string.IsNullOrEmpty(s))
@@ -175,7 +194,8 @@ namespace MyShogi.Model.Shogi
             // --- 盤面
 
             Array.Clear(board, 0, board.Length);
-            
+            KingSquare(Color.BLACK) = KingSquare(Color.WHITE) = Square.NB;
+
             // 盤面左上から。Square型のレイアウトに依らずに処理を進めたいため、Square型は使わない。
             File f = File.FILE_9;
             Rank r = Rank.RANK_1;
@@ -254,7 +274,7 @@ namespace MyShogi.Model.Shogi
                         var color = piece.PieceColor();
 
                         // 手駒を加算する
-                        hand[color.ToInt()].Add(piece.RawPieceType(), count);
+                        Hand(color).Add(piece.RawPieceType(), count);
 
                         count = 1;
                     }
@@ -306,11 +326,11 @@ namespace MyShogi.Model.Shogi
 
                 // 盤上にその駒を置く。
                 Piece pt = m.DroppedPiece();
-                if (pt < Piece.PAWN || Piece.GOLD < pt || hand[sideToMove.ToInt()].Count(pt) == 0)
+                if (pt < Piece.PAWN || Piece.GOLD < pt || Hand(sideToMove).Count(pt) == 0)
                     throw new PositionException("Position.DoMove()で持っていない手駒" + pt.Pretty2() + "を打とうとした");
 
                 PutPiece(to, Util.MakePiece(sideToMove,pt));
-                hand[sideToMove.ToInt()].Sub(pt);
+                Hand(sideToMove).Sub(pt);
             }
             else
             {
@@ -331,7 +351,7 @@ namespace MyShogi.Model.Shogi
                     if (!(Piece.PAWN <= rp && rp <= Piece.GOLD))
                         throw new PositionException("Position.DoMove()で取れない駒を取った(玉取り？)");
 
-                    hand[sideToMove.ToInt()].Add(rp);
+                    Hand(sideToMove).Add(rp);
                 }
 
                 PutPiece(to, pc);
@@ -357,10 +377,14 @@ namespace MyShogi.Model.Shogi
         /// <param name="pr"></param>
         private void PutPiece(Square sq, Piece pc)
         {
-            if (!sq.IsOk() || board[sq.ToInt()] != Piece.NO_PIECE)
+            if (!sq.IsOk() || PieceOn(sq) != Piece.NO_PIECE)
                 throw new PositionException("PutPiece(" + sq.Pretty() + "," + pc.Pretty() +")に失敗しました。");
 
-            board[sq.ToInt()] = pc;
+            PieceOn(sq) = pc;
+
+            // 玉であれば、KingSquareを更新する
+            if (pc.PieceType() == Piece.KING)
+                KingSquare(pc.PieceColor()) = sq;
         }
 
         /// <summary>
@@ -371,11 +395,16 @@ namespace MyShogi.Model.Shogi
         /// <returns></returns>
         private Piece RemovePiece(Square sq)
         {
-            if (!sq.IsOk() || board[sq.ToInt()] == Piece.NO_PIECE)
+            if (!sq.IsOk() || PieceOn(sq) == Piece.NO_PIECE)
                 throw new PositionException("RemovePieceに失敗しました。");
 
-            Piece pc = board[sq.ToInt()];
-            board[sq.ToInt()] = Piece.NO_PIECE;
+            Piece pc = PieceOn(sq);
+            PieceOn(sq) = Piece.NO_PIECE;
+
+            // 玉であれば、KingSquareを更新する
+            if (pc.PieceType() == Piece.KING)
+                KingSquare(pc.PieceColor()) = Square.NB;
+
             return pc;
         }
     }

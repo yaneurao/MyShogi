@@ -1,6 +1,25 @@
 ﻿
+- ToDo
+	- Position::legal() , undo_move() , Sfen読み込みきちんと書く
+	- Position::Hash実装、千日手実装。
+	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
+
 
 ■　2018/05/10
+
+- Model/Shogi/Test.cs追加
+	- テスト用のコードはこちらに移動
+	- UnitTestきちんと書くべきかもしれないが、やねうら王からの移植なので書くほどでもない。
+- Positionクラス、参照透明にすべきか…。DoMoveで参照透明になるほうも用意したほうがいいような…。
+	- あとで考える。
+- Positionにref Hand Hand(Color)追加。
+	- Position.PieceOn(Square)もrefを返すように変更。
+	- kingSquareのrefを返すKingSquare(Color)も用意
+- Position.PutPiece , RemovePieceでKingSquareを更新するようにした。
+- iteration変数にrefつけるのC#7.3以降の機能だと…。ターゲットC#7.3に変更する。
+	- しかし、これ思ってる機能ではないようであった…。
+
+
 
 - Position::DoMove()実装
 	- これを実装するのにLegal()を実装する必要がある。
