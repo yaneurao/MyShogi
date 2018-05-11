@@ -1,6 +1,5 @@
 ﻿
 - ToDo
-	- Bitboardをやねうら王から移植
 	- 各駒の利きをBitboardで返すクラス作成
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::legal() , undo_move() , Sfen読み込みきちんと書く
@@ -8,7 +7,17 @@
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
 
 
+
 ■　2018/05/12
+
+
+
+- Bitboardをやねうら王から移植
+	- Bitboard(Square)を用意
+	- IninitalizerでBitboardテーブルの初期化を呼び出すようにした。
+- Bitboard.Pretty()を実装
+- FILE_BB , RANK_BBテーブルの初期化コード追加。
+	- Bitboard.FileBB() , RankBB() , SquareBB()追加。
 
 
 - UInt128.cs追加

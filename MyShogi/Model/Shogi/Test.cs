@@ -16,10 +16,13 @@ namespace MyShogi.Model.Shogi
             Piece p2 = Util.MakePiecePromote(Model.Shogi.Color.WHITE, p);
             Console.WriteLine(p2.ToUsi());
 
+#if false
+            // Squareのテスト
             Square sq = Square.SQ_56;
             //Console.WriteLine(sq.ToFile().ToUSI() + sq.ToRank().ToUSI());
             Console.WriteLine(sq.ToUsi());
             Console.WriteLine(sq.Pretty());
+#endif
 
             Move m = Util.MakeMove(Square.SQ_56, Square.SQ_45);
             Console.WriteLine(m.ToUsi());
@@ -51,6 +54,16 @@ namespace MyShogi.Model.Shogi
             pos.UsiPositionCmd("sfen lnsgkgsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1 moves 5a6b 7g7f 3a3b");
 
             Console.WriteLine(pos.Pretty());
+
+#if false
+            // Bitboard(Square)のテスト
+            for (Square sq = Square.ZERO; sq < Square.NB ; ++sq)
+            {
+                Console.WriteLine("sq = " + sq.Pretty());
+                Bitboard b = new Bitboard(sq);
+                Console.WriteLine(b.Pretty());
+            }
+#endif
 
 #if false
             // 駒落ちの局面のテスト

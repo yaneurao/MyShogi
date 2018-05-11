@@ -48,6 +48,16 @@ namespace MyShogi.Model.Shogi
             return (int)(p0^p1);
         }
 
+        /// <summary>
+        /// 上位64bitと下位64bitをbitwise orして、64bit整数にする
+        /// Bitboardで、演算の結果、1bitでも立っているかどうかを判定するときに用いる
+        /// </summary>
+        /// <returns></returns>
+        public UInt64 ToU()
+        {
+            return p0 | p1;
+        }
+
         public static UInt128 operator +(UInt128 c1, UInt128 c2)
         {
             return new UInt128(c1.p0 + c2.p0, c1.p1 + c2.p1);

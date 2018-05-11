@@ -9,6 +9,7 @@
         public static void Init()
         {
             Zobrist.Init();
+            Bitboard.Init();
         }
     }
 }
