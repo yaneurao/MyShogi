@@ -83,6 +83,7 @@
     <Compile Include="Model\Shogi\Position.cs" />
     <Compile Include="Model\Shogi\Rank.cs" />
     <Compile Include="Model\Shogi\Square.cs" />
+    <Compile Include="Model\Shogi\SquareWithWall.cs" />
     <Compile Include="Model\Shogi\Test.cs" />
     <Compile Include="Model\Shogi\UInt128.cs" />
     <Compile Include="Model\Shogi\Zobrist.cs" />

@@ -8,6 +8,13 @@
 
 ■　2018/05/12
 
+
+- SquareWithWall.cs追加
+	- テーブル初期化部をBitboard.init()に追加。
+- Bitboard &(Bitboard , Square)みたいなの一式追加。
+- Bitboard.init()だけでゲロ吐きそう…。角の利きの初期化前まで書いた。
+
+
 - 各駒の利きをBitboardで返すメソッド追加
 	- Bitboard.PawnStepEffect(),LanceStepEffect(),SilverStepEffect()等、順番に追加
 		- この初期化のために飛び利きの処理が必要なのか…。
