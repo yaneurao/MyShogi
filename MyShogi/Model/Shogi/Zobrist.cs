@@ -13,18 +13,21 @@ namespace MyShogi.Model.Shogi
     /// </summary>
     public struct HASH_KEY
     {
-        public UInt64 p0;
-        public UInt64 p1;
+        public UInt128 p;
 
+        public HASH_KEY(UInt128 p_)
+        {
+            p = p_;
+        }
+          
         public override bool Equals(object key)
         {
-            HASH_KEY k = (HASH_KEY)key;
-            return p0 == k.p0 && p1 == k.p1;
+            return p.Equals(((HASH_KEY)key).p);
         }
 
         public override int GetHashCode()
         {
-            return (int)(p0 ^ p1);
+            return p.GetHashCode();
         }
 
         /// <summary>
@@ -34,31 +37,37 @@ namespace MyShogi.Model.Shogi
         public string Pretty()
         {
             // 16進数16桁×2で表現
-            return string.Format("{0,0:X16}:{1,0:X16}", p0, p1);
+            return string.Format("{0,0:X16}:{1,0:X16}", p.p0, p.p1);
         }
 
         public static HASH_KEY operator +(HASH_KEY c1, HASH_KEY c2)
         {
-            HASH_KEY h;
-            h.p0 = c1.p0 + c2.p0;
-            h.p1 = c1.p1 + c2.p1;
-            return h;
+            return new HASH_KEY(c1.p + c2.p);
         }
 
         public static HASH_KEY operator -(HASH_KEY c1, HASH_KEY c2)
         {
-            HASH_KEY h;
-            h.p0 = c1.p0 - c2.p0;
-            h.p1 = c1.p1 - c2.p1;
-            return h;
+            return new HASH_KEY(c1.p - c2.p);
+        }
+
+        public static HASH_KEY operator &(HASH_KEY c1, HASH_KEY c2)
+        {
+            return new HASH_KEY(c1.p & c2.p);
+        }
+
+        public static HASH_KEY operator |(HASH_KEY c1, HASH_KEY c2)
+        {
+            return new HASH_KEY(c1.p | c2.p);
+        }
+
+        public static HASH_KEY operator ^(HASH_KEY c1, HASH_KEY c2)
+        {
+            return new HASH_KEY(c1.p ^ c2.p);
         }
 
         public static HASH_KEY operator *(HASH_KEY c1, int n)
         {
-            HASH_KEY h;
-            h.p0 = c1.p0 * (UInt64)n;
-            h.p1 = c1.p1 * (UInt64)n;
-            return h;
+            return new HASH_KEY(c1.p * n);
         }
 
     }
@@ -149,9 +158,8 @@ namespace MyShogi.Model.Shogi
         /// <param name="d"></param>
         private static void SET_HASH(ref HASH_KEY h , UInt64 a,UInt64 b,UInt64 c , UInt64 d)
         {
-            h.p0 = a;
-            h.p1 = b;
-
+            h.p.Set(a,b);
+ 
             // 残り128bitは使用しない
             // 128bitで足りないなら、もしかしたら使うかも
         }

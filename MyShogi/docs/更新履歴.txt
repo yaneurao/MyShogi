@@ -1,9 +1,20 @@
 ﻿
 - ToDo
+	- Bitboardをやねうら王から移植
+	- 各駒の利きをBitboardで返すクラス作成
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::legal() , undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
+
+
+■　2018/05/12
+
+
+- UInt128.cs追加
+	- UInt128を用いてHASH_KEYを再実装
+- Bitboard.cs追加
+	- UInt128を用いて実装 and/or/xorをとりあず用意
 
 
 ■　2018/05/11

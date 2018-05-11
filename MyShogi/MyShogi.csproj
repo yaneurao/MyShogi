@@ -69,6 +69,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\Network\CsaConnectData.cs" />
+    <Compile Include="Model\Shogi\Bitboard.cs" />
     <Compile Include="Model\Shogi\BoardType.cs" />
     <Compile Include="Model\Shogi\Color.cs" />
     <Compile Include="Model\Shogi\Exception.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Model\Shogi\Rank.cs" />
     <Compile Include="Model\Shogi\Square.cs" />
     <Compile Include="Model\Shogi\Test.cs" />
+    <Compile Include="Model\Shogi\UInt128.cs" />
     <Compile Include="Model\Shogi\Zobrist.cs" />
     <Compile Include="Model\TimeMan\TimeLimit.cs" />
     <Compile Include="Program.cs" />

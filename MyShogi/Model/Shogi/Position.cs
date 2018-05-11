@@ -469,7 +469,7 @@ namespace MyShogi.Model.Shogi
             sideToMove.Flip();
 
             // Zobrist.sideはp1==0が保証されているのでこれで良い
-            st.Key.p0 ^= Zobrist.Side.p0;
+            st.Key.p.p0 ^= Zobrist.Side.p.p0;
         }
 
         /// <summary>
