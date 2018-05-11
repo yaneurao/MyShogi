@@ -1,15 +1,22 @@
 ﻿
 - ToDo
-	- 各駒の利きをBitboardで返すクラス作成
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::legal() , undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
 
 
-
 ■　2018/05/12
 
+- 各駒の利きをBitboardで返すメソッド追加
+	- Bitboard.PawnStepEffect(),LanceStepEffect(),SilverStepEffect()等、順番に追加
+		- この初期化のために飛び利きの処理が必要なのか…。
+- Bitboard.Pop()実装
+- BitOp.cs追加
+	- LSB64()を自前で用意。
+- Bitboard.Zero(),NotZero()をIsZero(),IsNotZero()とリネーム。
+- 長い利きの初期化ルーチン、やねうら王から移植してくる。(1/5ぐらい完了)
+	- SquareWithWallが必要になる。これも移植してくるか…。
 
 
 - Bitboardをやねうら王から移植

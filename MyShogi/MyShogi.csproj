@@ -70,6 +70,7 @@
     </Compile>
     <Compile Include="Model\Network\CsaConnectData.cs" />
     <Compile Include="Model\Shogi\Bitboard.cs" />
+    <Compile Include="Model\Shogi\BitOp.cs" />
     <Compile Include="Model\Shogi\BoardType.cs" />
     <Compile Include="Model\Shogi\Color.cs" />
     <Compile Include="Model\Shogi\Exception.cs" />

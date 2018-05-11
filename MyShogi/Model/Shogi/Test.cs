@@ -66,6 +66,17 @@ namespace MyShogi.Model.Shogi
 #endif
 
 #if false
+            // BitboardのPop()のテスト
+            for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
+            {
+                Console.Write("sq = " + sq.Pretty() + " ");
+                Bitboard b = new Bitboard(sq);
+                Square r = b.Pop();
+                Console.WriteLine(r.Pretty());
+            }
+#endif
+
+#if false
             // 駒落ちの局面のテスト
             pos.InitBoard(BoardType.Handicap2); // 2枚落ち
             Console.WriteLine(pos.Pretty());
