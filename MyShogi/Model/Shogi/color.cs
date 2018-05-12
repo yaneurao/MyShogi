@@ -69,6 +69,15 @@ namespace MyShogi.Model.Shogi
             color = (Color)(color.ToInt() ^ 1);
         }
 
+        /// <summary>
+        /// 先手なら後手、後手なら先手にする否定演算子
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static Color Not(this Color color)
+        {
+            return (Color)(color.ToInt() ^ 1);
+        }
     }
 
     public static partial class Util

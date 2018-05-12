@@ -66,7 +66,7 @@ namespace MyShogi.Model.Shogi
 #endif
 
 #if false
-            // 角の利きのテスト
+            // 角・馬の利きのテスト
             Bitboard occupied = new Bitboard(Square.SQ_33);
             Console.WriteLine(occupied.Pretty());
             Bitboard bb = Bitboard.BishopEffect(Square.SQ_55, occupied);
@@ -77,10 +77,14 @@ namespace MyShogi.Model.Shogi
 
             Bitboard bb3 = Bitboard.BishopEffect(Square.SQ_56 , Bitboard.AllBB());
             Console.WriteLine(bb3.Pretty());
+
+            Bitboard bb4 = Bitboard.HorseEffect(Square.SQ_55, occupied);
+            Console.WriteLine(bb4.Pretty());
+
 #endif
 
 #if false
-            // 飛車の利きのテスト
+            // 飛車・龍の利きのテスト
             Bitboard occupied = new Bitboard(Square.SQ_53);
             Console.WriteLine(occupied.Pretty());
             Bitboard bb = Bitboard.RookEffect(Square.SQ_55, occupied);
@@ -91,9 +95,13 @@ namespace MyShogi.Model.Shogi
 
             Bitboard bb3 = Bitboard.RookEffect(Square.SQ_56, Bitboard.AllBB());
             Console.WriteLine(bb3.Pretty());
+
+            Bitboard bb4 = Bitboard.DragonEffect(Square.SQ_55, occupied);
+            Console.WriteLine(bb4.Pretty());
+
 #endif
 
-#if true
+#if false
             // 香りの利きのテスト
             Bitboard occupied = new Bitboard(Square.SQ_53);
             Bitboard bb = Bitboard.LanceEffect(Color.BLACK , Square.SQ_55, occupied);
@@ -101,6 +109,25 @@ namespace MyShogi.Model.Shogi
 
             Bitboard bb3 = Bitboard.LanceStepEffect(Color.BLACK , Square.SQ_56);
             Console.WriteLine(bb3.Pretty());
+#endif
+
+#if false
+            // 歩、桂、銀、金、玉の利きのテスト
+            Bitboard bb = Bitboard.PawnEffect(Color.BLACK , Square.SQ_55);
+            Console.WriteLine(bb.Pretty());
+
+            Bitboard bb2 = Bitboard.KnightEffect(Color.BLACK, Square.SQ_55);
+            Console.WriteLine(bb2.Pretty());
+
+            Bitboard bb3 = Bitboard.SilverEffect(Color.BLACK, Square.SQ_55);
+            Console.WriteLine(bb3.Pretty());
+
+            Bitboard bb4 = Bitboard.GoldEffect(Color.BLACK, Square.SQ_55);
+            Console.WriteLine(bb4.Pretty());
+
+            Bitboard bb5 = Bitboard.KingEffect( Square.SQ_55);
+            Console.WriteLine(bb5.Pretty());
+
 #endif
 
 

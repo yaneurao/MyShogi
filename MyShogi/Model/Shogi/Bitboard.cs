@@ -290,7 +290,7 @@ namespace MyShogi.Model.Shogi
         /// <param name="sq"></param>
         /// <param name="occupied"></param>
         /// <returns></returns>
-        Bitboard HorseEffect(Square sq, Bitboard occupied)
+        public static Bitboard HorseEffect(Square sq, Bitboard occupied)
         {
             return BishopEffect(sq, occupied) | KingEffect(sq);
         }
@@ -742,6 +742,31 @@ namespace MyShogi.Model.Shogi
             for (Color c = Color.ZERO; c < Color.NB; ++c)
                 for (var sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
+                    // 歩は長さ1の香の利きとして定義できる
+                    PawnEffectBB[(int)sq,(int)c] = LanceEffect(c, sq, ALL_BB);
+
+                    // 桂の利きは、歩の利きの地点に長さ1の角の利きを作って、前方のみ残す。
+                    Bitboard tmp = ZERO_BB;
+                    Bitboard pawn = LanceEffect(c, sq, ALL_BB);
+                    if (pawn.IsNotZero())
+                    {
+                        Square sq2 = pawn.Pop();
+                        Bitboard pawn2 = LanceEffect(c, sq2, ALL_BB); // さらに1つ前
+                        if (pawn2.IsNotZero())
+                            tmp = BishopEffect(sq2, ALL_BB) & RANK_BB[(int)pawn2.Pop().ToRank()];
+                    }
+                    KnightEffectBB[(int)sq,(int)c] = tmp;
+
+                    // 銀は長さ1の角の利きと長さ1の香の利きの合成として定義できる。
+                    SilverEffectBB[(int)sq,(int)c] = LanceEffect(c, sq, ALL_BB) | BishopEffect(sq, ALL_BB);
+
+                    // 金は長さ1の角と飛車の利き。ただし、角のほうは相手側の歩の行き先の段でmaskしてしまう。
+                    Bitboard e_pawn = LanceEffect(c.Not() , sq, ALL_BB);
+                    Bitboard mask = ZERO_BB;
+                    if (e_pawn.IsNotZero())
+                        mask = RANK_BB[(int)e_pawn.Pop().ToRank()];
+                    GoldEffectBB[(int)sq,(int)c] = (BishopEffect(sq, ALL_BB) & ~mask) | RookEffect(sq, ALL_BB);
+
                     // 障害物がないときの角と飛車の利き
                     BishopStepEffectBB[(int)sq] = BishopEffect(sq, ZERO_BB);
                     RookStepEffectBB[(int)sq] = RookEffect(sq, ZERO_BB);
@@ -749,50 +774,6 @@ namespace MyShogi.Model.Shogi
 
 
 #if false
-        for (auto c : COLOR)
-		for (auto sq : SQ)
-		{
-			// 歩は長さ1の香の利きとして定義できる
-			PawnEffectBB[sq][c] = lanceEffect(c, sq, ALL_BB);
-
-			// 桂の利きは、歩の利きの地点に長さ1の角の利きを作って、前方のみ残す。
-			Bitboard tmp = ZERO_BB;
-			Bitboard pawn = lanceEffect(c, sq, ALL_BB);
-			if (pawn)
-			{
-				Square sq2 = pawn.pop();
-				Bitboard pawn2 = lanceEffect(c, sq2, ALL_BB); // さらに1つ前
-				if (pawn2)
-					tmp = bishopEffect(sq2, ALL_BB) & RANK_BB[rank_of(pawn2.pop())];
-			}
-			KnightEffectBB[sq][c] = tmp;
-
-			// 銀は長さ1の角の利きと長さ1の香の利きの合成として定義できる。
-			SilverEffectBB[sq][c] = lanceEffect(c, sq, ALL_BB) | bishopEffect(sq, ALL_BB);
-
-			// 金は長さ1の角と飛車の利き。ただし、角のほうは相手側の歩の行き先の段でmaskしてしまう。
-			Bitboard e_pawn = lanceEffect(~c, sq, ALL_BB);
-			Bitboard mask = ZERO_BB;
-			if (e_pawn)
-				mask = RANK_BB[rank_of(e_pawn.pop())];
-			GoldEffectBB[sq][c]= (bishopEffect(sq, ALL_BB) & ~mask) | rookEffect(sq, ALL_BB);
-
-			// 障害物がないときの角と飛車の利き
-			BishopStepEffectBB[sq] = bishopEffect(sq, ZERO_BB);
-			RookStepEffectBB[sq]   = rookEffect(sq, ZERO_BB);
-
-			// --- 以下のbitboard、あまり頻繁に呼び出さないので他のbitboardを合成して代用する。
-
-			// 盤上の駒がないときのqueenの利き
-			// StepEffectsBB[sq][c][PIECE_TYPE_BITBOARD_QUEEN] = bishopEffect(sq, ZERO_BB) | rookEffect(sq, ZERO_BB);
-
-			// 長さ1の十字
-			// StepEffectsBB[sq][c][PIECE_TYPE_BITBOARD_CROSS00] = rookEffect(sq, ALL_BB);
-
-			// 長さ1の斜め
-			// StepEffectsBB[sq][c][PIECE_TYPE_BITBOARD_CROSS45] = bishopEffect(sq, ALL_BB);
-		}
-
 	// 7) 二歩用のテーブル初期化
 
 	for (int i = 0; i < 0x80; ++i)
