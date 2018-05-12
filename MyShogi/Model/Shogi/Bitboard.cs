@@ -97,6 +97,19 @@ namespace MyShogi.Model.Shogi
             return new Bitboard(c1.p ^ SQUARE_BB[sq.ToInt()].p);
         }
 
+        public static Bitboard operator <<(Bitboard c1, int n)
+        {
+            // このbit shiftは、p[0]とp[1]をまたがない。
+            return new Bitboard(c1.p << n);
+        }
+
+        public static Bitboard operator >>(Bitboard c1, int n)
+        {
+            // このbit shiftは、p[0]とp[1]をまたがない。
+            return new Bitboard(c1.p >> n);
+        }
+
+
         /// <summary>
         /// 下位bitから1bit拾ってそのbit位置を返す。
         /// 少なくとも1bitは非0と仮定
@@ -176,6 +189,24 @@ namespace MyShogi.Model.Shogi
         // -------------------------------------------------------------------------
 
         /// <summary>
+        /// すべての升が1であるBitboard
+        /// </summary>
+        /// <returns></returns>
+        public static Bitboard AllBB()
+        {
+            return ALL_BB;
+        }
+
+        /// <summary>
+        /// すべての升が0であるBitboard
+        /// </summary>
+        /// <returns></returns>
+        public static Bitboard ZeroBB()
+        {
+            return ZERO_BB;
+        }
+
+        /// <summary>
         /// 筋を表現するbitboardを返す
         /// </summary>
         /// <param name="f"></param>
@@ -201,91 +232,142 @@ namespace MyShogi.Model.Shogi
         /// <returns></returns>
         public static Bitboard SquareBB(Square sq)
         {
-            return SQUARE_BB[sq.ToInt()];
+            return SQUARE_BB[(int)sq];
         }
 
-
-        /// <summary>
-        /// 盤上の駒を考慮しない角の利き
-        /// </summary>
-        /// <param name="sq"></param>
-        /// <returns></returns>
-        public static Bitboard BishopStepEffect(Square sq)
+        // ForwardRanksBBの定義)
+        //    c側の香の利き = 飛車の利き & ForwardRanksBB[c][rank_of(sq)]
+        //
+        // すなわち、
+        // color == BLACKのとき、n段目よりWHITE側(1からn-1段目)を表現するBitboard。
+        // color == WHITEのとき、n段目よりBLACK側(n+1から9段目)を表現するBitboard。
+        // このアイデアはAperyのもの。
+        public static Bitboard ForwardRanks(Color c, Rank r)
         {
-            return BishopStepEffectBB[sq.ToInt()];
+            return ForwardRanksBB[(int)c, (int)r];
         }
 
         // --- 遠方駒(盤上の駒の状態を考慮しながら利きを求める)
 
-        // 角の右上と左下方向への利き
+        /// <summary>
+        /// 角の右上と左下方向への利き
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="occupied"></param>
+        /// <returns></returns>
         private static Bitboard BishopEffect0(Square sq, Bitboard occupied)
         {
-            Bitboard block0 = new Bitboard(occupied & BishopEffectMask[0,(int)sq]);
-	        return BishopEffectBB[0,BishopEffectIndex[0,(int)sq] + (int)OccupiedToIndex(block0, BishopEffectMask[0,(int)sq])];
+            Bitboard block0 = new Bitboard(occupied & BishopEffectMask[0, (int)sq]);
+            return BishopEffectBB[0, BishopEffectIndex[0, (int)sq] + (int)OccupiedToIndex(block0, BishopEffectMask[0, (int)sq])];
         }
 
-        // 角の左上と右下方向への利き
+        /// <summary>
+        /// 角の左上と右下方向への利き
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="occupied"></param>
+        /// <returns></returns>
         private static Bitboard BishopEffect1(Square sq, Bitboard occupied)
         {
-            Bitboard block1 = new Bitboard(occupied & BishopEffectMask[1,(int)sq]);
-            return BishopEffectBB[1,BishopEffectIndex[1,(int)sq] + (int)OccupiedToIndex(block1, BishopEffectMask[1,(int)sq])];
+            Bitboard block1 = new Bitboard(occupied & BishopEffectMask[1, (int)sq]);
+            return BishopEffectBB[1, BishopEffectIndex[1, (int)sq] + (int)OccupiedToIndex(block1, BishopEffectMask[1, (int)sq])];
         }
 
-        // 角 : occupied bitboardを考慮しながら角の利きを求める
+        /// <summary>
+        /// 角 : occupied bitboardを考慮しながら角の利きを求める
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="occupied"></param>
+        /// <returns></returns>
         public static Bitboard BishopEffect(Square sq, Bitboard occupied)
         {
             return BishopEffect0(sq, occupied) | BishopEffect1(sq, occupied);
         }
 
-        // 馬 : occupied bitboardを考慮しながら香の利きを求める
+        /// <summary>
+        /// 馬 : occupied bitboardを考慮しながら香の利きを求める
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="occupied"></param>
+        /// <returns></returns>
         Bitboard HorseEffect(Square sq, Bitboard occupied)
         {
-	        return BishopEffect(sq, occupied) | KingEffect(sq);
+            return BishopEffect(sq, occupied) | KingEffect(sq);
         }
 
-#if false
-        // 飛車の縦の利き
-        Bitboard RookFileEffect(Square sq, Bitboard occupied)
+        // 指定した升(Square)が Bitboard のどちらの u64 変数の要素に属するか。
+        // 本ソースコードのように縦型Bitboardにおいては、香の利きを求めるのにBitboardの
+        // 片側のp[x]を調べるだけで済むので、ある升がどちらに属するかがわかれば香の利きは
+        // そちらを調べるだけで良いというAperyのアイデア。
+        private static int Part(Square sq) { return (Square.SQ_79 < sq) ? 1 : 0; }
+
+        /// <summary>
+        /// 飛車の縦の利き
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="occupied"></param>
+        /// <returns></returns>
+        public static Bitboard RookFileEffect(Square sq, Bitboard occupied)
         {
-            int index = (occupied.p[Bitboard::part(sq)] >> Slide[sq]) & 0x7f;
-            File f = file_of(sq);
-    	    return (f <= FILE_7) ?
-		        Bitboard(RookFileEffect[rank_of(sq)][index] << int(f | RANK_1), 0) :
-		        Bitboard(0, RookFileEffect[rank_of(sq)][index] << int((File)(f - FILE_8) | RANK_1));
+            UInt64 occ = Part(sq) == 0 ? occupied.p.p0 : occupied.p.p1;
+            int index = (int)((occ >> Slide[(int)sq]) & 0x7f);
+            File f = sq.ToFile();
+            return (f <= File.FILE_7) ?
+                new Bitboard(RookFileEffectBB[(int)sq.ToRank(), index] << (int)Util.MakeSquare(f, Rank.RANK_1), 0) :
+                new Bitboard(0, RookFileEffectBB[(int)sq.ToRank(), index] << (int)Util.MakeSquare((File)(f - File.FILE_8), Rank.RANK_1));
         }
 
-    // 飛車の横の利き
-    inline Bitboard rookRankEffect(Square sq, const Bitboard& occupied)
-    {
-        ASSERT_LV3(sq <= SQ_NB);
-        // 将棋盤をシフトして、SQ_71 , SQ_61 .. SQ_11に飛車の横方向の情報を持ってくる。
-        // このbitを直列化して7bit取り出して、これがindexとなる。
-        // しかし、r回の右シフトを以下の変数uに対して行なうと計算完了まで待たされるので、
-        // PEXT64()の第二引数のほうを左シフトしておく。
-        int r = rank_of(sq);
-        u64 u = (occupied.extract64 < 1 > () << 6 * 9) + (occupied.extract64 < 0 > () >> 9);
-        u64 index = PEXT64(u, 0b1000000001000000001000000001000000001000000001000000001 << r);
-        return RookRankEffect[file_of(sq)][index] << r;
-    }
+        /// <summary>
+        /// 飛車の横の利き
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="occupied"></param>
+        /// <returns></returns>
+        public static Bitboard RookRankEffect(Square sq, Bitboard occupied)
+        {
+            // 将棋盤をシフトして、SQ_71 , SQ_61 .. SQ_11に飛車の横方向の情報を持ってくる。
+            // このbitを直列化して7bit取り出して、これがindexとなる。
+            // しかし、r回の右シフトを以下の変数uに対して行なうと計算完了まで待たされるので、
+            // PEXT64()の第二引数のほうを左シフトしておく。
+            int r = (int)sq.ToRank();
+            UInt64 u = (occupied.p.p1 << 6 * 9) + (occupied.p.p0 >> 9);
+            UInt64 index = BitOp.PEXT64(u, 0b1000000001000000001000000001000000001000000001000000001UL << r);
+            return RookRankEffectBB[(int)sq.ToFile(), index] << r;
+        }
 
-    // 飛 : occupied bitboardを考慮しながら飛車の利きを求める
-    inline Bitboard rookEffect(Square sq, const Bitboard& occupied)
-    {
-        return rookFileEffect(sq, occupied) | rookRankEffect(sq, occupied);
-    }
+        /// <summary>
+        /// 飛 : occupied bitboardを考慮しながら飛車の利きを求める
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="occupied"></param>
+        /// <returns></returns>
+        public static Bitboard RookEffect(Square sq, Bitboard occupied)
+        {
+            return RookFileEffect(sq, occupied) | RookRankEffect(sq, occupied);
+        }
 
-    // 香 : occupied bitboardを考慮しながら香の利きを求める
-    inline Bitboard lanceEffect(Color c, Square sq, const Bitboard& occupied)
-    {
-        return rookFileEffect(sq, occupied) & lanceStepEffect(c, sq);
-    }
+        /// <summary>
+        /// 香 : occupied bitboardを考慮しながら香の利きを求める
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="sq"></param>
+        /// <param name="occupied"></param>
+        /// <returns></returns>
+        public static Bitboard LanceEffect(Color c, Square sq, Bitboard occupied)
+        {
+            return RookFileEffect(sq, occupied) & LanceStepEffect(c, sq);
+        }
 
-    // 龍 : occupied bitboardを考慮しながら香の利きを求める
-    inline Bitboard dragonEffect(Square sq, const Bitboard& occupied)
-    {
-        return rookEffect(sq, occupied) | kingEffect(sq);
-    }
-#endif
+        /// <summary>
+        /// 龍 : occupied bitboardを考慮しながら香の利きを求める
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="occupied"></param>
+        /// <returns></returns>
+        public static Bitboard DragonEffect(Square sq, Bitboard occupied)
+        {
+            return RookEffect(sq, occupied) | KingEffect(sq);
+        }
 
         /// <summary>
         /// sqに王をおいたときに利きがある升が1であるbitboardを返す
@@ -295,6 +377,97 @@ namespace MyShogi.Model.Shogi
         public static Bitboard KingEffect(Square sq)
         {
             return KingEffectBB[sq.ToInt()];
+        }
+
+        /// <summary>
+        /// 歩の利き
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public static Bitboard PawnEffect(Color c, Square sq)
+        {
+            return PawnEffectBB[(int)sq, (int)c];
+        }
+
+        // Bitboardに対する歩の利き
+        // color = BLACKのとき、51の升は49の升に移動するので、注意すること。
+        // (51の升にいる先手の歩は存在しないので、歩の移動に用いる分には問題ないが。)
+        public static Bitboard PawnEffect(Color c, Bitboard bb)
+        {
+            // Apery型の縦型Bitboardにおいては歩の利きはbit shiftで済む。
+            //ASSERT_LV3(is_ok(c));
+            //return c == BLACK ? bb >> 1 : c == WHITE ? bb << 1
+            //    : ZERO_BB;
+
+            return ZERO_BB;
+        }
+
+        /// <summary>
+        /// 桂の利き
+        /// </summary>
+        /// <returns></returns>
+        public static Bitboard KnightEffect(Color c, Square sq)
+        {
+            //ASSERT_LV3(is_ok(c) && sq <= SQ_NB);
+            return KnightEffectBB[(int)sq, (int)c];
+        }
+
+        /// <summary>
+        /// 銀の利き
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public static Bitboard SilverEffect(Color c, Square sq)
+        {
+            //ASSERT_LV3(is_ok(c) && sq <= SQ_NB);
+            return SilverEffectBB[(int)sq, (int)c];
+        }
+
+        /// <summary>
+        /// 金の利き
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public static Bitboard GoldEffect(Color c, Square sq)
+        {
+            //ASSERT_LV3(is_ok(c) && sq <= SQ_NB);
+            return GoldEffectBB[(int)sq, (int)c];
+        }
+
+        // --- 遠方仮想駒(盤上には駒がないものとして求める利き)
+
+        /// <summary>
+        /// 盤上の駒を考慮しない角の利き
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public static Bitboard BishopStepEffect(Square sq)
+        {
+            //ASSERT_LV3(sq <= SQ_NB);
+            return BishopStepEffectBB[(int)sq];
+        }
+
+        /// <summary>
+        /// 盤上の駒を考慮しない飛車の利き
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public static Bitboard RookStepEffect(Square sq)
+        {
+            //ASSERT_LV3(sq <= SQ_NB);
+            return RookStepEffectBB[(int)sq];
+        }
+
+        /// <summary>
+        /// 盤上の駒を考慮しない香の利き
+        /// </summary>
+        public static Bitboard LanceStepEffect(Color c, Square sq)
+        {
+            //ASSERT_LV3(is_ok(c) && sq <= SQ_NB);
+            return LanceStepEffectBB[(int)sq, (int)c];
         }
 
         // -------------------------------------------------------------------------
@@ -350,7 +523,7 @@ namespace MyShogi.Model.Shogi
             SQUARE_BB = new Bitboard[(int)Square.NB_PLUS1];
 
             // SQUARE_BBは上記のRANK_BBとFILE_BBを用いて初期化すると楽。
-            for(Square sq = Square.ZERO; sq < Square.NB; ++sq)
+            for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
             {
                 File f = sq.ToFile();
                 Rank r = sq.ToRank();
@@ -359,12 +532,21 @@ namespace MyShogi.Model.Shogi
                 SQUARE_BB[sq.ToInt()] = FILE_BB[f.ToInt()] & RANK_BB[r.ToInt()];
             }
 
+            ForwardRanksBB = new Bitboard[(int)Color.NB, (int)Rank.NB]
+            {
+              { ZERO_BB, RANK1_BB, RANK1_BB | RANK2_BB, RANK1_BB | RANK2_BB | RANK3_BB, RANK1_BB | RANK2_BB | RANK3_BB | RANK4_BB,
+              ~(RANK9_BB | RANK8_BB | RANK7_BB | RANK6_BB), ~(RANK9_BB | RANK8_BB | RANK7_BB), ~(RANK9_BB | RANK8_BB), ~RANK9_BB },
+              { ~RANK1_BB, ~(RANK1_BB | RANK2_BB), ~(RANK1_BB | RANK2_BB | RANK3_BB), ~(RANK1_BB | RANK2_BB | RANK3_BB | RANK4_BB),
+              RANK9_BB | RANK8_BB | RANK7_BB | RANK6_BB, RANK9_BB | RANK8_BB | RANK7_BB, RANK9_BB | RANK8_BB, RANK9_BB, ZERO_BB }
+            };
+
+
             // 1) SquareWithWallテーブルの初期化。
 
             for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 SquareWithWallExtensions.sqww_table[sq.ToInt()] = (SquareWithWall)
                     ((int)SquareWithWall.SQWW_11
-                    + sq.ToFile().ToInt() * (int)SquareWithWall.SQWW_L 
+                    + sq.ToFile().ToInt() * (int)SquareWithWall.SQWW_L
                     + sq.ToRank().ToInt() * (int)SquareWithWall.SQWW_D);
 
 
@@ -441,17 +623,17 @@ namespace MyShogi.Model.Shogi
             }
 
             // 角の利きテーブルの初期化
-            for (int n = 0; n < 2; ++ n)
-        	{
+            for (int n = 0; n < 2; ++n)
+            {
                 int index = 0;
-                for (var sq = Square.ZERO ; sq < Square.NB; ++sq)
+                for (var sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
                     // sqの升に対してテーブルのどこを見るかのindex
-                    BishopEffectIndex[n,sq.ToInt()] = index;
+                    BishopEffectIndex[n, sq.ToInt()] = index;
 
                     // sqの地点にpieceがあるときにその利きを得るのに関係する升を取得する
-                    var mask = BishopEffectMask[n,sq.ToInt()];
-                    mask = calcBishopEffectMask(sq, n);
+                    var mask = calcBishopEffectMask(sq, n);
+                    BishopEffectMask[n, sq.ToInt()] = mask;
 
                     // p[0]とp[1]が被覆していると正しく計算できないのでNG。
                     // Bitboardのレイアウト的に、正しく計算できるかのテスト。
@@ -474,92 +656,100 @@ namespace MyShogi.Model.Shogi
                 }
 
                 // 盤外(SQ_NB)に駒を配置したときに利きがZERO_BBとなるときのための処理
-                BishopEffectIndex[n,(int)Square.NB] = index;
+                BishopEffectIndex[n, (int)Square.NB] = index;
 
                 // 何番まで使ったか出力してみる。(確保する配列をこのサイズに収めたいので)
                 // cout << index << endl;
             }
-  
-	        // 5. 飛車の縦方向の利きテーブルの初期化
-	        // ここでは飛車の利きを使わずに初期化しないといけない。
 
-	    for (Rank rank = Rank.RANK_1; rank <= Rank.RANK_9 ; ++rank)
-	    {
-		    // sq = SQ_11 , SQ_12 , ... , SQ_19
-		    Square sq = Util.MakeSquare(File.FILE_1 , rank);
+            // 5. 飛車の縦方向の利きテーブルの初期化
+            // ここでは飛車の利きを使わずに初期化しないといけない。
 
-		    const int num1s = 7;
-		    for (int i = 0; i < (1 << num1s); ++i)
-		    {
-			    // iはsqに駒をおいたときに、その筋の2段～8段目の升がemptyかどうかを表現する値なので
-			    // 1ビットシフトして、1～9段目の升を表現するようにする。
-			    int ii = i << 1;
-			    Bitboard bb = ZERO_BB;
-			    for (int r = sq.ToRank().ToInt() - 1; r >= (int)Rank.RANK_1; --r)
-			    {
-				    bb |= Util.MakeSquare(sq.ToFile() , (Rank)r);
-				    if ((ii & (1 << r))!=0)
-					    break;
-			    }
-			    for (int r = sq.ToRank().ToInt() + 1; r <= (int)Rank.RANK_9; ++r)
-			    {
-				    bb |= Util.MakeSquare(sq.ToFile(), (Rank)r);
-				    if ((ii & (1 << r))!=0)
-					    break;
-			    }
-			    RookFileEffect[rank.ToInt(),i] = bb.p.p0;
-			    // RookEffectFile[RANK_NB][x] には値を代入していないがC++の規約によりゼロ初期化されている。
-		    }
-	    }
+            for (Rank rank = Rank.RANK_1; rank <= Rank.RANK_9; ++rank)
+            {
+                // sq = SQ_11 , SQ_12 , ... , SQ_19
+                Square sq = Util.MakeSquare(File.FILE_1, rank);
 
-	    // 飛車の横の利き
-	    for (File file = File.FILE_1 ; file <= File.FILE_9 ; ++file )
-	    {
-		    // sq = SQ_11 , SQ_21 , ... , SQ_NBまで
-		    Square sq = Util.MakeSquare(file , Rank.RANK_1);
-		
-		    const int num1s = 7;
-		    for (int i = 0; i < (1 << num1s); ++i)
-		    {
-			    int ii = i << 1;
-			    Bitboard bb = ZERO_BB;
-			    for (int f = (int)sq.ToFile() - 1; f >= (int)File.FILE_1; --f)
-			    {
-				    bb |= Util.MakeSquare((File)f , sq.ToRank());
-				    if ((ii & (1 << f))!=0)
-					    break;
-			    }
-			    for (int f = (int)sq.ToFile() + 1; f <= (int)File.FILE_9; ++f)
-			    {
-				    bb |= Util.MakeSquare((File)f , sq.ToRank());
-				    if ((ii & (1 << f))!=0)
-					    break;
-			    }
+                const int num1s = 7;
+                for (int i = 0; i < (1 << num1s); ++i)
+                {
+                    // iはsqに駒をおいたときに、その筋の2段～8段目の升がemptyかどうかを表現する値なので
+                    // 1ビットシフトして、1～9段目の升を表現するようにする。
+                    int ii = i << 1;
+                    Bitboard bb = ZERO_BB;
+                    for (int r = sq.ToRank().ToInt() - 1; r >= (int)Rank.RANK_1; --r)
+                    {
+                        bb |= Util.MakeSquare(sq.ToFile(), (Rank)r);
+                        if ((ii & (1 << r)) != 0)
+                            break;
+                    }
+                    for (int r = sq.ToRank().ToInt() + 1; r <= (int)Rank.RANK_9; ++r)
+                    {
+                        bb |= Util.MakeSquare(sq.ToFile(), (Rank)r);
+                        if ((ii & (1 << r)) != 0)
+                            break;
+                    }
+                    RookFileEffectBB[(int)rank, i] = bb.p.p0;
+                    // RookEffectFile[RANK_NB][x] には値を代入していないがC++の規約によりゼロ初期化されている。
+                }
+            }
 
-                RookRankEffectBB[(int)file,i] = bb;
-			    // RookRankEffect[FILE_NB][x] には値を代入していないがC++の規約によりゼロ初期化されている。
-		    }
-	    }
+            // 飛車の横の利き
+            for (File file = File.FILE_1; file <= File.FILE_9; ++file)
+            {
+                // sq = SQ_11 , SQ_21 , ... , SQ_NBまで
+                Square sq = Util.MakeSquare(file, Rank.RANK_1);
+
+                const int num1s = 7;
+                for (int i = 0; i < (1 << num1s); ++i)
+                {
+                    int ii = i << 1;
+                    Bitboard bb = ZERO_BB;
+                    for (int f = (int)sq.ToFile() - 1; f >= (int)File.FILE_1; --f)
+                    {
+                        bb |= Util.MakeSquare((File)f, sq.ToRank());
+                        if ((ii & (1 << f)) != 0)
+                            break;
+                    }
+                    for (int f = (int)sq.ToFile() + 1; f <= (int)File.FILE_9; ++f)
+                    {
+                        bb |= Util.MakeSquare((File)f, sq.ToRank());
+                        if ((ii & (1 << f)) != 0)
+                            break;
+                    }
+
+                    RookRankEffectBB[(int)file, i] = bb;
+                    // RookRankEffect[FILE_NB][x] には値を代入していないがC++の規約によりゼロ初期化されている。
+                }
+            }
 
 
-        // 6. 近接駒(+盤上の利きを考慮しない駒)のテーブルの初期化。
-        // 上で初期化した、香・馬・飛の利きを用いる。
+            // 6. 近接駒(+盤上の利きを考慮しない駒)のテーブルの初期化。
+            // 上で初期化した、香・馬・飛の利きを用いる。
 
-        for (var sq = Square.ZERO; sq < Square.NB; ++sq)
-        {
-            // 玉は長さ1の角と飛車の利きを合成する
-            KingEffectBB[(int)sq] = BishopEffect(sq, ALL_BB) | RookEffect(sq, ALL_BB);
-        }
+            for (var sq = Square.ZERO; sq < Square.NB; ++sq)
+            {
+                // 玉は長さ1の角と飛車の利きを合成する
+                KingEffectBB[(int)sq] = BishopEffect(sq, ALL_BB) | RookEffect(sq, ALL_BB);
+            }
+
+            for (Color c = Color.ZERO; c < Color.NB; ++c)
+                for (var sq = Square.ZERO; sq < Square.NB; ++sq)
+                    // 障害物がないときの香の利き
+                    // これを最初に初期化しないとlanceEffect()が使えない。
+                    LanceStepEffectBB[(int)sq, (int)c] = RookFileEffect(sq, ZERO_BB) & ForwardRanks(c, sq.ToRank());
+
+            for (Color c = Color.ZERO; c < Color.NB; ++c)
+                for (var sq = Square.ZERO; sq < Square.NB; ++sq)
+                {
+                    // 障害物がないときの角と飛車の利き
+                    BishopStepEffectBB[(int)sq] = BishopEffect(sq, ZERO_BB);
+                    RookStepEffectBB[(int)sq] = RookEffect(sq, ZERO_BB);
+                }
+
 
 #if false
-
-	for (auto c : COLOR)
-		for(auto sq : SQ)
-			// 障害物がないときの香の利き
-			// これを最初に初期化しないとlanceEffect()が使えない。
-			LanceStepEffectBB[sq][c] = rookFileEffect(sq,ZERO_BB) & ForwardRanksBB[c][rank_of(sq)];
-
-	for (auto c : COLOR)
+        for (auto c : COLOR)
 		for (auto sq : SQ)
 		{
 			// 歩は長さ1の香の利きとして定義できる
@@ -773,12 +963,12 @@ define FOREACH_BR(BB, EFFECT ) { for(auto sq : BB) { target|= EFFECT(sq,ZERO_BB)
         /// <summary>
         /// 筋を表現するBitboard
         /// </summary>
-        private static Bitboard [] FILE_BB;
+        private static Bitboard[] FILE_BB;
 
         /// <summary>
         /// 段を表現するBitboard
         /// </summary>
-        private static Bitboard [] RANK_BB;
+        private static Bitboard[] RANK_BB;
 
         /// <summary>
         /// Bitboard(Square)で用いるテーブル
@@ -786,6 +976,15 @@ define FOREACH_BR(BB, EFFECT ) { for(auto sq : BB) { target|= EFFECT(sq,ZERO_BB)
         /// </summary>
         private static Bitboard[] SQUARE_BB;
 
+
+        // ForwardRanksBBの定義)
+        //    c側の香の利き = 飛車の利き & ForwardRanksBB[c][rank_of(sq)]
+        //
+        // すなわち、
+        // color == BLACKのとき、n段目よりWHITE側(1からn-1段目)を表現するBitboard。
+        // color == WHITEのとき、n段目よりBLACK側(n+1から9段目)を表現するBitboard。
+        // このアイデアはAperyのもの。
+        private static Bitboard[,] ForwardRanksBB; //   = new Bitboard[(int)Color.NB, (int)Rank.NB]
 
         /// <summary>
         /// 玉、金、銀、桂、歩の利き
@@ -807,7 +1006,24 @@ define FOREACH_BR(BB, EFFECT ) { for(auto sq : BB) { target|= EFFECT(sq,ZERO_BB)
         private static int[,] BishopEffectIndex = new int[2,(int)Square.NB_PLUS1];
 
         // 飛車の縦、横の利き
-        private static UInt64[,] RookFileEffect = new UInt64[(int)Rank.NB + 1,128];
+
+        // 飛車の縦方向の利きを求めるときに、指定した升sqの属するfileのbitをshiftし、
+        // index を求める為に使用する。(from Apery)
+        private static Byte[] Slide = new Byte[(int)Square.NB_PLUS1]
+        {
+              1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 ,
+              10, 10, 10, 10, 10, 10, 10, 10, 10,
+              19, 19, 19, 19, 19, 19, 19, 19, 19,
+              28, 28, 28, 28, 28, 28, 28, 28, 28,
+              37, 37, 37, 37, 37, 37, 37, 37, 37,
+              46, 46, 46, 46, 46, 46, 46, 46, 46,
+              55, 55, 55, 55, 55, 55, 55, 55, 55,
+              1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 ,
+              10, 10, 10, 10, 10, 10, 10, 10, 10,
+              0 , // SQ_NB用
+        };
+
+        private static UInt64[,] RookFileEffectBB = new UInt64[(int)Rank.NB + 1,128];
         private static Bitboard[,] RookRankEffectBB = new Bitboard[(int)File.NB + 1,128];
 
     }

@@ -1,6 +1,5 @@
 ﻿
 - ToDo
-	- Bitboard.RookEffect()追加。
 		- Bitboard.DragonEffect()追加。
 	- Bitboard.KingEffect()追加。
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
@@ -10,6 +9,16 @@
 
 
 ■　2018/05/13
+
+
+- BishipEffect()うまく動いた
+- Bitboard.RookEffect()追加。
+- Bitboardにoperator << , >> 追加。
+	- UInt128にoperator << , >> 追加。
+- Bitboard.RookStepEffect()実装。
+- Bitboard.LanceEffect(),LanceStepEffect()実装。
+	- ForwardRanks()実装。
+	- うまく動いた。
 
 
 - Bitboard.init()に角の利きのテーブルを初期化するコード実装

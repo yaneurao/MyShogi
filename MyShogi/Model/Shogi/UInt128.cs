@@ -88,5 +88,17 @@ namespace MyShogi.Model.Shogi
             return new UInt128(c1.p0 * (UInt64)n , c1.p1 *(UInt64)n);
         }
 
+        public static UInt128 operator <<(UInt128 c1, int n)
+        {
+            // このbit shiftは、p[0]とp[1]をまたがない。
+            return new UInt128(c1.p0 << n, c1.p1 << n);
+        }
+
+        public static UInt128 operator >>(UInt128 c1, int n)
+        {
+            // このbit shiftは、p[0]とp[1]をまたがない。
+            return new UInt128(c1.p0 >> n, c1.p1 >> n);
+        }
+
     }
 }
