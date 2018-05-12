@@ -1,9 +1,26 @@
 ﻿
 - ToDo
+	- Bitboard.RookEffect()追加。
+		- Bitboard.DragonEffect()追加。
+	- Bitboard.KingEffect()追加。
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::legal() , undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
+
+
+■　2018/05/13
+
+
+- Bitboard.init()に角の利きのテーブルを初期化するコード実装
+- Bitboard.PopCount()追加。
+	- BitOp.PopCount()追加。
+	- 動作テストした。うまく動いてるっぽい。
+- BitOp.PEXT64()追加
+- Bitboard.BishopEffect()追加。
+	- Bitboard.BishopStepEffect()追加。
+	- BishopEffect()おかしいのでテーブル初期化コードなどを見直し中。
+
 
 
 ■　2018/05/12

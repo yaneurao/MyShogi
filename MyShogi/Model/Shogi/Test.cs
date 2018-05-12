@@ -55,6 +55,15 @@ namespace MyShogi.Model.Shogi
 
             Console.WriteLine(pos.Pretty());
 
+            // 角の利きのテスト
+            Bitboard occupied = new Bitboard(Square.SQ_33);
+            Console.WriteLine(occupied.Pretty());
+            Bitboard bb = Bitboard.BishopEffect(Square.SQ_55, occupied);
+            Console.WriteLine(bb.Pretty());
+
+            Bitboard bb2 = Bitboard.BishopStepEffect(Square.SQ_56);
+            Console.WriteLine(bb2.Pretty());
+
 #if false
             // Bitboard(Square)のテスト
             for (Square sq = Square.ZERO; sq < Square.NB ; ++sq)
