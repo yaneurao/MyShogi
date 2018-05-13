@@ -55,6 +55,9 @@ namespace MyShogi.Model.Shogi
 
             Console.WriteLine(pos.Pretty());
 
+            // 駒番号のテスト
+            //Console.WriteLine(pos.PrettyPieceNo());
+
             //  Console.WriteLine(pos.Pieces().Pretty());
             //  Console.WriteLine(pos.Pieces(Color.BLACK).Pretty());
 
@@ -182,8 +185,11 @@ namespace MyShogi.Model.Shogi
             Console.WriteLine(pos.ToSfen());
             Console.WriteLine(pos.Pretty());
 
-//            Console.WriteLine(pos.Pieces().Pretty());
-//           Console.WriteLine(pos.Pieces(Color.BLACK).Pretty());
+            // 駒番号のデバッグ
+            //Console.WriteLine(pos.PrettyPieceNo());
+
+            //            Console.WriteLine(pos.Pieces().Pretty());
+            //           Console.WriteLine(pos.Pieces(Color.BLACK).Pretty());
 
 
 #if false

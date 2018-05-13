@@ -80,6 +80,7 @@
     <Compile Include="Model\Shogi\Misc.cs" />
     <Compile Include="Model\Shogi\Move.cs" />
     <Compile Include="Model\Shogi\Piece.cs" />
+    <Compile Include="Model\Shogi\PieceNo.cs" />
     <Compile Include="Model\Shogi\Position.cs" />
     <Compile Include="Model\Shogi\Rank.cs" />
     <Compile Include="Model\Shogi\Square.cs" />

@@ -30,15 +30,21 @@ namespace MyShogi.Model.Shogi
     {
         // -------------------------------------------------------------------------
 
-            /// <summary>
+        /// <summary>
         /// 盤面、81升分の駒 + 1
         /// </summary>
         private Piece[] board = new Piece[Square.NB_PLUS1.ToInt()];
+        private PieceNo[] board_pn = new PieceNo[Square.NB_PLUS1.ToInt()];
 
         /// <summary>
         /// 手駒
         /// </summary>
         private Hand[] hand = new Hand[Color.NB.ToInt()];
+        private PieceNo[,,] hand_pn = new PieceNo[(int)Color.NB, (int)Piece.HAND_NB, (int)PieceNo.PAWN_MAX];
+        // →　どこまで使用してあるかは、Hand(Color,Piece)を用いればわかる。
+
+        // 使用しているPieceNoの終端
+        PieceNo lastPieceNo;
 
         /// <summary>
         /// 手番
@@ -91,6 +97,29 @@ namespace MyShogi.Model.Shogi
         {
             Debug.Assert(sq.IsOk());
             return ref board[sq.ToInt()];
+        }
+
+        /// <summary>
+        /// 盤面上、sqの升にある駒のPieceNoの参照
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public ref PieceNo PieceNoOn(Square sq)
+        {
+            return ref board_pn[sq.ToInt()];
+        }
+
+        /// <summary>
+        /// c側の手駒ptのno枚目の駒のPieceNoの参照
+        /// 駒の枚数自体はHand(Color).Count()で取得できるのでそちらを用いること。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="pt"></param>
+        /// <param name="no"></param>
+        /// <returns></returns>
+        public ref PieceNo HandPieceNo(Color c, Piece pt, int no)
+        {
+            return ref hand_pn[(int)c,(int)pt,no];
         }
 
         /// <summary>
@@ -256,6 +285,46 @@ namespace MyShogi.Model.Shogi
         }
 
         /// <summary>
+        /// PieceNoがどうなっているか表示する。(デバッグ用)
+        /// </summary>
+        /// <returns></returns>
+        public string PrettyPieceNo()
+        {
+            var sb = new StringBuilder();
+
+            for (Rank r = Rank.RANK_1; r <= Rank.RANK_9; ++r)
+            {
+                for (File f = File.FILE_9; f >= File.FILE_1; --f)
+                {
+                    var pn = PieceNoOn(Util.MakeSquare(f,r));
+                    sb.Append(string.Format("{0:D2} ",(int)pn));
+                }
+                sb.AppendLine();
+            }
+
+            for(Color c = Color.ZERO; c < Color.NB; ++c)
+            {
+                sb.Append(c.Pretty() + ":");
+                for(Piece p = Piece.PAWN; p < Piece.HAND_NB; ++p)
+                {
+                    int count = Hand(c).Count(p);
+                    if (count == 0)
+                        continue;
+
+                    sb.Append(p.Pretty());
+                    for (int i = 0; i < count; ++i)
+                    {
+                        var pn = HandPieceNo(c,p,i);
+                        sb.Append(string.Format("{0:D2} ", (int)pn));
+                    }
+                }
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
         /// SFEN形式で盤面を出力する。
         /// </summary>
         /// <returns></returns>
@@ -339,12 +408,15 @@ namespace MyShogi.Model.Shogi
 
             // 各Bitboard配列のゼロクリア
             Array.Clear(board, 0, board.Length);
+            Array.Clear(board_pn, 0, board_pn.Length);
+            Array.Clear(hand_pn, 0, hand_pn.Length);
             Array.Clear(byColorBB, 0, byColorBB.Length);
             Array.Clear(byTypeBB, 0, byTypeBB.Length);
 
             // 盤面左上から。Square型のレイアウトに依らずに処理を進めたいため、Square型は使わない。
             File f = File.FILE_9;
             Rank r = Rank.RANK_1;
+            lastPieceNo = PieceNo.ZERO;
 
             bool promoted = false;
             var board_sfen = split[0];
@@ -382,7 +454,7 @@ namespace MyShogi.Model.Shogi
 
                     piece = piece + (promoted ? Piece.PROMOTE.ToInt() : 0);
 
-                    PutPiece(Util.MakeSquare( f , r) , piece);
+                    PutPiece(Util.MakeSquare( f , r) , piece , lastPieceNo ++);
                     f -= 1;
                     promoted = false;
                 }
@@ -418,9 +490,15 @@ namespace MyShogi.Model.Shogi
                         }
 
                         var color = piece.PieceColor();
+                        var pr = piece.RawPieceType();
 
                         // 手駒を加算する
-                        Hand(color).Add(piece.RawPieceType(), count);
+                        Hand(color).Add(pr, count);
+
+                        for(int i=0;i<count;++i)
+                        {
+                            HandPieceNo(color, pr, i) = lastPieceNo++;
+                        }
 
                         count = 1;
                     }
@@ -487,8 +565,12 @@ namespace MyShogi.Model.Shogi
                     throw new PositionException("Position.DoMove()で持っていない手駒" + pt.Pretty2() + "を打とうとした");
 
                 Piece pc = Util.MakePiece(sideToMove, pt);
-                PutPiece(to, pc);
                 Hand(sideToMove).Sub(pt);
+
+                // 打つ駒の駒番号取得して、これを盤面に置く駒に反映させておく。
+                PieceNo pn = HandPieceNo(sideToMove, pt, Hand(sideToMove).Count(pt));
+
+                PutPiece(to, pc , pn);
 
                 // hash keyの更新
                 st.Key -= Zobrist.Hand(sideToMove,pt);
@@ -499,7 +581,11 @@ namespace MyShogi.Model.Shogi
                 // -- 駒の移動
 
                 Square from = m.From();
+                PieceNo pn = PieceNoOn(from);
                 Piece moved_pc = RemovePiece(from);
+
+                // 移動元の駒ナンバーをクリア
+                PieceNoOn(from) = PieceNo.NONE;
 
                 // 移動先の升にある駒
 
@@ -513,6 +599,10 @@ namespace MyShogi.Model.Shogi
                     if (!(Piece.PAWN <= pr && pr <= Piece.GOLD))
                         throw new PositionException("Position.DoMove()で取れない駒を取った(玉取り？)");
 
+                    // 取る駒のPieceNoを盤上に反映させておく
+                    PieceNo pn2 = PieceNoOn(to);
+                    HandPieceNo(sideToMove, pr, Hand(sideToMove).Count(pr)) = pn2;
+
                     Hand(sideToMove).Add(pr);
 
                     // 捕獲された駒が盤上から消えるので局面のhash keyを更新する
@@ -521,7 +611,7 @@ namespace MyShogi.Model.Shogi
                 }
 
                 Piece moved_after_pc = (Piece)(moved_pc.ToInt() + (m.IsPromote() ? Piece.PROMOTE.ToInt() : 0));  
-                PutPiece(to, moved_after_pc);
+                PutPiece(to, moved_after_pc , pn);
 
                 // fromにあったmoved_pcがtoにmoved_after_pcとして移動した。
                 st.Key -= Zobrist.Psq(from, moved_pc      );
@@ -802,12 +892,13 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         /// <param name="sq"></param>
         /// <param name="pr"></param>
-        private void PutPiece(Square sq, Piece pc)
+        private void PutPiece(Square sq, Piece pc , PieceNo pn)
         {
             if (!sq.IsOk() || PieceOn(sq) != Piece.NO_PIECE)
                 throw new PositionException("PutPiece(" + sq.Pretty() + "," + pc.Pretty() +")に失敗しました。");
 
             PieceOn(sq) = pc;
+            PieceNoOn(sq) = pn;
 
             // 玉であれば、KingSquareを更新する
             if (pc.PieceType() == Piece.KING)
