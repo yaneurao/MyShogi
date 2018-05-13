@@ -1,5 +1,7 @@
 ﻿
 - ToDo
+	- Position::EffectFrom()追加
+	- Positionの駒に駒番号振る
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::legal() , undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
@@ -7,6 +9,16 @@
 
 
 ■　2018/05/13
+
+
+- Position::Legal()追加準備
+	- Position::InCheck()用意 , 実装まだ
+	- Position::LegalPawnDrop()用意 , 実装まだ
+- Positionにoccupied bitboard追加
+	- Position::Pieces() , Pieces(Color) , Empties() 追加。
+	- Position::Pieces()に現在の局面が反映するようにした。
+- PieceにPIECE_BB_NBなど定数を追加。
+
 
 
 - Bitboard.KingEffect()追加。

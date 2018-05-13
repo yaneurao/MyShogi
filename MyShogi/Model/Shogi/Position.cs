@@ -73,6 +73,13 @@ namespace MyShogi.Model.Shogi
         /// <returns></returns>
         public HASH_KEY Key() { return st.Key; }
 
+        // 盤上の先手/後手/両方の駒があるところが1であるBitboard
+        public Bitboard[] byColorBB = new Bitboard[(int)Color.NB];
+
+        // 駒が存在する升を表すBitboard。先後混在。
+        // pieces()の引数と同じく、ALL_PIECES,HDKなどのPieceで定義されている特殊な定数が使える。
+        public Bitboard[] byTypeBB = new Bitboard[(int)Piece.PIECE_BB_NB];
+
         // -------------------------------------------------------------------------
 
         /// <summary>
@@ -104,6 +111,57 @@ namespace MyShogi.Model.Shogi
         public ref Square KingSquare(Color c)
         {
             return ref kingSquare[c.ToInt()];
+        }
+
+        /// <summary>
+        /// 現局面で王手がかかっているか
+        /// </summary>
+        /// <returns></returns>
+        public bool InCheck()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// 合法な打ち歩か。
+        /// 打ち歩詰めだとfalseが返る。
+        /// </summary>
+        /// <param name="us"></param>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public bool LegalPawnDrop(Color us,Square sq)
+        {
+            return true;
+        }
+
+        // -------------------------------------------------------------------------
+        // occupied bitboardなど
+        // -------------------------------------------------------------------------
+
+        /// <summary>
+        /// 先手か後手か、いずれかの駒がある場所が1であるBitboardが返る。
+        /// </summary>
+        /// <returns></returns>
+        public Bitboard Pieces()
+        {
+            return byTypeBB[(int)Piece.ALL_PIECES];
+        }
+
+        /// <summary>
+        /// c == BLACK : 先手の駒があるBitboardが返る
+        /// c == WHITE : 後手の駒があるBitboardが返る
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public Bitboard Pieces(Color c)
+        {
+            return byColorBB[(int)c];
+        }
+
+        // 駒がない升が1になっているBitboardが返る
+        public Bitboard Empties()
+        {
+            return Pieces() ^ Bitboard.AllBB();
         }
 
         // -------------------------------------------------------------------------
@@ -277,8 +335,12 @@ namespace MyShogi.Model.Shogi
 
             // --- 盤面
 
-            Array.Clear(board, 0, board.Length);
             KingSquare(Color.BLACK) = KingSquare(Color.WHITE) = Square.NB;
+
+            // 各Bitboard配列のゼロクリア
+            Array.Clear(board, 0, board.Length);
+            Array.Clear(byColorBB, 0, byColorBB.Length);
+            Array.Clear(byTypeBB, 0, byTypeBB.Length);
 
             // 盤面左上から。Square型のレイアウトに依らずに処理を進めたいため、Square型は使わない。
             File f = File.FILE_9;
@@ -529,6 +591,195 @@ namespace MyShogi.Model.Shogi
                     DoMove(Util.FromUsiMove(split[i]));
         }
 
+        /// <summary>
+        /// ※　mがこの局面においてpseudo_legalかどうかを判定するための関数。
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public bool IsLegal(Move m)
+        {
+            Color us = sideToMove;
+            Square to = m.To(); // 移動先
+
+            // 駒打ちと駒打ちでない指し手とで条件分離
+
+            if (m.IsDrop())
+            {
+                // 打つ駒
+                Piece pr = m.DroppedPiece();
+
+                // 打てないはずの駒
+                if (pr < Piece.PAWN && Piece.KING <= pr)
+                    return false;
+
+                // 打つ先の升が埋まっていたり、その手駒を持っていなかったりしたら駄目。
+                if (PieceOn(to) != Piece.NO_PIECE || Hand(us).Count(pr) == 0)
+                    return false;
+
+                if (InCheck())
+                {
+#if false
+                    // 王手されている局面なので合駒でなければならない
+                    Bitboard target = checkers();
+                    Square checksq = target.pop();
+
+                    // 王手している駒を1個取り除いて、もうひとつあるということは王手している駒が
+                    // 2つあったということであり、両王手なので合い利かず。
+                    if (target)
+                        return false;
+
+                    // 王と王手している駒との間の升に駒を打っていない場合、それは王手を回避していることに
+                    // ならないので、これは非合法手。
+                    if (!(between_bb(checksq, king_square(us)) & to))
+                        return false;
+#endif
+                }
+
+                // --- 移動できない升への歩・香・桂打ちについて
+                switch (pr)
+                {
+                    case Piece.PAWN:
+                        // 歩のとき、二歩および打ち歩詰めであるなら非合法手
+                        if (!LegalPawnDrop(us, to))
+                            return false;
+                        if (to.ToRank() == (us == Color.BLACK ? Rank.RANK_1 : Rank.RANK_9))
+                            return false;
+
+                        break;
+
+                    case Piece.LANCE:
+                        if (to.ToRank() == (us == Color.BLACK ? Rank.RANK_1 : Rank.RANK_9))
+                            return false;
+
+                        break;
+
+                    case Piece Knight:
+                        if ((us == Color.BLACK && to.ToRank() <= Rank.RANK_2) ||
+                            (us == Color.WHITE && to.ToRank() >= Rank.RANK_8))
+                            return false;
+
+                        break;
+                }
+            } else
+            {
+                // 移動させる指し手
+
+                Square from = m.From();
+                // 移動させる駒
+                Piece pc = PieceOn(from);
+
+                // 動かす駒が自駒でなければならない
+                if (pc == Piece.NO_PIECE || pc.PieceColor() != us)
+                    return false;
+
+                // toに移動できないといけない。
+                //if (!(EffectsFrom(pc, from , pieces()) & to))
+                //    return false;
+            }
+
+#if false
+
+
+                    // toの地点に自駒があるといけない
+                    if (pieces(us) & to)
+                        return false;
+
+                    Piece pt = type_of(pc);
+                    if (is_promote(m))
+                    {
+                        // --- 成る指し手
+
+                        // 成れない駒の成りではないことを確かめないといけない。
+                        static_assert(GOLD == 7, "GOLD must be 7.");
+                        if (pt >= GOLD)
+                            return false;
+
+                        // 移動先が敵陣でないと成れない。先手が置換表衝突で後手の指し手を引いてきたら、こういうことになりかねない。
+                        if (!(enemy_field(us) & (Bitboard(from) | Bitboard(to))))
+                            return false;
+
+                    }
+                    else
+                    {
+
+                        // --- 成らない指し手
+
+
+                        // 駒打ちのところに書いた理由により、不成で進めない升への指し手のチェックも不要。
+                        // 間違い　→　駒種をmoveに含めていないならこのチェック必要だわ。
+                        // 52から51銀のような指し手がkillerやcountermoveに登録されていたとして、52に歩があると
+                        // 51歩不成という指し手を生成してしまう…。
+                        // あと、歩や大駒が敵陣において成らない指し手も不要なのでは..。
+
+                        if (All)
+                        {
+                            // 歩と香に関しては1段目への不成は不可。桂は、桂飛びが出来る駒は桂しかないので
+                            // 移動元と移動先がこれであるかぎり、それは桂の指し手生成によって生成されたものだから
+                            // これが非合法手であることはない。
+
+                            if (pt == PAWN || pt == LANCE)
+                                if ((us == BLACK && rank_of(to) == RANK_1) || (us == WHITE && rank_of(to) == RANK_9))
+                                    return false;
+                        }
+                        else
+                        {
+                            // 歩の不成と香の2段目への不成を禁止。
+                            // 大駒の不成を禁止
+                            switch (pt)
+                            {
+                                case PAWN:
+                                    if (enemy_field(us) & to)
+                                        return false;
+                                    break;
+
+                                case LANCE:
+                                    if ((us == BLACK && rank_of(to) <= RANK_2) || (us == WHITE && rank_of(to) >= RANK_8))
+                                        return false;
+                                    break;
+
+                                case BISHOP:
+                                case ROOK:
+                                    if (enemy_field(us) & (Bitboard(from) | Bitboard(to)))
+                                        return false;
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                        }
+
+                    }
+
+                    // 王手している駒があるのか
+                    if (checkers())
+                    {
+                        // このとき、指し手生成のEVASIONで生成される指し手と同等以上の条件でなければならない。
+
+                        // 動かす駒は王以外か？
+                        if (type_of(pc) != KING)
+                        {
+                            // 両王手なら王の移動をさせなければならない。
+                            if (more_than_one(checkers()))
+                                return false;
+
+                            // 指し手は、王手を遮断しているか、王手している駒の捕獲でなければならない。
+                            // ※　王手している駒と王の間に王手している駒の升を足した升が駒の移動先であるか。
+                            // 例) 王■■■^飛
+                            // となっているときに■の升か、^飛 のところが移動先であれば王手は回避できている。
+                            // (素抜きになる可能性はあるが、そのチェックはここでは不要)
+                            if (!((between_bb(checkers().pop(), king_square(us)) | checkers()) & to))
+                                return false;
+                        }
+
+                        // 玉の自殺手のチェックはlegal()のほうで調べているのでここではやらない。
+
+                    }
+                }
+
+#endif
+            return true;
+        }
+
         // -------------------------------------------------------------------------
         // 以下、private methods
         // -------------------------------------------------------------------------
@@ -576,6 +827,8 @@ namespace MyShogi.Model.Shogi
             // 玉であれば、KingSquareを更新する
             if (pc.PieceType() == Piece.KING)
                 KingSquare(pc.PieceColor()) = sq;
+
+            XorPiece(pc, sq);
         }
 
         /// <summary>
@@ -596,7 +849,27 @@ namespace MyShogi.Model.Shogi
             if (pc.PieceType() == Piece.KING)
                 KingSquare(pc.PieceColor()) = Square.NB;
 
+            XorPiece(pc, sq);
+
             return pc;
+        }
+
+        /// <summary>
+        /// 駒を置く/取り除くときに呼び出すと、byColorBB,byTypeBBを更新する。
+        /// </summary>
+        /// <param name="pc"></param>
+        /// <param name="sq"></param>
+        private void XorPiece(Piece pc, Square sq)
+        {
+            // 先手・後手の駒のある場所を示すoccupied bitboardの更新
+            byColorBB[(int)pc.PieceColor()] ^= sq;
+
+            // 先手 or 後手の駒のある場所を示すoccupied bitboardの更新
+            byTypeBB[(int)Piece.ALL_PIECES] ^= sq;
+
+            // 駒別のBitboardの更新
+            // これ以外のBitboardの更新は、update_bitboards()で行なう。
+            byTypeBB[(int)pc.PieceType()] ^= sq;
         }
     }
 }

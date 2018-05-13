@@ -35,6 +35,17 @@ namespace MyShogi.Model.Shogi
         NB = 32,     // Pieceの終端を表す 
 
         HAND_NB = KING,   // 手駒になる駒種の最大+1
+
+        // --- Position::pieces()で用いる定数。空いてるところを順番に用いる。
+        ALL_PIECES = 0,         // 駒がある升を示すBitboardが返る。
+        GOLDS = QUEEN,          // 金と同じ移動特性を持つ駒のBitboardが返る。
+        HDK,                    // H=Horse,D=Dragon,K=Kingの合体したBitboardが返る。
+        BISHOP_HORSE,           // BISHOP,HORSEを合成したBitboardが返る。
+        ROOK_DRAGON,            // ROOK,DRAGONを合成したBitboardが返る。
+        SILVER_HDK,             // SILVER,HDKを合成したBitboardが返る。
+        GOLDS_HDK,              // GOLDS,HDKを合成したBitboardが返る。
+        PIECE_BB_NB,			// デリミタ
+
     };
 
     /// <summary>

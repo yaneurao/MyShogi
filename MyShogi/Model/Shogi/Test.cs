@@ -55,6 +55,9 @@ namespace MyShogi.Model.Shogi
 
             Console.WriteLine(pos.Pretty());
 
+            //  Console.WriteLine(pos.Pieces().Pretty());
+            //  Console.WriteLine(pos.Pieces(Color.BLACK).Pretty());
+
 #if false
             // Bitboard(Square)のテスト
             for (Square sq = Square.ZERO; sq < Square.NB ; ++sq)
@@ -169,6 +172,10 @@ namespace MyShogi.Model.Shogi
             pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
             Console.WriteLine(pos.ToSfen());
             Console.WriteLine(pos.Pretty());
+
+//            Console.WriteLine(pos.Pieces().Pretty());
+//           Console.WriteLine(pos.Pieces(Color.BLACK).Pretty());
+
 
 #if false
             // 乱数テスト
