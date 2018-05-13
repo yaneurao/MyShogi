@@ -58,6 +58,7 @@ namespace MyShogi.Model.Shogi
             //  Console.WriteLine(pos.Pieces().Pretty());
             //  Console.WriteLine(pos.Pieces(Color.BLACK).Pretty());
 
+
 #if false
             // Bitboard(Square)のテスト
             for (Square sq = Square.ZERO; sq < Square.NB ; ++sq)
@@ -133,6 +134,14 @@ namespace MyShogi.Model.Shogi
 
 #endif
 
+#if false
+            // EffectsFrom()のテスト
+            var bb = Bitboard.EffectsFrom(Piece.W_DRAGON, Square.SQ_54, pos.Pieces());
+            Console.WriteLine(bb.Pretty());
+
+            var bb2 = Bitboard.EffectsFrom(Piece.W_GOLD, Square.SQ_54, pos.Pieces());
+            Console.WriteLine(bb2.Pretty());
+#endif
 
 #if false
             // BitboardのPop()のテスト

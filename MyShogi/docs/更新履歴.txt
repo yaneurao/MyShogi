@@ -1,11 +1,22 @@
 ﻿
 - ToDo
-	- Position::EffectFrom()追加
 	- Positionの駒に駒番号振る
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::legal() , undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
+
+
+■　2018/05/14
+
+
+- Bitboard::EffectsFrom()追加
+	- うまく動いた
+- PieceにB_PAWN～W_QUEEN追加。
+- Bitboard.EnemyField()追加。
+- "case Piece Knight":となっていたの修正。
+	これPiece型のKnightという変数名の変数を宣言していることになるのか…。caseのなかで変数宣言してコンパイル通るの怖すぎワロタ。
+- Position::Legal() 7割ぐらい書けた
 
 
 ■　2018/05/13

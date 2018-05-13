@@ -470,6 +470,50 @@ namespace MyShogi.Model.Shogi
             return LanceStepEffectBB[(int)sq, (int)c];
         }
 
+        /// <summary>
+        /// 盤上sqに駒pc(先後の区別あり)を置いたときの利き。
+        /// pc == QUEENだと馬+龍の利きが返る。
+        /// </summary>
+        /// <returns></returns>
+        public static Bitboard EffectsFrom(Piece pc, Square sq, Bitboard occ)
+        {
+            switch (pc)
+            {
+                case Piece.B_PAWN: return PawnEffect(Color.BLACK, sq);
+                case Piece.B_LANCE: return LanceEffect(Color.BLACK, sq, occ);
+                case Piece.B_KNIGHT: return KnightEffect(Color.BLACK, sq);
+                case Piece.B_SILVER: return SilverEffect(Color.BLACK, sq);
+                case Piece.B_GOLD: case Piece.B_PRO_PAWN: case Piece.B_PRO_LANCE: case Piece.B_PRO_KNIGHT: case Piece.B_PRO_SILVER: return GoldEffect(Color.BLACK, sq);
+
+                case Piece.W_PAWN: return PawnEffect(Color.WHITE, sq);
+                case Piece.W_LANCE: return LanceEffect(Color.WHITE, sq, occ);
+                case Piece.W_KNIGHT: return KnightEffect(Color.WHITE, sq);
+                case Piece.W_SILVER: return SilverEffect(Color.WHITE, sq);
+                case Piece.W_GOLD: case Piece.W_PRO_PAWN: case Piece.W_PRO_LANCE: case Piece.W_PRO_KNIGHT: case Piece.W_PRO_SILVER: return GoldEffect(Color.WHITE, sq);
+
+                //　先後同じ移動特性の駒
+                case Piece.B_BISHOP: case Piece.W_BISHOP: return BishopEffect(sq, occ);
+                case Piece.B_ROOK: case Piece.W_ROOK: return RookEffect(sq, occ);
+                case Piece.B_HORSE: case Piece.W_HORSE: return HorseEffect(sq, occ);
+                case Piece.B_DRAGON: case Piece.W_DRAGON: return DragonEffect(sq, occ);
+                case Piece.B_KING: case Piece.W_KING: return KingEffect(sq);
+                case Piece.B_QUEEN: case Piece.W_QUEEN: return HorseEffect(sq, occ) | DragonEffect(sq, occ);
+                case Piece.NO_PIECE: case Piece.WHITE: return ZERO_BB; // これも入れておかないと初期化が面倒になる。
+
+                default: /*UNREACHABLE;*/ return ALL_BB;
+            }
+        }
+
+        /// <summary>
+        /// 敵陣を表現するBitboard。
+        /// </summary>
+        private static Bitboard[] EnemyFieldBB; // = new Bitboard[(int)Color.NB]{ RANK1_BB | RANK2_BB | RANK3_BB, RANK7_BB | RANK8_BB | RANK9_BB };
+
+        public static Bitboard EnemyField(Color c)
+        {
+            return EnemyFieldBB[(int)c];
+        }
+
         // -------------------------------------------------------------------------
         // 以下、private methods / tables
         // -------------------------------------------------------------------------
@@ -519,6 +563,8 @@ namespace MyShogi.Model.Shogi
 
             RANK_BB = new Bitboard[(int)Rank.NB]
             { RANK1_BB, RANK2_BB, RANK3_BB, RANK4_BB, RANK5_BB, RANK6_BB, RANK7_BB, RANK8_BB, RANK9_BB };
+
+            EnemyFieldBB = new Bitboard[(int)Color.NB]{ RANK1_BB | RANK2_BB | RANK3_BB, RANK7_BB | RANK8_BB | RANK9_BB };
 
             SQUARE_BB = new Bitboard[(int)Square.NB_PLUS1];
 

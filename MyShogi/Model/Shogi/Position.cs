@@ -653,14 +653,15 @@ namespace MyShogi.Model.Shogi
 
                         break;
 
-                    case Piece Knight:
+                    case Piece.KNIGHT:
                         if ((us == Color.BLACK && to.ToRank() <= Rank.RANK_2) ||
                             (us == Color.WHITE && to.ToRank() >= Rank.RANK_8))
                             return false;
 
                         break;
                 }
-            } else
+            }
+            else
             {
                 // 移動させる指し手
 
@@ -673,110 +674,94 @@ namespace MyShogi.Model.Shogi
                     return false;
 
                 // toに移動できないといけない。
-                //if (!(EffectsFrom(pc, from , pieces()) & to))
-                //    return false;
-            }
+                // (fromに駒を置いたときにtoに利きがないと駄目)
+                if ((Bitboard.EffectsFrom(pc, from, Pieces()) & to).IsZero())
+                    return false;
 
-#if false
+                // toの地点に自駒があるといけない
+                if ((Pieces(us) & to).IsNotZero())
+                    return false;
 
+                Piece pt = pc.PieceType();
+                if (m.IsPromote())
+                {
+                    // --- 成る指し手
 
-                    // toの地点に自駒があるといけない
-                    if (pieces(us) & to)
+                    // 成れない駒の成りではないことを確かめないといけない。
+                    // static_assert(GOLD == 7, "GOLD must be 7.");
+                    if (pt >= Piece.GOLD)
                         return false;
 
-                    Piece pt = type_of(pc);
-                    if (is_promote(m))
+                    // 移動先が敵陣でないと成れない。
+                    if ((Bitboard.EnemyField(us) & (new Bitboard(from) | new Bitboard(to))).IsZero())
+                        return false;
+
+                } else
+                {
+                    // --- 成らない指し手
+
+                    // 先手の歩の1段目へ不成での移動などは出来ない。このチェック。
+
+                    // --- 移動できない升への歩・香・桂打ちについて
+                    switch (pt)
                     {
-                        // --- 成る指し手
-
-                        // 成れない駒の成りではないことを確かめないといけない。
-                        static_assert(GOLD == 7, "GOLD must be 7.");
-                        if (pt >= GOLD)
-                            return false;
-
-                        // 移動先が敵陣でないと成れない。先手が置換表衝突で後手の指し手を引いてきたら、こういうことになりかねない。
-                        if (!(enemy_field(us) & (Bitboard(from) | Bitboard(to))))
-                            return false;
-
-                    }
-                    else
-                    {
-
-                        // --- 成らない指し手
-
-
-                        // 駒打ちのところに書いた理由により、不成で進めない升への指し手のチェックも不要。
-                        // 間違い　→　駒種をmoveに含めていないならこのチェック必要だわ。
-                        // 52から51銀のような指し手がkillerやcountermoveに登録されていたとして、52に歩があると
-                        // 51歩不成という指し手を生成してしまう…。
-                        // あと、歩や大駒が敵陣において成らない指し手も不要なのでは..。
-
-                        if (All)
-                        {
-                            // 歩と香に関しては1段目への不成は不可。桂は、桂飛びが出来る駒は桂しかないので
-                            // 移動元と移動先がこれであるかぎり、それは桂の指し手生成によって生成されたものだから
-                            // これが非合法手であることはない。
-
-                            if (pt == PAWN || pt == LANCE)
-                                if ((us == BLACK && rank_of(to) == RANK_1) || (us == WHITE && rank_of(to) == RANK_9))
-                                    return false;
-                        }
-                        else
-                        {
-                            // 歩の不成と香の2段目への不成を禁止。
-                            // 大駒の不成を禁止
-                            switch (pt)
-                            {
-                                case PAWN:
-                                    if (enemy_field(us) & to)
-                                        return false;
-                                    break;
-
-                                case LANCE:
-                                    if ((us == BLACK && rank_of(to) <= RANK_2) || (us == WHITE && rank_of(to) >= RANK_8))
-                                        return false;
-                                    break;
-
-                                case BISHOP:
-                                case ROOK:
-                                    if (enemy_field(us) & (Bitboard(from) | Bitboard(to)))
-                                        return false;
-                                    break;
-
-                                default:
-                                    break;
-                            }
-                        }
-
-                    }
-
-                    // 王手している駒があるのか
-                    if (checkers())
-                    {
-                        // このとき、指し手生成のEVASIONで生成される指し手と同等以上の条件でなければならない。
-
-                        // 動かす駒は王以外か？
-                        if (type_of(pc) != KING)
-                        {
-                            // 両王手なら王の移動をさせなければならない。
-                            if (more_than_one(checkers()))
+                        case Piece.PAWN:
+                            // 歩のとき、二歩および打ち歩詰めであるなら非合法手
+                            if (!LegalPawnDrop(us, to))
                                 return false;
 
-                            // 指し手は、王手を遮断しているか、王手している駒の捕獲でなければならない。
-                            // ※　王手している駒と王の間に王手している駒の升を足した升が駒の移動先であるか。
-                            // 例) 王■■■^飛
-                            // となっているときに■の升か、^飛 のところが移動先であれば王手は回避できている。
-                            // (素抜きになる可能性はあるが、そのチェックはここでは不要)
-                            if (!((between_bb(checkers().pop(), king_square(us)) | checkers()) & to))
+                            // 歩・香の2段目の不成も合法なので合法として扱う。
+                            if (to.ToRank() == (us == Color.BLACK ? Rank.RANK_1 : Rank.RANK_9))
                                 return false;
-                        }
 
-                        // 玉の自殺手のチェックはlegal()のほうで調べているのでここではやらない。
+                            break;
+
+                        case Piece.LANCE:
+                            if (to.ToRank() == (us == Color.BLACK ? Rank.RANK_1 : Rank.RANK_9))
+                                return false;
+
+                            break;
+
+                        case Piece.KNIGHT:
+                            if ((us == Color.BLACK && to.ToRank() <= Rank.RANK_2) ||
+                                (us == Color.WHITE && to.ToRank() >= Rank.RANK_8))
+                                return false;
+
+                            break;
+                    }
+
+                }
+
+                // 王手している駒があるのか
+                if (InCheck())
+                {
+                    // このとき、指し手生成のEVASIONで生成される指し手と同等以上の条件でなければならない。
+
+                    // 動かす駒は王以外か？
+                    if (pc.PieceType() != Piece.KING)
+                    {
+#if false
+                        // 両王手なら王の移動をさせなければならない。
+                        if (MoreThanOne(Checkers()))
+                            return false;
+
+                        // 指し手は、王手を遮断しているか、王手している駒の捕獲でなければならない。
+                        // ※　王手している駒と王の間に王手している駒の升を足した升が駒の移動先であるか。
+                        // 例) 王■■■^飛
+                        // となっているときに■の升か、^飛 のところが移動先であれば王手は回避できている。
+                        // (素抜きになる可能性はあるが、そのチェックはここでは不要)
+                        if (!((BetweenBB(Checkers().pop(), KingSquare(us)) | Checkers()) & to))
+                            return false;
+#endif
+                    } else
+                    {
+                        // TODO : 王の自殺チェック
 
                     }
                 }
+            }
 
-#endif
+            // すべてのテストの合格したので合法手である
             return true;
         }
 
