@@ -132,6 +132,35 @@ namespace MyShogi.Model.Shogi
             return p.p0.PopCount() + p.p1.PopCount();
         }
 
+        /// <summary>
+        /// 2bit以上あるかどうかを判定する。縦横斜め方向に並んだ駒が2枚以上であるかを判定する。この関係にないと駄目。
+        /// この関係にある場合、Bitboard::merge()によって被覆しないことがBitboardのレイアウトから保証されている。
+        /// </summary>
+        /// <param name="bb"></param>
+        /// <returns></returns>
+        bool MoreThanOne(Bitboard bb)
+        {
+            // ASSERT_LV2(!bb.cross_over());
+            return bb.Merge().PopCount() > 1;
+        }
+
+        // 2升に挟まれている升を返すためのテーブル(その2升は含まない)
+        // この配列には直接アクセスせずにbetween_bb()を使うこと。
+        // 配列サイズが大きくてcache汚染がひどいのでシュリンクしてある。
+        private static Bitboard[] BetweenBB_; // =new Bitboard[785];
+        private static UInt16 [,] BetweenIndex; // = new UInt16 [SQ_NB_PLUS1][SQ_NB_PLUS1];
+
+        /// <summary>
+        /// 2升に挟まれている升を表すBitboardを返す。sq1とsq2が縦横斜めの関係にないときはZERO_BBが返る。
+        /// </summary>
+        /// <param name="sq1"></param>
+        /// <param name="sq2"></param>
+        /// <returns></returns>
+        public static Bitboard BetweenBB(Square sq1, Square sq2)
+        {
+            return BetweenBB_[BetweenIndex[(int)sq1,(int)sq2]];
+        }
+
         // -------------------------------------------------------------------------
         // public methods
         // -------------------------------------------------------------------------
@@ -568,16 +597,6 @@ namespace MyShogi.Model.Shogi
 
             SQUARE_BB = new Bitboard[(int)Square.NB_PLUS1];
 
-            // SQUARE_BBは上記のRANK_BBとFILE_BBを用いて初期化すると楽。
-            for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
-            {
-                File f = sq.ToFile();
-                Rank r = sq.ToRank();
-
-                // 筋と段が交差するところがSQUARE_BB
-                SQUARE_BB[sq.ToInt()] = FILE_BB[f.ToInt()] & RANK_BB[r.ToInt()];
-            }
-
             ForwardRanksBB = new Bitboard[(int)Color.NB, (int)Rank.NB]
             {
               { ZERO_BB, RANK1_BB, RANK1_BB | RANK2_BB, RANK1_BB | RANK2_BB | RANK3_BB, RANK1_BB | RANK2_BB | RANK3_BB | RANK4_BB,
@@ -585,6 +604,16 @@ namespace MyShogi.Model.Shogi
               { ~RANK1_BB, ~(RANK1_BB | RANK2_BB), ~(RANK1_BB | RANK2_BB | RANK3_BB), ~(RANK1_BB | RANK2_BB | RANK3_BB | RANK4_BB),
               RANK9_BB | RANK8_BB | RANK7_BB | RANK6_BB, RANK9_BB | RANK8_BB | RANK7_BB, RANK9_BB | RANK8_BB, RANK9_BB, ZERO_BB }
             };
+
+            // ２つの升のfileの差、rankの差のうち大きいほうの距離を返す。sq1,sq2のどちらかが盤外ならINT_MAXが返る。
+            int dist(Square sq1, Square sq2)
+            {
+                return (!sq1.IsOk() || !sq2.IsOk()) ? int.MaxValue :
+                    Math.Max(Math.Abs(sq1.ToFile() - sq2.ToFile()), Math.Abs(sq1.ToRank() - sq2.ToRank()));
+            }
+
+            BetweenBB_ = new Bitboard[785];
+            BetweenIndex = new UInt16 [(int)Square.NB_PLUS1,(int)Square.NB_PLUS1];
 
 
             // 1) SquareWithWallテーブルの初期化。
@@ -595,6 +624,30 @@ namespace MyShogi.Model.Shogi
                     + sq.ToFile().ToInt() * (int)SquareWithWall.SQWW_L
                     + sq.ToRank().ToInt() * (int)SquareWithWall.SQWW_D);
 
+            // 2) direct_tableの初期化
+
+            Util.direc_table = new Directions[(int)Square.NB_PLUS1 , (int)Square.NB_PLUS1];
+
+            for (var sq1 = Square.ZERO; sq1 < Square.NB; ++ sq1)
+                for (var dir = Direct.ZERO; dir < Direct.NB; ++dir)
+                {
+                    // dirの方角に壁にぶつかる(盤外)まで延長していく。このとき、sq1から見てsq2のDirectionsは (1 << dir)である。
+                    var delta = (int)dir.ToDeltaWW();
+                    for (var sq2 = sq1.ToSqww() + delta; sq2.IsOk(); sq2 += delta)
+                        Util.direc_table[(int)sq1,(int)sq2.ToSquare()] = dir.ToDirections();
+                }
+
+            // 3) Square型のsqの指す升が1であるBitboardがSquareBB。これをまず初期化する。
+
+            // SQUARE_BBは上記のRANK_BBとFILE_BBを用いて初期化すると楽。
+            for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
+            {
+                File f = sq.ToFile();
+                Rank r = sq.ToRank();
+
+                // 筋と段が交差するところがSQUARE_BB
+                SQUARE_BB[sq.ToInt()] = FILE_BB[f.ToInt()] & RANK_BB[r.ToInt()];
+            }
 
             // 4) 遠方利きのテーブルの初期化
             //  thanks to Apery (Takuya Hiraoka)
@@ -840,50 +893,52 @@ namespace MyShogi.Model.Shogi
 
 		PAWN_DROP_MASK_BB[i].p[1] = b.p[1]; // 8,9筋
 	}
+#endif
 
-	// 8) BetweenBB , LineBBの初期化
-	{
-		u16 between_index = 1;
-		// BetweenBB[0] == ZERO_BBであることを保証する。
+            // 8) BetweenBB , LineBBの初期化
+            {
+                UInt16 between_index = 1;
+		        // BetweenBB[0] == ZERO_BBであることを保証する。
 
-		for (auto s1 : SQ)
-			for (auto s2 : SQ)
-			{
-				// 十字方向か、斜め方向かだけを判定して、例えば十字方向なら
-				// rookEffect(sq1,Bitboard(s2)) & rookEffect(sq2,Bitboard(s1))
-				// のように初期化したほうが明快なコードだが、この初期化をそこに依存したくないので愚直にやる。
+		        for (var s1 = Square.ZERO; s1 < Square.NB; ++s1)
+			        for (var s2 = Square.ZERO; s2 < Square.NB; ++s2)
+			        {
+				        // 十字方向か、斜め方向かだけを判定して、例えば十字方向なら
+				        // rookEffect(sq1,Bitboard(s2)) & rookEffect(sq2,Bitboard(s1))
+				        // のように初期化したほうが明快なコードだが、この初期化をそこに依存したくないので愚直にやる。
 					
-				// これについてはあとで設定する。
-				if (s1 >= s2)
-					continue;
+				        // これについてはあとで設定する。
+				        if (s1 >= s2)
+					        continue;
 
-				// 方角を用いるテーブルの初期化
-				if (Effect8::directions_of(s1, s2))
-				{
-					Bitboard bb = ZERO_BB;
-					// 間に挟まれた升を1に
-					Square delta = (s2 - s1) / dist(s1, s2);
-					for (Square s = s1 + delta; s != s2; s += delta)
-						bb |= s;
+				        // 方角を用いるテーブルの初期化
+				        if (Util.DirectionsOf(s1, s2) != Directions.ZERO)
+				        {
+					        Bitboard bb = ZERO_BB;
+					        // 間に挟まれた升を1に
+					        int delta = (s2 - s1) / dist(s1, s2);
+					        for (Square s = s1 + delta ; s != s2; s += delta)
+						        bb |= s;
 
-					// ZERO_BBなら、このindexとしては0を指しておけば良いので書き換える必要ない。
-					if (!bb)
-						continue;
+					        // ZERO_BBなら、このindexとしては0を指しておけば良いので書き換える必要ない。
+					        if (bb.IsZero())
+						        continue;
 
-					BetweenIndex[s1][s2] = between_index;
-					BetweenBB[between_index++] = bb;
-				}
-			}
+					        BetweenIndex[(int)s1,(int)s2] = between_index;
+					        BetweenBB_[between_index++] = bb;
+				        }
+			        }
 
-		ASSERT_LV1(between_index == 785);
+                //		    ASSERT_LV1(between_index == 785);
 
-		// 対称性を考慮して、さらにシュリンクする。
-		for (auto s1 : SQ)
-			for (auto s2 : SQ)
-				if (s1 > s2)
-					BetweenIndex[s1][s2] = BetweenIndex[s2][s1];
+		        // 対称性を考慮して、さらにシュリンクする。
+		        for (var s1 = Square.ZERO; s1 < Square.NB; ++ s1)
+			        for (var s2 = Square.ZERO; s2 < Square.NB; ++s2)
+				        if (s1 > s2)
+					        BetweenIndex[(int)s1,(int)s2] = BetweenIndex[(int)s2,(int)s1];
 
-	}
+            }
+#if false
 	for (auto s1 : SQ)
 		for (int d = 0; d < 4; ++d)
 		{

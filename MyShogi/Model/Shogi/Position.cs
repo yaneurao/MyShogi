@@ -193,6 +193,15 @@ namespace MyShogi.Model.Shogi
             return Pieces() ^ Bitboard.AllBB();
         }
 
+        /// <summary>
+        /// 原局面で王手している駒のBitboardが返る
+        /// </summary>
+        /// <returns></returns>
+        public Bitboard Checkers()
+        {
+            return Bitboard.ZeroBB();
+        }
+
         // -------------------------------------------------------------------------
 
         /// <summary>
@@ -708,21 +717,19 @@ namespace MyShogi.Model.Shogi
 
                 if (InCheck())
                 {
-#if false
                     // 王手されている局面なので合駒でなければならない
-                    Bitboard target = checkers();
-                    Square checksq = target.pop();
+                    Bitboard target = Checkers();
+                    Square checksq = target.Pop();
 
                     // 王手している駒を1個取り除いて、もうひとつあるということは王手している駒が
                     // 2つあったということであり、両王手なので合い利かず。
-                    if (target)
+                    if (target.IsNotZero())
                         return false;
 
                     // 王と王手している駒との間の升に駒を打っていない場合、それは王手を回避していることに
                     // ならないので、これは非合法手。
-                    if (!(between_bb(checksq, king_square(us)) & to))
+                    if ((Bitboard.BetweenBB(checksq, KingSquare(us)) & to).IsZero())
                         return false;
-#endif
                 }
 
                 // --- 移動できない升への歩・香・桂打ちについて

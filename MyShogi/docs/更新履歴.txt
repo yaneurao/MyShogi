@@ -9,6 +9,16 @@
 ■　2018/05/14
 
 
+- Bitboard.MoreThanOne()追加。
+- Bitboard.BetweenBB()追加。
+	- 初期化コードをBitboard.Init()に追加
+	- Between()うまく動いた
+- Direct.cs追加
+	- Directions enum追加
+	- Direct enum追加
+	- directions_of()追加
+
+
 - Positionの駒に駒番号振る
 	- 駒台の駒も一意に定まらなければならないので、BonaPieceのような番号が必要なのでは…。
 	- PieceNo.cs追加

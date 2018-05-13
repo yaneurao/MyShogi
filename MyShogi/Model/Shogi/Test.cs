@@ -185,12 +185,22 @@ namespace MyShogi.Model.Shogi
             Console.WriteLine(pos.ToSfen());
             Console.WriteLine(pos.Pretty());
 
+#if false
             // 駒番号のデバッグ
-            //Console.WriteLine(pos.PrettyPieceNo());
+            Console.WriteLine(pos.PrettyPieceNo());
 
             //            Console.WriteLine(pos.Pieces().Pretty());
             //           Console.WriteLine(pos.Pieces(Color.BLACK).Pretty());
+#endif
 
+#if false
+            // BitweenBB()のテスト
+            var bb = Bitboard.BetweenBB(Square.SQ_77, Square.SQ_33);
+            Console.WriteLine(bb.Pretty());
+
+            var bb2 = Bitboard.BetweenBB(Square.SQ_58, Square.SQ_52);
+            Console.WriteLine(bb2.Pretty());
+#endif
 
 #if false
             // 乱数テスト

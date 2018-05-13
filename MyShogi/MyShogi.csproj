@@ -73,6 +73,7 @@
     <Compile Include="Model\Shogi\BitOp.cs" />
     <Compile Include="Model\Shogi\BoardType.cs" />
     <Compile Include="Model\Shogi\Color.cs" />
+    <Compile Include="Model\Shogi\Direct.cs" />
     <Compile Include="Model\Shogi\Exception.cs" />
     <Compile Include="Model\Shogi\File.cs" />
     <Compile Include="Model\Shogi\Hand.cs" />
