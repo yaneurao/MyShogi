@@ -100,5 +100,16 @@ namespace MyShogi.Model.Shogi
             return new UInt128(c1.p0 >> n, c1.p1 >> n);
         }
 
+        public static bool operator ==(UInt128 lhs , UInt128 rhs)
+        {
+            return lhs.p0 == rhs.p0 && lhs.p1 == rhs.p1;
+        }
+
+        public static bool operator !=(UInt128 lhs , UInt128 rhs)
+        {
+            return !(lhs.p0 == rhs.p0 && lhs.p1 == rhs.p1);
+        }
+
+
     }
 }

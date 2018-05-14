@@ -109,6 +109,25 @@ namespace MyShogi.Model.Shogi
             return new Bitboard(c1.p >> n);
         }
 
+        public static bool operator == (Bitboard lhs, Bitboard rhs)
+        {
+            return lhs.p == rhs.p;
+        }
+
+        public static bool operator !=(Bitboard lhs , Bitboard rhs)
+        {
+            return lhs.p != rhs.p;
+        }
+        
+        public override bool Equals(object o)
+        {
+            return this.p == ((Bitboard)o).p;
+        }
+
+        public override int GetHashCode()
+        {
+            return p.GetHashCode();
+        }
 
         /// <summary>
         /// 下位bitから1bit拾ってそのbit位置を返す。
@@ -208,6 +227,15 @@ namespace MyShogi.Model.Shogi
         public bool IsNotZero()
         {
             return p.ToU() != 0;
+        }
+
+        /// <summary>
+        /// 否定演算子
+        /// </summary>
+        /// <returns></returns>
+        public Bitboard Not()
+        {
+            return this ^ ALL_BB;
         }
 
         /// <summary>

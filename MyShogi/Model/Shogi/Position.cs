@@ -185,14 +185,90 @@ namespace MyShogi.Model.Shogi
 
         /// <summary>
         /// 合法な打ち歩か。
-        /// 打ち歩詰めだとfalseが返る。
+        /// 二歩でなく、かつ打ち歩詰めでないならtrueを返す。
         /// </summary>
         /// <param name="us"></param>
-        /// <param name="sq"></param>
+        /// <param name="to"></param>
         /// <returns></returns>
-        public bool LegalPawnDrop(Color us,Square sq)
+        public bool LegalPawnDrop(Color us,Square to)
         {
-            return true;
+            return !(((Pieces(us, Piece.PAWN) & Bitboard.FileBB(to.ToFile())).IsNotZero())                   // 二歩
+                || ((Bitboard.PawnEffect(us, to) == new Bitboard(KingSquare(us.Not())) && !LegalDrop(to)))); // 打ち歩詰め
+        }
+
+        /// <summary>
+        /// toの地点に歩を打ったときに打ち歩詰めにならないならtrue。
+        /// 歩をtoに打つことと、二歩でないこと、toの前に敵玉がいることまでは確定しているものとする。
+        /// 二歩の判定もしたいなら、legal_pawn_drop()のほうを使ったほうがいい。
+        /// </summary>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        public bool LegalDrop(Square to)
+        {
+            var us = sideToMove;
+
+            // 打とうとする歩の利きに相手玉がいることは前提条件としてクリアしているはず。
+            // ASSERT_LV3(pawnEffect(us, to) == Bitboard(king_square(~us)));
+
+            // この歩に利いている自駒(歩を打つほうの駒)がなければ詰みには程遠いのでtrue
+            if (!EffectedTo(us, to))
+                return true;
+
+            // ここに利いている敵の駒があり、その駒で取れるなら打ち歩詰めではない
+            // ここでは玉は除外されるし、香が利いていることもないし、そういう意味では、特化した関数が必要。
+            Bitboard b = AttackersToPawn(us.Not(), to);
+
+            // このpinnedは敵のpinned pieces
+            Bitboard pinned = PinnedPieces(us.Not());
+
+            // pinされていない駒が1つでもあるなら、相手はその駒で取って何事もない。
+            if ((b & (pinned.Not() | Bitboard.FileBB(to.ToFile()))).IsNotZero())
+                return true;
+
+            // 攻撃駒はすべてpinされていたということであり、
+            // 王の頭に打たれた打ち歩をpinされている駒で取れるケースは、
+            // いろいろあるが、例1),例2)のような場合であるから、例3)のケースを除き、
+            // いずれも玉の頭方向以外のところからの玉頭方向への移動であるから、
+            // pinされている方向への移動ということはありえない。
+            // 例3)のケースを除くと、この歩は取れないことが確定する。
+            // 例3)のケースを除外するために同じ筋のものはpinされていないものとして扱う。
+            //    上のコードの　 " | FILE_BB[file_of(to)] " の部分がそれ。
+
+            // 例1)
+            // ^玉 ^角  飛
+            //  歩
+
+            // 例2)
+            // ^玉
+            //  歩 ^飛
+            //          角
+
+            // 例3)
+            // ^玉
+            //  歩
+            // ^飛
+            //  香
+
+            // 玉の退路を探す
+            // 自駒がなくて、かつ、to(はすでに調べたので)以外の地点
+
+            // 相手玉の場所
+            Square sq_king = KingSquare(us.Not());
+
+            // LONG EFFECT LIBRARYがない場合、愚直に8方向のうち逃げられそうな場所を探すしかない。
+
+            Bitboard escape_bb = Bitboard.KingEffect(sq_king) & Pieces(us.Not()).Not();
+            escape_bb ^= to;
+            var occ = Pieces() ^ to; // toには歩をおく前提なので、ここには駒があるものとして、これでの利きの遮断は考えないといけない。
+            while (escape_bb.IsNotZero())
+            {
+                Square king_to = escape_bb.Pop();
+                if (AttackersTo(us, king_to, occ).IsZero())
+                    return true; // 退路が見つかったので打ち歩詰めではない。
+            }
+
+            // すべての検査を抜けてきたのでこれは打ち歩詰めの条件を満たしている。
+            return false;
         }
 
         // -------------------------------------------------------------------------
@@ -976,10 +1052,6 @@ namespace MyShogi.Model.Shogi
                         // (素抜きになる可能性はあるが、そのチェックはここでは不要)
                         if (((Bitboard.BetweenBB(Checkers().Pop(), KingSquare(us)) | Checkers()) & to).IsZero())
                             return false;
-                    } else
-                    {
-                        // TODO : 王の自殺チェック
-
                     }
                 }
             }
@@ -1093,6 +1165,18 @@ namespace MyShogi.Model.Shogi
                     | (Bitboard.BishopEffect(pawn_sq, occ) & Pieces(Piece.BISHOP_HORSE))
                     | (Bitboard.RookEffect(pawn_sq, occ) & Pieces(Piece.ROOK_DRAGON))
                     ) & Pieces(c);
+        }
+
+        /// <summary>
+        /// attackers_to()で駒があればtrueを返す版。(利きの情報を持っているなら、軽い実装に変更できる)
+        /// kingSqの地点からは玉を取り除いての利きの判定を行なう。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public bool EffectedTo(Color c, Square sq)
+        {
+            return AttackersTo(c, sq, Pieces()).IsNotZero();
         }
 
         // -------------------------------------------------------------------------

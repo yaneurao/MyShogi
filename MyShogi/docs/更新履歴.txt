@@ -1,17 +1,34 @@
 ﻿
 - ToDo
 	- Position.Legal()で自殺チェック追加
-	- Position.AttackersTo()追加
-	- Position.Checkers()の更新コード追加
-	- Position.InCheck()実装
-
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
 
 
+                        // 王の自殺チェック
+
+                        // もし移動させる駒が玉であるなら、行き先の升に相手側の利きがないかをチェックする。
+                        if (type_of(piece_on(from)) == KING)
+                            return !effected_to(~us, move_to(m), from);
+
+                        return !(pinned_pieces(us) & from)
+                            || aligned(from, to_sq(m), square<KING>(us));
+                    }
+
+
 ■  2018/05/15
+
+
+
+- Position.LegalPawnDrop()のコード実装。
+- Position.LegalDrop()追加。
+- Position.IsLegal()で打ち歩、二歩の判定追加。
+- Bitboard operator == と != 追加
+- UInt128にoperator == と != 追加
+- Bitboard.Not()追加。
+- Bitboard.GetHashCode(),GetHashCode.Equals()追加。
 
 
 - Position.UpdateBitboard()追加。
