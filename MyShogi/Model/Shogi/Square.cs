@@ -30,6 +30,16 @@ namespace MyShogi.Model.Shogi
         SQ_R = -9, // 右(Right)
         SQ_U = -1, // 上(Up)
         SQ_L = +9, // 左(Left)
+
+        // 斜めの方角などを意味する定数。
+        SQ_RU = SQ_U + SQ_R,   // 右上(Right Up)
+        SQ_RD = SQ_D + SQ_R,   // 右下(Right Down)
+        SQ_LU = SQ_U + SQ_L,   // 左上(Left Up)
+        SQ_LD = SQ_D + SQ_L,   // 左下(Left Down)
+        SQ_RUU = SQ_RU + SQ_U, // 右上上
+        SQ_LUU = SQ_LU + SQ_U, // 左上上
+        SQ_RDD = SQ_RD + SQ_D, // 右下下
+        SQ_LDD = SQ_LD + SQ_D, // 左下下
     }
 
     /// <summary>

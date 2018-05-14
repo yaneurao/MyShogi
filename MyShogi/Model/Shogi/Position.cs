@@ -161,7 +161,7 @@ namespace MyShogi.Model.Shogi
         /// <returns></returns>
         public ref Hand Hand(Color c)
         {
-            return ref hand[c.ToInt()];
+            return ref hand[(int)c];
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace MyShogi.Model.Shogi
         /// <returns></returns>
         public ref Square KingSquare(Color c)
         {
-            return ref kingSquare[c.ToInt()];
+            return ref kingSquare[(int)c];
         }
 
         /// <summary>
@@ -241,13 +241,29 @@ namespace MyShogi.Model.Shogi
             return Pieces(pr1) | Pieces(pr2);
         }
 
-    /// <summary>
-    /// c側の駒種prのbitboardを返す
-    /// </summary>
-    /// <param name="c"></param>
-    /// <param name="pr"></param>
-    /// <returns></returns>
-    public Bitboard Pieces(Color c, Piece pr)
+        public Bitboard Pieces(Piece pr1, Piece pr2,Piece pr3)
+        {
+            return Pieces(pr1) | Pieces(pr2) | Pieces(pr3);
+        }
+
+        public Bitboard Pieces(Piece pr1, Piece pr2, Piece pr3 ,Piece pr4)
+        {
+            return Pieces(pr1) | Pieces(pr2) | Pieces(pr3) | Pieces(pr4);
+        }
+
+        public Bitboard Pieces(Piece pr1, Piece pr2, Piece pr3, Piece pr4 , Piece pr5)
+        {
+            return Pieces(pr1) | Pieces(pr2) | Pieces(pr3) | Pieces(pr4) | Pieces(pr5);
+        }
+
+
+        /// <summary>
+        /// c側の駒種prのbitboardを返す
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="pr"></param>
+        /// <returns></returns>
+        public Bitboard Pieces(Color c, Piece pr)
         {
             return Pieces(pr) & Pieces(c);
         }
@@ -637,6 +653,9 @@ namespace MyShogi.Model.Shogi
 
             // StateInfoの更新
             SetState(st);
+
+            // PutPiece()などを呼び出したので更新する。
+            UpdateBitboards();
         }
 
 
@@ -730,6 +749,14 @@ namespace MyShogi.Model.Shogi
 
             // Zobrist.sideはp1==0が保証されているのでこれで良い
             st.Key.p.p0 ^= Zobrist.Side.p.p0;
+
+            // -- update
+
+            // PutPiece()などを呼び出したので更新する。
+            UpdateBitboards();
+
+            // このタイミングで王手関係の情報を更新しておいてやる。
+            SetCheckInfo(st);
         }
 
         /// <summary>
@@ -739,6 +766,8 @@ namespace MyShogi.Model.Shogi
         public void UndoMove(Move move)
         {
 
+            // PutPiece()などを呼び出したので更新する。
+            UpdateBitboards();
         }
 
         /// <summary>
@@ -1066,7 +1095,7 @@ namespace MyShogi.Model.Shogi
                     ) & Pieces(c);
         }
 
-// -------------------------------------------------------------------------
+        // -------------------------------------------------------------------------
         // 以下、private methods
         // -------------------------------------------------------------------------
 
@@ -1157,6 +1186,138 @@ namespace MyShogi.Model.Shogi
             // 駒別のBitboardの更新
             // これ以外のBitboardの更新は、update_bitboards()で行なう。
             byTypeBB[(int)pc.PieceType()] ^= sq;
+        }
+
+        /// <summary>
+        /// put_piece(),remove_piece(),xor_piece()を用いたあとに呼び出す必要がある。
+        /// </summary>
+        void UpdateBitboards()
+        {
+            // 王・馬・龍を合成したbitboard
+            byTypeBB[(int)Piece.HDK] = Pieces(Piece.KING, Piece.HORSE, Piece.DRAGON);
+
+            // 金と同じ移動特性を持つ駒
+            byTypeBB[(int)Piece.GOLDS] = Pieces(Piece.GOLD, Piece.PRO_PAWN, Piece.PRO_LANCE, Piece.PRO_KNIGHT, Piece.PRO_SILVER);
+
+            // 以下、attackers_to()で頻繁に用いるのでここで1回計算しておいても、トータルでは高速化する。
+
+            // 角と馬
+            byTypeBB[(int)Piece.BISHOP_HORSE] = Pieces(Piece.BISHOP, Piece.HORSE);
+
+            // 飛車と龍
+            byTypeBB[(int)Piece.ROOK_DRAGON] = Pieces(Piece.ROOK, Piece.DRAGON);
+
+            // 銀とHDK
+            byTypeBB[(int)Piece.SILVER_HDK] = Pieces(Piece.SILVER, Piece.HDK);
+
+            // 金相当の駒とHDK
+            byTypeBB[(int)Piece.GOLDS_HDK] = Pieces(Piece.GOLDS, Piece.HDK);
+        }
+
+        /// <summary>
+        /// 升sに対して、c側の大駒に含まれる長い利きを持つ駒の利きを遮っている駒のBitboardを返す(先後の区別なし)
+        /// ※　Stockfishでは、sildersを渡すようになっているが、大駒のcolorを渡す実装のほうが優れているので変更。
+        /// [Out] pinnersとは、pinされている駒が取り除かれたときに升sに利きが発生する大駒である。これは返し値。
+        /// また、升sにある玉は~c側のKINGであるとする。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="s"></param>
+        /// <param name="pinners"></param>
+        /// <returns></returns>
+        public Bitboard SliderBlockers(Color c, Square s, Bitboard pinners)
+        {
+            Bitboard result = Bitboard.ZeroBB();
+
+            // pinnersは返し値。
+            pinners = Bitboard.ZeroBB();
+
+            // cが与えられていないと香の利きの方向を確定させることが出来ない。
+            // ゆえに将棋では、この関数は手番を引数に取るべき。(チェスとはこの点において異なる。)
+
+            // snipersとは、pinされている駒が取り除かれたときに升sに利きが発生する大駒である。
+            Bitboard snipers =
+                ((Pieces(Piece.ROOK_DRAGON) & Bitboard.RookStepEffect(s))
+                | (Pieces(Piece.BISHOP_HORSE) & Bitboard.BishopStepEffect(s))
+                // 香に関しては攻撃駒が先手なら、玉より下側をサーチして、そこにある先手の香を探す。
+                | (Pieces(Piece.LANCE) & Bitboard.LanceStepEffect(c.Not(), s))
+                ) & Pieces(c);
+
+            while (snipers.IsNotZero())
+            {
+                Square sniperSq = snipers.Pop();
+                Bitboard b = Bitboard.BetweenBB(s, sniperSq) & Pieces();
+
+                // snipperと玉との間にある駒が1個であるなら。
+                // (間にある駒が0個の場合、b == ZERO_BBとなり、何も変化しない。)
+                if (!Bitboard.MoreThanOne(b))
+                {
+                    result |= b;
+                    if ((b & Pieces(c.Not())).IsNotZero())
+                        // sniperと玉に挟まれた駒が玉と同じ色の駒であるなら、pinnerに追加。
+                        pinners |= sniperSq;
+                }
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// StateInfoの初期化(初期化するときに内部的に用いる)
+        /// </summary>
+        /// <param name="si"></param>
+        private void SetCheckInfo(StateInfo si)
+        {
+            // --- bitboard
+
+            // この局面で自玉に王手している敵駒
+            st.checkersBB = AttackersTo(sideToMove.Not(), KingSquare(sideToMove));
+
+            // -- 王手情報の初期化
+
+            //: si->blockersForKing[WHITE] = slider_blockers(pieces(BLACK), square<KING>(WHITE),si->pinnersForKing[WHITE]);
+            //: si->blockersForKing[BLACK] = slider_blockers(pieces(WHITE), square<KING>(BLACK),si->pinnersForKing[BLACK]);
+
+            // ↓Stockfishのこの部分の実装、将棋においては良くないので、以下のように変える。
+
+            //if (!doNullMove)
+            {
+                // null moveのときは前の局面でこの情報は設定されているので更新する必要がない。
+                si.blockersForKing[(int)Color.WHITE] = SliderBlockers(Color.BLACK, KingSquare(Color.WHITE), si.pinnersForKing[(int)Color.WHITE]);
+                si.blockersForKing[(int)Color.BLACK] = SliderBlockers(Color.WHITE, KingSquare(Color.BLACK), si.pinnersForKing[(int)Color.BLACK]);
+            }
+
+            Square ksq = KingSquare(sideToMove.Not());
+
+            // 駒種Xによって敵玉に王手となる升のbitboard
+
+            // 歩であれば、自玉に敵の歩を置いたときの利きにある場所に自分の歩があればそれは敵玉に対して王手になるので、
+            // そういう意味で(ksq,them)となっている。
+
+            Bitboard occ = Pieces();
+            Color them = sideToMove.Not();
+
+            // この指し手が二歩でないかは、この時点でテストしない。指し手生成で除外する。なるべくこの手のチェックは遅延させる。
+            si.checkSquares[(int)Piece.PAWN]   = Bitboard.PawnEffect(them, ksq);
+            si.checkSquares[(int)Piece.KNIGHT] = Bitboard.KnightEffect(them, ksq);
+            si.checkSquares[(int)Piece.SILVER] = Bitboard.SilverEffect(them, ksq);
+            si.checkSquares[(int)Piece.BISHOP] = Bitboard.BishopEffect(ksq, occ);
+            si.checkSquares[(int)Piece.ROOK]   = Bitboard.RookEffect(ksq, occ);
+            si.checkSquares[(int)Piece.GOLD]   = Bitboard.GoldEffect(them, ksq);
+
+            // 香で王手になる升は利きを求め直さずに飛車で王手になる升を香のstep effectでマスクしたものを使う。
+            si.checkSquares[(int)Piece.LANCE] = si.checkSquares[(int)Piece.ROOK] & Bitboard.LanceStepEffect(them, ksq);
+
+            // 王を移動させて直接王手になることはない。それは自殺手である。
+            si.checkSquares[(int)Piece.KING] = Bitboard.ZeroBB();
+
+            // 成り駒。この初期化は馬鹿らしいようだが、gives_check()は指し手ごとに呼び出されるので、その処理を軽くしたいので
+            // ここでの初期化は許容できる。(このコードはdo_move()に対して1回呼び出されるだけなので)
+            si.checkSquares[(int)Piece.PRO_PAWN]   = si.checkSquares[(int)Piece.GOLD];
+            si.checkSquares[(int)Piece.PRO_LANCE]  = si.checkSquares[(int)Piece.GOLD];
+            si.checkSquares[(int)Piece.PRO_KNIGHT] = si.checkSquares[(int)Piece.GOLD];
+            si.checkSquares[(int)Piece.PRO_SILVER] = si.checkSquares[(int)Piece.GOLD];
+            si.checkSquares[(int)Piece.HORSE]      = si.checkSquares[(int)Piece.BISHOP] | Bitboard.KingEffect(ksq);
+            si.checkSquares[(int)Piece.DRAGON]     = si.checkSquares[(int)Piece.ROOK]   | Bitboard.KingEffect(ksq);
         }
     }
 }

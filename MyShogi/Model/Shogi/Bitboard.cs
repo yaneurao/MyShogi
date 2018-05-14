@@ -161,6 +161,23 @@ namespace MyShogi.Model.Shogi
             return BetweenBB_[BetweenIndex[(int)sq1,(int)sq2]];
         }
 
+        // 2升を通過する直線を返すためのテーブル
+        // 2つ目のindexは[0]:右上から左下、[1]:横方向、[2]:左上から右下、[3]:縦方向の直線。
+        // この配列には直接アクセスせず、line_bb()を使うこと。
+        private static Bitboard[,] LineBB_; //[SQ_NB][4];
+
+        /// <summary>
+        /// 2升を通過する直線を返すためのテーブル
+        /// 2つ目のindexは[0]:右上から左下、[1]:横方向、[2]:左上から右下、[3]:縦方向の直線。
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static Bitboard LineBB(Square sq,int type)
+        {
+            return LineBB_[(int)sq, type];
+        }
+
         // -------------------------------------------------------------------------
         // public methods
         // -------------------------------------------------------------------------
@@ -898,137 +915,67 @@ namespace MyShogi.Model.Shogi
             // 8) BetweenBB , LineBBの初期化
             {
                 UInt16 between_index = 1;
-		        // BetweenBB[0] == ZERO_BBであることを保証する。
+                // BetweenBB[0] == ZERO_BBであることを保証する。
 
-		        for (var s1 = Square.ZERO; s1 < Square.NB; ++s1)
-			        for (var s2 = Square.ZERO; s2 < Square.NB; ++s2)
-			        {
-				        // 十字方向か、斜め方向かだけを判定して、例えば十字方向なら
-				        // rookEffect(sq1,Bitboard(s2)) & rookEffect(sq2,Bitboard(s1))
-				        // のように初期化したほうが明快なコードだが、この初期化をそこに依存したくないので愚直にやる。
-					
-				        // これについてはあとで設定する。
-				        if (s1 >= s2)
-					        continue;
+                for (var s1 = Square.ZERO; s1 < Square.NB; ++s1)
+                    for (var s2 = Square.ZERO; s2 < Square.NB; ++s2)
+                    {
+                        // 十字方向か、斜め方向かだけを判定して、例えば十字方向なら
+                        // rookEffect(sq1,Bitboard(s2)) & rookEffect(sq2,Bitboard(s1))
+                        // のように初期化したほうが明快なコードだが、この初期化をそこに依存したくないので愚直にやる。
 
-				        // 方角を用いるテーブルの初期化
-				        if (Util.DirectionsOf(s1, s2) != Directions.ZERO)
-				        {
-					        Bitboard bb = ZERO_BB;
-					        // 間に挟まれた升を1に
-					        int delta = (s2 - s1) / dist(s1, s2);
-					        for (Square s = s1 + delta ; s != s2; s += delta)
-						        bb |= s;
+                        // これについてはあとで設定する。
+                        if (s1 >= s2)
+                            continue;
 
-					        // ZERO_BBなら、このindexとしては0を指しておけば良いので書き換える必要ない。
-					        if (bb.IsZero())
-						        continue;
+                        // 方角を用いるテーブルの初期化
+                        if (Util.DirectionsOf(s1, s2) != Directions.ZERO)
+                        {
+                            Bitboard bb = ZERO_BB;
+                            // 間に挟まれた升を1に
+                            int delta = (s2 - s1) / dist(s1, s2);
+                            for (Square s = s1 + delta; s != s2; s += delta)
+                                bb |= s;
 
-					        BetweenIndex[(int)s1,(int)s2] = between_index;
-					        BetweenBB_[between_index++] = bb;
-				        }
-			        }
+                            // ZERO_BBなら、このindexとしては0を指しておけば良いので書き換える必要ない。
+                            if (bb.IsZero())
+                                continue;
+
+                            BetweenIndex[(int)s1, (int)s2] = between_index;
+                            BetweenBB_[between_index++] = bb;
+                        }
+                    }
 
                 //		    ASSERT_LV1(between_index == 785);
 
-		        // 対称性を考慮して、さらにシュリンクする。
-		        for (var s1 = Square.ZERO; s1 < Square.NB; ++ s1)
-			        for (var s2 = Square.ZERO; s2 < Square.NB; ++s2)
-				        if (s1 > s2)
-					        BetweenIndex[(int)s1,(int)s2] = BetweenIndex[(int)s2,(int)s1];
+                // 対称性を考慮して、さらにシュリンクする。
+                for (var s1 = Square.ZERO; s1 < Square.NB; ++s1)
+                    for (var s2 = Square.ZERO; s2 < Square.NB; ++s2)
+                        if (s1 > s2)
+                            BetweenIndex[(int)s1, (int)s2] = BetweenIndex[(int)s2, (int)s1];
 
+
+                LineBB_ = new Bitboard[(int)Square.NB, 4];
+
+                for (var s1 = Square.ZERO; s1 < Square.NB; ++s1)
+                    for (int d = 0; d < 4; ++d)
+                    {
+                        // BishopEffect0 , RookRankEffect , BishopEffect1 , RookFileEffectを用いて初期化したほうが
+                        // 明快なコードだが、この初期化をそこに依存したくないので愚直にやる。
+
+                        Square[] deltas = new Square[] { Square.SQ_RU, Square.SQ_R, Square.SQ_RD, Square.SQ_U };
+                        int delta = (int)deltas[d];
+                        Bitboard bb = new Bitboard(s1);
+
+                        // 壁に当たるまでs1から-delta方向に延長
+                        for (Square s = s1; dist(s, s - delta) <= 1; s -= delta) bb |= (s - delta);
+
+                        // 壁に当たるまでs1から+delta方向に延長
+                        for (Square s = s1; dist(s, s + delta) <= 1; s += delta) bb |= (s + delta);
+
+                        LineBB_[(int)s1, d] = bb;
+                    }
             }
-#if false
-	for (auto s1 : SQ)
-		for (int d = 0; d < 4; ++d)
-		{
-			// BishopEffect0 , RookRankEffect , BishopEffect1 , RookFileEffectを用いて初期化したほうが
-			// 明快なコードだが、この初期化をそこに依存したくないので愚直にやる。
-
-			const Square deltas[4] = { SQ_RU , SQ_R , SQ_RD , SQ_U };
-			const Square delta = deltas[d];
-			Bitboard bb = Bitboard(s1);
-
-			// 壁に当たるまでs1から-delta方向に延長
-			for (Square s = s1; dist(s, s - delta) <= 1; s -= delta) bb |= (s - delta);
-
-			// 壁に当たるまでs1から+delta方向に延長
-			for (Square s = s1; dist(s, s + delta) <= 1; s += delta) bb |= (s + delta);
-
-			LineBB[s1][d] = bb;
-		}
-
-
-	// 9) 王手となる候補の駒のテーブル初期化(王手の指し手生成に必要。やねうら王nanoでは削除予定)
-
-define FOREACH_KING(BB, EFFECT ) { for(auto sq : BB){ target|= EFFECT(sq); } }
-define FOREACH(BB, EFFECT ) { for(auto sq : BB){ target|= EFFECT(them,sq); } }
-define FOREACH_BR(BB, EFFECT ) { for(auto sq : BB) { target|= EFFECT(sq,ZERO_BB); } }
-
-	for (auto Us : COLOR)
-		for (auto ksq : SQ)
-		{
-			Color them = ~Us;
-			auto enemyGold = goldEffect(them, ksq) & enemy_field(Us);
-			Bitboard target;
-
-			// 歩で王手になる可能性のあるものは、敵玉から２つ離れた歩(不成での移動) + ksqに敵の金をおいた範囲(enemyGold)に成りで移動できる
-			target = ZERO_BB;
-			FOREACH(pawnEffect(them, ksq), pawnEffect);
-			FOREACH(enemyGold, pawnEffect);
-			CheckCandidateBB[ksq][PAWN - 1][Us] = target & ~Bitboard(ksq);
-
-			// 香で王手になる可能性のあるものは、ksqに敵の香をおいたときの利き。(盤上には何もないものとする)
-			// と、王が1から3段目だと成れるので王の両端に香を置いた利きも。
-			target = lanceStepEffect(them, ksq);
-			if (enemy_field(Us) & ksq)
-			{
-				if (file_of(ksq) != FILE_1)
-					target |= lanceStepEffect(them, ksq + SQ_R);
-				if (file_of(ksq) != FILE_9)
-					target |= lanceStepEffect(them, ksq + SQ_L);
-			}
-			CheckCandidateBB[ksq][LANCE - 1][Us] = target;
-
-			// 桂で王手になる可能性のあるものは、ksqに敵の桂をおいたところに移動できる桂(不成) + ksqに金をおいた範囲(enemyGold)に成りで移動できる桂
-			target = ZERO_BB;
-			FOREACH(knightEffect(them, ksq) | enemyGold, knightEffect);
-			CheckCandidateBB[ksq][KNIGHT - 1][Us] = target & ~Bitboard(ksq);
-
-			// 銀も同様だが、2,3段目からの引き成りで王手になるパターンがある。(4段玉と5段玉に対して)
-			target = ZERO_BB;
-			FOREACH(silverEffect(them, ksq), silverEffect);
-			FOREACH(enemyGold, silverEffect); // 移動先が敵陣 == 成れる == 金になるので、敵玉の升に敵の金をおいた利きに成りで移動すると王手になる。
-			FOREACH(goldEffect(them, ksq), enemy_field(Us) & silverEffect); // 移動元が敵陣 == 成れる == 金になるので、敵玉の升に敵の金をおいた利きに成りで移動すると王手になる。
-			CheckCandidateBB[ksq][SILVER - 1][Us] = target & ~Bitboard(ksq);
-
-			// 金
-			target = ZERO_BB;
-			FOREACH(goldEffect(them, ksq), goldEffect);
-			CheckCandidateBB[ksq][GOLD - 1][Us] = target & ~Bitboard(ksq);
-
-			// 角
-			target = ZERO_BB;
-			FOREACH_BR(bishopEffect(ksq, ZERO_BB), bishopEffect);
-			FOREACH_BR(kingEffect(ksq) & enemy_field(Us), bishopEffect); // 移動先が敵陣 == 成れる == 王の動き
-			FOREACH_BR(kingEffect(ksq), enemy_field(Us) & bishopEffect); // 移動元が敵陣 == 成れる == 王の動き
-			CheckCandidateBB[ksq][BISHOP - 1][Us] = target & ~Bitboard(ksq);
-
-			// 飛・龍は無条件全域。
-			// ROOKのところには馬のときのことを格納
-
-			// 馬
-			target = ZERO_BB;
-			FOREACH_BR(horseEffect(ksq, ZERO_BB), horseEffect);
-			CheckCandidateBB[ksq][ROOK - 1][Us] = target & ~Bitboard(ksq);
-
-			// 王(24近傍が格納される)
-			target = ZERO_BB;
-			FOREACH_KING(kingEffect(ksq), kingEffect);
-			CheckCandidateKingBB[ksq] = target & ~Bitboard(ksq);
-		}
-
-#endif
 
         }
 

@@ -14,6 +14,14 @@
 ■  2018/05/15
 
 
+- Position.UpdateBitboard()追加。
+- Position.Pieces(...)いろいろ追加。
+- Position.DoMove()でCheckers等の更新。
+- Position.SliderBlockers()実装
+- Bitboard.LineBB()追加
+	- テーブルの初期化追加
+- enumにextension methodでToInt()生やすの今ひとつな気がしてきた…まあいいか…。
+
 
 - Position.AttackersTo()一式追加
 - Position.AttackersToPawn()追加。
