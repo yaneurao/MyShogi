@@ -1,9 +1,27 @@
 ﻿
 - ToDo
+	- Position.Legal()で自殺チェック追加
+	- Position.AttackersTo()追加
+	- Position.Checkers()の更新コード追加
+	- Position.InCheck()実装
+
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
+
+
+■  2018/05/15
+
+
+
+- Position.AttackersTo()一式追加
+- Position.AttackersToPawn()追加。
+- Position.Pieces(Color c, Piece pr)追加
+- Position.Checkers()実装
+- StateInfo.blockersForKing[]追加
+- StateInfo.checkSquares[]追加
+- StateInfo.pinnersForKing[]追加
 
 
 ■　2018/05/14

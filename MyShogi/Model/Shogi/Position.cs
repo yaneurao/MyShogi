@@ -16,6 +16,38 @@ namespace MyShogi.Model.Shogi
         public HASH_KEY Key;
 
         /// <summary>
+        /// この手番側の連続王手は何手前からやっているのか(連続王手の千日手の検出のときに必要)
+        /// </summary>
+        public int[] continuousCheck = new int[(int)Color.NB];
+
+        /// <summary>
+        /// 現局面で手番側に対して王手をしている駒のbitboard
+        /// </summary>
+        public Bitboard checkersBB;
+
+        // 動かすと手番側の王に対して空き王手になるかも知れない駒の候補
+        // チェスの場合、駒がほとんどが大駒なのでこれらを動かすと必ず開き王手となる。
+        // 将棋の場合、そうとも限らないので移動方向について考えなければならない。
+        // color = 手番側 なら pinされている駒(動かすと開き王手になる)
+        // color = 相手側 なら 両王手の候補となる駒。
+
+        /// <summary>
+        /// 自玉に対して(敵駒によって)pinされている駒
+        /// </summary>
+        public Bitboard[] blockersForKing = new Bitboard[(int)Color.NB];
+
+        /// <summary>
+        /// 自玉に対してpinしている(可能性のある)敵の大駒。
+        /// 自玉に対して上下左右方向にある敵の飛車、斜め十字方向にある敵の角、玉の前方向にある敵の香、…
+        /// </summary>
+        public Bitboard[] pinnersForKing = new Bitboard[(int)Color.NB];
+
+        /// <summary>
+        /// 自駒の駒種Xによって敵玉が王手となる升のbitboard
+        /// </summary>
+        public Bitboard[] checkSquares = new Bitboard[(int)Piece.WHITE];
+
+        /// <summary>
         /// 一手前の局面へのポインタ
         /// previous == null であるとき、これ以上辿れない
         /// これを辿ることで千日手判定などを行う。
@@ -148,7 +180,7 @@ namespace MyShogi.Model.Shogi
         /// <returns></returns>
         public bool InCheck()
         {
-            return false;
+            return Checkers().IsNotZero();
         }
 
         /// <summary>
@@ -187,19 +219,86 @@ namespace MyShogi.Model.Shogi
             return byColorBB[(int)c];
         }
 
+        /// <summary>
+        /// 特定の駒種のBitboardを返す。
+        /// </summary>
+        /// <param name="pr"></param>
+        /// <returns></returns>
+        public Bitboard Pieces(Piece pr)
+        {
+            // ASSERT_LV3(pr<PIECE_BB_NB);
+            return byTypeBB[(int)pr];
+        }
+
+        /// <summary>
+        /// pr1とpr2の駒種を合成した(足し合わせた)Bitboardを返す。
+        /// </summary>
+        /// <param name="pr1"></param>
+        /// <param name="pr2"></param>
+        /// <returns></returns>
+        public Bitboard Pieces(Piece pr1, Piece pr2)
+        {
+            return Pieces(pr1) | Pieces(pr2);
+        }
+
+    /// <summary>
+    /// c側の駒種prのbitboardを返す
+    /// </summary>
+    /// <param name="c"></param>
+    /// <param name="pr"></param>
+    /// <returns></returns>
+    public Bitboard Pieces(Color c, Piece pr)
+        {
+            return Pieces(pr) & Pieces(c);
+        }
+
         // 駒がない升が1になっているBitboardが返る
         public Bitboard Empties()
         {
             return Pieces() ^ Bitboard.AllBB();
         }
 
-        /// <summary>
+        // --- 王手
+
+            /// <summary>
         /// 原局面で王手している駒のBitboardが返る
         /// </summary>
         /// <returns></returns>
         public Bitboard Checkers()
         {
-            return Bitboard.ZeroBB();
+            return st.checkersBB;
+        }
+
+        /// <summary>
+        /// 移動させると(相手側＝非手番側)の玉に対して空き王手となる候補の(手番側)駒のbitboard。
+        /// </summary>
+        /// <returns></returns>
+        public Bitboard DiscoveredCheckCandidates()
+        {
+            return st.blockersForKing[(int)sideToMove.Not()] & Pieces(sideToMove);
+        }
+
+        /// <summary>
+        /// ピンされているc側の駒。下手な方向に移動させるとc側の玉が素抜かれる。
+        /// 手番側のpinされている駒はpos.pinned_pieces(pos.side_to_move())のようにして取得できる。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public Bitboard PinnedPieces(Color c)
+        {
+            // ASSERT_LV3(is_ok(c));
+            return st.blockersForKing[(int)c] & Pieces(c);
+        }
+
+        /// <summary>
+        /// 現局面で駒Ptを動かしたときに王手となる升を表現するBitboard
+        /// </summary>
+        /// <param name="pt"></param>
+        /// <returns></returns>
+	    public Bitboard CheckSquares(Piece pt)
+        {
+            // ASSERT_LV3(pt!= NO_PIECE && pt<PIECE_WHITE);
+            return st.checkSquares[(int)pt];
         }
 
         // -------------------------------------------------------------------------
@@ -837,9 +936,8 @@ namespace MyShogi.Model.Shogi
                     // 動かす駒は王以外か？
                     if (pc.PieceType() != Piece.KING)
                     {
-#if false
                         // 両王手なら王の移動をさせなければならない。
-                        if (MoreThanOne(Checkers()))
+                        if (Bitboard.MoreThanOne(Checkers()))
                             return false;
 
                         // 指し手は、王手を遮断しているか、王手している駒の捕獲でなければならない。
@@ -847,9 +945,8 @@ namespace MyShogi.Model.Shogi
                         // 例) 王■■■^飛
                         // となっているときに■の升か、^飛 のところが移動先であれば王手は回避できている。
                         // (素抜きになる可能性はあるが、そのチェックはここでは不要)
-                        if (!((BetweenBB(Checkers().pop(), KingSquare(us)) | Checkers()) & to))
+                        if (((Bitboard.BetweenBB(Checkers().Pop(), KingSquare(us)) | Checkers()) & to).IsZero())
                             return false;
-#endif
                     } else
                     {
                         // TODO : 王の自殺チェック
@@ -862,7 +959,114 @@ namespace MyShogi.Model.Shogi
             return true;
         }
 
-        // -------------------------------------------------------------------------
+
+        /// <summary>
+        /// 現局面でsqに利いているC側の駒を列挙する
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public Bitboard AttackersTo(Color c, Square sq)
+        {
+            return AttackersTo(c, sq, Pieces());
+        }
+
+        public Bitboard AttackersTo(Color c, Square sq, Bitboard occ)
+        {
+            // assert(is_ok(c) && sq <= SQ_NB);
+
+            Color them = c.Not();
+
+            // sの地点に敵駒ptをおいて、その利きに自駒のptがあればsに利いているということだ。
+            // 香の利きを求めるコストが惜しいのでrookEffect()を利用する。
+            return
+                ((Bitboard.PawnEffect(them, sq) & Pieces(Piece.PAWN))
+                    | (Bitboard.KnightEffect(them, sq) & Pieces(Piece.KNIGHT))
+                    | (Bitboard.SilverEffect(them, sq) & Pieces(Piece.SILVER_HDK))
+                    | (Bitboard.GoldEffect(them, sq) & Pieces(Piece.GOLDS_HDK))
+                    | (Bitboard.BishopEffect(sq, occ) & Pieces(Piece.BISHOP_HORSE))
+                    | (Bitboard.RookEffect(sq, occ) & (
+                            Pieces(Piece.ROOK_DRAGON)
+                        | (Bitboard.LanceStepEffect(them, sq) & Pieces(Piece.LANCE))
+                        ))
+                    //  | (kingEffect(sq) & pieces(c, HDK));
+                    // →　HDKは、銀と金のところに含めることによって、参照するテーブルを一個減らして高速化しようというAperyのアイデア。
+                    ) & Pieces(c); // 先後混在しているのでc側の駒だけ最後にマスクする。
+            ;
+
+        }
+
+        /// <summary>
+        /// 現局面でsqに利いている駒を列挙する
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public Bitboard AttackersTo(Square sq)
+        {
+            return AttackersTo(sq, Pieces());
+        }
+
+        public Bitboard AttackersTo(Square sq, Bitboard occ)
+        {
+        //        ASSERT_LV3(sq <= SQ_NB);
+
+                // sqの地点に敵駒ptをおいて、その利きに自駒のptがあればsqに利いているということだ。
+                return
+                    // 先手の歩・桂・銀・金・HDK
+                    (((Bitboard.PawnEffect(Color.WHITE, sq) & Pieces(Piece.PAWN))
+                        | (Bitboard.KnightEffect(Color.WHITE, sq) & Pieces(Piece.KNIGHT))
+                        | (Bitboard.SilverEffect(Color.WHITE, sq) & Pieces(Piece.SILVER_HDK))
+                        | (Bitboard.GoldEffect(Color.WHITE, sq) & Pieces(Piece.GOLDS_HDK))
+                        ) & Pieces(Color.BLACK))
+                    |
+
+                    // 後手の歩・桂・銀・金・HDK
+                    (((Bitboard.PawnEffect(Color.BLACK, sq) & Pieces(Piece.PAWN))
+                        | (Bitboard.KnightEffect(Color.BLACK, sq) & Pieces(Piece.KNIGHT))
+                        | (Bitboard.SilverEffect(Color.BLACK, sq) & Pieces(Piece.SILVER_HDK))
+                        | (Bitboard.GoldEffect(Color.BLACK, sq) & Pieces(Piece.GOLDS_HDK))
+                        ) & Pieces(Color.WHITE))
+
+                    // 先後の角・飛・香
+                    | (Bitboard.BishopEffect(sq, occ) & Pieces(Piece.BISHOP_HORSE))
+                    | (Bitboard.RookEffect(sq, occ) & (
+                           Pieces(Piece.ROOK_DRAGON)
+                        | (Pieces(Color.BLACK, Piece.LANCE) & Bitboard.LanceStepEffect(Color.WHITE, sq))
+                        | (Pieces(Color.WHITE, Piece.LANCE) & Bitboard.LanceStepEffect(Color.BLACK, sq))
+                        // 香も、StepEffectでマスクしたあと飛車の利きを使ったほうが香の利きを求めなくて済んで速い。
+                        ));
+            }
+
+        /// <summary>
+        /// 打ち歩詰め判定に使う。王に打ち歩された歩の升をpawn_sqとして、c側(王側)のpawn_sqへ利いている駒を列挙する。香が利いていないことは自明。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="pawn_sq"></param>
+        /// <returns></returns>
+        public Bitboard AttackersToPawn(Color c, Square pawn_sq)
+        {
+        //    ASSERT_LV3(is_ok(c) && pawn_sq <= SQ_NB);
+
+            Color them = c.Not();
+            Bitboard occ = Pieces();
+
+            // 馬と龍
+            Bitboard bb_hd = Bitboard.KingEffect(pawn_sq) & Pieces(Piece.HORSE, Piece.DRAGON);
+            // 馬、龍の利きは考慮しないといけない。しかしここに玉が含まれるので玉は取り除く必要がある。
+            // bb_hdは銀と金のところに加えてしまうことでテーブル参照を一回減らす。
+
+            // sの地点に敵駒ptをおいて、その利きに自駒のptがあればsに利いているということだ。
+            // 打ち歩詰め判定なので、その打たれた歩を歩、香、王で取れることはない。(王で取れないことは事前にチェック済)
+            return
+                ((Bitboard.KnightEffect(them, pawn_sq) & Pieces(Piece.KNIGHT))
+                    | (Bitboard.SilverEffect(them, pawn_sq) & (Pieces(Piece.SILVER) | bb_hd))
+                    | (Bitboard.GoldEffect(them, pawn_sq) & (Pieces(Piece.GOLDS) | bb_hd))
+                    | (Bitboard.BishopEffect(pawn_sq, occ) & Pieces(Piece.BISHOP_HORSE))
+                    | (Bitboard.RookEffect(pawn_sq, occ) & Pieces(Piece.ROOK_DRAGON))
+                    ) & Pieces(c);
+        }
+
+// -------------------------------------------------------------------------
         // 以下、private methods
         // -------------------------------------------------------------------------
 

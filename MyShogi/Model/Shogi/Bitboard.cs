@@ -138,7 +138,7 @@ namespace MyShogi.Model.Shogi
         /// </summary>
         /// <param name="bb"></param>
         /// <returns></returns>
-        bool MoreThanOne(Bitboard bb)
+        public static bool MoreThanOne(Bitboard bb)
         {
             // ASSERT_LV2(!bb.cross_over());
             return bb.Merge().PopCount() > 1;
