@@ -1,25 +1,17 @@
 ﻿
 - ToDo
-	- Position.Legal()で自殺チェック追加
+	- 王手回避手になっているかをIsLegal()でチェック
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
 
 
-                        // 王の自殺チェック
-
-                        // もし移動させる駒が玉であるなら、行き先の升に相手側の利きがないかをチェックする。
-                        if (type_of(piece_on(from)) == KING)
-                            return !effected_to(~us, move_to(m), from);
-
-                        return !(pinned_pieces(us) & from)
-                            || aligned(from, to_sq(m), square<KING>(us));
-                    }
-
-
 ■  2018/05/15
 
+
+- Bitboard.Not()削除
+- Position.Legal()に玉の移動による自殺チェック追加
 
 
 - Position.LegalPawnDrop()のコード実装。

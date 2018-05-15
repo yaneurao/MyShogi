@@ -230,15 +230,6 @@ namespace MyShogi.Model.Shogi
         }
 
         /// <summary>
-        /// 否定演算子
-        /// </summary>
-        /// <returns></returns>
-        public Bitboard Not()
-        {
-            return this ^ ALL_BB;
-        }
-
-        /// <summary>
         /// bitboardを綺麗に出力する
         /// </summary>
         /// <returns></returns>

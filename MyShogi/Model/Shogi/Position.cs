@@ -222,7 +222,7 @@ namespace MyShogi.Model.Shogi
             Bitboard pinned = PinnedPieces(us.Not());
 
             // pinされていない駒が1つでもあるなら、相手はその駒で取って何事もない。
-            if ((b & (pinned.Not() | Bitboard.FileBB(to.ToFile()))).IsNotZero())
+            if ((b & (~pinned | Bitboard.FileBB(to.ToFile()))).IsNotZero())
                 return true;
 
             // 攻撃駒はすべてpinされていたということであり、
@@ -257,7 +257,7 @@ namespace MyShogi.Model.Shogi
 
             // LONG EFFECT LIBRARYがない場合、愚直に8方向のうち逃げられそうな場所を探すしかない。
 
-            Bitboard escape_bb = Bitboard.KingEffect(sq_king) & Pieces(us.Not()).Not();
+            Bitboard escape_bb = Bitboard.KingEffect(sq_king) & ~Pieces(us.Not());
             escape_bb ^= to;
             var occ = Pieces() ^ to; // toには歩をおく前提なので、ここには駒があるものとして、これでの利きの遮断は考えないといけない。
             while (escape_bb.IsNotZero())
@@ -1054,6 +1054,22 @@ namespace MyShogi.Model.Shogi
                             return false;
                     }
                 }
+
+                // 王の自殺チェック
+                if (pc.PieceType() == Piece.KING)
+                {
+                    // もし移動させる駒が玉であるなら、行き先の升に相手側の利きがないかをチェックする。
+                    if (EffectedTo(us.Not(), to, from))
+                        return false;
+                } else
+                {
+                    // TODO : 王手回避手になっているかどうかのチェックが必要
+                    // 駒打ちのときも..
+
+                    //return !(pinned_pieces(us) & from)
+                    //    || aligned(from, to_sq(m), square<KING>(us));
+                }
+
             }
 
             // すべてのテストの合格したので合法手である
@@ -1169,7 +1185,6 @@ namespace MyShogi.Model.Shogi
 
         /// <summary>
         /// attackers_to()で駒があればtrueを返す版。(利きの情報を持っているなら、軽い実装に変更できる)
-        /// kingSqの地点からは玉を取り除いての利きの判定を行なう。
         /// </summary>
         /// <param name="c"></param>
         /// <param name="sq"></param>
@@ -1177,6 +1192,18 @@ namespace MyShogi.Model.Shogi
         public bool EffectedTo(Color c, Square sq)
         {
             return AttackersTo(c, sq, Pieces()).IsNotZero();
+        }
+
+        /// <summary>
+        /// kingSqの地点からは玉を取り除いての利きの判定を行なう。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="sq"></param>
+        /// <param name="kingSq"></param>
+        /// <returns></returns>
+        public bool EffectedTo(Color c, Square sq, Square kingSq)
+        {
+            return AttackersTo(c, sq, Pieces() ^ kingSq).IsNotZero();
         }
 
         // -------------------------------------------------------------------------
