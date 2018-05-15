@@ -81,6 +81,7 @@ namespace MyShogi.Model.Shogi.Core
         /// <summary>
         /// 手番
         /// </summary>
+        public Color SideToMove { get { return sideToMove; } }
         private Color sideToMove = Color.BLACK;
 
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿
 - ToDo
-	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::undo_move()
 	- Position::千日手実装。
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
@@ -9,9 +8,15 @@
 ■  2018/05/16
 
 
+- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
+- MoveGen.cs追加
+- Position.SideToMove()追加
+- MoveGen、一応書けた。
+	- テストがうまく通らん。あとでデバッグする。
+
+
 - Model.Shogiをcore/ (Model.Shogi.Core)に移動
 - Test.csをtest/ (Model/Test) に移動
-
 
 
 ■  2018/05/15

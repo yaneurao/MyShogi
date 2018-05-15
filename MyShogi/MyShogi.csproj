@@ -68,6 +68,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\Shogi\Core\MoveGen.cs" />
     <Compile Include="Model\Shogi\Network\CsaConnectData.cs" />
     <Compile Include="Model\Shogi\Core\Bitboard.cs" />
     <Compile Include="Model\Shogi\Core\BitOp.cs" />

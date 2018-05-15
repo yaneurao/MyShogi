@@ -49,6 +49,9 @@ namespace MyShogi.Model.Test
             var pos = new Position();
             //pos.UsiPositionCmd("startpos moves 7g7f 3c3d 8h3c+");
 
+            pos.InitBoard(BoardType.NoHandicap);
+            MoveGen.GenTest(pos);
+
             pos.UsiPositionCmd("sfen lnsgkgsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1 moves 5a6b 7g7f 3a3b");
 
             Console.WriteLine(pos.Pretty());

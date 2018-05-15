@@ -17,6 +17,9 @@ namespace MyShogi.Model.Shogi.Core
 
         DROP    = 1 << 14,       // 駒打ちフラグ
         PROMOTE = 1 << 15,       // 駒成りフラグ
+
+        // 将棋のある局面の合法手の最大数。593らしいが、保険をかけて少し大きめにしておく。
+        MAX_MOVES = 600,
     }
 
     /// <summary>
