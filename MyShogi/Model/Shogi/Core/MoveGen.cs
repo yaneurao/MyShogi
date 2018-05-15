@@ -33,6 +33,9 @@ namespace MyShogi.Model.Shogi.Core
             var rank1_for_us = us == Color.BLACK ? Rank.RANK_1 : Rank.RANK_9;
             var rank2_for_us = us == Color.BLACK ? Rank.RANK_2 : Rank.RANK_8;
 
+            // 自駒がないところ(移動先の候補)
+            var movable = ~ pos.Pieces(us);
+
             while (ourPieces.IsNotZero())
             {
                 from = ourPieces.Pop();
@@ -40,7 +43,7 @@ namespace MyShogi.Model.Shogi.Core
                 Piece pt = pc.PieceType();
 
                 // pcに駒を置いたときの利きに移動できて、自駒があるところには移動できない
-                var target = Bitboard.EffectsFrom(pc, from, pos.Pieces()) & pos.Pieces(us);
+                var target = Bitboard.EffectsFrom(pc, from, pos.Pieces()) & movable;
                 while (target.IsNotZero())
                 {
                     to = target.Pop();
@@ -49,9 +52,9 @@ namespace MyShogi.Model.Shogi.Core
 
                     var r = to.ToRank();
 
-                    // 行き場のない駒の移動は非合法手なのでそれを除外して指し手生成
+                    // 行き場のない升への移動は非合法手なのでそれを除外して指し手生成
                     if (!
-                        (((pt == Piece.PAWN) || (pt == Piece.LANCE) && r == rank1_for_us)
+                        (((pt == Piece.PAWN || pt == Piece.LANCE) && r == rank1_for_us)
                         ||(pt == Piece.KNIGHT && (r == rank1_for_us || r== rank2_for_us)))
                         )
     
@@ -78,18 +81,19 @@ namespace MyShogi.Model.Shogi.Core
 
                 for (to = Square.ZERO; to < Square.NB; ++to)
                 {
-                    // 行き場のないところには打てない
-                    var r = to.ToRank();
-                    if (((pt == Piece.PAWN) || (pt == Piece.LANCE) && r == rank1_for_us)
-                      || (pt == Piece.KNIGHT && (r == rank1_for_us || r == rank2_for_us)))
+                    // 駒がない升にしか打てない
+                    if (pos.PieceOn(to) != Piece.NO_PIECE)
                         continue;
 
-                    if (pos.PieceOn(to) != Piece.NO_PIECE)
+                    // 行き場のない駒は打てない
+                    var r = to.ToRank();
+                    if (((pt == Piece.PAWN || pt == Piece.LANCE) && r == rank1_for_us)
+                      || (pt == Piece.KNIGHT && (r == rank1_for_us || r == rank2_for_us)))
                         continue;
 
                     // 二歩のチェックだけしとく
                     if (pt == Piece.PAWN
-                        && (pos.Pieces(Piece.PAWN) & Bitboard.FileBB(to.ToFile())).IsNotZero())
+                        && (pos.Pieces(us , Piece.PAWN) & Bitboard.FileBB(to.ToFile())).IsNotZero())
                         continue;
 
                     moves[endIndex++] = Util.MakeMoveDrop(pt, to );

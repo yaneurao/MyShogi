@@ -240,9 +240,9 @@ namespace MyShogi.Model.Test
 
         }
 
+        // 棋譜の読み込みテスト
         public static void Test2()
         {
-            // 棋譜の読み込みテスト
             using (var sr = new StreamReader("records20151115.sfen"))
             {
                 string line;
@@ -275,5 +275,22 @@ namespace MyShogi.Model.Test
             }
             Console.WriteLine("Finished");
         }
+
+#if false
+            // 指し手生成のテスト
+            // Position.SetSfen()のなかでこのテストをする
+            Move[] moves = new Move[(int)Move.MAX_MOVES];
+
+            int endIndex = MoveGen.LegalAll(this, moves, 0);
+            for (int j = 0; j < endIndex;  ++j)
+                if (move == moves[j])
+                    goto Success;
+            Console.WriteLine("MoveGenで生成されていない指し手がある : " + move.Pretty());
+            Console.WriteLine(Pretty());
+
+            Success:;
+#endif
+
+
     }
 }

@@ -906,6 +906,7 @@ namespace MyShogi.Model.Shogi.Core
                     var move = Util.FromUsiMove(split[i]);
                     if (!IsLegal(move))
                         throw new PositionException(string.Format("{0}手目が非合法手です。", i - cur_pos));
+
                     DoMove(move);
                 }
         }
