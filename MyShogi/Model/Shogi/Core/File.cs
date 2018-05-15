@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyShogi.Model.Shogi
+namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
     /// 将棋の「筋」(列)を表現する型

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace MyShogi.Model.Shogi
+namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
     /// 駒を表す定数

@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MyShogi.Model.Shogi
+namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
     /// sfen形式のデータの読み込み時に発生する例外

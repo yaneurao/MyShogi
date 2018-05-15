@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MyShogi.Model.Shogi.Core;
 
-namespace MyShogi.Model.Shogi
+namespace MyShogi.Model.Test
 {
     public static class Test
     {
@@ -14,7 +11,7 @@ namespace MyShogi.Model.Shogi
             Piece p = Piece.GOLD;
             Console.WriteLine(p.Pretty());
             Console.WriteLine(p.ToUsi());
-            Piece p2 = Util.MakePiecePromote(Model.Shogi.Color.WHITE, p);
+            Piece p2 = Util.MakePiecePromote(Color.WHITE, p);
             Console.WriteLine(p2.ToUsi());
 
 #if false
@@ -46,8 +43,8 @@ namespace MyShogi.Model.Shogi
             h.Add(Piece.PAWN, 5);
             h.Add(Piece.KNIGHT, 1);
             Console.WriteLine(h.Pretty());
-            Console.WriteLine(h.ToUsi(Model.Shogi.Color.BLACK));
-            Console.WriteLine(h.ToUsi(Model.Shogi.Color.WHITE));
+            Console.WriteLine(h.ToUsi(Color.BLACK));
+            Console.WriteLine(h.ToUsi(Color.WHITE));
 
             var pos = new Position();
             //pos.UsiPositionCmd("startpos moves 7g7f 3c3d 8h3c+");

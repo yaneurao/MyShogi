@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyShogi.Model.Shogi
+namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
     /// 平手、二枚落ちなど盤面タイプを表現する

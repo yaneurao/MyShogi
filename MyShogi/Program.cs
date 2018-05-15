@@ -12,7 +12,7 @@ namespace MyShogi
         static void Main()
         {
             // モデルの初期化一式
-            Model.Shogi.Initializer.Init();
+            Model.Shogi.Core.Initializer.Init();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

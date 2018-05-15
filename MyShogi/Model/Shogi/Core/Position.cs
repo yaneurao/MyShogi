@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace MyShogi.Model.Shogi
+namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
     /// Position(局面)の付随情報を格納する構造体

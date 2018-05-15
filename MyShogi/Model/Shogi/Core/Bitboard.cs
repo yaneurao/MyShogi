@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace MyShogi.Model.Shogi
+namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
     /// Bitboard

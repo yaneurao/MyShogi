@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyShogi.Model.Shogi
+namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
     /// 方角を表す。遠方駒の利きや、玉から見た方角を表すのに用いる。

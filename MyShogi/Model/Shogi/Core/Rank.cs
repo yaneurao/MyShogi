@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyShogi.Model.Shogi
+namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
     /// 段を表現する型

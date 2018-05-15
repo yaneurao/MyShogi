@@ -6,6 +6,14 @@
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
 
 
+■  2018/05/16
+
+
+- Model.Shogiをcore/ (Model.Shogi.Core)に移動
+- Test.csをtest/ (Model/Test) に移動
+
+
+
 ■  2018/05/15
 
 

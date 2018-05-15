@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Text;
 
-namespace MyShogi.Model.Shogi
+namespace MyShogi.Model.Shogi.Core
 {
     /// <summary>
     /// 手駒を表現するenum
