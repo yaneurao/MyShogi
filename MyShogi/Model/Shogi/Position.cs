@@ -813,6 +813,9 @@ namespace MyShogi.Model.Shogi
                     // 捕獲された駒が盤上から消えるので局面のhash keyを更新する
                     st.Key -= Zobrist.Psq(to, to_pc);
                     st.Key += Zobrist.Hand(sideToMove,pr);
+
+                    // toの地点から元あった駒をいったん取り除く
+                    RemovePiece(to);
                 }
 
                 Piece moved_after_pc = (Piece)(moved_pc.ToInt() + (m.IsPromote() ? Piece.PROMOTE.ToInt() : 0));  
@@ -835,6 +838,8 @@ namespace MyShogi.Model.Shogi
 
             // このタイミングで王手関係の情報を更新しておいてやる。
             SetCheckInfo(st);
+
+            gamePly++;
         }
 
         /// <summary>
@@ -893,7 +898,15 @@ namespace MyShogi.Model.Shogi
             // "moves"以降の文字列をUSIの指し手と解釈しながら、局面を進める。
             if (cur_pos < split.Length && split[cur_pos] == "moves")
                 for (int i = cur_pos + 1; i < split.Length; ++i)
-                    DoMove(Util.FromUsiMove(split[i]));
+                {
+                    // デバッグ用に盤面を出力
+                    //Console.WriteLine(Pretty());
+
+                    var move = Util.FromUsiMove(split[i]);
+                    if (!IsLegal(move))
+                        throw new PositionException(string.Format("{0}手目が非合法手です。", i - cur_pos));
+                    DoMove(move);
+                }
         }
 
         /// <summary>
@@ -995,20 +1008,10 @@ namespace MyShogi.Model.Shogi
                     switch (pt)
                     {
                         case Piece.PAWN:
-                            // 歩のとき、二歩および打ち歩詰めであるなら非合法手
-                            if (!LegalPawnDrop(us, to))
-                                return false;
-
+                        case Piece.LANCE:
                             // 歩・香の2段目の不成も合法なので合法として扱う。
                             if (to.ToRank() == (us == Color.BLACK ? Rank.RANK_1 : Rank.RANK_9))
                                 return false;
-
-                            break;
-
-                        case Piece.LANCE:
-                            if (to.ToRank() == (us == Color.BLACK ? Rank.RANK_1 : Rank.RANK_9))
-                                return false;
-
                             break;
 
                         case Piece.KNIGHT:

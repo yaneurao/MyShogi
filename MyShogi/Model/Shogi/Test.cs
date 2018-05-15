@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -223,6 +224,56 @@ namespace MyShogi.Model.Shogi
             var json = Encoding.UTF8.GetString(ms.ToArray());
             MessageBox.Show(json);
 #endif
+
+#if false
+            // UsiPositionCmdのテスト。非合法手が混じっているパターン
+
+            var pos2 = new Position();
+            try
+            {
+                pos2.UsiPositionCmd("startpos moves 7g7f 3c4d 2g2f "); // 2手目が非合法手
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+#endif
+
+        }
+
+        public static void Test2()
+        {
+            // 棋譜の読み込みテスト
+            using (var sr = new StreamReader("records20151115.sfen"))
+            {
+                string line;
+                // 行番号
+                int lineNo = 1;
+
+                var pos = new Position();
+
+                while ((line = sr.ReadLine()) != null)
+                {
+                    //Console.WriteLine(line);
+
+                    try
+                    {
+                        pos.UsiPositionCmd(line);
+                    }catch (Exception e)
+                    {
+                        Console.WriteLine(line);
+                        Console.WriteLine(string.Format("{0}行目で例外発生。{1}", lineNo , e.Message));
+                    }
+
+                    lineNo++;
+
+                    // 進捗用のマーカー出力
+                    if ((lineNo % 1000) == 0)
+                    {
+                        Console.WriteLine(".");
+                    }
+                }
+            }
+            Console.WriteLine("Finished");
         }
     }
 }

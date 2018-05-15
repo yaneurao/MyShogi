@@ -1,12 +1,25 @@
 ﻿
 - ToDo
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
-	- Position::undo_move() , Sfen読み込みきちんと書く
+	- Position::undo_move()
 	- Position::千日手実装。
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
 
 
 ■  2018/05/15
+
+
+- Sfenの読み込みテスト 3万局。
+	- すべてIsLegal()をパスするかのテスト
+	- perftしたほうがいいかも知れん..
+	- とりま、"records20151115.sfen"を読み込むテスト
+	- Test.Test2()を追加。
+	- "records20151115.sfen"のすべての指し手、IsLegal()でtrueであった。
+	- Position.UsiPositionCmd()うまく動いてるっぽい。
+- Position.UsiPositionCmd()で、非合法手が混じっていたときに、何手目が非合法であるかを例外のメッセージとして入れることに。
+- Position.DoMove()でgamePly++するようにした。
+- Position.IsLegal()で歩の移動のときにIsLegalDrop()呼び出していたの修正。
+- Position.DoMove()で駒を取ったときにRemovePiece()していなかったの修正。
 
 
 - 王手回避手になっているかをIsLegal()でチェックするように

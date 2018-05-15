@@ -30,5 +30,10 @@ namespace MyShogi
         {
 
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Model.Shogi.Test.Test2();
+        }
     }
 }
