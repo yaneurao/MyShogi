@@ -1,6 +1,5 @@
 ﻿
 - ToDo
-	- 王手回避手になっているかをIsLegal()でチェック
 	- 指し手生成書く(指し手生成、legalの判定があれば不要ではあるが…。駒の動かせる場所のガイドを表示したいので作っておく)
 	- Position::undo_move() , Sfen読み込みきちんと書く
 	- Position::千日手実装。
@@ -8,6 +7,12 @@
 
 
 ■  2018/05/15
+
+
+- 王手回避手になっているかをIsLegal()でチェックするように
+	- 駒打ち、駒の移動に関してIsLegal実装完了
+- Direct.Util.IsAligned()追加
+- Position.SetState()削除
 
 
 - Bitboard.Not()削除

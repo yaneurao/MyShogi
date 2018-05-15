@@ -72,6 +72,23 @@ namespace MyShogi.Model.Shogi
         /// <param name="sq2"></param>
         /// <returns></returns>
         public static Directions DirectionsOf(Square sq1, Square sq2) { return direc_table[(int)sq1,(int)sq2]; }
+
+        /// <summary>
+        /// 与えられた3升が縦横斜めの1直線上にあるか。駒を移動させたときに開き王手になるかどうかを判定するのに使う。
+        /// 例) 王がsq1, pinされている駒がsq2にあるときに、pinされている駒をsq3に移動させたときにaligned(sq1,sq2,sq3)であれば、
+        ///  pinされている方向に沿った移動なので開き王手にはならないと判定できる。
+        /// ただし玉はsq3として、sq1,sq2は同じ側にいるものとする。(玉を挟んでの一直線は一直線とはみなさない)
+        /// </summary>
+        /// <param name="sq1"></param>
+        /// <param name="sq2"></param>
+        /// <param name="sq3"></param>
+        /// <returns></returns>
+        public static bool IsAligned(Square sq1, Square sq2, Square sq3/* is ksq */)
+        {
+            var d1 = DirectionsOf(sq1, sq3);
+            return d1!=Directions.ZERO ? d1 == DirectionsOf(sq2, sq3) : false;
+        }
+
     }
 
 #if false

@@ -727,11 +727,13 @@ namespace MyShogi.Model.Shogi
 
             // これをもって読み込みが成功したと言える。
 
-            // StateInfoの更新
-            SetState(st);
+            // -- update
 
             // PutPiece()などを呼び出したので更新する。
             UpdateBitboards();
+
+            // このタイミングで王手関係の情報を更新しておいてやる。
+            SetCheckInfo(st);
         }
 
 
@@ -904,12 +906,15 @@ namespace MyShogi.Model.Shogi
             Color us = sideToMove;
             Square to = m.To(); // 移動先
 
-            // 駒打ちと駒打ちでない指し手とで条件分離
+            // 駒打ちと駒打ちでない指し手とで条件分岐
+
+            // toの場所に来るPieceType
+            Piece toPcType;
 
             if (m.IsDrop())
             {
                 // 打つ駒
-                Piece pr = m.DroppedPiece();
+                Piece pr = toPcType = m.DroppedPiece();
 
                 // 打てないはずの駒
                 if (pr < Piece.PAWN && Piece.KING <= pr)
@@ -918,23 +923,6 @@ namespace MyShogi.Model.Shogi
                 // 打つ先の升が埋まっていたり、その手駒を持っていなかったりしたら駄目。
                 if (PieceOn(to) != Piece.NO_PIECE || Hand(us).Count(pr) == 0)
                     return false;
-
-                if (InCheck())
-                {
-                    // 王手されている局面なので合駒でなければならない
-                    Bitboard target = Checkers();
-                    Square checksq = target.Pop();
-
-                    // 王手している駒を1個取り除いて、もうひとつあるということは王手している駒が
-                    // 2つあったということであり、両王手なので合い利かず。
-                    if (target.IsNotZero())
-                        return false;
-
-                    // 王と王手している駒との間の升に駒を打っていない場合、それは王手を回避していることに
-                    // ならないので、これは非合法手。
-                    if ((Bitboard.BetweenBB(checksq, KingSquare(us)) & to).IsZero())
-                        return false;
-                }
 
                 // --- 移動できない升への歩・香・桂打ちについて
                 switch (pr)
@@ -1063,13 +1051,40 @@ namespace MyShogi.Model.Shogi
                         return false;
                 } else
                 {
-                    // TODO : 王手回避手になっているかどうかのチェックが必要
-                    // 駒打ちのときも..
+                    // 王手がされているとき/いないとき、共通の処理
+                    // 王以外を動かすケースについて
 
-                    //return !(pinned_pieces(us) & from)
-                    //    || aligned(from, to_sq(m), square<KING>(us));
+                    var b = (PinnedPieces(us) & from).IsZero() // ピンされていない駒の移動は自由である
+                            || Util.IsAligned(from, to, KingSquare(us)); // ピンされている方角への移動は合法
+
+                    if (!b)
+                        return false;
                 }
 
+                toPcType = pc.PieceType();
+            }
+
+            // 王手がされているなら
+            // 王手回避手になっているかどうかのチェックが必要
+
+            if (InCheck() && toPcType != Piece.KING)
+            {
+                Bitboard target = Checkers();
+                Square checksq = target.Pop();
+
+                // 王手している駒を1個取り除いて、もうひとつあるということは王手している駒が
+                // 2つあったということであり、両王手なので合い利かず。
+                if (target.IsNotZero())
+                    return false;
+
+                // 王と王手している駒との間の升に駒を打っていない場合、それは王手を回避していることに
+                // ならないので、これは非合法手。
+
+                // 王手している駒が1つなら、王手している駒を取る指し手であるか、
+                // 遮断する指し手でなければならない
+
+                if (!((Bitboard.BetweenBB(checksq, KingSquare(us)) & to).IsNotZero() || checksq == to))
+                    return false;
             }
 
             // すべてのテストの合格したので合法手である
@@ -1209,33 +1224,6 @@ namespace MyShogi.Model.Shogi
         // -------------------------------------------------------------------------
         // 以下、private methods
         // -------------------------------------------------------------------------
-
-        /// <summary>
-        /// StateInfoの値を初期化する。
-        /// やねうら王から移植
-        /// </summary>
-        /// <param name="si"></param>
-        private void SetState(StateInfo si)
-        {
-            // --- bitboard
-
-            // この局面で自玉に王手している敵駒
-            //st->checkersBB = attackers_to(~sideToMove, king_square(sideToMove));
-
-            // 王手情報の初期化
-            //set_check_info < false > (si);
-
-            // --- hash keyの計算
-            si.Key = sideToMove == Color.BLACK ? Zobrist.Zero : Zobrist.Side;
-            for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
-            {
-                var pc = PieceOn(sq);
-                si.Key += Zobrist.Psq(sq,pc);
-            }
-            for (Color c = Color.ZERO; c < Color.NB; ++c)
-                for (Piece pr = Piece.PAWN; pr < Piece.HAND_NB; ++pr)
-                    si.Key += Zobrist.Hand(c,pr) * Hand(c).Count(pr); // 手駒はaddにする(差分計算が楽になるため)
-        }
 
         /// <summary>
         /// 盤面上のsqの升にpcを置く。
