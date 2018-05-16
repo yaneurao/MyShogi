@@ -12,6 +12,9 @@
 ■  2018/05/16
 
 
+- PositionにToCsa()なども必要。同じくスタブだけ用意するか。
+
+
 - PositionにToKif()などが必要
 	- Positionに生やすとソースコードがくちゃくちゃになるな…
 	- Model/Converter/Kif.csとかに書くか..
