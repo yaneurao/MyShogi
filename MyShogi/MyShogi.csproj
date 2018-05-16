@@ -69,6 +69,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\Shogi\Core\MoveGen.cs" />
+    <Compile Include="Model\Shogi\Converter\Kif.cs" />
     <Compile Include="Model\Shogi\Network\CsaConnectData.cs" />
     <Compile Include="Model\Shogi\Core\Bitboard.cs" />
     <Compile Include="Model\Shogi\Core\BitOp.cs" />
@@ -124,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\更新履歴.txt" />
+    <Content Include="docs\解説.txt" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

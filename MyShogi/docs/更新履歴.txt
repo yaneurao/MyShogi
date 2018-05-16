@@ -1,11 +1,24 @@
 ﻿
 - ToDo
-	- Position::undo_move()
-	- Position::千日手実装。
+	- Position::undo_move()の実装
+	- Position::千日手判定の実装。
+		- 連続王手千日手を非合法手にしないと…。
+	- Position.FromKif()もか
+
 	- Positionに駒落ちかそうでないかを表現するフラグが必要
+		- そもそも棋譜の管理クラスが必要
 
 
 ■  2018/05/16
+
+
+- PositionにToKif()などが必要
+	- Positionに生やすとソースコードがくちゃくちゃになるな…
+	- Model/Converter/Kif.csとかに書くか..
+		- とりま、スタブだけ用意した。
+		- Kif.cs
+			- string ToKif(this Position pos)
+			- string ToKif(this Position pos , Move move)
 
 
 - MoveGenのテスト通った

@@ -1,0 +1,7 @@
+﻿
+/Model          ViewModelのModel
+	/Shogi       将棋関連
+		/Core      将棋用のコアライブラリ。ほとんどがやねうら王からの移植。なるべくpure C#で書かれてある。
+
+/View			ViewModeのView
+
