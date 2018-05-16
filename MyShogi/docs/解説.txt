@@ -1,7 +1,12 @@
 ﻿
 /Model          ViewModelのModel
 	/Shogi       将棋関連
-		/Core      将棋用のコアライブラリ。ほとんどがやねうら王からの移植。なるべくpure C#で書かれてある。
+		/Core       将棋用のコアライブラリ。ほとんどがやねうら王からの移植。なるべくpure C#で書かれてある。
+		/Converter  KIF/CSA形式での入出力のヘルパー
+		/IO         棋譜ファイルの入出力
+		/Network    通信対局関連
+	/Test         テスト用のコード
 
-/View			ViewModeのView
+/View           ViewModeのView
+	/Win2D        Windows用 2D描画 GDI+で実装
 
