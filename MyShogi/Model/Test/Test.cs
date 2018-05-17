@@ -56,7 +56,7 @@ namespace MyShogi.Model.Test
 
             Console.WriteLine(pos.Pretty());
 
-#if true
+#if false
             // UndoMove()のテスト
             pos.UndoMove();
             Console.WriteLine(pos.Pretty());
@@ -313,6 +313,21 @@ namespace MyShogi.Model.Test
                     }
                 }
             }
+#endif
+
+#if false
+            //  UndoMove()でcapture,promoteが戻るかのテスト
+            var pos2 = new Position();
+            pos2.UsiPositionCmd("startpos moves 7g7f 3c3d 8h2b+");
+            Console.WriteLine(pos2.Pretty());
+            pos2.UndoMove();
+            Console.WriteLine(pos2.Pretty());
+            pos2.UndoMove();
+            Console.WriteLine(pos2.Pretty());
+            pos2.UndoMove();
+            Console.WriteLine(pos2.Pretty());
+            Console.WriteLine(pos2.PrettyPieceNo());
+
 #endif
 
         }

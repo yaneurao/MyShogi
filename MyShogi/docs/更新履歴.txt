@@ -1,7 +1,29 @@
-﻿
-- ToDo
-	- Position.Undo()で戻したときの駒落ちのときのhash keyおかしい。あとで原因調べる。
-	- PlayManagerあとで考える
+﻿ToDo
+	- Model/Shogi/Kifu/作る
+
+
+■  2018/05/18
+
+
+- Position.UndoMove()で戻したときの駒落ちのときのhash keyおかしい。あとで原因調べる。
+	- UndoMove()でkingSquare更新していたの削除
+	- Position.SetState(StateInfo)復活
+	- 以前のバージョンとkeyが一致した
+- Position.UndoMove()でcaptureとdrop、promoteがきちんとundoされるかを調べる
+	- ちゃんとundoされてた。
+
+
+- PlayerManagerをKifuManagerにリネーム
+- Model/Shogi/IO/ を Model/Shogi/Kifu/ にリネーム
+- Model/Shogi/Kifu/のなかに
+	- KifuFileType.cs
+	- KifuManager.cs
+	- KifuMove.cs
+	を追加
+
+
+- Model/Shogi/Converter/Kif.cs実装 (Mizarさん) #1
+
 
 
 ■  2018/05/17

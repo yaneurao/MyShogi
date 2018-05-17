@@ -456,7 +456,7 @@ namespace MyShogi.Model.Shogi.Core
                 throw new PositionException("範囲外のBoardTypeを指定してPosition.init()を呼び出した");
 
             // 平手で初期化
-            SetSfen(SFENS_OF_BOARDTYPE[boardType.ToInt()]);
+            SetSfen(SFENS_OF_BOARDTYPE[(int)boardType]);
         }
 
         /// <summary>
@@ -743,6 +743,9 @@ namespace MyShogi.Model.Shogi.Core
 
             // -- update
 
+            // hash keyの更新
+            SetState(st);
+
             // PutPiece()などを呼び出したので更新する。
             UpdateBitboards();
 
@@ -940,9 +943,6 @@ namespace MyShogi.Model.Shogi.Core
                     PutPiece(from, moved_pc , pn);
                     PieceNoOn(to) = PieceNo.NONE;
                 }
-
-                if (moved_pc.PieceType() == Piece.KING)
-                    kingSquare[(int)us] = from;
             }
 
             // PutPiece()などを呼び出したので更新する。
@@ -1389,6 +1389,33 @@ namespace MyShogi.Model.Shogi.Core
         // -------------------------------------------------------------------------
         // 以下、private methods
         // -------------------------------------------------------------------------
+
+        /// <summary>
+        /// StateInfoの値を初期化する。
+        /// やねうら王から移植
+        /// </summary>
+        /// <param name="si"></param>
+        private void SetState(StateInfo si)
+        {
+            // --- bitboard
+
+            // この局面で自玉に王手している敵駒
+            //st->checkersBB = attackers_to(~sideToMove, king_square(sideToMove));
+
+            // 王手情報の初期化
+            //set_check_info < false > (si);
+
+            // --- hash keyの計算
+            si.key = sideToMove == Color.BLACK ? Zobrist.Zero : Zobrist.Side;
+            for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
+            {
+                var pc = PieceOn(sq);
+                si.key += Zobrist.Psq(sq, pc);
+            }
+            for (Color c = Color.ZERO; c < Color.NB; ++c)
+                for (Piece pr = Piece.PAWN; pr < Piece.HAND_NB; ++pr)
+                    si.key += Zobrist.Hand(c, pr) * Hand(c).Count(pr); // 手駒はaddにする(差分計算が楽になるため)
+        }
 
         /// <summary>
         /// 盤面上のsqの升にpcを置く。

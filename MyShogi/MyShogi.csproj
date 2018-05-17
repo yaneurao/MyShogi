@@ -73,7 +73,9 @@
     <Compile Include="Model\Shogi\Core\MoveGen.cs" />
     <Compile Include="Model\Shogi\Converter\Kif.cs" />
     <Compile Include="Model\Shogi\Core\RepetitionState.cs" />
-    <Compile Include="Model\Shogi\IO\PlayManager.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuFileType.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuMove.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuManager.cs" />
     <Compile Include="Model\Shogi\Network\CsaConnectData.cs" />
     <Compile Include="Model\Shogi\Core\Bitboard.cs" />
     <Compile Include="Model\Shogi\Core\BitOp.cs" />
