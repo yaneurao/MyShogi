@@ -13,12 +13,19 @@ namespace MyShogi.Model.Shogi.Core
         /// <summary>
         /// 現在の局面のhash key
         /// </summary>
-        public HASH_KEY Key;
+        public HASH_KEY key;
 
         /// <summary>
         /// この手番側の連続王手は何手前からやっているのか(連続王手の千日手の検出のときに必要)
         /// </summary>
         public int[] continuousCheck = new int[(int)Color.NB];
+
+        /// <summary>
+        /// Position.DoMove()する直前の指し手。
+        /// デバッグ時などにおいてその局面までの手順を表示出来ると便利なことがあるのでそのための機能
+        /// あと、棋譜を表示するときに「同歩」のように直前の指し手のto(行き先の升)が分からないといけないのでこれを用いると良い。
+        /// </summary>
+        public Move lastMove;
 
         /// <summary>
         /// 現局面で手番側に対して王手をしている駒のbitboard
@@ -110,7 +117,7 @@ namespace MyShogi.Model.Shogi.Core
         /// 現局面のhash key。
         /// </summary>
         /// <returns></returns>
-        public HASH_KEY Key() { return st.Key; }
+        public HASH_KEY Key() { return st.key; }
 
         // 盤上の先手/後手/両方の駒があるところが1であるBitboard
         public Bitboard[] byColorBB = new Bitboard[(int)Color.NB];
@@ -757,9 +764,12 @@ namespace MyShogi.Model.Shogi.Core
             var newSt = new StateInfo
             {
                 previous = st,
-                Key = st.Key
+                key = st.key
             };
             st = newSt;
+
+            var us = sideToMove;
+            var them = us.Not();
 
             if (m.IsDrop())
             {
@@ -767,20 +777,20 @@ namespace MyShogi.Model.Shogi.Core
 
                 // 盤上にその駒を置く。
                 Piece pt = m.DroppedPiece();
-                if (pt < Piece.PAWN || Piece.GOLD < pt || Hand(sideToMove).Count(pt) == 0)
+                if (pt < Piece.PAWN || Piece.GOLD < pt || Hand(us).Count(pt) == 0)
                     throw new PositionException("Position.DoMove()で持っていない手駒" + pt.Pretty2() + "を打とうとした");
 
-                Piece pc = Util.MakePiece(sideToMove, pt);
-                Hand(sideToMove).Sub(pt);
+                Piece pc = Util.MakePiece(us, pt);
+                Hand(us).Sub(pt);
 
                 // 打つ駒の駒番号取得して、これを盤面に置く駒に反映させておく。
-                PieceNo pn = HandPieceNo(sideToMove, pt, Hand(sideToMove).Count(pt));
+                PieceNo pn = HandPieceNo(us, pt, Hand(us).Count(pt));
 
                 PutPiece(to, pc , pn);
 
                 // hash keyの更新
-                st.Key -= Zobrist.Hand(sideToMove,pt);
-                st.Key += Zobrist.Psq(to,pc);
+                st.key -= Zobrist.Hand(us,pt);
+                st.key += Zobrist.Psq(to,pc);
             }
             else
             {
@@ -807,13 +817,13 @@ namespace MyShogi.Model.Shogi.Core
 
                     // 取る駒のPieceNoを盤上に反映させておく
                     PieceNo pn2 = PieceNoOn(to);
-                    HandPieceNo(sideToMove, pr, Hand(sideToMove).Count(pr)) = pn2;
+                    HandPieceNo(us, pr, Hand(us).Count(pr)) = pn2;
 
-                    Hand(sideToMove).Add(pr);
+                    Hand(us).Add(pr);
 
                     // 捕獲された駒が盤上から消えるので局面のhash keyを更新する
-                    st.Key -= Zobrist.Psq(to, to_pc);
-                    st.Key += Zobrist.Hand(sideToMove,pr);
+                    st.key -= Zobrist.Psq(to, to_pc);
+                    st.key += Zobrist.Hand(us,pr);
 
                     // toの地点から元あった駒をいったん取り除く
                     RemovePiece(to);
@@ -823,14 +833,11 @@ namespace MyShogi.Model.Shogi.Core
                 PutPiece(to, moved_after_pc , pn);
 
                 // fromにあったmoved_pcがtoにmoved_after_pcとして移動した。
-                st.Key -= Zobrist.Psq(from, moved_pc      );
-                st.Key += Zobrist.Psq(to  , moved_after_pc);
+                st.key -= Zobrist.Psq(from, moved_pc      );
+                st.key += Zobrist.Psq(to  , moved_after_pc);
             }
 
-            sideToMove.Flip();
-
-            // Zobrist.sideはp1==0が保証されているのでこれで良い
-            st.Key.p.p0 ^= Zobrist.Side.p.p0;
+            sideToMove = us.Not();
 
             // -- update
 
@@ -839,6 +846,12 @@ namespace MyShogi.Model.Shogi.Core
 
             // このタイミングで王手関係の情報を更新しておいてやる。
             SetCheckInfo(st);
+
+            // 直前の指し手の更新
+            st.lastMove = m;
+
+            // Zobrist.sideはp1==0が保証されているのでこれで良い
+            st.key.p.p0 ^= Zobrist.Side.p.p0;
 
             gamePly++;
         }
@@ -1422,6 +1435,21 @@ namespace MyShogi.Model.Shogi.Core
             si.checkSquares[(int)Piece.PRO_SILVER] = si.checkSquares[(int)Piece.GOLD];
             si.checkSquares[(int)Piece.HORSE]      = si.checkSquares[(int)Piece.BISHOP] | Bitboard.KingEffect(ksq);
             si.checkSquares[(int)Piece.DRAGON]     = si.checkSquares[(int)Piece.ROOK]   | Bitboard.KingEffect(ksq);
+
+            // DoMove()前の手番
+            var us = them.Not();
+
+            // DoMove()後の局面で王手している駒のある升
+            st.checkersBB = AttackersTo(us, KingSquare(us.Not()));
+
+            if (st.previous != null)
+            {
+                // 王手しているなら連続王手の値を更新する
+                st.continuousCheck[(int)us] = (st.checkersBB.IsNotZero()) ? st.previous.continuousCheck[(int)us] + 2 : 0;
+
+                // 相手番のほうは関係ないので前ノードの値をそのまま受け継ぐ。
+                st.continuousCheck[(int)them] = st.previous.continuousCheck[(int)them];
+            }
         }
     }
 }

@@ -1,10 +1,26 @@
 ﻿
 - ToDo
-	- Position::undo_move()の実装
 	- Position::千日手判定の実装。
 		- 連続王手千日手を非合法手にしないと…。
 		- 王手の指し手とか、指してから「王手を回避していません」と表示されないと、「なんで駒つかめないの？」とかなりそう…。
+		- Positionのなかでやるべきではないな。Positionでは千日手のチェックだけ出来ればいいや。
+	- Position::undo_move()の実装
 
+
+
+■  2018/05/17
+
+
+- StateInfo.Keyをkeyにリネーム。
+- StateInfo.lastMove追加。
+	- この変数にPosition.DoMove()で反映するようにした。
+	- 初期化するコードも追加。
+- StateInfo.continuousCheck[]をDoMove()で更新するようにした。
+- StateInfo.checkersBBをDoMove()で更新するようにした。
+	- SetSfen()でも更新されるようにした。
+	- やねうら王のほう、Position::Set()でcontinuousCheck更新してなくて、
+		初期局面で王手がかかっていると連続王手の千日手判定に間違うような気がしてきた。まあそんな局面を開始局面として与えないのでいいや…。
+	
 
 
 ■  2018/05/16

@@ -71,6 +71,7 @@
     <Compile Include="Model\Shogi\Converter\Csa.cs" />
     <Compile Include="Model\Shogi\Core\MoveGen.cs" />
     <Compile Include="Model\Shogi\Converter\Kif.cs" />
+    <Compile Include="Model\Shogi\IO\PlayManager.cs" />
     <Compile Include="Model\Shogi\Network\CsaConnectData.cs" />
     <Compile Include="Model\Shogi\Core\Bitboard.cs" />
     <Compile Include="Model\Shogi\Core\BitOp.cs" />
