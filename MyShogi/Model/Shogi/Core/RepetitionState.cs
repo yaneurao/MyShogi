@@ -6,7 +6,7 @@ namespace MyShogi.Model.Shogi.Core
     /// 千日手であるかを表現する
     /// Position.IsRepetition()の返し値
     /// </summary>
-    enum RepetitionState : Int32
+    public enum RepetitionState : Int32
     {
         NONE = 0, // 千日手ではない
         DRAW = 1, // 千日手

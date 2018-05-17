@@ -1111,7 +1111,7 @@ namespace MyShogi.Model.Shogi.Core
 
 
         // 連続王手の千日手等で引き分けかどうかを返す
-        RepetitionState IsRepetition()
+        public RepetitionState IsRepetition()
         {
             // 現在の局面と同じhash keyを持つ局面が4回あれば、それは千日手局面であると判定する。
 
@@ -1155,7 +1155,7 @@ namespace MyShogi.Model.Shogi.Core
                     }
                 }
                 // ここから2手ずつ遡る
-                stp = prev(st, 2);
+                stp = prev(stp, 2);
                 t += 2;
             }
 
@@ -1493,19 +1493,16 @@ namespace MyShogi.Model.Shogi.Core
             si.checkSquares[(int)Piece.HORSE]      = si.checkSquares[(int)Piece.BISHOP] | Bitboard.KingEffect(ksq);
             si.checkSquares[(int)Piece.DRAGON]     = si.checkSquares[(int)Piece.ROOK]   | Bitboard.KingEffect(ksq);
 
-            // DoMove()前の手番
-            var us = them.Not();
-
-            // DoMove()後の局面で王手している駒のある升
-            st.checkersBB = AttackersTo(us, KingSquare(us.Not()));
-
             if (st.previous != null)
             {
+                // DoMove()前の手番 == them
+                var us = them.Not();
+
                 // 王手しているなら連続王手の値を更新する
-                st.continuousCheck[(int)us] = (st.checkersBB.IsNotZero()) ? st.previous.continuousCheck[(int)us] + 2 : 0;
+                st.continuousCheck[(int)them] = (st.checkersBB.IsNotZero()) ? st.previous.continuousCheck[(int)them] + 2 : 0;
 
                 // 相手番のほうは関係ないので前ノードの値をそのまま受け継ぐ。
-                st.continuousCheck[(int)them] = st.previous.continuousCheck[(int)them];
+                st.continuousCheck[(int)us] = st.previous.continuousCheck[(int)us];
             }
         }
     }

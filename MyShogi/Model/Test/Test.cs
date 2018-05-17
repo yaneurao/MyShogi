@@ -238,6 +238,69 @@ namespace MyShogi.Model.Test
             }
 #endif
 
+#if false
+            {
+                // 千日手の引き分けのテスト
+                var pos2 = new Position();
+                pos.UsiPositionCmd("startpos moves");
+
+                var moves = new[]{
+                    Util.MakeMove(Square.SQ_59, Square.SQ_58),
+                    Util.MakeMove(Square.SQ_51, Square.SQ_52),
+                    Util.MakeMove(Square.SQ_58, Square.SQ_59),
+                    Util.MakeMove(Square.SQ_52, Square.SQ_51),
+                };
+
+                int ply = 0;
+                for (int j = 0; j < 5; ++j)
+                {
+                    for (int i=0;i<moves.Length;++i)
+                    {
+                        pos.DoMove(moves[i]);
+                        var rep = pos.IsRepetition();
+
+                        ply++;
+                        Console.WriteLine(string.Format("ply = {0} , rep = {1} ", ply, rep.ToString()));
+
+                        // 16手目を指した局面(17手目)が先手番で千日手引き分けの局面になるはず
+                    }
+                }
+            }
+#endif
+
+#if false
+            {
+                // 連続王手の千日手の負けのテスト
+                var pos2 = new Position();
+                pos.UsiPositionCmd("startpos moves 7g7f 5c5d 8h3c 5a6b");
+
+                var moves = new[]{
+                    Util.MakeMove(Square.SQ_33, Square.SQ_44),
+                    Util.MakeMove(Square.SQ_62, Square.SQ_51),
+                    Util.MakeMove(Square.SQ_44, Square.SQ_33),
+                    Util.MakeMove(Square.SQ_51, Square.SQ_62),
+                };
+
+                int ply = 4;
+                for (int j = 0; j < 5; ++j)
+                {
+                    for (int i = 0; i < moves.Length; ++i)
+                    {
+                        pos.DoMove(moves[i]);
+                        //Console.WriteLine(pos.Pretty());
+                        //Console.WriteLine(pos.State().checkersBB.Pretty());
+
+                        var rep = pos.IsRepetition();
+
+                        ply++;
+                        Console.WriteLine(string.Format("ply = {0} , rep = {1} ", ply, rep.ToString()));
+
+                        // 19手目の局面(を指した直後の局面=20手目,後手番)で、ここで後手勝ちになるはず。
+                    }
+                }
+            }
+#endif
+
         }
 
         // 棋譜の読み込みテスト
