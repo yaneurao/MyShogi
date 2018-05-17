@@ -1,10 +1,13 @@
 ﻿
 - ToDo
-	- Position.Undo()で戻したときの駒落ちのときのhash keyおかしい
+	- Position.Undo()で戻したときの駒落ちのときのhash keyおかしい。あとで原因調べる。
 	- PlayManagerあとで考える
 
 
 ■  2018/05/17
+
+
+- Bitboard.IsOne()追加
 
 
 - Position::UndoMove()の実装

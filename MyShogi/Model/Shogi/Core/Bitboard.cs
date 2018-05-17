@@ -230,6 +230,15 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// 1になっているbitが1つだけである。
+        /// </summary>
+        /// <returns></returns>
+        public bool IsOne()
+        {
+            return PopCount() == 1;
+        }
+
+        /// <summary>
         /// bitboardを綺麗に出力する
         /// </summary>
         /// <returns></returns>
