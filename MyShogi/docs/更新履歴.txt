@@ -1,10 +1,15 @@
 ﻿
 - ToDo
-	- Position::undo_move()の実装
+	- Position.Undo()で戻したときの駒落ちのときのhash keyおかしい
 	- PlayManagerあとで考える
 
 
 ■  2018/05/17
+
+
+- Position::UndoMove()の実装
+- StateInfo.capturedPiece追加
+- PieceNo.ZEROをNONEに修正。
 
 
 - readme.mdに実装予定の機能を追記

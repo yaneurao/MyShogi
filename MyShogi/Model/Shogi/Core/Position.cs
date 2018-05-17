@@ -55,6 +55,12 @@ namespace MyShogi.Model.Shogi.Core
         public Bitboard[] checkSquares = new Bitboard[(int)Piece.WHITE];
 
         /// <summary>
+        /// この局面で捕獲された駒。先後の区別あり。
+        /// ※　次の局面にDoMove()で進むときにこの値が設定される
+        /// </summary>
+        public Piece capturedPiece;
+
+        /// <summary>
         /// 一手前の局面へのポインタ
         /// previous == null であるとき、これ以上辿れない
         /// これを辿ることで千日手判定などを行う。
@@ -791,6 +797,9 @@ namespace MyShogi.Model.Shogi.Core
                 // hash keyの更新
                 st.key -= Zobrist.Hand(us,pt);
                 st.key += Zobrist.Psq(to,pc);
+
+                // 駒打ちは捕獲した駒がない。
+                st.capturedPiece = Piece.NO_PIECE;
             }
             else
             {
@@ -827,6 +836,12 @@ namespace MyShogi.Model.Shogi.Core
 
                     // toの地点から元あった駒をいったん取り除く
                     RemovePiece(to);
+
+                    // 駒打ちは捕獲した駒がない。
+                    st.capturedPiece = to_pc;
+                } else
+                {
+                    st.capturedPiece = Piece.NO_PIECE;
                 }
 
                 Piece moved_after_pc = (Piece)(moved_pc.ToInt() + (m.IsPromote() ? Piece.PROMOTE.ToInt() : 0));  
@@ -859,12 +874,87 @@ namespace MyShogi.Model.Shogi.Core
         /// <summary>
         /// 指し手で盤面を1手戻す
         /// </summary>
-        /// <param name="move"></param>
-        public void UndoMove(Move move)
+        public void UndoMove()
         {
+            // Usは1手前の局面での手番
+            var us = sideToMove.Not();
+            var m = st.lastMove;
+
+           var to = m.To();
+            //ASSERT_LV2(is_ok(to));
+
+            // --- 移動後の駒
+
+            Piece moved_after_pc = PieceOn(to);
+
+            // 移動前の駒
+            Piece moved_pc = m.IsPromote() ? (moved_after_pc - (int)Piece.PROMOTE) : moved_after_pc;
+
+            if (m.IsDrop())
+            {
+                // --- 駒打ち
+
+                // toの場所にある駒を手駒に戻す
+                Piece pt = moved_after_pc.RawPieceType();
+
+                var pn = PieceNoOn(to);
+                HandPieceNo(us, pt, hand[(int)us].Count(pt)) = pn;
+
+                hand[(int)us].Add(pt);
+
+                // toの場所から駒を消す
+                RemovePiece(to);
+                PieceNoOn(to) = PieceNo.NONE;
+            }
+            else
+            {
+                // --- 通常の指し手
+
+                var from = m.From();
+                //ASSERT_LV2(is_ok(from));
+
+                // toの場所にあった駒番号
+                var pn = PieceNoOn(to);
+
+                // toの場所から駒を消す
+                RemovePiece(to);
+
+                // toの地点には捕獲された駒があるならその駒が盤面に戻り、手駒から減る。
+                // 駒打ちの場合は捕獲された駒があるということはありえない。
+                // (なので駒打ちの場合は、st->capturedTypeを設定していないから参照してはならない)
+                if (st.capturedPiece != Piece.NO_PIECE)
+                {
+                    Piece to_pc = st.capturedPiece;
+                    Piece pr = to_pc.RawPieceType();
+
+                    // 盤面のtoの地点に捕獲されていた駒を復元する
+                    var pn2 = HandPieceNo(us, pr, hand[(int)us].Count(pr) - 1);
+                    PutPiece(to, to_pc , pn2);
+                    PutPiece(from, moved_pc , pn);
+
+                    // 手駒から減らす
+                    hand[(int)us].Sub(pr);
+                }
+                else
+                {
+                    PutPiece(from, moved_pc , pn);
+                    PieceNoOn(to) = PieceNo.NONE;
+                }
+
+                if (moved_pc.PieceType() == Piece.KING)
+                    kingSquare[(int)us] = from;
+            }
 
             // PutPiece()などを呼び出したので更新する。
             UpdateBitboards();
+
+            // --- 相手番に変更
+            sideToMove = us; // Usは先後入れ替えて呼び出されているはず。
+
+            // --- StateInfoを巻き戻す
+            st = st.previous;
+
+            --gamePly;
         }
 
         /// <summary>

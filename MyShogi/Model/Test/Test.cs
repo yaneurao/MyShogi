@@ -56,6 +56,20 @@ namespace MyShogi.Model.Test
 
             Console.WriteLine(pos.Pretty());
 
+#if true
+            // UndoMove()のテスト
+            pos.UndoMove();
+            Console.WriteLine(pos.Pretty());
+
+            pos.UndoMove();
+            Console.WriteLine(pos.Pretty());
+
+            pos.UndoMove();
+            Console.WriteLine(pos.Pretty());
+            Console.WriteLine(pos.PrettyPieceNo());
+
+#endif
+
             // 駒番号のテスト
             //Console.WriteLine(pos.PrettyPieceNo());
 
