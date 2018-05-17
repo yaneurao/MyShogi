@@ -1110,6 +1110,63 @@ namespace MyShogi.Model.Shogi.Core
         }
 
 
+        // 連続王手の千日手等で引き分けかどうかを返す
+        RepetitionState IsRepetition()
+        {
+            // 現在の局面と同じhash keyを持つ局面が4回あれば、それは千日手局面であると判定する。
+
+            // n回st.previousを辿るlocal method
+            StateInfo prev(StateInfo st, int n)
+            {
+                for (int i = 0; i < n; ++i)
+                {
+                    st = st.previous;
+                    if (st == null)
+                        break;
+                }
+                return st;
+            };
+
+            // 4手かけないと千日手にはならないから、4手前から調べていく。
+            StateInfo stp = prev(st, 4);
+            // 遡った手数のトータル
+            int t = 4;
+
+            // 盤上の駒が同一である局面が出現した回数
+            int cnt = 0;
+
+            while (stp != null)
+            {
+                // HashKeyは128bitもあるのでこのチェックで現実的には間違いないだろう。
+                if (stp.key == st.key)
+                {
+                    // 4回出現した時点で千日手が成立
+                    if (++cnt == 4)
+                    {
+                        // 自分が王手をしている連続王手の千日手なのか？
+                        if (t <= st.continuousCheck[(int)sideToMove])
+                            return RepetitionState.LOSE;
+
+                        // 相手が王手をしている連続王手の千日手なのか？
+                        if (t <= st.continuousCheck[(int)sideToMove.Not()])
+                            return RepetitionState.WIN;
+
+                        return RepetitionState.DRAW;
+                    }
+                }
+                // ここから2手ずつ遡る
+                stp = prev(st, 2);
+                t += 2;
+            }
+
+            // 同じhash keyの局面が見つからなかったので…。
+            return RepetitionState.NONE;
+        }
+
+        // -------------------------------------------------------------------------
+        // 利き
+        // -------------------------------------------------------------------------
+
         /// <summary>
         /// 現局面でsqに利いているC側の駒を列挙する
         /// </summary>
