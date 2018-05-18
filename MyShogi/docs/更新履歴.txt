@@ -1,5 +1,10 @@
 ﻿
+
 ■  2018/05/18
+
+
+- KifuMoveに考慮時間、TimeSpan追加する。
+- KifuTreeにAdd(),Remove()追加。
 
 
 - KifuTree.cs作成

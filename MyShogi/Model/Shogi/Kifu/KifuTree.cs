@@ -1,5 +1,6 @@
-﻿using MyShogi.Model.Shogi.Core;
+﻿using System;
 using System.Linq;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Kifu
 {
@@ -62,9 +63,13 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// 現在の局面(currentMove)に対して、指し手moveが登録されていないなら、その指し手を追加して
         /// posをその指し手で進める。すでに存在しているなら、その指し手は追加しない。
+        /// 
+        /// thinkingTimeは考慮に要した時間。新たにnodeを追加しないときは、この値は無視される。
+        /// ミリ秒まで計測して突っ込んでおいて良い。(棋譜出力時には秒単位で繰り上げられる)
         /// </summary>
         /// <param name="move"></param>
-        public void DoMove(Move move)
+        /// <param name="thinkingTime"></param>
+        public void Add(Move move , TimeSpan thinkingTime)
         {
             var m = currentNode.moves.FirstOrDefault((x)=>x.nextMove == move);
             if (m == null)
@@ -72,14 +77,17 @@ namespace MyShogi.Model.Shogi.Kifu
                 // -- 見つからなかったので次のnodeを追加してやる
 
                 KifuNode nextNode = new KifuNode(currentNode);
-                currentNode.moves.Add(new KifuMove(move,nextNode));
-                currentNode = nextNode;
-            } else
-            {
-                currentNode = m.nextNode;
+                currentNode.moves.Add(new KifuMove(move,nextNode,thinkingTime));
             }
+        }
 
-            pos.DoMove(move);
+        /// <summary>
+        /// currentNode(現在のnode)から、moveの指し手以降の枝を削除する
+        /// </summary>
+        /// <param name="move"></param>
+        public void Remove(Move move)
+        {
+            currentNode.moves.RemoveAll((x) => x.nextMove == move);
         }
 
     }
