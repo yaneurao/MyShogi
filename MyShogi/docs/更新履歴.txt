@@ -1,8 +1,12 @@
-﻿ToDo
-	- Model/Shogi/Kifu/作る
-
-
+﻿
 ■  2018/05/18
+
+
+- KifuTree.cs作成
+- KifuNode.cs作成
+- KifuMove.cs作成
+- KifuTreeにDoMove(),UndoMove()実装
+	- もう少し色々メソッドを生やせば使えるようになりそう。
 
 
 - Position.UndoMove()で戻したときの駒落ちのときのhash keyおかしい。あとで原因調べる。

@@ -40,19 +40,9 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// 棋譜の初手の指し手。これを数珠つなぎに、樹形図状に持っている。
+        /// 棋譜本体。分岐棋譜。
         /// </summary>
-        public KifuMove firstMove;
-
-        /// <summary>
-        /// 現在の局面
-        /// </summary>
-        public Position pos = new Position();
-
-        /// <summary>
-        /// posの現在の局面の直前の指し手
-        /// </summary>
-        public KifuMove lastMove;
+        public KifuTree Tree = new KifuTree(); 
 
     }
 }
