@@ -1,4 +1,5 @@
 ﻿using MyShogi.Model.Shogi.Core;
+using System.Text;
 
 namespace MyShogi.Model.Shogi.Converter
 {
@@ -46,6 +47,7 @@ namespace MyShogi.Model.Shogi.Converter
 
     public class KifFormatter
     {
+        private static bool DEBUG = true;
         public ColorFormat colorFmt;
         public SquareFormat squareFmt;
         public SamePosFormat sameposFmt;
@@ -102,33 +104,33 @@ namespace MyShogi.Model.Shogi.Converter
                 {
                     case Color.BLACK: return "+";
                     case Color.WHITE: return "-";
-                    default: return "";
+                    default: throw new ConverterException();
                 }
                 case ColorFormat.KIF: switch (c)
                 {
                     case Color.BLACK: return "▲";
                     case Color.WHITE: return "△";
-                    default: return "";
+                    default: throw new ConverterException();
                 }
                 case ColorFormat.KIFTurn: switch (c)
                 {
                     case Color.BLACK: return "▲";
                     case Color.WHITE: return "▽";
-                    default: return "";
+                    default: throw new ConverterException();
                 }
                 case ColorFormat.Piece: switch (c)
                 {
                     case Color.BLACK: return "☗";
                     case Color.WHITE: return "☖";
-                    default: return "";
+                    default: throw new ConverterException();
                 }
                 case ColorFormat.PieceTurn: switch (c)
                 {
                     case Color.BLACK: return "☗";
                     case Color.WHITE: return "⛉";
-                    default: return "";
+                    default: throw new ConverterException();
                 }
-                default: return "";
+                default: throw new ConverterException();
             }
         }
         public string format(Square sq)
@@ -138,28 +140,29 @@ namespace MyShogi.Model.Shogi.Converter
             switch (squareFmt)
             {
                 case SquareFormat.ASCII:
-                    return HW_NUMBER[(int)f] + HW_NUMBER[(int)r];
+                    return HW_NUMBER[f.ToInt()] + HW_NUMBER[r.ToInt()];
                 case SquareFormat.FullWidthArabic:
-                    return FW_NUMBER[(int)f] + FW_NUMBER[(int)r];
+                    return FW_NUMBER[f.ToInt()] + FW_NUMBER[r.ToInt()];
                 case SquareFormat.FullWidthMix:
-                    return FW_NUMBER[(int)f] + CN_NUMBER[(int)r];
+                    return FW_NUMBER[f.ToInt()] + CN_NUMBER[r.ToInt()];
                 default:
-                    return "";
+                    throw new ConverterException();
             }
         }
         public string format(Position pos, Move move, Move lastMove)
         {
-            string kif = format(pos.SideToMove);
+            StringBuilder kif = new StringBuilder();
+            kif.Append(format(pos.SideToMove));
             switch (move)
             {
                 case Move.NONE:
-                    return kif + "エラー";
+                    return kif.Append("エラー").ToString();
                 case Move.NULL:
-                    return kif + "パス";
+                    return kif.Append("パス").ToString();
                 case Move.RESIGN:
-                    return kif + "投了";
+                    return kif.Append("投了").ToString();
                 case Move.WIN:
-                    return kif + "勝ち宣言";
+                    return kif.Append("勝ち宣言").ToString();
             }
             // 普通の指し手
             // 着手元の駒種
@@ -170,12 +173,14 @@ namespace MyShogi.Model.Shogi.Converter
                 // 一つ前の指し手の移動先と、今回の移動先が同じ場合、"同"金のように表示する。
                 switch (sameposFmt)
                 {
+                    case SamePosFormat.NONE:
+                        break;
                     case SamePosFormat.SHORT:
-                        kif += "同";
+                        kif.Append("同");
                         break;
                     // KIF形式では"同"の後に全角空白
                     case SamePosFormat.KIFsp:
-                        kif += "同　";
+                        kif.Append("同　");
                         break;
                     // KI2形式では成香・成桂・成銀・成り動作での空白は入らない
                     case SamePosFormat.KI2sp:
@@ -186,39 +191,40 @@ namespace MyShogi.Model.Shogi.Converter
                             fromPieceType == Piece.PRO_SILVER
                         )
                         {
-                            kif += "同";
+                            kif.Append("同");
                             break;
                         }
                         else
                         {
-                            kif += "同　";
+                            kif.Append("同　");
                             break;
                         }
                     // 座標 + "同"
                     case SamePosFormat.Verbose:
-                        kif += format(move.To()) + "同";
+                        kif.Append(format(move.To())).Append("同");
                         break;
+                    default:
+                        throw new ConverterException();
                 }
             }
             else
             {
-                kif += format(move.To());
+                kif.Append(format(move.To()));
             }
-            kif += PIECE_KIF[(int)move.From()];
-            if (move.IsDrop())
-            {
-                kif += "打";
-            }
-            else
-            {
-                switch (fromsqFmt) {
-                    case FromSqFormat.NONE:
-                        break;
-                    case FromSqFormat.KIF:
+            kif.Append(PIECE_KIF[pos.PieceOn(move.From()).ToInt()]);
+            switch (fromsqFmt) {
+                case FromSqFormat.NONE:
+                    break;
+                case FromSqFormat.KIF:
+                {
+                    if (move.IsDrop())
                     {
+                        // KIF形式では持駒からの着手は必ず"打"と表記する
+                        kif.Append("打");
+                    } else {
                         if (move.IsPromote())
                         {
-                            kif += "成";
+                            kif.Append("成");
                         }
                         else if (
                             !fromPiece.IsPromote() &&
@@ -226,44 +232,61 @@ namespace MyShogi.Model.Shogi.Converter
                             Core.Util.CanPromote(pos.SideToMove, move.From()))
                         )
                         {
-                            kif += "不成";
+                            kif.Append("不成");
                         }
                         Square fromSquare = move.From();
-                        kif += "(" +
-                            HW_NUMBER[(int)move.From().ToFile()] +
-                            HW_NUMBER[(int)move.From().ToRank()] +
-                            ")";
-                        break;
+                        kif.AppendFormat("({0}{1})",
+                            HW_NUMBER[move.From().ToFile().ToInt()],
+                            HW_NUMBER[move.From().ToRank().ToInt()]
+                        );
                     }
-                    case FromSqFormat.KI2:
-                    {
-                        kif += fromSqFormat_KI2(pos, move);
-                        if (move.IsPromote())
-                        {
-                            kif += "成";
-                        }
-                        else if (
-                            !fromPiece.IsPromote() &&
-                            (Core.Util.CanPromote(pos.SideToMove, move.To()) ||
-                            Core.Util.CanPromote(pos.SideToMove, move.From()))
-                        )
-                        {
-                            kif += "不成";
-                        }
-                        break;
-                    }
+                    break;
                 }
+                case FromSqFormat.KI2:
+                {
+                    if (move.IsDrop())
+                    {
+                        // KI2では紛らわしくない場合、"打"と表記しない。
+                        Bitboard sameBB = pos.AttackersTo(pos.SideToMove, move.To()) & pos.Pieces(pos.SideToMove, move.DroppedPiece());
+                        if (!sameBB.IsZero()) kif.Append("打");
+                        break;
+                    }
+                    kif.Append(fromSqFormat_KI2(pos, move));
+                    if (move.IsPromote())
+                    {
+                        kif.Append("成");
+                        break;
+                    }
+                    if (
+                        !fromPiece.IsPromote() &&
+                        (Core.Util.CanPromote(pos.SideToMove, move.To()) ||
+                        Core.Util.CanPromote(pos.SideToMove, move.From()))
+                    )
+                    {
+                        kif.Append("不成");
+                    }
+                    break;
+                }
+                default:
+                    throw new ConverterException();
             }
-            return kif;
+            return kif.ToString();
         }
         static string fromSqFormat_KI2(Position pos, Move move)
         {
             Color c = pos.SideToMove;
             Square fromSq = move.From(), toSq = move.To();
             Piece p = pos.PieceOn(fromSq), pt = p.PieceType();
-            Bitboard sameBB = pos.AttackersTo(toSq) & pos.Pieces(p);
+            Bitboard sameBB = pos.AttackersTo(c, toSq) & pos.Pieces(c, pt);
+            if (!sameBB.IsSet(fromSq))
+            {
+                // 異常な局面・指し手をわざと食わせる必要がある場合はどうするべき？
+                if (DEBUG)
+                    throw new ConverterException("Position(" + pos.Pretty() + ") で Move(" + move.Pretty() + ") は不正な着手のようです");
+                else
+                    return "";
+            }
             if (sameBB.IsOne()) return "";
-            if (sameBB.IsZero()) throw new System.ArgumentException("maybe illegal move");
             if (bb_check(sameBB, Bitboard.RankBB(toSq.ToRank()), fromSq)) return "寄";
             if (bb_check(sameBB, dir_bb(c, toSq, Direct.D), fromSq)) return "上";
             if (bb_check(sameBB, dir_bb(c, toSq, Direct.U), fromSq)) return "引";
@@ -279,7 +302,12 @@ namespace MyShogi.Model.Shogi.Converter
             if (bb_check(sameBB, dir_bb(c, toSq, Direct.D) & dir_or_bb(c, fromSq, Direct.R), fromSq)) return "右上";
             if (bb_check(sameBB, dir_bb(c, toSq, Direct.U) & dir_or_bb(c, fromSq, Direct.L), fromSq)) return "左引";
             if (bb_check(sameBB, dir_bb(c, toSq, Direct.U) & dir_or_bb(c, fromSq, Direct.R), fromSq)) return "右引";
-            throw new System.ArgumentException("maybe illegal position/move");
+            // 正常な局面・指し手でここに到達する筈は無い
+            // 異常な局面・指し手をわざと食わせる必要がある場合はどうするべき？
+            if (DEBUG)
+                throw new ConverterException("Position(" + pos.Pretty() + ") で Move(" + move.Pretty() + ") の表記に失敗しました");
+            else
+                return "";
         }
         static bool bb_check(Bitboard samebb, Bitboard dirbb, Square sq) => (dirbb.IsSet(sq) && (samebb & dirbb).IsOne());
         static Bitboard dir_bb_(Color color, Square sq, Direct dir, bool or_flag)
@@ -296,7 +324,7 @@ namespace MyShogi.Model.Shogi.Converter
                 case Direct.L: for (File f = sq.ToFile() + offset; f <= File.FILE_9; f++) bb |= Bitboard.FileBB(f); break;
                 case Direct.U: for (Rank r = sq.ToRank() - offset; r >= Rank.RANK_1; r--) bb |= Bitboard.RankBB(r); break;
                 case Direct.D: for (Rank r = sq.ToRank() + offset; r <= Rank.RANK_9; r++) bb |= Bitboard.RankBB(r); break;
-                default: throw new System.ArgumentException("不適切な方向が指定されました");
+                default: throw new ConverterException("不適切な方向が指定されました");
             }
 
             return bb;
@@ -317,7 +345,7 @@ namespace MyShogi.Model.Shogi.Converter
                 case Direct.L: for (File fi = f + 1; fi <= File.FILE_9; fi++) bb |= Bitboard.SquareBB(Core.Util.MakeSquare(fi, r)); break;
                 case Direct.U: for (Rank ri = r - 1; ri >= Rank.RANK_1; ri--) bb |= Bitboard.SquareBB(Core.Util.MakeSquare(f, ri)); break;
                 case Direct.D: for (Rank ri = r + 1; ri <= Rank.RANK_9; ri++) bb |= Bitboard.SquareBB(Core.Util.MakeSquare(f, ri)); break;
-                default: throw new System.ArgumentException("不適切な方向が指定されました");
+                default: throw new ConverterException("不適切な方向が指定されました");
             }
             return bb;
         }
@@ -333,7 +361,7 @@ namespace MyShogi.Model.Shogi.Converter
             "歩","香","桂","銀","角","飛","金","玉",
             "と","成香","成桂","成銀","馬","龍","成金","王",
             "歩","香","桂","銀","角","飛","金","玉",
-            "と","成香","成桂","成銀","馬","龍","成金","王"
+            "と","成香","成桂","成銀","馬","龍","成金","王",
         };
         private static readonly string[] PIECE_BOD = {
             " ・"," 歩"," 香"," 桂"," 銀"," 角"," 飛"," 金",
@@ -366,71 +394,75 @@ namespace MyShogi.Model.Shogi.Converter
         /// <returns></returns>
         public static string ToBod(this Position pos)
         {
-            string bod = "";
+            StringBuilder bod = new StringBuilder();
             // TODO: 後手対局者名
-            // bod += "後手：" + whitePlayerName + "\n";
+            // 対局者名はここに書かずにヘッダ部に書くべき？
+            // bod.AppendFormat("後手：{0}", whitePlayerName).appendLine();
             // 後手の持駒
             Hand whiteHand = pos.Hand(Color.WHITE);
             if (whiteHand == Hand.ZERO)
             {
-                bod += "後手の持駒：なし\n";
+                bod.AppendLine("後手の持駒：なし");
             }
             else
             {
-                bod += "後手の持駒：";
+                bod.Append("後手の持駒：");
                 foreach (Piece pc in HAND_ORDER)
                 {
                     int cnt = whiteHand.Count(pc);
                     if (cnt > 0)
                     {
-                        bod += PIECE_KIF[(int)pc] + HAND_NUM[cnt] + " ";
+                        bod.AppendFormat("{0}{1} ", PIECE_KIF[pc.ToInt()], HAND_NUM[cnt]);
                     }
                 }
-                bod += "\n";
+                bod.AppendLine();
             }
             // 盤面
-            bod += "  ９ ８ ７ ６ ５ ４ ３ ２ １\n";
-            bod += "+---------------------------+\n";
+            bod.AppendLine("  ９ ８ ７ ６ ５ ４ ３ ２ １");
+            bod.AppendLine("+---------------------------+");
             for (Rank r = Rank.RANK_1; r <= Rank.RANK_9; r++)
             {
-                bod += "|";
+                bod.Append("|");
                 for (File f = File.FILE_9; f >= File.FILE_1; f--)
                 {
-                    bod += PIECE_BOD[(int)pos.PieceOn(Shogi.Core.Util.MakeSquare(f, r))];
+                    bod.Append(PIECE_BOD[pos.PieceOn(Core.Util.MakeSquare(f, r)).ToInt()]);
                 }
-                bod += "|" + CN_NUMBER[(int)r] + "\n";
+                bod.AppendFormat("|{0}", CN_NUMBER[r.ToInt()]).AppendLine();
             }
-            bod += "+---------------------------+\n";
+            bod.AppendLine("+---------------------------+");
             // TODO: 先手対局者名
-            // bod += "先手：" + blackPlayerName + "\n";
+            // 対局者名はここに書かずにヘッダ部に書くべき？
+            // bod.AppendFormat("先手：{0}", blackPlayerName).appendLine();
             // 先手の持駒
             Hand blackHand = pos.Hand(Color.BLACK);
             if (blackHand == Hand.ZERO)
             {
-                bod += "先手の持駒：なし\n";
+                bod.AppendLine("先手の持駒：なし");
             }
             else
             {
-                bod += "先手の持駒：";
+                bod.Append("先手の持駒：");
                 foreach (Piece pc in HAND_ORDER)
                 {
                     int cnt = blackHand.Count(pc);
                     if (cnt > 0)
                     {
-                        bod += PIECE_KIF[(int)pc] + HAND_NUM[cnt] + " ";
+                        bod.AppendFormat("{0}{1} ", PIECE_KIF[pc.ToInt()], HAND_NUM[cnt]);
                     }
                 }
-                bod += "\n";
+                bod.AppendLine();
             }
             // TODO: 現在手数、直前の指し手出力
-            // bod += "手数＝" + (string)pos.gamePly + "  " + lastMoveWithSideColor + "  まで\n";
+            // pos.gamePly が private。直前の指し手を出力するには一旦undoMove()して出力すべきか？
+            //
+            // bod.AppendFormat("手数＝{0}  {1}  まで", pos.gamePly - 1, pos.State().lastMove).appendLine();
             // 後手番のみ追加行
             if (pos.SideToMove == Color.WHITE)
             {
-                bod += "後手番\n";
+                bod.AppendLine("後手番");
             }
 
-            return bod;
+            return bod.ToString();
         }
 
         /// <summary>
