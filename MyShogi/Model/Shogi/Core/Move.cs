@@ -11,15 +11,25 @@ namespace MyShogi.Model.Shogi.Core
     {
         NONE = 0,             // 無効な移動
 
-        NULL    = (1 << 7) + 1,  // NULL MOVEを意味する指し手。Square(1)からSquare(1)への移動は存在しないのでここを特殊な記号として使う。
-        RESIGN  = (2 << 7) + 2,  // << で出力したときに"resign"と表示する投了を意味する指し手。
-        WIN     = (3 << 7) + 3,  // 入玉時の宣言勝ちのために使う特殊な指し手
-
         DROP    = 1 << 14,       // 駒打ちフラグ
         PROMOTE = 1 << 15,       // 駒成りフラグ
 
         // 将棋のある局面の合法手の最大数。593らしいが、保険をかけて少し大きめにしておく。
         MAX_MOVES = 600,
+
+        // 以下は、やねうら王から変更して、USIの通常の指し手文字列から変換したときに取りえない特殊な値にしておく。
+
+        SPECIAL = DROP + PROMOTE,
+
+        NULL   ,  // NULL MOVEを意味する指し手
+        RESIGN ,  // << で出力したときに"resign"と表示する投了を意味する指し手。自分による手番時の投了。
+        WIN    ,  // 入玉時の宣言勝ちのために使う特殊な指し手
+        MATE   ,  // 詰み(合法手がない)局面 
+        REPETITION_DRAW, // 千日手引き分け
+        REPETITION_WIN , // 千日手勝ち(相手の連続王手)
+        REPETITION_LOSE, // 千日手負け(自分の連続王手)　この値は使うことはないはず
+        TIME_UP        , // 時間切れによる負け
+        INTERRUPTION   , // ゲーム中断
     }
 
     /// <summary>
@@ -52,6 +62,16 @@ namespace MyShogi.Model.Shogi.Core
         public static Int32 ToInt(this Move m)
         {
             return (Int32)m;
+        }
+
+        /// <summary>
+        /// 指し手がSPECIALな指し手(DoMove出来ない)であるかを判定する。
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public static bool IsSpecial(this Move m)
+        {
+            return m >= Move.SPECIAL;
         }
 
         /// <summary>

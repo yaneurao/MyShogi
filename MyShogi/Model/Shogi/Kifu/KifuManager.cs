@@ -1,6 +1,7 @@
 ﻿using MyShogi.Model.Shogi.Core;
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MyShogi.Model.Shogi.Kifu
 {
@@ -88,6 +89,10 @@ namespace MyShogi.Model.Shogi.Kifu
             if ( line.StartsWith("sfen") || line.StartsWith("startpos"))
                 return FromSfenString(line);
 
+            // PSN形式なのか？
+            if (line.StartsWith("[Sente"))
+                return FromPsnString(lines);
+
             return string.Empty;
         }
 
@@ -116,6 +121,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// sfen文字列のparser
+        /// USIプロトコルの"position"コマンドで使う文字列を読み込む。
+        /// 便宜上、ここではsfenと呼んでいるが、本来はsfenには"moves .."は含まれない。
         /// エラーがあった場合は、そのエラーの文字列が返る。
         /// エラーがなければstring.Emptyが返る。
         /// </summary>
@@ -183,7 +190,35 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// 現在の棋譜をsfen化する
+        /// PSN形式の棋譜ファイルのparser
+        /// エラーがあった場合は、そのエラーの文字列が返る。
+        /// エラーがなければstring.Emptyが返る。
+        /// </summary>
+        private string FromPsnString(string[] lines)
+        {
+            if (lines.Length < 3)
+                return "PSN形式の棋譜が短すぎます。";
+
+            var r1 = new Regex(@"\[Sente ""(.*)""\]");
+            var m1 = r1.Match(lines[0]);
+            if (!m1.Success)
+                return "PSN形式で先手の対局者名の部分がおかしいです。";
+            playerName[(int)Color.BLACK] = m1.Groups[1].ToString();
+
+            var r2 = new Regex(@"\[Gote ""(.*)""\]");
+            var m2 = r2.Match(lines[1]);
+            if (!m1.Success)
+                return "PSN形式で後手の対局者名の部分がおかしいです。";
+            playerName[(int)Color.WHITE] = m2.Groups[1].ToString();
+
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// 現在の棋譜をUSIプロトコルの"position"コマンドで使う文字列化する。
+        /// 便宜上、ここではsfenと呼んでいるが、本来はsfenには"moves .."は含まれない。
+        /// 特殊な指し手は出力されない。
         /// </summary>
         /// <returns></returns>
         private string ToSfenString()
@@ -212,6 +247,15 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 // 複数候補があろうと1つ目の
                 var m = Tree.currentNode.moves[0].nextMove;
+
+                // 特殊な指し手文字列であればこれはsfenとしては出力できない。
+                if (m.IsSpecial())
+                    break;
+
+                // 非合法手も出力せずにそこで中断することにする。
+                if (!Tree.position.IsLegal(m))
+                    break;
+
                 sb.Append(" " + m.ToUsi());
 
                 Tree.DoMove(m);

@@ -18,6 +18,9 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 次の指し手
+        /// 1. SpecialMove(Moveの定義を見よ)である可能性がある。
+        /// 2. 非合法手である可能性がある。(その指し手を指して、負けたことを示すために)
+        /// DoMove()する前に、IsSpecial()とPosition.IsLegal()で判定すること。
         /// </summary>
         public Move nextMove;
 

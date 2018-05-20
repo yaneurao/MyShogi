@@ -23,7 +23,7 @@ namespace MyShogi
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Model.Test.Test.Test1();
+            Model.Test.DevTest1.Test1();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -33,17 +33,17 @@ namespace MyShogi
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Model.Test.Test.Test2();
+            Model.Test.DevTest1.Test2();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Model.Test.Test.Test3();
+            Model.Test.DevTest1.Test3();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            Model.Test.Test.Test4();
+            Model.Test.DevTest2.Test1();
         }
     }
 }

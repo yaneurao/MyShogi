@@ -1,4 +1,28 @@
 ﻿
+- KifuManager
+	- KifuManagerのCSA形式のサポート
+	- KifuManagerのKIF形式のサポート
+	- KifuManagerのKI2形式のサポート
+
+
+
+■  2018/05/21
+
+
+- Moveに、特殊な意味の定数を各種追加。千日手、中断など。
+- MoveExtensionsにIsSpecial()追加
+- KifuMove.nextMoveに非合法を追加した
+- KifuManagerのPSN形式のサポート
+	- KifuManager.FromString()にPSN形式の読み込み実装開始
+	- これ、千日手負けも単に「Sennichite」としか文字列として書き出していないんだな。
+	- チェスから来たからこうなっているのか…欠陥プロトコルだな。
+	- 対局者名の読み込み部分まで書けた。
+- TestクラスをDevTest1にリネーム
+	- Mizarさん用のテストをDevTest2に移動
+
+
+- Readme.mdに多言語対応、flodgate、通信対局の件、追加。
+
 
 ■  2018/05/20
 

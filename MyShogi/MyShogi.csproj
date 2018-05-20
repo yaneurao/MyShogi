@@ -97,9 +97,10 @@
     <Compile Include="Model\Shogi\Core\Rank.cs" />
     <Compile Include="Model\Shogi\Core\Square.cs" />
     <Compile Include="Model\Shogi\Core\SquareWithWall.cs" />
-    <Compile Include="Model\Test\Test.cs" />
+    <Compile Include="Model\Test\DevTest1.cs" />
     <Compile Include="Model\Shogi\Core\UInt128.cs" />
     <Compile Include="Model\Shogi\Core\Zobrist.cs" />
+    <Compile Include="Model\Test\DevTest2.cs" />
     <Compile Include="Model\TimeMan\TimeLimit.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
