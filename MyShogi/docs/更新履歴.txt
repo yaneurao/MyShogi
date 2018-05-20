@@ -1,5 +1,37 @@
 ﻿
 
+■  2018/05/20
+
+
+- KifuManagerのKIF/KI2/CSA/PSN/SFENファイルの読み書きのサポート作業
+	- 対応フォーマットにPSN追加
+	- KifuTree.RoundTime()追加 , KifuMoveからは削除
+	- KifuTree.TotalConsumptionTime()追加
+	- KifuTree.Add()にtotalTimeの引数追加。
+	- KifuManagerのLoad/Save()やめて、ToString,FromString()に変更。
+	- KifuTree.Init()追加
+	- KifuManger.FromSfenString()追加
+	- KifuTree.RewindToRoot(),FastForward()追加
+	- KifuManager , SFENの読み書き、動作確認完了
+- BoardTypeにOthers追加
+- Mizarさん用のテストコードをTest.Test4()に移動。
+
+
+- USI2.0.md追加 , readme.mdに追記
+
+
+- readme.mdに実装予定の内容を追記。
+
+
+
+■  2018/05/19
+
+
+- Mizarさんのプルリクをマージ
+	- Shogi.Converter: add export CSA, fix export KIF/KI2
+	- Conv to CSA/KIF/KI2 test
+
+
 ■  2018/05/18
 
 

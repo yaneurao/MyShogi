@@ -35,5 +35,15 @@ namespace MyShogi
         {
             Model.Test.Test.Test2();
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            Model.Test.Test.Test3();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            Model.Test.Test.Test4();
+        }
     }
 }
