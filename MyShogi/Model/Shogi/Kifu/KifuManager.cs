@@ -203,13 +203,193 @@ namespace MyShogi.Model.Shogi.Kifu
             var m1 = r1.Match(lines[0]);
             if (!m1.Success)
                 return "PSN形式で先手の対局者名の部分がおかしいです。";
-            playerName[(int)Color.BLACK] = m1.Groups[1].ToString();
+            playerName[(int)Color.BLACK] = m1.Groups[1].Value;
 
             var r2 = new Regex(@"\[Gote ""(.*)""\]");
             var m2 = r2.Match(lines[1]);
-            if (!m1.Success)
+            if (!m2.Success)
                 return "PSN形式で後手の対局者名の部分がおかしいです。";
-            playerName[(int)Color.WHITE] = m2.Groups[1].ToString();
+            playerName[(int)Color.WHITE] = m2.Groups[1].Value;
+
+            var r3 = new Regex(@"\[SFEN ""(.*)""\]");
+            var m3 = r3.Match(lines[2]);
+            // 将棋所で出力したPSNファイルはここに必ず"SFEN"が来るはず。平手の局面であっても…。
+            // 互換性のためにも、こうなっているべきだろう。
+
+            if (!m3.Success)
+                return "PSN形式で開始局面が解釈出来ませんでした。";
+
+            var rootSfen = m3.Groups[1].Value;
+            Tree.position.SetSfen(rootSfen);
+            rootBoardType = BoardType.Others;
+
+            // -- 4行目以降は指し手文字列などが来るはず..
+
+            // e.g.
+            // 1.P7g-7f          (00:03 / 00:00:03)
+            // 2.P5c-5d          (00:02 / 00:00:02)
+            // 3.B8hx3c+         (00:03 / 00:00:06)
+            // 5.B*4e            (00:01 / 00:00:04)
+            // 15.+B4d-3c        (00:01 / 00:00:12)
+            // 16.Sennichite     (00:01 / 00:00:10)
+
+            // 9.Resigns         (00:03 / 00:00:08)
+
+            // 駒種(成り駒は先頭に"+")、移動元、移動先をUSI文字列で書いて、captureのときは"x"、非captureは"-"
+            // 成りは末尾に"+"が入る。駒打ちは"*"
+
+            var r4 = new Regex(@"(\d+)\.([^\s]+)\s*\((.+?)\s*\/\s*(.+)\)");
+            // 正規表現のデバッグ難しすぎワロタ
+            // 正規表現デバッグ用の神サイトを使う : https://regex101.com/
+
+            for (var lineNo = 4; lineNo <= lines.Length; ++lineNo)
+            {
+                var line = lines[lineNo - 1];
+                var m4 = r4.Match(line);
+                if (m4.Success)
+                {
+                    var ply_string = m4.Groups[1].Value;
+                    int ply;
+                    if (!int.TryParse(ply_string, out ply))
+                        return string.Format("PSN形式の{0}行目の手数文字列がおかしいです。", lineNo);
+                    var move_string = m4.Groups[2].Value;
+                    var time_string1 = m4.Groups[3].Value;
+                    var time_string2 = m4.Groups[4].Value;
+
+                    Move move = Move.NONE;
+
+                    // move_stringが"Sennichite"などであるか。
+                    if (move_string == "Sennichite")
+                    {
+                        // どちらが勝ちかはわからない千日手
+                        move = Move.REPETITION;
+                        goto FINISH_MOVE_PARSE;
+                    }
+
+                    int seek_pos = 0;
+                    // 1文字ずつmove_stringから切り出す。終端になると'\0'が返る。
+                    char get_char()
+                    {
+                        return seek_pos < move_string.Length ? move_string[seek_pos++] : '\0';
+                    }
+                    // 1文字先読みする。終端だと'\0'が返る
+                    char peek_char()
+                    {
+                        return seek_pos < move_string.Length ? move_string[seek_pos] : '\0';
+                    }
+
+                    bool promote_piece = false;
+                    // 先頭の"+"は成り駒の移動を意味する
+                    if (peek_char() == '+')
+                    {
+                        get_char();
+                        promote_piece = true;
+                    }
+                    char piece_name = get_char();
+                    var pc = Util.FromUsiPiece(piece_name);
+                    if (pc == Piece.NO_PIECE)
+                        return string.Format("PSN形式の{0}行目の指し手文字列の駒名がおかしいです。", lineNo);
+                    pc = pc.PieceType();
+
+                    bool drop_move = false;
+                    if (peek_char() == '*')
+                    {
+                        get_char();
+                        drop_move = true;
+                        if (promote_piece)
+                            return string.Format("PSN形式の{0}行目の指し手文字列で成駒を打とうとしました。", lineNo);
+                    }
+
+                    // 移動元の升
+                    var c1 = get_char();
+                    var c2 = get_char();
+                    var from = Util.FromUsiSquare(c1,c2);
+                    if (from == Square.NB)
+                        return string.Format("PSN形式の{0}行目の指し手文字列の移動元の表現がおかしいです。", lineNo);
+
+                    if (drop_move)
+                    {
+                        // この升に打てばOk.
+                        move = Util.MakeMoveDrop(pc, from);
+                        goto FINISH_MOVE_PARSE;
+                    }
+
+                    //bool is_capture = false;
+                    if (peek_char() == '-')
+                    {
+                        get_char();
+                    } else if (peek_char() == 'x')
+                    {
+                        get_char();
+                        //is_capture = true;
+                    }
+                    // 移動先の升
+                    var c3 = get_char();
+                    var c4 = get_char();
+                    var to = Util.FromUsiSquare(c3, c4);
+                    if (to == Square.NB)
+                        return string.Format("PSN形式の{0}行目の指し手文字列の移動先の表現がおかしいです。", lineNo);
+
+                    bool is_promote = false;
+                    if (peek_char() == '+')
+                        is_promote = true;
+
+                    move = !is_promote ? Util.MakeMove(from, to) : Util.MakeMovePromote(from, to);
+
+                    // この指し手でcaptureになるかどうかだとか
+                    // 移動元の駒が正しいかを検証する必要があるが、
+                    // 非合法手が含まれる可能性はあるので、それは無視する。
+
+                    // ここで指し手のパースは終わり。
+                    FINISH_MOVE_PARSE:;
+
+                    // 消費時間、総消費時間のparse。これは失敗しても構わない。
+                    // 消費時間のほうはmm:ssなのでhh:mm:ss形式にしてやる。
+                    if (time_string1.Length <= 5)
+                        time_string1 = "00:" + time_string1;
+                    TimeSpan.TryParse(time_string1, out TimeSpan thinking_time);
+                    TimeSpan.TryParse(time_string2 , out TimeSpan total_time);
+
+                    var rep = Tree.position.IsRepetition();
+                    switch (rep)
+                    {
+                        case RepetitionState.NONE:
+                            break; // do nothing
+
+                        case RepetitionState.DRAW:
+                            move = Move.REPETITION_DRAW;
+                            break;
+
+                        case RepetitionState.WIN:
+                            move = Move.REPETITION_WIN;
+                            break;
+
+                        case RepetitionState.LOSE:
+                            move = Move.REPETITION_LOSE;
+                            break;
+                    }
+
+                    if (move == Move.REPETITION)
+                    {
+                        // 千日手らしいが、上で千日手判定をしているのに、それに引っかからなかった。
+                        // おかしな千日手出力であるので、ここ以降の読み込みに失敗させる。
+
+                        return string.Format("PSN形式の{0}行目が千日手となっているが千日手ではないです。", lineNo);
+                    }
+
+                    Tree.Add(move , thinking_time , total_time);
+
+                    // 特殊な指し手、もしくはLegalでないならDoMove()は行わない
+                    if (move.IsSpecial() || !Tree.position.IsLegal(move))
+                        break;
+
+                    Tree.DoMove(move);
+
+                    continue;
+                }
+
+                // 分岐棋譜、もしくは負けなど
+            }
 
 
             return string.Empty;

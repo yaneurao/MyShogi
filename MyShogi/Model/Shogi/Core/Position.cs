@@ -1199,8 +1199,11 @@ namespace MyShogi.Model.Shogi.Core
             return true;
         }
 
-
-        // 連続王手の千日手等で引き分けかどうかを返す
+        /// <summary>
+        /// 連続王手の千日手等で引き分けかどうかを返す
+        /// 千日手でなければRepetitionState.NONEが返る。
+        /// </summary>
+        /// <returns></returns>
         public RepetitionState IsRepetition()
         {
             // 現在の局面と同じhash keyを持つ局面が4回あれば、それは千日手局面であると判定する。
@@ -1222,7 +1225,7 @@ namespace MyShogi.Model.Shogi.Core
             // 遡った手数のトータル
             int t = 4;
 
-            // 盤上の駒が同一である局面が出現した回数
+            // 同一である局面が出現した回数
             int cnt = 0;
 
             while (stp != null)
@@ -1230,8 +1233,8 @@ namespace MyShogi.Model.Shogi.Core
                 // HashKeyは128bitもあるのでこのチェックで現実的には間違いないだろう。
                 if (stp.key == st.key)
                 {
-                    // 4回出現した時点で千日手が成立
-                    if (++cnt == 4)
+                    // 同一局面が4回出現した時点で千日手が成立
+                    if (++cnt == 3)
                     {
                         // 自分が王手をしている連続王手の千日手なのか？
                         if (t <= st.continuousCheck[(int)sideToMove])

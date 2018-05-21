@@ -9,6 +9,13 @@
 ■  2018/05/21
 
 
+- KifuManagerのPSN形式サポート
+	- 局面図の読み込み実装
+	- 千日手勝ちの局面を正しく読み込めた
+	- 勝ちの局面とかはまだ。あとで実装する。書き出しもまだ。あとで。
+- Position.IsRepetition()で千日手が5度目の同一局面になっていたのを4度目に修正。
+
+
 - Moveに、特殊な意味の定数を各種追加。千日手、中断など。
 - MoveExtensionsにIsSpecial()追加
 - KifuMove.nextMoveに非合法を追加した
