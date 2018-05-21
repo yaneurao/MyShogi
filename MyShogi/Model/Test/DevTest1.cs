@@ -412,7 +412,7 @@ namespace MyShogi.Model.Test
             // psnの読み込み
             var manager = new KifuManager();
 
-            var psn = System.IO.File.ReadAllText("kif/2.psn" , Encoding.GetEncoding("Shift_JIS"));
+            var psn = System.IO.File.ReadAllText("kif/4.psn" , Encoding.GetEncoding("Shift_JIS"));
             var error = manager.FromString(psn);
 
             Console.WriteLine(manager.Tree.position.Pretty());

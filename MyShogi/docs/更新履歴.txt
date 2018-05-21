@@ -1,4 +1,6 @@
 ﻿
+ToDo
+- Positionに入玉判定のmethod追加。
 - KifuManager
 	- KifuManagerのCSA形式のサポート
 	- KifuManagerのKIF形式のサポート
@@ -7,6 +9,17 @@
 
 
 ■  2018/05/21
+
+
+- KifuManagerのPSN形式サポート
+	- 読み込み部、詰みの局面に対応。
+	- PSN形式のヘッダ部の解釈、きちんとやることにした。
+- Position.IsMated()追加
+- PSNフォーマットのサイトを見ると千日手とか宣言勝ちについて規定がない。どう見ても欠陥フォーマットである。
+	 http://genedavis.com/articles/2014/05/09/psn/
+	- 将棋所の出力するPSN形式が読めればいいや…。
+	- 詰み、持将棋、中断の解釈に対応。
+	- 分岐棋譜、意外と大変…。対応するか考え中。
 
 
 - KifuManagerのPSN形式サポート

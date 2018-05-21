@@ -1256,6 +1256,16 @@ namespace MyShogi.Model.Shogi.Core
             return RepetitionState.NONE;
         }
 
+        /// <summary>
+        /// この局面で手番側が詰んでいるか(合法な指し手がないか)
+        /// 実際に指し手生成をして判定を行うので、引数として指し手生成バッファを渡してやる必要がある。
+        /// </summary>
+        /// <returns></returns>
+        public bool IsMated(Move[] moves)
+        {
+            return InCheck() && MoveGen.LegalAll(this, moves, 0) == 0;
+        }
+
         // -------------------------------------------------------------------------
         // 利き
         // -------------------------------------------------------------------------

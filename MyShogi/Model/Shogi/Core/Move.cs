@@ -24,13 +24,14 @@ namespace MyShogi.Model.Shogi.Core
         NULL   ,  // NULL MOVEを意味する指し手
         RESIGN ,  // << で出力したときに"resign"と表示する投了を意味する指し手。自分による手番時の投了。
         WIN    ,  // 入玉時の宣言勝ちのために使う特殊な指し手
-        MATE   ,  // 詰み(合法手がない)局面 
+        MATED  ,  // 詰み(合法手がない)局面(手番側が詰まされていて合法手がない) 
         REPETITION     , // 千日手(PSN形式で、DRAWかWINかわからない"Sennichite"という文字列が送られてくるのでその解釈用)
         REPETITION_DRAW, // 千日手引き分け
         REPETITION_WIN , // 千日手勝ち(相手の連続王手)
         REPETITION_LOSE, // 千日手負け(自分の連続王手)　この値は使うことはないはず
         TIME_UP        , // 時間切れによる負け
-        INTERRUPTION   , // ゲーム中断
+        INTERRUPT      , // ゲーム中断
+        MAX_MOVES_DRAW , // 最大手数に達したために引き分け
     }
 
     /// <summary>

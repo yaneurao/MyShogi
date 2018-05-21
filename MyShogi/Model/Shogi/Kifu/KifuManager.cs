@@ -196,34 +196,49 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         private string FromPsnString(string[] lines)
         {
-            if (lines.Length < 3)
-                return "PSN形式の棋譜が短すぎます。";
+            var lineNo = 1;
 
-            var r1 = new Regex(@"\[Sente ""(.*)""\]");
-            var m1 = r1.Match(lines[0]);
-            if (!m1.Success)
-                return "PSN形式で先手の対局者名の部分がおかしいです。";
-            playerName[(int)Color.BLACK] = m1.Groups[1].Value;
+            var r1 = new Regex(@"\[([^\s]+)\s*""(.*)""\]");
 
-            var r2 = new Regex(@"\[Gote ""(.*)""\]");
-            var m2 = r2.Match(lines[1]);
-            if (!m2.Success)
-                return "PSN形式で後手の対局者名の部分がおかしいです。";
-            playerName[(int)Color.WHITE] = m2.Groups[1].Value;
+            for (; lineNo <= lines.Length; ++lineNo)
+            {
+                var line = lines[lineNo - 1];
+                var m1 = r1.Match(line);
+                if (m1.Success)
+                {
+                    var token = m1.Groups[1].Value;
+                    var body = m1.Groups[2].Value;
 
-            var r3 = new Regex(@"\[SFEN ""(.*)""\]");
-            var m3 = r3.Match(lines[2]);
-            // 将棋所で出力したPSNファイルはここに必ず"SFEN"が来るはず。平手の局面であっても…。
-            // 互換性のためにも、こうなっているべきだろう。
+                    switch (token)
+                    {
+                        case "Sente":
+                            playerName[(int)Color.BLACK] = body;
+                            break;
 
-            if (!m3.Success)
-                return "PSN形式で開始局面が解釈出来ませんでした。";
+                        case "Gote":
+                            playerName[(int)Color.WHITE] = body;
+                            break;
 
-            var rootSfen = m3.Groups[1].Value;
-            Tree.position.SetSfen(rootSfen);
-            rootBoardType = BoardType.Others;
+                        case "SFEN":
+                            // 将棋所で出力したPSNファイルはここに必ず"SFEN"が来るはず。平手の局面であっても…。
+                            // 互換性のためにも、こうなっているべきだろう。
 
-            // -- 4行目以降は指し手文字列などが来るはず..
+                            rootSfen = body;
+                            Tree.position.SetSfen(body);
+                            rootBoardType = BoardType.Others;
+                            break;
+                    }
+                }
+                else
+                    break;
+            }
+
+            // PSNフォーマットのサイトを見ると千日手とか宣言勝ちについて規定がない。
+            // どう見ても欠陥フォーマットである。
+            // http://genedavis.com/articles/2014/05/09/psn/
+
+
+            // -- そこ以降は指し手文字列などが来るはず..
 
             // e.g.
             // 1.P7g-7f          (00:03 / 00:00:03)
@@ -238,11 +253,19 @@ namespace MyShogi.Model.Shogi.Kifu
             // 駒種(成り駒は先頭に"+")、移動元、移動先をUSI文字列で書いて、captureのときは"x"、非captureは"-"
             // 成りは末尾に"+"が入る。駒打ちは"*"
 
+            // 入玉宣言勝ちは将棋所では次のようになっているようだ。
+            // 75.Jishogi        (00:02 / 00:00:44)
+            // {
+            // 入玉宣言により勝ち。
+            // }
+
             var r4 = new Regex(@"(\d+)\.([^\s]+)\s*\((.+?)\s*\/\s*(.+)\)");
             // 正規表現のデバッグ難しすぎワロタ
             // 正規表現デバッグ用の神サイトを使う : https://regex101.com/
 
-            for (var lineNo = 4; lineNo <= lines.Length; ++lineNo)
+            var moves = new Move[(int)Move.MAX_MOVES];
+
+            for (; lineNo <= lines.Length; ++lineNo)
             {
                 var line = lines[lineNo - 1];
                 var m4 = r4.Match(line);
@@ -259,11 +282,28 @@ namespace MyShogi.Model.Shogi.Kifu
                     Move move = Move.NONE;
 
                     // move_stringが"Sennichite"などであるか。
-                    if (move_string == "Sennichite")
+                    switch (move_string)
                     {
-                        // どちらが勝ちかはわからない千日手
-                        move = Move.REPETITION;
-                        goto FINISH_MOVE_PARSE;
+                        case "Sennichite":
+                            // どちらが勝ちかはわからない千日手
+                            move = Move.REPETITION;
+                            goto FINISH_MOVE_PARSE;
+
+                        case "Resigns":
+                            move = Move.RESIGN;
+                            goto FINISH_MOVE_PARSE;
+
+                        case "Interrupt":
+                            move = Move.INTERRUPT;
+                            goto FINISH_MOVE_PARSE;
+
+                        case "Mate":
+                            move = Move.MATED;
+                            goto FINISH_MOVE_PARSE;
+
+                        case "Jishogi":
+                            move = Move.WIN;
+                            goto FINISH_MOVE_PARSE;
                     }
 
                     int seek_pos = 0;
@@ -350,6 +390,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     TimeSpan.TryParse(time_string1, out TimeSpan thinking_time);
                     TimeSpan.TryParse(time_string2 , out TimeSpan total_time);
 
+                    // -- 千日手の判定
+
                     var rep = Tree.position.IsRepetition();
                     switch (rep)
                     {
@@ -376,6 +418,28 @@ namespace MyShogi.Model.Shogi.Kifu
 
                         return string.Format("PSN形式の{0}行目が千日手となっているが千日手ではないです。", lineNo);
                     }
+
+                    // -- 詰みの判定
+
+                    if (Tree.position.IsMated(moves))
+                    {
+                        // move == Move.MATEDでないとおかしいのだが中断もありうるので強制的に詰み扱いにしておく。
+                        
+                        move = Move.MATED;
+                    }
+
+                    // -- 持将棋の判定
+
+                    if (move == Move.WIN)
+                    {
+                        // 持将棋の条件が異なるかも知れないので、この判定はしないことにする。
+                    /*
+                        if (!Tree.position.IsNyuugyoku())
+                            return string.Format("PSN形式の{0}行目が持将棋となっているが持将棋ではないです。", lineNo);
+                    */
+                    }
+
+                    // -- DoMove()
 
                     Tree.Add(move , thinking_time , total_time);
 
