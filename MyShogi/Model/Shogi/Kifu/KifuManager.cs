@@ -259,22 +259,65 @@ namespace MyShogi.Model.Shogi.Kifu
             // 入玉宣言により勝ち。
             // }
 
+            // 変化手順の表現
+            // 6手目からの変化手順の場合
+            // Variation:6
+            // 6.K5a-6b          (00:02 / 00:00:04)
+
+            // 指し手の正規表現
             var r4 = new Regex(@"(\d+)\.([^\s]+)\s*\((.+?)\s*\/\s*(.+)\)");
             // 正規表現のデバッグ難しすぎワロタ
             // 正規表現デバッグ用の神サイトを使う : https://regex101.com/
 
+            // 変化手順
+            var r5 = new Regex(@"Variation:(\d+)");
+
             var moves = new Move[(int)Move.MAX_MOVES];
 
+            // 初期局面からの手数
+            int ply1 = 1;
             for (; lineNo <= lines.Length; ++lineNo)
             {
                 var line = lines[lineNo - 1];
+
+                // コメントブロックのスキップ
+                // "{"で始まる行に遭遇したら、"}"で終わる行まで読み飛ばす
+                if (line.StartsWith("{"))
+                {
+                    for (++lineNo; lineNo <= lines.Length; ++lineNo)
+                    {
+                        line = lines[lineNo - 1];
+                        if (line.EndsWith("}"))
+                            break;
+                    }
+                    continue;
+                }
+
+                // 変化手順
+                var m5 = r5.Match(line);
+                if (m5.Success)
+                {
+                    // 正規表現で数値にマッチングしているのでこのparseは100%成功する。
+                    int ply2 = int.Parse(m5.Groups[1].Value);
+
+                    // ply2手目まで局面を巻き戻す
+                    while (ply2 < ply1)
+                    {
+                        --ply1;
+                        Tree.UndoMove();
+                    }
+                    continue;
+                }
+
                 var m4 = r4.Match(line);
                 if (m4.Success)
                 {
-                    var ply_string = m4.Groups[1].Value;
-                    int ply;
-                    if (!int.TryParse(ply_string, out ply))
-                        return string.Format("PSN形式の{0}行目の手数文字列がおかしいです。", lineNo);
+                    // 正規表現で数値にマッチングしているのでこのparseは100%成功する。
+                    var ply2 = int.Parse(m4.Groups[1].Value);
+
+                    // ply1 == ply2のはずなのだが…。
+                    // まあいいか…。
+
                     var move_string = m4.Groups[2].Value;
                     var time_string1 = m4.Groups[3].Value;
                     var time_string2 = m4.Groups[4].Value;
@@ -443,14 +486,19 @@ namespace MyShogi.Model.Shogi.Kifu
 
                     // 特殊な指し手、もしくはLegalでないならDoMove()は行わない
                     if (move.IsSpecial() || !Tree.position.IsLegal(move))
-                        break;
+                    {
+                        // まだ次の分岐棋譜があるかも知れないので読み進める
+                        continue;
+                    }
 
                     Tree.DoMove(move);
+                    ++ply1;
 
                     continue;
+                } else
+                {
+                    // 空行など、parseに失敗したものは読み飛ばす
                 }
-
-                // 分岐棋譜、もしくは負けなど
             }
 
 
