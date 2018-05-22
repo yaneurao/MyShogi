@@ -17,8 +17,11 @@ USIプロトコル対応の将棋エンジンが使えます。// 以下、書�
 - 通常対局機能
 - 詰将棋エンジンの利用
 - 検討機能
-- KIF/KI2/CSA/SFEN/PSN/[PSN2](docs/PSN2format.md)形式の棋譜の入出力機能。分岐棋譜対応。
+- 形勢のグラフ表示
+- KIF/KI2/CSA/SFEN/PSN/[PSN2](MyShogi/docs/PSN2format.md)形式の棋譜の入出力機能。分岐棋譜対応。
 - 入玉宣言勝ちの条件変更(24点法、27点法、トライルール)
+
+現在の作業状況は、[こちら](MyShogi/docs/progress.md)にあります。
 
 # 商用版について
 
@@ -56,8 +59,8 @@ USIプロトコル対応の将棋エンジンが使えます。// 以下、書�
 
 # 本プロジェクトが提案するフォーマット
 
-- [PSN2format](docs/PSN2format.md) : PSN形式から改良された棋譜ファイルフォーマット
-- [USI2.0](docs/USI2.0.md) : USIプロトコルから改良されたプロトコル
+- [PSN2format](MyShogi/docs/PSN2format.md) : PSN形式から改良された棋譜ファイルフォーマット
+- [USI2.0](MyShogi/docs/USI2.0.md) : USIプロトコルから改良されたプロトコル
 
 # 謝辞
 
@@ -75,5 +78,4 @@ USIプロトコル対応の将棋エンジンが使えます。// 以下、書�
 
 - ソースコードはGPLv3
 - 画面素材、音声素材の単体配布(二次利用等)は禁止
-
 

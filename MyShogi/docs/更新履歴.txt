@@ -2,15 +2,34 @@
 ToDo
 
 - KifuManager
-	- KifuManagerのCSA形式のサポート
 	- KifuManagerのKIF形式のサポート
 	- KifuManagerのKI2形式のサポート
 
-- readme.mdに商用版について紹介文追加
-
-
 
 ■  2018/05/22
+
+
+- KifuManager
+	- KifuManagerのCSA形式の読み込みのサポート
+	- KifuManager.FromCsaString()作業開始
+
+
+- readme.mdに形勢グラフの件、追記
+- docs/progress.md追加
+- docs/ を MyShogi/docs/に移動
+
+
+- KifuTreeのply削除。
+	- Position.GamePly追加
+- KifuFileTypeにPSN2追加。
+- KifuManagerでPSN2フォーマットの読み書きに対応
+- KifuManagerでPSNフォーマットの"Timeup"に対応
+
+
+- PSN2 formatを策定
+
+
+- readme.mdに商用版について紹介文追加
 
 
 - KifuTreeにply追加。
