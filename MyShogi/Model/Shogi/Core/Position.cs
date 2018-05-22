@@ -1411,6 +1411,33 @@ namespace MyShogi.Model.Shogi.Core
             return Move.NONE;
         }
 
+        /// <summary>
+        /// 盤面と手駒、手番を与えて、そのsfenを返す。
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name=""></param>
+        /// <param name="hands"></param>
+        /// <param name=""></param>
+        /// <param name="turn"></param>
+        /// <param name="gamePly"></param>
+        /// <returns></returns>
+        public static string SfenFromRawdata(Piece[/*81*/] board, Hand[/*2*/] hands, Color turn, int gamePly)
+        {
+            // 内部的な構造体にコピーして、sfen()を呼べば、変換過程がそこにしか依存していないならば
+            // これで正常に変換されるのでは…。
+            var pos = new Position();
+
+            Array.Copy(board, pos.board , 81);
+            Array.Copy(hands, pos.hand  ,  2);
+            pos.sideToMove = turn;
+            pos.gamePly = gamePly;
+
+            return pos.ToSfen();
+
+            // ↑の実装、美しいが、いかんせん遅い。
+            // 棋譜を大量に読み込ませて学習させるときにここがボトルネックになるので直接unpackする関数を書く。(べき)
+        }
+
         // -------------------------------------------------------------------------
         // 利き
         // -------------------------------------------------------------------------

@@ -440,7 +440,9 @@ namespace MyShogi.Model.Test
             Console.WriteLine(psn2);
 #endif
 
-#if true
+#if false
+            // あとで書く
+
             // KifuManagerのテスト
 
             // CSA形式の読み込み
@@ -455,6 +457,20 @@ namespace MyShogi.Model.Test
             // psn2での書き出し
             var psn2 = manager.ToString(KifuFileType.PSN2);
             Console.WriteLine(psn2);
+#endif
+
+#if false
+            // 配列を用意してsfen文字列化するテスト
+            var board = new Piece[81];
+            var hands = new Hand[2];
+            hands[(int)Color.WHITE].Add(Piece.KNIGHT, 2);
+            var turn = Color.WHITE;
+            var gamePly = 5;
+            board[(int)Square.SQ_59] = Piece.B_KING;
+            board[(int)Square.SQ_51] = Piece.W_KING;
+            var sfen = Position.SfenFromRawdata(board, hands, turn, gamePly);
+
+            Console.WriteLine(sfen);
 #endif
 
         }
