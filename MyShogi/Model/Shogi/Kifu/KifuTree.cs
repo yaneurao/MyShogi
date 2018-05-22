@@ -55,7 +55,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// rootNodeだとply==1となる。
         /// DoMove()で1手加算され、UndoMove()で1手減算される。
         /// </summary>
-        public int ply { get { return position.GamePly; } }
+        public int ply { get { return position.gamePly; } }
 
         // -------------------------------------------------------------------------
         // 局面に対する操作子

@@ -12,6 +12,8 @@ ToDo
 - KifuManager
 	- KifuManagerのCSA形式の読み込みのサポート
 	- KifuManager.FromCsaString()作業開始
+- Position.gamePly、自動プロパティに変更。
+- Position.lastPieceNo、getはpublicに変更。
 
 
 - readme.mdに形勢グラフの件、追記

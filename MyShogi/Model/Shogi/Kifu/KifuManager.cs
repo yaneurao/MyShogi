@@ -98,6 +98,10 @@ namespace MyShogi.Model.Shogi.Kifu
             if (line.StartsWith("[BLACK"))
                 return FromPsnString(lines , KifuFileType.PSN2);
 
+            // CSA形式なのか？
+            if (line.StartsWith("V2")) // 将棋所だと"V2.2"など書いてあるはず。
+                return FromCsaString(lines, KifuFileType.CSA);
+
             return string.Empty;
         }
 
@@ -568,6 +572,63 @@ namespace MyShogi.Model.Shogi.Kifu
                     // 空行など、parseに失敗したものは読み飛ばす
                 }
             }
+
+
+            return string.Empty;
+        }
+
+        /// <summary>
+        /// CSA形式の棋譜ファイルのparser
+        /// エラーがあった場合は、そのエラーの文字列が返る。
+        /// エラーがなければstring.Emptyが返る。
+        /// </summary>
+        private string FromCsaString(string[] lines, KifuFileType kf)
+        {
+            var lineNo = 1;
+
+            /*
+             * 例)
+
+                V2.2
+                N+人間
+                N-人間
+                P1-KY-KE-GI-KI-OU-KI-GI-KE-KY
+                P2 * -HI *  *  *  *  * -KA * 
+                P3-FU-FU-FU-FU-FU-FU-FU-FU-FU
+                P4 *  *  *  *  *  *  *  *  * 
+                P5 *  *  *  *  *  *  *  *  * 
+                P6 *  *  *  *  *  *  *  *  * 
+                P7+FU+FU+FU+FU+FU+FU+FU+FU+FU
+                P8 * +KA *  *  *  *  * +HI * 
+                P9+KY+KE+GI+KI+OU+KI+GI+KE+KY
+                P+
+                P-
+                +
+                +7776FU,T3
+                -8384FU,T1
+            */
+
+            string line = string.Empty;
+            for (; lineNo <= lines.Length; ++lineNo)
+            {
+                line = lines[lineNo - 1];
+
+                if (line.StartsWith("N+"))
+                {
+                    playerName[(int)Color.BLACK] = line.Substring(2);
+                    continue;
+                }
+                if (line.StartsWith("N-"))
+                {
+                    playerName[(int)Color.WHITE] = line.Substring(2);
+                    continue;
+                }
+            }
+
+            if (!line.StartsWith("P1")) // 局面図が来た
+                return string.Format("CSA形式の{0}行目で局面図が来ずにファイルが終了しました。", lineNo);
+
+            
 
 
             return string.Empty;

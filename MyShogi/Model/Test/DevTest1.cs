@@ -423,7 +423,7 @@ namespace MyShogi.Model.Test
             Console.WriteLine(psn2);
 #endif
 
-#if true
+#if false
             // KifuManagerのテスト
 
             // psn2の読み込み
@@ -435,7 +435,24 @@ namespace MyShogi.Model.Test
             Console.WriteLine(manager.Tree.position.Pretty());
             Console.WriteLine("Error = " + error);
 
-            // psnでの書き出し
+            // psn2での書き出し
+            var psn2 = manager.ToString(KifuFileType.PSN2);
+            Console.WriteLine(psn2);
+#endif
+
+#if true
+            // KifuManagerのテスト
+
+            // CSA形式の読み込み
+            var manager = new KifuManager();
+
+            var csa = System.IO.File.ReadAllText("kif/1.csa" , Encoding.GetEncoding("Shift_JIS"));
+            var error = manager.FromString(csa);
+
+            Console.WriteLine(manager.Tree.position.Pretty());
+            Console.WriteLine("Error = " + error);
+
+            // psn2での書き出し
             var psn2 = manager.ToString(KifuFileType.PSN2);
             Console.WriteLine(psn2);
 #endif

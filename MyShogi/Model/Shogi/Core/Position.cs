@@ -89,7 +89,7 @@ namespace MyShogi.Model.Shogi.Core
         // →　どこまで使用してあるかは、Hand(Color,Piece)を用いればわかる。
 
         // 使用しているPieceNoの終端
-        PieceNo lastPieceNo;
+        public PieceNo lastPieceNo { get; private set;}
 
         /// <summary>
         /// 手番
@@ -105,8 +105,7 @@ namespace MyShogi.Model.Shogi.Core
         /// <summary>
         /// 初期局面からの手数(初期局面 == 1)
         /// </summary>
-        private int gamePly = 1;
-        public int GamePly { get { return gamePly; } }
+        public int gamePly { get; private set; } = 1;
 
         /// <summary>
         /// 局面の付随情報
