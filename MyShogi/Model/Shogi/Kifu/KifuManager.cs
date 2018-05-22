@@ -1,5 +1,6 @@
 ﻿using MyShogi.Model.Shogi.Core;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -104,15 +105,28 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="kf"></param>
         public string ToString(KifuFileType kt)
         {
+            // 局面をrootに移動(あとで戻す)
+            var moves = Tree.RewindToRoot();
+
+            string result = string.Empty;
             switch(kt)
             {
                 case KifuFileType.SFEN:
-                    return ToSfenString();
+                    result = ToSfenString();
+                    break;
+
+                case KifuFileType.PSN:
+                    result = ToPsnString();
+                    break;
 
                 // ToDo : 他の形式もサポートする
             }
 
-            return "";
+            // 呼び出された時の局面に戻す
+            Tree.RewindToRoot();
+            Tree.FastForward(moves);
+
+            return result;
         }
 
         // -------------------------------------------------------------------------
@@ -274,8 +288,6 @@ namespace MyShogi.Model.Shogi.Kifu
 
             var moves = new Move[(int)Move.MAX_MOVES];
 
-            // 初期局面からの手数
-            int ply1 = 1;
             for (; lineNo <= lines.Length; ++lineNo)
             {
                 var line = lines[lineNo - 1];
@@ -298,14 +310,12 @@ namespace MyShogi.Model.Shogi.Kifu
                 if (m5.Success)
                 {
                     // 正規表現で数値にマッチングしているのでこのparseは100%成功する。
-                    int ply2 = int.Parse(m5.Groups[1].Value);
+                    int ply = int.Parse(m5.Groups[1].Value);
 
-                    // ply2手目まで局面を巻き戻す
-                    while (ply2 < ply1)
-                    {
-                        --ply1;
+                    // ply手目まで局面を巻き戻す
+                    while (ply < Tree.ply)
                         Tree.UndoMove();
-                    }
+
                     continue;
                 }
 
@@ -492,9 +502,9 @@ namespace MyShogi.Model.Shogi.Kifu
                     }
 
                     Tree.DoMove(move);
-                    ++ply1;
 
                     continue;
+
                 } else
                 {
                     // 空行など、parseに失敗したものは読み飛ばす
@@ -513,9 +523,6 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <returns></returns>
         private string ToSfenString()
         {
-            // 現在の局面をrootまで巻き戻す
-            var moves = Tree.RewindToRoot();
-
             var sb = new StringBuilder();
             if (rootBoardType == BoardType.NoHandicap)
             {
@@ -551,12 +558,137 @@ namespace MyShogi.Model.Shogi.Kifu
                 Tree.DoMove(m);
             }
 
-            // 元の局面に戻す
-            Tree.RewindToRoot();
-            Tree.FastForward(moves);
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// PSN形式で書き出す。
+        /// </summary>
+        /// <returns></returns>
+        private string ToPsnString()
+        {
+            var sb = new StringBuilder();
+
+            // 対局者名
+            sb.AppendLine(string.Format(@"[Sente ""{0}""]", playerName[(int)Color.BLACK]));
+            sb.AppendLine(string.Format(@"[Gote ""{0}""]", playerName[(int)Color.WHITE]));
+
+            // 初期局面
+            sb.AppendLine(string.Format(@"[SFEN ""{0}""]", Tree.position.ToSfen()));
+
+            // -- 局面を出力していく
+
+            // Treeのmoves[0]を選択してDoMove()を繰り返したものがPVで、これを最初に出力しなければならないから、
+            // わりと難しい。
+
+            // 再帰で書くの難しいので分岐地点をstackに積んでいく実装。
+
+            var stack = new Stack<Node>();
+
+            bool endNode = false;
+
+            while (!endNode || stack.Count != 0)
+            {
+                int select = 0;
+                if (endNode)
+                {
+                    endNode = false;
+                    // 次の分岐まで巻き戻して、また出力していく。
+
+                    var node = stack.Pop();
+
+                    sb.AppendLine();
+                    sb.AppendLine(string.Format("Variation:{0}", node.ply));
+
+                    while (node.ply < Tree.ply)
+                        Tree.UndoMove();
+
+                    select = node.select;
+                    goto SELECT;
+                }
+
+                int count = Tree.currentNode.moves.Count;
+                if (count == 0)
+                {
+                    // ここで指し手終わっとる。終端ノードであるな。
+                    endNode = true;
+                    continue;
+                }
+
+                // このnodeの分岐の数
+                if (count != 1)
+                {
+                    // あとで分岐しないといけないので残りをstackに記録しておく
+                    for(int i=1;i<count;++i)
+                        stack.Push(new Node(Tree.ply, i));
+                }
+
+                SELECT:;
+                var move = Tree.currentNode.moves[select];
+
+                Move m = move.nextMove;
+                string mes;
+
+                if (m.IsSpecial())
+                {
+                    // 特殊な指し手なら、それを出力して終わり。
+
+                    endNode = true;
+
+                    switch(m)
+                    {
+                        case Move.MATED:           mes = "Mate";       break;
+                        case Move.INTERRUPT:       mes = "Interrupt";  break;
+                        case Move.REPETITION_WIN:  mes = "Sennichite"; break;
+                        case Move.REPETITION_DRAW: mes = "Sennichite"; break;
+                        case Move.WIN:             mes = "Jishogi";    break;
+                        case Move.RESIGN:          mes = "Resigns";    break;
+                        default:                   mes = "";           break;
+                    }
+
+                    mes = Tree.ply + "." + mes;
+                }
+                else
+                {
+                    // この指し手を出力する
+                    var to = m.To();
+                    Piece pc;
+                    if (m.IsDrop())
+                    {
+                        pc = m.DroppedPiece().PieceType();
+                        mes = string.Format("{0}.{1}*{2}", Tree.ply, pc.ToUsi(), to.ToUsi());
+                    }
+                    else
+                    {
+                        var c = Tree.position.IsCapture(m) ? 'x' : '-';
+                        var c2 = m.IsPromote() ? "+" : "";
+                        var from = m.From();
+                        pc = Tree.position.PieceOn(m.From()).PieceType();
+                        mes = string.Format("{0}.{1}{2}{3}{4}{5}", Tree.ply, pc.ToUsi(), from.ToUsi(), c, to.ToUsi(), c2);
+                    }
+
+
+                    Tree.DoMove(move);
+                }
+
+                var time_string1 = move.thinkingTime.ToString("mm\\:ss");
+                var time_string2 = move.totalTime.ToString("hh\\:mm\\:ss");
+
+                sb.AppendLine(string.Format("{0,-18}({1} / {2})", mes , time_string1 , time_string2));
+            }
 
             return sb.ToString();
         }
+
+        /// <summary>
+        /// ply手目のselect個目の指し手分岐をのちほど選択するの意味
+        /// </summary>
+        private struct Node
+        {
+            public int ply;
+            public int select;
+            public Node(int ply_, int select_) { ply = ply_; select = select_; }
+        };
 
     }
 }

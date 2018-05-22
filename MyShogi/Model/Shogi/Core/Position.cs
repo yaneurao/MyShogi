@@ -1287,6 +1287,16 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// 捕獲する指し手であるか
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public bool IsCapture(Move m)
+        {
+            return PieceOn(m.To()) != Piece.NO_PIECE;
+        }
+
+        /// <summary>
         /// 宣言勝ちできる局面であるかを判定する。
         /// 
         /// 宣言勝ちできる局面でなければMove.NONEが返る。
