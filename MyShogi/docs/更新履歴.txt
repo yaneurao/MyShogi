@@ -1,12 +1,29 @@
 ﻿
 ToDo
+
 - KifuManager
 	- KifuManagerのCSA形式のサポート
 	- KifuManagerのKIF形式のサポート
 	- KifuManagerのKI2形式のサポート
 
+- readme.mdに商用版について紹介文追加
+
+
 
 ■  2018/05/22
+
+
+- KifuTreeにply追加。
+- KifuManager
+	- PSN形式の書き出しに対応
+	- 分岐棋譜に対応
+	- 持将棋、詰み、中断、千日手の棋譜に対して簡単な棋譜を読み込んで書き出すテスト完了
+- Position.IsCapture(Move)追加。
+
+
+- KifuManager
+	- PSN形式の読み込み、コメントブロック、空行のスキップ処理
+	- PSN形式の読み込み、分岐棋譜のサポート
 
 
 - readme.md更新
