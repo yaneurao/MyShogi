@@ -1,11 +1,21 @@
 ﻿
 ToDo
-- Positionに入玉判定のmethod追加。
 - KifuManager
 	- KifuManagerのCSA形式のサポート
 	- KifuManagerのKIF形式のサポート
 	- KifuManagerのKI2形式のサポート
 
+
+■  2018/05/22
+
+
+- readme.md更新
+	- 商用版で実装する予定のこと書いた
+
+
+- Positionに入玉判定のmethod追加。DeclarationWin()
+- EnteringKingRule.cs追加
+- Position.Piece(Color,Piece,...)追加
 
 
 ■  2018/05/21
