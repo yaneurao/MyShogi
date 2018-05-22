@@ -9,6 +9,7 @@
         KI2  , // KI2形式
         CSA  , // CSA形式
         PSN  , // PSN形式
+        PSN2 , // PSN2形式
         SFEN , // SFEN形式
     }
 }

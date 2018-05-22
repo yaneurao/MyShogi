@@ -92,7 +92,11 @@ namespace MyShogi.Model.Shogi.Kifu
 
             // PSN形式なのか？
             if (line.StartsWith("[Sente"))
-                return FromPsnString(lines);
+                return FromPsnString(lines , KifuFileType.PSN);
+
+            // PSN2形式なのか？
+            if (line.StartsWith("[BLACK"))
+                return FromPsnString(lines , KifuFileType.PSN2);
 
             return string.Empty;
         }
@@ -116,7 +120,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     break;
 
                 case KifuFileType.PSN:
-                    result = ToPsnString();
+                case KifuFileType.PSN2:
+                    result = ToPsnString(kt);
                     break;
 
                 // ToDo : 他の形式もサポートする
@@ -208,7 +213,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// エラーがあった場合は、そのエラーの文字列が返る。
         /// エラーがなければstring.Emptyが返る。
         /// </summary>
-        private string FromPsnString(string[] lines)
+        private string FromPsnString(string[] lines , KifuFileType kf)
         {
             var lineNo = 1;
 
@@ -226,10 +231,12 @@ namespace MyShogi.Model.Shogi.Kifu
                     switch (token)
                     {
                         case "Sente":
+                        case "BLACK":
                             playerName[(int)Color.BLACK] = body;
                             break;
 
                         case "Gote":
+                        case "WHITE":
                             playerName[(int)Color.WHITE] = body;
                             break;
 
@@ -251,6 +258,8 @@ namespace MyShogi.Model.Shogi.Kifu
             // どう見ても欠陥フォーマットである。
             // http://genedavis.com/articles/2014/05/09/psn/
 
+            // PSN2フォーマットを策定した
+            // cf. https://github.com/yaneurao/MyShogi/blob/master/docs/PSN2format.md
 
             // -- そこ以降は指し手文字列などが来るはず..
 
@@ -335,28 +344,76 @@ namespace MyShogi.Model.Shogi.Kifu
                     Move move = Move.NONE;
 
                     // move_stringが"Sennichite"などであるか。
-                    switch (move_string)
+                    if (kf == KifuFileType.PSN)
+                        switch (move_string)
+                        {
+                            case "Sennichite":
+                                // どちらが勝ちかはわからない千日手
+                                move = Move.REPETITION;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "Resigns":
+                                move = Move.RESIGN;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "Interrupt":
+                                move = Move.INTERRUPT;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "Mate":
+                                move = Move.MATED;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "Jishogi":
+                                // 入玉宣言勝ちなのか最大手数による引き分けなのか不明
+                                move = Move.WIN;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "Timeup":
+                                move = Move.TIME_UP;
+                                goto FINISH_MOVE_PARSE;
+                        }
+                    else if (kf == KifuFileType.PSN2)
+                        switch (move_string)
+                        {
+                            case "Resigns":
+                                move = Move.RESIGN;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "Interrupt":
+                                move = Move.INTERRUPT;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "Mate":
+                                move = Move.MATED;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "Timeup":
+                                move = Move.TIME_UP;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "MaxMovesDraw":
+                                move = Move.MAX_MOVES_DRAW;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "DeclarationWin":
+                                move = Move.WIN;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "RepetitionDraw":
+                                move = Move.REPETITION_DRAW;
+                                goto FINISH_MOVE_PARSE;
+
+                            case "RepetitionWin":
+                                move = Move.REPETITION_WIN;
+                                goto FINISH_MOVE_PARSE;
+                        }
+
+                    if (kf == KifuFileType.PSN2)
                     {
-                        case "Sennichite":
-                            // どちらが勝ちかはわからない千日手
-                            move = Move.REPETITION;
-                            goto FINISH_MOVE_PARSE;
-
-                        case "Resigns":
-                            move = Move.RESIGN;
-                            goto FINISH_MOVE_PARSE;
-
-                        case "Interrupt":
-                            move = Move.INTERRUPT;
-                            goto FINISH_MOVE_PARSE;
-
-                        case "Mate":
-                            move = Move.MATED;
-                            goto FINISH_MOVE_PARSE;
-
-                        case "Jishogi":
-                            move = Move.WIN;
-                            goto FINISH_MOVE_PARSE;
+                        // PSN2ならparse簡単すぎワロタ
+                        move = Util.FromUsiMove(move_string);
+                        goto FINISH_MOVE_PARSE;
                     }
 
                     int seek_pos = 0;
@@ -416,6 +473,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         get_char();
                         //is_capture = true;
                     }
+                    
                     // 移動先の升
                     var c3 = get_char();
                     var c4 = get_char();
@@ -565,13 +623,20 @@ namespace MyShogi.Model.Shogi.Kifu
         /// PSN形式で書き出す。
         /// </summary>
         /// <returns></returns>
-        private string ToPsnString()
+        private string ToPsnString(KifuFileType kt)
         {
             var sb = new StringBuilder();
 
             // 対局者名
-            sb.AppendLine(string.Format(@"[Sente ""{0}""]", playerName[(int)Color.BLACK]));
-            sb.AppendLine(string.Format(@"[Gote ""{0}""]", playerName[(int)Color.WHITE]));
+            if (kt == KifuFileType.PSN)
+            {
+                sb.AppendLine(string.Format(@"[Sente ""{0}""]", playerName[(int)Color.BLACK]));
+                sb.AppendLine(string.Format(@"[Gote ""{0}""]", playerName[(int)Color.WHITE]));
+            } else if (kt == KifuFileType.PSN2)
+            {
+                sb.AppendLine(string.Format(@"[BLACK ""{0}""]", playerName[(int)Color.BLACK]));
+                sb.AppendLine(string.Format(@"[WHITE ""{0}""]", playerName[(int)Color.WHITE]));
+            }
 
             // 初期局面
             sb.AppendLine(string.Format(@"[SFEN ""{0}""]", Tree.position.ToSfen()));
@@ -635,43 +700,70 @@ namespace MyShogi.Model.Shogi.Kifu
 
                     endNode = true;
 
-                    switch(m)
-                    {
-                        case Move.MATED:           mes = "Mate";       break;
-                        case Move.INTERRUPT:       mes = "Interrupt";  break;
-                        case Move.REPETITION_WIN:  mes = "Sennichite"; break;
-                        case Move.REPETITION_DRAW: mes = "Sennichite"; break;
-                        case Move.WIN:             mes = "Jishogi";    break;
-                        case Move.RESIGN:          mes = "Resigns";    break;
-                        default:                   mes = "";           break;
-                    }
+                    if (kt == KifuFileType.PSN)
+                        switch(m)
+                        {
+                            case Move.MATED:           mes = "Mate";       break;
+                            case Move.INTERRUPT:       mes = "Interrupt";  break;
+                            case Move.REPETITION_WIN:  mes = "Sennichite"; break;
+                            case Move.REPETITION_DRAW: mes = "Sennichite"; break;
+                            case Move.WIN:             mes = "Jishogi";    break;
+                            case Move.MAX_MOVES_DRAW:  mes = "Jishogi";    break;
+                            case Move.RESIGN:          mes = "Resigns";    break;
+                            case Move.TIME_UP:         mes = "Timeup";     break;
+                            default:                   mes = "";           break;
+                        }
+                    else if (kt == KifuFileType.PSN2)
+                        switch (m)
+                        {
+                            case Move.MATED:           mes = "Mate";           break;
+                            case Move.INTERRUPT:       mes = "Interrupt";      break;
+                            case Move.REPETITION_WIN:  mes = "RepetitionWin";  break;
+                            case Move.REPETITION_DRAW: mes = "RepetitionDraw"; break;
+                            case Move.WIN:             mes = "DeclarationWin"; break;
+                            case Move.MAX_MOVES_DRAW:  mes = "MaxMovesDraw";   break;
+                            case Move.RESIGN:          mes = "Resigns";        break;
+                            case Move.TIME_UP:         mes = "Timeup"; break;
+                            default: mes = ""; break;
+                        }
+                    else
+                        mes = "";
 
                     mes = Tree.ply + "." + mes;
                 }
                 else
                 {
                     // この指し手を出力する
-                    var to = m.To();
-                    Piece pc;
-                    if (m.IsDrop())
+                    if (kt == KifuFileType.PSN)
                     {
-                        pc = m.DroppedPiece().PieceType();
-                        mes = string.Format("{0}.{1}*{2}", Tree.ply, pc.ToUsi(), to.ToUsi());
+                        var to = m.To();
+                        Piece pc;
+                        if (m.IsDrop())
+                        {
+                            pc = m.DroppedPiece().PieceType();
+                            mes = string.Format("{0}.{1}*{2}", Tree.ply, pc.ToUsi(), to.ToUsi());
+                        }
+                        else
+                        {
+                            var c = Tree.position.IsCapture(m) ? 'x' : '-';
+                            var c2 = m.IsPromote() ? "+" : "";
+                            var from = m.From();
+                            pc = Tree.position.PieceOn(m.From()).PieceType();
+                            mes = string.Format("{0}.{1}{2}{3}{4}{5}", Tree.ply, pc.ToUsi(), from.ToUsi(), c, to.ToUsi(), c2);
+                        }
                     }
+                    else if (kt == KifuFileType.PSN2)
+                        // PSN2形式なら指し手表現はUSIの指し手文字列そのまま!!簡単すぎ!!
+                        mes = string.Format("{0}.{1}", Tree.ply, m.ToUsi());
                     else
-                    {
-                        var c = Tree.position.IsCapture(m) ? 'x' : '-';
-                        var c2 = m.IsPromote() ? "+" : "";
-                        var from = m.From();
-                        pc = Tree.position.PieceOn(m.From()).PieceType();
-                        mes = string.Format("{0}.{1}{2}{3}{4}{5}", Tree.ply, pc.ToUsi(), from.ToUsi(), c, to.ToUsi(), c2);
-                    }
-
+                        mes = "";
 
                     Tree.DoMove(move);
                 }
 
-                var time_string1 = move.thinkingTime.ToString("mm\\:ss");
+                var time_string1 = (kt == KifuFileType.PSN) ? move.thinkingTime.ToString("mm\\:ss")
+                                                            : move.thinkingTime.ToString("hh\\:mm\\:ss");
+
                 var time_string2 = move.totalTime.ToString("hh\\:mm\\:ss");
 
                 sb.AppendLine(string.Format("{0,-18}({1} / {2})", mes , time_string1 , time_string2));

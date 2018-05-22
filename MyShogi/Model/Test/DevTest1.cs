@@ -406,7 +406,7 @@ namespace MyShogi.Model.Test
             Console.WriteLine(sfen2);
 #endif
 
-#if true
+#if false
             // KifuManagerのテスト
 
             // psnの読み込み
@@ -418,10 +418,26 @@ namespace MyShogi.Model.Test
             Console.WriteLine(manager.Tree.position.Pretty());
             Console.WriteLine("Error = " + error);
 
-            // psnの書き出し
+            // psnでの書き出し
             var psn2 = manager.ToString(KifuFileType.PSN);
             Console.WriteLine(psn2);
+#endif
 
+#if true
+            // KifuManagerのテスト
+
+            // psn2の読み込み
+            var manager = new KifuManager();
+
+            var psn = System.IO.File.ReadAllText("kif/4.psn2" , Encoding.GetEncoding("utf-8"));
+            var error = manager.FromString(psn);
+
+            Console.WriteLine(manager.Tree.position.Pretty());
+            Console.WriteLine("Error = " + error);
+
+            // psnでの書き出し
+            var psn2 = manager.ToString(KifuFileType.PSN2);
+            Console.WriteLine(psn2);
 #endif
 
         }

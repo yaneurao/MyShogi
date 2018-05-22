@@ -29,7 +29,6 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             position.InitBoard();
             currentNode = rootNode = new KifuNode(null);
-            ply = 1;
         }
 
         // -------------------------------------------------------------------------
@@ -56,7 +55,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// rootNodeだとply==1となる。
         /// DoMove()で1手加算され、UndoMove()で1手減算される。
         /// </summary>
-        public int ply;
+        public int ply { get { return position.GamePly; } }
 
         // -------------------------------------------------------------------------
         // 局面に対する操作子
@@ -75,7 +74,6 @@ namespace MyShogi.Model.Shogi.Kifu
 
             position.DoMove(m.nextMove);
             currentNode = m.nextNode;
-            ++ply;
         }
 
         /// <summary>
@@ -95,7 +93,6 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             position.UndoMove();
             currentNode = currentNode.prevNode;
-            --ply;
         }
 
         /// <summary>

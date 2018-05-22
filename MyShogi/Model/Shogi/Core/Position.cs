@@ -106,6 +106,7 @@ namespace MyShogi.Model.Shogi.Core
         /// 初期局面からの手数(初期局面 == 1)
         /// </summary>
         private int gamePly = 1;
+        public int GamePly { get { return gamePly; } }
 
         /// <summary>
         /// 局面の付随情報
