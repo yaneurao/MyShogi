@@ -9,6 +9,16 @@ ToDo
 ■  2018/05/22
 
 
+- readme.md リンクが一箇所前のままだったの修正。
+
+
+- Positionクラスに、盤面配列と手駒などを渡してsfen文字列を構築するメソッド追加
+	- // 盤面と手駒、手番を与えて、そのsfenを返す。
+    -  public string SfenFromRawdata(Piece[/*81*/] board, Hand[/*2*/] hands, Color turn, int gamePly)
+	- やねうら王から移植
+	- テスト書いた。うまく動いてそう。
+
+
 - KifuManager
 	- KifuManagerのCSA形式の読み込みのサポート
 	- KifuManager.FromCsaString()作業開始
