@@ -1,7 +1,15 @@
 ﻿
 ToDo
 
+- ViewModelの作成
+
+- View/Win2Dの作成
+	- 画面素材の作成
+	- 画面素材の読み込み、管理部
+
+
 - KifuManager
+	- KifuManagerのCSA形式の読み込みのサポート
 	- KifuManagerのKIF形式のサポート
 	- KifuManagerのKI2形式のサポート
 
