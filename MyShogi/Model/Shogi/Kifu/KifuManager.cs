@@ -433,10 +433,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     if (move == Move.WIN)
                     {
                         // 持将棋の条件が異なるかも知れないので、この判定はしないことにする。
-                    /*
-                        if (!Tree.position.IsNyuugyoku())
-                            return string.Format("PSN形式の{0}行目が持将棋となっているが持将棋ではないです。", lineNo);
-                    */
+                        //if (Tree.position.DeclarationWin(EnteringKingRule.POINT27) == Move.WIN)
+                        //    return string.Format("PSN形式の{0}行目が持将棋となっているが持将棋ではないです。", lineNo);
                     }
 
                     // -- DoMove()

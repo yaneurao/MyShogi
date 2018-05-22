@@ -346,7 +346,6 @@ namespace MyShogi.Model.Shogi.Core
             return Pieces(pr1) | Pieces(pr2) | Pieces(pr3) | Pieces(pr4) | Pieces(pr5);
         }
 
-
         /// <summary>
         /// c側の駒種prのbitboardを返す
         /// </summary>
@@ -357,6 +356,27 @@ namespace MyShogi.Model.Shogi.Core
         {
             return Pieces(pr) & Pieces(c);
         }
+
+        public Bitboard Pieces(Color c, Piece pr1, Piece pr2)
+        {
+            return Pieces(pr1, pr2) & Pieces(c);
+        }
+
+        public Bitboard Pieces(Color c, Piece pr1, Piece pr2, Piece pr3)
+        {
+            return Pieces(pr1, pr2, pr3) & Pieces(c);
+        }
+
+        public Bitboard Pieces(Color c, Piece pr1, Piece pr2, Piece pr3, Piece pr4)
+        {
+            return Pieces(pr1, pr2, pr3, pr4) & Pieces(c);
+        }
+
+        public Bitboard Pieces(Color c, Piece pr1, Piece pr2, Piece pr3, Piece pr4, Piece pr5)
+        {
+            return Pieces(pr1, pr2, pr3, pr4, pr5) & Pieces(c);
+        }
+
 
         // 駒がない升が1になっているBitboardが返る
         public Bitboard Empties()
@@ -1264,6 +1284,121 @@ namespace MyShogi.Model.Shogi.Core
         public bool IsMated(Move[] moves)
         {
             return InCheck() && MoveGen.LegalAll(this, moves, 0) == 0;
+        }
+
+        /// <summary>
+        /// 宣言勝ちできる局面であるかを判定する。
+        /// 
+        /// 宣言勝ちできる局面でなければMove.NONEが返る。
+        /// 宣言勝ちできる局面であればMove.WINが返る。
+        /// 
+        /// ruleでトライルール(TRY_RULE)を指定している場合は、トライ(玉を51の升に移動させること)出来る条件を
+        /// 満たしているなら、その指し手を返す。
+        /// </summary>
+        /// <returns></returns>
+        public Move DeclarationWin(EnteringKingRule rule)
+        {
+            switch (rule)
+            {
+                // 入玉ルールなし
+                case EnteringKingRule.NONE: return Move.NONE;
+
+                // CSAルールに基づく宣言勝ちの条件を満たしているか
+                // 満たしているならば非0が返る。返し値は駒点の合計。
+                // cf.http://www.computer-shogi.org/protocol/tcp_ip_1on1_11.html
+                case EnteringKingRule.POINT24: // 24点法(31点以上で宣言勝ち)
+                case EnteringKingRule.POINT27: // 27点法 == CSAルール
+                    {
+                        /*
+                        「入玉宣言勝ち」の条件(第13回選手権で使用のもの):
+                        次の条件が成立する場合、勝ちを宣言できる(以下「入玉宣言勝ち」と云う)。
+                        条件:
+                        (a) 宣言側の手番である。
+                        (b) 宣言側の玉が敵陣三段目以内に入っている。
+                        (c) 宣言側が(大駒5点小駒1点の計算で)
+                        ・先手の場合28点以上の持点がある。
+                        ・後手の場合27点以上の持点がある。
+                        ・点数の対象となるのは、宣言側の持駒と敵陣三段目
+                        以内に存在する玉を除く宣言側の駒のみである。
+                        (d) 宣言側の敵陣三段目以内の駒は、玉を除いて10枚以上存在する。
+                        (e) 宣言側の玉に王手がかかっていない。
+                        (詰めろや必死であることは関係ない)
+                        (f) 宣言側の持ち時間が残っている。(切れ負けの場合)
+                        以上1つでも条件を満たしていない場合、宣言した方が負けとなる。
+                        (注) このルールは、日本将棋連盟がアマチュアの公式戦で使用しているものである。
+                        以上の宣言は、コンピュータが行い、画面上に明示する。
+                        */
+                        // (a)宣言側の手番である。
+                        // →　手番側でこの関数を呼び出して判定するのでそうだろう。
+
+                        Color us = sideToMove;
+
+                        // 敵陣
+                        Bitboard ef = Bitboard.EnemyField(us);
+
+                        // (b)宣言側の玉が敵陣三段目以内に入っている。
+                        if ((ef & KingSquare(us)).IsZero())
+                            return Move.NONE;
+
+                        // (e)宣言側の玉に王手がかかっていない。
+                        if (InCheck())
+                            return Move.NONE;
+
+
+                        // (d)宣言側の敵陣三段目以内の駒は、玉を除いて10枚以上存在する。
+                        int p1 = (Pieces(us) & ef).PopCount();
+                        // p1には玉も含まれているから11枚以上ないといけない
+                        if (p1 < 11)
+                            return Move.NONE;
+
+                        // 敵陣にいる大駒の数
+                        int p2 = ((Pieces(us, Piece.BISHOP_HORSE, Piece.ROOK_DRAGON)) & ef).PopCount();
+
+                        // 小駒1点、大駒5点、玉除く
+                        // ＝　敵陣の自駒 + 敵陣の自駒の大駒×4 - 玉
+
+                        // (c)
+                        // ・先手の場合28点以上の持点がある。
+                        // ・後手の場合27点以上の持点がある。
+                        Hand h = Hand(us);
+                        int score = p1 + p2 * 4 - 1
+                            + h.Count(Piece.PAWN) + h.Count(Piece.LANCE) + h.Count(Piece.KNIGHT) + h.Count(Piece.SILVER)
+                            + h.Count(Piece.GOLD) + (h.Count(Piece.BISHOP) + h.Count(Piece.ROOK)) * 5;
+
+                        // rule==EKR_27_POINTならCSAルール。rule==EKR_24_POINTなら24点法(30点以下引き分けなので31点以上あるときのみ勝ち扱いとする)
+                        if (score < (rule == EnteringKingRule.POINT27 ? (us == Color.BLACK ? 28 : 27) : 31))
+                            return Move.NONE;
+
+                        // 評価関数でそのまま使いたいので非0のときは駒点を返しておく。
+                        return Move.WIN;
+                    }
+
+                // トライルールの条件を満たしているか。
+                case EnteringKingRule.TRY_RULE:
+                    {
+                        Color us = sideToMove;
+                        Square king_try_sq = (us == Color.BLACK ? Square.SQ_51 : Square.SQ_59);
+                        Square king_sq = KingSquare(us);
+
+                        // 1) 初期陣形で敵玉がいた場所に自玉が移動できるか。
+                        if ((Bitboard.KingEffect(king_sq) & king_try_sq).IsZero())
+                            return Move.NONE;
+
+                        // 2) トライする升に自駒がないか。
+                        if ((Pieces(us) & king_try_sq).IsNotZero())
+                            return Move.NONE;
+
+                        // 3) トライする升に移動させたときに相手に取られないか。
+                        if (EffectedTo(us.Not(), king_try_sq, king_sq))
+                            return Move.NONE;
+
+                        // 王の移動の指し手により勝ちが確定する
+                        return Util.MakeMove(king_sq, king_try_sq);
+                    }
+
+            }
+
+            return Move.NONE;
         }
 
         // -------------------------------------------------------------------------

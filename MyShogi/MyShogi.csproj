@@ -70,6 +70,7 @@
     </Compile>
     <Compile Include="Model\Shogi\Converter\Csa.cs" />
     <Compile Include="Model\Shogi\Converter\Exception.cs" />
+    <Compile Include="Model\Shogi\Core\EnteringKingRule.cs" />
     <Compile Include="Model\Shogi\Core\HashKey.cs" />
     <Compile Include="Model\Shogi\Core\MoveGen.cs" />
     <Compile Include="Model\Shogi\Converter\Kif.cs" />
