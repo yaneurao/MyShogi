@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\TheApp.cs" />
+    <Compile Include="Controller\GameController.cs" />
     <Compile Include="ViewModel\MainDialogViewModel.cs" />
     <Compile Include="View\TestForm\TestForm1.cs">
       <SubType>Form</SubType>

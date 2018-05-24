@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
+using MyShogi.ViewModel;
 
 namespace MyShogi.View.Win2D
 {
@@ -18,6 +11,18 @@ namespace MyShogi.View.Win2D
         public MainDialog()
         {
             InitializeComponent();
+        }
+
+        public MainDialogViewModel ViewModel { get; private set;}
+
+        /// <summary>
+        /// ViewModelを設定する。
+        /// このクラスのインスタンスとは1:1で対応する。
+        /// </summary>
+        /// <param name="vm"></param>
+        public void Bind(MainDialogViewModel vm)
+        {
+            ViewModel = vm;
         }
     }
 }

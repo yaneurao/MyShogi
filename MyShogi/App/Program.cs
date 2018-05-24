@@ -26,8 +26,7 @@ namespace MyShogi
 #if true
             // 本番用
             // singletonなTheAppインスタンスを生成して実行するだけ
-            var app = new TheApp();
-            app.Run();
+            TheApp.app.Run();
 #endif
         }
     }
