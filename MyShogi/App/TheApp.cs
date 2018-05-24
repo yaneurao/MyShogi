@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using MyShogi.Controller;
 
 // とりま、Windows用
 // あとで他環境用を用意する
@@ -19,11 +20,17 @@ namespace MyShogi.App
         /// </summary>
         public void Run()
         {
-            // 各インスタンスの生成と、それぞれのbind作業
+            // -- 各インスタンスの生成と、それぞれのbind作業
+
+            // メインの対局ウィンドゥ
 
             var mainDialog = new MainDialog();
             mainDialogViewModel = new MainDialogViewModel();
             mainDialog.Bind(mainDialogViewModel);
+
+            // 対局controllerを1つ生成して、メインの対局ウィンドゥのViewModelに加える
+            var game = new GameController();
+            mainDialogViewModel.Add(game);
 
             Application.Run(mainDialog);
         }

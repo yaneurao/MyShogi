@@ -23,6 +23,7 @@ namespace MyShogi.View.Win2D
         public void Bind(MainDialogViewModel vm)
         {
             ViewModel = vm;
+
         }
     }
 }
