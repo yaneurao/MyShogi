@@ -1,23 +1,86 @@
 ﻿
 ToDo
 
-- ViewModelの作成
-
-- View/Win2Dの作成
-	- 画面素材の作成
-	- 画面素材の読み込み、管理部
-
-
 - KifuManager
 	- KifuManagerのCSA形式の読み込みのサポート
 	- KifuManagerのKIF形式のサポート
 	- KifuManagerのKI2形式のサポート
+		- Mizarさんに依頼中
+
+- ViewModelからViewへのNotifyの仕組み考える。
+
+
+■  2018/05/24
+
+
+- readme.mdの将来的な予定に「即席詰将棋機能、中盤終盤課題局面生成機能」の追加
+
+
+-  Parse CSA/KIF pos/move, Export CSA/KIF fix (Mizarさん)
+-  Convert CSA/KIF test (Mizarさん)
+
+
+- Model/ObjectModel/フォルダ追加
+	- NotifyObject.cs追加
+	- 作成中
+
+- 画面素材など動的に読み込むなら、リソースを管理するリソースマネージャーみたいなのが必要なのでは…。
+	- それはViewが持つことになるのか？本当にその設計は正しいのだろうか…。
+	- ResourceManager.cs、一体どこに置けばいいのか…。
+
+- Controller/ フォルダ追加
+	- この設計が適切であるかどうか考え中。
+- 対局を管理するクラス GameController.cs追加
+
+- MainDialog <-> MainDialogViewModelを1:Nにするか考え中。
+
+            // 1画面に盤面が複数表示できたほうが良いので(2画面、4画面、16画面、あるいは選択、みたいな)
+            // mainDialogViewModelのインスタンス自体は1つではなくN個用意して、そのなかから1つ、もしくは2,4,16個を
+            // 切り替えて表示できるようにしたほうがいいような気がする。            
+            // mainDialog.bind(mainDialogViewModel);
+
+	- MainDialogとMainDialogViewModelは 1:1にしておき、MainDialogViewModelのなかに1:Nでさらに対局関連の情報をもたせるべきでは..
+
+
+
+- KifuManager.Bind(Position)追加
+	- KifuTree.Bind(Position)追加
+	- KifuTreeがPositionのインスタンスを生成するのおかしいので、Bind()して使うように変更する。
+- 描画に関して、MVVM with Controlみたいな設計にすることに決定。
+- Form1をTestForm1とrename
+- View/Win2D/MainDialog追加
+- ViewModel/MainDialogViewModel.cs追加
+- App/TheApp.cs追加
+
+
+- KifuTreeからToUsiPositionString()削除。
+	- これ、あとでよく考える。
+
+
+- ViewModeフォルダ追加
+- Appフォルダ追加
+	- Program.csをApp/に移動
+- Form1をView/TestFormに移動
+
+
+
+■  2018/05/23
+
+
+- KifuManagerにそこまでのUSIの"position"コマンドで用いる局面図を保持しておく機能を追加。
+	- ToUsiPosition()
+	- この設計、良くないかも。あとでよく考える。
+- KifuManagerからKifuTreeに、rootBoardTypeとrootSfenを移動させた。
 
 
 ■  2018/05/22
 
 
+- readme.mdに本GUIの特徴などを追加
+
+
 - readme.md リンクが一箇所前のままだったの修正。
+	- 対応エンジンなどについて追記
 
 
 - Positionクラスに、盤面配列と手駒などを渡してsfen文字列を構築するメソッド追加
