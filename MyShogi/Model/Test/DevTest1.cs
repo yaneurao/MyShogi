@@ -411,6 +411,8 @@ namespace MyShogi.Model.Test
 
             // psnの読み込み
             var manager = new KifuManager();
+            var pos = new Position();
+            manager.Bind(pos);
 
             var psn = System.IO.File.ReadAllText("kif/4.psn" , Encoding.GetEncoding("Shift_JIS"));
             var error = manager.FromString(psn);
@@ -423,7 +425,7 @@ namespace MyShogi.Model.Test
             Console.WriteLine(psn2);
 
             // USIの"position"コマンドで用いる局面図を意味する文字列のリストを取得
-            Console.WriteLine(manager.Tree.UsiPositionString);
+            // Console.WriteLine(manager.Tree.UsiPositionString);
 #endif
 
 #if false

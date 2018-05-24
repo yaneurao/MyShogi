@@ -62,11 +62,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="View\TestForm\Form1.cs">
+    <Compile Include="App\TheApp.cs" />
+    <Compile Include="ViewModel\MainDialogViewModel.cs" />
+    <Compile Include="View\TestForm\TestForm1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\TestForm\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="View\TestForm\TestForm1.Designer.cs">
+      <DependentUpon>TestForm1.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\Shogi\Converter\Csa.cs" />
     <Compile Include="Model\Shogi\Converter\Exception.cs" />
@@ -105,8 +107,14 @@
     <Compile Include="Model\TimeMan\TimeLimit.cs" />
     <Compile Include="App\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="View\TestForm\Form1.resx">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="View\Win2D\MainDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\MainDialog.Designer.cs">
+      <DependentUpon>MainDialog.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="View\TestForm\TestForm1.resx">
+      <DependentUpon>TestForm1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -117,6 +125,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="View\Win2D\MainDialog.resx">
+      <DependentUpon>MainDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="docs\progress.md" />
     <None Include="docs\PSN2format.md" />
     <None Include="docs\USI2.0.md" />
@@ -135,8 +146,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Util\" />
-    <Folder Include="ViewModel\" />
-    <Folder Include="View\Win2D\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="docs\更新履歴.txt" />

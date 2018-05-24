@@ -1,6 +1,6 @@
 ﻿namespace MyShogi
 {
-    partial class Form1
+    partial class TestForm1
     {
         /// <summary>
         /// 必要なデザイナー変数です。
@@ -74,7 +74,7 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
-            // Form1
+            // TestForm1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -83,8 +83,8 @@
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "TestForm1";
+            this.Text = "TestForm1";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
 

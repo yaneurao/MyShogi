@@ -13,6 +13,10 @@ namespace MyShogi.Model.Shogi.Kifu
     /// ・対局相手の名前をサポート
     /// ・KIF/KI2/CSA/SFEN/PSN形式での入出力をサポート
     /// ・千日手の管理、検出をサポート
+    /// 
+    /// 使用上の注意)
+    /// ・Bind(Position)で、Positionのインスタンスを関連付けてから使うこと。
+    /// ・また、必要ならば、そのあとにInit()を呼び出すこと。
     /// </summary>
     public class KifuManager
     {
@@ -36,9 +40,14 @@ namespace MyShogi.Model.Shogi.Kifu
         // public methods
         // -------------------------------------------------------------------------
 
-        public KifuManager()
+        /// <summary>
+        /// このメソッドを用いて、必ず外部からPositionのインスタンスを関連付けてから
+        /// このクラスのメソッドを呼び出すこと。
+        /// </summary>
+        /// <param name="pos"></param>
+        public void Bind(Position pos)
         {
-            Init();
+            Tree.Bind(pos);
         }
 
         /// <summary>

@@ -14,9 +14,9 @@ using MyShogi.Model.Shogi;
 
 namespace MyShogi
 {
-    public partial class Form1 : Form
+    public partial class TestForm1 : Form
     {
-        public Form1()
+        public TestForm1()
         {
             InitializeComponent();
         }
