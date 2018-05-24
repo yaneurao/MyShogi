@@ -32,17 +32,6 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public KifuTree Tree = new KifuTree();
 
-        /// <summary>
-        /// rootの局面の局面タイプ
-        /// 任意局面の場合は、BoardType.Others
-        /// </summary>
-        public BoardType rootBoardType;
-
-        /// <summary>
-        /// rootの局面図。sfen形式で。
-        /// </summary>
-        public string rootSfen;
-
         // -------------------------------------------------------------------------
         // public methods
         // -------------------------------------------------------------------------
@@ -59,8 +48,6 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             playerName = new string[2];
             Tree.Init();
-            rootBoardType = BoardType.NoHandicap;
-            rootSfen = Position.SFEN_HIRATE;
         }
 
         /// <summary>
@@ -178,18 +165,18 @@ namespace MyShogi.Model.Shogi.Kifu
                     throw new PositionException("Position.UsiPositionCmd()に渡された文字列にmovesが出てこない");
 
                 if (cur_pos == 4)
-                    rootSfen = string.Format("{0} {1} {2}", split[1], split[2], split[3]);
+                    Tree.rootSfen = string.Format("{0} {1} {2}", split[1], split[2], split[3]);
                 else // if (cur_pos == 5)
-                    rootSfen = string.Format("{0} {1} {2} {3}", split[1], split[2], split[3], split[4]);
+                    Tree.rootSfen = string.Format("{0} {1} {2} {3}", split[1], split[2], split[3], split[4]);
 
-                Tree.position.SetSfen(rootSfen);
-                rootBoardType = BoardType.Others;
+                Tree.position.SetSfen(Tree.rootSfen);
+                Tree.rootBoardType = BoardType.Others;
             }
             else if (split[0] == "startpos")
             {
-                rootSfen = Position.SFEN_HIRATE;
-                Tree.position.SetSfen(rootSfen);
-                rootBoardType = BoardType.NoHandicap;
+                Tree.rootSfen = Position.SFEN_HIRATE;
+                Tree.position.SetSfen(Tree.rootSfen);
+                Tree.rootBoardType = BoardType.NoHandicap;
             }
 
             // "moves"以降の文字列をUSIの指し手と解釈しながら、局面を進める。
@@ -248,9 +235,9 @@ namespace MyShogi.Model.Shogi.Kifu
                             // 将棋所で出力したPSNファイルはここに必ず"SFEN"が来るはず。平手の局面であっても…。
                             // 互換性のためにも、こうなっているべきだろう。
 
-                            rootSfen = body;
+                            Tree.rootSfen = body;
                             Tree.position.SetSfen(body);
-                            rootBoardType = BoardType.Others;
+                            Tree.rootBoardType = BoardType.Others;
                             break;
                     }
                 }
@@ -628,7 +615,7 @@ namespace MyShogi.Model.Shogi.Kifu
             if (!line.StartsWith("P1")) // 局面図が来た
                 return string.Format("CSA形式の{0}行目で局面図が来ずにファイルが終了しました。", lineNo);
 
-            
+            // 書きかけ
 
 
             return string.Empty;
@@ -643,15 +630,15 @@ namespace MyShogi.Model.Shogi.Kifu
         private string ToSfenString()
         {
             var sb = new StringBuilder();
-            if (rootBoardType == BoardType.NoHandicap)
+            if (Tree.rootBoardType == BoardType.NoHandicap)
             {
                 // 平手の初期局面
                 sb.Append("startpos");
 
-            } else if (rootBoardType == BoardType.Others)
+            } else if (Tree.rootBoardType == BoardType.Others)
             {
                 // 任意局面なので"sfen"を出力する
-                sb.Append(string.Format("sfen {0}",rootSfen));
+                sb.Append(string.Format("sfen {0}",Tree.rootSfen));
             }
 
             // 候補の一つ目を選択していく。

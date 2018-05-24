@@ -406,7 +406,7 @@ namespace MyShogi.Model.Test
             Console.WriteLine(sfen2);
 #endif
 
-#if false
+#if true
             // KifuManagerのテスト
 
             // psnの読み込み
@@ -421,6 +421,9 @@ namespace MyShogi.Model.Test
             // psnでの書き出し
             var psn2 = manager.ToString(KifuFileType.PSN);
             Console.WriteLine(psn2);
+
+            // USIの"position"コマンドで用いる局面図を意味する文字列のリストを取得
+            Console.WriteLine(manager.Tree.UsiPositionString);
 #endif
 
 #if false

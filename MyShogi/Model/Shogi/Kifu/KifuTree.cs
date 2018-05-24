@@ -19,6 +19,7 @@ namespace MyShogi.Model.Shogi.Kifu
         public KifuTree()
         {
             position = new Position(); // 結構重いのでコンストラクタで1度だけ作成。
+            UsiMoveStringList = new List<string>();
             Init();
         }
 
@@ -29,6 +30,9 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             position.InitBoard();
             currentNode = rootNode = new KifuNode(null);
+            UsiMoveStringList.Clear();
+            rootBoardType = BoardType.NoHandicap;
+            rootSfen = Position.SFEN_HIRATE;
         }
 
         // -------------------------------------------------------------------------
@@ -57,6 +61,41 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public int ply { get { return position.gamePly; } }
 
+        /// <summary>
+        /// rootの局面の局面タイプ
+        /// 任意局面の場合は、BoardType.Others
+        /// </summary>
+        public BoardType rootBoardType;
+
+        /// <summary>
+        /// rootの局面図。sfen形式で。
+        /// </summary>
+        public string rootSfen;
+
+        /// <summary>
+        /// ここまでの指し手を意味する文字列(USIプロトコルでの指し手文字列)
+        /// DoMove(),UndoMove()を呼び出すごとに自動的に更新される。
+        /// これを 
+        ///   "position " + rootSfen + " " + String.Join(" ",usiMoveString) 
+        /// とすれば、currentNodeまでのUSIのposition文字列が出来上がる。
+        /// 
+        /// ※　usiPositionStringのほうではこの処理を行っている。
+        /// </summary>
+        public List<string> UsiMoveStringList { get; private set; }
+
+        /// <summary>
+        /// USIの"Position"コマンドで用いる局面図
+        /// </summary>
+        public string UsiPositionString
+        {
+            get {
+                // rootが平手の初期局面のときは、sfen形式ではなく、"startpos"と省略記法が使えるのでそれを活用する。
+                return string.Format("{0} moves {1}",
+                    ( rootBoardType == BoardType.NoHandicap) ? "startpos" : rootSfen
+                    , string.Join(" ", UsiMoveStringList));
+            }
+        }
+
         // -------------------------------------------------------------------------
         // 局面に対する操作子
         // -------------------------------------------------------------------------
@@ -74,6 +113,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             position.DoMove(m.nextMove);
             currentNode = m.nextNode;
+            UsiMoveStringList.Add(m.nextMove.ToUsi());
         }
 
         /// <summary>
@@ -93,6 +133,7 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             position.UndoMove();
             currentNode = currentNode.prevNode;
+            UsiMoveStringList.RemoveAt(UsiMoveStringList.Count-1); // RemoveLast()
         }
 
         /// <summary>
