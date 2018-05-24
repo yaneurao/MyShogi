@@ -1,6 +1,7 @@
 ﻿using System;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
+using MyShogi.Model.Shogi.Converter;
 
 namespace MyShogi.Model.Test
 {
@@ -12,6 +13,126 @@ namespace MyShogi.Model.Test
         public static void Test1()
         {
 #if true
+            {
+                // KIF形式の局面・指し手入力テスト
+                Position pos = new Position();
+                string sfen = KifExtensions.BodToSfen(new string[] {
+                    "後手の持駒：なし",
+                    "  ９ ８ ７ ６ ５ ４ ３ ２ １",
+                    "+---------------------------+",
+                    "|v玉vと ・ ・ ・ 馬 ・ ・ ・|一",
+                    "|vとvと ・ 金 ・ ・ ・ ・ 馬|二",
+                    "| ・ ・ ・ 金 金 金 ・ ・ ・|三",
+                    "| ・ ・ ・ ・ ・ ・ ・ ・ ・|四",
+                    "| ・ ・ ・ ・ 龍 ・ ・ ・ 龍|五",
+                    "| ・ ・ ・ ・ ・ ・ ・ ・ ・|六",
+                    "| ・ と ・ ・ ・ ・ 銀 ・ 銀|七",
+                    "| と ・ と ・ ・ ・ ・ ・ ・|八",
+                    "| と と と 桂 玉 桂 銀 銀 ・|九",
+                    "+---------------------------+",
+                    "先手の持駒：桂二 香四 歩九"
+                });
+                pos.SetSfen(sfen);
+                Console.Out.WriteLine(pos.Pretty());
+                foreach (string kif in new string[] {
+                    "８８と左上",
+                    "８８と直",
+                    "８８と右上",
+                    "８８と左寄",
+                    "８８と右寄",
+                    "８８と引",
+                    "５７桂左",
+                    "５７桂右",
+                    "２８銀左上",
+                    "２８銀直",
+                    "２８銀左引",
+                    "２８銀右",
+                    "３５龍左",
+                    "３５龍右",
+                    "５２金左上",
+                    "５２金寄",
+                    "５２金直",
+                    "５２金右",
+                    "２３馬左",
+                    "２３馬右",
+                })
+                {
+                    Move m = pos.FromKif(kif);
+                    Console.Out.WriteLine(string.Format("org:{0} usi:{1} csa:{2} kif:{3} ki2:{4} pretty:{5}", kif, m.ToUsi(), pos.ToCSA(m), pos.ToKif(m), pos.ToKi2(m), m.Pretty()));
+                }
+            }
+#endif
+#if true
+            {
+                // CSA形式の局面・指し手入力テスト
+                Position pos = new Position();
+                string sfen = CsaExtensions.CsaToSfen(new string[]{
+                    "N+",
+                    "N-",
+                    "P1-OU-TO *  *  * +UM *  *  * ",
+                    "P2-TO-TO * +KI *  *  *  * +UM",
+                    "P3 *  *  * +KI+KI+KI *  *  * ",
+                    "P4 *  *  *  *  *  *  *  *  * ",
+                    "P5 *  *  *  * +RY *  *  * +RY",
+                    "P6 *  *  *  *  *  *  *  *  * ",
+                    "P7 * +TO *  *  *  * +GI * +GI",
+                    "P8+TO * +TO *  *  *  *  *  * ",
+                    "P9+TO+TO+TO+KE+OU+KE+GI+GI * ",
+                    "P+00KE00KE00KY00KY00KY00KY00FU00FU00FU00FU00FU00FU00FU00FU00FU",
+                    "P-",
+                    "+"
+                });
+                pos.SetSfen(sfen);
+                Console.Out.WriteLine(pos.Pretty());
+                foreach (string csa in new string[] {
+                    "+9988TO",
+                    "+8988TO",
+                    "+7988TO",
+                    "+9888TO",
+                    "+7888TO",
+                    "+8788TO",
+                    "+6957KE",
+                    "+4957KE",
+                    "+3928GI",
+                    "+2928GI",
+                    "+3728GI",
+                    "+1728GI",
+                    "+5535RY",
+                    "+1535RY",
+                    "+6352KI",
+                    "+6252KI",
+                    "+5352KI",
+                    "+4352KI",
+                    "+4123UM",
+                    "+1223UM",
+                    "9988TO",
+                    "8988TO",
+                    "7988TO",
+                    "9888TO",
+                    "7888TO",
+                    "8788TO",
+                    "6957KE",
+                    "4957KE",
+                    "3928GI",
+                    "2928GI",
+                    "3728GI",
+                    "1728GI",
+                    "5535RY",
+                    "1535RY",
+                    "6352KI",
+                    "6252KI",
+                    "5352KI",
+                    "4352KI",
+                    "4123UM",
+                    "1223UM",
+                })
+                {
+                    Move m = pos.FromCSA(csa);
+                    Console.Out.WriteLine(string.Format("org:{0} usi:{1} csa:{2} kif:{3} ki2:{4} pretty:{5}", csa, m.ToUsi(), pos.ToCSA(m), pos.ToKif(m), pos.ToKi2(m), m.Pretty()));
+                }
+            }
+#endif
+#if false
             var pos = new Position();
 
             // Csa/Kif/Ki2形式の局面・指し手出力

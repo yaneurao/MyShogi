@@ -89,13 +89,12 @@ namespace MyShogi.Model.Shogi.Core
         // →　どこまで使用してあるかは、Hand(Color,Piece)を用いればわかる。
 
         // 使用しているPieceNoの終端
-        public PieceNo lastPieceNo { get; private set;}
+        public PieceNo lastPieceNo { get; private set; }
 
         /// <summary>
         /// 手番
         /// </summary>
-        public Color SideToMove { get { return sideToMove; } }
-        private Color sideToMove = Color.BLACK;
+        public Color sideToMove { get; private set; } = Color.BLACK;
 
         /// <summary>
         /// 玉の位置

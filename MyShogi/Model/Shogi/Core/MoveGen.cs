@@ -24,7 +24,7 @@ namespace MyShogi.Model.Shogi.Core
             // 愚直に81升調べてもどうってことないはずだが最低限の高速化をしとく
             var endIndex = startIndex;
 
-            var us = pos.SideToMove;
+            var us = pos.sideToMove;
             var ourPieces = pos.Pieces(us); // 自駒
             Square from , to;
             var enemyField = Bitboard.EnemyField(us); // 敵陣
@@ -57,7 +57,7 @@ namespace MyShogi.Model.Shogi.Core
                         (((pt == Piece.PAWN || pt == Piece.LANCE) && r == rank1_for_us)
                         ||(pt == Piece.KNIGHT && (r == rank1_for_us || r== rank2_for_us)))
                         )
-    
+
                         moves[endIndex++] = Util.MakeMove(from, to);
 
                     // 成れる条件

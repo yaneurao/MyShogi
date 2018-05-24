@@ -1,5 +1,7 @@
 ﻿using MyShogi.Model.Shogi.Core;
+using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MyShogi.Model.Shogi.Converter
 {
@@ -47,7 +49,6 @@ namespace MyShogi.Model.Shogi.Converter
 
     public class KifFormatter
     {
-        private static bool DEBUG = true;
         public ColorFormat colorFmt;
         public SquareFormat squareFmt;
         public SamePosFormat sameposFmt;
@@ -152,7 +153,7 @@ namespace MyShogi.Model.Shogi.Converter
         public string format(Position pos, Move move, Move lastMove)
         {
             StringBuilder kif = new StringBuilder();
-            kif.Append(format(pos.SideToMove));
+            kif.Append(format(pos.sideToMove));
             switch (move)
             {
                 case Move.NONE:
@@ -228,8 +229,10 @@ namespace MyShogi.Model.Shogi.Converter
                         }
                         else if (
                             !fromPiece.IsPromote() &&
-                            (Core.Util.CanPromote(pos.SideToMove, move.To()) ||
-                            Core.Util.CanPromote(pos.SideToMove, move.From()))
+                            fromPieceType != Piece.GOLD &&
+                            fromPieceType != Piece.KING &&
+                            (Util.CanPromote(pos.sideToMove, move.To()) ||
+                            Util.CanPromote(pos.sideToMove, move.From()))
                         )
                         {
                             kif.Append("不成");
@@ -247,7 +250,7 @@ namespace MyShogi.Model.Shogi.Converter
                     if (move.IsDrop())
                     {
                         // KI2では紛らわしくない場合、"打"と表記しない。
-                        Bitboard sameBB = pos.AttackersTo(pos.SideToMove, move.To()) & pos.Pieces(pos.SideToMove, move.DroppedPiece());
+                        Bitboard sameBB = pos.AttackersTo(pos.sideToMove, move.To()) & pos.Pieces(pos.sideToMove, move.DroppedPiece());
                         if (!sameBB.IsZero()) kif.Append("打");
                         break;
                     }
@@ -259,8 +262,10 @@ namespace MyShogi.Model.Shogi.Converter
                     }
                     if (
                         !fromPiece.IsPromote() &&
-                        (Core.Util.CanPromote(pos.SideToMove, move.To()) ||
-                        Core.Util.CanPromote(pos.SideToMove, move.From()))
+                        fromPieceType != Piece.GOLD &&
+                        fromPieceType != Piece.KING &&
+                        (Util.CanPromote(pos.sideToMove, move.To()) ||
+                        Util.CanPromote(pos.sideToMove, move.From()))
                     )
                     {
                         kif.Append("不成");
@@ -274,49 +279,40 @@ namespace MyShogi.Model.Shogi.Converter
         }
         static string fromSqFormat_KI2(Position pos, Move move)
         {
-            Color c = pos.SideToMove;
+            Color c = pos.sideToMove;
             Square fromSq = move.From(), toSq = move.To();
             Piece p = pos.PieceOn(fromSq), pt = p.PieceType();
             Bitboard sameBB = pos.AttackersTo(c, toSq) & pos.Pieces(c, pt);
-            if (!sameBB.IsSet(fromSq))
-            {
-                // 異常な局面・指し手をわざと食わせる必要がある場合はどうするべき？
-                if (DEBUG)
-                    throw new ConverterException("Position(" + pos.Pretty() + ") で Move(" + move.Pretty() + ") は不正な着手のようです");
-                else
-                    return "";
-            }
+            if (!sameBB.IsSet(fromSq)) return "";
             if (sameBB.IsOne()) return "";
-            if (bb_check(sameBB, Bitboard.RankBB(toSq.ToRank()), fromSq)) return "寄";
-            if (bb_check(sameBB, dir_bb(c, toSq, Direct.D), fromSq)) return "上";
-            if (bb_check(sameBB, dir_bb(c, toSq, Direct.U), fromSq)) return "引";
-            if (bb_check(sameBB, line_dir_bb(c, toSq, Direct.D), fromSq) && (
+            if (KifUtil.checkBB(sameBB, Bitboard.RankBB(toSq.ToRank()), fromSq)) return "寄";
+            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.D), fromSq)) return "上";
+            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.U), fromSq)) return "引";
+            if (KifUtil.checkBB(sameBB, KifUtil.lineDirBB(c, toSq, Direct.D), fromSq) && (
                 pt == Piece.SILVER || pt == Piece.GOLD ||
                 pt == Piece.PRO_PAWN || pt == Piece.PRO_LANCE || pt == Piece.PRO_KNIGHT || pt == Piece.PRO_SILVER
             )) return "直";
-            if (bb_check(sameBB, dir_or_bb(c, fromSq, Direct.L), fromSq)) return "左";
-            if (bb_check(sameBB, dir_or_bb(c, fromSq, Direct.R), fromSq)) return "右";
-            if (bb_check(sameBB, line_dir_bb(c, fromSq, Direct.L), fromSq)) return "左寄";
-            if (bb_check(sameBB, line_dir_bb(c, fromSq, Direct.R), fromSq)) return "右寄";
-            if (bb_check(sameBB, dir_bb(c, toSq, Direct.D) & dir_or_bb(c, fromSq, Direct.L), fromSq)) return "左上";
-            if (bb_check(sameBB, dir_bb(c, toSq, Direct.D) & dir_or_bb(c, fromSq, Direct.R), fromSq)) return "右上";
-            if (bb_check(sameBB, dir_bb(c, toSq, Direct.U) & dir_or_bb(c, fromSq, Direct.L), fromSq)) return "左引";
-            if (bb_check(sameBB, dir_bb(c, toSq, Direct.U) & dir_or_bb(c, fromSq, Direct.R), fromSq)) return "右引";
+            if (KifUtil.checkBB(sameBB, KifUtil.dirOrBB(c, fromSq, Direct.L), fromSq)) return "左";
+            if (KifUtil.checkBB(sameBB, KifUtil.dirOrBB(c, fromSq, Direct.R), fromSq)) return "右";
+            if (KifUtil.checkBB(sameBB, KifUtil.lineDirOrBB(c, fromSq, Direct.L) & Bitboard.RankBB(toSq.ToRank()), fromSq)) return "左寄";
+            if (KifUtil.checkBB(sameBB, KifUtil.lineDirOrBB(c, fromSq, Direct.R) & Bitboard.RankBB(toSq.ToRank()), fromSq)) return "右寄";
+            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.D) & KifUtil.dirOrBB(c, fromSq, Direct.L), fromSq)) return "左上";
+            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.D) & KifUtil.dirOrBB(c, fromSq, Direct.R), fromSq)) return "右上";
+            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.U) & KifUtil.dirOrBB(c, fromSq, Direct.L), fromSq)) return "左引";
+            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.U) & KifUtil.dirOrBB(c, fromSq, Direct.R), fromSq)) return "右引";
             // 正常な局面・指し手でここに到達する筈は無い
-            // 異常な局面・指し手をわざと食わせる必要がある場合はどうするべき？
-            if (DEBUG)
-                throw new ConverterException("Position(" + pos.Pretty() + ") で Move(" + move.Pretty() + ") の表記に失敗しました");
-            else
-                return "";
+            return "";
         }
-        static bool bb_check(Bitboard samebb, Bitboard dirbb, Square sq) => (dirbb.IsSet(sq) && (samebb & dirbb).IsOne());
-        static Bitboard dir_bb_(Color color, Square sq, Direct dir, bool or_flag)
+    }
+
+    static class KifUtil
+    {
+        public static bool checkBB(Bitboard samebb, Bitboard dirbb, Square sq) => (dirbb.IsSet(sq) && (samebb & dirbb).IsOne());
+        static Bitboard dirBB_(Color color, Square sq, Direct dir, bool or_flag)
         {
             // color == Color.White ならば逆の方角にする
             dir = (color != Color.WHITE) ? dir : (7 - dir);
-
             int offset = or_flag ? 0 : 1;
-
             Bitboard bb = Bitboard.ZeroBB();
             switch (dir)
             {
@@ -326,29 +322,29 @@ namespace MyShogi.Model.Shogi.Converter
                 case Direct.D: for (Rank r = sq.ToRank() + offset; r <= Rank.RANK_9; r++) bb |= Bitboard.RankBB(r); break;
                 default: throw new ConverterException("不適切な方向が指定されました");
             }
-
             return bb;
         }
-        static Bitboard dir_bb(Color color, Square sq, Direct dir) => dir_bb_(color, sq, dir, false);
-        static Bitboard dir_or_bb(Color color, Square sq, Direct dir) => dir_bb_(color, sq, dir, true);
-        static Bitboard line_dir_bb(Color color, Square sq, Direct dir)
+        public static Bitboard dirBB(Color color, Square sq, Direct dir) => dirBB_(color, sq, dir, false);
+        public static Bitboard dirOrBB(Color color, Square sq, Direct dir) => dirBB_(color, sq, dir, true);
+        public static Bitboard lineDirBB_(Color color, Square sq, Direct dir, bool or_flag)
         {
             dir = (color != Color.WHITE) ? dir : (7 - dir);
-
+            int offset = or_flag ? 0 : 1;
             File f = sq.ToFile();
             Rank r = sq.ToRank();
-
             Bitboard bb = Bitboard.ZeroBB();
             switch (dir)
             {
-                case Direct.R: for (File fi = f - 1; fi >= File.FILE_1; fi--) bb |= Bitboard.SquareBB(Core.Util.MakeSquare(fi, r)); break;
-                case Direct.L: for (File fi = f + 1; fi <= File.FILE_9; fi++) bb |= Bitboard.SquareBB(Core.Util.MakeSquare(fi, r)); break;
-                case Direct.U: for (Rank ri = r - 1; ri >= Rank.RANK_1; ri--) bb |= Bitboard.SquareBB(Core.Util.MakeSquare(f, ri)); break;
-                case Direct.D: for (Rank ri = r + 1; ri <= Rank.RANK_9; ri++) bb |= Bitboard.SquareBB(Core.Util.MakeSquare(f, ri)); break;
+                case Direct.R: for (File fi = f - offset; fi >= File.FILE_1; fi--) bb |= Bitboard.SquareBB(Util.MakeSquare(fi, r)); break;
+                case Direct.L: for (File fi = f + offset; fi <= File.FILE_9; fi++) bb |= Bitboard.SquareBB(Util.MakeSquare(fi, r)); break;
+                case Direct.U: for (Rank ri = r - offset; ri >= Rank.RANK_1; ri--) bb |= Bitboard.SquareBB(Util.MakeSquare(f, ri)); break;
+                case Direct.D: for (Rank ri = r + offset; ri <= Rank.RANK_9; ri++) bb |= Bitboard.SquareBB(Util.MakeSquare(f, ri)); break;
                 default: throw new ConverterException("不適切な方向が指定されました");
             }
             return bb;
         }
+        public static Bitboard lineDirBB(Color color, Square sq, Direct dir) => lineDirBB_(color, sq, dir, false);
+        public static Bitboard lineDirOrBB(Color color, Square sq, Direct dir) => lineDirBB_(color, sq, dir, true);
     }
 
     /// <summary>
@@ -425,7 +421,7 @@ namespace MyShogi.Model.Shogi.Converter
                 bod.Append("|");
                 for (File f = File.FILE_9; f >= File.FILE_1; f--)
                 {
-                    bod.Append(PIECE_BOD[pos.PieceOn(Core.Util.MakeSquare(f, r)).ToInt()]);
+                    bod.Append(PIECE_BOD[pos.PieceOn(Util.MakeSquare(f, r)).ToInt()]);
                 }
                 bod.AppendFormat("|{0}", CN_NUMBER[r.ToInt()]).AppendLine();
             }
@@ -457,7 +453,7 @@ namespace MyShogi.Model.Shogi.Converter
             //
             // bod.AppendFormat("手数＝{0}  {1}  まで", pos.gamePly - 1, pos.State().lastMove).appendLine();
             // 後手番のみ追加行
-            if (pos.SideToMove == Color.WHITE)
+            if (pos.sideToMove == Color.WHITE)
             {
                 bod.AppendLine("後手番");
             }
@@ -494,8 +490,142 @@ namespace MyShogi.Model.Shogi.Converter
         /// <returns></returns>
         public static Move FromKif(this Position pos, string kifMove)
         {
-            // ToDo : あとで実装する
-            return Move.NONE;
+            // match.Group[1]: ([▲△▼▽☗☖⛊⛉]?)
+            // match.Group[2]: ([1-9１２３４５６７８９一二三四五六七八九]{2}同?)
+            // match.Group[3]: (同)
+            // match.Group[4]: ([歩香桂銀金角飛玉王と杏圭全馬竜龍]|成[香桂銀])
+            // match.Group[5]: ([右左]?[上寄引]?|直)
+            // match.Group[6]: (成|不成|打)?
+            // match.Group[7]: (\([1-9]{2}\))?
+            Match match = new Regex(@"([▲△▼▽☗☖⛊⛉]?)(?:([1-9１２３４５６７８９一二三四五六七八九]{2}同?)|(同))[　 ]*([歩香桂銀金角飛玉王と杏圭全馬竜龍]|成[香桂銀])(直|[右左]?[上寄引]?)(成|不成|打)?(\([1-9]{2}\))?").Match(kifMove);
+            if (!match.Success) return Move.NONE;
+            Color c0 = pos.sideToMove;
+            Color c1 = FromColor(match.Groups[1].Value);
+            Square sq0;
+            Square sq1 = match.Groups[3].Value == "同" ? pos.State().lastMove.To() : FromSquare(match.Groups[2].Value);
+            if (sq1 == Square.NB) return Move.NONE;
+            Piece pt1 = FromKifPieceType(match.Groups[4].Value);
+            // 駒打ち
+            if (match.Groups[6].Value == "打") return Util.MakeMoveDrop(pt1, sq1);
+            // 成チェック
+            bool isPromote = (match.Groups[6].Value == "成");
+            // KIF形式で元座標が示されている場合
+            if (match.Groups[7].Value.Length == 4)
+            {
+                sq0 = FromSquare(match.Groups[7].Value.Substring(1, 2));
+                return isPromote ? Util.MakeMovePromote(sq0, sq1) : Util.MakeMove(sq0, sq1);
+            }
+            // KI2棋譜用処理
+            // 駒の移動範囲を調べるため、着手前の駒を求める
+            Piece pt0 = isPromote ? pt1.RawPieceType() : pt1;
+            Bitboard sameBB = pos.AttackersTo(c0, sq1) & pos.Pieces(c0, pt0);
+            if (sameBB.IsZero()) return Move.NONE;
+            if (sameBB.IsOne())
+            {
+                sq0 = sameBB.Pop();
+                return isPromote ? Util.MakeMovePromote(sq0, sq1) : Util.MakeMove(sq0, sq1);
+            }
+            Bitboard bb;
+            switch (match.Groups[5].Value)
+            {
+                case "右":
+                    sq0 = rightMost(c0, sameBB);
+                    break;
+                case "左":
+                    sq0 = leftMost(c0, sameBB);
+                    break;
+                case "直":
+                    bb = (KifUtil.lineDirBB(c0, sq1, Direct.D) & sameBB);
+                    if (!bb.IsOne()) return Move.NONE;
+                    sq0 = bb.Pop();
+                    break;
+                case "上":
+                    bb = (KifUtil.dirBB(c0, sq1, Direct.D) & sameBB);
+                    if (!bb.IsOne()) return Move.NONE;
+                    sq0 = bb.Pop();
+                    break;
+                case "引":
+                    bb = (KifUtil.dirBB(c0, sq1, Direct.U) & sameBB);
+                    if (!bb.IsOne()) return Move.NONE;
+                    sq0 = bb.Pop();
+                    break;
+                case "寄":
+                    bb = (Bitboard.RankBB(sq1.ToRank()) & sameBB);
+                    if (!bb.IsOne()) return Move.NONE;
+                    sq0 = bb.Pop();
+                    break;
+                case "右上":
+                    bb = (KifUtil.dirBB(c0, sq1, Direct.D) & sameBB);
+                    sq0 = rightMost(c0, bb);
+                    break;
+                case "左上":
+                    bb = (KifUtil.dirBB(c0, sq1, Direct.D) & sameBB);
+                    sq0 = leftMost(c0, bb);
+                    break;
+                case "右引":
+                    bb = (KifUtil.dirBB(c0, sq1, Direct.U) & sameBB);
+                    sq0 = rightMost(c0, bb);
+                    break;
+                case "左引":
+                    bb = (KifUtil.dirBB(c0, sq1, Direct.U) & sameBB);
+                    sq0 = leftMost(c0, bb);
+                    break;
+                case "右寄":
+                    bb = (Bitboard.RankBB(sq1.ToRank()) & sameBB);
+                    sq0 = rightMost(c0, bb);
+                    break;
+                case "左寄":
+                    bb = (Bitboard.RankBB(sq1.ToRank()) & sameBB);
+                    sq0 = leftMost(c0, bb);
+                    break;
+                default: return Move.NONE;
+            }
+            if (sq0 == Square.NB) return Move.NONE;
+            return isPromote ? Util.MakeMovePromote(sq0, sq1) : Util.MakeMove(sq0, sq1);
+        }
+        // bbの中で最も右にあるSquareを検出する。全く無かったり右に複数あったりすればSquare.NBを返す。
+        private static Square rightMost(Color c, Bitboard bb)
+        {
+            switch (c)
+            {
+                case Color.BLACK: return rightMost(bb);
+                case Color.WHITE: return leftMost(bb);
+                default: return Square.NB;
+            }
+        }
+        // bbの中で最も左にあるSquareを検出する。全く無かったり左に複数あったりすればSquare.NBを返す。
+        private static Square leftMost(Color c, Bitboard bb)
+        {
+            switch (c)
+            {
+                case Color.BLACK: return leftMost(bb);
+                case Color.WHITE: return rightMost(bb);
+                default: return Square.NB;
+            }
+        }
+        // bbの中で最も右にあるSquareを検出する。全く無かったり右に複数あったりすればSquare.NBを返す。
+        private static Square rightMost(Bitboard bb)
+        {
+            for (File f = File.FILE_1; f <= File.FILE_9; ++f)
+            {
+                Bitboard bbF = (bb & Bitboard.FileBB(f));
+                if (bbF.IsZero()) continue;
+                if (bbF.IsOne()) return bbF.Pop();
+                return Square.NB;
+            }
+            return Square.NB;
+        }
+        // bbの中で最も左にあるSquareを検出する。全く無かったり左に複数あったりすればSquare.NBを返す。
+        private static Square leftMost(Bitboard bb)
+        {
+            for (File f = File.FILE_9; f >= File.FILE_1; --f)
+            {
+                Bitboard bbF = (bb & Bitboard.FileBB(f));
+                if (bbF.IsZero()) continue;
+                if (bbF.IsOne()) return bbF.Pop();
+                return Square.NB;
+            }
+            return Square.NB;
         }
 
         /// <summary>
@@ -503,9 +633,278 @@ namespace MyShogi.Model.Shogi.Converter
         /// </summary>
         /// <param name="bod"></param>
         /// <returns></returns>
-        public static string BodToSfen(string bod)
+        public static string BodToSfen(string[] bod)
         {
-            return "";
+            var board = new Piece[81];
+            for (int i = 0; i < 81; ++i) board[i] = Piece.NO_PIECE;
+            var hand = new Hand[2];
+            for (int i = 0; i < 2; ++i) hand[i] = Hand.ZERO;
+            Color turn = Color.BLACK;
+            int ply = 1;
+
+            // 盤上の駒
+            var bRegex = new Regex(@"^\|((?:[ v][・歩香桂銀金角飛玉王と杏圭全馬龍竜]){9})\|([一二三四五六七八九])");
+            // 持駒
+            var hRegex = new Regex(@"(歩香桂銀金角飛)(十[一二三四五六七八]|[一二三四五六七八九])?");
+
+            foreach (var line in bod)
+            {
+                if (line.StartsWith("先手の持駒：") || line.StartsWith("下手の持駒："))
+                {
+                    hand[Color.BLACK.ToInt()] = Hand.ZERO;
+                    var hMatches = hRegex.Matches(line);
+                    foreach (Match hMatch in hMatches)
+                    {
+                        hand[Color.BLACK.ToInt()].Add(FromKifPieceType(hMatch.Groups[1].Value), Math.Max(FromNum(hMatch.Groups[2].Value), 1));
+                    }
+                    continue;
+                }
+                if (line.StartsWith("後手の持駒：") || line.StartsWith("上手の持駒："))
+                {
+                    hand[Color.WHITE.ToInt()] = Hand.ZERO;
+                    var hMatches = hRegex.Matches(line);
+                    foreach (Match hMatch in hMatches)
+                    {
+                        hand[Color.WHITE.ToInt()].Add(FromKifPieceType(hMatch.Groups[1].Value), Math.Max(FromNum(hMatch.Groups[2].Value), 1));
+                    }
+                    continue;
+                }
+                if (line.StartsWith("先手番") || line.StartsWith("下手番"))
+                {
+                    turn = Color.BLACK;
+                }
+                if (line.StartsWith("後手番") || line.StartsWith("上手番"))
+                {
+                    turn = Color.WHITE;
+                }
+                if (line.StartsWith("手数＝"))
+                {
+                    Match plyMatch = new Regex(@"^手数＝([0-9]+)").Match(line);
+                    if (plyMatch.Success)
+                    {
+                        ply = int.Parse(plyMatch.Groups[1].Value) + 1;
+                    }
+                    // 手数と同じ行にある最終着手の情報はここでは取り込まない
+                    continue;
+                }
+                if (line.StartsWith("|"))
+                {
+                    Match bMatch = bRegex.Match(line);
+                    if (bMatch.Success)
+                    {
+                        Rank r = (Rank)(FromNum(bMatch.Groups[2].Value) - 1);
+                        for (File f = File.FILE_9; f >= File.FILE_1; --f)
+                        {
+                            board[Util.MakeSquare(f, r).ToInt()] = FromKifPiece(bMatch.Groups[1].Value.Substring((int)(File.FILE_9 - f) * 2, 2));
+                        }
+                    }
+                    continue;
+                }
+            }
+            return Position.SfenFromRawdata(board, hand, turn, ply);
+        }
+        private static Piece FromKifPiece(string str)
+        {
+            switch (str)
+            {
+                case " ・": return Piece.NO_PIECE;
+                case " 歩": return Piece.B_PAWN;
+                case " 香": return Piece.B_LANCE;
+                case " 桂": return Piece.B_KNIGHT;
+                case " 銀": return Piece.B_SILVER;
+                case " 角": return Piece.B_BISHOP;
+                case " 飛": return Piece.B_ROOK;
+                case " 金": return Piece.B_GOLD;
+                case " 玉": return Piece.B_KING;
+                case " 王": return Piece.B_KING;
+                case " と": return Piece.B_PRO_PAWN;
+                case " 杏": return Piece.B_PRO_LANCE;
+                case " 圭": return Piece.B_PRO_KNIGHT;
+                case " 全": return Piece.B_PRO_SILVER;
+                case " 馬": return Piece.B_HORSE;
+                case " 龍": return Piece.B_DRAGON;
+                case " 竜": return Piece.B_DRAGON;
+                case "v歩": return Piece.W_PAWN;
+                case "v香": return Piece.W_LANCE;
+                case "v桂": return Piece.W_KNIGHT;
+                case "v銀": return Piece.W_SILVER;
+                case "v角": return Piece.W_BISHOP;
+                case "v飛": return Piece.W_ROOK;
+                case "v金": return Piece.W_GOLD;
+                case "v玉": return Piece.W_KING;
+                case "v王": return Piece.W_KING;
+                case "vと": return Piece.W_PRO_PAWN;
+                case "v杏": return Piece.W_PRO_LANCE;
+                case "v圭": return Piece.W_PRO_KNIGHT;
+                case "v全": return Piece.W_PRO_SILVER;
+                case "v馬": return Piece.W_HORSE;
+                case "v龍": return Piece.W_DRAGON;
+                case "v竜": return Piece.W_DRAGON;
+                case "歩": return Piece.PAWN;
+                case "歩兵": return Piece.PAWN;
+                case "香": return Piece.LANCE;
+                case "香車": return Piece.LANCE;
+                case "桂": return Piece.KNIGHT;
+                case "桂馬": return Piece.KNIGHT;
+                case "銀": return Piece.SILVER;
+                case "銀将": return Piece.SILVER;
+                case "角": return Piece.BISHOP;
+                case "角行": return Piece.BISHOP;
+                case "飛": return Piece.ROOK;
+                case "飛車": return Piece.ROOK;
+                case "金": return Piece.GOLD;
+                case "金将": return Piece.GOLD;
+                case "玉": return Piece.KING;
+                case "玉将": return Piece.KING;
+                case "王": return Piece.KING;
+                case "王将": return Piece.KING;
+                case "と": return Piece.PRO_PAWN;
+                case "と金": return Piece.PRO_PAWN;
+                case "杏": return Piece.PRO_LANCE;
+                case "成香": return Piece.PRO_LANCE;
+                case "圭": return Piece.PRO_KNIGHT;
+                case "成桂": return Piece.PRO_KNIGHT;
+                case "全": return Piece.PRO_SILVER;
+                case "成銀": return Piece.PRO_SILVER;
+                case "馬": return Piece.HORSE;
+                case "竜馬": return Piece.HORSE;
+                case "龍馬": return Piece.HORSE;
+                case "龍": return Piece.DRAGON;
+                case "龍王": return Piece.DRAGON;
+                case "竜": return Piece.DRAGON;
+                case "竜王": return Piece.DRAGON;
+                default: return Piece.NO_PIECE;
+            }
+        }
+        private static Piece FromKifPieceType(string str)
+        {
+            // 解釈できない時はPiece.NO_PIECEを返す
+            switch (str)
+            {
+                case "歩": return Piece.PAWN;
+                case "歩兵": return Piece.PAWN;
+                case "香": return Piece.LANCE;
+                case "香車": return Piece.LANCE;
+                case "桂": return Piece.KNIGHT;
+                case "桂馬": return Piece.KNIGHT;
+                case "銀": return Piece.SILVER;
+                case "銀将": return Piece.SILVER;
+                case "角": return Piece.BISHOP;
+                case "角行": return Piece.BISHOP;
+                case "飛": return Piece.ROOK;
+                case "飛車": return Piece.ROOK;
+                case "金": return Piece.GOLD;
+                case "金将": return Piece.GOLD;
+                case "玉": return Piece.KING;
+                case "玉将": return Piece.KING;
+                case "王": return Piece.KING;
+                case "王将": return Piece.KING;
+                case "と": return Piece.PRO_PAWN;
+                case "と金": return Piece.PRO_PAWN;
+                case "杏": return Piece.PRO_LANCE;
+                case "成香": return Piece.PRO_LANCE;
+                case "圭": return Piece.PRO_KNIGHT;
+                case "成桂": return Piece.PRO_KNIGHT;
+                case "全": return Piece.PRO_SILVER;
+                case "成銀": return Piece.PRO_SILVER;
+                case "馬": return Piece.HORSE;
+                case "竜馬": return Piece.HORSE;
+                case "龍馬": return Piece.HORSE;
+                case "龍": return Piece.DRAGON;
+                case "龍王": return Piece.DRAGON;
+                case "竜": return Piece.DRAGON;
+                case "竜王": return Piece.DRAGON;
+                default: return Piece.NO_PIECE;
+            }
+        }
+        private static Color FromColor(string colorStr)
+        {
+            // 解釈できない時はColor.NBを返す
+            switch (colorStr)
+            {
+                case "▲": return Color.BLACK;
+                case "△": return Color.WHITE;
+                case "▼": return Color.BLACK;
+                case "▽": return Color.WHITE;
+                case "☗": return Color.BLACK;
+                case "☖": return Color.WHITE;
+                case "⛊": return Color.BLACK;
+                case "⛉": return Color.WHITE;
+                case "先手": return Color.BLACK;
+                case "後手": return Color.WHITE;
+                case "下手": return Color.BLACK;
+                case "上手": return Color.WHITE;
+                default: return Color.NB;
+            }
+        }
+        private static Square FromSquare(string sqStr)
+        {
+            // 座標文字列からSquareに（解釈出来ない時はSquare.NBを返す）
+            if (sqStr.Length < 2) return Square.NB;
+            int FileNum = FromNum(sqStr.Substring(0, 1));
+            int RankNum = FromNum(sqStr.Substring(1, 1));
+            if (FileNum < 1 || FileNum > 9) return Square.NB;
+            if (RankNum < 1 || RankNum > 9) return Square.NB;
+            return Util.MakeSquare((File)(FileNum - 1), (Rank)(RankNum - 1));
+        }
+        private static int FromNum(string numStr)
+        {
+            // 解釈できない時は-1を返す
+            switch (numStr)
+            {
+                case "0": return 0;
+                case "1": return 1;
+                case "2": return 2;
+                case "3": return 3;
+                case "4": return 4;
+                case "5": return 5;
+                case "6": return 6;
+                case "7": return 7;
+                case "8": return 8;
+                case "9": return 9;
+                case "０": return 0;
+                case "１": return 1;
+                case "２": return 2;
+                case "３": return 3;
+                case "４": return 4;
+                case "５": return 5;
+                case "６": return 6;
+                case "７": return 7;
+                case "８": return 8;
+                case "９": return 9;
+                case "〇": return 0;
+                case "零": return 0;
+                case "一": return 1;
+                case "二": return 2;
+                case "三": return 3;
+                case "四": return 4;
+                case "五": return 5;
+                case "六": return 6;
+                case "七": return 7;
+                case "八": return 8;
+                case "九": return 9;
+                case "一〇": return 10;
+                case "一一": return 11;
+                case "一二": return 12;
+                case "一三": return 13;
+                case "一四": return 14;
+                case "一五": return 15;
+                case "一六": return 16;
+                case "一七": return 17;
+                case "一八": return 18;
+                case "一九": return 19;
+                case "十": return 10;
+                case "十一": return 11;
+                case "十二": return 12;
+                case "十三": return 13;
+                case "十四": return 14;
+                case "十五": return 15;
+                case "十六": return 16;
+                case "十七": return 17;
+                case "十八": return 18;
+                case "十九": return 19;
+                default: return -1;
+            }
         }
     }
 }
