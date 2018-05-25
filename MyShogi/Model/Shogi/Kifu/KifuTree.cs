@@ -54,9 +54,14 @@ namespace MyShogi.Model.Shogi.Kifu
         public void Bind(Position pos) { position = pos; }
 
         /// <summary>
-        /// 棋譜の初手の指し手。これを数珠つなぎに、樹形図状に持っている。
+        /// 棋譜の初期局面を示すnode。これを数珠つなぎに、樹形図状に持っている。
         /// </summary>
         public KifuNode rootNode;
+
+        /// <summary>
+        /// 棋譜の開始局面に対してつけられるコメント、対局を開始した時刻などの情報
+        /// </summary>
+        public KifuComment rootComment;
 
         /// <summary>
         /// posの現在の局面に対応するKifuNode

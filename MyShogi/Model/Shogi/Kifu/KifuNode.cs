@@ -24,5 +24,6 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 一手前のnode
         /// </summary>
         public KifuNode prevNode;
+        
     }
 }
