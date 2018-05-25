@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using MyShogi.Controller;
+using MyShogi.Model.ObjectModel;
 
 // とりま、Windows用
 // あとで他環境用を用意する
@@ -31,6 +32,9 @@ namespace MyShogi.App
             // 対局controllerを1つ生成して、メインの対局ウィンドゥのViewModelに加える
             var game = new GameController();
             mainDialogViewModel.Add(game);
+
+            // Notifyクラスのテスト(あとで消す)
+            //NotifyTest.Test();
 
             Application.Run(mainDialog);
         }
