@@ -59,9 +59,9 @@ namespace MyShogi.Model.Shogi.Kifu
         public KifuNode rootNode;
 
         /// <summary>
-        /// 棋譜の開始局面に対してつけられるコメント、対局を開始した時刻などの情報
+        /// 棋譜の開始局面に対してつけられる思考ログ、対局を開始した時刻などの情報
         /// </summary>
-        public KifuComment rootComment;
+        public KifuLog rootKifuLog;
 
         /// <summary>
         /// posの現在の局面に対応するKifuNode

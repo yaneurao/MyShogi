@@ -24,6 +24,12 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 一手前のnode
         /// </summary>
         public KifuNode prevNode;
-        
+
+        /// <summary>
+        /// この局面に対する棋譜コメント
+        /// rootNode(開始局面)に対するコメントもここに。
+        /// </summary>
+        public string comment;
+
     }
 }

@@ -6,7 +6,7 @@ namespace MyShogi.Model.Shogi.Kifu
     /// <summary>
     /// KifuTreeで用いる指し手
     /// </summary>
-    public class KifuMove : KifuComment
+    public class KifuMove : KifuLog
     {
         public KifuMove(Move nextMove_,KifuNode nextNode_ , TimeSpan thinkingTime_ , TimeSpan totalTime_)
         {
