@@ -65,6 +65,9 @@
     <Compile Include="App\TheApp.cs" />
     <Compile Include="Controller\GameController.cs" />
     <Compile Include="Model\ObjectModel\NotifyObject.cs" />
+    <Compile Include="Model\Resource\ImageLoader.cs" />
+    <Compile Include="Model\Resource\ImageManager.cs" />
+    <Compile Include="Model\Resource\ImageManagerConfig.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuLog.cs" />
     <Compile Include="ViewModel\MainDialogViewModel.cs" />
     <Compile Include="View\TestForm\TestForm1.cs">

@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using MyShogi.Controller;
 using MyShogi.Model.ObjectModel;
+using MyShogi.Model.Resource;
 
 // とりま、Windows用
 // あとで他環境用を用意する
@@ -23,15 +24,27 @@ namespace MyShogi.App
         {
             // -- 各インスタンスの生成と、それぞれのbind作業
 
-            // メインの対局ウィンドゥ
+            // -- 画像の読み込み
+
+            {
+                imageManager = new ImageManager();
+                // この設定はファイルから読み込んで、最後、ファイルに書き戻すべき。
+                var config = new ImageManagerConfig();
+                imageManager.Config = config;
+                imageManager.Init(); // ここで画像が読み込まれる。
+            }
+
+            // -- メインの対局ウィンドゥ
 
             var mainDialog = new MainDialog();
             mainDialogViewModel = new MainDialogViewModel();
             mainDialog.Bind(mainDialogViewModel);
 
-            // 対局controllerを1つ生成して、メインの対局ウィンドゥのViewModelに加える
-            var game = new GameController();
-            mainDialogViewModel.Add(game);
+            // -- 対局controllerを1つ生成して、メインの対局ウィンドゥのViewModelに加える
+            {
+                var game = new GameController();
+                mainDialogViewModel.Add(game);
+            }
 
             // Notifyクラスのテスト(あとで消す)
             //NotifyTest.Test();
@@ -48,6 +61,11 @@ namespace MyShogi.App
         /// MainDialogのViewModel
         /// </summary>
         public MainDialogViewModel mainDialogViewModel { get; private set; }
+
+        /// <summary>
+        /// 画像の読み込み用。本GUIで用いる画像はすべてここから取得する。
+        /// </summary>
+        public ImageManager imageManager { get; private set; }
 
         /// <summary>
         /// singletonなinstance。それぞれのViewModelなどにアクセスしたければ、これ経由でアクセスする。

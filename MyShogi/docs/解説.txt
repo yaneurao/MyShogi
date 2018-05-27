@@ -5,6 +5,8 @@
 		/Converter  KIF/CSA形式での入出力のヘルパー
 		/IO         棋譜ファイルの入出力
 		/Network    通信対局関連
+	/ObjectModel  WPFのようなMVVM用の補助クラスの自作
+	/Resource     画像や音声などのリソースを動的に読み込み管理するためのマネージャー
 	/Test         テスト用のコード
 
 /View           ViewModeのView
