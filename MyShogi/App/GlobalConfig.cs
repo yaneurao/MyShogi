@@ -83,5 +83,16 @@ namespace MyShogi.App
         /// </summary>
         public int ScreenRatio { get; set; } = 0;
 
+        /// <summary>
+        /// 盤画像のバージョン
+        /// 商用版のみ1以外を選択できる。(ようにするかも)
+        /// </summary>
+        public int BoardImageVersion { get; set; } = 1;
+
+        /// <summary>
+        /// 駒画像のバージョン
+        /// 商用版のみ1以外を選択できる。
+        /// </summary>
+        public int PieceImageVersion { get; set; } = 1;
     }
 }

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyShogi.Model.Resource
 {
@@ -70,9 +65,25 @@ namespace MyShogi.Model.Resource
                 switch (from_y)
                 {
                     case 1: oy += 2; break;
-                    case 2: oy += 6; break;
-                    case 6: oy -= 6; break;
+                    case 2: oy += 6; ox += 3;  break;
+                    case 6: oy -= 6; ox -= 3;  break;
                     case 7: oy -= 2; break;
+                }
+
+                // さらに駒ごとの微調整
+                int pc = to_x + to_y * 8;
+                switch (pc)
+                {
+                    case 1: ox += 2; break;
+                    case 2: ox -= 2; break;
+                    case 3: ox -= 2; break;
+                    case 4: ox -= 2; break;
+                    case 8: ox -= 3; break;
+                    case 16 +1: ox -= 2; break;
+                    case 16 +2: ox += 2; break;
+                    case 16 + 3: ox += 2; break;
+                    case 16 + 4: ox += 2; break;
+                    case 16 + 8: ox -= 3; break;
                 }
 
                 var srcRect = new Rectangle(0 + ox, 0 + oy, x, y);

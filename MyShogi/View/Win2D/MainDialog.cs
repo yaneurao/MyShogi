@@ -16,7 +16,7 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
-            InitMenuItems();
+            UpdateMenuItems();
             FindScreenSize();
         }
 
@@ -35,6 +35,9 @@ namespace MyShogi.View.Win2D
         public static readonly int piece_img_width = 96;
         public static readonly int piece_img_height = 106;
 
+        // メニュー高さ。これはClientSize.Heightに含まれてしまうのでこれを加算した分だけ確保しないといけない。
+        public static int menu_height = SystemInformation.MenuHeight;
+
         /// <summary>
         /// スクリーンサイズにぴったり収まるぐらいのウィンドゥサイズを決定する。
         /// </summary>
@@ -44,6 +47,7 @@ namespace MyShogi.View.Win2D
             // プライマリスクリーンを基準にして良いのかどうかはわからん…。
             int w = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
             int h = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+
 
             float[] scale = new float[]
             {
@@ -57,7 +61,7 @@ namespace MyShogi.View.Win2D
                 int clip = (board_img_width - cx) / 2;
 
                 int w2 = (int)((board_img_width - clip * 2) * s);
-                int h2 = (int)(board_img_height * s);
+                int h2 = (int)(board_img_height * s + menu_height);
 
                 // 10%ほど余裕を持って画面に収まるサイズを探す。
                 if (w >= (int)(w2 * 1.1f) && h >= (int)(h2 * 1.1f))
@@ -86,15 +90,17 @@ namespace MyShogi.View.Win2D
         /// メニューのitemを動的に追加する。
         /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
         /// </summary>
-        public void InitMenuItems()
+        public void UpdateMenuItems()
         {
+            var app = TheApp.app;
+            var config = app.config;
+
             // Commercial Version GUI
-            bool CV_GUI = TheApp.app.config.YaneuraOu2018_GUI_MODE;
+            bool CV_GUI = config.YaneuraOu2018_GUI_MODE;
             if (CV_GUI)
                 Text = "将棋神やねうら王";
 
             // -- メニューの追加。あとで考える。
-#if false
             {
                 var menu = new MenuStrip();
 
@@ -102,25 +108,108 @@ namespace MyShogi.View.Win2D
                 SuspendLayout();
                 menu.SuspendLayout();
 
+                // 前回設定されたメニューを除去する
+                if (old_menu != null)
+                    Controls.Remove(old_menu);
+
+                var file_display = new ToolStripMenuItem();
+                file_display.Text = "ファイル";
+                menu.Items.Add(file_display);
+                // あとで追加する。
+
                 var item_display = new ToolStripMenuItem();
                 item_display.Text = "表示";
                 menu.Items.Add(item_display);
 
-                var item1 = new ToolStripMenuItem();
-                item1.Text = "二文字駒";
-                item_display.DropDownItems.Add(item1);
+                // 駒種
+                {
+                    if (CV_GUI)
+                    {
+                        { // -- 盤画像の選択メニュー
 
-                var item2 = new ToolStripMenuItem();
-                item2.Text = "一文字駒";
-                item_display.DropDownItems.Add(item2);
+                            var item = new ToolStripMenuItem();
+                            item.Text = "盤画像";
 
-                var item3 = new ToolStripMenuItem();
-                item3.Text = "英文字駒";
-                item_display.DropDownItems.Add(item3);
+                            var item1 = new ToolStripMenuItem();
+                            item1.Text = "Type1";
+                            item1.Checked = config.BoardImageVersion == 1;
+                            item1.Click += (sender, e) =>
+                            {
+                                if (config.BoardImageVersion != 1)
+                                {
+                                    config.BoardImageVersion = 1;
+                                    app.imageManager.Update();
+                                    UpdateMenuItems();
+                                }
+                            };
+                            item.DropDownItems.Add(item1);
+
+                            var item2 = new ToolStripMenuItem();
+                            item2.Text = "Type2";
+                            item2.Checked = config.BoardImageVersion == 2;
+                            item2.Click += (sender, e) =>
+                            {
+                                if (config.BoardImageVersion != 2)
+                                {
+                                    config.BoardImageVersion = 2;
+                                    app.imageManager.Update();
+                                    UpdateMenuItems();
+                                }
+                            };
+                            item.DropDownItems.Add(item2);
+                            item_display.DropDownItems.Add(item);
+
+                        }
+
+                        { // -- 駒画像の選択メニュー
+
+                            var item = new ToolStripMenuItem();
+                            item.Text = "駒画像";
+
+                            var item1 = new ToolStripMenuItem();
+                            item1.Text = "一文字駒";
+                            item1.Checked = config.PieceImageVersion == 2;
+                            item1.Click += (sender, e) =>
+                            {
+                                if (config.PieceImageVersion != 2)
+                                {
+                                    config.PieceImageVersion = 2;
+                                    app.imageManager.Update();
+                                    UpdateMenuItems();
+                                }
+                            };
+                            item.DropDownItems.Add(item1);
+
+                            var item2 = new ToolStripMenuItem();
+                            item2.Text = "二文字駒";
+                            item2.Checked = TheApp.app.config.PieceImageVersion == 1;
+                            item2.Click += (sender, e) =>
+                            {
+                                config.PieceImageVersion = 1;
+                                app.imageManager.Update();
+                                UpdateMenuItems();
+                            };
+                            item.DropDownItems.Add(item2);
+
+                            var item3 = new ToolStripMenuItem();
+                            item3.Text = "英文字駒";
+                            item3.Checked = TheApp.app.config.PieceImageVersion == 3;
+                            item3.Click += (sender, e) =>
+                            {
+                                config.PieceImageVersion = 3;
+                                app.imageManager.Update();
+                                UpdateMenuItems();
+                            };
+                            item.DropDownItems.Add(item3);
+                            item_display.DropDownItems.Add(item);
+                        }
+                    }
+                }
 
                 Controls.Add(menu);
                 //フォームのメインメニューとする
                 MainMenuStrip = menu;
+                old_menu = menu;
 
                 //レイアウトロジックを再開する
                 menu.ResumeLayout(false);
@@ -128,8 +217,11 @@ namespace MyShogi.View.Win2D
                 ResumeLayout(false);
                 PerformLayout();
             }
-#endif
+
+            Invalidate();
         }
+
+        private MenuStrip old_menu { get; set; } = null;
 
         public MainDialogViewModel ViewModel { get; private set;}
 
@@ -158,8 +250,8 @@ namespace MyShogi.View.Win2D
             // -- 盤面の描画
             {
                 var board = img.BoardImg.image;
-                var destRect = new Rectangle(0, 0, ClientSize.Width , ClientSize.Height);
-                var sourceRect = new Rectangle(clip_x, 0, board.Width - clip_x * 2, board.Height);
+                var destRect = new Rectangle(0, menu_height , ClientSize.Width , ClientSize.Height - menu_height);
+                var sourceRect = new Rectangle(clip_x, 0, board_img_width - clip_x * 2, board_img_height);
                 e.Graphics.DrawImage(board, destRect, sourceRect, GraphicsUnit.Pixel);
             }
 
@@ -170,7 +262,7 @@ namespace MyShogi.View.Win2D
 
                 var piece = img.PieceImg.image;
                 var scale_x = (float)ClientSize.Width / (board_img_width - clip_x*2 );
-                var scale_y = (float)ClientSize.Height / board_img_height;
+                var scale_y = (float)(ClientSize.Height - menu_height) / board_img_height;
 
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
@@ -181,9 +273,9 @@ namespace MyShogi.View.Win2D
                         Rank r = sq.ToRank();
 
                         var destRect = new Rectangle(
-                            (int)(scale_x * (board_left - clip_x + piece_img_width * (int)f)),
-                            (int)(scale_y * (board_top + piece_img_height * (int)r)),
-                            (int)(piece_img_width * 1 * scale_x),
+                            (int)(scale_x * (board_left - clip_x +(piece_img_width + 0.5f )* (8 - (int)f) - 4)    ),
+                            (int)(scale_y * (board_top  +          piece_img_height    * (int)r) + menu_height),
+                            (int)(piece_img_width  * 1 * scale_x),
                             (int)(piece_img_height * 1 * scale_y));
 
                         var sourceRect = new Rectangle(

@@ -41,8 +41,7 @@ namespace MyShogi.App
                 imageManager = new ImageManager();
                 // この設定はファイルから読み込んで、最後、ファイルに書き戻すべき。
                 var config = new ImageManagerConfig();
-                imageManager.Config = config;
-                imageManager.Init(); // ここで画像が読み込まれる。
+                imageManager.Update(); // ここで画像が読み込まれる。
             }
 
             // -- メインの対局ウィンドゥ
