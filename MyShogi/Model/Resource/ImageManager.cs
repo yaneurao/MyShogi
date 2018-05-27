@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows.Forms;
 
 namespace MyShogi.Model.Resource
@@ -25,7 +20,7 @@ namespace MyShogi.Model.Resource
         public void Init()
         {
             BoardImg = Load($"board_v{Config.BoardImageNo}_1920_1080.png");
-            PieceImg = Load($"piece_v{Config.PieceImageNo}_1920_1080.png");
+            PieceImg = Load($"piece_v{Config.PieceImageNo}_768_424.png");
 
             // 画像の読み込みに失敗していたら警告ダイアログを表示する。
             if (BoardImg.image == null)

@@ -25,7 +25,8 @@ namespace MyShogi.View.Win2D
                 // ぴったり収まりそうな画面サイズを探す
                 4.0f , 3.0f , 2.5f , 2.0f , 1.75f , 1.5f , 1.25f , 1.0f , 0.75f , 0.5f , 0.25f
             };
-            foreach(var s in scale)
+
+            foreach (var s in scale)
             {
                 int w2 = (int)(1920 * s);
                 int h2 = (int)(1080 * s);
@@ -38,9 +39,7 @@ namespace MyShogi.View.Win2D
                 }
             }
 
-#if YANEURAOU_GUI_2018
-            Text = "将棋神やねうら王";
-#endif
+            //Text = "将棋神やねうら王";
         }
 
         public MainDialogViewModel ViewModel { get; private set;}
@@ -61,15 +60,28 @@ namespace MyShogi.View.Win2D
 
             var app = TheApp.app;
             var img = app.imageManager;
-            var board = img.BoardImg.image;
 
-            var destRect = new Rectangle(0, 0, ClientSize.Width  , ClientSize.Height );
+            // -- 盤面の描画
+            {
+                var board = img.BoardImg.image;
+                var destRect = new Rectangle(0, 0, ClientSize.Width, ClientSize.Height);
+                var sourceRect = new Rectangle(0, 0, board.Width, board.Height);
+                e.Graphics.DrawImage(board, destRect, sourceRect, GraphicsUnit.Pixel);
+            }
 
-            var sourceRect = new Rectangle(0, 0, board.Width , board.Height );
-            e.Graphics.DrawImage(board , destRect, sourceRect , GraphicsUnit.Pixel);
+            // -- 駒の描画
+            {
+                // 書きかけ。あとでちゃんと書く。
 
-            var piece = img.PieceImg.image;
-            e.Graphics.DrawImage(piece, destRect, sourceRect, GraphicsUnit.Pixel);
+                var piece = img.PieceImg.image;
+                var scale_x = (float)ClientSize.Width / 1920;
+                var scale_y = (float)ClientSize.Height / 1080;
+
+                var destRect = new Rectangle((int)(scale_x * 526), (int)(scale_y * 53),
+                    (int)(96 * 8 * scale_x) , (int)(106*4*scale_y));
+                var sourceRect = new Rectangle(0, 0, piece.Width, piece.Height);
+                e.Graphics.DrawImage(piece, destRect, sourceRect, GraphicsUnit.Pixel);
+            }
 
         }
 

@@ -25,7 +25,7 @@ namespace MyShogi.Model.Resource
         /// "piece_v3_1920_1080.png"
         /// のようなファイル名になる。
         /// </summary>
-        public int PieceImageNo { get; set; } = 1;
+        public int PieceImageNo { get; set; } = 2;
 
 
     }

@@ -22,6 +22,11 @@ namespace MyShogi.App
         /// </summary>
         public void Run()
         {
+            // -- 開発時のテストコード
+
+            // 駒素材画像の変換
+            //ImageConverter.ConvertPieceImage();
+
             // -- 各インスタンスの生成と、それぞれのbind作業
 
             // -- 画像の読み込み
