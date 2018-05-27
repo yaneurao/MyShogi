@@ -88,7 +88,9 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void InitMenuItems()
         {
-            if (TheApp.app.YaneuraOu2018_GUI_MODE)
+            // Commercial Version GUI
+            bool CV_GUI = TheApp.app.config.YaneuraOu2018_GUI_MODE;
+            if (CV_GUI)
                 Text = "将棋神やねうら王";
 
             // -- メニューの追加。あとで考える。

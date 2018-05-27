@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using MyShogi.Controller;
 using MyShogi.Model.ObjectModel;
@@ -30,9 +31,7 @@ namespace MyShogi.App
 
             // -- global configの読み込み
 
-            // カレントフォルダに"YaneuraOuGUI2018.txt"というファイルがあるなら、
-            // 商用版のやねうら王用のモード。
-            YaneuraOu2018_GUI_MODE = System.IO.File.Exists("YaneuraOuGUI2018.txt");
+            config = GlobalConfig.CreateInstance();
 
             // -- 各インスタンスの生成と、それぞれのbind作業
 
@@ -61,6 +60,12 @@ namespace MyShogi.App
             // Notifyクラスのテスト(あとで消す)
             //NotifyTest.Test();
 
+            // 終了するときに設定ファイルに書き出すコード
+            Application.ApplicationExit += new EventHandler((sender,e) =>
+            {
+                config.Save();
+            });
+
             Application.Run(mainDialog);
         }
 
@@ -80,9 +85,9 @@ namespace MyShogi.App
         public ImageManager imageManager { get; private set; }
 
         /// <summary>
-        /// 商用版のやねうら王用のモードであるか。
+        /// GUIの全体設定
         /// </summary>
-        public bool YaneuraOu2018_GUI_MODE { get; private set; }
+        public GlobalConfig config { get; private set; }
 
         /// <summary>
         /// singletonなinstance。それぞれのViewModelなどにアクセスしたければ、これ経由でアクセスする。
