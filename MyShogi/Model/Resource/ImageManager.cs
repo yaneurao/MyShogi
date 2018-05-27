@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace MyShogi.Model.Resource
 {
@@ -25,6 +26,15 @@ namespace MyShogi.Model.Resource
         {
             BoardImg = Load($"board_v{Config.BoardImageNo}_1920_1080.png");
             PieceImg = Load($"piece_v{Config.PieceImageNo}_1920_1080.png");
+
+            // 画像の読み込みに失敗していたら警告ダイアログを表示する。
+            if (BoardImg.image == null)
+            {
+                MessageBox.Show("盤画像の読み込みに失敗しました。");
+
+                // このままApplication.Exit()させてしまうと次回以降も読み込みに失敗してしまい、
+                // 永久に起動出来なくなってしまう。
+            }
         }
 
         /// <summary>
