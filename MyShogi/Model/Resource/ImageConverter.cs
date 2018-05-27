@@ -43,7 +43,10 @@ namespace MyShogi.Model.Resource
             {
                 // 後手の駒
                 if (is_white)
+                {
+                    from_x = 8 - from_x; // x方向もミラーしておかないと角と飛車の位置が違う。
                     from_y = 8 - from_y;
+                }
 
                 var g = Graphics.FromImage(bmp);
                 // 盤面の升は(526,53)が左上。
