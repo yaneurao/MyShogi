@@ -17,7 +17,8 @@ namespace MyShogi.View.Win2D
 
             FindScreenSize();
 
-            //Text = "将棋神やねうら王";
+            if (TheApp.app.YaneuraOu2018_GUI_MODE)
+                Text = "将棋神やねうら王";
         }
 
         /// <summary>

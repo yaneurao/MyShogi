@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.IO;
+using System.Windows.Forms;
 using MyShogi.Controller;
 using MyShogi.Model.ObjectModel;
 using MyShogi.Model.Resource;
@@ -26,6 +27,12 @@ namespace MyShogi.App
 
             // 駒素材画像の変換
             //ImageConverter.ConvertPieceImage();
+
+            // -- global configの読み込み
+
+            // カレントフォルダに"YaneuraOuGUI2018.txt"というファイルがあるなら、
+            // 商用版のやねうら王用のモード。
+            YaneuraOu2018_GUI_MODE = System.IO.File.Exists("YaneuraOuGUI2018.txt");
 
             // -- 各インスタンスの生成と、それぞれのbind作業
 
@@ -71,6 +78,11 @@ namespace MyShogi.App
         /// 画像の読み込み用。本GUIで用いる画像はすべてここから取得する。
         /// </summary>
         public ImageManager imageManager { get; private set; }
+
+        /// <summary>
+        /// 商用版のやねうら王用のモードであるか。
+        /// </summary>
+        public bool YaneuraOu2018_GUI_MODE { get; private set; }
 
         /// <summary>
         /// singletonなinstance。それぞれのViewModelなどにアクセスしたければ、これ経由でアクセスする。
