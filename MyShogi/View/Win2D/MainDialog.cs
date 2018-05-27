@@ -16,10 +16,8 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
+            InitMenuItems();
             FindScreenSize();
-
-            if (TheApp.app.YaneuraOu2018_GUI_MODE)
-                Text = "将棋神やねうら王";
         }
 
         // -- 各種定数
@@ -82,6 +80,53 @@ namespace MyShogi.View.Win2D
                     break;
 
             }
+        }
+
+        /// <summary>
+        /// メニューのitemを動的に追加する。
+        /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
+        /// </summary>
+        public void InitMenuItems()
+        {
+            if (TheApp.app.YaneuraOu2018_GUI_MODE)
+                Text = "将棋神やねうら王";
+
+            // -- メニューの追加。あとで考える。
+#if false
+            {
+                var menu = new MenuStrip();
+
+                //レイアウトロジックを停止する
+                SuspendLayout();
+                menu.SuspendLayout();
+
+                var item_display = new ToolStripMenuItem();
+                item_display.Text = "表示";
+                menu.Items.Add(item_display);
+
+                var item1 = new ToolStripMenuItem();
+                item1.Text = "二文字駒";
+                item_display.DropDownItems.Add(item1);
+
+                var item2 = new ToolStripMenuItem();
+                item2.Text = "一文字駒";
+                item_display.DropDownItems.Add(item2);
+
+                var item3 = new ToolStripMenuItem();
+                item3.Text = "英文字駒";
+                item_display.DropDownItems.Add(item3);
+
+                Controls.Add(menu);
+                //フォームのメインメニューとする
+                MainMenuStrip = menu;
+
+                //レイアウトロジックを再開する
+                menu.ResumeLayout(false);
+                menu.PerformLayout();
+                ResumeLayout(false);
+                PerformLayout();
+            }
+#endif
         }
 
         public MainDialogViewModel ViewModel { get; private set;}
