@@ -13,7 +13,7 @@ namespace MyShogi.Model.Resource
         /// <summary>
         /// 駒素材のバージョン
         /// </summary>
-        public static readonly int version = 3;
+        public static readonly int version = 1;
 
         /// <summary>
         /// 駒素材の画像から駒の部分を集めて書き出す。
@@ -86,7 +86,7 @@ namespace MyShogi.Model.Resource
                 var img2 = (img == omote) ? ura : omote; // 逆側
                 var c = i >= 2; // IsWhite?
                 copy(img2, 4, 8, 0, i, c); // 王   59の王を、(0,0)に移動。
-                copy(img, 0, 6, 1, i, c);  // 歩   97の歩を、(1,0)に移動。以下、同様。
+                copy(img, 1, 6, 1, i, c);  // 歩   87の歩を、(1,0)に移動。以下、同様。
                 copy(img, 0, 8, 2, i, c);  // 香
                 copy(img, 1, 8, 3, i, c);  // 桂
                 copy(img, 2, 8, 4, i, c);  // 銀

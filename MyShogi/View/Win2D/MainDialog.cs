@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Shogi.Core;
 using MyShogi.ViewModel;
 
 namespace MyShogi.View.Win2D
@@ -20,6 +21,21 @@ namespace MyShogi.View.Win2D
             if (TheApp.app.YaneuraOu2018_GUI_MODE)
                 Text = "将棋神やねうら王";
         }
+
+        // -- 各種定数
+
+        // 盤面素材の画像サイズ
+        public static readonly int board_img_width = 1920;
+        public static readonly int board_img_height = 1080;
+
+        // 盤面素材における、駒を配置する升の左上。
+        public static readonly int board_top = 53;
+        public static readonly int board_left = 526;
+
+        // 駒素材の画像サイズ(駒1つ分)
+        // これが横に8つ、縦に4つ、計32個並んでいる。
+        public static readonly int piece_img_width = 96;
+        public static readonly int piece_img_height = 106;
 
         /// <summary>
         /// スクリーンサイズにぴったり収まるぐらいのウィンドゥサイズを決定する。
@@ -40,10 +56,10 @@ namespace MyShogi.View.Win2D
             bool is_suitable(int cx /* window width*/ , float s /* scale */)
             {
                 // window size = 1440 : 1080 = 4:3
-                int clip = (1920 - cx) / 2;
+                int clip = (board_img_width - cx) / 2;
 
-                int w2 = (int)((1920 - clip * 2) * s);
-                int h2 = (int)(1080 * s);
+                int w2 = (int)((board_img_width - clip * 2) * s);
+                int h2 = (int)(board_img_height * s);
 
                 // 10%ほど余裕を持って画面に収まるサイズを探す。
                 if (w >= (int)(w2 * 1.1f) && h >= (int)(h2 * 1.1f))
@@ -102,16 +118,36 @@ namespace MyShogi.View.Win2D
 
             // -- 駒の描画
             {
-                // 書きかけ。あとでちゃんと書く。
+                // 描画する盤面
+                var pos = ViewModel.Pos;
 
                 var piece = img.PieceImg.image;
-                var scale_x = (float)ClientSize.Width / ( 1920 - clip_x*2 );
-                var scale_y = (float)ClientSize.Height / 1080;
+                var scale_x = (float)ClientSize.Width / (board_img_width - clip_x*2 );
+                var scale_y = (float)ClientSize.Height / board_img_height;
 
-                var destRect = new Rectangle((int)(scale_x * (526-clip_x )), (int)(scale_y * 53),
-                    (int)(96 * 8 * scale_x) , (int)(106*4*scale_y));
-                var sourceRect = new Rectangle(0, 0, piece.Width, piece.Height);
-                e.Graphics.DrawImage(piece, destRect, sourceRect, GraphicsUnit.Pixel);
+                for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
+                {
+                    var pc = pos.PieceOn(sq);
+                    if (pc != Piece.NO_PIECE)
+                    {
+                        File f = sq.ToFile();
+                        Rank r = sq.ToRank();
+
+                        var destRect = new Rectangle(
+                            (int)(scale_x * (board_left - clip_x + piece_img_width * (int)f)),
+                            (int)(scale_y * (board_top + piece_img_height * (int)r)),
+                            (int)(piece_img_width * 1 * scale_x),
+                            (int)(piece_img_height * 1 * scale_y));
+
+                        var sourceRect = new Rectangle(
+                            ((int)pc % 8) * piece_img_width , 
+                            ((int)pc / 8) * piece_img_height,
+                            piece_img_width , piece_img_height);
+
+                        e.Graphics.DrawImage(piece, destRect, sourceRect, GraphicsUnit.Pixel);
+                    }
+                }
+
             }
 
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using MyShogi.Controller;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.ViewModel
 {
@@ -10,6 +11,8 @@ namespace MyShogi.ViewModel
     {
         public MainDialogViewModel()
         {
+            // デバッグ中。あとで削除する。
+            Pos.InitBoard(BoardType.NoHandicap);
         }
 
         /// <summary>
@@ -41,6 +44,11 @@ namespace MyShogi.ViewModel
         /// VisibleGamesのなかのいずれかのインスタンス。
         /// </summary>
         public GameController ActiveGame;
+
+        /// <summary>
+        /// 盤面。あとで書き直す。デバッグ用。
+        /// </summary>
+        public Position Pos { get; private set; } = new Position();
 
     }
 }

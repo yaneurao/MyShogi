@@ -16,6 +16,8 @@ namespace MyShogi.Model.Resource
         /// 例)3なら
         /// "board_v3_1920_1080.png"
         /// のようなファイル名になる。
+        /// 
+        /// 商用版のみ素材が複数用意されていて、フリーウェア版は、素材がないため1しか選択できない。
         /// </summary>
         public int BoardImageNo { get; set; } = 1;
 
@@ -24,8 +26,10 @@ namespace MyShogi.Model.Resource
         /// 例) 3なら
         /// "piece_v3_1920_1080.png"
         /// のようなファイル名になる。
+        /// 
+        /// 商用版のみ素材が複数用意されていて、フリーウェア版は、素材がないため1しか選択できない。
         /// </summary>
-        public int PieceImageNo { get; set; } = 2;
+        public int PieceImageNo { get; set; } = 1;
 
 
     }
