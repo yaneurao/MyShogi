@@ -135,12 +135,8 @@ namespace MyShogi.View.Win2D
                             item1.Checked = config.BoardImageVersion == 1;
                             item1.Click += (sender, e) =>
                             {
-                                if (config.BoardImageVersion != 1)
-                                {
-                                    config.BoardImageVersion = 1;
-                                    app.imageManager.Update();
-                                    UpdateMenuItems();
-                                }
+                                config.BoardImageVersion = 1;
+                                UpdateMenuItems();
                             };
                             item.DropDownItems.Add(item1);
 
@@ -149,12 +145,8 @@ namespace MyShogi.View.Win2D
                             item2.Checked = config.BoardImageVersion == 2;
                             item2.Click += (sender, e) =>
                             {
-                                if (config.BoardImageVersion != 2)
-                                {
-                                    config.BoardImageVersion = 2;
-                                    app.imageManager.Update();
-                                    UpdateMenuItems();
-                                }
+                                config.BoardImageVersion = 2;
+                                UpdateMenuItems();
                             };
                             item.DropDownItems.Add(item2);
                             item_display.DropDownItems.Add(item);
@@ -171,12 +163,10 @@ namespace MyShogi.View.Win2D
                             item1.Checked = config.PieceImageVersion == 2;
                             item1.Click += (sender, e) =>
                             {
-                                if (config.PieceImageVersion != 2)
-                                {
-                                    config.PieceImageVersion = 2;
-                                    app.imageManager.Update();
-                                    UpdateMenuItems();
-                                }
+                                config.PieceImageVersion = 2;
+                                // このときに画像の読み直しが発生する(かも)なので
+                                // メニューの更新もこのへんでしとかないといけない。
+                                UpdateMenuItems();
                             };
                             item.DropDownItems.Add(item1);
 
@@ -186,7 +176,6 @@ namespace MyShogi.View.Win2D
                             item2.Click += (sender, e) =>
                             {
                                 config.PieceImageVersion = 1;
-                                app.imageManager.Update();
                                 UpdateMenuItems();
                             };
                             item.DropDownItems.Add(item2);
@@ -197,7 +186,6 @@ namespace MyShogi.View.Win2D
                             item3.Click += (sender, e) =>
                             {
                                 config.PieceImageVersion = 3;
-                                app.imageManager.Update();
                                 UpdateMenuItems();
                             };
                             item.DropDownItems.Add(item3);

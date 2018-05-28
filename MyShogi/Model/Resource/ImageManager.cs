@@ -16,14 +16,22 @@ namespace MyShogi.Model.Resource
         public static readonly string ImageFolder = "image";
 
         /// <summary>
-        /// Configの設定に従い、画像を読み込む。
+        /// TheApp.app.configの内容に従い、画像を読み込む。
         /// </summary>
         public void Update()
+        {
+            UpdateBoardImage();
+            UpdatePieceImage();
+        }
+
+        /// <summary>
+        /// TheApp.app.config.BoardImageVersionの設定が変わったときに画像を読み込む。
+        /// </summary>
+        public void UpdateBoardImage()
         {
             var config = TheApp.app.config;
 
             BoardImg.Release();
-            PieceImg.Release();
 
             BoardImg = Load($"board_v{config.BoardImageVersion}_1920_1080.png");
             // 画像の読み込みに失敗していたら警告ダイアログを表示する。
@@ -37,6 +45,17 @@ namespace MyShogi.Model.Resource
 
                 Application.Exit();
             }
+
+        }
+
+        /// <summary>
+        /// TheApp.app.config.PieceImageVersionが変わったときに呼び出されるハンドラ
+        /// </summary>
+        public void UpdatePieceImage()
+        {
+            var config = TheApp.app.config;
+
+            PieceImg.Release();
 
             PieceImg = Load($"piece_v{config.PieceImageVersion}_768_424.png");
             if (PieceImg.image == null)

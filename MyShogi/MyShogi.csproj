@@ -70,7 +70,6 @@
     <Compile Include="Model\Resource\ImageConverter.cs" />
     <Compile Include="Model\Resource\ImageLoader.cs" />
     <Compile Include="Model\Resource\ImageManager.cs" />
-    <Compile Include="Model\Resource\ImageManagerConfig.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuLog.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ViewModel\MainDialogViewModel.cs" />

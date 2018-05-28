@@ -39,9 +39,12 @@ namespace MyShogi.App
 
             {
                 imageManager = new ImageManager();
-                // この設定はファイルから読み込んで、最後、ファイルに書き戻すべき。
-                var config = new ImageManagerConfig();
-                imageManager.Update(); // ここで画像が読み込まれる。
+                imageManager.Update(); // ここでconfigに従い、画像が読み込まれる。
+
+                // GlobalConfigのプロパティ変更に対して、このimageManagerが呼び出されるようにbindしておく。
+
+                config.AddPropertyChangedHandler("BoardImageVersion", imageManager.UpdateBoardImage);
+                config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
             }
 
             // -- メインの対局ウィンドゥ

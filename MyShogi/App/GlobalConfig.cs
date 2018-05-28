@@ -1,4 +1,4 @@
-﻿using System;
+﻿using MyShogi.Model.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Xml.Serialization;
@@ -9,13 +9,16 @@ namespace MyShogi.App
     /// 全体設定。
     /// 駒画像番号、サウンドの有無、ウインドウ比率など…
     /// </summary>
-    public class GlobalConfig
+    public class GlobalConfig : NotifyObject
     {
         public GlobalConfig()
         {
             // カレントフォルダに"YaneuraOuGUI2018.txt"というファイルがあるなら、
             // 商用版のやねうら王用のモード。
             YaneuraOu2018_GUI_MODE = System.IO.File.Exists("YaneuraOuGUI2018.txt");
+
+            BoardImageVersion = 1;
+            PieceImageVersion = 1;
         }
 
         /// <summary>
@@ -87,12 +90,20 @@ namespace MyShogi.App
         /// 盤画像のバージョン
         /// 商用版のみ1以外を選択できる。(ようにするかも)
         /// </summary>
-        public int BoardImageVersion { get; set; } = 1;
+        public int BoardImageVersion
+        {
+            get { return GetValue<int>("BoardImageVersion"); }
+            set { SetValue<int>("BoardImageVersion",value); }
+        }
 
         /// <summary>
         /// 駒画像のバージョン
         /// 商用版のみ1以外を選択できる。
         /// </summary>
-        public int PieceImageVersion { get; set; } = 1;
+        public int PieceImageVersion
+        {
+            get { return GetValue<int>("PieceImageVersion"); }
+            set { SetValue<int>("PieceImageVersion",value); }
+        }
     }
 }

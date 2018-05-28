@@ -1,31 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace MyShogi.Model.ObjectModel
 {
     /// <summary>
-    /// Propertyが変更されたときに呼び出されるハンドラの引数
+    /// プロパティが変更されたときに呼び出されるハンドラの型
     /// </summary>
-    public class PropertyChangedEventArgs
-    {
-        public PropertyChangedEventArgs(string name)
-        {
-            propertyName = name;
-        }
-
-        /// <summary>
-        /// 変更されたプロパティ名
-        /// </summary>
-        public string propertyName;
-    }
-
-        public delegate void PropertyChangedEventHandler(
-            object sender,
-            PropertyChangedEventArgs e
-        );
+    public delegate void PropertyChangedEventHandler();
 
     /// <summary>
     /// MVVMのViewModelで用いる、プロパティが変更されたときに、それをsubscribe(購読)しているobserverに
@@ -46,11 +26,12 @@ namespace MyShogi.Model.ObjectModel
             lock (lockObject)
             {
                 object current;
-                if (!this.propDic.TryGetValue(name, out current)
+                if (!this.properties.TryGetValue(name, out current)
                     || current != (object)value)
                 {
-                    // 値が異なるときだけ代入して、イベントが発火する。
-                    propDic[name] = value;
+                    // 値が異なるときだけ代入して、そのときにイベントが発火する。
+                    // 一度目はイベントは発火しない。
+                    properties[name] = value;
                     RaisePropertyChanged(name);
                 }
             }
@@ -68,7 +49,7 @@ namespace MyShogi.Model.ObjectModel
             lock (lockObject)
             {
                 object current;
-                if (!this.propDic.TryGetValue(name, out current))
+                if (!this.properties.TryGetValue(name, out current))
                     return default(T);
 
                 return (T)current;
@@ -82,34 +63,45 @@ namespace MyShogi.Model.ObjectModel
         protected void RaisePropertyChanged(string name)
         {
             // このpropertyをsubscribeしているobserverに更新通知を送る
+            foreach(var prop in propery_changed_handlers)
+                if (prop.Key == name)
+                    prop.Value();
+        }
 
-            subscribers(/* sender */this, new PropertyChangedEventArgs(name));
-
-            // nameのpropertyに依存しているpropertyも発火させる
-            if (depends_from.ContainsKey(name))
+        /// <summary>
+        /// プロパティが変更されたときに呼び出されるハンドラを追加する。
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="h"></param>
+        public void AddPropertyChangedHandler(string name , PropertyChangedEventHandler h)
+        {
+            lock (lockObject)
             {
-                foreach (var name2 in depends_from[name])
-                    RaisePropertyChanged(name2);
+                if (!propery_changed_handlers.ContainsKey(name))
+                    propery_changed_handlers.Add(name,h);
+                else
+                    propery_changed_handlers[name] += h;
             }
         }
 
         /// <summary>
-        /// name1のプロパティがname2のプロパティに依存していることを示す
-        /// つまり、name2が変更になったときに、name1のプロパティの値も変わる。
-        /// なので、name2が変更になったときに、name1のイベントも発火する。
+        /// プロパティが変更されたときに呼び出されるハンドラを削除する。
         /// </summary>
-        /// <param name="name1"></param>
-        /// <param name="name2"></param>
-        protected void DependsOn(string name1 , string name2)
+        /// <param name="name"></param>
+        /// <param name="h"></param>
+        public void RemovePropertyChangedHandler(string name , PropertyChangedEventHandler h)
         {
-            if (!depends_from.ContainsKey(name1))
-                depends_from.Add(name1, new List<string>());
-            depends_from[name1].Add(name2);
-        }
+            lock (lockObject)
+            {
+                if (propery_changed_handlers.ContainsKey(name))
+                {
+                    propery_changed_handlers[name] -= h;
 
-        public void AddListener(PropertyChangedEventHandler h)
-        {
-            subscribers += h;
+                    // delegateを削除した結果、nullになったなら、このentryを削除しておく。
+                    if (propery_changed_handlers[name] == null)
+                        propery_changed_handlers.Remove(name);
+                }
+            }
         }
 
         // --- 以下 private 
@@ -118,33 +110,25 @@ namespace MyShogi.Model.ObjectModel
         /// 移植性を考慮し、reflection/DynamicObjectを使いたくないので
         /// プロパティ名と、それに対応するプロパティを自前でもっておく。
         /// </summary>
-        private Dictionary<string, object> propDic = new Dictionary<string, object>();
+        private Dictionary<string, object> properties = new Dictionary<string, object>();
 
         /// <summary>
         /// プロパティが変更されたときに呼び出されるイベントハンドラ
         /// </summary>
-        private PropertyChangedEventHandler subscribers;
+        private Dictionary<string,PropertyChangedEventHandler> propery_changed_handlers 
+            = new Dictionary<string, PropertyChangedEventHandler>();
         
-        /// <summary>
-        /// あるpropertyに依存しているpropertyのリスト
-        /// </summary>
-        private Dictionary<string, List<string /*property name*/>> depends_from = new Dictionary<string, List<string>>();
-
         /// <summary>
         /// lockに用いるobject
         /// </summary>
         private object lockObject = new object();
     }
 
-#if true
+
+#if false
 
     public class NotifyTestViewModel : NotifyObject
     {
-        public NotifyTestViewModel()
-        {
-            DependsOn("X", "Y"); // XはYに依存する(Yの値が変わったときにXもそれに応じて変わる)
-        }
-
         public int X
         {
             get { return GetValue<int>("X"); }
@@ -160,14 +144,9 @@ namespace MyShogi.Model.ObjectModel
 
     public class NotifyTestView
     {
-        public void Bind(NotifyObject o)
+        public void X_Changed()
         {
-//            o.AddListener( this , "name" );
-        }
-
-        public void PropertyChanged(PropertyChangedEventArgs e)
-        {
-
+            System.Console.WriteLine("X_Changed");
         }
     }
 
@@ -178,11 +157,18 @@ namespace MyShogi.Model.ObjectModel
             var testViewModel = new NotifyTestViewModel();
             var testView = new NotifyTestView();
 
+            testViewModel.AddPropertyChangedHandler("X", testView.X_Changed);
+
             testViewModel.X = 1;
             testViewModel.Y = 2;
 
-            Console.WriteLine(testViewModel.X);
-            Console.WriteLine(testViewModel.Y);
+            testViewModel.RemovePropertyChangedHandler("X", testView.X_Changed);
+
+            testViewModel.X = 1;
+            testViewModel.Y = 2;
+
+            System.Console.WriteLine(testViewModel.X);
+            System.Console.WriteLine(testViewModel.Y);
         }
     }
 
