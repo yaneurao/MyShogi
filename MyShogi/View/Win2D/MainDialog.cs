@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Test;
 using MyShogi.ViewModel;
 
 namespace MyShogi.View.Win2D
@@ -121,7 +122,7 @@ namespace MyShogi.View.Win2D
                 item_display.Text = "表示";
                 menu.Items.Add(item_display);
 
-                // 駒種
+                // 盤・駒種
                 {
                     if (CV_GUI)
                     {
@@ -171,6 +172,36 @@ namespace MyShogi.View.Win2D
                         }
                     }
                 }
+
+#if DEBUG
+                // デバッグ用にメニューにテストコードを実行する項目を追加する。
+                {
+                    var item_debug = new ToolStripMenuItem();
+                    item_debug.Text = "デバッグ";
+
+                    var item1 = new ToolStripMenuItem();
+                    item1.Text = "DevTest1.Test1()";
+                    item1.Click += (sender, e) => { DevTest1.Test1(); };
+                    item_debug.DropDownItems.Add(item1);
+
+                    var item2 = new ToolStripMenuItem();
+                    item2.Text = "DevTest1.Test2()";
+                    item2.Click += (sender, e) => { DevTest1.Test2(); };
+                    item_debug.DropDownItems.Add(item2);
+
+                    var item3 = new ToolStripMenuItem();
+                    item3.Text = "DevTest1.Test3()";
+                    item3.Click += (sender, e) => { DevTest1.Test3(); };
+                    item_debug.DropDownItems.Add(item3);
+
+                    var item4 = new ToolStripMenuItem();
+                    item4.Text = "DevTest2.Test1()";
+                    item4.Click += (sender, e) => { DevTest2.Test1(); };
+                    item_debug.DropDownItems.Add(item4);
+
+                    menu.Items.Add(item_debug);
+                }
+#endif
 
                 Controls.Add(menu);
                 //フォームのメインメニューとする
