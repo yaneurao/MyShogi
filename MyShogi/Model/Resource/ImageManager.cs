@@ -57,7 +57,7 @@ namespace MyShogi.Model.Resource
 
             PieceImg.Release();
 
-            PieceImg = Load($"piece_v{config.PieceImageVersion}_768_424.png");
+            PieceImg = Load($"piece_v{config.PieceImageVersion}_776_424.png");
             if (PieceImg.image == null)
             {
                 MessageBox.Show("駒画像の読み込みに失敗しました。");

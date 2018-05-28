@@ -73,12 +73,6 @@
     <Compile Include="Model\Shogi\Kifu\KifuLog.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ViewModel\MainDialogViewModel.cs" />
-    <Compile Include="View\TestForm\TestForm1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="View\TestForm\TestForm1.Designer.cs">
-      <DependentUpon>TestForm1.cs</DependentUpon>
-    </Compile>
     <Compile Include="Model\Shogi\Converter\Csa.cs" />
     <Compile Include="Model\Shogi\Converter\Exception.cs" />
     <Compile Include="Model\Shogi\Core\EnteringKingRule.cs" />
@@ -122,9 +116,6 @@
     <Compile Include="View\Win2D\MainDialog.Designer.cs">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="View\TestForm\TestForm1.resx">
-      <DependentUpon>TestForm1.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

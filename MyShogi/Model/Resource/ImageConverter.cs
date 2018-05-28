@@ -6,15 +6,20 @@ namespace MyShogi.Model.Resource
     public static class ImageConverter
     {
         /// <summary>
-        /// 駒素材のバージョン
+        /// 駒素材の画像をすべて1枚絵に変換する。
         /// </summary>
-        public static readonly int version = 1;
+        public static void ConvertPieceImage()
+        {
+            ConvertPieceImage_(1);
+            ConvertPieceImage_(2);
+            ConvertPieceImage_(3);
+        }
 
         /// <summary>
         /// 駒素材の画像から駒の部分を集めて書き出す。
         /// (開発時にのみ必要)
         /// </summary>
-        public static void ConvertPieceImage()
+        private static void ConvertPieceImage_(int version)
         {
             ImageLoader Load(string name)
             {
@@ -29,8 +34,10 @@ namespace MyShogi.Model.Resource
             var omote = PieceOmote.image;
             var ura = PieceUra.image;
 
-            int x = 96;
+            // 駒の横・縦のサイズ[px]
+            int x = 97;
             int y = 106;
+
             var bmp = new Bitmap(x * 8, y * 4); // Piece.NB = 32 == 8*4
 
             // 駒画像のコピー
@@ -45,7 +52,7 @@ namespace MyShogi.Model.Resource
 
                 var g = Graphics.FromImage(bmp);
                 // 盤面の升は(526,53)が左上。
-                int ox = from_x * x + 526;
+                int ox = from_x * x + 524;
                 int oy = from_y * y + 53;
 
                 // 元素材、ベースラインがずれているのでそれを修正するコード
@@ -74,14 +81,14 @@ namespace MyShogi.Model.Resource
                 int pc = to_x + to_y * 8;
                 switch (pc)
                 {
-                    case 1: ox += 2; break;
-                    case 2: ox -= 2; break;
-                    case 3: ox -= 2; break;
+                    case 1: ox += 4; break;
+                    case 2: ox += 2; break;
+                    //case 3: ox -= 2; break;
                     case 4: ox -= 2; break;
                     case 8: ox -= 3; break;
-                    case 16 +1: ox -= 2; break;
-                    case 16 +2: ox += 2; break;
-                    case 16 + 3: ox += 2; break;
+                    case 16 + 1: ox -= 4; break;
+                    case 16 +2: ox -= 2; break;
+                    //case 16 + 3: ox += 2; break;
                     case 16 + 4: ox += 2; break;
                     case 16 + 8: ox -= 3; break;
                 }
@@ -99,7 +106,10 @@ namespace MyShogi.Model.Resource
                 var img = ((i % 2) == 0) ? omote : ura;
                 var img2 = (img == omote) ? ura : omote; // 逆側
                 var c = i >= 2; // IsWhite?
-                copy(img2, 4, 8, 0, i, c); // 王   59の王を、(0,0)に移動。
+
+                if (i!=0)
+                    copy(img2, 4, 8, 0, i, c); // 王   59の王を、(0,0)に移動。
+
                 copy(img, 1, 6, 1, i, c);  // 歩   87の歩を、(1,0)に移動。以下、同様。
                 copy(img, 0, 8, 2, i, c);  // 香
                 copy(img, 1, 8, 3, i, c);  // 桂
@@ -109,9 +119,17 @@ namespace MyShogi.Model.Resource
                 copy(img, 3, 8, 7, i, c);  // 金
             }
 
+            {
+                // 左上の塗りつぶし配置
+                var g = Graphics.FromImage(bmp);
+                var b = new SolidBrush(Color.FromArgb((int)(255*0.3f),0,0,0));
+                g.FillRectangle(b, 0,0 , x ,y);
+                b.Dispose();
+                g.Dispose();
+            }
 
-            // (96*8 , 106 * 4)= (768,424)
-            bmp.Save(Path.Combine("image",$"piece_v{version}_768_424.png"), System.Drawing.Imaging.ImageFormat.Png);
+            // (97*8 , 106 * 4)= (776,424)
+            bmp.Save(Path.Combine("image",$"piece_v{version}_776_424.png"), System.Drawing.Imaging.ImageFormat.Png);
             bmp.Dispose();
 
         }

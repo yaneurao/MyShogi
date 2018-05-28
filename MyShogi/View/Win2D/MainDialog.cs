@@ -28,12 +28,12 @@ namespace MyShogi.View.Win2D
         public static readonly int board_img_height = 1080;
 
         // 盤面素材における、駒を配置する升の左上。
+        public static readonly int board_left = 524;
         public static readonly int board_top = 53;
-        public static readonly int board_left = 526;
 
         // 駒素材の画像サイズ(駒1つ分)
         // これが横に8つ、縦に4つ、計32個並んでいる。
-        public static readonly int piece_img_width = 96;
+        public static readonly int piece_img_width = 97;
         public static readonly int piece_img_height = 106;
 
         // メニュー高さ。これはClientSize.Heightに含まれてしまうのでこれを加算した分だけ確保しないといけない。
@@ -264,13 +264,13 @@ namespace MyShogi.View.Win2D
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
                     var pc = pos.PieceOn(sq);
-                    if (pc != Piece.NO_PIECE)
+                    //if (pc != Piece.NO_PIECE)
                     {
                         File f = sq.ToFile();
                         Rank r = sq.ToRank();
 
                         var destRect = new Rectangle(
-                            (int)(scale_x * (board_left - clip_x +(piece_img_width + 0.5f )* (8 - (int)f) - 4)    ),
+                            (int)(scale_x * (board_left - clip_x +(piece_img_width    )* (8 - (int)f)    )    ),
                             (int)(scale_y * (board_top  +          piece_img_height    * (int)r) + menu_height),
                             (int)(piece_img_width  * 1 * scale_x),
                             (int)(piece_img_height * 1 * scale_y));
