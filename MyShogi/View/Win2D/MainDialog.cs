@@ -243,13 +243,14 @@ namespace MyShogi.View.Win2D
 
             var app = TheApp.app;
             var img = app.imageManager;
+            var g = e.Graphics;
 
             // -- 盤面の描画
             {
                 var board = img.BoardImg.image;
                 var destRect = new Rectangle(0, menu_height , ClientSize.Width , ClientSize.Height - menu_height);
                 var sourceRect = new Rectangle(clip_x, 0, board_img_width - clip_x * 2, board_img_height);
-                e.Graphics.DrawImage(board, destRect, sourceRect, GraphicsUnit.Pixel);
+                g.DrawImage(board, destRect, sourceRect, GraphicsUnit.Pixel);
             }
 
             // -- 駒の描画
@@ -258,34 +259,57 @@ namespace MyShogi.View.Win2D
                 var pos = ViewModel.Pos;
 
                 var piece = img.PieceImg.image;
-                var scale_x = (float)ClientSize.Width / (board_img_width - clip_x*2 );
-                var scale_y = (float)(ClientSize.Height - menu_height) / board_img_height;
+                scale_x = (double)ClientSize.Width / (board_img_width - clip_x*2 );
+                scale_y = (double)(ClientSize.Height - menu_height) / board_img_height;
+                offset_x = (int)(-clip_x * scale_x);
+                offset_y = menu_height;
 
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
                     var pc = pos.PieceOn(sq);
-                    //if (pc != Piece.NO_PIECE)
+                    if (pc != Piece.NO_PIECE)
                     {
-                        File f = sq.ToFile();
-                        Rank r = sq.ToRank();
+                        int f = 8 - (int)sq.ToFile();
+                        int r = (int)sq.ToRank();
 
-                        var destRect = new Rectangle(
-                            (int)(scale_x * (board_left - clip_x +(piece_img_width    )* (8 - (int)f)    )    ),
-                            (int)(scale_y * (board_top  +          piece_img_height    * (int)r) + menu_height),
-                            (int)(piece_img_width  * 1 * scale_x),
-                            (int)(piece_img_height * 1 * scale_y));
+                        var destRect = new Rectangle(board_left + piece_img_width * f, board_top + piece_img_height * r,
+                            piece_img_width, piece_img_height);
 
                         var sourceRect = new Rectangle(
                             ((int)pc % 8) * piece_img_width , 
                             ((int)pc / 8) * piece_img_height,
                             piece_img_width , piece_img_height);
 
-                        e.Graphics.DrawImage(piece, destRect, sourceRect, GraphicsUnit.Pixel);
+                        Draw(g, piece, destRect, sourceRect);
                     }
                 }
 
             }
 
+        }
+
+        // 元画像から画面に描画するときに横・縦方向の縮小率
+        private double scale_x;
+        private double scale_y;
+        private int offset_x;
+        private int offset_y;
+
+        /// <summary>
+        /// scale_x,scale_y、offset_x,offset_yを用いてアフィン変換してから描画する。
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="img"></param>
+        /// <param name="destRect"></param>
+        /// <param name="sourceRect"></param>
+        private void Draw(Graphics g, Image img , Rectangle destRect , Rectangle sourceRect)
+        {
+            var destRect2 = new Rectangle(
+                (int)(destRect.Left * scale_x) + offset_x,
+                (int)(destRect.Top  * scale_y) + offset_y,
+                (int)(destRect.Width  * scale_x),
+                (int)(destRect.Height * scale_y)
+                );
+            g.DrawImage(img, destRect2, sourceRect, GraphicsUnit.Pixel);
         }
 
         private void MainDialog_SizeChanged(object sender, EventArgs e)

@@ -83,13 +83,17 @@ namespace MyShogi.Model.Resource
                 {
                     case 1: ox += 4; break;
                     case 2: ox += 2; break;
-                    //case 3: ox -= 2; break;
-                    case 4: ox -= 2; break;
+                    case 3: ox += 2; break;
+                    case 4: ox += 2; break;
+                    case 5: ox += 2; break;
+                    case 7: ox += 2; break;
                     case 8: ox -= 3; break;
                     case 16 + 1: ox -= 4; break;
                     case 16 +2: ox -= 2; break;
-                    //case 16 + 3: ox += 2; break;
+                    case 16 + 3: ox += 2; break;
                     case 16 + 4: ox += 2; break;
+                    case 16+ 5: ox += 2; break;
+                    case 16+7: ox += 2; break;
                     case 16 + 8: ox -= 3; break;
                 }
 
