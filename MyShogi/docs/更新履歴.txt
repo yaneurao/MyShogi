@@ -1,11 +1,92 @@
 ﻿
 ToDo
 
+- 3:2モード、4:3モード追加。
+- Menuにデバッグ用の項目追加。
+- Menuに盤の数字を描画する/しないを追加する。
+- MainDialogの手駒描画のコード追加。
+- MainDialogに盤面反転、追加。
+- MainDialog、盤面描画、さらに抽象化する。
+
 - KifuManager
 	- KifuManagerのCSA形式の読み込みのサポート
 	- KifuManagerのKIF形式のサポート
 	- KifuManagerのKI2形式のサポート
 		- Mizarさんに依頼中
+
+
+■  2018/05/28
+
+
+- MainDialogのイベント、少し整理。
+
+
+- NotifyObject、修正。
+	- DependOn削除。
+	- 大幅に簡略化
+- ObserverObject追加。
+- この通知モデルを用いてGlobalConfig書き直す。
+	- MainDialog書き直した。
+- ImageManager、盤の読み込みと駒の読み込みを分離。
+- ImageManagerConfig削除
+
+
+- メニューに盤面画像の選択と駒画像の選択部を追加。イベントハンドラも追加。
+
+
+- ImageConverterで駒ごとの位置微調整を行うコード追加。
+
+
+- Menuを追加したときのダイアログ高さの計算コード追加。
+
+
+- 駒画像のコンバーター、後手の角と飛車の位置が入れ替わっていたの修正。
+
+
+- App/GlobalConfig.cs追加。起動時にglobal_config.xmlを読み込み、アプリ終了時に書き出すコード追加。
+
+
+- MainDialogに素材選択のメニュー追加。
+	少しだけコード書いた。あとでよく考える。
+
+
+- Positionの盤面に従い、MainDialogの盤上の升に駒を描画するコード追加。手駒はまだ。
+
+
+- MainDialogにやねうら王のアイコン設定
+
+
+- 実行ファイルの配置してあるフォルダに
+	YaneuraOuGUI2018.txt
+	というファイルが存在すると、商用版の「やねうら王」用のモードに切り替わるように。
+
+
+- MainDialogにスクリーンサイズにfitするようなウィンドウサイズを決定するコードを追加。
+
+
+- 駒の画像用意。
+	- ImageManagerに駒画像から駒を一纏めにするConvert()追加。
+	- 駒素材、用意できた。
+
+
+- 盤面の表示
+	- とりあえず、PictureBoxにdpi無視で表示は出来るようになった。
+	- MainDialogに、ウィンドゥのサイズを自動調整するコードを書いた。
+
+
+
+■  2018/05/27
+
+
+- Model/Resource/追加
+	- ImageLoader.cs追加。
+	- ImageManager.cs追加。
+	- ImageManagerConfig.cs追加。
+	- 盤面と駒の読み込み部分、とりあえず書いた。
+
+- readme.mdの予定として感想戦、指定局面からの連続自己対局などを追加。
+
+- NotifyObject、方針が決まった。(あとで作る)
 
 
 ■  2018/05/25
