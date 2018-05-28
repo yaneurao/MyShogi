@@ -133,21 +133,13 @@ namespace MyShogi.View.Win2D
                             var item1 = new ToolStripMenuItem();
                             item1.Text = "Type1";
                             item1.Checked = config.BoardImageVersion == 1;
-                            item1.Click += (sender, e) =>
-                            {
-                                config.BoardImageVersion = 1;
-                                UpdateMenuItems();
-                            };
+                            item1.Click += (sender, e) => { config.BoardImageVersion = 1; };
                             item.DropDownItems.Add(item1);
 
                             var item2 = new ToolStripMenuItem();
                             item2.Text = "Type2";
                             item2.Checked = config.BoardImageVersion == 2;
-                            item2.Click += (sender, e) =>
-                            {
-                                config.BoardImageVersion = 2;
-                                UpdateMenuItems();
-                            };
+                            item2.Click += (sender, e) => { config.BoardImageVersion = 2; };
                             item.DropDownItems.Add(item2);
                             item_display.DropDownItems.Add(item);
 
@@ -161,33 +153,19 @@ namespace MyShogi.View.Win2D
                             var item1 = new ToolStripMenuItem();
                             item1.Text = "一文字駒";
                             item1.Checked = config.PieceImageVersion == 2;
-                            item1.Click += (sender, e) =>
-                            {
-                                config.PieceImageVersion = 2;
-                                // このときに画像の読み直しが発生する(かも)なので
-                                // メニューの更新もこのへんでしとかないといけない。
-                                UpdateMenuItems();
-                            };
+                            item1.Click += (sender, e) => { config.PieceImageVersion = 2; };
                             item.DropDownItems.Add(item1);
 
                             var item2 = new ToolStripMenuItem();
                             item2.Text = "二文字駒";
                             item2.Checked = TheApp.app.config.PieceImageVersion == 1;
-                            item2.Click += (sender, e) =>
-                            {
-                                config.PieceImageVersion = 1;
-                                UpdateMenuItems();
-                            };
+                            item2.Click += (sender, e) => { config.PieceImageVersion = 1; };
                             item.DropDownItems.Add(item2);
 
                             var item3 = new ToolStripMenuItem();
                             item3.Text = "英文字駒";
                             item3.Checked = TheApp.app.config.PieceImageVersion == 3;
-                            item3.Click += (sender, e) =>
-                            {
-                                config.PieceImageVersion = 3;
-                                UpdateMenuItems();
-                            };
+                            item3.Click += (sender, e) => { config.PieceImageVersion = 3; };
                             item.DropDownItems.Add(item3);
                             item_display.DropDownItems.Add(item);
                         }

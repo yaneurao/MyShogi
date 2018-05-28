@@ -59,6 +59,11 @@ namespace MyShogi.App
                 mainDialogViewModel.Add(game);
             }
 
+            // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
+            config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems );
+            config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems );
+
+
             // Notifyクラスのテスト(あとで消す)
             //NotifyTest.Test();
 
