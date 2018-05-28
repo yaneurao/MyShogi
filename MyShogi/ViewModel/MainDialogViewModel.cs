@@ -12,7 +12,9 @@ namespace MyShogi.ViewModel
         public MainDialogViewModel()
         {
             // デバッグ中。あとで削除する。
-            Pos.InitBoard(BoardType.NoHandicap);
+            // Pos.InitBoard(BoardType.NoHandicap);
+
+            Pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
         }
 
         /// <summary>

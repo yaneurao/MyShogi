@@ -18,16 +18,8 @@ namespace MyShogi
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-#if false
-            // デバッグ用のFormを生成するとき
-            Application.Run(new TestForm1());
-#endif
-
-#if true
-            // 本番用
             // singletonなTheAppインスタンスを生成して実行するだけ
             TheApp.app.Run();
-#endif
         }
     }
 }

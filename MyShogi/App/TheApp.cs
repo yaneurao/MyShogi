@@ -28,6 +28,7 @@ namespace MyShogi.App
 
             // 駒素材画像の変換
             //ImageConverter.ConvertPieceImage();
+            ImageConverter.ConvertBoardNumberImage();
 
             // -- global configの読み込み
 
@@ -45,6 +46,7 @@ namespace MyShogi.App
 
                 config.AddPropertyChangedHandler("BoardImageVersion", imageManager.UpdateBoardImage);
                 config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
+                config.AddPropertyChangedHandler("BoardNumberImageVersion", imageManager.UpdateBoardNumberImage);
             }
 
             // -- メインの対局ウィンドゥ
@@ -62,7 +64,8 @@ namespace MyShogi.App
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
             config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems );
             config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems );
-
+            config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems);
+            config.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);
 
             // Notifyクラスのテスト(あとで消す)
             //NotifyTest.Test();

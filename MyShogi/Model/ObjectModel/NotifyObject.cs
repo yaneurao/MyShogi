@@ -96,7 +96,6 @@ namespace MyShogi.Model.ObjectModel
                 if (propery_changed_handlers.ContainsKey(name))
                 {
                     propery_changed_handlers[name] -= h;
-
                     // delegateを削除した結果、nullになったなら、このentryを削除しておく。
                     if (propery_changed_handlers[name] == null)
                         propery_changed_handlers.Remove(name);

@@ -15,19 +15,19 @@ namespace MyShogi.Model.Resource
             ConvertPieceImage_(3);
         }
 
+        private static ImageLoader Load(string name)
+        {
+            var img = new ImageLoader();
+            img.Load(Path.Combine("image", name));
+            return img;
+        }
+
         /// <summary>
         /// 駒素材の画像から駒の部分を集めて書き出す。
         /// (開発時にのみ必要)
         /// </summary>
         private static void ConvertPieceImage_(int version)
         {
-            ImageLoader Load(string name)
-            {
-                var img = new ImageLoader();
-                img.Load(Path.Combine("image", name));
-                return img;
-            }
-
             // 素材の駒画像を移動させてひとまとめになった画像を作る処理
             var PieceOmote = Load($"piece_v{version}_omote.png");
             var PieceUra = Load($"piece_v{version}_ura.png");
@@ -83,14 +83,14 @@ namespace MyShogi.Model.Resource
                 {
                     case 1: ox += 4; break;
                     case 2: ox += 2; break;
-                    case 3: ox += 2; break;
+                    case 3: ox += 0; break;
                     case 4: ox += 2; break;
                     case 5: ox += 2; break;
                     case 7: ox += 2; break;
                     case 8: ox -= 3; break;
                     case 16 + 1: ox -= 4; break;
                     case 16 +2: ox -= 2; break;
-                    case 16 + 3: ox += 2; break;
+                    case 16 + 3: ox += 0; break;
                     case 16 + 4: ox += 2; break;
                     case 16+ 5: ox += 2; break;
                     case 16+7: ox += 2; break;
@@ -135,6 +135,97 @@ namespace MyShogi.Model.Resource
             // (97*8 , 106 * 4)= (776,424)
             bmp.Save(Path.Combine("image",$"piece_v{version}_776_424.png"), System.Drawing.Imaging.ImageFormat.Png);
             bmp.Dispose();
+
+        }
+
+        /// <summary>
+        /// 盤の端に表示する段と筋の画像の抽出
+        /// </summary>
+        public static void ConvertBoardNumberImage()
+        {
+            ConvertBoardNumberImage_(1 ,false);
+            ConvertBoardNumberImage_(1, true);
+            ConvertBoardNumberImage_(2, false);
+            ConvertBoardNumberImage_(2, true);
+        }
+
+        /// <summary>
+        /// 上の補助関数。reverse == trueだと盤面反転用の素材を生成
+        /// </summary>
+        /// <param name="version"></param>
+        /// <param name="reverse"></param>
+        private static void ConvertBoardNumberImage_(int version , bool reverse)
+        {
+            // 駒の横・縦のサイズ[px]
+            int x = 97;
+            int y = 106;
+
+            var img = Load($"number_v{version}.png");
+
+            var bmp1 = new Bitmap(x * 9, 19); // 横長の画像(筋を表示する)
+            var bmp2 = new Bitmap(22, y * 9); // 縦長の画像(段を表示する)
+
+            // 黒地に黒文字だと画像ビュアーで黒にしか見えないのでデバッグ時は背景を白にしておく。
+//            Fill(bmp1, 255, 255, 255, 255);
+//            Fill(bmp2, 255, 255, 255, 255);
+
+            void Draw(Image dst,Rectangle srcRect, int dest_x, int dest_y)
+            {
+                var g = Graphics.FromImage(dst);
+                var destRect = new Rectangle(dest_x,dest_y,srcRect.Width,srcRect.Height);
+                g.DrawImage(img.image , destRect, srcRect, GraphicsUnit.Pixel);
+                g.Dispose();
+            }
+
+            var src1 = new Rectangle(526, 53 - 19 - 2, x * 9, 19);
+            Draw(bmp1, src1, 0, 0);
+            bmp1.Save(Path.Combine("image", $"number_v{version}_873_19.png"), System.Drawing.Imaging.ImageFormat.Png);
+
+            // 1 <-> 9を入れ替えたものを用意する
+            bmp1 = new Bitmap(x * 9, 19); // 横長の画像(筋を表示する)
+            for (int i=0;i<9;++i)
+            {
+                var src = new Rectangle(526 + x * i, 53 - 19 - 2, x , 19);
+                Draw(bmp1, src, x * (8-i), 0);
+            }
+
+            bmp1.Save(Path.Combine("image", $"number_v{version}Rev_873_19.png"), System.Drawing.Imaging.ImageFormat.Png);
+            bmp1.Dispose();
+
+            var src2 = new Rectangle(1419 - 22 - 2, 53, 22, y * 9);
+            Draw(bmp2, src2, 0, 0);
+            bmp2.Save(Path.Combine("image", $"number_v{version}_22_954.png"), System.Drawing.Imaging.ImageFormat.Png);
+
+            // 1 <-> 9を入れ替えたものを用意する
+            bmp2 = new Bitmap(22, y * 9); // 横長の画像(筋を表示する)
+            for (int i = 0; i < 9; ++i)
+            {
+                var src = new Rectangle(1419 - 22 - 2 , 53  + y * i, 22, y);
+                Draw(bmp2, src,  0 , y * (8 - i));
+            }
+
+            bmp2.Save(Path.Combine("image", $"number_v{version}Rev_22_954.png"), System.Drawing.Imaging.ImageFormat.Png);
+            bmp2.Dispose();
+
+
+        }
+
+        /// <summary>
+        /// Bitmap全体を指定色で塗りつぶす
+        /// </summary>
+        /// <param name="bmp"></param>
+        /// <param name="a"></param>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        private static void Fill(Image bmp , int a_ , int r_, int g_, int b_)
+        {
+            // 左上の塗りつぶし配置
+            var g = Graphics.FromImage(bmp);
+            var b = new SolidBrush(Color.FromArgb(a_, r_, g_, b_));
+            g.FillRectangle(b, 0, 0, bmp.Width, bmp.Height);
+            b.Dispose();
+            g.Dispose();
 
         }
     }

@@ -122,8 +122,42 @@ namespace MyShogi.View.Win2D
                 item_display.Text = "表示";
                 menu.Items.Add(item_display);
 
-                // 盤・駒種
+                // -- 「表示」配下のメニュー
                 {
+                    { // -- 盤面反転
+                        var item = new ToolStripMenuItem();
+                        item.Text = "盤面反転";
+                        item.Checked = config.BoardReverse;
+                        item.Click += (sender, e) => { config.BoardReverse = !config.BoardReverse; };
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
+                    { // -- 段・筋の画像の選択メニュー
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "筋・段の表示";
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "非表示";
+                        item1.Checked = config.BoardNumberImageVersion == 0;
+                        item1.Click += (sender, e) => { config.BoardNumberImageVersion = 0; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "標準";
+                        item2.Checked = TheApp.app.config.BoardNumberImageVersion == 1;
+                        item2.Click += (sender, e) => { config.BoardNumberImageVersion = 1; };
+                        item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "Chess式";
+                        item3.Checked = TheApp.app.config.BoardNumberImageVersion == 2;
+                        item3.Click += (sender, e) => { config.BoardNumberImageVersion = 2; };
+                        item.DropDownItems.Add(item3);
+                        item_display.DropDownItems.Add(item);
+                    }
+
                     if (CV_GUI)
                     {
                         { // -- 盤画像の選択メニュー
@@ -170,6 +204,7 @@ namespace MyShogi.View.Win2D
                             item.DropDownItems.Add(item3);
                             item_display.DropDownItems.Add(item);
                         }
+
                     }
                 }
 
@@ -242,8 +277,12 @@ namespace MyShogi.View.Win2D
             // ここに盤面を描画するコードを色々書く。(あとで)
 
             var app = TheApp.app;
+            var config = app.config;
             var img = app.imageManager;
             var g = e.Graphics;
+
+            // 盤面を反転させて描画するかどうか
+            var reverse = config.BoardReverse;
 
             // -- 盤面の描画
             {
@@ -269,11 +308,17 @@ namespace MyShogi.View.Win2D
                     var pc = pos.PieceOn(sq);
                     if (pc != Piece.NO_PIECE)
                     {
-                        int f = 8 - (int)sq.ToFile();
-                        int r = (int)sq.ToRank();
+                        // 盤面反転モードなら、盤面を180度回した升から取得
+                        Square sq2 = reverse ? sq.Inv() : sq;
+                        int f = 8 - (int)sq2.ToFile();
+                        int r = (int)sq2.ToRank();
 
                         var destRect = new Rectangle(board_left + piece_img_width * f, board_top + piece_img_height * r,
                             piece_img_width, piece_img_height);
+
+                        // 盤面反転モードなら、駒を先後入れ替える
+                        if (reverse)
+                            pc = pc ^ Piece.WHITE;
 
                         var sourceRect = new Rectangle(
                             ((int)pc % 8) * piece_img_width , 
@@ -283,7 +328,29 @@ namespace MyShogi.View.Win2D
                         Draw(g, piece, destRect, sourceRect);
                     }
                 }
+            }
 
+            // -- 盤の段・筋を表す数字の表示
+            {
+                var version = config.BoardNumberImageVersion;
+                if (version != 0)
+                {
+                    var file_img = (!reverse) ? img.BoardNumberImgFile.image : img.BoardNumberImgRevFile.image;
+                    if (file_img != null)
+                    {
+                        var dstRect = new Rectangle(526, 32, file_img.Width, file_img.Height);
+                        var srcRect = new Rectangle(0, 0, file_img.Width, file_img.Height);
+                        Draw(g, file_img, dstRect, srcRect);
+                    }
+
+                    var rank_img = (!reverse) ? img.BoardNumberImgRank.image : img.BoardNumberImgRevRank.image;
+                    if (rank_img != null)
+                    {
+                        var dstRect = new Rectangle(1397,49, rank_img.Width, rank_img.Height);
+                        var srcRect = new Rectangle(0, 0, rank_img.Width, rank_img.Height);
+                        Draw(g, rank_img, dstRect, srcRect);
+                    }
+                }
             }
 
         }

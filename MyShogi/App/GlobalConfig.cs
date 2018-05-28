@@ -19,6 +19,8 @@ namespace MyShogi.App
 
             BoardImageVersion = 1;
             PieceImageVersion = 1;
+            BoardNumberImageVersion = 1;
+            BoardReverse = false;
         }
 
         /// <summary>
@@ -104,6 +106,29 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("PieceImageVersion"); }
             set { SetValue<int>("PieceImageVersion",value); }
+        }
+
+        /// <summary>
+        /// 盤のサイドにある段・筋を表現する駒画像のバージョン
+        /// 商用版のみ1以外を選択できる。
+        /// 
+        /// 0 : 非表示
+        /// 1 : 標準
+        /// 2 : Chess式
+        /// </summary>
+        public int BoardNumberImageVersion
+        {
+            get { return GetValue<int>("BoardNumberImageVersion"); }
+            set { SetValue<int>("BoardNumberImageVersion", value); }
+        }
+
+        /// <summary>
+        /// 盤面反転(これはGlobalな設定)
+        /// </summary>
+        public bool BoardReverse
+        {
+            get { return GetValue<bool>("BoardReverse"); }
+            set { SetValue<bool>("BoardReverse", value); }
         }
     }
 }

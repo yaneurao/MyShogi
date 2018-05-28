@@ -22,6 +22,7 @@ namespace MyShogi.Model.Resource
         {
             UpdateBoardImage();
             UpdatePieceImage();
+            UpdateBoardNumberImage();
         }
 
         /// <summary>
@@ -71,6 +72,42 @@ namespace MyShogi.Model.Resource
         }
 
         /// <summary>
+        /// 駒番号の画像を読み込む
+        /// </summary>
+        public void UpdateBoardNumberImage()
+        {
+            var config = TheApp.app.config;
+            var version = config.BoardNumberImageVersion;
+
+            BoardNumberImgFile.Release();
+            BoardNumberImgRevFile.Release();
+            BoardNumberImgRank.Release();
+            BoardNumberImgRevRank.Release();
+
+            // 0は非表示の意味
+            if (version == 0)
+                return;
+
+            BoardNumberImgFile = Load($"number_v{version}_873_19.png");
+            BoardNumberImgRevFile = Load($"number_v{version}Rev_873_19.png");
+            BoardNumberImgRank = Load($"number_v{version}_22_954.png");
+            BoardNumberImgRevRank = Load($"number_v{version}Rev_22_954.png");
+
+            if (BoardNumberImgFile.image == null || BoardNumberImgRevFile.image == null
+                || BoardNumberImgRank.image == null || BoardNumberImgRevRank.image == null)
+            {
+                MessageBox.Show("駒番号画像の読み込みに失敗しました。");
+
+                // このままApplication.Exit()させてしまうと次回以降も読み込みに失敗してしまい、
+                // 永久に起動出来なくなってしまう。
+                config.BoardNumberImageVersion = 0;
+
+                Application.Exit();
+            }
+        }
+
+
+        /// <summary>
         /// ファイル名を与えて、ImgFolderから画像を読み込む
         /// </summary>
         /// <param name="name"></param>
@@ -92,5 +129,13 @@ namespace MyShogi.Model.Resource
         /// 駒画像
         /// </summary>
         public ImageLoader PieceImg { get; private set; } = new ImageLoader();
+
+        /// <summary>
+        /// 盤面の番号画像、筋・段、盤面反転の筋・段
+        /// </summary>
+        public ImageLoader BoardNumberImgFile { get; private set; } = new ImageLoader();
+        public ImageLoader BoardNumberImgRank { get; private set; } = new ImageLoader();
+        public ImageLoader BoardNumberImgRevFile { get; private set; } = new ImageLoader();
+        public ImageLoader BoardNumberImgRevRank { get; private set; } = new ImageLoader();
     }
 }
