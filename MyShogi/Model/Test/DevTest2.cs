@@ -14,6 +14,47 @@ namespace MyShogi.Model.Test
         {
 #if true
             {
+                // 文字幅計算テスト
+                foreach (var s in new string[]{
+                    "α", // U+03B1 Ambiguous
+                    "Ａ", // U+FF21 Fullwidth
+                    "ｱ", // U+FF71 Halfwidth
+                    "À", // U+00C0 Neutral
+                    "A", // U+0041 Narrow
+                    "ア", // U+30A2 Wide
+                    "𠮷", // U+20BB7 Wide
+                    "𩸽", // U+29E3D Wide
+                    "🤔", // U+1F914 Wide
+                    "▲", // U+25B2 Ambiguous
+                    "△", // U+25B3 Ambiguous
+                    "▼", // U+25BC Ambiguous
+                    "▽", // U+25BD Ambiguous
+                    "☗", // U+2617 Newtral
+                    "☖", // U+2616 Newtral
+                    "⛊", // U+26CA Ambiguous
+                    "⛉", // U+26C9 Ambiguous
+                    "　", // U+3000 Fullwidth
+                    " ", // U+0020 Narrow
+                    "\t", // U+0009 Newtral
+                    "\n", // U+000A Newtral
+                    "\u1eaf", // U+1EAF Newtral (LATIN SMALL LETTER A WITH BREVE AND ACUTE)
+                    "\u0103\u0301", // U+1EAF の合字表記1 (LATIN SMALL LETTER A WITH BREVE + COMBINING ACUTE ACCENT)
+                    "\u0061\u0306\u0301", // U+1EAF の合字表記2 (LATIN SMALL LETTER A + COMBINING BREVE + COMBINING ACUTE ACCENT)
+                    "\u304c", // U+304C (HIRAGANA LETTER GA)
+                    "\u304b\u3099", // U+304B U+3099 (HIRAGANA LETTER KA + COMBINING KATAKANA-HIRAGANA VOICED SOUND)
+                })
+                {
+                    Console.Out.WriteLine(String.Format(
+                        "\"{0}\" width {1},{2}",
+                        s,
+                        EastAsianWidth.legacyWidth(s),
+                        EastAsianWidth.modernWidth(s)
+                    ));
+                }
+            }
+#endif
+#if false
+            {
                 // KIF形式の局面・指し手入力テスト
                 Position pos = new Position();
                 string sfen = KifExtensions.BodToSfen(new string[] {
@@ -62,7 +103,7 @@ namespace MyShogi.Model.Test
                 }
             }
 #endif
-#if true
+#if false
             {
                 // CSA形式の局面・指し手入力テスト
                 Position pos = new Position();

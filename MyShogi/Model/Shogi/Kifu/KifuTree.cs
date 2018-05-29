@@ -15,7 +15,7 @@ namespace MyShogi.Model.Shogi.Kifu
     {
         /// <summary>
         /// コンストラクタ
-        /// 
+        ///
         /// このクラスにはPositionのインスタンスは持っていない。
         /// Bind(Position)で、外部からPositionのインスタンスを設定して使うこと。
         /// </summary>
@@ -34,7 +34,7 @@ namespace MyShogi.Model.Shogi.Kifu
             Debug.Assert(position != null , "Bind(Position)を呼び出してからInit()を呼ぶようにしてください。");
 
             position.InitBoard();
-            
+
             currentNode = rootNode = new KifuNode(null);
         //    UsiMoveStringList.Clear();
             rootBoardType = BoardType.NoHandicap;
@@ -50,7 +50,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// これは、Bind()で渡すことになっている。
         /// </summary>
         public Position position { get; private set; }
-        
+
         public void Bind(Position pos) { position = pos; }
 
         /// <summary>
@@ -91,10 +91,10 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// ここまでの指し手を意味する文字列(USIプロトコルでの指し手文字列)
         /// DoMove(),UndoMove()を呼び出すごとに自動的に更新される。
-        /// これを 
-        ///   "position " + rootSfen + " " + String.Join(" ",usiMoveString) 
+        /// これを
+        ///   "position " + rootSfen + " " + String.Join(" ",usiMoveString)
         /// とすれば、currentNodeまでのUSIのposition文字列が出来上がる。
-        /// 
+        ///
         /// ※　usiPositionStringのほうではこの処理を行っている。
         /// </summary>
         public List<string> UsiMoveStringList { get; private set; }
@@ -156,10 +156,10 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// 現在の局面(currentMove)に対して、指し手moveが登録されていないなら、その指し手を追加する。
         /// すでに存在しているなら、その指し手は追加しない。
-        /// 
+        ///
         /// thinkingTimeは考慮に要した時間。新たにnodeを追加しないときは、この値は無視される。
         /// ミリ秒まで計測して突っ込んでおいて良い。(棋譜出力時には秒単位で繰り上げられる)
-        /// 
+        ///
         /// totalTimeは総消費時間。nullを指定した場合は、ここまでの総消費時間(TotalConsumptionTime()で取得できる)に
         /// thinkingTimeを秒単位に繰り上げたものが入る。
         /// </summary>
@@ -203,7 +203,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             return prev2.moves.Find((x) => x.nextNode == prev).totalTime;
         }
-   
+
 
         /// <summary>
         /// timeから秒を繰り上げた時間
@@ -213,6 +213,7 @@ namespace MyShogi.Model.Shogi.Kifu
         public TimeSpan RoundTime(TimeSpan t)
         {
             // ミリ秒が端数があれば、秒単位で繰り上げる。
+            // ToDo: t.Thiks != 0 だった場合を考慮しなくて良いか確認
             return (t.Milliseconds == 0) ? t : t.Add(new TimeSpan(0, 0, 0, 0, 1000 - t.Milliseconds));
         }
 
@@ -235,7 +236,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             return moves;
         }
-        
+
         /// <summary>
         /// RewindToRoot()でrootまで巻き戻したものを元の局面に戻す。
         /// RewindToRoot()の返し値を、このメソッドの引数に渡すこと。

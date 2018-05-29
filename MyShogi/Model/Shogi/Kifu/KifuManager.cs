@@ -1,4 +1,5 @@
 ﻿using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Converter;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,7 +14,7 @@ namespace MyShogi.Model.Shogi.Kifu
     /// ・対局相手の名前をサポート
     /// ・KIF/KI2/CSA/SFEN/PSN形式での入出力をサポート
     /// ・千日手の管理、検出をサポート
-    /// 
+    ///
     /// 使用上の注意)
     /// ・Bind(Position)で、Positionのインスタンスを関連付けてから使うこと。
     /// ・また、必要ならば、そのあとにInit()を呼び出すこと。
@@ -30,7 +31,7 @@ namespace MyShogi.Model.Shogi.Kifu
         ///   playerName[(int)Color.WHITE] : 後手の名前(駒落ちの場合、上手)
         /// </summary>
         public string[] playerName;
-        
+
         /// <summary>
         /// 棋譜本体。分岐棋譜。
         /// </summary>
@@ -64,10 +65,10 @@ namespace MyShogi.Model.Shogi.Kifu
         /// this.Treeに反映する。また最終局面までthis.Tree.posを自動的に進める。
         /// フォーマットは自動判別。
         /// CSA/KIF/KI2/PSN/SFEN形式を読み込める。
-        /// 
+        ///
         /// ファイル丸ごと読み込んでstring型に入れて引数に渡すこと。
         /// 読み込めたところまでの棋譜を反映させる。読み込めなかった部分やエラーなどは無視する。
-        /// 
+        ///
         /// エラーがあった場合は、そのエラーの文字列が返る。
         /// エラーがなければstring.Emptyが返る。
         /// </summary>
@@ -122,6 +123,18 @@ namespace MyShogi.Model.Shogi.Kifu
                 case KifuFileType.PSN:
                 case KifuFileType.PSN2:
                     result = ToPsnString(kt);
+                    break;
+
+                case KifuFileType.CSA:
+                    result = ToCsaString();
+                    break;
+
+                case KifuFileType.KIF:
+                    result = ToKifString();
+                    break;
+
+                case KifuFileType.KI2:
+                    result = ToKi2String();
                     break;
 
                 // ToDo : 他の形式もサポートする
@@ -473,7 +486,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         get_char();
                         //is_capture = true;
                     }
-                    
+
                     // 移動先の升
                     var c3 = get_char();
                     var c4 = get_char();
@@ -535,7 +548,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     if (Tree.position.IsMated(moves))
                     {
                         // move == Move.MATEDでないとおかしいのだが中断もありうるので強制的に詰み扱いにしておく。
-                        
+
                         move = Move.MATED;
                     }
 
@@ -589,13 +602,13 @@ namespace MyShogi.Model.Shogi.Kifu
                 N+人間
                 N-人間
                 P1-KY-KE-GI-KI-OU-KI-GI-KE-KY
-                P2 * -HI *  *  *  *  * -KA * 
+                P2 * -HI *  *  *  *  * -KA *
                 P3-FU-FU-FU-FU-FU-FU-FU-FU-FU
-                P4 *  *  *  *  *  *  *  *  * 
-                P5 *  *  *  *  *  *  *  *  * 
-                P6 *  *  *  *  *  *  *  *  * 
+                P4 *  *  *  *  *  *  *  *  *
+                P5 *  *  *  *  *  *  *  *  *
+                P6 *  *  *  *  *  *  *  *  *
                 P7+FU+FU+FU+FU+FU+FU+FU+FU+FU
-                P8 * +KA *  *  *  *  * +HI * 
+                P8 * +KA *  *  *  *  * +HI *
                 P9+KY+KE+GI+KI+OU+KI+GI+KE+KY
                 P+
                 P-
@@ -627,6 +640,23 @@ namespace MyShogi.Model.Shogi.Kifu
             // 書きかけ
 
 
+            return string.Empty;
+        }
+
+        private string FromKifString(string[] lines)
+        {
+            // ToDo: ここに実装する
+            return string.Empty;
+        }
+
+        private string FromKi2String(string[] lines)
+        {
+            // ToDo: ここに実装する
+            return string.Empty;
+        }
+        private string FromJsonString(string[] lines)
+        {
+            // ToDo: ここに実装する
             return string.Empty;
         }
 
@@ -826,6 +856,109 @@ namespace MyShogi.Model.Shogi.Kifu
                 sb.AppendLine(string.Format("{0,-18}({1} / {2})", mes , time_string1 , time_string2));
             }
 
+            return sb.ToString();
+        }
+
+        private string ToCsaString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("V2.2");
+            sb.AppendFormat("N+", playerName[Color.BLACK.ToInt()]).AppendLine();
+            sb.AppendFormat("N-", playerName[Color.WHITE.ToInt()]).AppendLine();
+            switch (Tree.rootBoardType)
+            {
+                case BoardType.NoHandicap:
+                    // 平手の初期局面
+                    sb.AppendLine("PI");
+                    sb.AppendLine("+");
+                    break;
+                default:
+                    // それ以外は任意局面として出力する
+                    sb.AppendLine(Tree.position.ToCsa().TrimEnd('\r', '\n'));
+                    break;
+            }
+
+            while (Tree.currentNode.moves.Count != 0)
+            {
+                var m = Tree.currentNode.moves[0].nextMove;
+
+                switch (m)
+                {
+                    case Move.MATED:
+                        sb.AppendLine("%TORYO"); break;
+                    case Move.INTERRUPT:
+                        sb.AppendLine("%CHUDAN"); break;
+                    case Move.REPETITION_WIN:
+                        sb.AppendLine("%SENNICHITE"); break;
+                    case Move.REPETITION_DRAW:
+                        sb.AppendLine("%SENNICHITE"); break;
+                    case Move.WIN:
+                        sb.AppendLine("%KACHI"); break;
+                    case Move.MAX_MOVES_DRAW:
+                        sb.AppendLine("%JISHOGI"); break;
+                    case Move.RESIGN:
+                        sb.AppendLine("%TORYO"); break;
+                    case Move.TIME_UP:
+                        sb.AppendLine("%TIME_UP"); break;
+                }
+
+                if (m.IsSpecial())
+                {
+                    break;
+                }
+
+                if (!Tree.position.IsLegal(m))
+                {
+                    sb.AppendLine("%ILLEGAL_MOVE");
+                    // 現時点の実装としては秒未満切り捨てとして出力。
+                    sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), Math.Truncate(Tree.currentNode.moves[0].thinkingTime.TotalSeconds)).AppendLine();
+                    break;
+                }
+
+                // 現時点の実装としては秒未満切り捨てとして出力。
+                sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), Math.Truncate(Tree.currentNode.moves[0].thinkingTime.TotalSeconds)).AppendLine();
+
+            }
+            return sb.ToString();
+        }
+        private string ToKifString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("先手：", playerName[Color.BLACK.ToInt()]).AppendLine();
+            sb.AppendFormat("後手：", playerName[Color.WHITE.ToInt()]).AppendLine();
+            switch (Tree.rootBoardType)
+            {
+                case BoardType.NoHandicap:
+                    sb.AppendLine("手合割：平手");
+                    break;
+                default:
+                    sb.AppendLine(Tree.position.ToBod().TrimEnd('\r', '\n'));
+                    break;
+            }
+            // ToDo: ここに実装する
+            return sb.ToString();
+        }
+        private string ToKi2String()
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("先手：", playerName[Color.BLACK.ToInt()]).AppendLine();
+            sb.AppendFormat("後手：", playerName[Color.WHITE.ToInt()]).AppendLine();
+            switch (Tree.rootBoardType)
+            {
+                case BoardType.NoHandicap:
+                    sb.AppendLine("手合割：平手");
+                    break;
+                default:
+                    sb.AppendLine(Tree.position.ToBod().TrimEnd('\r', '\n'));
+                    break;
+            }
+            // ToDo: ここに実装する
+            return sb.ToString();
+        }
+        private string ToJsonString()
+        {
+            var sb = new StringBuilder();
+            // ToDo: ここに実装する
             return sb.ToString();
         }
 

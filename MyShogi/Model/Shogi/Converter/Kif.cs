@@ -519,7 +519,7 @@ namespace MyShogi.Model.Shogi.Converter
             // 駒の移動範囲を調べるため、着手前の駒を求める
             Piece pt0 = isPromote ? pt1.RawPieceType() : pt1;
             Bitboard sameBB = pos.AttackersTo(c0, sq1) & pos.Pieces(c0, pt0);
-            if (sameBB.IsZero()) return Move.NONE;
+            if (sameBB.IsZero()) return Util.MakeMoveDrop(pt1, sq1);
             if (sameBB.IsOne())
             {
                 sq0 = sameBB.Pop();

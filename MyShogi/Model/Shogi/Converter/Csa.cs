@@ -1,4 +1,5 @@
 ﻿using MyShogi.Model.Shogi.Core;
+using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -268,12 +269,36 @@ namespace MyShogi.Model.Shogi.Converter
                 }
                 if (line.StartsWith("P+00AL"))
                 {
-                    // ToDo: 先手持駒に残り全ての駒を追加
+                    int[] restCount = { 2, 18, 4, 4, 4, 2, 2, 4 };
+                    for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
+                    {
+                        var p = board[sq.ToInt()];
+                        if (p == Piece.NO_PIECE) continue;
+                        restCount[p.RawPieceType().ToInt()] -= 1;
+                    }
+                    for (Piece p = Piece.PAWN; p < Piece.KING; ++p)
+                    {
+                        restCount[p.ToInt()] -= hand[Color.BLACK.ToInt()].Count(p);
+                        restCount[p.ToInt()] -= hand[Color.WHITE.ToInt()].Count(p);
+                        hand[Color.BLACK.ToInt()].Add(p, Math.Max(restCount[p.ToInt()], 0));
+                    }
                     continue;
                 }
                 if (line.StartsWith("P-00AL"))
                 {
-                    // ToDo: 後手持駒に残り全ての駒を追加
+                    int[] restCount = { 2, 18, 4, 4, 4, 2, 2, 4 };
+                    for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
+                    {
+                        var p = board[sq.ToInt()];
+                        if (p == Piece.NO_PIECE) continue;
+                        restCount[p.RawPieceType().ToInt()] -= 1;
+                    }
+                    for (Piece p = Piece.PAWN; p < Piece.KING; ++p)
+                    {
+                        restCount[p.ToInt()] -= hand[Color.BLACK.ToInt()].Count(p);
+                        restCount[p.ToInt()] -= hand[Color.WHITE.ToInt()].Count(p);
+                        hand[Color.WHITE.ToInt()].Add(p, Math.Max(restCount[p.ToInt()], 0));
+                    }
                     continue;
                 }
                 Match hMatch = hRegex.Match(line);
