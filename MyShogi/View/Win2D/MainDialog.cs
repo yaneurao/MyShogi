@@ -19,7 +19,9 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             UpdateMenuItems();
-            FindScreenSize();
+
+            // FindScreenSize();
+            FitToScreenSize();
         }
 
         // -- 各種定数
@@ -30,18 +32,12 @@ namespace MyShogi.View.Win2D
 
         // 盤面素材における、駒を配置する升の左上。
         public static readonly int board_left = 524;
-        public static readonly int board_top = 53;
+        public static readonly int board_top = 53 + 19;
 
         // 駒素材の画像サイズ(駒1つ分)
         // これが横に8つ、縦に4つ、計32個並んでいる。
         public static readonly int piece_img_width = 97;
         public static readonly int piece_img_height = 106;
-
-        // 駒台の先手側の右下の座標、駒台の後手側の左上の座標
-        public static readonly int hand_img_black_right = 1689;
-        public static readonly int hand_img_black_bottom = 1026;
-        public static readonly int hand_img_white_left = 230;
-        public static readonly int hand_img_white_top = 31;
 
         // 手駒の表示場所(駒台を左上とする)
         public class HandLocation
@@ -78,8 +74,8 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private static readonly Point[] hand_table_pos =
         {
-            new Point(1431,643), // 先手の駒台
-            new Point(229,32),   // 後手の駒台
+            new Point(1431,643 + 19), // 先手の駒台
+            new Point(229,32 + 19),   // 後手の駒台
         };
 
         /// <summary>
@@ -92,52 +88,30 @@ namespace MyShogi.View.Win2D
         public static int menu_height = SystemInformation.MenuHeight;
 
         /// <summary>
-        /// スクリーンサイズにぴったり収まるぐらいのウィンドゥサイズを決定する。
+        /// 現在のウィンドウサイズに収まるようにaffine変換の係数を決定する。
         /// </summary>
-        public void FindScreenSize()
+        public void FitToScreenSize()
         {
-            // ディスプレイに収まるサイズのスクリーンにする必要がある。
-            // プライマリスクリーンを基準にして良いのかどうかはわからん…。
-            int w = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
-            int h = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height;
+            int w = ClientSize.Width;
+            int h = ClientSize.Height - menu_height;
 
+            // 縦(h)を基準に横方向のクリップ位置を決める
+            // 1920 * 1080が望まれる比率
+            int w2 = h * 1920 / 1080;
 
-            float[] scale = new float[]
-            {
-                // ぴったり収まりそうな画面サイズを探す
-                4.0f , 3.0f , 2.5f , 2.0f , 1.75f , 1.5f , 1.25f , 1.0f , 0.75f , 0.5f , 0.25f
-            };
+            //if (w > w2)
+            //{
+            //    w = w2;
+            //    //ClientSize = new Size(w, ClientSize.Height);
+            //    // これでイベントが無限に発生するとまずいのだ…。
+            //}
 
-            bool is_suitable(int cx /* window width*/ , float s /* scale */)
-            {
-                // window size = 1440 : 1080 = 4:3
-                int clip = (board_img_width - cx) / 2;
-
-                int w2 = (int)((board_img_width - clip * 2) * s);
-                int h2 = (int)(board_img_height * s + menu_height);
-
-                // 10%ほど余裕を持って画面に収まるサイズを探す。
-                if (w >= (int)(w2 * 1.1f) && h >= (int)(h2 * 1.1f))
-                {
-                    ClientSize = new Size(w2, h2);
-                    clip_x = clip;
-                    return true;
-                }
-                return false;
-            }
-
-            foreach (var s in scale)
-            {
-                // window size = 1620 : 1080 = 3:2
-                if (is_suitable(1620, s))
-                    break;
-
-                // window size = 1440 : 1080 = 4:3
-                if (is_suitable(1440, s))
-                    break;
-
-            }
+            offset_x = (w - w2) / 2;
+            offset_y = menu_height;
+            scale_y = (double)h / board_img_height;
+            scale_x = scale_y;
         }
+
 
         /// <summary>
         /// メニューのitemを動的に追加する。
@@ -310,11 +284,6 @@ namespace MyShogi.View.Win2D
         public MainDialogViewModel ViewModel { get; private set; }
 
         /// <summary>
-        /// 盤面画像を描画するときに左側と右側とをclipする量。
-        /// </summary>
-        public int clip_x = 0;
-
-        /// <summary>
         /// ViewModelを設定する。
         /// このクラスのインスタンスとは1:1で対応する。
         /// </summary>
@@ -338,10 +307,11 @@ namespace MyShogi.View.Win2D
 
             // -- 盤面の描画
             {
+                // 座標系はストレートに指定しておけばaffine変換されて適切に描画される。
                 var board = img.BoardImg.image;
-                var destRect = new Rectangle(0, menu_height, ClientSize.Width, ClientSize.Height - menu_height);
-                var sourceRect = new Rectangle(clip_x, 0, board_img_width - clip_x * 2, board_img_height);
-                g.DrawImage(board, destRect, sourceRect, GraphicsUnit.Pixel);
+                var srcRect = new Rectangle(0, 0, board_img_width, board_img_height);
+                var dstRect = new Rectangle(0, menu_height, board_img_width , board_img_height);
+                Draw(g, board, dstRect, srcRect);
             }
 
             // -- 駒の描画
@@ -350,10 +320,6 @@ namespace MyShogi.View.Win2D
                 var pos = ViewModel.Pos;
 
                 var piece = img.PieceImg.image;
-                scale_x = (double)ClientSize.Width / (board_img_width - clip_x * 2);
-                scale_y = (double)(ClientSize.Height - menu_height) / board_img_height;
-                offset_x = (int)(-clip_x * scale_x);
-                offset_y = menu_height;
 
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
@@ -390,11 +356,6 @@ namespace MyShogi.View.Win2D
                     Hand h = pos.Hand(reverse ? c.Not() : c);
 
                     // c側の駒台に描画する。
-
-                    Point p = (c == ShogiCore.Color.BLACK) ?
-                        new Point(hand_img_black_right, hand_img_black_bottom) :
-                        new Point(hand_img_white_left, hand_img_white_top);
-
 
                     // 枚数によって位置が自動調整されるの、わりと見づらいので嫌。
                     // 駒種によって位置固定で良いと思う。
@@ -460,7 +421,7 @@ namespace MyShogi.View.Win2D
                     var file_img = (!reverse) ? img.BoardNumberImgFile.image : img.BoardNumberImgRevFile.image;
                     if (file_img != null)
                     {
-                        var dstRect = new Rectangle(526, 32, file_img.Width, file_img.Height);
+                        var dstRect = new Rectangle(526, 32 + 19, file_img.Width, file_img.Height);
                         var srcRect = new Rectangle(0, 0, file_img.Width, file_img.Height);
                         Draw(g, file_img, dstRect, srcRect);
                     }
@@ -490,15 +451,15 @@ namespace MyShogi.View.Win2D
         /// <param name="img"></param>
         /// <param name="destRect"></param>
         /// <param name="sourceRect"></param>
-        private void Draw(Graphics g, Image img, Rectangle destRect, Rectangle sourceRect)
+        private void Draw(Graphics g, Image img, Rectangle dstRect, Rectangle srcRect)
         {
-            var destRect2 = new Rectangle(
-            (int)(destRect.Left * scale_x) + offset_x,
-            (int)(destRect.Top * scale_y) + offset_y,
-            (int)(destRect.Width * scale_x),
-            (int)(destRect.Height * scale_y)
+            var dstRect2 = new Rectangle(
+            (int)(dstRect.Left   * scale_x) + offset_x,
+            (int)(dstRect.Top    * scale_y) + offset_y,
+            (int)(dstRect.Width  * scale_x),
+            (int)(dstRect.Height * scale_y)
             );
-            g.DrawImage(img, destRect2, sourceRect, GraphicsUnit.Pixel);
+            g.DrawImage(img, dstRect2, srcRect, GraphicsUnit.Pixel);
         }
 
         private void MainDialog_SizeChanged(object sender, EventArgs e)
@@ -507,5 +468,12 @@ namespace MyShogi.View.Win2D
             Invalidate();
         }
 
+        private void MainDialog_Resize(object sender, EventArgs e)
+        {
+            // 画面がリサイズされたときにそれに収まるように盤面を描画する。
+            // Paintメッセージは送られてくるはず..
+
+            FitToScreenSize();
+        }
     }
 }
