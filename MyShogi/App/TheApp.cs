@@ -28,7 +28,7 @@ namespace MyShogi.App
 
             // 駒素材画像の変換
             //ImageConverter.ConvertPieceImage();
-            ImageConverter.ConvertBoardNumberImage();
+            //ImageConverter.ConvertBoardNumberImage();
 
             // -- global configの読み込み
 

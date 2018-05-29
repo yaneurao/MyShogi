@@ -17,12 +17,16 @@ namespace MyShogi.Model.Resource
 
         /// <summary>
         /// TheApp.app.configの内容に従い、画像を読み込む。
+        /// 
+        /// これらの画像を描画するのはUIスレッドのみ。
+        /// また、読み直しもUIスレッドが行うので、スレッド競合の問題はない。
         /// </summary>
         public void Update()
         {
             UpdateBoardImage();
             UpdatePieceImage();
             UpdateBoardNumberImage();
+            UpdateHandNumberImage();
         }
 
         /// <summary>
@@ -106,6 +110,14 @@ namespace MyShogi.Model.Resource
             }
         }
 
+        /// <summary>
+        /// 手駒の右肩に表示する駒の枚数を示す数字画像
+        /// </summary>
+        private void UpdateHandNumberImage()
+        {
+            HandNumberImg = Load("hand_number_v1_864_96.png");
+        }
+
 
         /// <summary>
         /// ファイル名を与えて、ImgFolderから画像を読み込む
@@ -137,5 +149,10 @@ namespace MyShogi.Model.Resource
         public ImageLoader BoardNumberImgRank { get; private set; } = new ImageLoader();
         public ImageLoader BoardNumberImgRevFile { get; private set; } = new ImageLoader();
         public ImageLoader BoardNumberImgRevRank { get; private set; } = new ImageLoader();
+
+        /// <summary>
+        /// 手駒の右肩に表示する駒の枚数を示す数字画像
+        /// </summary>
+        public ImageLoader HandNumberImg { get; private set; } = new ImageLoader();
     }
 }

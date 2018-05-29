@@ -5,6 +5,7 @@ using MyShogi.App;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Test;
 using MyShogi.ViewModel;
+using ShogiCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
 {
@@ -35,6 +36,57 @@ namespace MyShogi.View.Win2D
         // これが横に8つ、縦に4つ、計32個並んでいる。
         public static readonly int piece_img_width = 97;
         public static readonly int piece_img_height = 106;
+
+        // 駒台の先手側の右下の座標、駒台の後手側の左上の座標
+        public static readonly int hand_img_black_right = 1689;
+        public static readonly int hand_img_black_bottom = 1026;
+        public static readonly int hand_img_white_left = 230;
+        public static readonly int hand_img_white_top = 31;
+
+        // 手駒の表示場所(駒台を左上とする)
+        public class HandLocation
+        {
+            public HandLocation(Piece piece_, int x_, int y_)
+            {
+                piece = piece_;
+                x = x_;
+                y = y_;
+            }
+
+            public Piece piece;
+            public int x;
+            public int y;
+        };
+
+        /// <summary>
+        /// 手駒の表示場所(駒台を左上とする)
+        /// </summary>
+        private static readonly HandLocation[] hand_location =
+        {
+            // 10(margin)+96(piece_width)+30(margin)+96(piece_width)+28(margin) = 260(駒台のwidth)
+            new HandLocation(Piece.ROOK,10,5),
+            new HandLocation(Piece.BISHOP, 135,5),
+            new HandLocation(Piece.GOLD,10,100),
+            new HandLocation(Piece.SILVER,135,100),
+            new HandLocation(Piece.KNIGHT,10,190),
+            new HandLocation(Piece.LANCE, 135,190),
+            new HandLocation(Piece.PAWN,10,280),
+        };
+
+        /// <summary>
+        /// 駒台の画面上の位置
+        /// </summary>
+        private static readonly Point[] hand_table_pos =
+        {
+            new Point(1431,643), // 先手の駒台
+            new Point(229,32),   // 後手の駒台
+        };
+
+        /// <summary>
+        /// 駒台の幅と高さ
+        /// </summary>
+        private static int hand_table_width = 260;
+        private static int hand_table_height = 388;
 
         // メニュー高さ。これはClientSize.Heightに含まれてしまうのでこれを加算した分だけ確保しないといけない。
         public static int menu_height = SystemInformation.MenuHeight;
@@ -255,7 +307,7 @@ namespace MyShogi.View.Win2D
 
         private MenuStrip old_menu { get; set; } = null;
 
-        public MainDialogViewModel ViewModel { get; private set;}
+        public MainDialogViewModel ViewModel { get; private set; }
 
         /// <summary>
         /// 盤面画像を描画するときに左側と右側とをclipする量。
@@ -287,7 +339,7 @@ namespace MyShogi.View.Win2D
             // -- 盤面の描画
             {
                 var board = img.BoardImg.image;
-                var destRect = new Rectangle(0, menu_height , ClientSize.Width , ClientSize.Height - menu_height);
+                var destRect = new Rectangle(0, menu_height, ClientSize.Width, ClientSize.Height - menu_height);
                 var sourceRect = new Rectangle(clip_x, 0, board_img_width - clip_x * 2, board_img_height);
                 g.DrawImage(board, destRect, sourceRect, GraphicsUnit.Pixel);
             }
@@ -298,7 +350,7 @@ namespace MyShogi.View.Win2D
                 var pos = ViewModel.Pos;
 
                 var piece = img.PieceImg.image;
-                scale_x = (double)ClientSize.Width / (board_img_width - clip_x*2 );
+                scale_x = (double)ClientSize.Width / (board_img_width - clip_x * 2);
                 scale_y = (double)(ClientSize.Height - menu_height) / board_img_height;
                 offset_x = (int)(-clip_x * scale_x);
                 offset_y = menu_height;
@@ -313,20 +365,90 @@ namespace MyShogi.View.Win2D
                         int f = 8 - (int)sq2.ToFile();
                         int r = (int)sq2.ToRank();
 
-                        var destRect = new Rectangle(board_left + piece_img_width * f, board_top + piece_img_height * r,
+                        var dstRect = new Rectangle(board_left + piece_img_width * f, board_top + piece_img_height * r,
                             piece_img_width, piece_img_height);
 
                         // 盤面反転モードなら、駒を先後入れ替える
                         if (reverse)
                             pc = pc ^ Piece.WHITE;
 
-                        var sourceRect = new Rectangle(
-                            ((int)pc % 8) * piece_img_width , 
+                        var srcRect = new Rectangle(
+                            ((int)pc % 8) * piece_img_width,
                             ((int)pc / 8) * piece_img_height,
-                            piece_img_width , piece_img_height);
+                            piece_img_width, piece_img_height);
 
-                        Draw(g, piece, destRect, sourceRect);
+                        Draw(g, piece, dstRect, srcRect);
                     }
+                }
+
+                // -- 手駒の描画
+
+                var hand_number = img.HandNumberImg.image;
+
+                for (var c = ShogiCore.Color.ZERO; c < ShogiCore.Color.NB; ++c)
+                {
+                    Hand h = pos.Hand(reverse ? c.Not() : c);
+
+                    // c側の駒台に描画する。
+
+                    Point p = (c == ShogiCore.Color.BLACK) ?
+                        new Point(hand_img_black_right, hand_img_black_bottom) :
+                        new Point(hand_img_white_left, hand_img_white_top);
+
+
+                    // 枚数によって位置が自動調整されるの、わりと見づらいので嫌。
+                    // 駒種によって位置固定で良いと思う。
+
+
+                    //同種の駒が3枚以上になったときに、その駒は1枚だけを表示して、
+                    //数字を右肩表示しようと考えていたのですが、例えば、金が2枚、
+                    //歩が3枚あるときに、歩だけが数字表示になるのはどうもおかしい気が
+                    //するのです。2枚以上は全部数字表示のほうが良いだろう。
+
+                    foreach (var loc in hand_location)
+                    {
+                        var pc = loc.piece;
+
+                        int count = h.Count(pc);
+                        if (count != 0)
+                        {
+                            // 後手の駒台には後手の駒を描画しなくてはならないのでpcを後手の駒にする。
+
+                            if (c == ShogiCore.Color.WHITE)
+                                pc = pc | Piece.WHITE;
+
+                            var srcRect = new Rectangle(
+                                ((int)pc % 8) * piece_img_width,
+                                ((int)pc / 8) * piece_img_height,
+                                piece_img_width, piece_img_height);
+
+                            Rectangle dstRect;
+                            
+                            if (c == ShogiCore.Color.BLACK)
+                                dstRect = new Rectangle(
+                                    hand_table_pos[(int)c].X + loc.x,
+                                    hand_table_pos[(int)c].Y + loc.y,
+                                    piece_img_width, piece_img_height);
+                            else
+                                // 180度回転させた位置を求める
+                                // 後手も駒の枚数は右肩に描画するのでそれに合わせて左右のmarginを調整する。
+                                dstRect = new Rectangle(
+                                    hand_table_pos[(int)c].X + (hand_table_width  - loc.x - piece_img_width  - 10 ) ,
+                                    hand_table_pos[(int)c].Y + (hand_table_height - loc.y - piece_img_height) ,
+                                    piece_img_width , piece_img_height);
+
+                            Draw(g, piece, dstRect, srcRect);
+
+                            // 数字の表示
+                            if (count > 1)
+                            {
+                                var srcRect2 = new Rectangle(48 * (count - 1), 0, 48, 48);
+                                var dstRect2 = new Rectangle(dstRect.Left + 60, dstRect.Top + 20, 48, 48);
+                                Draw(g, hand_number, dstRect2, srcRect2);
+                            }
+                        }
+                    }
+
                 }
             }
 
@@ -346,7 +468,7 @@ namespace MyShogi.View.Win2D
                     var rank_img = (!reverse) ? img.BoardNumberImgRank.image : img.BoardNumberImgRevRank.image;
                     if (rank_img != null)
                     {
-                        var dstRect = new Rectangle(1397,49, rank_img.Width, rank_img.Height);
+                        var dstRect = new Rectangle(1397, 49, rank_img.Width, rank_img.Height);
                         var srcRect = new Rectangle(0, 0, rank_img.Width, rank_img.Height);
                         Draw(g, rank_img, dstRect, srcRect);
                     }
@@ -368,14 +490,14 @@ namespace MyShogi.View.Win2D
         /// <param name="img"></param>
         /// <param name="destRect"></param>
         /// <param name="sourceRect"></param>
-        private void Draw(Graphics g, Image img , Rectangle destRect , Rectangle sourceRect)
+        private void Draw(Graphics g, Image img, Rectangle destRect, Rectangle sourceRect)
         {
             var destRect2 = new Rectangle(
-                (int)(destRect.Left * scale_x) + offset_x,
-                (int)(destRect.Top  * scale_y) + offset_y,
-                (int)(destRect.Width  * scale_x),
-                (int)(destRect.Height * scale_y)
-                );
+            (int)(destRect.Left * scale_x) + offset_x,
+            (int)(destRect.Top * scale_y) + offset_y,
+            (int)(destRect.Width * scale_x),
+            (int)(destRect.Height * scale_y)
+            );
             g.DrawImage(img, destRect2, sourceRect, GraphicsUnit.Pixel);
         }
 
