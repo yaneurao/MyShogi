@@ -79,7 +79,7 @@ namespace MyShogi.Model.Resource
 
                 // さらに駒ごとの微調整
                 int pc = to_x + to_y * 8;
-                switch (pc)
+                switch (pc & ~ 8/* Piece.PROMOTE*/ ) // 成り駒に関しては同様
                 {
                     case 1: ox += 4; break;
                     case 2: ox += 2; break;
