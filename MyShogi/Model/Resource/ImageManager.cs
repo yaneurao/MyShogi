@@ -38,7 +38,7 @@ namespace MyShogi.Model.Resource
 
             BoardImg.Release();
 
-            BoardImg = Load($"board_v{config.BoardImageVersion}_1920_1080.png");
+            BoardImg = Load($"board_v{config.BoardImageVersion}_1920_1080.png",true);
             // 画像の読み込みに失敗していたら警告ダイアログを表示する。
             if (BoardImg.image == null)
             {
@@ -121,12 +121,14 @@ namespace MyShogi.Model.Resource
 
         /// <summary>
         /// ファイル名を与えて、ImgFolderから画像を読み込む
+        /// 
+        /// noAlpha == trueなら、ARGBではなくRGBのBitmapを作成してそこに読み込む。
         /// </summary>
         /// <param name="name"></param>
-        private ImageLoader Load(string name)
+        private ImageLoader Load(string name , bool noAlpha = false)
         {
             var img = new ImageLoader();
-            img.Load(Path.Combine(ImageFolder,name));
+            img.Load(Path.Combine(ImageFolder,name) , noAlpha);
             return img;
         }
 
