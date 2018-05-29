@@ -20,8 +20,8 @@ namespace MyShogi.View.Win2D
 
             UpdateMenuItems();
 
-            // FindScreenSize();
             FitToScreenSize();
+            FitToClientSize();
         }
 
         // -- 各種定数
@@ -32,7 +32,7 @@ namespace MyShogi.View.Win2D
 
         // 盤面素材における、駒を配置する升の左上。
         public static readonly int board_left = 524;
-        public static readonly int board_top = 53 + 19;
+        public static readonly int board_top = 53;
 
         // 駒素材の画像サイズ(駒1つ分)
         // これが横に8つ、縦に4つ、計32個並んでいる。
@@ -74,8 +74,8 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private static readonly Point[] hand_table_pos =
         {
-            new Point(1431,643 + 19), // 先手の駒台
-            new Point(229,32 + 19),   // 後手の駒台
+            new Point(1431,643), // 先手の駒台
+            new Point(229 , 32), // 後手の駒台
         };
 
         /// <summary>
@@ -88,9 +88,40 @@ namespace MyShogi.View.Win2D
         public static int menu_height = SystemInformation.MenuHeight;
 
         /// <summary>
-        /// 現在のウィンドウサイズに収まるようにaffine変換の係数を決定する。
+        /// 現在のスクリーンの大きさに合わせたウィンドウサイズにする。(起動時)
         /// </summary>
         public void FitToScreenSize()
+        {
+            // ディスプレイに収まるサイズのスクリーンにする必要がある。
+            // プライマリスクリーンを基準にして良いのかどうかはわからん…。
+            int w = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width;
+            int h = System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height - menu_height;
+
+            // いっぱいいっぱいだと邪魔なので90%ぐらい使うか。
+            w = (int)(w * 0.9);
+            h = (int)(h * 0.9);
+
+            // 縦(h)を基準に横方向のクリップ位置を決める
+            // 1920 * 1080が望まれる比率
+            int w2 = h * 1920 / 1080;
+
+            if (w > w2)
+            {
+                w = w2;
+                // 横幅が余りつつも画面にぴったりなのでこのサイズで生成する。
+            }
+            else
+            {
+                int h2 = w * 1080 / 1920;
+                h = h2;
+            }
+            ClientSize = new Size(w, h + menu_height);
+        }
+
+        /// <summary>
+        /// 現在のウィンドウサイズに収まるようにaffine変換の係数を決定する。
+        /// </summary>
+        public void FitToClientSize()
         {
             int w = ClientSize.Width;
             int h = ClientSize.Height - menu_height;
@@ -309,8 +340,8 @@ namespace MyShogi.View.Win2D
             {
                 // 座標系はストレートに指定しておけばaffine変換されて適切に描画される。
                 var board = img.BoardImg.image;
-                var srcRect = new Rectangle(0, 0, board_img_width, board_img_height);
-                var dstRect = new Rectangle(0, menu_height, board_img_width , board_img_height);
+                var srcRect = new Rectangle(0, 0, board_img_width , board_img_height);
+                var dstRect = new Rectangle(0, 0, board_img_width , board_img_height);
                 Draw(g, board, dstRect, srcRect);
             }
 
@@ -421,7 +452,7 @@ namespace MyShogi.View.Win2D
                     var file_img = (!reverse) ? img.BoardNumberImgFile.image : img.BoardNumberImgRevFile.image;
                     if (file_img != null)
                     {
-                        var dstRect = new Rectangle(526, 32 + 19, file_img.Width, file_img.Height);
+                        var dstRect = new Rectangle(526, 32 , file_img.Width, file_img.Height);
                         var srcRect = new Rectangle(0, 0, file_img.Width, file_img.Height);
                         Draw(g, file_img, dstRect, srcRect);
                     }
@@ -473,7 +504,8 @@ namespace MyShogi.View.Win2D
             // 画面がリサイズされたときにそれに収まるように盤面を描画する。
             // Paintメッセージは送られてくるはず..
 
-            FitToScreenSize();
+            FitToClientSize();
+            Invalidate();
         }
     }
 }
