@@ -30,6 +30,10 @@ namespace MyShogi.View.Win2D
 
             text = "MyShogi Version " + GlobalConfig.MYSHOGI_VERSION_STRING + "\r\n\r\n" + text;
 
+            // 商用版であるなら、Mynaviの権利表示。
+            if (TheApp.app.config.CommercialVersion)
+                text += "\r\n\r\n(C)2018 Mynavi Publishing Corporation / MyShogi Project";
+
             textBox1.Text = text;
         }
 

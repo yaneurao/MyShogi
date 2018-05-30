@@ -25,6 +25,18 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// メニュー高さとToolStripの高さをあわせたもの。
+        /// これはClientSize.Heightに含まれてしまうので実際の描画エリアはこれを減算したもの。
+        /// </summary>
+        public int menu_height
+        {
+            get
+            {
+                return System.Windows.Forms.SystemInformation.MenuHeight + toolStrip1.Height;
+            }
+        }
+
+        /// <summary>
         /// 現在のスクリーンの大きさに合わせたウィンドウサイズにする。(起動時)
         /// </summary>
         public void FitToScreenSize()
@@ -91,7 +103,7 @@ namespace MyShogi.View.Win2D
             var config = app.config;
 
             // Commercial Version GUI
-            bool CV_GUI = config.YaneuraOu2018_GUI_MODE;
+            bool CV_GUI = config.CommercialVersion;
             if (CV_GUI)
                 Text = "将棋神やねうら王";
             // 商用版とどこで差別化するのか考え中
@@ -108,9 +120,14 @@ namespace MyShogi.View.Win2D
                 if (old_menu != null)
                     Controls.Remove(old_menu);
 
-                var file_display = new ToolStripMenuItem();
-                file_display.Text = "ファイル";
-                menu.Items.Add(file_display);
+                var item_file = new ToolStripMenuItem();
+                item_file.Text = "ファイル";
+                menu.Items.Add(item_file);
+                // あとで追加する。
+
+                var item_playgame = new ToolStripMenuItem();
+                item_playgame.Text = "対局";
+                menu.Items.Add(item_playgame);
                 // あとで追加する。
 
                 var item_display = new ToolStripMenuItem();
@@ -560,6 +577,19 @@ namespace MyShogi.View.Win2D
 
             FitToClientSize();
             Invalidate();
+        }
+
+        // -- 以下、ToolStripのハンドラ
+
+        /// <summary>
+        /// 待ったボタンが押されたときのハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton8_Click(object sender, EventArgs e)
+        {
+            var config = TheApp.app.config;
+            config.BoardReverse = !config.BoardReverse;
         }
     }
 }

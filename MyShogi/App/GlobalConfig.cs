@@ -18,10 +18,6 @@ namespace MyShogi.App
 
         public GlobalConfig()
         {
-            // カレントフォルダ配下のtextフォルダに"YaneuraOuGUI2018.txt"というファイルがあるなら、
-            // 商用版のやねうら王用のモード。
-            YaneuraOu2018_GUI_MODE = System.IO.File.Exists("text/YaneuraOuGUI2018.txt");
-
             BoardImageVersion = 1;
             TatamiImageVersion = 1;
             PieceImageVersion = 1;
@@ -54,6 +50,18 @@ namespace MyShogi.App
                 // 読み込めなかったので新規に作成する。
                 config = new GlobalConfig();
             }
+
+            // カレントフォルダ配下のtextフォルダに"CommercialVersion.txt"というファイルがあるなら、
+            // 商用版のやねうら王用のモード。(シリアライズされた内容は関係ない)
+
+            config.CommercialVersion = System.IO.File.Exists("text/CommercialVersion.txt");
+
+            // いまのところ商用版とオープンソース版とでの差別化はあまり考えていないが、
+            // オープンソース版に対してこのファイルを用意した場合、素材が足りなくて落ちる可能性はある。
+            // あと、
+            // 「このファイル置いたら商用版になるぜー、うひょーｗｗｗｗｗ」
+            // という記事を書いて公開するのはなるべくならやめてもらいたい。
+
             return config;
         }
 
@@ -85,7 +93,7 @@ namespace MyShogi.App
         /// シリアライズするためにsetterもpublicになっているが、この値は起動時に
         /// 別の方法で判定しているので、setterには意味がない。
         /// </summary>
-        public bool YaneuraOu2018_GUI_MODE { get; set; }
+        public bool CommercialVersion { get; set; }
 
 
         /// <summary>

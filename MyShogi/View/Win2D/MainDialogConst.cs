@@ -78,8 +78,5 @@ namespace MyShogi.View.Win2D
             new Point(239+2,446+4),  // 後手のネームプレート
         };
 
-        // メニュー高さ。これはClientSize.Heightに含まれてしまうのでこれを加算した分だけ確保しないといけない。
-        public static int menu_height = System.Windows.Forms.SystemInformation.MenuHeight;
-
     }
 }
