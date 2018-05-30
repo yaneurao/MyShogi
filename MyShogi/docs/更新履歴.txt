@@ -1,13 +1,6 @@
 ﻿
 ToDo
 
-- 3:2モード、4:3モード追加。
-- Menuにデバッグ用の項目追加。
-- Menuに盤の数字を描画する/しないを追加する。
-- MainDialogの手駒描画のコード追加。
-- MainDialogに盤面反転、追加。
-- MainDialog、盤面描画、さらに抽象化する。
-
 - KifuManager
 	- KifuManagerのCSA形式の読み込みのサポート
 	- KifuManagerのKIF形式のサポート
@@ -15,7 +8,108 @@ ToDo
 		- Mizarさんに依頼中
 
 
+■　2018/05/30
+
+
+- readme.md、予定のところに局面の画像出力機能など追記。
+
+
+- 最終手の移動先の升を朱色にする
+	- ImageConverter修正。
+	- Piece.WHITEのところの画像にその朱色のイメージを入れる
+	- MainDialog、修正。
+
+
+- 畳と盤面画像を分離する
+	- ImageLoaderでRGBに読み込む機能不要なのでは…。削除する。
+	- 代わりに、imageを合成する機能を用意する。
+- ImageManager、Load修正。
+	- エラー処理、削除。(ファイルが存在しないときは赤い「×」が設定されるので)
+- GlobalConfigからScreenRatio削除
+- GlobalConfigにTatamiImageVersion追加
+- MainDialogのメニューに畳の選択追加など
+
+
+- 成り駒は赤い駒に変更する
+	- ImageConverter修正。
+
+
+- 対局盤面、対局者氏名が描画されるように。
+- 手駒の枚数画像、わかりにくかったので差し替え。
+	- いい感じになった。
+- board画像、対局者氏名のところ窓枠修正。
+- MainDialogの定数をMainDialogConst.csに分離
+
+
+- 画像の読み込みに失敗したときに、赤で「×」の画像を生成して、それを表示することにする。
+
+
+- 盤面の描画位置、メニュー高さ分だけずれていたの修正。
+
+
+- フルスクリーン時の処理、専用で何か追加したほうが良いのでは…。
+	- フルスクリーン時にwindow captionを消す処理を追加
+	- 簡単ではなさげなのでやめる。
+- 駒の枚数の数字、縮小されたときに見にくいので修正依頼。
+
+
+- ウィンドウのリサイズが出来るように変更する。
+	- affine変換の係数おかしかったので修正した。
+
+
+■　2018/05/29
+
+
+- 背景、alpha channelありのbitmapに読み込むの無駄なのでalphaなしのBitmapにcloneするようにした。
+
+
+- Mizarさんのプルリクをmerge (#4)
+	* KI2: 盤上で着手可能な駒が無ければ駒打ちと解釈する
+	* CSA: "P+00AL", "P-00AL" の実装
+	* KifuManager: wip
+	* EastAsianWidth
+
+
+- ImageConverter、成り駒の位置調整、忘れていたの修正。
+
+
+- 手駒の右肩に表示する駒の枚数を示す数字画像追加
+	- 読み込みに対応
+- MainDialogの駒台の駒の描画
+	- 反転表示に対応
+	- 駒が2枚以上のときは右肩に数字表示をするように
+- MainDialogの駒台の画像を大きめに変更
+
+
+- Menuに盤の数字を描画する/しないを追加した。
+- ImageConverterにConvertBoardNumberImage()追加。
+- GlobalConfigにBoardNumberImageVersion追加。
+- GlobalConfigにBoardReverse追加。
+	- 関連するハンドラ追加
+	- MainDialogに反映するように。
+- メニューの表示のところに「盤面反転」追加。
+- MainDialogの盤上の駒に盤面反転が反映するようにした。
+
+
 ■  2018/05/28
+
+
+- MainDialogの描画のところ、抽象化した。
+
+
+- 駒素材、ずれ修正。
+	- ImageConverter、すべての駒素材を一括変換するように修正。
+	- 駒素材のNO_PIECEのところにα30%の黒入れる。(明度を落とすのに使えるかも。あるいは位置の確認に使えるかも)
+	- 読み込む駒画像の横幅776pxに変更
+
+
+- Menuにデバッグ用の項目追加。
+	- リリースのときに消す
+		- DEBUGビルドのときだけ追加されるようにした。
+	- TestForm削除。
+
+
+- progress.md更新
 
 
 - MainDialogのイベント、少し整理。
