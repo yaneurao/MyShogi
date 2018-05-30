@@ -11,35 +11,17 @@ namespace MyShogi.Model.Resource
     {
         /// <summary>
         /// ファイル名のファイル(画像)を読み込む。
-        /// 読み込みに失敗した場合、例外は投げずにimage = nullにする。
+        /// 読み込みに失敗した場合、例外は投げずにimageに「×」画像を設定する。
         /// 
-        /// noAlpha == trueならARGBではなくRGBのBitmapに読み込む。
         /// </summary>
         /// <param name="filename"></param>
-        public void Load(string filename , bool noAlpha = false)
+        public void Load(string filename)
         {
-            try
-            {
-                if (noAlpha)
-                {
-                    using (var orig = System.Drawing.Image.FromFile(filename))
-                    {
-                        // Image.FromFile()はpngファイルだとalphaなしで読み込めない。
-                        // PiexelFormat.Format24bppRgbにcloneしてそちらを使う。
+            try {
 
-                        Bitmap clone = new Bitmap(orig.Width, orig.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                        using (var g = Graphics.FromImage(clone))
-                        {
-                            g.DrawImage(orig, new Rectangle(0, 0, clone.Width, clone.Height));
-                        }
-                        image = clone;
-                    }
-                }
-                else
-                {
-                    image = System.Drawing.Image.FromFile(filename);
-                }
-            }catch
+                image = System.Drawing.Image.FromFile(filename);
+
+            } catch
             {
                 // 画像の読み込みに失敗した。これを例外として投げると、オプションを変更して、その設定に対応する
                 // 画像が足りないときに例外で落ちてしまい、また、その設定が終了時に保存されるので、次回以降ソフト自体が
@@ -56,6 +38,25 @@ namespace MyShogi.Model.Resource
                     g.DrawLine(pen, new Point(0, 0), new Point(63, 63));
                     g.DrawLine(pen, new Point(63, 0), new Point(0, 63));
                 }
+            }
+        }
+
+        /// <summary>
+        /// width×heightサイズのbitmapを用意する。
+        /// 初期化はしないので何が描かれているかは不定とする。
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <param name="format"></param>
+        public void CreateBitmap(int width,int height , PixelFormat format)
+        {
+            if (image == null)
+            {
+                image = new Bitmap(width, height, format);
+            } else if (image.Width != width || image.Height != height)
+            {
+                Release();
+                image = new Bitmap(width, height, format);
             }
         }
 

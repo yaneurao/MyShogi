@@ -18,6 +18,7 @@ namespace MyShogi.App
             YaneuraOu2018_GUI_MODE = System.IO.File.Exists("YaneuraOuGUI2018.txt");
 
             BoardImageVersion = 1;
+            TatamiImageVersion = 1;
             PieceImageVersion = 1;
             BoardNumberImageVersion = 1;
             BoardReverse = false;
@@ -80,13 +81,6 @@ namespace MyShogi.App
         /// </summary>
         public bool YaneuraOu2018_GUI_MODE { get; set; }
 
-        /// <summary>
-        /// メインウィンドゥの画面比率
-        /// ScreenRatio == 0 : 自動選択
-        /// ScreenRatio == 1 : 4:3モード
-        /// ScreenRatio == 2 : 3:2モード
-        /// </summary>
-        public int ScreenRatio { get; set; } = 0;
 
         /// <summary>
         /// 盤画像のバージョン
@@ -96,6 +90,16 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("BoardImageVersion"); }
             set { SetValue<int>("BoardImageVersion",value); }
+        }
+
+        /// <summary>
+        /// 畳画像のバージョン
+        /// 商用版のみ1以外を選択できる。(ようにするかも)
+        /// </summary>
+        public int TatamiImageVersion
+        {
+            get { return GetValue<int>("TatamiImageVersion"); }
+            set { SetValue<int>("TatamiImageVersion", value); }
         }
 
         /// <summary>

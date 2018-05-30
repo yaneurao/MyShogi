@@ -45,6 +45,7 @@ namespace MyShogi.App
                 // GlobalConfigのプロパティ変更に対して、このimageManagerが呼び出されるようにbindしておく。
 
                 config.AddPropertyChangedHandler("BoardImageVersion", imageManager.UpdateBoardImage);
+                config.AddPropertyChangedHandler("TatamiImageVersion", imageManager.UpdateBoardImage);
                 config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
                 config.AddPropertyChangedHandler("BoardNumberImageVersion", imageManager.UpdateBoardNumberImage);
             }
@@ -63,6 +64,7 @@ namespace MyShogi.App
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
             config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems );
+            config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems );
             config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);

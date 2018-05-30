@@ -1,4 +1,6 @@
 ﻿using MyShogi.App;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
@@ -35,22 +37,25 @@ namespace MyShogi.Model.Resource
         public void UpdateBoardImage()
         {
             var config = TheApp.app.config;
+            var board = new ImageLoader();
+            var tatami = new ImageLoader();
+            Load(ref board ,$"board_v{config.BoardImageVersion}_1920_1080.png");
+            Load(ref tatami, $"tatami_v{config.TatamiImageVersion}_1920_1080.png");
 
-            BoardImg.Release();
+            BoardImg.CreateBitmap(1920, 1080, PixelFormat.Format24bppRgb);
 
-            BoardImg = Load($"board_v{config.BoardImageVersion}_1920_1080.png",true);
-            // 画像の読み込みに失敗していたら警告ダイアログを表示する。
-            if (BoardImg.image == null)
+            // 畳と盤を合成する。
+            using (var g = Graphics.FromImage(BoardImg.image))
             {
-                MessageBox.Show("盤画像の読み込みに失敗しました。");
-
-                // このままApplication.Exit()させてしまうと次回以降も読み込みに失敗してしまい、
-                // 永久に起動出来なくなってしまう。
-                config.BoardImageVersion = 1;
-
-                Application.Exit();
+                var rect = new Rectangle(0, 0, BoardImg.image.Width, BoardImg.image.Height);
+                // DrawImageで等倍の転送にするためにはrectの指定が必要
+                g.DrawImage(tatami.image , rect , rect , GraphicsUnit.Pixel);
+                g.DrawImage(board.image, rect , rect , GraphicsUnit.Pixel);
             }
 
+            // しばらく使わないと思うので開放しておく
+            board.Release();
+            tatami.Release();
         }
 
         /// <summary>
@@ -59,20 +64,7 @@ namespace MyShogi.Model.Resource
         public void UpdatePieceImage()
         {
             var config = TheApp.app.config;
-
-            PieceImg.Release();
-
-            PieceImg = Load($"piece_v{config.PieceImageVersion}_776_424.png");
-            if (PieceImg.image == null)
-            {
-                MessageBox.Show("駒画像の読み込みに失敗しました。");
-
-                // このままApplication.Exit()させてしまうと次回以降も読み込みに失敗してしまい、
-                // 永久に起動出来なくなってしまう。
-                config.PieceImageVersion = 1;
-
-                Application.Exit();
-            }
+            Load(ref PieceImg , $"piece_v{config.PieceImageVersion}_776_424.png");
         }
 
         /// <summary>
@@ -83,31 +75,14 @@ namespace MyShogi.Model.Resource
             var config = TheApp.app.config;
             var version = config.BoardNumberImageVersion;
 
-            BoardNumberImgFile.Release();
-            BoardNumberImgRevFile.Release();
-            BoardNumberImgRank.Release();
-            BoardNumberImgRevRank.Release();
-
             // 0は非表示の意味
             if (version == 0)
                 return;
 
-            BoardNumberImgFile = Load($"number_v{version}_873_19.png");
-            BoardNumberImgRevFile = Load($"number_v{version}Rev_873_19.png");
-            BoardNumberImgRank = Load($"number_v{version}_22_954.png");
-            BoardNumberImgRevRank = Load($"number_v{version}Rev_22_954.png");
-
-            if (BoardNumberImgFile.image == null || BoardNumberImgRevFile.image == null
-                || BoardNumberImgRank.image == null || BoardNumberImgRevRank.image == null)
-            {
-                MessageBox.Show("駒番号画像の読み込みに失敗しました。");
-
-                // このままApplication.Exit()させてしまうと次回以降も読み込みに失敗してしまい、
-                // 永久に起動出来なくなってしまう。
-                config.BoardNumberImageVersion = 0;
-
-                Application.Exit();
-            }
+            Load(ref BoardNumberImgFile    , $"number_v{version}_873_19.png");
+            Load(ref BoardNumberImgRevFile , $"number_v{version}Rev_873_19.png");
+            Load(ref BoardNumberImgRank    , $"number_v{version}_22_954.png");
+            Load(ref BoardNumberImgRevRank , $"number_v{version}Rev_22_954.png");
         }
 
         /// <summary>
@@ -115,46 +90,45 @@ namespace MyShogi.Model.Resource
         /// </summary>
         private void UpdateHandNumberImage()
         {
-            HandNumberImg = Load("hand_number_v1_864_96.png");
+            Load(ref HandNumberImg , "hand_number_v1_864_96.png");
         }
 
 
         /// <summary>
         /// ファイル名を与えて、ImgFolderから画像を読み込む
-        /// 
-        /// noAlpha == trueなら、ARGBではなくRGBのBitmapを作成してそこに読み込む。
         /// </summary>
         /// <param name="name"></param>
-        private ImageLoader Load(string name , bool noAlpha = false)
+        private void Load(ref ImageLoader img, string name)
         {
-            var img = new ImageLoader();
-            img.Load(Path.Combine(ImageFolder,name) , noAlpha);
-            return img;
+            // プロパティをrefで渡せないので、プロパティにするのやめる。(´ω｀)
+
+            img.Release();
+            img.Load(Path.Combine(ImageFolder,name));
         }
 
         // -- 以下、それぞれの画像
 
         /// <summary>
-        /// 盤面
+        /// 盤面 + 畳を合成したRGB画像
         /// </summary>
-        public ImageLoader BoardImg { get; private set; } = new ImageLoader();
+        public ImageLoader BoardImg = new ImageLoader();
 
         /// <summary>
         /// 駒画像
         /// </summary>
-        public ImageLoader PieceImg { get; private set; } = new ImageLoader();
+        public ImageLoader PieceImg = new ImageLoader();
 
         /// <summary>
         /// 盤面の番号画像、筋・段、盤面反転の筋・段
         /// </summary>
-        public ImageLoader BoardNumberImgFile { get; private set; } = new ImageLoader();
-        public ImageLoader BoardNumberImgRank { get; private set; } = new ImageLoader();
-        public ImageLoader BoardNumberImgRevFile { get; private set; } = new ImageLoader();
-        public ImageLoader BoardNumberImgRevRank { get; private set; } = new ImageLoader();
+        public ImageLoader BoardNumberImgFile  = new ImageLoader();
+        public ImageLoader BoardNumberImgRank  = new ImageLoader();
+        public ImageLoader BoardNumberImgRevFile  = new ImageLoader();
+        public ImageLoader BoardNumberImgRevRank  = new ImageLoader();
 
         /// <summary>
         /// 手駒の右肩に表示する駒の枚数を示す数字画像
         /// </summary>
-        public ImageLoader HandNumberImg { get; private set; } = new ImageLoader();
+        public ImageLoader HandNumberImg = new ImageLoader();
     }
 }

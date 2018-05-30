@@ -160,18 +160,36 @@ namespace MyShogi.View.Win2D
                             item.Text = "盤画像";
 
                             var item1 = new ToolStripMenuItem();
-                            item1.Text = "Type1";
+                            item1.Text = "白色";
                             item1.Checked = config.BoardImageVersion == 1;
                             item1.Click += (sender, e) => { config.BoardImageVersion = 1; };
                             item.DropDownItems.Add(item1);
 
                             var item2 = new ToolStripMenuItem();
-                            item2.Text = "Type2";
+                            item2.Text = "黄色";
                             item2.Checked = config.BoardImageVersion == 2;
                             item2.Click += (sender, e) => { config.BoardImageVersion = 2; };
                             item.DropDownItems.Add(item2);
                             item_display.DropDownItems.Add(item);
+                        }
 
+                        { // -- 盤画像の選択メニュー
+
+                            var item = new ToolStripMenuItem();
+                            item.Text = "畳画像";
+
+                            var item1 = new ToolStripMenuItem();
+                            item1.Text = "薄い";
+                            item1.Checked = config.TatamiImageVersion == 1;
+                            item1.Click += (sender, e) => { config.TatamiImageVersion = 1; };
+                            item.DropDownItems.Add(item1);
+
+                            var item2 = new ToolStripMenuItem();
+                            item2.Text = "濃い";
+                            item2.Checked = config.TatamiImageVersion == 2;
+                            item2.Click += (sender, e) => { config.TatamiImageVersion = 2; };
+                            item.DropDownItems.Add(item2);
+                            item_display.DropDownItems.Add(item);
                         }
 
                         { // -- 駒画像の選択メニュー
