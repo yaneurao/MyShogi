@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Shogi.Core;
@@ -22,6 +23,8 @@ namespace MyShogi.View.Win2D
 
             FitToScreenSize();
             FitToClientSize();
+
+            MinimumSize = new Size(192*2 , 108*2 + menu_height );
         }
 
         /// <summary>
@@ -79,12 +82,26 @@ namespace MyShogi.View.Win2D
             // 1920 * 1080が望まれる比率
             int w2 = h * 1920 / 1080;
 
-            //if (w > w2)
-            //{
-            //    w = w2;
-            //    //ClientSize = new Size(w, ClientSize.Height);
-            //    // これでイベントが無限に発生するとまずいのだ…。
-            //}
+            // ちらつかずにウインドウのaspect ratioを保つのは.NET Frameworkの範疇では不可能。
+            // ClientSizeをResizeイベント中に変更するのは安全ではない。
+            // cf. 
+            //   https://qiita.com/yu_ka1984/items/b4a3ce9ed7750bd67b86
+            // →　あきらめる
+
+#if false
+            // このコード、有効にするとハングする。
+            double ratio = (double)h / w;
+            if (ratio < 0.563)
+            {
+                w = (int)(h / 0.563);
+                ClientSize = new Size(w, h + menu_height);
+            }
+            else if (ratio > 0.726)
+            {
+                w = (int)(h / 0.726);
+                ClientSize = new Size(w, h + menu_height);
+            }
+#endif
 
             offset_x = (w - w2) / 2;
             offset_y = menu_height;
@@ -548,11 +565,16 @@ namespace MyShogi.View.Win2D
             );
 
             // 文字フォントサイズは、scaleの影響を受ける。
-            var font = new Font("MSPゴシック", (int)(20 * scale_x));
-            //            var font = new Font("MS UI Gothic", (int)(18 * scale_x));
 
-            g.DrawString(mes, font, Brushes.Black , dstPoint2);
-            font.Dispose();
+            var font_size = (int)(20 * scale_x);
+            // こんな小さいものは視認できないので描画しなくて良い。
+            if (font_size <= 2)
+                return;
+
+            using (var font = new Font("MSPゴシック", font_size))
+            {
+                g.DrawString(mes, font, Brushes.Black, dstPoint2);
+            }
         }
 
         // -- 以下、このフォームの管理下にあるDialog
@@ -573,8 +595,6 @@ namespace MyShogi.View.Win2D
         private void MainDialog_Resize(object sender, EventArgs e)
         {
             // 画面がリサイズされたときにそれに収まるように盤面を描画する。
-            // Paintメッセージは送られてくるはず..
-
             FitToClientSize();
             Invalidate();
         }
@@ -591,5 +611,6 @@ namespace MyShogi.View.Win2D
             var config = TheApp.app.config;
             config.BoardReverse = !config.BoardReverse;
         }
+
     }
 }

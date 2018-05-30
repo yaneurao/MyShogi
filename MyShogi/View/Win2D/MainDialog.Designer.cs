@@ -170,7 +170,7 @@
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(192, 108);
+            this.MinimumSize = new System.Drawing.Size(400, 200);
             this.Name = "MainDialog";
             this.Text = "MyShogi";
             this.SizeChanged += new System.EventHandler(this.MainDialog_SizeChanged);
