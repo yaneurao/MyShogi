@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using MyShogi.Controller;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Kifu;
 
 namespace MyShogi.ViewModel
 {
@@ -14,7 +16,23 @@ namespace MyShogi.ViewModel
             // デバッグ中。あとで削除する。
             // Pos.InitBoard(BoardType.NoHandicap);
 
+            // 指し手生成祭りの局面
             Pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
+
+            // 入玉局面
+            // Pos.SetSfen("ln6+R/1+P2GKGBR/p1ppp+P+PP+P/1k7/1p7/9/PPPPP4/1B7/LNSG1GSNL b 2SNL3P 75");
+
+#if false
+            // psnの読み込み
+            var manager = new KifuManager();
+            var pos = new Position();
+            manager.Bind(pos);
+
+            var psn = System.IO.File.ReadAllText("kif/4.psn", Encoding.GetEncoding("Shift_JIS"));
+            var error = manager.FromString(psn);
+
+            Pos = pos;
+#endif
         }
 
         /// <summary>

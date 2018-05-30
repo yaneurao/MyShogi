@@ -46,7 +46,10 @@ namespace MyShogi.App
 
                 config.AddPropertyChangedHandler("BoardImageVersion", imageManager.UpdateBoardImage);
                 config.AddPropertyChangedHandler("TatamiImageVersion", imageManager.UpdateBoardImage);
+
                 config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
+                config.AddPropertyChangedHandler("LastMoveColorType", imageManager.UpdatePieceImage);
+                
                 config.AddPropertyChangedHandler("BoardNumberImageVersion", imageManager.UpdateBoardNumberImage);
             }
 
@@ -63,12 +66,13 @@ namespace MyShogi.App
             }
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
+            config.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems );
             config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems );
             config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);
-
+            config.AddPropertyChangedHandler("LastMoveColorType", mainDialog.UpdateMenuItems);
+            
             // Notifyクラスのテスト(あとで消す)
             //NotifyTest.Test();
 

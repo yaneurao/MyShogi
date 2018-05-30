@@ -115,7 +115,7 @@ namespace MyShogi.Model.Resource
                 var img2 = (img == omote) ? aka : omote; // 逆側
                 var c = i >= 2; // IsWhite?
 
-                if (i!=0)
+                if (i==1 || i==3)
                     copy(img2, 4, 8, 0, i, c); // 王   59の王を、(0,0)に移動。
 
                 copy(img, 1, 6, 1, i, c);  // 歩   87の歩を、(1,0)に移動。以下、同様。
@@ -132,6 +132,12 @@ namespace MyShogi.Model.Resource
                 var g = Graphics.FromImage(bmp);
                 var b = new SolidBrush(Color.FromArgb((int)(255*0.3f),0,0,0));
                 g.FillRectangle(b, 0,0 , x ,y);
+
+                // Piece.WHITEのところに最終手の着手を意味する画像を生成
+
+                b = new SolidBrush(Color.FromArgb((int)(255 * 0.45), 0xff, 0x7f, 0x50));
+                g.FillRectangle(b, 0 + 0, y * 2 + 0, x , y );
+ 
                 b.Dispose();
                 g.Dispose();
             }

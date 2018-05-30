@@ -21,6 +21,7 @@ namespace MyShogi.App
             TatamiImageVersion = 1;
             PieceImageVersion = 1;
             BoardNumberImageVersion = 1;
+            LastMoveColorType = 1;
             BoardReverse = false;
         }
 
@@ -126,6 +127,18 @@ namespace MyShogi.App
             set { SetValue<int>("BoardNumberImageVersion", value); }
         }
 
+        /// <summary>
+        /// 最終手の駒の移動先の升の背景色
+        /// 1 : 朱色
+        /// 2 : 青色
+        /// 3 : 緑色
+        /// </summary>
+        public int LastMoveColorType
+        {
+            get { return GetValue<int>("LastMoveColorType"); }
+            set { SetValue<int>("LastMoveColorType", value); }
+        }
+        
         /// <summary>
         /// 盤面反転(これはGlobalな設定)
         /// </summary>

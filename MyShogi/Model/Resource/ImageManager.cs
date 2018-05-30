@@ -65,6 +65,31 @@ namespace MyShogi.Model.Resource
         {
             var config = TheApp.app.config;
             Load(ref PieceImg , $"piece_v{config.PieceImageVersion}_776_424.png");
+
+            // -- 最終手の背景
+
+            Color c;
+            var colorType = config.LastMoveColorType;
+            switch (colorType)
+            {
+                case 1: c = Color.FromArgb((int)(255 * 0.45), 0xff, 0x7f, 0x50); break;
+                case 2: c = Color.FromArgb((int)(255 * 0.60), 0x41, 0x69, 0xe1); break;
+                case 3: c = Color.FromArgb((int)(255 * 0.60), 0x6b, 0x8e, 0x23); break;
+                default: c = Color.FromArgb(0, 0, 0, 0); break;
+            }
+
+            // 駒の横・縦のサイズ[px]
+            int x = 97;
+            int y = 106;
+
+            // 左上の塗りつぶし配置
+            using (var g = Graphics.FromImage(PieceImg.image))
+            {
+                // Piece.WHITEのところに最終手の着手を意味する画像を生成
+                using (var b = new SolidBrush(c))
+                    g.FillRectangle(b, 0 + 0, y * 2 + 0, x, y);
+            }
+
         }
 
         /// <summary>

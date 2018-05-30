@@ -217,6 +217,31 @@ namespace MyShogi.View.Win2D
                             item_display.DropDownItems.Add(item);
                         }
 
+                        { // -- 駒画像の選択メニュー
+
+                            var item = new ToolStripMenuItem();
+                            item.Text = "最終手の升の背景色";
+
+                            var item1 = new ToolStripMenuItem();
+                            item1.Text = "朱色";
+                            item1.Checked = config.LastMoveColorType == 1;
+                            item1.Click += (sender, e) => { config.LastMoveColorType = 1; };
+                            item.DropDownItems.Add(item1);
+
+                            var item2 = new ToolStripMenuItem();
+                            item2.Text = "青色";
+                            item2.Checked = TheApp.app.config.LastMoveColorType == 2;
+                            item2.Click += (sender, e) => { config.LastMoveColorType = 2; };
+                            item.DropDownItems.Add(item2);
+
+                            var item3 = new ToolStripMenuItem();
+                            item3.Text = "緑色";
+                            item3.Checked = TheApp.app.config.LastMoveColorType == 3;
+                            item3.Click += (sender, e) => { config.LastMoveColorType = 3; };
+                            item.DropDownItems.Add(item3);
+                            item_display.DropDownItems.Add(item);
+                        }
+
                     }
                 }
 
@@ -305,13 +330,15 @@ namespace MyShogi.View.Win2D
             {
                 // 描画する盤面
                 var pos = ViewModel.Pos;
+                var lastMove = pos.State().lastMove;
+                var lastMoveTo = (lastMove != ShogiCore.Move.NONE) ? lastMove.To() : Square.NB;
 
                 var piece = img.PieceImg.image;
 
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
                     var pc = pos.PieceOn(sq);
-                    if (pc != Piece.NO_PIECE)
+                    if (pc != Piece.NO_PIECE )
                     {
                         // 盤面反転モードなら、盤面を180度回した升から取得
                         Square sq2 = reverse ? sq.Inv() : sq;
@@ -329,6 +356,17 @@ namespace MyShogi.View.Win2D
                             ((int)pc % 8) * piece_img_width,
                             ((int)pc / 8) * piece_img_height,
                             piece_img_width, piece_img_height);
+
+                        // これが最終手の移動先の升であるなら、最終手として描画する必要がある。
+                        if (sq == lastMoveTo)
+                        {
+                            var pc2 = Piece.WHITE; // 素材のここに朱色の塗りつぶしがあるはず
+                            var srcRect2 = new Rectangle(
+                                ((int)pc2 % 8) * piece_img_width,
+                                ((int)pc2 / 8) * piece_img_height,
+                                piece_img_width, piece_img_height);
+                            Draw(g, piece, dstRect, srcRect2);
+                        }
 
                         Draw(g, piece, dstRect, srcRect);
                     }
