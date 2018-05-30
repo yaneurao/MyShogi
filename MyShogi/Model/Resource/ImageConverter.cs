@@ -18,7 +18,7 @@ namespace MyShogi.Model.Resource
         private static ImageLoader Load(string name)
         {
             var img = new ImageLoader();
-            img.Load(Path.Combine("image", name));
+            img.Load(Path.Combine("image_source", name));
             return img;
         }
 
@@ -135,8 +135,8 @@ namespace MyShogi.Model.Resource
 
                 // Piece.WHITEのところに最終手の着手を意味する画像を生成
 
-                b = new SolidBrush(Color.FromArgb((int)(255 * 0.45), 0xff, 0x7f, 0x50));
-                g.FillRectangle(b, 0 + 0, y * 2 + 0, x , y );
+                //b = new SolidBrush(Color.FromArgb((int)(255 * 0.45), 0xff, 0x7f, 0x50));
+                //g.FillRectangle(b, 0 + 0, y * 2 + 0, x , y );
  
                 b.Dispose();
                 g.Dispose();

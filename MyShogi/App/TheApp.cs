@@ -1,14 +1,11 @@
 ﻿using System;
-using System.IO;
 using System.Windows.Forms;
 using MyShogi.Controller;
-using MyShogi.Model.ObjectModel;
 using MyShogi.Model.Resource;
 
 // とりま、Windows用
 // あとで他環境用を用意する
 using MyShogi.View.Win2D;
-
 using MyShogi.ViewModel;
 
 namespace MyShogi.App
@@ -27,7 +24,7 @@ namespace MyShogi.App
             // -- 開発時のテストコード
 
             // 駒素材画像の変換
-            //ImageConverter.ConvertPieceImage();
+            ImageConverter.ConvertPieceImage();
             //ImageConverter.ConvertBoardNumberImage();
 
             // -- global configの読み込み

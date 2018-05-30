@@ -11,11 +11,16 @@ namespace MyShogi.App
     /// </summary>
     public class GlobalConfig : NotifyObject
     {
+        /// <summary>
+        /// MyShogiのバージョン文字列。Aboutダイアログに表示される。
+        /// </summary>
+        public static readonly string MYSHOGI_VERSION_STRING = "0.01";
+
         public GlobalConfig()
         {
-            // カレントフォルダに"YaneuraOuGUI2018.txt"というファイルがあるなら、
+            // カレントフォルダ配下のtextフォルダに"YaneuraOuGUI2018.txt"というファイルがあるなら、
             // 商用版のやねうら王用のモード。
-            YaneuraOu2018_GUI_MODE = System.IO.File.Exists("YaneuraOuGUI2018.txt");
+            YaneuraOu2018_GUI_MODE = System.IO.File.Exists("text/YaneuraOuGUI2018.txt");
 
             BoardImageVersion = 1;
             TatamiImageVersion = 1;
@@ -70,7 +75,7 @@ namespace MyShogi.App
         /// <summary>
         /// シリアライズ先のファイル
         /// </summary>
-        private const string xmlFile = @"global_config.xml";
+        private const string xmlFile = @"settings.xml";
 
         // -- 以下、property
 

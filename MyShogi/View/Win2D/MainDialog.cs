@@ -94,6 +94,7 @@ namespace MyShogi.View.Win2D
             bool CV_GUI = config.YaneuraOu2018_GUI_MODE;
             if (CV_GUI)
                 Text = "将棋神やねうら王";
+            // 商用版とどこで差別化するのか考え中
 
             // -- メニューの追加。あとで考える。
             {
@@ -152,97 +153,115 @@ namespace MyShogi.View.Win2D
                         item_display.DropDownItems.Add(item);
                     }
 
-                    if (CV_GUI)
-                    {
-                        { // -- 盤画像の選択メニュー
+                    { // -- 盤画像の選択メニュー
 
-                            var item = new ToolStripMenuItem();
-                            item.Text = "盤画像";
+                        var item = new ToolStripMenuItem();
+                        item.Text = "盤画像";
 
-                            var item1 = new ToolStripMenuItem();
-                            item1.Text = "白色";
-                            item1.Checked = config.BoardImageVersion == 1;
-                            item1.Click += (sender, e) => { config.BoardImageVersion = 1; };
-                            item.DropDownItems.Add(item1);
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "白色";
+                        item1.Checked = config.BoardImageVersion == 1;
+                        item1.Click += (sender, e) => { config.BoardImageVersion = 1; };
+                        item.DropDownItems.Add(item1);
 
-                            var item2 = new ToolStripMenuItem();
-                            item2.Text = "黄色";
-                            item2.Checked = config.BoardImageVersion == 2;
-                            item2.Click += (sender, e) => { config.BoardImageVersion = 2; };
-                            item.DropDownItems.Add(item2);
-                            item_display.DropDownItems.Add(item);
-                        }
-
-                        { // -- 盤画像の選択メニュー
-
-                            var item = new ToolStripMenuItem();
-                            item.Text = "畳画像";
-
-                            var item1 = new ToolStripMenuItem();
-                            item1.Text = "薄い";
-                            item1.Checked = config.TatamiImageVersion == 1;
-                            item1.Click += (sender, e) => { config.TatamiImageVersion = 1; };
-                            item.DropDownItems.Add(item1);
-
-                            var item2 = new ToolStripMenuItem();
-                            item2.Text = "濃い";
-                            item2.Checked = config.TatamiImageVersion == 2;
-                            item2.Click += (sender, e) => { config.TatamiImageVersion = 2; };
-                            item.DropDownItems.Add(item2);
-                            item_display.DropDownItems.Add(item);
-                        }
-
-                        { // -- 駒画像の選択メニュー
-
-                            var item = new ToolStripMenuItem();
-                            item.Text = "駒画像";
-
-                            var item1 = new ToolStripMenuItem();
-                            item1.Text = "一文字駒";
-                            item1.Checked = config.PieceImageVersion == 2;
-                            item1.Click += (sender, e) => { config.PieceImageVersion = 2; };
-                            item.DropDownItems.Add(item1);
-
-                            var item2 = new ToolStripMenuItem();
-                            item2.Text = "二文字駒";
-                            item2.Checked = TheApp.app.config.PieceImageVersion == 1;
-                            item2.Click += (sender, e) => { config.PieceImageVersion = 1; };
-                            item.DropDownItems.Add(item2);
-
-                            var item3 = new ToolStripMenuItem();
-                            item3.Text = "英文字駒";
-                            item3.Checked = TheApp.app.config.PieceImageVersion == 3;
-                            item3.Click += (sender, e) => { config.PieceImageVersion = 3; };
-                            item.DropDownItems.Add(item3);
-                            item_display.DropDownItems.Add(item);
-                        }
-
-                        { // -- 駒画像の選択メニュー
-
-                            var item = new ToolStripMenuItem();
-                            item.Text = "最終手の升の背景色";
-
-                            var item1 = new ToolStripMenuItem();
-                            item1.Text = "朱色";
-                            item1.Checked = config.LastMoveColorType == 1;
-                            item1.Click += (sender, e) => { config.LastMoveColorType = 1; };
-                            item.DropDownItems.Add(item1);
-
-                            var item2 = new ToolStripMenuItem();
-                            item2.Text = "青色";
-                            item2.Checked = TheApp.app.config.LastMoveColorType == 2;
-                            item2.Click += (sender, e) => { config.LastMoveColorType = 2; };
-                            item.DropDownItems.Add(item2);
-
-                            var item3 = new ToolStripMenuItem();
-                            item3.Text = "緑色";
-                            item3.Checked = TheApp.app.config.LastMoveColorType == 3;
-                            item3.Click += (sender, e) => { config.LastMoveColorType = 3; };
-                            item.DropDownItems.Add(item3);
-                            item_display.DropDownItems.Add(item);
-                        }
-
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "黄色";
+                        item2.Checked = config.BoardImageVersion == 2;
+                        item2.Click += (sender, e) => { config.BoardImageVersion = 2; };
+                        item.DropDownItems.Add(item2);
+                        item_display.DropDownItems.Add(item);
                     }
+
+                    { // -- 盤画像の選択メニュー
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "畳画像";
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "薄い";
+                        item1.Checked = config.TatamiImageVersion == 1;
+                        item1.Click += (sender, e) => { config.TatamiImageVersion = 1; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "濃い";
+                        item2.Checked = config.TatamiImageVersion == 2;
+                        item2.Click += (sender, e) => { config.TatamiImageVersion = 2; };
+                        item.DropDownItems.Add(item2);
+                        item_display.DropDownItems.Add(item);
+                    }
+
+                    { // -- 駒画像の選択メニュー
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "駒画像";
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "一文字駒";
+                        item1.Checked = config.PieceImageVersion == 2;
+                        item1.Click += (sender, e) => { config.PieceImageVersion = 2; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "二文字駒";
+                        item2.Checked = TheApp.app.config.PieceImageVersion == 1;
+                        item2.Click += (sender, e) => { config.PieceImageVersion = 1; };
+                        item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "英文字駒";
+                        item3.Checked = TheApp.app.config.PieceImageVersion == 3;
+                        item3.Click += (sender, e) => { config.PieceImageVersion = 3; };
+                        item.DropDownItems.Add(item3);
+                        item_display.DropDownItems.Add(item);
+                    }
+
+                    { // -- 駒画像の選択メニュー
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "最終手の升の背景色";
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "朱色";
+                        item1.Checked = config.LastMoveColorType == 1;
+                        item1.Click += (sender, e) => { config.LastMoveColorType = 1; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "青色";
+                        item2.Checked = TheApp.app.config.LastMoveColorType == 2;
+                        item2.Click += (sender, e) => { config.LastMoveColorType = 2; };
+                        item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "緑色";
+                        item3.Checked = TheApp.app.config.LastMoveColorType == 3;
+                        item3.Click += (sender, e) => { config.LastMoveColorType = 3; };
+                        item.DropDownItems.Add(item3);
+                        item_display.DropDownItems.Add(item);
+                    }
+
+                }
+
+                // 「その他」
+                {
+                    var item_others = new ToolStripMenuItem();
+                    item_others.Text = "その他";
+                    menu.Items.Add(item_others);
+
+                    // aboutダイアログ
+
+                    var item1 = new ToolStripMenuItem();
+                    item1.Text = "about..";
+                    item1.Click += (sender, e) =>
+                    {
+                        if (AboutDialog == null)
+                            AboutDialog = new AboutYaneuraOu();
+
+                        AboutDialog.ShowDialog();
+                    };
+                    item_others.DropDownItems.Add(item1);
+
                 }
 
 #if DEBUG
@@ -518,6 +537,13 @@ namespace MyShogi.View.Win2D
             g.DrawString(mes, font, Brushes.Black , dstPoint2);
             font.Dispose();
         }
+
+        // -- 以下、このフォームの管理下にあるDialog
+
+        /// <summary>
+        /// 「やねうら王について」のダイアログ
+        /// </summary>
+        public Form AboutDialog;
 
         // -- 以下、イベントハンドラ
 
