@@ -30,9 +30,11 @@ namespace MyShogi.Model.Resource
         {
             // 素材の駒画像を移動させてひとまとめになった画像を作る処理
             var PieceOmote = Load($"piece_v{version}_omote.png");
-            var PieceUra = Load($"piece_v{version}_ura.png");
+            var PieceUra = Load($"piece_v{version}_ura.png"); // 黒い成り駒
+            var PieceAka = Load($"piece_v{version}_aka.png"); // 赤い成り駒
             var omote = PieceOmote.image;
             var ura = PieceUra.image;
+            var aka = PieceAka.image;
 
             // 駒の横・縦のサイズ[px]
             int x = 97;
@@ -107,8 +109,10 @@ namespace MyShogi.Model.Resource
 
             for (int i = 0; i < 4; ++i)
             {
-                var img = ((i % 2) == 0) ? omote : ura;
-                var img2 = (img == omote) ? ura : omote; // 逆側
+                // 黒い成り駒、使わないことにしよう…。
+
+                var img = ((i % 2) == 0) ? omote : aka;
+                var img2 = (img == omote) ? aka : omote; // 逆側
                 var c = i >= 2; // IsWhite?
 
                 if (i!=0)
