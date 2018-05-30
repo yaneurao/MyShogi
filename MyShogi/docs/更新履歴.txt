@@ -11,6 +11,44 @@ ToDo
 ■　2018/05/30
 
 
+- 最終手の表示、色が変更できると良いのか…。
+	- 誰得なんだ、この機能。
+	- GlobalConfig.LastMoveColorType追加
+	- これに伴いImageManager修正
+
+
+- progress.md削除
+	こんなん要らんやろ…。
+
+	# 作業状況
+
+	## Model/Shogi/Core
+
+	- Bitboardをやねうら王から移植 →　完了
+	- Bitboardで利きの実装　→　完了
+	- GenMoveで全合法手の生成　→　完了
+	- Positionクラスの実装、DoMove(),UndoMove() →　完了
+
+	## Model/Shogi/Kifu
+
+	- 棋譜の読み書き PSN,PSN2形式完了
+		- CSA,KIF,KI2形式まだ
+	- KifuManager、おおよそ完成
+
+	## View
+
+	- MainDialog →　対局盤面表示できるようになった(段・筋の数字と手駒はまだ)
+		- メニュー色々、追加中。
+		- 盤面反転　→　完了
+		- 駒の画像選択　→　完了
+		- 盤の画像選択　→　完了
+		- 畳の画像選択　→　完了
+
+	## App
+
+	- GlobalConfig →　全体設定の読み込み、自動保存のコード書けた。
+
+
 - readme.md、予定のところに局面の画像出力機能など追記。
 
 
