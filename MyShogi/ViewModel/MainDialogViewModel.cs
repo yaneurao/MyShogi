@@ -52,5 +52,11 @@ namespace MyShogi.ViewModel
         /// </summary>
         public Position Pos { get; private set; } = new Position();
 
+        /// <summary>
+        /// 対局者氏名。あとで書き直す。
+        /// </summary>
+        public string Player1Name { get; private set; } = "ワイ";
+        public string Player2Name { get; private set; } = "あんた";
+
     }
 }

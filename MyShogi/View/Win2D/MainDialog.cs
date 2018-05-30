@@ -24,69 +24,6 @@ namespace MyShogi.View.Win2D
             FitToClientSize();
         }
 
-        // -- 各種定数
-
-        // 盤面素材の画像サイズ
-        public static readonly int board_img_width = 1920;
-        public static readonly int board_img_height = 1080;
-
-        // 盤面素材における、駒を配置する升の左上。
-        public static readonly int board_left = 524;
-        public static readonly int board_top = 53;
-
-        // 駒素材の画像サイズ(駒1つ分)
-        // これが横に8つ、縦に4つ、計32個並んでいる。
-        public static readonly int piece_img_width = 97;
-        public static readonly int piece_img_height = 106;
-
-        // 手駒の表示場所(駒台を左上とする)
-        public class HandLocation
-        {
-            public HandLocation(Piece piece_, int x_, int y_)
-            {
-                piece = piece_;
-                x = x_;
-                y = y_;
-            }
-
-            public Piece piece;
-            public int x;
-            public int y;
-        };
-
-        /// <summary>
-        /// 手駒の表示場所(駒台を左上とする)
-        /// </summary>
-        private static readonly HandLocation[] hand_location =
-        {
-            // 10(margin)+96(piece_width)+30(margin)+96(piece_width)+28(margin) = 260(駒台のwidth)
-            new HandLocation(Piece.ROOK,10,5),
-            new HandLocation(Piece.BISHOP, 135,5),
-            new HandLocation(Piece.GOLD,10,100),
-            new HandLocation(Piece.SILVER,135,100),
-            new HandLocation(Piece.KNIGHT,10,190),
-            new HandLocation(Piece.LANCE, 135,190),
-            new HandLocation(Piece.PAWN,10,280),
-        };
-
-        /// <summary>
-        /// 駒台の画面上の位置
-        /// </summary>
-        private static readonly Point[] hand_table_pos =
-        {
-            new Point(1431,643), // 先手の駒台
-            new Point(229 , 32), // 後手の駒台
-        };
-
-        /// <summary>
-        /// 駒台の幅と高さ
-        /// </summary>
-        private static int hand_table_width = 260;
-        private static int hand_table_height = 388;
-
-        // メニュー高さ。これはClientSize.Heightに含まれてしまうのでこれを加算した分だけ確保しないといけない。
-        public static int menu_height = SystemInformation.MenuHeight;
-
         /// <summary>
         /// 現在のスクリーンの大きさに合わせたウィンドウサイズにする。(起動時)
         /// </summary>
@@ -332,6 +269,7 @@ namespace MyShogi.View.Win2D
             var config = app.config;
             var img = app.imageManager;
             var g = e.Graphics;
+            var vm = ViewModel;
 
             // 盤面を反転させて描画するかどうか
             var reverse = config.BoardReverse;
@@ -467,9 +405,20 @@ namespace MyShogi.View.Win2D
                 }
             }
 
+            // -- 対局者氏名
+            {
+                DrawString(g, name_plate[reverse ? 1 : 0] , vm.Player1Name);
+                DrawString(g, name_plate[reverse ? 0 : 1] , vm.Player2Name);
+            }
+
         }
 
-        // 元画像から画面に描画するときに横・縦方向の縮小率
+        // -- affine変換してのスクリーンへの描画
+
+        /// <summary>
+        /// 元画像から画面に描画するときに横・縦方向の縮小率とオフセット値(affine変換の係数)
+        /// Draw()で描画するときに用いる。
+        /// </summary>
         private double scale_x;
         private double scale_y;
         private int offset_x;
@@ -492,6 +441,29 @@ namespace MyShogi.View.Win2D
             );
             g.DrawImage(img, dstRect2, srcRect, GraphicsUnit.Pixel);
         }
+
+        /// <summary>
+        /// scale_x,scale_y、offset_x,offset_yを用いてアフィン変換してから描画する。
+        /// </summary>
+        /// <param name="g"></param>
+        /// <param name="dstPoint"></param>
+        /// <param name="mes"></param>
+        private void DrawString(Graphics g , Point dstPoint , string mes)
+        {
+            var dstPoint2 = new Point(
+            (int)(dstPoint.X * scale_x) + offset_x,
+            (int)(dstPoint.Y * scale_y) + offset_y
+            );
+
+            // 文字フォントサイズは、scaleの影響を受ける。
+            var font = new Font("MSPゴシック", (int)(20 * scale_x));
+            //            var font = new Font("MS UI Gothic", (int)(18 * scale_x));
+
+            g.DrawString(mes, font, Brushes.Black , dstPoint2);
+            font.Dispose();
+        }
+
+        // -- 以下、イベントハンドラ
 
         private void MainDialog_SizeChanged(object sender, EventArgs e)
         {
