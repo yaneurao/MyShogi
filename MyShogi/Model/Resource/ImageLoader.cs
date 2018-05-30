@@ -28,9 +28,9 @@ namespace MyShogi.Model.Resource
                         // PiexelFormat.Format24bppRgbにcloneしてそちらを使う。
 
                         Bitmap clone = new Bitmap(orig.Width, orig.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                        using (Graphics gr = Graphics.FromImage(clone))
+                        using (var g = Graphics.FromImage(clone))
                         {
-                            gr.DrawImage(orig, new Rectangle(0, 0, clone.Width, clone.Height));
+                            g.DrawImage(orig, new Rectangle(0, 0, clone.Width, clone.Height));
                         }
                         image = clone;
                     }
@@ -41,7 +41,21 @@ namespace MyShogi.Model.Resource
                 }
             }catch
             {
-                image = null;
+                // 画像の読み込みに失敗した。これを例外として投げると、オプションを変更して、その設定に対応する
+                // 画像が足りないときに例外で落ちてしまい、また、その設定が終了時に保存されるので、次回以降ソフト自体が
+                // 起動しないことになるので、それは防ぎたい。
+
+                // そこでここでは64×64の赤で「×」印を描画したBitmapを用意する。
+                // デザインパターンで言うところのNullObjectみたいなものである。
+                // (ファイル名も描画しておくと存在しないファイルのファイル名がわかっていいかも)
+
+                image = new Bitmap(64, 64 , PixelFormat.Format24bppRgb);
+                using (var g = Graphics.FromImage(image))
+                {
+                    var pen = new Pen(Color.Red,5);
+                    g.DrawLine(pen, new Point(0, 0), new Point(63, 63));
+                    g.DrawLine(pen, new Point(63, 0), new Point(0, 63));
+                }
             }
         }
 
