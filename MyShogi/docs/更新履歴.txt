@@ -1,7 +1,6 @@
 ﻿
 ToDo
 
-- WebBrowserとTextBoxの描画速度比較
 - 棋譜ウィンドウの実装
 - 指し手の選択機能をMainDialogに追加する
 
@@ -13,6 +12,21 @@ ToDo
 
 
 ■　2018/05/31
+
+
+- readme.mdに特徴など追加
+
+
+- 着手後の移動元の升のエフェクトを追加。(デフォルトでは、なし)
+	- メニューで選択できるようにした。
+	- GlobalConfigにLastMoveFromColorType追加。
+
+
+- 升のエフェクト、駒の画像と分離する。
+	- ImageLoaderにSetBitmap()追加
+	- ImageManager内で生成するコード追加。
+	- Graphics.DrawImage()で生成していたの間違いなのでSetPixel()使うように修正。
+- 移動先の升のエフェクト、なしを選択できるようにする。
 
 
 - "setting.xml"名前かぶりかねないので"MyShogi.setting.xml"に変更する
