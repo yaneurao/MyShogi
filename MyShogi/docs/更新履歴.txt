@@ -1,6 +1,10 @@
 ﻿
 ToDo
 
+- WebBrowserとTextBoxの描画速度比較
+- 棋譜ウィンドウの実装
+- 指し手の選択機能をMainDialogに追加する
+
 - KifuManager
 	- KifuManagerのCSA形式の読み込みのサポート
 	- KifuManagerのKIF形式のサポート
@@ -8,7 +12,36 @@ ToDo
 		- Mizarさんに依頼中
 
 
+■　2018/05/31
+
+
+- "setting.xml"名前かぶりかねないので"MyShogi.setting.xml"に変更する
+
+
+- 小さすぎるフォントの文字を描画しないように。
+- MainDialogの横幅、一定以上に縮められないようにするコード追加。
+	- 一定以上にも広げられないコード追加
+	- →　あかん、これハングする。.NET FrameworkのClientSize、setterの処理おかしい気がする。
+
+
+- MainDialogにToolStrip追加する。
+	- とりあえず「転」ボタンだけハンドラ用意した。
+- メニューに「対局」を追加する
+	- 中身はまだ何も。
+- 商用版、GlobalConfigにCommercialVersionのプロパティを用意することに変更。
+	- 商用版の判定、間違っていたの修正。
+
+
 ■　2018/05/30
+
+
+- メニューに「その他」を追加
+	- aboutダイアログ追加
+	- "YaneuraOuGUI2018.txt"の置き場をtext/に変更
+	- "global_config.xml"のファイル名を"settings.xml"に変更
+
+
+- ImageConverterの元画像のフォルダ変更する。
 
 
 - 最終手の表示、色が変更できると良いのか…。
