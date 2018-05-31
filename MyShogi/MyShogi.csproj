@@ -48,6 +48,9 @@
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -153,6 +156,7 @@
     <EmbeddedResource Include="View\Win2D\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="app.manifest" />
     <None Include="docs\PSN2format.md" />
     <None Include="docs\USI2.0.md" />
     <None Include="Properties\Settings.settings">

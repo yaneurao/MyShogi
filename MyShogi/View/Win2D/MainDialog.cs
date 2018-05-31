@@ -170,8 +170,8 @@ namespace MyShogi.View.Win2D
             {
                 if (config.KomadaiImageVersion == 1)
                 {
-                    DrawString(name_plate[reverse ? 1 : 0], vm.Player1Name);
-                    DrawString(name_plate[reverse ? 0 : 1], vm.Player2Name);
+                    DrawString(name_plate[reverse ? 1 : 0], vm.Player1Name , 13);
+                    DrawString(name_plate[reverse ? 0 : 1], vm.Player2Name , 13);
                 }
             }
 
@@ -222,7 +222,7 @@ namespace MyShogi.View.Win2D
         /// <param name="g"></param>
         /// <param name="dstPoint"></param>
         /// <param name="mes"></param>
-        private void DrawString( Point dstPoint , string mes)
+        private void DrawString( Point dstPoint , string mes , int font_size)
         {
             // affine変換を行う
             var dstPoint2 = new Point(
@@ -232,12 +232,12 @@ namespace MyShogi.View.Win2D
 
             // 文字フォントサイズは、scaleの影響を受ける。
 
-            var font_size = (int)(20 * scale_x);
+            var size = (int)(font_size * scale_x);
             // こんな小さいものは視認できないので描画しなくて良い。
-            if (font_size <= 2)
+            if (size <= 2)
                 return;
 
-            using (var font = new Font("MSPゴシック", font_size))
+            using (var font = new Font("MSPゴシック", size))
             {
                 graphics.DrawString(mes, font, Brushes.Black, dstPoint2);
             }

@@ -18,18 +18,20 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
-            webBrowser1.Navigate(Path.Combine(Application.StartupPath,"text/about_dialog.html").ToString());
-            /*
-            string text;
+            var file_name = 
+                TheApp.app.config.CommercialVersion ?
+                "text/about_dialog_commercial_version.html":
+                "text/about_dialog_opensource_version.html";
 
-            text = "MyShogi Version " + GlobalConfig.MYSHOGI_VERSION_STRING + "\r\n\r\n";
-            textBox1.Text = text;
-            */
-        }
+            webBrowser1.Navigate(Path.Combine(Application.StartupPath,file_name).ToString());
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Close();
+            // -- バージョン文字列をJavaScript経由でインジェクションする。
+
+            // 1回メッセージループを処理しないとNavigate()が終わらない。
+            Application.DoEvents();
+
+            var version_string = "MyShogi Version " + GlobalConfig.MYSHOGI_VERSION_STRING;
+            webBrowser1.Document.InvokeScript("add_version_string", new string[] { version_string });
         }
     }
 }
