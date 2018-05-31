@@ -1,10 +1,11 @@
-﻿using MyShogi.App;
+﻿using System.Drawing;
+using System.Windows.Forms;
+using MyShogi.App;
+using MyShogi.Model.Resource;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.ViewModel;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
 using ShogiCore = MyShogi.Model.Shogi.Core;
+using SPRITE = MyShogi.Model.Resource.SpriteManager;
 
 namespace MyShogi.View.Win2D
 {
@@ -46,16 +47,21 @@ namespace MyShogi.View.Win2D
             var g = e.Graphics;
             var vm = ViewModel;
 
+            // スプライトを描画するコード
+            // 以下の描画を移植性を考慮してすべてスプライトの描画に抽象化しておく。
+            void DrawSprite(Rectangle dest , Sprite src)
+            {
+                Draw(g, src.image, dest, src.rect);
+            }
+
             // 盤面を反転させて描画するかどうか
             var reverse = config.BoardReverse;
 
             // -- 盤面の描画
             {
                 // 座標系はストレートに指定しておけばaffine変換されて適切に描画される。
-                var board = img.BoardImg.image;
-                var srcRect = new Rectangle(0, 0, board_img_width , board_img_height);
                 var dstRect = new Rectangle(0, 0, board_img_width , board_img_height);
-                Draw(g, board, dstRect, srcRect);
+                DrawSprite(dstRect, SPRITE.BoardImage());
             }
 
             // -- 駒の描画
@@ -65,9 +71,6 @@ namespace MyShogi.View.Win2D
                 var lastMove = pos.State().lastMove;
                 var lastMoveFrom = (lastMove != ShogiCore.Move.NONE && !lastMove.IsDrop()) ? lastMove.From() : Square.NB;
                 var lastMoveTo = (lastMove != ShogiCore.Move.NONE) ? lastMove.To() : Square.NB;
-
-                var piece = img.PieceImg.image;
-                var piece_move_img = img.PieceMoveImg.image;
 
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
@@ -84,19 +87,19 @@ namespace MyShogi.View.Win2D
 
                     // これが最終手の移動元の升であるなら、最終手として描画する必要がある。
                     if (sq == lastMoveFrom)
-                        Draw(g, piece_move_img, dstRect, PieceRect((Piece)1));
+                        DrawSprite(dstRect, SPRITE.PieceMoveImage(1));
 
                     // これが最終手の移動先の升であるなら、最終手として描画する必要がある。
                     if (sq == lastMoveTo)
-                        Draw(g, piece_move_img, dstRect, PieceRect((Piece)0));
-
+                        DrawSprite(dstRect, SPRITE.PieceMoveImage(0));
+                    
                     if (pc != Piece.NO_PIECE)
                     {
                         // 盤面反転モードなら、駒を先後入れ替える
                         if (reverse)
                             pc = pc ^ Piece.WHITE;
 
-                        Draw(g, piece, dstRect, PieceRect(pc));
+                        DrawSprite(dstRect, SPRITE.PieceImage(pc));
                     }
                 }
 
@@ -146,7 +149,7 @@ namespace MyShogi.View.Win2D
                                     hand_table_pos[(int)c].Y + (hand_table_height - loc.y - piece_img_height) ,
                                     piece_img_width , piece_img_height);
 
-                            Draw(g, piece, dstRect, PieceRect(pc));
+                            DrawSprite(dstRect, SPRITE.PieceImage(pc));
 
                             // 数字の表示
                             if (count > 1)
@@ -166,7 +169,7 @@ namespace MyShogi.View.Win2D
                 var version = config.BoardNumberImageVersion;
                 if (version != 0)
                 {
-                    var file_img = (!reverse) ? img.BoardNumberImgFile.image : img.BoardNumberImgRevFile.image;
+                    var file_img = (!reverse) ? img.BoardNumberImageFile.image : img.BoardNumberImageRevFile.image;
                     if (file_img != null)
                     {
                         var dstRect = new Rectangle(526, 32 , file_img.Width, file_img.Height);
@@ -174,7 +177,7 @@ namespace MyShogi.View.Win2D
                         Draw(g, file_img, dstRect, srcRect);
                     }
 
-                    var rank_img = (!reverse) ? img.BoardNumberImgRank.image : img.BoardNumberImgRevRank.image;
+                    var rank_img = (!reverse) ? img.BoardNumberImageRank.image : img.BoardNumberImageRevRank.image;
                     if (rank_img != null)
                     {
                         var dstRect = new Rectangle(1397, 49, rank_img.Width, rank_img.Height);
@@ -190,19 +193,6 @@ namespace MyShogi.View.Win2D
                 DrawString(g, name_plate[reverse ? 0 : 1] , vm.Player2Name);
             }
 
-        }
-
-        /// <summary>
-        /// 駒画像に対して、pcを指定して、その駒の転送元矩形を返す
-        /// </summary>
-        /// <param name="pc"></param>
-        /// <returns></returns>
-        public Rectangle PieceRect(Piece pc)
-        {
-            return new Rectangle(
-                ((int)pc % 8) * piece_img_width,
-                ((int)pc / 8) * piece_img_height,
-                piece_img_width, piece_img_height);
         }
 
         // -- affine変換してのスクリーンへの描画

@@ -43,12 +43,12 @@ namespace MyShogi.Model.Resource
             Load(ref board ,$"board_v{config.BoardImageVersion}_1920_1080.png");
             Load(ref tatami, $"tatami_v{config.TatamiImageVersion}_1920_1080.png");
 
-            BoardImg.CreateBitmap(1920, 1080, PixelFormat.Format24bppRgb);
+            BoardImage.CreateBitmap(1920, 1080, PixelFormat.Format24bppRgb);
 
             // 畳と盤を合成する。
-            using (var g = Graphics.FromImage(BoardImg.image))
+            using (var g = Graphics.FromImage(BoardImage.image))
             {
-                var rect = new Rectangle(0, 0, BoardImg.image.Width, BoardImg.image.Height);
+                var rect = new Rectangle(0, 0, BoardImage.image.Width, BoardImage.image.Height);
                 // DrawImageで等倍の転送にするためにはrectの指定が必要
                 g.DrawImage(tatami.image , rect , rect , GraphicsUnit.Pixel);
                 g.DrawImage(board.image, rect , rect , GraphicsUnit.Pixel);
@@ -65,7 +65,7 @@ namespace MyShogi.Model.Resource
         public void UpdatePieceImage()
         {
             var config = TheApp.app.config;
-            Load(ref PieceImg , $"piece_v{config.PieceImageVersion}_776_424.png");
+            Load(ref PieceImage, $"piece_v{config.PieceImageVersion}_776_424.png");
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace MyShogi.Model.Resource
             Fill(1, ColorOf(config.LastMoveFromColorType));
 
             // 確保したBitmapをImageLoaderの管理下に置く。
-            PieceMoveImg.SetBitmap(bmp);
+            PieceMoveImage.SetBitmap(bmp);
         }
 
         /// <summary>
@@ -135,10 +135,10 @@ namespace MyShogi.Model.Resource
             if (version == 0)
                 return;
 
-            Load(ref BoardNumberImgFile    , $"number_v{version}_873_19.png");
-            Load(ref BoardNumberImgRevFile , $"number_v{version}Rev_873_19.png");
-            Load(ref BoardNumberImgRank    , $"number_v{version}_22_954.png");
-            Load(ref BoardNumberImgRevRank , $"number_v{version}Rev_22_954.png");
+            Load(ref BoardNumberImageFile, $"number_v{version}_873_19.png");
+            Load(ref BoardNumberImageRevFile, $"number_v{version}Rev_873_19.png");
+            Load(ref BoardNumberImageRank, $"number_v{version}_22_954.png");
+            Load(ref BoardNumberImageRevRank, $"number_v{version}Rev_22_954.png");
         }
 
         /// <summary>
@@ -167,25 +167,25 @@ namespace MyShogi.Model.Resource
         /// <summary>
         /// 盤面 + 畳を合成したRGB画像
         /// </summary>
-        public ImageLoader BoardImg = new ImageLoader();
+        public ImageLoader BoardImage = new ImageLoader();
 
         /// <summary>
         /// 駒画像
         /// </summary>
-        public ImageLoader PieceImg = new ImageLoader();
+        public ImageLoader PieceImage = new ImageLoader();
 
         /// <summary>
         /// 指し手の移動元や移動先の升の背景色を変更するのに用いる。
         /// </summary>
-        public ImageLoader PieceMoveImg = new ImageLoader();
+        public ImageLoader PieceMoveImage = new ImageLoader();
 
         /// <summary>
         /// 盤面の番号画像、筋・段、盤面反転の筋・段
         /// </summary>
-        public ImageLoader BoardNumberImgFile  = new ImageLoader();
-        public ImageLoader BoardNumberImgRank  = new ImageLoader();
-        public ImageLoader BoardNumberImgRevFile  = new ImageLoader();
-        public ImageLoader BoardNumberImgRevRank  = new ImageLoader();
+        public ImageLoader BoardNumberImageFile = new ImageLoader();
+        public ImageLoader BoardNumberImageRank = new ImageLoader();
+        public ImageLoader BoardNumberImageRevFile = new ImageLoader();
+        public ImageLoader BoardNumberImageRevRank = new ImageLoader();
 
         /// <summary>
         /// 手駒の右肩に表示する駒の枚数を示す数字画像
