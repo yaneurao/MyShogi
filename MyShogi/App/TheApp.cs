@@ -46,6 +46,7 @@ namespace MyShogi.App
 
                 config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
 
+                config.AddPropertyChangedHandler("LastMoveFromColorType", imageManager.UpdatePieceMoveImage);
                 config.AddPropertyChangedHandler("LastMoveToColorType", imageManager.UpdatePieceMoveImage);
                 
                 config.AddPropertyChangedHandler("BoardNumberImageVersion", imageManager.UpdateBoardNumberImage);
@@ -69,6 +70,7 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems );
             config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems);
+            config.AddPropertyChangedHandler("LastMoveFromColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("LastMoveToColorType", mainDialog.UpdateMenuItems);
             
             // Notifyクラスのテスト(あとで消す)

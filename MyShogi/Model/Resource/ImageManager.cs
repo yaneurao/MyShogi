@@ -89,31 +89,35 @@ namespace MyShogi.Model.Resource
 
             // 左からn番目をcで塗りつぶす
             // Graphics.DrawImageだとαが合成されてしまい、思っている色で塗りつぶされない
-            void Fill(int n , Color color)
+            void Fill(int n , Color c)
             {
                 for (int j = 0; j < y; ++j)
                     for (int i = 0; i < x; ++i)
-                        bmp.SetPixel(i + n * x ,j, color);
+                        bmp.SetPixel(i + n * x ,j, c);
                 // SetPixel()遅いけど、そんなに大きな領域ではないし、リアルタイムでもないのでまあいいや。
             }
 
-
-            // -- 最終手の背景
-
-            Color c;
-            var colorType = config.LastMoveToColorType;
-            switch (colorType)
+            // 番号に応じた色を返す
+            Color ColorOf(int type)
             {
-                case 0: c = Color.FromArgb(0, 0, 0, 0); break;
-                case 1: c = Color.FromArgb((int)(255 * 0.40), 0xff, 0x7f, 0x50); break;
-                case 2: c = Color.FromArgb((int)(255 * 0.40), 0x41, 0x69, 0xe1); break;
-                case 3: c = Color.FromArgb((int)(255 * 0.40), 0x6b, 0x8e, 0x23); break;
-                default: c = Color.FromArgb(0, 0, 0, 0); break;
+                Color c;
+                switch (type)
+                {
+                    case 0: c = Color.FromArgb(0, 0, 0, 0); break;
+                    case 1: c = Color.FromArgb((int)(255 * 0.40), 0xff, 0x7f, 0x50); break;
+                    case 2: c = Color.FromArgb((int)(255 * 0.40), 0x41, 0x69, 0xe1); break;
+                    case 3: c = Color.FromArgb((int)(255 * 0.40), 0x6b, 0x8e, 0x23); break;
+                    default: c = Color.FromArgb(0, 0, 0, 0); break;
+                }
+                return c;
             }
 
-            // -- 最終手の移動元の升の背景
 
-            Fill(0, c);
+            // 最終手の移動先の升の背景
+            Fill(0, ColorOf(config.LastMoveToColorType));
+
+            // 最終手の移動元の升の背景
+            Fill(1, ColorOf(config.LastMoveFromColorType));
 
             // 確保したBitmapをImageLoaderの管理下に置く。
             PieceMoveImg.SetBitmap(bmp);

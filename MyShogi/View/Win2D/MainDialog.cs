@@ -250,10 +250,39 @@ namespace MyShogi.View.Win2D
                         item_display.DropDownItems.Add(item);
                     }
 
-                    { // -- 駒画像の選択メニュー
-
+                    // -- 最終手のエフェクト
+                    {
                         var item = new ToolStripMenuItem();
-                        item.Text = "最終手の升の背景色";
+                        item.Text = "最終手の移動元";
+
+                        var item0 = new ToolStripMenuItem();
+                        item0.Text = "なし";
+                        item0.Checked = config.LastMoveFromColorType == 0;
+                        item0.Click += (sender, e) => { config.LastMoveFromColorType = 0; };
+                        item.DropDownItems.Add(item0);
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "朱色";
+                        item1.Checked = config.LastMoveFromColorType == 1;
+                        item1.Click += (sender, e) => { config.LastMoveFromColorType = 1; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "青色";
+                        item2.Checked = TheApp.app.config.LastMoveFromColorType == 2;
+                        item2.Click += (sender, e) => { config.LastMoveFromColorType = 2; };
+                        item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "緑色";
+                        item3.Checked = TheApp.app.config.LastMoveFromColorType == 3;
+                        item3.Click += (sender, e) => { config.LastMoveFromColorType = 3; };
+                        item.DropDownItems.Add(item3);
+                        item_display.DropDownItems.Add(item);
+                    }
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "最終手の移動先";
 
                         var item0 = new ToolStripMenuItem();
                         item0.Text = "なし";
@@ -280,6 +309,7 @@ namespace MyShogi.View.Win2D
                         item.DropDownItems.Add(item3);
                         item_display.DropDownItems.Add(item);
                     }
+
 
                 }
 
@@ -390,6 +420,7 @@ namespace MyShogi.View.Win2D
                 // 描画する盤面
                 var pos = ViewModel.Pos;
                 var lastMove = pos.State().lastMove;
+                var lastMoveFrom = (lastMove != ShogiCore.Move.NONE && !lastMove.IsDrop()) ? lastMove.From() : Square.NB;
                 var lastMoveTo = (lastMove != ShogiCore.Move.NONE) ? lastMove.To() : Square.NB;
 
                 var piece = img.PieceImg.image;
@@ -398,24 +429,29 @@ namespace MyShogi.View.Win2D
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
                     var pc = pos.PieceOn(sq);
-                    if (pc != Piece.NO_PIECE )
+
+                    // 盤面反転モードなら、盤面を180度回した升から取得
+                    Square sq2 = reverse ? sq.Inv() : sq;
+                    int f = 8 - (int)sq2.ToFile();
+                    int r = (int)sq2.ToRank();
+
+                    var dstRect = new Rectangle(
+                        board_left + piece_img_width * f, board_top + piece_img_height * r,
+                        piece_img_width, piece_img_height);
+
+                    // これが最終手の移動元の升であるなら、最終手として描画する必要がある。
+                    if (sq == lastMoveFrom)
+                        Draw(g, piece_move_img, dstRect, PieceRect((Piece)1));
+
+                    // これが最終手の移動先の升であるなら、最終手として描画する必要がある。
+                    if (sq == lastMoveTo)
+                        Draw(g, piece_move_img, dstRect, PieceRect((Piece)0));
+
+                    if (pc != Piece.NO_PIECE)
                     {
-                        // 盤面反転モードなら、盤面を180度回した升から取得
-                        Square sq2 = reverse ? sq.Inv() : sq;
-                        int f = 8 - (int)sq2.ToFile();
-                        int r = (int)sq2.ToRank();
-
-                        var dstRect = new Rectangle(
-                            board_left + piece_img_width * f, board_top + piece_img_height * r,
-                            piece_img_width, piece_img_height);
-
                         // 盤面反転モードなら、駒を先後入れ替える
                         if (reverse)
                             pc = pc ^ Piece.WHITE;
-
-                        // これが最終手の移動先の升であるなら、最終手として描画する必要がある。
-                        if (sq == lastMoveTo)
-                            Draw(g, piece_move_img, dstRect, PieceRect((Piece)0));
 
                         Draw(g, piece, dstRect, PieceRect(pc));
                     }

@@ -22,6 +22,7 @@ namespace MyShogi.App
             TatamiImageVersion = 1;
             PieceImageVersion = 1;
             BoardNumberImageVersion = 1;
+            LastMoveFromColorType = 0;
             LastMoveToColorType = 1;
             BoardReverse = false;
         }
@@ -141,7 +142,21 @@ namespace MyShogi.App
         }
 
         /// <summary>
+        /// 最終手の駒の移動元の升の背景色
+        /// 0 : なし
+        /// 1 : 朱色
+        /// 2 : 青色
+        /// 3 : 緑色
+        /// </summary>
+        public int LastMoveFromColorType
+        {
+            get { return GetValue<int>("LastMoveFromColorType"); }
+            set { SetValue<int>("LastMoveFromColorType", value); }
+        }
+
+        /// <summary>
         /// 最終手の駒の移動先の升の背景色
+        /// 0 : なし
         /// 1 : 朱色
         /// 2 : 青色
         /// 3 : 緑色
