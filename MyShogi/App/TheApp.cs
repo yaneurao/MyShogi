@@ -24,7 +24,7 @@ namespace MyShogi.App
             // -- 開発時のテストコード
 
             // 駒素材画像の変換
-            ImageConverter.ConvertPieceImage();
+            //ImageConverter.ConvertPieceImage();
             //ImageConverter.ConvertBoardNumberImage();
 
             // -- global configの読み込み
@@ -43,6 +43,7 @@ namespace MyShogi.App
 
                 config.AddPropertyChangedHandler("BoardImageVersion", imageManager.UpdateBoardImage);
                 config.AddPropertyChangedHandler("TatamiImageVersion", imageManager.UpdateBoardImage);
+                config.AddPropertyChangedHandler("KomadaiImageVersion", imageManager.UpdateBoardImage);
 
                 config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
 

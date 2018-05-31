@@ -18,23 +18,13 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
-            // ファイルから読み込む
+            webBrowser1.Navigate(Path.Combine(Application.StartupPath,"text/about_dialog.html").ToString());
+            /*
             string text;
-            try
-            {
-                text = File.ReadAllText("text/about_myshogi.txt", Encoding.UTF8);
-            }catch
-            {
-                text = "";
-            }
 
-            text = "MyShogi Version " + GlobalConfig.MYSHOGI_VERSION_STRING + "\r\n\r\n" + text;
-
-            // 商用版であるなら、Mynaviの権利表示。
-            if (TheApp.app.config.CommercialVersion)
-                text += "\r\n\r\n(C)2018 Mynavi Publishing Corporation / MyShogi Project";
-
+            text = "MyShogi Version " + GlobalConfig.MYSHOGI_VERSION_STRING + "\r\n\r\n";
             textBox1.Text = text;
+            */
         }
 
         private void button1_Click(object sender, EventArgs e)

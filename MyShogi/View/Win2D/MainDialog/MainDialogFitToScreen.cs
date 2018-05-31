@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using MyShogi.App;
+using System;
+using System.Drawing;
 
 namespace MyShogi.View.Win2D
 {
@@ -48,6 +50,8 @@ namespace MyShogi.View.Win2D
                 h = h2;
             }
             ClientSize = new Size(w, h + menu_height);
+
+            set_komadai();
         }
 
         /// <summary>
@@ -87,6 +91,21 @@ namespace MyShogi.View.Win2D
             offset_y = menu_height;
             scale_y = (double)h / board_img_height;
             scale_x = scale_y;
+
+            set_komadai();
+        }
+
+        /// <summary>
+        ///  縦長の画面なら駒台を縦長にする。
+        /// </summary>
+        private void set_komadai()
+        {
+            int h = ClientSize.Height - menu_height;
+            int w = ClientSize.Width;
+            double ratio = (double)w / h;
+            //Console.WriteLine(ratio);
+
+            TheApp.app.config.KomadaiImageVersion = (ratio < 1.36) ? 2 : 1;
         }
     }
 }

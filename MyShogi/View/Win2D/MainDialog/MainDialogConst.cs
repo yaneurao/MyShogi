@@ -42,7 +42,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 手駒の表示場所(駒台を左上とする)
         /// </summary>
-        private static readonly HandLocation[] hand_location =
+        private static readonly HandLocation[] hand_location1 =
         {
             // 10(margin)+96(piece_width)+30(margin)+96(piece_width)+28(margin) = 260(駒台のwidth)
             new HandLocation(Piece.ROOK,10,5),
@@ -55,19 +55,45 @@ namespace MyShogi.View.Win2D
         };
 
         /// <summary>
+        /// 手駒の表示場所(駒台を左上とする)
+        /// 縦長の駒台の場合
+        /// </summary>
+        private static readonly HandLocation[] hand_location2 =
+        {
+            new HandLocation(Piece.ROOK,-5,-15),
+            new HandLocation(Piece.BISHOP, -5,70),
+            new HandLocation(Piece.GOLD,-5,150),
+            new HandLocation(Piece.SILVER,-5,220),
+            new HandLocation(Piece.KNIGHT,-5,290),
+            new HandLocation(Piece.LANCE, -5,360),
+            new HandLocation(Piece.PAWN, -5,440),
+        };
+
+        /// <summary>
         /// 駒台の画面上の位置
         /// </summary>
-        private static readonly Point[] hand_table_pos =
+        private static readonly Point[] hand_table_pos1 =
         {
             new Point(1431,643), // 先手の駒台
             new Point(229 , 32), // 後手の駒台
         };
 
         /// <summary>
+        /// 駒台の画面上の位置
+        /// </summary>
+        private static readonly Point[] hand_table_pos2 =
+        {
+            new Point(1431,488), // 先手の駒台
+            new Point( 404 ,32), // 後手の駒台
+        };
+
+        /// <summary>
         /// 駒台の幅と高さ
         /// </summary>
-        private static int hand_table_width = 260;
-        private static int hand_table_height = 388;
+        private static int hand_table_width1 = 260;
+        private static int hand_table_width2 = 95;
+        private static int hand_table_height1 = 388;
+        private static int hand_table_height2 = 543;
 
         /// <summary>
         /// ネームプレートの座標

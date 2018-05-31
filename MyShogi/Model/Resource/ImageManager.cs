@@ -40,8 +40,12 @@ namespace MyShogi.Model.Resource
             var config = TheApp.app.config;
             var board = new ImageLoader();
             var tatami = new ImageLoader();
+            var komadai = new ImageLoader();
+            var name_plate = new ImageLoader();
             Load(ref board ,$"board_v{config.BoardImageVersion}_1920_1080.png");
             Load(ref tatami, $"tatami_v{config.TatamiImageVersion}_1920_1080.png");
+            Load(ref komadai, $"komadai_v{config.KomadaiImageVersion}_1920_1080.png");
+            Load(ref name_plate, "name_plate_v1_1920_1080.png");
 
             BoardImage.CreateBitmap(1920, 1080, PixelFormat.Format24bppRgb);
 
@@ -52,6 +56,10 @@ namespace MyShogi.Model.Resource
                 // DrawImageで等倍の転送にするためにはrectの指定が必要
                 g.DrawImage(tatami.image , rect , rect , GraphicsUnit.Pixel);
                 g.DrawImage(board.image, rect , rect , GraphicsUnit.Pixel);
+                g.DrawImage(komadai.image, rect, rect, GraphicsUnit.Pixel);
+                if (config.KomadaiImageVersion == 1)
+                    g.DrawImage(name_plate.image, rect, rect, GraphicsUnit.Pixel);
+                // 駒台が縦長のとき、ネームプレート表示できない
             }
 
             // しばらく使わないと思うので開放しておく

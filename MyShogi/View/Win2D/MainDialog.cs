@@ -58,8 +58,12 @@ namespace MyShogi.View.Win2D
             {
                 // 描画する盤面
                 var pos = ViewModel.Pos;
+
+                // 最終手(初期盤面などでは存在せず、lastMove == Move.NONEであることに注意)
                 var lastMove = pos.State().lastMove;
+                // 最終手の移動元の升
                 var lastMoveFrom = (lastMove != ShogiCore.Move.NONE && !lastMove.IsDrop()) ? lastMove.From() : Square.NB;
+                // 最終手の移動先の升
                 var lastMoveTo = (lastMove != ShogiCore.Move.NONE) ? lastMove.To() : Square.NB;
 
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
@@ -73,11 +77,11 @@ namespace MyShogi.View.Win2D
 
                     var dest = new Point(board_left + piece_img_width * f, board_top + piece_img_height * r);
 
-                    // これが最終手の移動元の升であるなら、最終手として描画する必要がある。
+                    // これが最終手の移動元の升であるなら、エフェクトを描画する必要がある。
                     if (sq == lastMoveFrom)
                         DrawSprite(dest , SPRITE.PieceMove(1));
 
-                    // これが最終手の移動先の升であるなら、最終手として描画する必要がある。
+                    // これが最終手の移動先の升であるなら、エフェクトを描画する必要がある。
                     if (sq == lastMoveTo)
                         DrawSprite(dest , SPRITE.PieceMove(0));
                     
@@ -92,6 +96,12 @@ namespace MyShogi.View.Win2D
                 }
 
                 // -- 手駒の描画
+
+                // 駒台の種類によって描画場所が異なる
+                var hand_location = config.KomadaiImageVersion == 1 ? hand_location1 : hand_location2;
+                var hand_table = config.KomadaiImageVersion == 1 ? hand_table_pos1 : hand_table_pos2;
+                var hand_table_width = config.KomadaiImageVersion == 1 ? hand_table_width1 : hand_table_width2;
+                var hand_table_height = config.KomadaiImageVersion == 1 ? hand_table_height1 : hand_table_height2;
 
                 for (var c = ShogiCore.Color.ZERO; c < ShogiCore.Color.NB; ++c)
                 {
@@ -124,20 +134,21 @@ namespace MyShogi.View.Win2D
 
                             if (c == ShogiCore.Color.BLACK)
                                 dest = new Point(
-                                    hand_table_pos[(int)c].X + loc.x,
-                                    hand_table_pos[(int)c].Y + loc.y);
+                                    hand_table[(int)c].X + loc.x,
+                                    hand_table[(int)c].Y + loc.y);
                             else
                                 // 180度回転させた位置を求める
                                 // 後手も駒の枚数は右肩に描画するのでそれに合わせて左右のmarginを調整する。
                                 dest = new Point(
-                                    hand_table_pos[(int)c].X + (hand_table_width - loc.x - piece_img_width - 10),
-                                    hand_table_pos[(int)c].Y + (hand_table_height - loc.y - piece_img_height)
+                                    hand_table[(int)c].X + (hand_table_width  - loc.x - piece_img_width - 10),
+                                    hand_table[(int)c].Y + (hand_table_height - loc.y - piece_img_height)
                                     );
 
+                            // 駒の描画
                             DrawSprite(dest, SPRITE.Piece(pc));
 
-                            // 数字の表示
-                            if (count > 1)
+                            // 数字の描画(枚数が2枚以上のとき)
+                            if (count >= 2)
                             {
                                 var dest2 = new Point(dest.X + 60, dest.Y + 20);
                                 DrawSprite(dest2, SPRITE.HandNumber(count));
@@ -157,13 +168,18 @@ namespace MyShogi.View.Win2D
 
             // -- 対局者氏名
             {
-                DrawString( name_plate[reverse ? 1 : 0] , vm.Player1Name);
-                DrawString( name_plate[reverse ? 0 : 1] , vm.Player2Name);
+                if (config.KomadaiImageVersion == 1)
+                {
+                    DrawString(name_plate[reverse ? 1 : 0], vm.Player1Name);
+                    DrawString(name_plate[reverse ? 0 : 1], vm.Player2Name);
+                }
             }
 
         }
 
-        // -- affine変換してのスクリーンへの描画
+        // -------------------------------------------------------------------------
+        //  affine変換してのスクリーンへの描画
+        // -------------------------------------------------------------------------
 
         /// <summary>
         /// 元画像から画面に描画するときに横・縦方向の縮小率とオフセット値(affine変換の係数)
@@ -173,7 +189,6 @@ namespace MyShogi.View.Win2D
         private double scale_y;
         private int offset_x;
         private int offset_y;
-
 
         /// <summary>
         /// DrawSprite(),DrawString()に毎回引数で指定するの気持ち悪いので、

@@ -27,7 +27,7 @@ namespace MyShogi.Model.ObjectModel
             {
                 object current;
                 if (!this.properties.TryGetValue(name, out current)
-                    || current != (object)value)
+                    || !Util.GenericEquals(current , value))
                 {
                     // 値が異なるときだけ代入して、そのときにイベントが発火する。
                     // 一度目はイベントは発火しない。

@@ -20,6 +20,7 @@ namespace MyShogi.App
         {
             BoardImageVersion = 1;
             TatamiImageVersion = 1;
+            KomadaiImageVersion = 1;
             PieceImageVersion = 1;
             BoardNumberImageVersion = 1;
             LastMoveFromColorType = 0;
@@ -99,7 +100,6 @@ namespace MyShogi.App
 
         /// <summary>
         /// 盤画像のバージョン
-        /// 商用版のみ1以外を選択できる。(ようにするかも)
         /// </summary>
         public int BoardImageVersion
         {
@@ -109,7 +109,6 @@ namespace MyShogi.App
 
         /// <summary>
         /// 畳画像のバージョン
-        /// 商用版のみ1以外を選択できる。(ようにするかも)
         /// </summary>
         public int TatamiImageVersion
         {
@@ -118,8 +117,20 @@ namespace MyShogi.App
         }
 
         /// <summary>
+        /// 駒台のバージョン
+        /// メインウインドウの横幅を狭めると自動的に2が選ばれる。
+        /// 
+        /// 1 : 普通の
+        /// 2 : 低aspect ratio環境向けの縦に細長い駒台
+        /// </summary>
+        public int KomadaiImageVersion
+        {
+            get { return GetValue<int>("KomadaiImageVersion"); }
+            set { SetValue<int>("KomadaiImageVersion", value); }
+        }
+
+        /// <summary>
         /// 駒画像のバージョン
-        /// 商用版のみ1以外を選択できる。
         /// </summary>
         public int PieceImageVersion
         {

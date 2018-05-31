@@ -67,6 +67,7 @@
     <Compile Include="App\TheApp.cs" />
     <Compile Include="Controller\GameController.cs" />
     <Compile Include="Model\ObjectModel\NotifyObject.cs" />
+    <Compile Include="Model\ObjectModel\Util.cs" />
     <Compile Include="Model\Resource\ImageConverter.cs" />
     <Compile Include="Model\Resource\ImageLoader.cs" />
     <Compile Include="Model\Resource\ImageManager.cs" />
