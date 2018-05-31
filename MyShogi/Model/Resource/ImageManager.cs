@@ -133,12 +133,20 @@ namespace MyShogi.Model.Resource
 
             // 0は非表示の意味
             if (version == 0)
-                return;
-
-            Load(ref BoardNumberImageFile, $"number_v{version}_873_19.png");
-            Load(ref BoardNumberImageRevFile, $"number_v{version}Rev_873_19.png");
-            Load(ref BoardNumberImageRank, $"number_v{version}_22_954.png");
-            Load(ref BoardNumberImageRevRank, $"number_v{version}Rev_22_954.png");
+            {
+                // 描画したときに効果のない画像を入れておいたほうが、image == nullで場合分けする必要なくて助かる
+                BoardNumberImageFile.SetNullBitmap();
+                BoardNumberImageRevFile.SetNullBitmap();
+                BoardNumberImageRank.SetNullBitmap();
+                BoardNumberImageRevRank.SetNullBitmap();
+            }
+            else
+            {
+                Load(ref BoardNumberImageFile, $"number_v{version}_873_19.png");
+                Load(ref BoardNumberImageRevFile, $"number_v{version}Rev_873_19.png");
+                Load(ref BoardNumberImageRank, $"number_v{version}_22_954.png");
+                Load(ref BoardNumberImageRevRank, $"number_v{version}Rev_22_954.png");
+            }
         }
 
         /// <summary>
@@ -146,7 +154,7 @@ namespace MyShogi.Model.Resource
         /// </summary>
         private void UpdateHandNumberImage()
         {
-            Load(ref HandNumberImg , "hand_number_v1_864_96.png");
+            Load(ref HandNumberImage , "hand_number_v1_864_96.png");
         }
 
 
@@ -190,6 +198,6 @@ namespace MyShogi.Model.Resource
         /// <summary>
         /// 手駒の右肩に表示する駒の枚数を示す数字画像
         /// </summary>
-        public ImageLoader HandNumberImg = new ImageLoader();
+        public ImageLoader HandNumberImage = new ImageLoader();
     }
 }

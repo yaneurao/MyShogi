@@ -10,14 +10,26 @@ namespace MyShogi.Model.Resource
     public static class SpriteManager
     {
         /// <summary>
+        /// 盤面画像
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite Board()
+        {
+            var srcRect = new Rectangle(0, 0, board_img_width, board_img_height);
+            var image = TheApp.app.imageManager.BoardImage.image;
+
+            return new Sprite(image, srcRect);
+        }
+
+        /// <summary>
         /// 駒画像
         /// 
-        /// 盤面に打つ用。
+        /// 盤面に配置する用。
         /// 後手の駒なら、180度回転させた画像が返る。
         /// </summary>
         /// <param name="pc"></param>
         /// <returns></returns>
-        public static Sprite PieceImage(Piece pc)
+        public static Sprite Piece(Piece pc)
         {
             var srcRect = new Rectangle(
                     ((int)pc % 8) * piece_img_width,
@@ -36,7 +48,7 @@ namespace MyShogi.Model.Resource
         /// </summary>
         /// <param name="pc"></param>
         /// <returns></returns>
-        public static Sprite PieceMoveImage(int pc)
+        public static Sprite PieceMove(int pc)
         {
             var srcRect = new Rectangle(
                     ((int)pc % 8) * piece_img_width,
@@ -49,15 +61,47 @@ namespace MyShogi.Model.Resource
         }
 
         /// <summary>
-        /// 盤面画像
+        /// 同一種の手駒の枚数のための数字
+        /// 
+        /// 例えば、count == 1なら「1」という数字が返る。
         /// </summary>
+        /// <param name="count"></param>
         /// <returns></returns>
-        public static Sprite BoardImage()
+        public static Sprite HandNumber(int count)
         {
-            var srcRect = new Rectangle(0, 0, board_img_width, board_img_height);
-            var image = TheApp.app.imageManager.BoardImage.image;
+            var srcRect = new Rectangle(48 * (count - 1), 0, 48, 48);
+
+            var image = TheApp.app.imageManager.HandNumberImage.image;
 
             return new Sprite(image, srcRect);
+        }
+
+        /// <summary>
+        /// 盤面の上に表示する「筋」を表現する数字画像
+        /// </summary>
+        /// <param name="reverse"></param>
+        /// <returns></returns>
+        public static Sprite BoardNumberFile(bool reverse)
+        {
+            var img = TheApp.app.imageManager;
+            var file_img = (!reverse) ? img.BoardNumberImageFile.image : img.BoardNumberImageRevFile.image;
+            var srcRect = new Rectangle(0, 0, file_img.Width, file_img.Height); // 画像丸ごとなので大きさのことは知らん。
+
+            return new Sprite(file_img, srcRect);
+        }
+
+        /// <summary>
+        /// 盤面の上に表示する「段」を表現する数字画像
+        /// </summary>
+        /// <param name="reverse"></param>
+        /// <returns></returns>
+        public static Sprite BoardNumberRank(bool reverse)
+        {
+            var img = TheApp.app.imageManager;
+            var rank_img = (!reverse) ? img.BoardNumberImageRank.image : img.BoardNumberImageRevRank.image;
+            var srcRect = new Rectangle(0, 0, rank_img.Width, rank_img.Height); // 画像丸ごとなので大きさのことは知らん。
+
+            return new Sprite(rank_img, srcRect);
         }
 
         // -- 以下、画像絡みの定数。

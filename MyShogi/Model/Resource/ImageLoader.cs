@@ -72,6 +72,21 @@ namespace MyShogi.Model.Resource
         }
 
         /// <summary>
+        /// 何も描画されない画像をセットする。
+        /// 
+        /// 画像を表示しない場合、描画しても何も表示されない画像(alpha == 0)にしておいたほうが、
+        /// image == nullかどうかで条件分岐が不要になって可読性が良くなる。
+        /// デザインパターンで言うところのnull objectに相当する。
+        /// </summary>
+        public void SetNullBitmap()
+        {
+            Release();
+            var bmp = new Bitmap(1, 1);
+            bmp.SetPixel(0, 0, Color.FromArgb(0, 0, 0, 0));
+            image = bmp;
+        }
+
+        /// <summary>
         /// 読み込んでいる画像を(明示的に)開放する。
         /// </summary>
         public void Release()

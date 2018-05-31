@@ -43,25 +43,15 @@ namespace MyShogi.View.Win2D
 
             var app = TheApp.app;
             var config = app.config;
-            var img = app.imageManager;
-            var g = e.Graphics;
+            this.graphics = e.Graphics; // DrawSprite(),DrawString()のために必要
             var vm = ViewModel;
-
-            // スプライトを描画するコード
-            // 以下の描画を移植性を考慮してすべてスプライトの描画に抽象化しておく。
-            void DrawSprite(Rectangle dest , Sprite src)
-            {
-                Draw(g, src.image, dest, src.rect);
-            }
-
             // 盤面を反転させて描画するかどうか
             var reverse = config.BoardReverse;
 
             // -- 盤面の描画
             {
                 // 座標系はストレートに指定しておけばaffine変換されて適切に描画される。
-                var dstRect = new Rectangle(0, 0, board_img_width , board_img_height);
-                DrawSprite(dstRect, SPRITE.BoardImage());
+                DrawSprite( new Point(0,0) , SPRITE.Board());
             }
 
             // -- 駒の描画
@@ -81,17 +71,15 @@ namespace MyShogi.View.Win2D
                     int f = 8 - (int)sq2.ToFile();
                     int r = (int)sq2.ToRank();
 
-                    var dstRect = new Rectangle(
-                        board_left + piece_img_width * f, board_top + piece_img_height * r,
-                        piece_img_width, piece_img_height);
+                    var dest = new Point(board_left + piece_img_width * f, board_top + piece_img_height * r);
 
                     // これが最終手の移動元の升であるなら、最終手として描画する必要がある。
                     if (sq == lastMoveFrom)
-                        DrawSprite(dstRect, SPRITE.PieceMoveImage(1));
+                        DrawSprite(dest , SPRITE.PieceMove(1));
 
                     // これが最終手の移動先の升であるなら、最終手として描画する必要がある。
                     if (sq == lastMoveTo)
-                        DrawSprite(dstRect, SPRITE.PieceMoveImage(0));
+                        DrawSprite(dest , SPRITE.PieceMove(0));
                     
                     if (pc != Piece.NO_PIECE)
                     {
@@ -99,13 +87,11 @@ namespace MyShogi.View.Win2D
                         if (reverse)
                             pc = pc ^ Piece.WHITE;
 
-                        DrawSprite(dstRect, SPRITE.PieceImage(pc));
+                        DrawSprite(dest , SPRITE.Piece(pc));
                     }
                 }
 
                 // -- 手駒の描画
-
-                var hand_number = img.HandNumberImg.image;
 
                 for (var c = ShogiCore.Color.ZERO; c < ShogiCore.Color.NB; ++c)
                 {
@@ -134,29 +120,27 @@ namespace MyShogi.View.Win2D
                             if (c == ShogiCore.Color.WHITE)
                                 pc = pc | Piece.WHITE;
 
-                            Rectangle dstRect;
-                            
+                            Point dest;
+
                             if (c == ShogiCore.Color.BLACK)
-                                dstRect = new Rectangle(
+                                dest = new Point(
                                     hand_table_pos[(int)c].X + loc.x,
-                                    hand_table_pos[(int)c].Y + loc.y,
-                                    piece_img_width, piece_img_height);
+                                    hand_table_pos[(int)c].Y + loc.y);
                             else
                                 // 180度回転させた位置を求める
                                 // 後手も駒の枚数は右肩に描画するのでそれに合わせて左右のmarginを調整する。
-                                dstRect = new Rectangle(
-                                    hand_table_pos[(int)c].X + (hand_table_width  - loc.x - piece_img_width  - 10 ) ,
-                                    hand_table_pos[(int)c].Y + (hand_table_height - loc.y - piece_img_height) ,
-                                    piece_img_width , piece_img_height);
+                                dest = new Point(
+                                    hand_table_pos[(int)c].X + (hand_table_width - loc.x - piece_img_width - 10),
+                                    hand_table_pos[(int)c].Y + (hand_table_height - loc.y - piece_img_height)
+                                    );
 
-                            DrawSprite(dstRect, SPRITE.PieceImage(pc));
+                            DrawSprite(dest, SPRITE.Piece(pc));
 
                             // 数字の表示
                             if (count > 1)
                             {
-                                var srcRect2 = new Rectangle(48 * (count - 1), 0, 48, 48);
-                                var dstRect2 = new Rectangle(dstRect.Left + 60, dstRect.Top + 20, 48, 48);
-                                Draw(g, hand_number, dstRect2, srcRect2);
+                                var dest2 = new Point(dest.X + 60, dest.Y + 20);
+                                DrawSprite(dest2, SPRITE.HandNumber(count));
                             }
                         }
                     }
@@ -167,30 +151,14 @@ namespace MyShogi.View.Win2D
             // -- 盤の段・筋を表す数字の表示
             {
                 var version = config.BoardNumberImageVersion;
-                if (version != 0)
-                {
-                    var file_img = (!reverse) ? img.BoardNumberImageFile.image : img.BoardNumberImageRevFile.image;
-                    if (file_img != null)
-                    {
-                        var dstRect = new Rectangle(526, 32 , file_img.Width, file_img.Height);
-                        var srcRect = new Rectangle(0, 0, file_img.Width, file_img.Height);
-                        Draw(g, file_img, dstRect, srcRect);
-                    }
-
-                    var rank_img = (!reverse) ? img.BoardNumberImageRank.image : img.BoardNumberImageRevRank.image;
-                    if (rank_img != null)
-                    {
-                        var dstRect = new Rectangle(1397, 49, rank_img.Width, rank_img.Height);
-                        var srcRect = new Rectangle(0, 0, rank_img.Width, rank_img.Height);
-                        Draw(g, rank_img, dstRect, srcRect);
-                    }
-                }
+                DrawSprite(new Point( 526, 32), SPRITE.BoardNumberFile(reverse));
+                DrawSprite(new Point(1397, 49), SPRITE.BoardNumberRank(reverse));
             }
 
             // -- 対局者氏名
             {
-                DrawString(g, name_plate[reverse ? 1 : 0] , vm.Player1Name);
-                DrawString(g, name_plate[reverse ? 0 : 1] , vm.Player2Name);
+                DrawString( name_plate[reverse ? 1 : 0] , vm.Player1Name);
+                DrawString( name_plate[reverse ? 0 : 1] , vm.Player2Name);
             }
 
         }
@@ -206,32 +174,42 @@ namespace MyShogi.View.Win2D
         private int offset_x;
         private int offset_y;
 
+
         /// <summary>
-        /// scale_x,scale_y、offset_x,offset_yを用いてアフィン変換してから描画する。
+        /// DrawSprite(),DrawString()に毎回引数で指定するの気持ち悪いので、
+        /// この２つの関数を呼び出す前にこの変数にコピーしておくものとする。
+        /// </summary>
+        private Graphics graphics;
+
+        /// <summary>
+        // スプライトを描画するコード
+        // 以下の描画を移植性を考慮してすべてスプライトの描画に抽象化しておく。
+        // pの地点に等倍でSpriteを描画する。(描画するときにaffine変換を行うものとする)
         /// </summary>
         /// <param name="g"></param>
         /// <param name="img"></param>
         /// <param name="destRect"></param>
         /// <param name="sourceRect"></param>
-        private void Draw(Graphics g, Image img, Rectangle dstRect, Rectangle srcRect)
+        private void DrawSprite(Point p , Sprite src)
         {
-            var dstRect2 = new Rectangle(
-            (int)(dstRect.Left   * scale_x) + offset_x,
-            (int)(dstRect.Top    * scale_y) + offset_y,
-            (int)(dstRect.Width  * scale_x),
-            (int)(dstRect.Height * scale_y)
+            var dstRect = new Rectangle(
+            (int)(p.X    * scale_x) + offset_x,
+            (int)(p.Y    * scale_y) + offset_y,
+            (int)(src.rect.Width  * scale_x), // 転送先width×scale_xなのだが、等倍なので転送先width == 転送元width
+            (int)(src.rect.Height * scale_y)  // heightについても上記と同様。
             );
-            g.DrawImage(img, dstRect2, srcRect, GraphicsUnit.Pixel);
+            graphics.DrawImage(src.image, dstRect, src.rect, GraphicsUnit.Pixel);
         }
 
         /// <summary>
-        /// scale_x,scale_y、offset_x,offset_yを用いてアフィン変換してから描画する。
+        /// scale_x,scale_y、offset_x,offset_yを用いてアフィン変換してから文字列を描画する。
         /// </summary>
         /// <param name="g"></param>
         /// <param name="dstPoint"></param>
         /// <param name="mes"></param>
-        private void DrawString(Graphics g , Point dstPoint , string mes)
+        private void DrawString( Point dstPoint , string mes)
         {
+            // affine変換を行う
             var dstPoint2 = new Point(
             (int)(dstPoint.X * scale_x) + offset_x,
             (int)(dstPoint.Y * scale_y) + offset_y
@@ -246,7 +224,7 @@ namespace MyShogi.View.Win2D
 
             using (var font = new Font("MSPゴシック", font_size))
             {
-                g.DrawString(mes, font, Brushes.Black, dstPoint2);
+                graphics.DrawString(mes, font, Brushes.Black, dstPoint2);
             }
         }
 
