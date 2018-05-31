@@ -56,7 +56,7 @@ namespace MyShogi.App
 
             var mainDialog = new MainDialog();
             mainDialogViewModel = new MainDialogViewModel();
-            mainDialog.Bind(mainDialogViewModel);
+            mainDialog.ViewModel = mainDialogViewModel;
 
             // -- 対局controllerを1つ生成して、メインの対局ウィンドゥのViewModelに加える
             {

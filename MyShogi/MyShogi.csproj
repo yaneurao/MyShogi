@@ -123,7 +123,16 @@
     <Compile Include="View\Win2D\MainDialog.Designer.cs">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\MainDialogConst.cs">
+    <Compile Include="View\Win2D\MainDialog\MainDialogConst.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\MainDialog\MainDialogEventHandler.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\MainDialog\MainDialogFitToScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\MainDialog\MainDialogMenu.cs">
       <SubType>Form</SubType>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
