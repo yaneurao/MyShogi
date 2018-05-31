@@ -83,7 +83,7 @@ namespace MyShogi.App
         /// <summary>
         /// シリアライズ先のファイル
         /// </summary>
-        private const string xmlFile = @"settings.xml";
+        private const string xmlFile = @"MyShogi.setting.xml";
 
         // -- 以下、property
 
