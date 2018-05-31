@@ -255,22 +255,28 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Text = "最終手の升の背景色";
 
+                        var item0 = new ToolStripMenuItem();
+                        item0.Text = "なし";
+                        item0.Checked = config.LastMoveToColorType == 0;
+                        item0.Click += (sender, e) => { config.LastMoveToColorType = 0; };
+                        item.DropDownItems.Add(item0);
+
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "朱色";
-                        item1.Checked = config.LastMoveColorType == 1;
-                        item1.Click += (sender, e) => { config.LastMoveColorType = 1; };
+                        item1.Checked = config.LastMoveToColorType == 1;
+                        item1.Click += (sender, e) => { config.LastMoveToColorType = 1; };
                         item.DropDownItems.Add(item1);
 
                         var item2 = new ToolStripMenuItem();
                         item2.Text = "青色";
-                        item2.Checked = TheApp.app.config.LastMoveColorType == 2;
-                        item2.Click += (sender, e) => { config.LastMoveColorType = 2; };
+                        item2.Checked = TheApp.app.config.LastMoveToColorType == 2;
+                        item2.Click += (sender, e) => { config.LastMoveToColorType = 2; };
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
                         item3.Text = "緑色";
-                        item3.Checked = TheApp.app.config.LastMoveColorType == 3;
-                        item3.Click += (sender, e) => { config.LastMoveColorType = 3; };
+                        item3.Checked = TheApp.app.config.LastMoveToColorType == 3;
+                        item3.Click += (sender, e) => { config.LastMoveToColorType = 3; };
                         item.DropDownItems.Add(item3);
                         item_display.DropDownItems.Add(item);
                     }
@@ -387,6 +393,7 @@ namespace MyShogi.View.Win2D
                 var lastMoveTo = (lastMove != ShogiCore.Move.NONE) ? lastMove.To() : Square.NB;
 
                 var piece = img.PieceImg.image;
+                var piece_move_img = img.PieceMoveImg.image;
 
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
@@ -398,30 +405,19 @@ namespace MyShogi.View.Win2D
                         int f = 8 - (int)sq2.ToFile();
                         int r = (int)sq2.ToRank();
 
-                        var dstRect = new Rectangle(board_left + piece_img_width * f, board_top + piece_img_height * r,
+                        var dstRect = new Rectangle(
+                            board_left + piece_img_width * f, board_top + piece_img_height * r,
                             piece_img_width, piece_img_height);
 
                         // 盤面反転モードなら、駒を先後入れ替える
                         if (reverse)
                             pc = pc ^ Piece.WHITE;
 
-                        var srcRect = new Rectangle(
-                            ((int)pc % 8) * piece_img_width,
-                            ((int)pc / 8) * piece_img_height,
-                            piece_img_width, piece_img_height);
-
                         // これが最終手の移動先の升であるなら、最終手として描画する必要がある。
                         if (sq == lastMoveTo)
-                        {
-                            var pc2 = Piece.WHITE; // 素材のここに朱色の塗りつぶしがあるはず
-                            var srcRect2 = new Rectangle(
-                                ((int)pc2 % 8) * piece_img_width,
-                                ((int)pc2 / 8) * piece_img_height,
-                                piece_img_width, piece_img_height);
-                            Draw(g, piece, dstRect, srcRect2);
-                        }
+                            Draw(g, piece_move_img, dstRect, PieceRect((Piece)0));
 
-                        Draw(g, piece, dstRect, srcRect);
+                        Draw(g, piece, dstRect, PieceRect(pc));
                     }
                 }
 
@@ -456,11 +452,6 @@ namespace MyShogi.View.Win2D
                             if (c == ShogiCore.Color.WHITE)
                                 pc = pc | Piece.WHITE;
 
-                            var srcRect = new Rectangle(
-                                ((int)pc % 8) * piece_img_width,
-                                ((int)pc / 8) * piece_img_height,
-                                piece_img_width, piece_img_height);
-
                             Rectangle dstRect;
                             
                             if (c == ShogiCore.Color.BLACK)
@@ -476,7 +467,7 @@ namespace MyShogi.View.Win2D
                                     hand_table_pos[(int)c].Y + (hand_table_height - loc.y - piece_img_height) ,
                                     piece_img_width , piece_img_height);
 
-                            Draw(g, piece, dstRect, srcRect);
+                            Draw(g, piece, dstRect, PieceRect(pc));
 
                             // 数字の表示
                             if (count > 1)
@@ -520,6 +511,19 @@ namespace MyShogi.View.Win2D
                 DrawString(g, name_plate[reverse ? 0 : 1] , vm.Player2Name);
             }
 
+        }
+
+        /// <summary>
+        /// 駒画像に対して、pcを指定して、その駒の転送元矩形を返す
+        /// </summary>
+        /// <param name="pc"></param>
+        /// <returns></returns>
+        public Rectangle PieceRect(Piece pc)
+        {
+            return new Rectangle(
+                ((int)pc % 8) * piece_img_width,
+                ((int)pc / 8) * piece_img_height,
+                piece_img_width, piece_img_height);
         }
 
         // -- affine変換してのスクリーンへの描画

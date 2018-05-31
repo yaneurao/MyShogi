@@ -27,6 +27,7 @@ namespace MyShogi.Model.Resource
         {
             UpdateBoardImage();
             UpdatePieceImage();
+            UpdatePieceMoveImage();
             UpdateBoardNumberImage();
             UpdateHandNumberImage();
         }
@@ -65,31 +66,57 @@ namespace MyShogi.Model.Resource
         {
             var config = TheApp.app.config;
             Load(ref PieceImg , $"piece_v{config.PieceImageVersion}_776_424.png");
+        }
 
-            // -- 最終手の背景
-
-            Color c;
-            var colorType = config.LastMoveColorType;
-            switch (colorType)
-            {
-                case 1: c = Color.FromArgb((int)(255 * 0.45), 0xff, 0x7f, 0x50); break;
-                case 2: c = Color.FromArgb((int)(255 * 0.60), 0x41, 0x69, 0xe1); break;
-                case 3: c = Color.FromArgb((int)(255 * 0.60), 0x6b, 0x8e, 0x23); break;
-                default: c = Color.FromArgb(0, 0, 0, 0); break;
-            }
+        /// <summary>
+        /// 着手の移動元、移動先のエフェクト画像の生成。
+        /// TheApp.app.config.LastMoveColorTypeが変わったときなどに呼び出されるハンドラ
+        /// </summary>
+        public void UpdatePieceMoveImage()
+        {
+            var config = TheApp.app.config;
 
             // 駒の横・縦のサイズ[px]
             int x = 97;
             int y = 106;
 
-            // 左上の塗りつぶし配置
-            using (var g = Graphics.FromImage(PieceImg.image))
+            // 1. 着手の移動先の升のエフェクト
+            // 2. 着手の移動元の升のエフェクト
+            // 3. 駒を持ち上げたときの移動元のエフェクト
+            // 4. 駒を持ち上げたときに移動できない升のエフェクト
+            // の4つを左から並べる
+            var bmp = new Bitmap(x * 4, y, PixelFormat.Format32bppArgb);
+
+            // 左からn番目をcで塗りつぶす
+            // Graphics.DrawImageだとαが合成されてしまい、思っている色で塗りつぶされない
+            void Fill(int n , Color color)
             {
-                // Piece.WHITEのところに最終手の着手を意味する画像を生成
-                using (var b = new SolidBrush(c))
-                    g.FillRectangle(b, 0 + 0, y * 2 + 0, x, y);
+                for (int j = 0; j < y; ++j)
+                    for (int i = 0; i < x; ++i)
+                        bmp.SetPixel(i + n * x ,j, color);
+                // SetPixel()遅いけど、そんなに大きな領域ではないし、リアルタイムでもないのでまあいいや。
             }
 
+
+            // -- 最終手の背景
+
+            Color c;
+            var colorType = config.LastMoveToColorType;
+            switch (colorType)
+            {
+                case 0: c = Color.FromArgb(0, 0, 0, 0); break;
+                case 1: c = Color.FromArgb((int)(255 * 0.40), 0xff, 0x7f, 0x50); break;
+                case 2: c = Color.FromArgb((int)(255 * 0.40), 0x41, 0x69, 0xe1); break;
+                case 3: c = Color.FromArgb((int)(255 * 0.40), 0x6b, 0x8e, 0x23); break;
+                default: c = Color.FromArgb(0, 0, 0, 0); break;
+            }
+
+            // -- 最終手の移動元の升の背景
+
+            Fill(0, c);
+
+            // 確保したBitmapをImageLoaderの管理下に置く。
+            PieceMoveImg.SetBitmap(bmp);
         }
 
         /// <summary>
@@ -142,6 +169,11 @@ namespace MyShogi.Model.Resource
         /// 駒画像
         /// </summary>
         public ImageLoader PieceImg = new ImageLoader();
+
+        /// <summary>
+        /// 指し手の移動元や移動先の升の背景色を変更するのに用いる。
+        /// </summary>
+        public ImageLoader PieceMoveImg = new ImageLoader();
 
         /// <summary>
         /// 盤面の番号画像、筋・段、盤面反転の筋・段

@@ -59,6 +59,17 @@ namespace MyShogi.Model.Resource
                 image = new Bitmap(width, height, format);
             }
         }
+        
+        /// <summary>
+        /// 外部で生成されたBitmapのインスタンスを渡して、
+        /// このクラスの管理下におく。
+        /// </summary>
+        /// <param name="bmp"></param>
+        public void SetBitmap(Bitmap bmp)
+        {
+            Release();
+            image = bmp;
+        }
 
         /// <summary>
         /// 読み込んでいる画像を(明示的に)開放する。

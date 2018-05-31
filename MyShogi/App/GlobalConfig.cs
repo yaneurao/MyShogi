@@ -22,7 +22,7 @@ namespace MyShogi.App
             TatamiImageVersion = 1;
             PieceImageVersion = 1;
             BoardNumberImageVersion = 1;
-            LastMoveColorType = 1;
+            LastMoveToColorType = 1;
             BoardReverse = false;
         }
 
@@ -146,10 +146,10 @@ namespace MyShogi.App
         /// 2 : 青色
         /// 3 : 緑色
         /// </summary>
-        public int LastMoveColorType
+        public int LastMoveToColorType
         {
-            get { return GetValue<int>("LastMoveColorType"); }
-            set { SetValue<int>("LastMoveColorType", value); }
+            get { return GetValue<int>("LastMoveToColorType"); }
+            set { SetValue<int>("LastMoveToColorType", value); }
         }
         
         /// <summary>
