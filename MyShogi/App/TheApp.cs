@@ -71,6 +71,7 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems );
             config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems );
+            config.AddPropertyChangedHandler("PromotePieceColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PieceAttackImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("LastMoveFromColorType", mainDialog.UpdateMenuItems);

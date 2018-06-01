@@ -59,6 +59,10 @@ namespace MyShogi.View.Win2D
 
             // kifuControl内の文字サイズも変更しないといけない。
             // あとで考える。
+
+            // 駒台が縦長のモードのときは、このコントロールは非表示にする。
+            // (何か別の方法で描画する)
+            kifuControl1.Visible = TheApp.app.config.KomadaiImageVersion == 1;
         }
 
         // -- 以下、ToolStripのハンドラ

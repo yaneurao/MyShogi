@@ -141,6 +141,7 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// 成り駒であるかどうかを判定する
+        /// Piece.KINGに対して呼び出すと成駒と判定されてしまうので注意。
         /// </summary>
         public static bool IsPromote(this Piece piece)
         {

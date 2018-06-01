@@ -40,7 +40,9 @@ namespace MyShogi.Model.Resource
             int x = 97;
             int y = 106;
 
-            var bmp = new Bitmap(x * 8, y * 4); // Piece.NB = 32 == 8*4
+            // 先手の駒(8*2)、後手の駒(8*2)、先手の赤い成駒(8*1)、後手の赤い成駒(8*1)
+            // のように並んでいる。
+            var bmp = new Bitmap(x * 8, y * 6); // Piece.NB = 32 == 8*4
 
             // 駒画像のコピー
             void copy(Image image, int from_x, int from_y, int to_x, int to_y, bool is_white)
@@ -107,15 +109,18 @@ namespace MyShogi.Model.Resource
                 g.Dispose();
             }
 
-            for (int i = 0; i < 4; ++i)
+            for (int i = 0; i < 6; ++i)
             {
-                // 黒い成り駒、使わないことにしよう…。
+                var img = ((i % 2) == 0) ? omote : ura;
+                var img2 = (img == omote) ? ura : omote; // 逆側
 
-                var img = ((i % 2) == 0) ? omote : aka;
-                var img2 = (img == omote) ? aka : omote; // 逆側
-                var c = i >= 2; // IsWhite?
+                // 赤い成駒
+                if (i >= 4)
+                    img = img2 = aka;
 
-                if (i==1 || i==3)
+                var c = i == 2 || i==3 || i==5; // IsWhite?
+
+                if (i==1 || i==3 || i==5)
                     copy(img2, 4, 8, 0, i, c); // 王   59の王を、(0,0)に移動。
 
                 copy(img, 1, 6, 1, i, c);  // 歩   87の歩を、(1,0)に移動。以下、同様。
@@ -142,8 +147,8 @@ namespace MyShogi.Model.Resource
                 g.Dispose();
             }
 
-            // (97*8 , 106 * 4)= (776,424)
-            bmp.Save(Path.Combine("image",$"piece_v{version}_776_424.png"), System.Drawing.Imaging.ImageFormat.Png);
+            // (97*8 , 106 * 6)= (776,636)
+            bmp.Save(Path.Combine("image",$"piece_v{version}_776_636.png"), System.Drawing.Imaging.ImageFormat.Png);
             bmp.Dispose();
 
         }

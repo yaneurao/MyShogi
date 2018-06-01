@@ -153,6 +153,26 @@ namespace MyShogi.View.Win2D
                         item_display.DropDownItems.Add(item);
                     }
 
+                    { // -- 成駒の画像の選択メニュー
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "成駒の色";
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "黒";
+                        item1.Checked = config.PromotePieceColorType == 0;
+                        item1.Click += (sender, e) => { config.PromotePieceColorType = 0; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "赤";
+                        item2.Checked = TheApp.app.config.PromotePieceColorType == 1;
+                        item2.Click += (sender, e) => { config.PromotePieceColorType = 1; };
+                        item.DropDownItems.Add(item2);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
                     // -- 最終手のエフェクト
                     {
                         var item = new ToolStripMenuItem();

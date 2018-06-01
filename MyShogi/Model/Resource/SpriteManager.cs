@@ -31,6 +31,14 @@ namespace MyShogi.Model.Resource
         /// <returns></returns>
         public static Sprite Piece(Piece pc)
         {
+            if (pc.PieceType()!= Shogi.Core.Piece.KING && pc.IsPromote())
+            {
+                if (TheApp.app.config.PromotePieceColorType == 1)
+                    // 赤い成駒にする。
+                    // これは駒画像素材の4,5段目に書かれているのでオフセット値を加算する。
+                    pc += (pc.PieceColor() == Shogi.Core.Color.BLACK) ? 3*8 /*3段下から*/ : 2*8 /* 2段下から*/; 
+            }
+
             var srcRect = new Rectangle(
                     ((int)pc % 8) * piece_img_width,
                     ((int)pc / 8) * piece_img_height,

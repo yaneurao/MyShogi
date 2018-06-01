@@ -26,6 +26,7 @@ namespace MyShogi.App
             BoardNumberImageVersion = 1;
             LastMoveFromColorType = 0;
             LastMoveToColorType = 1;
+            PromotePieceColorType = 0;
             BoardReverse = false;
         }
 
@@ -137,6 +138,18 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("PieceImageVersion"); }
             set { SetValue<int>("PieceImageVersion",value); }
+        }
+
+        /// <summary>
+        /// 成駒の色
+        /// 0 : 黒
+        /// 1 : 赤
+        /// その他、あとで追加するかも知れないのでboolにしておくとまずい。
+        /// </summary>
+        public int PromotePieceColorType
+        {
+            get { return GetValue<int>("PromotePieceColorType"); }
+            set { SetValue<int>("PromotePieceColorType", value); }
         }
 
         /// <summary>

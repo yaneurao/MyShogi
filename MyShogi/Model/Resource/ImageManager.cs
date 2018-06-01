@@ -74,7 +74,7 @@ namespace MyShogi.Model.Resource
         public void UpdatePieceImage()
         {
             var config = TheApp.app.config;
-            Load(ref PieceImage, $"piece_v{config.PieceImageVersion}_776_424.png");
+            Load(ref PieceImage, $"piece_v{config.PieceImageVersion}_776_636.png");
         }
 
         public void UpdatePieceAttackImage()
