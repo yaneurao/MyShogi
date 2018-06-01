@@ -35,6 +35,20 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// Sizeに対してaffine変換を行う。
+        /// offsetの加算は行わない。scaleのみ。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        private Size Affine(Size s)
+        {
+            return new Size(
+            (int)(s.Width * scale_x),
+            (int)(s.Height * scale_y)
+            );
+        }
+
+        /// <summary>
         /// DrawSprite(),DrawString()に毎回引数で指定するの気持ち悪いので、
         /// この２つの関数を呼び出す前にこの変数にコピーしておくものとする。
         /// </summary>
