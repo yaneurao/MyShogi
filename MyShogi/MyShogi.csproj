@@ -123,19 +123,22 @@
     <Compile Include="View\Win2D\AboutYaneuraOu.Designer.cs">
       <DependentUpon>AboutYaneuraOu.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\KifuControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\KifuControl.Designer.cs">
+      <DependentUpon>KifuControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\MainDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\Win2D\MainDialog.Designer.cs">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\KifuDialog.cs">
+    <Compile Include="View\Win2D\MainDialog\MainDialogConst.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\KifuDialog.Designer.cs">
-      <DependentUpon>KifuDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="View\Win2D\MainDialog\MainDialogConst.cs">
+    <Compile Include="View\Win2D\MainDialog\MainDialogDraw.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\Win2D\MainDialog\MainDialogEventHandler.cs">
@@ -159,11 +162,11 @@
     <EmbeddedResource Include="View\Win2D\AboutYaneuraOu.resx">
       <DependentUpon>AboutYaneuraOu.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\KifuControl.resx">
+      <DependentUpon>KifuControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\KifuDialog.resx">
-      <DependentUpon>KifuDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
     <None Include="docs\PSN2format.md" />

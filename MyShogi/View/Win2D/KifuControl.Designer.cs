@@ -1,16 +1,16 @@
 ﻿namespace MyShogi.View.Win2D
 {
-    partial class KifuDialog
+    partial class KifuControl
     {
-        /// <summary>
-        /// Required designer variable.
+        /// <summary> 
+        /// 必要なデザイナー変数です。
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
+        /// <summary> 
+        /// 使用中のリソースをすべてクリーンアップします。
         /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        /// <param name="disposing">マネージ リソースを破棄する場合は true を指定し、その他の場合は false を指定します。</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -20,11 +20,11 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #region コンポーネント デザイナーで生成されたコード
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
+        /// <summary> 
+        /// デザイナー サポートに必要なメソッドです。このメソッドの内容を 
+        /// コード エディターで変更しないでください。
         /// </summary>
         private void InitializeComponent()
         {
@@ -37,17 +37,15 @@
             this.webBrowser1.Location = new System.Drawing.Point(0, 0);
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.Size = new System.Drawing.Size(424, 398);
+            this.webBrowser1.Size = new System.Drawing.Size(150, 150);
             this.webBrowser1.TabIndex = 0;
             // 
-            // KifuDialog
+            // KifuControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(424, 398);
             this.Controls.Add(this.webBrowser1);
-            this.Name = "KifuDialog";
-            this.Text = "棋譜ウィンドウ";
+            this.Name = "KifuControl";
             this.ResumeLayout(false);
 
         }

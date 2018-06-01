@@ -24,13 +24,7 @@ namespace MyShogi.View.Win2D
             FitToClientSize();
 
             MinimumSize = new Size(192*2 , 108*2 + menu_height );
-
-            kifuDialog = new KifuDialog();
-            kifuDialog.Show();
         }
-
-        // 棋譜ダイアログ
-        private KifuDialog kifuDialog;
 
         /// <summary>
         /// このViewに対応するViewModel
@@ -181,72 +175,6 @@ namespace MyShogi.View.Win2D
                 }
             }
 
-        }
-
-        // -------------------------------------------------------------------------
-        //  affine変換してのスクリーンへの描画
-        // -------------------------------------------------------------------------
-
-        /// <summary>
-        /// 元画像から画面に描画するときに横・縦方向の縮小率とオフセット値(affine変換の係数)
-        /// Draw()で描画するときに用いる。
-        /// </summary>
-        private double scale_x;
-        private double scale_y;
-        private int offset_x;
-        private int offset_y;
-
-        /// <summary>
-        /// DrawSprite(),DrawString()に毎回引数で指定するの気持ち悪いので、
-        /// この２つの関数を呼び出す前にこの変数にコピーしておくものとする。
-        /// </summary>
-        private Graphics graphics;
-
-        /// <summary>
-        // スプライトを描画するコード
-        // 以下の描画を移植性を考慮してすべてスプライトの描画に抽象化しておく。
-        // pの地点に等倍でSpriteを描画する。(描画するときにaffine変換を行うものとする)
-        /// </summary>
-        /// <param name="g"></param>
-        /// <param name="img"></param>
-        /// <param name="destRect"></param>
-        /// <param name="sourceRect"></param>
-        private void DrawSprite(Point p , Sprite src)
-        {
-            var dstRect = new Rectangle(
-            (int)(p.X    * scale_x) + offset_x,
-            (int)(p.Y    * scale_y) + offset_y,
-            (int)(src.rect.Width  * scale_x), // 転送先width×scale_xなのだが、等倍なので転送先width == 転送元width
-            (int)(src.rect.Height * scale_y)  // heightについても上記と同様。
-            );
-            graphics.DrawImage(src.image, dstRect, src.rect, GraphicsUnit.Pixel);
-        }
-
-        /// <summary>
-        /// scale_x,scale_y、offset_x,offset_yを用いてアフィン変換してから文字列を描画する。
-        /// </summary>
-        /// <param name="g"></param>
-        /// <param name="dstPoint"></param>
-        /// <param name="mes"></param>
-        private void DrawString( Point dstPoint , string mes , int font_size)
-        {
-            // affine変換を行う
-            var dstPoint2 = new Point(
-            (int)(dstPoint.X * scale_x) + offset_x,
-            (int)(dstPoint.Y * scale_y) + offset_y
-            );
-
-            // 文字フォントサイズは、scaleの影響を受ける。
-
-            var size = (int)(font_size * scale_x);
-            // こんな小さいものは視認できないので描画しなくて良い。
-            if (size <= 2)
-                return;
-
-            using (var font = new Font("MSPゴシック", size , GraphicsUnit.Pixel))
-            {
-                graphics.DrawString(mes, font, Brushes.Black, dstPoint2);
-            }
         }
 
     }
