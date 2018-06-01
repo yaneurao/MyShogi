@@ -3,20 +3,21 @@
 <head>
 <meta charset="utf-8">
 <title>dialog</title>
+<style>
+  p { font-size: 0.8em; margin: 0 0 0 1em; padding: 0; }
+  p.image { width: 100%; margin: 0; }
+  img { width: 100%; }
+</style>
 </head>
 <body>
-<p id='version' style='font-size:24px;margin-left:30px;'></p>
-<p><img src="../image/yaneura_logo.jpg" style='width:633px;height:291px;'></p>
-<br/>
+<p id='version'></p>
 <!-- C#側からInvokeScript()で呼び出してもらう -->
 <script>
-function add_version_string(v) { var e = document.getElementById('version'); e.innerText = v; }
+  function add_version_string(v) { var e = document.getElementById('version'); e.innerText = v; }
 </script>
-<p style='font-size:24px;margin-left:50px;'>
-	(C)2018 Mynavi Publishing Corporation / MyShogi Project<br/>
-<br/>
-	MyShogi Project : https://github.com/yaneurao/MyShogi
-	<!-- WebBrowserなので別窓で開いてくれないから、単純にhyperlinkにするの良くない -->
-</p>
+<p class='image'><img src="../image/yaneura_logo.jpg"></p>
+<p>(C)2018 Mynavi Publishing Corporation / MyShogi Project</p>
+<!-- WebBrowserなので別窓で開いてくれないから、単純にhyperlinkにするの良くない -->
+<p>MyShogi Project : https://github.com/yaneurao/MyShogi</p>
 </body>
 </html>
