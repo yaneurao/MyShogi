@@ -1,7 +1,6 @@
 ﻿
 ToDo
 
-- 棋譜ウィンドウの実装
 - 指し手の選択機能をMainDialogに追加する
 
 - KifuManager
@@ -11,7 +10,98 @@ ToDo
 		- Mizarさんに依頼中
 
 
+■　2018/06/01
+
+
+- readme.mdに最新の作業状況などを反映。
+
+
+- aboutダイアログのhtml修正。
+	- WebBrowserの問題、pxで指定していたのがいけなかったのか。(Mizarさん、サンクス)
+
+
+- マーカー用に黒の成り駒を用意する。
+	- ImageConverter修正。
+	- 駒画像、heightを424から636に変更。
+	- ImageManager修正。
+	- SpriteManager修正。
+	- GlobalConfigにPromotePieceColorType追加
+
+
+- 縦長の駒台画像差し替え。
+	- それに伴う手駒の描画座標修正
+
+
+- 駒の移動方向が図示してある画像の処理
+	- 連結スプライト用意するか…。
+		- した。
+	- "piece_atk_v1_776_424.png"
+	- 成り駒とマーカーが混じると見にくい…対策考え中。
+
+
+- 棋譜ウインドウのリサイズハンドラ追加
+- MainDialogにaffine(Size)追加。
+
+
+- 棋譜ウィンドウ、MainDialogに埋め込んだほうがいいかもな。よく考える。
+	- 棋譜ウィンドウ、WindForm.Controlに変更
+	- Control.DesignModeがうまく取れない。吐きそう…。
+	- 解決した : https://stackoverflow.com/questions/4498478/designmode-in-subcontrols-is-not-set-correctly
+	- とりま、棋譜ウィンドウをMainDialogに埋め込んでおいた。あとでもうちょっとなんとかする。
+- MainDialogからaffine変換する部分をMainDialogDraw.csに移動
+- MainDialogにaffine(Point)追加。
+
+
+- html/をgitの管理下に移動。
+
+
+- 棋譜ウィンドウの実装開始
+	- WebBrowserを抽象化したクラスを用意するか？
+	- navigateとInvokeしかないからしなくてもいいかな…。
+	- とりあえずKifuDialog途中まで書けた。
+	- このデザインよく考えたほうが良さそう。
+- MainDialogのDrawString、dpiに非依存に変更する。
+- htmlの配置場所、text/やめて、html/に変更する。
+
+
+- dpi awareに変更する
+	- cf . Windows Formsアプリケーションの高DPI対応  https://qiita.com/felis_silv/items/efee4b1a397b0b95100a
+	- AboutDialogも修正。うまく動いたのでこれで良し。
+- 良く考えた末に、Window.Controlのなかで使うWebBrowser、dpi awareになられると困るという結論になった。
+		- 外側のControlがdpi awareで、自動的に拡大されてて、それに応じた座標系を使って、窓を作ってそこに
+		WebBrowserを配置しているのに、そのなかが勝手に違う座標系で描画されるのがおかしくなる原因。
+		- WebBrowserのhigh dpi対応
+			- https://social.msdn.microsoft.com/Forums/vstudio/en-US/cea332e5-071d-4db5-bee5-1c3342644e70/webbrowser-control-high-dpi-support?forum=winforms
+
+- 縦長の駒台、もうちょっと上まで素材が必要。修正依頼。
+- NotifyObject、値型の比較するところ、間違っていたの修正。
+	- NotifyObject.Util.GenericEquals()追加。
+- 駒台とネームプレートの素材を分離
+	- ImageManager修正。
+	- GlobalConfig.KomadaiImageVersion追加
+- 駒の移動方向の素材発注
+- WebBrowser、high dpi対応、ムズすぎワロタ
+
+
 ■　2018/05/31
+
+
+- MainDialogで描画している画像、すべてSprite化する。
+- ImageLoaderにSetNullBitmap()追加。
+- MainDialogのDrawImage()廃止。描画手段はDrawSprite()とDrawString()だけに限定した。
+
+
+- Spriteクラス追加。
+- SpriteManager追加
+- MainDialogをSpriteを用いて描画を抽象化
+- ImageManagerのプロパティ名の～Img、ここだけ省略形なの気持ちわるいので～Imageに変更。
+
+
+- MainDialogのコード、機能別にファイルを分離
+	- View/Win2D/MainDialog/ 追加
+		- MainDialogEventHandler.cs追加
+		- MainDialogFitToScreen.cs追加
+		- MainDialogMenu,cs追加
 
 
 - readme.mdに特徴など追加
