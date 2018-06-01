@@ -1,13 +1,5 @@
 ﻿using MyShogi.App;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D
@@ -20,8 +12,8 @@ namespace MyShogi.View.Win2D
 
             var file_name = 
                 TheApp.app.config.CommercialVersion ?
-                "text/about_dialog_commercial_version.html":
-                "text/about_dialog_opensource_version.html";
+                "html/about_dialog_commercial_version.html":
+                "html/about_dialog_opensource_version.html";
 
             webBrowser1.Navigate(Path.Combine(Application.StartupPath,file_name).ToString());
 

@@ -24,7 +24,13 @@ namespace MyShogi.View.Win2D
             FitToClientSize();
 
             MinimumSize = new Size(192*2 , 108*2 + menu_height );
+
+            kifuDialog = new KifuDialog();
+            kifuDialog.Show();
         }
+
+        // 棋譜ダイアログ
+        private KifuDialog kifuDialog;
 
         /// <summary>
         /// このViewに対応するViewModel
@@ -170,8 +176,8 @@ namespace MyShogi.View.Win2D
             {
                 if (config.KomadaiImageVersion == 1)
                 {
-                    DrawString(name_plate[reverse ? 1 : 0], vm.Player1Name , 13);
-                    DrawString(name_plate[reverse ? 0 : 1], vm.Player2Name , 13);
+                    DrawString(name_plate[reverse ? 1 : 0], vm.Player1Name , 28);
+                    DrawString(name_plate[reverse ? 0 : 1], vm.Player2Name , 28);
                 }
             }
 
@@ -237,7 +243,7 @@ namespace MyShogi.View.Win2D
             if (size <= 2)
                 return;
 
-            using (var font = new Font("MSPゴシック", size))
+            using (var font = new Font("MSPゴシック", size , GraphicsUnit.Pixel))
             {
                 graphics.DrawString(mes, font, Brushes.Black, dstPoint2);
             }
