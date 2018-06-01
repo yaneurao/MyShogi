@@ -38,14 +38,14 @@
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScrollBarsEnabled = false;
-            this.webBrowser1.Size = new System.Drawing.Size(674, 429);
+            this.webBrowser1.Size = new System.Drawing.Size(674, 459);
             this.webBrowser1.TabIndex = 2;
             // 
             // AboutYaneuraOu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(674, 429);
+            this.ClientSize = new System.Drawing.Size(674, 459);
             this.Controls.Add(this.webBrowser1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
