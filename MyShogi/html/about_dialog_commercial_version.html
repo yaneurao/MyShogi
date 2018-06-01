@@ -1,0 +1,22 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>dialog</title>
+</head>
+<body>
+<p id='version' style='font-size:24px;margin-left:30px;'></p>
+<p><img src="../image/yaneura_logo.jpg" style='width:633px;height:291px;'></p>
+<br/>
+<!-- C#側からInvokeScript()で呼び出してもらう -->
+<script>
+function add_version_string(v) { var e = document.getElementById('version'); e.innerText = v; }
+</script>
+<p style='font-size:24px;margin-left:50px;'>
+	(C)2018 Mynavi Publishing Corporation / MyShogi Project<br/>
+<br/>
+	MyShogi Project : https://github.com/yaneurao/MyShogi
+	<!-- WebBrowserなので別窓で開いてくれないから、単純にhyperlinkにするの良くない -->
+</p>
+</body>
+</html>
