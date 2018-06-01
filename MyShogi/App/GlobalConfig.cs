@@ -22,6 +22,7 @@ namespace MyShogi.App
             TatamiImageVersion = 1;
             KomadaiImageVersion = 1;
             PieceImageVersion = 1;
+            PieceAttackImageVersion = 0;
             BoardNumberImageVersion = 1;
             LastMoveFromColorType = 0;
             LastMoveToColorType = 1;
@@ -136,6 +137,16 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("PieceImageVersion"); }
             set { SetValue<int>("PieceImageVersion",value); }
+        }
+
+        /// <summary>
+        /// 駒の移動できる方向が描いてある画像
+        /// 0 : なし
+        /// </summary>
+        public int PieceAttackImageVersion
+        {
+            get { return GetValue<int>("PieceAttackImageVersion"); }
+            set { SetValue<int>("PieceAttackImageVersion", value); }
         }
 
         /// <summary>

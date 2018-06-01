@@ -27,6 +27,7 @@ namespace MyShogi.Model.Resource
         {
             UpdateBoardImage();
             UpdatePieceImage();
+            UpdatePieceAttackImage();
             UpdatePieceMoveImage();
             UpdateBoardNumberImage();
             UpdateHandNumberImage();
@@ -74,6 +75,16 @@ namespace MyShogi.Model.Resource
         {
             var config = TheApp.app.config;
             Load(ref PieceImage, $"piece_v{config.PieceImageVersion}_776_424.png");
+        }
+
+        public void UpdatePieceAttackImage()
+        {
+            var config = TheApp.app.config;
+            var version = config.PieceAttackImageVersion;
+            if (version == 0)
+                PieceAttackImage.SetNullBitmap();
+            else
+                Load(ref PieceAttackImage, $"piece_atk_v{version}_776_424.png");
         }
 
         /// <summary>
@@ -194,6 +205,11 @@ namespace MyShogi.Model.Resource
         /// 指し手の移動元や移動先の升の背景色を変更するのに用いる。
         /// </summary>
         public ImageLoader PieceMoveImage = new ImageLoader();
+
+        /// <summary>
+        /// 駒の移動方向が描いてある画像
+        /// </summary>
+        public ImageLoader PieceAttackImage = new ImageLoader();
 
         /// <summary>
         /// 盤面の番号画像、筋・段、盤面反転の筋・段

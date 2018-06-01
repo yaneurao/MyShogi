@@ -83,6 +83,7 @@ namespace MyShogi.View.Win2D
                         item3.Checked = TheApp.app.config.BoardNumberImageVersion == 2;
                         item3.Click += (sender, e) => { config.BoardNumberImageVersion = 2; };
                         item.DropDownItems.Add(item3);
+
                         item_display.DropDownItems.Add(item);
                     }
 
@@ -102,6 +103,7 @@ namespace MyShogi.View.Win2D
                         item2.Checked = config.BoardImageVersion == 2;
                         item2.Click += (sender, e) => { config.BoardImageVersion = 2; };
                         item.DropDownItems.Add(item2);
+
                         item_display.DropDownItems.Add(item);
                     }
 
@@ -121,6 +123,7 @@ namespace MyShogi.View.Win2D
                         item2.Checked = config.TatamiImageVersion == 2;
                         item2.Click += (sender, e) => { config.TatamiImageVersion = 2; };
                         item.DropDownItems.Add(item2);
+
                         item_display.DropDownItems.Add(item);
                     }
 
@@ -146,6 +149,7 @@ namespace MyShogi.View.Win2D
                         item3.Checked = TheApp.app.config.PieceImageVersion == 3;
                         item3.Click += (sender, e) => { config.PieceImageVersion = 3; };
                         item.DropDownItems.Add(item3);
+
                         item_display.DropDownItems.Add(item);
                     }
 
@@ -177,6 +181,7 @@ namespace MyShogi.View.Win2D
                         item3.Checked = TheApp.app.config.LastMoveFromColorType == 3;
                         item3.Click += (sender, e) => { config.LastMoveFromColorType = 3; };
                         item.DropDownItems.Add(item3);
+
                         item_display.DropDownItems.Add(item);
                     }
                     {
@@ -206,14 +211,34 @@ namespace MyShogi.View.Win2D
                         item3.Checked = TheApp.app.config.LastMoveToColorType == 3;
                         item3.Click += (sender, e) => { config.LastMoveToColorType = 3; };
                         item.DropDownItems.Add(item3);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+                    
+                    // 駒の移動方向
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "移動方角マーカー";
+
+                        var item0 = new ToolStripMenuItem();
+                        item0.Text = "なし";
+                        item0.Checked = config.PieceAttackImageVersion == 0;
+                        item0.Click += (sender, e) => { config.PieceAttackImageVersion = 0; };
+                        item.DropDownItems.Add(item0);
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "あり";
+                        item1.Checked = config.PieceAttackImageVersion == 1;
+                        item1.Click += (sender, e) => { config.PieceAttackImageVersion = 1; };
+                        item.DropDownItems.Add(item1);
+
                         item_display.DropDownItems.Add(item);
                     }
 
-
                 }
 
-                // 「その他」
-                {
+                    // 「その他」
+                    {
                     var item_others = new ToolStripMenuItem();
                     item_others.Text = "その他";
                     menu.Items.Add(item_others);

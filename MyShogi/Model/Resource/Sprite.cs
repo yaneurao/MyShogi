@@ -24,5 +24,10 @@ namespace MyShogi.Model.Resource
         /// 転送元矩形
         /// </summary>
         public Rectangle rect { get; private set; }
+
+        /// <summary>
+        /// 連結スプライト。これがnullでないなら、次のスプライトも続けて描画される。
+        /// </summary>
+        public Sprite next { get; set; }
     }
 }

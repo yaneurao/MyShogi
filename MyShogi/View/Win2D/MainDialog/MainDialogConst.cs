@@ -60,17 +60,17 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private static readonly HandLocation[] hand_location2 =
         {
-            new HandLocation(Piece.ROOK,-5,-15),
-            new HandLocation(Piece.BISHOP, -5,70),
-            new HandLocation(Piece.GOLD,-5,150),
-            new HandLocation(Piece.SILVER,-5,220),
-            new HandLocation(Piece.KNIGHT,-5,290),
-            new HandLocation(Piece.LANCE, -5,360),
-            new HandLocation(Piece.PAWN, -5,440),
+            new HandLocation(Piece.ROOK,-5,0),
+            new HandLocation(Piece.BISHOP, -5,95),
+            new HandLocation(Piece.GOLD,-5,187),
+            new HandLocation(Piece.SILVER,-5,279),
+            new HandLocation(Piece.KNIGHT,-5,369),
+            new HandLocation(Piece.LANCE, -5,459),
+            new HandLocation(Piece.PAWN, -5,549),
         };
 
         /// <summary>
-        /// 駒台の画面上の位置
+        /// 駒台の画面上の位置(通常の駒台)
         /// </summary>
         private static readonly Point[] hand_table_pos1 =
         {
@@ -79,11 +79,11 @@ namespace MyShogi.View.Win2D
         };
 
         /// <summary>
-        /// 駒台の画面上の位置
+        /// 駒台の画面上の位置(細い駒台)
         /// </summary>
         private static readonly Point[] hand_table_pos2 =
         {
-            new Point(1431,488), // 先手の駒台
+            new Point(1431,368), // 先手の駒台
             new Point( 404 ,32), // 後手の駒台
         };
 
@@ -93,7 +93,7 @@ namespace MyShogi.View.Win2D
         private static int hand_table_width1 = 260;
         private static int hand_table_width2 = 95;
         private static int hand_table_height1 = 388;
-        private static int hand_table_height2 = 543;
+        private static int hand_table_height2 = 663;
 
         /// <summary>
         /// ネームプレートの座標

@@ -46,7 +46,8 @@ namespace MyShogi.App
                 config.AddPropertyChangedHandler("KomadaiImageVersion", imageManager.UpdateBoardImage);
 
                 config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
-
+                config.AddPropertyChangedHandler("PieceAttackImageVersion", imageManager.UpdatePieceAttackImage);
+                
                 config.AddPropertyChangedHandler("LastMoveFromColorType", imageManager.UpdatePieceMoveImage);
                 config.AddPropertyChangedHandler("LastMoveToColorType", imageManager.UpdatePieceMoveImage);
                 
@@ -70,6 +71,7 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems );
             config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems );
+            config.AddPropertyChangedHandler("PieceAttackImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("LastMoveFromColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("LastMoveToColorType", mainDialog.UpdateMenuItems);

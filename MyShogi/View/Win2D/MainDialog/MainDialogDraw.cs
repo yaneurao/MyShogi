@@ -73,6 +73,10 @@ namespace MyShogi.View.Win2D
             // heightについても上記と同様。
 
             graphics.DrawImage(src.image, dstRect, src.rect, GraphicsUnit.Pixel);
+
+            // 連結スプライトならば続けてそれを描画する。
+            if (src.next != null)
+                DrawSprite(p, src.next);
         }
 
         /// <summary>

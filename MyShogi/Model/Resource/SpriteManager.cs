@@ -38,7 +38,17 @@ namespace MyShogi.Model.Resource
 
             var image = TheApp.app.imageManager.PieceImage.image;
 
-            return new Sprite(image, srcRect);
+            var sprite = new Sprite(image, srcRect);
+
+            // 移動マーカーが必要ならそれを連結スプライトにして返す。
+            if (TheApp.app.config.PieceAttackImageVersion != 0)
+            {
+                var image2 = TheApp.app.imageManager.PieceAttackImage.image;
+                var sprite2 = new Sprite(image2, srcRect);
+                sprite.next = sprite2;
+            }
+
+            return sprite;
         }
 
         /// <summary>
