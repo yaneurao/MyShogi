@@ -234,7 +234,68 @@ namespace MyShogi.View.Win2D
 
                         item_display.DropDownItems.Add(item);
                     }
-                    
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "駒を掴んだ時の移動元";
+
+                        var item0 = new ToolStripMenuItem();
+                        item0.Text = "なし";
+                        item0.Checked = config.PickedMoveFromColorType == 0;
+                        item0.Click += (sender, e) => { config.PickedMoveFromColorType = 0; };
+                        item.DropDownItems.Add(item0);
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "黄色";
+                        item1.Checked = config.PickedMoveFromColorType == 1;
+                        item1.Click += (sender, e) => { config.PickedMoveFromColorType = 1; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "青色";
+                        item2.Checked = TheApp.app.config.PickedMoveFromColorType == 2;
+                        item2.Click += (sender, e) => { config.PickedMoveFromColorType = 2; };
+                        item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "緑色";
+                        item3.Checked = TheApp.app.config.PickedMoveFromColorType == 3;
+                        item3.Click += (sender, e) => { config.PickedMoveFromColorType = 3; };
+                        item.DropDownItems.Add(item3);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "駒を掴んだ時の移動出来ない升";
+
+                        var item0 = new ToolStripMenuItem();
+                        item0.Text = "何もしない";
+                        item0.Checked = config.PickedMoveToColorType == 0;
+                        item0.Click += (sender, e) => { config.PickedMoveToColorType = 0; };
+                        item.DropDownItems.Add(item0);
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "移動できない升を少し暗くする";
+                        item1.Checked = config.PickedMoveToColorType == 1;
+                        item1.Click += (sender, e) => { config.PickedMoveToColorType = 1; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "移動できない升を暗くする";
+                        item2.Checked = TheApp.app.config.PickedMoveToColorType == 2;
+                        item2.Click += (sender, e) => { config.PickedMoveToColorType = 2; };
+                        item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "移動できない升をかなり暗くする";
+                        item3.Checked = TheApp.app.config.PickedMoveToColorType == 3;
+                        item3.Click += (sender, e) => { config.PickedMoveToColorType = 3; };
+                        item.DropDownItems.Add(item3);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
                     // 駒の移動方向
                     {
                         var item = new ToolStripMenuItem();

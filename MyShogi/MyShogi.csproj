@@ -75,6 +75,7 @@
     <Compile Include="Model\Resource\ImageConverter.cs" />
     <Compile Include="Model\Resource\ImageLoader.cs" />
     <Compile Include="Model\Resource\ImageManager.cs" />
+    <Compile Include="Model\Resource\PieceMoveEffect.cs" />
     <Compile Include="Model\Resource\Sprite.cs" />
     <Compile Include="Model\Resource\SpriteManager.cs" />
     <Compile Include="Model\Shogi\Core\SquareHand.cs" />

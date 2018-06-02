@@ -108,15 +108,15 @@ namespace MyShogi.Model.Resource
 
             // 左からn番目をcで塗りつぶす
             // Graphics.DrawImageだとαが合成されてしまい、思っている色で塗りつぶされない
-            void Fill(int n , Color c)
+            void Fill(PieceMoveEffect n , Color c)
             {
                 for (int j = 0; j < y; ++j)
                     for (int i = 0; i < x; ++i)
-                        bmp.SetPixel(i + n * x ,j, c);
+                        bmp.SetPixel(i + (int) n * x ,j, c);
                 // SetPixel()遅いけど、そんなに大きな領域ではないし、リアルタイムでもないのでまあいいや。
             }
 
-            // 番号に応じた色を返す
+            // 最終手の移動元、移動先で用いるエフェクトの番号に応じた色を返す
             Color ColorOf(int type)
             {
                 Color c;
@@ -131,12 +131,47 @@ namespace MyShogi.Model.Resource
                 return c;
             }
 
+            // 駒を掴んだ時の移動元で用いるエフェクトの番号に応じた色を返す
+            Color ColorOf2(int type)
+            {
+                Color c;
+                switch (type)
+                {
+                    case 0: c = Color.FromArgb(0, 0, 0, 0); break;
+                    case 1: c = Color.FromArgb((int)(255 * 0.80), 0xff, 0xef, 0x80); break;
+                    case 2: c = Color.FromArgb((int)(255 * 0.80), 0x81, 0xa9, 0xf1); break;
+                    case 3: c = Color.FromArgb((int)(255 * 0.80), 0xab, 0xde, 0x73); break;
+                    default: c = Color.FromArgb(0, 0, 0, 0); break;
+                }
+                return c;
+            }
+
+            // 駒を掴んだ時の移動先(以外)で用いるエフェクトの番号に応じた色を返す
+            Color ColorOf3(int type)
+            {
+                Color c;
+                switch (type)
+                {
+                    case 0: c = Color.FromArgb(0, 0, 0, 0); break;
+                    case 1: c = Color.FromArgb((int)(255 * 0.20),0x80,0x80,  0x40); break;
+                    case 2: c = Color.FromArgb((int)(255 * 0.20),0x40, 0x40, 0x20); break;
+                    case 3: c = Color.FromArgb((int)(255 * 0.20),0x20, 0x0,  0x10); break;
+                    default: c = Color.FromArgb(0, 0, 0, 0); break;
+                }
+                return c;
+            }
 
             // 最終手の移動先の升の背景
-            Fill(0, ColorOf(config.LastMoveToColorType));
+            Fill(PieceMoveEffect.To   , ColorOf(config.LastMoveToColorType));
 
             // 最終手の移動元の升の背景
-            Fill(1, ColorOf(config.LastMoveFromColorType));
+            Fill(PieceMoveEffect.From , ColorOf(config.LastMoveFromColorType));
+
+            // 最終手の移動元の升の背景
+            Fill(PieceMoveEffect.PickedFrom, ColorOf2(config.PickedMoveFromColorType));
+
+            // 最終手の移動先(以外)の升の背景
+            Fill(PieceMoveEffect.PickedTo, ColorOf3(config.PickedMoveToColorType));
 
             // 確保したBitmapをImageLoaderの管理下に置く。
             PieceMoveImage.SetBitmap(bmp);

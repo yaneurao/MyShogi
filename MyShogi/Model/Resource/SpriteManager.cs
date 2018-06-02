@@ -71,8 +71,26 @@ namespace MyShogi.Model.Resource
         /// </summary>
         /// <param name="pc"></param>
         /// <returns></returns>
-        public static Sprite PieceMove(int pc)
+        public static Sprite PieceMove(PieceMoveEffect pc)
         {
+            // 効果を「オフ」にしているならnull spriteを返してやる。
+            var config = TheApp.app.config;
+            switch(pc)
+            {
+                case PieceMoveEffect.To:
+                    if (config.LastMoveToColorType == 0) return null;
+                    break;
+                case PieceMoveEffect.From:
+                    if (config.LastMoveFromColorType == 0) return null;
+                    break;
+                case PieceMoveEffect.PickedFrom:
+                    if (config.PickedMoveFromColorType == 0) return null;
+                    break;
+                case PieceMoveEffect.PickedTo:
+                    if (config.PickedMoveToColorType == 0) return null;
+                    break;
+            }
+
             var srcRect = new Rectangle(
                     ((int)pc % 8) * piece_img_width,
                     ((int)pc / 8) * piece_img_height,

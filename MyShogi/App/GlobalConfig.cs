@@ -26,6 +26,8 @@ namespace MyShogi.App
             BoardNumberImageVersion = 1;
             LastMoveFromColorType = 0;
             LastMoveToColorType = 1;
+            PickedMoveFromColorType = 1;
+            PickedMoveToColorType = 1;
             PromotePieceColorType = 0;
         }
 
@@ -211,6 +213,31 @@ namespace MyShogi.App
             get { return GetValue<int>("LastMoveToColorType"); }
             set { SetValue<int>("LastMoveToColorType", value); }
         }
-        
+
+        /// <summary>
+        /// 移動させる時の移動元の升に適用するエフェクト(ちょっと明るめ)
+        /// 0 : なし
+        /// 1 : 朱色
+        /// 2 : 青色
+        /// 3 : 緑色
+        /// </summary>
+        public int PickedMoveFromColorType
+        {
+            get { return GetValue<int>("PickedMoveFromColorType"); }
+            set { SetValue<int>("PickedMoveFromColorType", value); }
+        }
+
+        /// <summary>
+        /// 移動させる時の移動先の候補以外の升に適用するエフェクト
+        /// 0 : なし
+        /// 1 : 少し暗い
+        /// 2 : 暗い
+        /// 3 : だいぶ暗い
+        /// </summary>
+        public int PickedMoveToColorType
+        {
+            get { return GetValue<int>("PickedMoveToColorType"); }
+            set { SetValue<int>("PickedMoveToColorType", value); }
+        }
     }
 }

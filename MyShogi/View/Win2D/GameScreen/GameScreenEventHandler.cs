@@ -150,11 +150,21 @@ namespace MyShogi.View.Win2D
             {
                 if (ViewModel.viewState.picked_from != sq)
                 {
-                    // この駒をユーザーが掴んで動かそうとしていることを示す
-                    ViewModel.viewState.picked_from = sq;
+                    var pos = ViewModel.ViewModel.Pos;
+                    var pc = pos.PieceOn((Square)sq);
+                    if (pc != Piece.NO_PIECE /*自分の手番の駒であることも確認すべき　あとで*/)
+                    {
+                        // この駒をユーザーが掴んで動かそうとしていることを示す
+                        ViewModel.viewState.picked_from = sq;
+                        // 簡単に利きを表示する。行き先として自駒がある場所は取り除くが、自殺手などは除外しない。
+                        // そうしておかないと「ユーザーが駒が動かせない、バグだ」をみたいなことを言い出すからである。
+                        // 移動後に王手を回避していないという警告を出すようにしなくてはならない。
+                        ViewModel.viewState.picked_piece_legalmovesto =
+                            Bitboard.EffectsFrom(pc, (Square)sq, pos.Pieces()) & ~pos.Pieces(pc.PieceColor());
 
-                    // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
-                    ViewModel.dirty = true;
+                        // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
+                        ViewModel.dirty = true;
+                    }
                 }
             }
 

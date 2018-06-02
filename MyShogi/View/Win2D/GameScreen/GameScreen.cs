@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Resource;
 using MyShogi.Model.Shogi.Core;
 using ShogiCore = MyShogi.Model.Shogi.Core;
 using SPRITE = MyShogi.Model.Resource.SpriteManager;
@@ -76,17 +77,30 @@ namespace MyShogi.View.Win2D
 
                     // これが最終手の移動元の升であるなら、エフェクトを描画する。
                     if (sq == lastMoveFrom)
-                        DrawSprite(dest, SPRITE.PieceMove(1));
+                        DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.From));
 
                     // これが最終手の移動先の升であるなら、エフェクトを描画する。
                     if (sq == lastMoveTo)
-                        DrawSprite(dest, SPRITE.PieceMove(0));
+                        DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.To));
 
                     // いま持ち上げている駒であるなら、少し持ち上げている感じで描画する
-                    // ただし、一番手前に描画したいので、この駒は一番最後に描画する。
-                    // (なので今回の描画はskipする)
-                    if (sq == (Square)vm.viewState.picked_from)
-                        continue;
+                    var picked_from = vm.viewState.picked_from;
+                    if (picked_from != SquareHand.NB)
+                    {
+                        // ただし、一番手前に描画したいので、この駒は一番最後に描画する。
+                        // (なので今回の描画はskipする)
+                        if (sq == (Square)picked_from)
+                        {
+                            // 移動元の升に適用されるエフェクトを描画する。
+                            DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
+                            continue;
+                        } else
+                        {
+                            // 駒を持ち上げてはいるので移動先の候補以外の升を暗めに描画する。
+                            if (!vm.viewState.picked_piece_legalmovesto.IsSet(sq))
+                                DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedTo));
+                        }
+                    }
 
                     // 盤面反転モードなら、駒を先後入れ替えて描画する。
                     DrawSprite(dest, SPRITE.Piece(reverse ? pc.Inverse() : pc));
@@ -152,12 +166,15 @@ namespace MyShogi.View.Win2D
                 var sq = vm.viewState.picked_from;
                 if (sq != SquareHand.NB)
                 {
-                    var pc = pos.PieceOn((Square)sq);
-                    var dest = PieceLocation((SquareHand)sq) + new Size(-5,-20);
-                    // ちょっと持ち上げている感じを出すために(-5,-20)する
+                    if (sq.PieceColor() == ShogiCore.Color.NB)
+                    {
+                        var pc = pos.PieceOn((Square)sq);
+                        var dest = PieceLocation((SquareHand)sq) + new Size(-5, -20);
+                        // ちょっと持ち上げている感じを出すために(-5,-20)する
 
-                    // 盤面反転モードなら、駒を先後入れ替えて描画する。
-                    DrawSprite(dest, SPRITE.Piece(reverse ? pc.Inverse() : pc));
+                        // 盤面反転モードなら、駒を先後入れ替えて描画する。
+                        DrawSprite(dest, SPRITE.Piece(reverse ? pc.Inverse() : pc));
+                    }
                 }
             }
 

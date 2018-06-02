@@ -47,6 +47,11 @@ namespace MyShogi.View.Win2D
         public SquareHand picked_to;
 
         /// <summary>
+        /// 掴んでいる駒が行ける升の候補
+        /// </summary>
+        public Bitboard picked_piece_legalmovesto;
+
+        /// <summary>
         /// あと何秒でダイアログが消えるかだとか、状態が遷移するだとか
         /// CheckAlertDialog , RepetitionAlertDialogのときに。
         /// </summary>
