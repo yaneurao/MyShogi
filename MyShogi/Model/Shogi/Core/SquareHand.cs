@@ -56,6 +56,8 @@ namespace MyShogi.Model.Shogi.Core
         /// <summary>
         /// sqの手駒に対して、その駒種を返す
         /// sqは手駒でないといけない。
+        /// 
+        /// 先後の区別はない。Piece.PAWN ～ Piece.GOLDまでの値が返る。
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>

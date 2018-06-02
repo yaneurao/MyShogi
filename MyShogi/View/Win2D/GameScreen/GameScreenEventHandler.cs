@@ -135,6 +135,12 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 指し手生成用のバッファ
+        /// UIスレッドからしか使わない。マウスクリックのときの合法手を表示するために使う。
+        /// </summary>
+        public Move[] moves_buf { get; } = new Move[(int)Move.MAX_MOVES];
+
+        /// <summary>
         /// 盤面がクリックされたときに呼び出されるハンドラ
         /// </summary>
         /// <param name="p"></param>
@@ -148,22 +154,69 @@ namespace MyShogi.View.Win2D
 
             if (sq != SquareHand.NB)
             {
+                // 前回と異なる駒を掴んだ。
                 if (ViewModel.viewState.picked_from != sq)
                 {
                     var pos = ViewModel.ViewModel.Pos;
-                    var pc = pos.PieceOn((Square)sq);
-                    if (pc != Piece.NO_PIECE /*自分の手番の駒であることも確認すべき　あとで*/)
+                    if (sq.PieceColor() == ShogiCore.Color.NB)
                     {
-                        // この駒をユーザーが掴んで動かそうとしていることを示す
-                        ViewModel.viewState.picked_from = sq;
-                        // 簡単に利きを表示する。行き先として自駒がある場所は取り除くが、自殺手などは除外しない。
-                        // そうしておかないと「ユーザーが駒が動かせない、バグだ」をみたいなことを言い出すからである。
-                        // 移動後に王手を回避していないという警告を出すようにしなくてはならない。
-                        ViewModel.viewState.picked_piece_legalmovesto =
-                            Bitboard.EffectsFrom(pc, (Square)sq, pos.Pieces()) & ~pos.Pieces(pc.PieceColor());
+                        // 盤上の駒
+                        var pc = pos.PieceOn((Square)sq);
+                        if (pc != Piece.NO_PIECE && pos.sideToMove == pc.PieceColor())
+                        {
+                            // この駒をユーザーが掴んで動かそうとしていることを示す
+                            ViewModel.viewState.picked_from = sq;
 
-                        // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
-                        ViewModel.dirty = true;
+                            // 簡単に利きを表示する。
+                            // ここで連続王手による千日手などを除外すると
+                            // 「ユーザーが駒が動かせない、バグだ」をみたいなことを言い出しかねない。
+                            // 移動後に連続王手の千日手を回避していないという警告を出すようにしなくてはならない。
+
+                            // 合法手を生成して、そこに含まれるものだけにする。
+                            // この生成、局面が変わったときに1回でいいような気はするが..
+                            // 何回もクリックしまくらないはずなのでまあいいや。
+                            int n = MoveGen.LegalAll(pos, moves_buf, 0);
+
+                            Bitboard bb = Bitboard.ZeroBB();
+                            for(int i=0;i<n;++i)
+                            {
+                                var m = moves_buf[i];
+                                if (!m.IsDrop() && m.From() == (Square)sq)
+                                    bb |= m.To();
+                            }
+
+                            ViewModel.viewState.picked_piece_legalmovesto = bb;
+
+                            // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
+                            ViewModel.dirty = true;
+                        }
+                    } else
+                    {
+                        // 手駒
+                        var pc = sq.ToPiece();
+                        var color = sq.PieceColor();
+                        if (pos.sideToMove == color && pos.Hand(color).Count(pc) >= 1) // この駒を持っていなくてはならない。
+                        {
+                            // この駒をユーザーが掴んで動かそうとしていることを示す
+                            ViewModel.viewState.picked_from = sq;
+
+                            // 駒の打てる先。これは合法手でなければならない。
+                            // 二歩とか打ち歩詰めなどがあるので合法手のみにしておく。
+                            // (打ち歩詰めなので打てませんの警告ダイアログ、用意してないので…)
+
+                            int n = MoveGen.LegalAll(pos, moves_buf, 0);
+
+                            Bitboard bb = Bitboard.ZeroBB();
+                            for (int i = 0; i < n; ++i)
+                            {
+                                var m = moves_buf[i];
+                                if (m.IsDrop() && m.DroppedPiece() == pc)
+                                    bb |= m.To();
+                            }
+
+                            ViewModel.viewState.picked_piece_legalmovesto = bb;
+                            ViewModel.dirty = true;
+                        }
                     }
                 }
             }

@@ -49,6 +49,8 @@ namespace MyShogi.View.Win2D
             var vm = ViewModel;
             // 描画する局面
             var pos = vm.ViewModel.Pos; // MainDialogViewModel
+            // 掴んでいる駒
+            var picked_from = vm.viewState.picked_from;
 
             // 盤面を反転させて描画するかどうか
             var reverse = config.BoardReverse;
@@ -84,7 +86,6 @@ namespace MyShogi.View.Win2D
                         DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.To));
 
                     // いま持ち上げている駒であるなら、少し持ち上げている感じで描画する
-                    var picked_from = vm.viewState.picked_from;
                     if (picked_from != SquareHand.NB)
                     {
                         // ただし、一番手前に描画したいので、この駒は一番最後に描画する。
@@ -132,8 +133,11 @@ namespace MyShogi.View.Win2D
                             // 物理画面で後手側の駒台への描画であるか(駒を180度回転さて描画しないといけない)
                             var is_white_in_display = (c == ShogiCore.Color.WHITE) ^ reverse;
 
+                            // この駒を掴んでいるならすごしずれたところに描画する。
+                            var offset = (picked_from == piece) ? new Size(-5,-20) : new Size(0,0);
+
                             // 駒の描画
-                            DrawSprite(dest, SPRITE.Piece(is_white_in_display ? pc.Inverse() : pc));
+                            DrawSprite(dest + offset, SPRITE.Piece(is_white_in_display ? pc.Inverse() : pc));
 
                             // 数字の描画(枚数が2枚以上のとき)
                             if (count >= 2)

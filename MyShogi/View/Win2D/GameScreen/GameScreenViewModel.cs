@@ -33,7 +33,7 @@ namespace MyShogi.View.Win2D
         /// 駒を持ち上げている状態であるだとか、王手を回避していない警告ダイアログを出すだとか
         /// </summary>
         public GameScreenViewState viewState { get; private set; } = new GameScreenViewState();
-
+        
         /// <summary>
         /// 画面が汚れているか(OnDraw()を呼び出さないといけないか)のフラグ
         /// </summary>
