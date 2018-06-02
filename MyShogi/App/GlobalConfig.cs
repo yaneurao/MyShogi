@@ -27,7 +27,7 @@ namespace MyShogi.App
             LastMoveFromColorType = 0;
             LastMoveToColorType = 1;
             PickedMoveFromColorType = 1;
-            PickedMoveToColorType = 1;
+            PickedMoveToColorType = 2;
             PromotePieceColorType = 0;
         }
 

@@ -153,9 +153,9 @@ namespace MyShogi.Model.Resource
                 switch (type)
                 {
                     case 0: c = Color.FromArgb(0, 0, 0, 0); break;
-                    case 1: c = Color.FromArgb((int)(255 * 0.20),0x80,0x80,  0x40); break;
-                    case 2: c = Color.FromArgb((int)(255 * 0.20),0x40, 0x40, 0x20); break;
-                    case 3: c = Color.FromArgb((int)(255 * 0.20),0x20, 0x0,  0x10); break;
+                    case 1: c = Color.FromArgb((int)(255 * 0.30), (int)(243 * 0.7), (int)(230 * 0.7), (int)(187 * 0.7)); break;
+                    case 2: c = Color.FromArgb((int)(255 * 0.30), (int)(243 * 0.5), (int)(230 * 0.5), (int)(187 * 0.5)); break;
+                    case 3: c = Color.FromArgb((int)(255 * 0.30), (int)(243 * 0.2), (int)(230 * 0.2), (int)(187 * 0.2)); break;
                     default: c = Color.FromArgb(0, 0, 0, 0); break;
                 }
                 return c;
