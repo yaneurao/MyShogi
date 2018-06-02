@@ -654,7 +654,7 @@ namespace MyShogi.Model.Shogi.Core
             int dist(Square sq1, Square sq2)
             {
                 return (!sq1.IsOk() || !sq2.IsOk()) ? int.MaxValue :
-                    Math.Max(Math.Abs(sq1.ToFile() - sq2.ToFile()), Math.Abs(sq1.ToRank() - sq2.ToRank()));
+                    System.Math.Max(System.Math.Abs(sq1.ToFile() - sq2.ToFile()), System.Math.Abs(sq1.ToRank() - sq2.ToRank()));
             }
 
             BetweenBB_ = new Bitboard[785];
@@ -755,7 +755,7 @@ namespace MyShogi.Model.Shogi.Core
                         var dr = sq.ToRank() - r;
                         var df = sq.ToFile() - f;
                         // dr == dfとdr != dfとをnが0,1とで切り替える。
-                        if (Math.Abs(dr) == Math.Abs(df)
+                        if (System.Math.Abs(dr) == System.Math.Abs(df)
                             && ((((int)dr == (int)df) ? 1 : 0) ^ n) != 0)
                             result ^= Util.MakeSquare(f, r);
                     }

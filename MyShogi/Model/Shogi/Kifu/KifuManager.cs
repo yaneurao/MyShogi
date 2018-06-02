@@ -911,12 +911,12 @@ namespace MyShogi.Model.Shogi.Kifu
                 {
                     sb.AppendLine("%ILLEGAL_MOVE");
                     // 現時点の実装としては秒未満切り捨てとして出力。
-                    sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), Math.Truncate(Tree.currentNode.moves[0].thinkingTime.TotalSeconds)).AppendLine();
+                    sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), System.Math.Truncate(Tree.currentNode.moves[0].thinkingTime.TotalSeconds)).AppendLine();
                     break;
                 }
 
                 // 現時点の実装としては秒未満切り捨てとして出力。
-                sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), Math.Truncate(Tree.currentNode.moves[0].thinkingTime.TotalSeconds)).AppendLine();
+                sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), System.Math.Truncate(Tree.currentNode.moves[0].thinkingTime.TotalSeconds)).AppendLine();
 
             }
             return sb.ToString();

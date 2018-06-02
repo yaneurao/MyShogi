@@ -87,10 +87,8 @@ namespace MyShogi.View.Win2D
             }
 #endif
 
-            offset_x = (w - w2) / 2;
-            offset_y = menu_height;
-            scale_y = (double)h / board_img_size.Height;
-            scale_x = scale_y;
+            var scale = (double)h / board_img_size.Height;
+            ViewInstance.AffineMatrix.SetMatrix(scale,scale, (w - w2) / 2 , menu_height);
 
             set_komadai();
         }

@@ -27,7 +27,7 @@ namespace MyShogi.Model.ObjectModel
             {
                 object current;
                 if (!this.properties.TryGetValue(name, out current)
-                    || !Util.GenericEquals(current , value))
+                    || !GenericEquals(current , value))
                 {
                     // 値が異なるときだけ代入して、そのときにイベントが発火する。
                     // 一度目はイベントは発火しない。
@@ -121,6 +121,37 @@ namespace MyShogi.Model.ObjectModel
         /// lockに用いるobject
         /// </summary>
         private object lockObject = new object();
+
+
+        /// <summary>
+        /// オブジェクトをnull値などを考慮しながら比較する。
+        /// </summary>
+        /// <remarks>
+        /// 主にoperator==の実装で使われる。
+        /// 
+        /// ここでしか使わないので別のclassにしてない。
+        /// </remarks>
+        private static bool GenericEquals<T>(T lhs, T rhs)
+        {
+            if (!typeof(T).IsValueType)
+            {
+                // どちらもnullか、同じオブジェクトなら真を返します。
+                if (ReferenceEquals(lhs, rhs))
+                {
+                    return true;
+                }
+
+                // objectとして比較します。比較の仕方を間違えると
+                // 無限ループになるので注意が必要。
+                if (ReferenceEquals(lhs, null) || ReferenceEquals(rhs, null))
+                {
+                    return false;
+                }
+            }
+
+            return lhs.Equals(rhs);
+        }
+
     }
 
 

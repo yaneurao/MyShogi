@@ -52,17 +52,19 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void ResizeKifuControl()
         {
+            var kifu = ViewInstance.kifuControl;
+
             var point = new Point(229, 600);
-            kifuControl1.Location = Affine(point);
+            kifu.Location = Affine(point);
             var size = new Size(265, 423);
-            kifuControl1.Size = Affine(size);
+            kifu.Size = AffineScale(size);
 
             // kifuControl内の文字サイズも変更しないといけない。
             // あとで考える。
 
             // 駒台が縦長のモードのときは、このコントロールは非表示にする。
             // (何か別の方法で描画する)
-            kifuControl1.Visible = TheApp.app.config.KomadaiImageVersion == 1;
+            kifu.Visible = TheApp.app.config.KomadaiImageVersion == 1;
         }
 
         // -- 以下、マウスのクリック、ドラッグ(による駒移動)を検知するためのハンドラ

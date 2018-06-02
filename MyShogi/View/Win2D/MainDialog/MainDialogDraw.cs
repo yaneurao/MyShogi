@@ -13,27 +13,14 @@ namespace MyShogi.View.Win2D
         // -------------------------------------------------------------------------
 
         /// <summary>
-        /// 元画像から画面に描画するときに横・縦方向の縮小率とオフセット値(affine変換の係数)
-        /// Draw()で描画するときに用いる。
-        /// 
-        /// この4つの変数、盤面のN画面対応をするときにはNセット必要…。
-        /// </summary>
-        private double scale_x;
-        private double scale_y;
-        private int offset_x;
-        private int offset_y;
-
-        /// <summary>
-        /// 上の4つの変数の値に基づいてaffine変換を行う
+        /// ViewInstanceのOffsetX,OffsetY,ScaleX,ScaleY
+        /// の値に基づいてaffine変換を行う
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
         private Point Affine(Point p)
         {
-            return new Point(
-            (int)(p.X * scale_x) + offset_x,
-            (int)(p.Y * scale_y) + offset_y
-            );
+            return ViewInstance.AffineMatrix.Affine(p);
         }
 
         /// <summary>
@@ -42,12 +29,14 @@ namespace MyShogi.View.Win2D
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
-        private Size Affine(Size s)
+        private Size AffineScale(Size s)
         {
-            return new Size(
-            (int)(s.Width * scale_x),
-            (int)(s.Height * scale_y)
-            );
+            return ViewInstance.AffineMatrix.AffineScale(s);
+        }
+
+        private Rectangle Affine(Point p,Size s)
+        {
+            return ViewInstance.AffineMatrix.Affine(p,s);
         }
 
         /// <summary>
@@ -57,10 +46,7 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Point InverseAffine(Point p)
         {
-            return new Point(
-                (int)((p.X - offset_x) / scale_x),
-                (int)((p.Y - offset_y) / scale_y)
-                );
+            return ViewInstance.AffineMatrix.InverseAffine(p);
         }
 
         /// <summary>
@@ -84,10 +70,7 @@ namespace MyShogi.View.Win2D
             if (src == null)
                 return;
 
-            var dstRect = new Rectangle( Affine(p), new Size(
-                (int)(src.rect.Width * scale_x),
-                (int)(src.rect.Height * scale_y)
-            ));
+            var dstRect = Affine(p, new Size(src.rect.Width, src.rect.Height));
             // dstRect.Width = 転送先width×scale_xなのだが、等倍なので転送先width == 転送元width
             // heightについても上記と同様。
 
@@ -107,8 +90,9 @@ namespace MyShogi.View.Win2D
         private void DrawString(Point dstPoint, string mes, int font_size)
         {
             // 文字フォントサイズは、scaleの影響を受ける。
+            var scale = ViewInstance.AffineMatrix.Scale.X;
 
-            var size = (int)(font_size * scale_x);
+            var size = (int)(font_size * scale);
             // こんな小さいものは視認できないので描画しなくて良い。
             if (size <= 2)
                 return;

@@ -280,7 +280,7 @@ namespace MyShogi.Model.Shogi.Converter
                     {
                         restCount[p.ToInt()] -= hand[Color.BLACK.ToInt()].Count(p);
                         restCount[p.ToInt()] -= hand[Color.WHITE.ToInt()].Count(p);
-                        hand[Color.BLACK.ToInt()].Add(p, Math.Max(restCount[p.ToInt()], 0));
+                        hand[Color.BLACK.ToInt()].Add(p, System.Math.Max(restCount[p.ToInt()], 0));
                     }
                     continue;
                 }
@@ -297,7 +297,7 @@ namespace MyShogi.Model.Shogi.Converter
                     {
                         restCount[p.ToInt()] -= hand[Color.BLACK.ToInt()].Count(p);
                         restCount[p.ToInt()] -= hand[Color.WHITE.ToInt()].Count(p);
-                        hand[Color.WHITE.ToInt()].Add(p, Math.Max(restCount[p.ToInt()], 0));
+                        hand[Color.WHITE.ToInt()].Add(p, System.Math.Max(restCount[p.ToInt()], 0));
                     }
                     continue;
                 }

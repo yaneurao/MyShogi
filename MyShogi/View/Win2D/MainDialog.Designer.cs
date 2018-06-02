@@ -40,7 +40,6 @@
             this.toolStripButton7 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton8 = new System.Windows.Forms.ToolStripButton();
-            this.kifuControl1 = new MyShogi.View.Win2D.KifuControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -163,19 +162,11 @@
             this.toolStripButton8.ToolTipText = "盤面を反転します。";
             this.toolStripButton8.Click += new System.EventHandler(this.toolStripButton8_Click);
             // 
-            // kifuControl1
-            // 
-            this.kifuControl1.Location = new System.Drawing.Point(115, 103);
-            this.kifuControl1.Name = "kifuControl1";
-            this.kifuControl1.Size = new System.Drawing.Size(150, 150);
-            this.kifuControl1.TabIndex = 1;
-            // 
             // MainDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1034, 529);
-            this.Controls.Add(this.kifuControl1);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -208,6 +199,5 @@
         private System.Windows.Forms.ToolStripButton toolStripButton7;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton toolStripButton8;
-        private KifuControl kifuControl1;
     }
 }

@@ -69,8 +69,9 @@
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
     <Compile Include="Controller\GameController.cs" />
+    <Compile Include="Model\Math\AffineMatrix.cs" />
+    <Compile Include="Model\Math\Vector2D.cs" />
     <Compile Include="Model\ObjectModel\NotifyObject.cs" />
-    <Compile Include="Model\ObjectModel\Util.cs" />
     <Compile Include="Model\Resource\ImageConverter.cs" />
     <Compile Include="Model\Resource\ImageLoader.cs" />
     <Compile Include="Model\Resource\ImageManager.cs" />
@@ -151,6 +152,7 @@
     <Compile Include="View\Win2D\MainDialog\MainDialogMenu.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="View\Win2D\MainDialog\MainDialogViewInstance.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

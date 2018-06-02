@@ -655,7 +655,7 @@ namespace MyShogi.Model.Shogi.Converter
                     var hMatches = hRegex.Matches(line);
                     foreach (Match hMatch in hMatches)
                     {
-                        hand[Color.BLACK.ToInt()].Add(FromKifPieceType(hMatch.Groups[1].Value), Math.Max(FromNum(hMatch.Groups[2].Value), 1));
+                        hand[Color.BLACK.ToInt()].Add(FromKifPieceType(hMatch.Groups[1].Value), System.Math.Max(FromNum(hMatch.Groups[2].Value), 1));
                     }
                     continue;
                 }
@@ -665,7 +665,7 @@ namespace MyShogi.Model.Shogi.Converter
                     var hMatches = hRegex.Matches(line);
                     foreach (Match hMatch in hMatches)
                     {
-                        hand[Color.WHITE.ToInt()].Add(FromKifPieceType(hMatch.Groups[1].Value), Math.Max(FromNum(hMatch.Groups[2].Value), 1));
+                        hand[Color.WHITE.ToInt()].Add(FromKifPieceType(hMatch.Groups[1].Value), System.Math.Max(FromNum(hMatch.Groups[2].Value), 1));
                     }
                     continue;
                 }

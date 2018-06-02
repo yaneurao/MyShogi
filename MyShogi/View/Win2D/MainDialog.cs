@@ -18,6 +18,9 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
+            ViewInstance = new MainDialogViewInstance();
+            ViewInstance.Init(this);
+
             UpdateMenuItems();
 
             FitToScreenSize();
@@ -30,7 +33,17 @@ namespace MyShogi.View.Win2D
         /// このViewに対応するViewModel
         /// このクラスをnewした時にViewModelのインスタンスと関連付ける。
         /// </summary>
-        public MainDialogViewModel ViewModel { get; set; }
+        public MainDialogViewModel ViewModel
+        {
+            get { return ViewInstance.ViewModel; }
+            set { ViewInstance.ViewModel = value; }
+        }
+
+        /// <summary>
+        /// 描画のときに必要となる、Viewに属する情報
+        /// 1つのViewInstanceと1つのViewModelが対応する。
+        /// </summary>
+        public MainDialogViewInstance ViewInstance { get; private set; }
 
         /// <summary>
         /// 対局盤面の描画関係のコード一式
