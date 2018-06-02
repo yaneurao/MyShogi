@@ -24,8 +24,6 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 元画像から画面に描画するときに横・縦方向の縮小率とオフセット値(affine変換の係数)
         /// Draw()で描画するときに用いる。
-        /// 
-        /// 盤面のN画面対応をするときにはNセット必要…。
         /// </summary>
         public AffineMatrix AffineMatrix;
 
@@ -39,5 +37,11 @@ namespace MyShogi.View.Win2D
         /// 棋譜ウィンドウ(埋め込み)
         /// </summary>
         public KifuControl kifuControl;
+
+        /// <summary>
+        /// ユーザー操作に対して、このViewがどういう状態にあるかを表現する変数
+        /// 駒を持ち上げている状態であるだとか、王手を回避していない警告ダイアログを出すだとか
+        /// </summary>
+        public MainDialogViewState viewState;
     }
 }

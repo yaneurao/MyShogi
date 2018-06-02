@@ -1,7 +1,6 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
-using MyShogi.Model.Resource;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.ViewModel;
 using ShogiCore = MyShogi.Model.Shogi.Core;

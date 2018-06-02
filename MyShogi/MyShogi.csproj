@@ -131,10 +131,10 @@
     <Compile Include="View\Win2D\KifuControl.Designer.cs">
       <DependentUpon>KifuControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\MainDialog.cs">
+    <Compile Include="View\Win2D\MainDialog\MainDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\MainDialog.Designer.cs">
+    <Compile Include="View\Win2D\MainDialog\MainDialog.Designer.cs">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\MainDialog\MainDialogConst.cs">
@@ -153,6 +153,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\Win2D\MainDialog\MainDialogViewInstance.cs" />
+    <Compile Include="View\Win2D\MainDialog\MainDialogViewState.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -168,7 +169,7 @@
     <EmbeddedResource Include="View\Win2D\KifuControl.resx">
       <DependentUpon>KifuControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\MainDialog.resx">
+    <EmbeddedResource Include="View\Win2D\MainDialog\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
