@@ -25,6 +25,7 @@ namespace MyShogi.View.Win2D
         public GameScreenViewState()
         {
             state = GameScreenViewStateEnum.Normal;
+            picked_from = picked_to = SquareHand.NB;
         }
 
         /// <summary>

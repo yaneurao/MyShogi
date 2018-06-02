@@ -45,7 +45,9 @@ namespace MyShogi.View.Win2D
 
             var app = TheApp.app;
             var config = app.config;
-            var vm = ViewModel.ViewModel; // MainDialogViewModel
+            var vm = ViewModel;
+            // 描画する局面
+            var pos = vm.ViewModel.Pos; // MainDialogViewModel
 
             // 盤面を反転させて描画するかどうか
             var reverse = config.BoardReverse;
@@ -60,9 +62,6 @@ namespace MyShogi.View.Win2D
             {
                 // -- 盤上の駒
 
-                // 描画する局面
-                var pos = ViewModel.ViewModel.Pos;
-
                 // 最終手(初期盤面などでは存在せず、lastMove == Move.NONEであることに注意)
                 var lastMove = pos.State().lastMove;
                 // 最終手の移動元の升
@@ -75,13 +74,19 @@ namespace MyShogi.View.Win2D
                     var pc = pos.PieceOn(sq);
                     var dest = PieceLocation((SquareHand)sq);
 
-                    // これが最終手の移動元の升であるなら、エフェクトを描画する必要がある。
+                    // これが最終手の移動元の升であるなら、エフェクトを描画する。
                     if (sq == lastMoveFrom)
                         DrawSprite(dest, SPRITE.PieceMove(1));
 
-                    // これが最終手の移動先の升であるなら、エフェクトを描画する必要がある。
+                    // これが最終手の移動先の升であるなら、エフェクトを描画する。
                     if (sq == lastMoveTo)
                         DrawSprite(dest, SPRITE.PieceMove(0));
+
+                    // いま持ち上げている駒であるなら、少し持ち上げている感じで描画する
+                    // ただし、一番手前に描画したいので、この駒は一番最後に描画する。
+                    // (なので今回の描画はskipする)
+                    if (sq == (Square)vm.viewState.picked_from)
+                        continue;
 
                     // 盤面反転モードなら、駒を先後入れ替えて描画する。
                     DrawSprite(dest, SPRITE.Piece(reverse ? pc.Inverse() : pc));
@@ -137,11 +142,27 @@ namespace MyShogi.View.Win2D
                 // 氏名の描画は通常状態の駒台表示の場合のみ
                 if (config.KomadaiImageVersion == 1)
                 {
-                    DrawString(name_plate[reverse ? 1 : 0], vm.Player1Name, 28);
-                    DrawString(name_plate[reverse ? 0 : 1], vm.Player2Name, 28);
+                    DrawString(name_plate[reverse ? 1 : 0], vm.ViewModel.Player1Name, 28);
+                    DrawString(name_plate[reverse ? 0 : 1], vm.ViewModel.Player2Name, 28);
                 }
             }
 
+            // -- 持ち上げている駒があるなら、一番最後に描画する。
+            {
+                var sq = vm.viewState.picked_from;
+                if (sq != SquareHand.NB)
+                {
+                    var pc = pos.PieceOn((Square)sq);
+                    var dest = PieceLocation((SquareHand)sq) + new Size(-5,-20);
+                    // ちょっと持ち上げている感じを出すために(-5,-20)する
+
+                    // 盤面反転モードなら、駒を先後入れ替えて描画する。
+                    DrawSprite(dest, SPRITE.Piece(reverse ? pc.Inverse() : pc));
+                }
+            }
+
+            // 描画が完了したのでDirtyフラグを戻しておく。
+            ViewModel.dirty = false;
         }
 
     }

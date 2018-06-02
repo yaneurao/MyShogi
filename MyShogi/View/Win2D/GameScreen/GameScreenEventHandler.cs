@@ -2,6 +2,7 @@
 using ShogiCore = MyShogi.Model.Shogi.Core;
 using MyShogi.App;
 using MyShogi.Model.Shogi.Core;
+using System;
 
 namespace MyShogi.View.Win2D
 {
@@ -125,30 +126,70 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 画面が汚れているかどうかのフラグ。
+        /// これを定期的に監視して、trueになっていれば、親からOnDraw()を呼び出してもらうものとする。
+        /// </summary>
+        public bool Dirty
+        {
+            get { return ViewModel.dirty; }
+        }
+
+        /// <summary>
         /// 盤面がクリックされたときに呼び出されるハンドラ
-        /// 座標系は、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)になっている。
         /// </summary>
         /// <param name="p"></param>
-        private void BoardClick(Point p)
+        public void OnClick(Point p)
         {
+            /// 座標系を、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)にする。
+            p = ViewModel.AffineMatrix.InverseAffine(p);
+
+            // 盤面(手駒を含む)のどこの升がクリックされたのかを調べる
             SquareHand sq = BoardAxisToSquare(p);
+
+            if (sq != SquareHand.NB)
+            {
+                if (ViewModel.viewState.picked_from != sq)
+                {
+                    // この駒をユーザーが掴んで動かそうとしていることを示す
+                    ViewModel.viewState.picked_from = sq;
+
+                    // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
+                    ViewModel.dirty = true;
+                }
+            }
+
+            // デバッグ用にクリックされた升の名前を出力する。
+            //Console.WriteLine(sq.Pretty());
         }
 
         /// <summary>
         /// 盤面がドラッグされたときに呼び出されるハンドラ
-        /// 座標系は、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)になっている。
         /// </summary>
         /// <param name="p1">ドラッグ開始点</param>
         /// <param name="p2">ドラッグ終了点</param>
-        private void BoardDrag(Point p1, Point p2)
+        public void OnDrag(Point p1, Point p2)
         {
+            /// 座標系を、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)にする。
+            p1 = ViewModel.AffineMatrix.InverseAffine(p1);
+            p2 = ViewModel.AffineMatrix.InverseAffine(p2);
+
+            // 盤面(手駒を含む)のどこの升からどこの升にドラッグされたのかを調べる
             SquareHand sq1 = BoardAxisToSquare(p1);
             SquareHand sq2 = BoardAxisToSquare(p2);
 
+            // 同じ升がクリックされていれば、これはOnClick()として処理してやる。
+            if (sq1 == sq2 && sq1 != SquareHand.NB)
+            {
+                OnClick(p1);
+                return;
+            }
+
+            // デバッグ用にドラッグされた升の名前を出力する。
+            //Console.WriteLine(sq1.Pretty() + '→' + sq2.Pretty());
         }
 
         /// <summary>
-        /// 盤面座標系から、それを表現するSquareに変換する。
+        /// 盤面座標系から、それを表現するSquareHand型に変換する。
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
@@ -160,11 +201,17 @@ namespace MyShogi.View.Win2D
             var board_rect = new Rectangle(board_location.X, board_location.Y, piece_img_size.Width * 9, piece_img_size.Height * 9);
             if (board_rect.Contains(p))
             {
-                var sq = (Square)(((p.X - board_location.X) / piece_img_size.Width) * 9 + ((p.Y - board_location.Y) / piece_img_size.Height));
-                if (config.BoardReverse)
-                    sq = sq.Inv();
+                // 筋と段
+                var f = (File)(8 - (p.X - board_location.X) / piece_img_size.Width);
+                var r = (Rank)((p.Y - board_location.Y) / piece_img_size.Height);
+                if (File.ZERO <= f && f < File.NB && Rank.ZERO <= r && r < Rank.NB)
+                {
+                    var sq = Util.MakeSquare(f, r);
+                    if (config.BoardReverse)
+                        sq = sq.Inv();
 
-                return (SquareHand)sq;
+                    return (SquareHand)sq;
+                }
             }
             else
             {

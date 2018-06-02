@@ -1,6 +1,5 @@
-﻿using MyShogi.ViewModel;
-using MyShogi.Model.Math;
-using System.Windows.Forms;
+﻿using MyShogi.Model.Math;
+using MyShogi.ViewModel;
 
 namespace MyShogi.View.Win2D
 {
@@ -33,6 +32,11 @@ namespace MyShogi.View.Win2D
         /// ユーザー操作に対して、このViewがどういう状態にあるかを表現する変数
         /// 駒を持ち上げている状態であるだとか、王手を回避していない警告ダイアログを出すだとか
         /// </summary>
-        public GameScreenViewState viewState;
+        public GameScreenViewState viewState { get; private set; } = new GameScreenViewState();
+
+        /// <summary>
+        /// 画面が汚れているか(OnDraw()を呼び出さないといけないか)のフラグ
+        /// </summary>
+        public bool dirty { get; set; }
     }
 }
