@@ -1,8 +1,6 @@
 ﻿
 ToDo
 
-- 指し手の選択機能をMainDialogに追加する
-
 - KifuManager
 	- KifuManagerのCSA形式の読み込みのサポート
 	- KifuManagerのKIF形式のサポート
@@ -10,7 +8,55 @@ ToDo
 		- Mizarさんに依頼中
 
 
+
+■　2018/06/03
+
+
+- MainDialogViewState.cs追加。
+	- ユーザーの操作に対して状態管理を行う必要があるので。
+	- MainDialog.csもWin2D/MainDialog配下に移動
+	- MainDialogViewState.cs追加
+	- MainDialogViewInstanceにMainDialogViewState追加。
+
+
+- MainDialogで複数対局画面を描画するときに必要なものを分離
+- ObjectModel/Util.cs削除
+- Model/Math作成。
+	- AffineMatrix.cs追加。
+	- Vector2D.cs追加
+- System.Mathを参照していたところ修正。
+- MainDialog.KifuControlをMainDialogのViewInstanceに移動。
+
+
+■　2018/06/02
+
+
+- MainDialogのコード整理
+	- width,heightはSizeを使って書き換える。
+	- Piece.Inverse()追加
+- BoardReverse、やはりGlobalConfigにも用意する。Viewの個別設定は別途必要。
+- SquareHandにToSquareHand()追加。
+
+
+- 指し手の選択機能をMainDialogに追加する作業開始
+	- MainDialogViewModelにCanMoveなど追加。
+		- MainDialogのClickハンドラでこのpropertyを見に行くように
+	- MainDialogにAffine()の逆変換であるInverseAffine()追加
+	- MainDialogにマウスハンドラ追加
+		- ドラッグ、クリックを自前で判定
+	- Model.Shogi.CoreにSquareHand追加。
+	- BoardReverseをMainDialogViewModelに移動
+
+
+- aboutダイアログのhtmlで文字フォントを指定した。
+	- これで、複数の環境でうまく表示できることを確認。
+	
+
 ■　2018/06/01
+
+
+- aboutダイアログのhtml、centeringなど。
+	- もう少し調整が必要な模様…。
 
 
 - readme.mdに最新の作業状況などを反映。
