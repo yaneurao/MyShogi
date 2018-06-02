@@ -27,7 +27,6 @@ namespace MyShogi.App
             LastMoveFromColorType = 0;
             LastMoveToColorType = 1;
             PromotePieceColorType = 0;
-            BoardReverse = false;
         }
 
         /// <summary>
@@ -202,13 +201,5 @@ namespace MyShogi.App
             set { SetValue<int>("LastMoveToColorType", value); }
         }
         
-        /// <summary>
-        /// 盤面反転(これはGlobalな設定)
-        /// </summary>
-        public bool BoardReverse
-        {
-            get { return GetValue<bool>("BoardReverse"); }
-            set { SetValue<bool>("BoardReverse", value); }
-        }
     }
 }

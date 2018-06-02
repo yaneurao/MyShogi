@@ -1,15 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Text;
-using MyShogi.Controller;
+﻿using MyShogi.Controller;
+using MyShogi.Model.ObjectModel;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Kifu;
+using System.Collections.Generic;
 
 namespace MyShogi.ViewModel
 {
     /// <summary>
     /// MainDialogを表示するときに必要な情報を保持しているクラス
     /// </summary>
-    public class MainDialogViewModel
+    public class MainDialogViewModel : NotifyObject
     {
         public MainDialogViewModel()
         {
@@ -17,7 +16,7 @@ namespace MyShogi.ViewModel
             // Pos.InitBoard(BoardType.NoHandicap);
 
             // 指し手生成祭りの局面
-//            Pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
+            //            Pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
 
             // 手駒が1種ずつあある局面
             Pos.SetSfen("l6n1/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GSG/R8/LN5KL w rbgsnl5p 1");
@@ -36,6 +35,11 @@ namespace MyShogi.ViewModel
 
             Pos = pos;
 #endif
+
+            // 合法手を設定しておいてやる。
+            LegalMoves = new Move[(int)Move.MAX_MOVES];
+            LegalMovesLength = MoveGen.LegalAll(Pos, LegalMoves, 0);
+            CanMove = true;
         }
 
         /// <summary>
@@ -61,6 +65,9 @@ namespace MyShogi.ViewModel
         /// </summary>
         public List<GameController> VisibleGames { get; private set; } = new List<GameController>();
 
+        // -- 以下、盤面関連の情報
+        // あとで書き直す
+
         /// <summary>
         /// 現在activeなゲーム。対局棋譜ウィンドゥは、singletonであることを想定しているので
         /// activeなゲームに関する情報しか表示できない。なので、どのGameがActiveであるかを選択できるようになっている。
@@ -73,11 +80,40 @@ namespace MyShogi.ViewModel
         /// </summary>
         public Position Pos { get; private set; } = new Position();
 
+
         /// <summary>
-        /// 対局者氏名。あとで書き直す。
+        /// 盤面反転
+        /// 
+        /// あとで書き直す
+        /// </summary>
+        public bool BoardReverse
+        {
+            get { return GetValue<bool>("BoardReverse"); }
+            set { SetValue<bool>("BoardReverse", value); }
+        }
+
+
+        /// <summary>
+        /// 対局者氏名。
+        /// 
+        /// あとで書き直す。
         /// </summary>
         public string Player1Name { get; private set; } = "ワイ";
         public string Player2Name { get; private set; } = "あんた";
+
+        /// <summary>
+        /// いまユーザーの手番で、ユーザーはマウス操作によって駒を動かせるのか？
+        /// 
+        /// デバッグ用。あとで書き直す。
+        /// </summary>
+        /// <returns></returns>
+        public bool CanMove { get; private set;}
+
+        /// <summary>
+        /// この局面の合法手。CanMoveがtrueになるときに設定される。
+        /// </summary>
+        public Move[] LegalMoves { get; private set; }
+        public int LegalMovesLength { get; private set; }
 
     }
 }

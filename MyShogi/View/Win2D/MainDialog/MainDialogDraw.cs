@@ -15,6 +15,8 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 元画像から画面に描画するときに横・縦方向の縮小率とオフセット値(affine変換の係数)
         /// Draw()で描画するときに用いる。
+        /// 
+        /// この4つの変数、盤面のN画面対応をするときにはNセット必要…。
         /// </summary>
         private double scale_x;
         private double scale_y;
@@ -46,6 +48,19 @@ namespace MyShogi.View.Win2D
             (int)(s.Width * scale_x),
             (int)(s.Height * scale_y)
             );
+        }
+
+        /// <summary>
+        /// 上記のAffine()の逆変換
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        private Point InverseAffine(Point p)
+        {
+            return new Point(
+                (int)((p.X - offset_x) / scale_x),
+                (int)((p.Y - offset_y) / scale_y)
+                );
         }
 
         /// <summary>

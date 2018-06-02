@@ -39,14 +39,16 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void MainDialog_Paint(object sender, PaintEventArgs e)
         {
-            // ここに盤面を描画するコードを色々書く。(あとで)
+            // 将来的には複数viewに対応させる。
+            // ここではDrawSprite()とDrawString()だけで描画を完結させてあるので複数Viewへの対応は(描画だけなら)容易。
 
             var app = TheApp.app;
             var config = app.config;
             this.graphics = e.Graphics; // DrawSprite(),DrawString()のために必要
             var vm = ViewModel;
+
             // 盤面を反転させて描画するかどうか
-            var reverse = config.BoardReverse;
+            var reverse = vm.BoardReverse;
 
             // -- 盤面の描画
             {
@@ -175,6 +177,58 @@ namespace MyShogi.View.Win2D
                 }
             }
 
+        }
+
+        /// <summary>
+        /// 盤面がクリックされたときに呼び出されるハンドラ
+        /// 座標系は、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)になっている。
+        /// </summary>
+        /// <param name="p"></param>
+        private void BoardClick(Point p)
+        {
+            SquareHand sq = BoardAxisToSquare(p);
+        }
+
+        /// <summary>
+        /// 盤面がドラッグされたときに呼び出されるハンドラ
+        /// 座標系は、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)になっている。
+        /// </summary>
+        /// <param name="p1">ドラッグ開始点</param>
+        /// <param name="p2">ドラッグ終了点</param>
+        private void BoardDrag(Point p1,Point p2)
+        {
+            SquareHand sq1 = BoardAxisToSquare(p1);
+            SquareHand sq2 = BoardAxisToSquare(p2);
+
+        }
+
+        /// <summary>
+        /// 盤面座標系から、それを表現するSquareに変換する。
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        SquareHand BoardAxisToSquare(Point p)
+        {
+            SquareHand sq = SquareHand.NB;
+
+            // 盤上の升かどうかの判定
+            var board_rect = new Rectangle(board_left , board_top  , piece_img_width  * 9 ,  piece_img_height * 9);
+            if (board_rect.Contains(p))
+            {
+                var sq2 = (Square)(((p.X - board_left) / piece_img_width) * 9 + ((p.Y - board_top) / piece_img_height));
+                if (ViewModel.BoardReverse)
+                    sq2 = sq2.Inv();
+
+                sq = (SquareHand)sq2;
+            } else
+            {
+                // 手駒かどうかの判定
+                // 細長駒台があるのでわりと面倒。何も考えずに描画位置で判定する。
+
+
+            }
+
+            return sq;
         }
 
     }

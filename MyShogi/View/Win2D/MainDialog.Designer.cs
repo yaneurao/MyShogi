@@ -184,6 +184,9 @@
             this.Text = "MyShogi";
             this.SizeChanged += new System.EventHandler(this.MainDialog_SizeChanged);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainDialog_Paint);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainDialog_MouseDown);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainDialog_MouseMove);
+            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainDialog_MouseUp);
             this.Resize += new System.EventHandler(this.MainDialog_Resize);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
