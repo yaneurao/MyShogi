@@ -5,9 +5,9 @@ using MyShogi.Model.Shogi.Core;
 namespace MyShogi.View.Win2D
 {
     /// <summary>
-    /// MainDialogで用いる、盤面の描画位置に関する各種定数
+    /// 盤面の描画位置に関する各種定数
     /// </summary>
-    public partial class MainDialog
+    public partial class GameScreen
     {
         // -- 各種定数
 

@@ -52,19 +52,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void ResizeKifuControl()
         {
-            var kifu = ViewInstance.kifuControl;
-
-            var point = new Point(229, 600);
-            kifu.Location = Affine(point);
-            var size = new Size(265, 423);
-            kifu.Size = AffineScale(size);
-
-            // kifuControl内の文字サイズも変更しないといけない。
-            // あとで考える。
-
-            // 駒台が縦長のモードのときは、このコントロールは非表示にする。
-            // (何か別の方法で描画する)
-            kifu.Visible = TheApp.app.config.KomadaiImageVersion == 1;
+            gameScreen.ResizeKifuControl();
         }
 
         // -- 以下、マウスのクリック、ドラッグ(による駒移動)を検知するためのハンドラ
@@ -72,11 +60,12 @@ namespace MyShogi.View.Win2D
 
         private void MainDialog_MouseDown(object sender, MouseEventArgs e)
         {
-            mouseLastDown = InverseAffine(e.Location);
+            //mouseLastDown = InverseAffine(e.Location);
         }
 
         private void MainDialog_MouseUp(object sender, MouseEventArgs e)
         {
+#if false
             // affine変換(逆変換)して、盤面座標系にして渡してやる。
             var p = InverseAffine(e.Location);
             
@@ -86,6 +75,7 @@ namespace MyShogi.View.Win2D
             else
                 BoardDrag(mouseLastDown, p);
             mouseLastDown = new Point(-1, -1); // また意味のない地点を指すようにしておく
+#endif
         }
 
         private void MainDialog_MouseMove(object sender, MouseEventArgs e)

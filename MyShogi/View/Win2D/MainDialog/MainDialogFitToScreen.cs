@@ -1,6 +1,4 @@
-﻿using MyShogi.App;
-using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace MyShogi.View.Win2D
 {
@@ -51,7 +49,7 @@ namespace MyShogi.View.Win2D
             }
             ClientSize = new Size(w, h + menu_height);
 
-            set_komadai();
+            //set_komadai();
         }
 
         /// <summary>
@@ -59,51 +57,14 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void FitToClientSize()
         {
-            int w = ClientSize.Width;
-            int h = ClientSize.Height - menu_height;
+            var screenSize = new Rectangle(
+                0, menu_height,
+                ClientSize.Width,
+                ClientSize.Height - menu_height
+                );
 
-            // 縦(h)を基準に横方向のクリップ位置を決める
-            // 1920 * 1080が望まれる比率
-            int w2 = h * 1920 / 1080;
-
-            // ちらつかずにウインドウのaspect ratioを保つのは.NET Frameworkの範疇では不可能。
-            // ClientSizeをResizeイベント中に変更するのは安全ではない。
-            // cf. 
-            //   https://qiita.com/yu_ka1984/items/b4a3ce9ed7750bd67b86
-            // →　あきらめる
-
-#if false
-            // このコード、有効にするとハングする。
-            double ratio = (double)h / w;
-            if (ratio < 0.563)
-            {
-                w = (int)(h / 0.563);
-                ClientSize = new Size(w, h + menu_height);
-            }
-            else if (ratio > 0.726)
-            {
-                w = (int)(h / 0.726);
-                ClientSize = new Size(w, h + menu_height);
-            }
-#endif
-
-            var scale = (double)h / board_img_size.Height;
-            ViewInstance.AffineMatrix.SetMatrix(scale,scale, (w - w2) / 2 , menu_height);
-
-            set_komadai();
+            gameScreen.FitToClientSize(screenSize);
         }
 
-        /// <summary>
-        ///  縦長の画面なら駒台を縦長にする。
-        /// </summary>
-        private void set_komadai()
-        {
-            int h = ClientSize.Height - menu_height;
-            int w = ClientSize.Width;
-            double ratio = (double)w / h;
-            //Console.WriteLine(ratio);
-
-            TheApp.app.config.KomadaiImageVersion = (ratio < 1.36) ? 2 : 1;
-        }
     }
 }

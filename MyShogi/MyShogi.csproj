@@ -125,6 +125,8 @@
     <Compile Include="View\Win2D\AboutYaneuraOu.Designer.cs">
       <DependentUpon>AboutYaneuraOu.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\GameScreen\GameScreen.cs" />
+    <Compile Include="View\Win2D\GameScreen\GameScreenEventHandler.cs" />
     <Compile Include="View\Win2D\KifuControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -137,12 +139,8 @@
     <Compile Include="View\Win2D\MainDialog\MainDialog.Designer.cs">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\MainDialog\MainDialogConst.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="View\Win2D\MainDialog\MainDialogDraw.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="View\Win2D\GameScreen\GameScreenConst.cs" />
+    <Compile Include="View\Win2D\GameScreen\GameScreenDraw.cs" />
     <Compile Include="View\Win2D\MainDialog\MainDialogEventHandler.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -152,8 +150,8 @@
     <Compile Include="View\Win2D\MainDialog\MainDialogMenu.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\MainDialog\MainDialogViewInstance.cs" />
-    <Compile Include="View\Win2D\MainDialog\MainDialogViewState.cs" />
+    <Compile Include="View\Win2D\GameScreen\GameScreenViewModel.cs" />
+    <Compile Include="View\Win2D\GameScreen\GameScreenViewState.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

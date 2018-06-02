@@ -6,7 +6,7 @@ namespace MyShogi.View.Win2D
     /// <summary>
     /// MainDialogでaffine変換して描画する部分のコード
     /// </summary>
-    public partial class MainDialog
+    public partial class GameScreen
     {
         // -------------------------------------------------------------------------
         //  affine変換してのスクリーンへの描画
@@ -20,7 +20,7 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Point Affine(Point p)
         {
-            return ViewInstance.AffineMatrix.Affine(p);
+            return ViewModel.AffineMatrix.Affine(p);
         }
 
         /// <summary>
@@ -31,12 +31,12 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Size AffineScale(Size s)
         {
-            return ViewInstance.AffineMatrix.AffineScale(s);
+            return ViewModel.AffineMatrix.AffineScale(s);
         }
 
         private Rectangle Affine(Point p,Size s)
         {
-            return ViewInstance.AffineMatrix.Affine(p,s);
+            return ViewModel.AffineMatrix.Affine(p,s);
         }
 
         /// <summary>
@@ -46,14 +46,14 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Point InverseAffine(Point p)
         {
-            return ViewInstance.AffineMatrix.InverseAffine(p);
+            return ViewModel.AffineMatrix.InverseAffine(p);
         }
 
         /// <summary>
         /// DrawSprite(),DrawString()に毎回引数で指定するの気持ち悪いので、
         /// この２つの関数を呼び出す前にこの変数にコピーしておくものとする。
         /// </summary>
-        private Graphics graphics;
+        public Graphics graphics;
 
         /// <summary>
         // スプライトを描画するコード
@@ -90,7 +90,7 @@ namespace MyShogi.View.Win2D
         private void DrawString(Point dstPoint, string mes, int font_size)
         {
             // 文字フォントサイズは、scaleの影響を受ける。
-            var scale = ViewInstance.AffineMatrix.Scale.X;
+            var scale = ViewModel.AffineMatrix.Scale.X;
 
             var size = (int)(font_size * scale);
             // こんな小さいものは視認できないので描画しなくて良い。
