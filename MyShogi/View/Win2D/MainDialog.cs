@@ -48,7 +48,7 @@ namespace MyShogi.View.Win2D
             var vm = ViewModel;
 
             // 盤面を反転させて描画するかどうか
-            var reverse = vm.BoardReverse;
+            var reverse = config.BoardReverse;
 
             // -- 盤面の描画
             {
@@ -58,7 +58,9 @@ namespace MyShogi.View.Win2D
 
             // -- 駒の描画
             {
-                // 描画する盤面
+                // -- 盤上の駒
+
+                // 描画する局面
                 var pos = ViewModel.Pos;
 
                 // 最終手(初期盤面などでは存在せず、lastMove == Move.NONEであることに注意)
@@ -71,13 +73,7 @@ namespace MyShogi.View.Win2D
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
                     var pc = pos.PieceOn(sq);
-
-                    // 盤面反転モードなら、盤面を180度回した升から取得
-                    Square sq2 = reverse ? sq.Inv() : sq;
-                    int f = 8 - (int)sq2.ToFile();
-                    int r = (int)sq2.ToRank();
-
-                    var dest = new Point(board_left + piece_img_width * f, board_top + piece_img_height * r);
+                    var dest = PieceLocation((SquareHand)sq);
 
                     // これが最終手の移動元の升であるなら、エフェクトを描画する必要がある。
                     if (sq == lastMoveFrom)
@@ -87,74 +83,42 @@ namespace MyShogi.View.Win2D
                     if (sq == lastMoveTo)
                         DrawSprite(dest , SPRITE.PieceMove(0));
                     
-                    if (pc != Piece.NO_PIECE)
-                    {
-                        // 盤面反転モードなら、駒を先後入れ替える
-                        if (reverse)
-                            pc = pc ^ Piece.WHITE;
-
-                        DrawSprite(dest , SPRITE.Piece(pc));
-                    }
+                    // 盤面反転モードなら、駒を先後入れ替えて描画する。
+                    DrawSprite(dest , SPRITE.Piece(reverse ? pc.Inverse() : pc));
                 }
 
                 // -- 手駒の描画
 
-                // 駒台の種類によって描画場所が異なる
-                var hand_location = config.KomadaiImageVersion == 1 ? hand_location1 : hand_location2;
-                var hand_table = config.KomadaiImageVersion == 1 ? hand_table_pos1 : hand_table_pos2;
-                var hand_table_width = config.KomadaiImageVersion == 1 ? hand_table_width1 : hand_table_width2;
-                var hand_table_height = config.KomadaiImageVersion == 1 ? hand_table_height1 : hand_table_height2;
-
                 for (var c = ShogiCore.Color.ZERO; c < ShogiCore.Color.NB; ++c)
                 {
-                    Hand h = pos.Hand(reverse ? c.Not() : c);
-
-                    // c側の駒台に描画する。
+                    Hand h = pos.Hand(c);
 
                     // 枚数によって位置が自動調整されるの、わりと見づらいので嫌。
                     // 駒種によって位置固定で良いと思う。
-
 
                     //同種の駒が3枚以上になったときに、その駒は1枚だけを表示して、
                     //数字を右肩表示しようと考えていたのですが、例えば、金が2枚、
                     //歩が3枚あるときに、歩だけが数字表示になるのはどうもおかしい気が
                     //するのです。2枚以上は全部数字表示のほうが良いだろう。
 
-                    foreach (var loc in hand_location)
+                    foreach (var pc in hand_piece_list)
                     {
-                        var pc = loc.piece;
-
                         int count = h.Count(pc);
                         if (count != 0)
                         {
-                            // 後手の駒台には後手の駒を描画しなくてはならないのでpcを後手の駒にする。
+                            // この駒の描画されるべき位置を求めるためにSquareHand型に変換する。
+                            var piece = Util.ToSquareHand(c, pc);
+                            var dest = PieceLocation(piece);
 
-                            if (c == ShogiCore.Color.WHITE)
-                                pc = pc | Piece.WHITE;
-
-                            Point dest;
-
-                            if (c == ShogiCore.Color.BLACK)
-                                dest = new Point(
-                                    hand_table[(int)c].X + loc.x,
-                                    hand_table[(int)c].Y + loc.y);
-                            else
-                                // 180度回転させた位置を求める
-                                // 後手も駒の枚数は右肩に描画するのでそれに合わせて左右のmarginを調整する。
-                                dest = new Point(
-                                    hand_table[(int)c].X + (hand_table_width  - loc.x - piece_img_width - 10),
-                                    hand_table[(int)c].Y + (hand_table_height - loc.y - piece_img_height)
-                                    );
+                            // 物理画面で後手側の駒台への描画であるか(駒を180度回転さて描画しないといけない)
+                            var is_white_in_display = (c == ShogiCore.Color.WHITE) ^ reverse;
 
                             // 駒の描画
-                            DrawSprite(dest, SPRITE.Piece(pc));
+                            DrawSprite(dest, SPRITE.Piece(is_white_in_display ? pc.Inverse() : pc));
 
                             // 数字の描画(枚数が2枚以上のとき)
                             if (count >= 2)
-                            {
-                                var dest2 = new Point(dest.X + 60, dest.Y + 20);
-                                DrawSprite(dest2, SPRITE.HandNumber(count));
-                            }
+                                DrawSprite(dest + hand_number_offset, SPRITE.HandNumber(count));
                         }
                     }
 
@@ -164,12 +128,13 @@ namespace MyShogi.View.Win2D
             // -- 盤の段・筋を表す数字の表示
             {
                 var version = config.BoardNumberImageVersion;
-                DrawSprite(new Point( 526, 32), SPRITE.BoardNumberFile(reverse));
-                DrawSprite(new Point(1397, 49), SPRITE.BoardNumberRank(reverse));
+                DrawSprite(board_number_pos[0], SPRITE.BoardNumberFile(reverse));
+                DrawSprite(board_number_pos[1], SPRITE.BoardNumberRank(reverse));
             }
 
             // -- 対局者氏名
             {
+                // 氏名の描画は通常状態の駒台表示の場合のみ
                 if (config.KomadaiImageVersion == 1)
                 {
                     DrawString(name_plate[reverse ? 1 : 0], vm.Player1Name , 28);
@@ -177,6 +142,50 @@ namespace MyShogi.View.Win2D
                 }
             }
 
+        }
+
+        /// <summary>
+        /// sqの描画する場所を得る。
+        /// Config.BoardReverseも反映されている。
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        private Point PieceLocation(SquareHand sq)
+        {
+            var reverse = TheApp.app.config.BoardReverse;
+            var color = sq.PieceColor();
+            Point dest;
+
+            if (color == ShogiCore.Color.NB)
+            {
+                // 盤面の升
+                Square sq2 = reverse ? ((Square)sq).Inv() : (Square)sq;
+                int f = 8 - (int)sq2.ToFile();
+                int r = (int)sq2.ToRank();
+
+                dest = new Point(board_location.X + piece_img_size.Width * f, board_location.Y + piece_img_size.Height * r);
+            } else
+            {
+                if (reverse)
+                    color = color.Not();
+
+                var v = (TheApp.app.config.KomadaiImageVersion == 1) ? 0 : 1;
+
+                var pc = sq.ToPiece();
+
+                if (color == ShogiCore.Color.BLACK)
+                    // Point型同士の加算は定義されていないので、第二項をSize型にcastしている。
+                    dest = hand_table_pos[v,(int)color] + (Size)hand_piece_pos[v,(int)pc - 1];
+                else
+                    // 180度回転させた位置を求める
+                    // 後手も駒の枚数は右肩に描画するのでそれに合わせて左右のmarginを調整する。
+                    dest = new Point(
+                        hand_table_pos[v,(int)color].X + (hand_table_size[v].Width  - hand_piece_pos[v,(int)pc - 1].X - piece_img_size.Width - 10),
+                        hand_table_pos[v,(int)color].Y + (hand_table_size[v].Height - hand_piece_pos[v,(int)pc - 1].Y - piece_img_size.Height+  0)
+                    );
+            }
+
+            return dest;
         }
 
         /// <summary>
@@ -209,26 +218,30 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         SquareHand BoardAxisToSquare(Point p)
         {
-            SquareHand sq = SquareHand.NB;
+            var config = TheApp.app.config;
 
             // 盤上の升かどうかの判定
-            var board_rect = new Rectangle(board_left , board_top  , piece_img_width  * 9 ,  piece_img_height * 9);
+            var board_rect = new Rectangle(board_location.X , board_location.Y  , piece_img_size.Width  * 9 ,  piece_img_size.Height * 9);
             if (board_rect.Contains(p))
             {
-                var sq2 = (Square)(((p.X - board_left) / piece_img_width) * 9 + ((p.Y - board_top) / piece_img_height));
-                if (ViewModel.BoardReverse)
-                    sq2 = sq2.Inv();
+                var sq = (Square)(((p.X - board_location.X) / piece_img_size.Width) * 9 + ((p.Y - board_location.Y) / piece_img_size.Height));
+                if (config.BoardReverse)
+                    sq = sq.Inv();
 
-                sq = (SquareHand)sq2;
-            } else
+                return (SquareHand)sq;
+            }
+            else
             {
                 // 手駒かどうかの判定
                 // 細長駒台があるのでわりと面倒。何も考えずに描画位置で判定する。
 
-
+                for (var sq = SquareHand.Hand; sq < SquareHand.HandNB; ++sq)
+                    if (new Rectangle(PieceLocation(sq), piece_img_size).Contains(p))
+                        return sq;
             }
 
-            return sq;
+            // not found
+            return SquareHand.NB;
         }
 
     }

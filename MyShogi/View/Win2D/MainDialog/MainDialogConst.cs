@@ -12,88 +12,95 @@ namespace MyShogi.View.Win2D
         // -- 各種定数
 
         // 盤面素材の画像サイズ
-        public static readonly int board_img_width = 1920;
-        public static readonly int board_img_height = 1080;
+        public static readonly Size board_img_size = new Size(1920,1080);
 
         // 盤面素材における、駒を配置する升の左上。
-        public static readonly int board_left = 524;
-        public static readonly int board_top = 53;
+        public static readonly Point board_location = new Point(524, 53);
 
         // 駒素材の画像サイズ(駒1つ分)
         // これが横に8つ、縦に4つ、計32個並んでいる。
-        public static readonly int piece_img_width = 97;
-        public static readonly int piece_img_height = 106;
+        public static readonly Size piece_img_size = new Size(97,106);
 
-        // 手駒の表示場所(駒台を左上とする)
-        public class HandLocation
+        // 駒台の手駒の表示順
+        private static readonly Piece[] hand_piece_list = {
+            Piece.ROOK,
+            Piece.BISHOP,
+            Piece.GOLD,
+            Piece.SILVER,
+            Piece.KNIGHT,
+            Piece.LANCE,
+            Piece.PAWN,
+            };
+            
+        /// <summary>
+        /// 駒台の手駒の表示場所(駒台を左上とする)
+        /// 
+        /// 順番は、Piece.PAWNからPieceの定数の順になっているので注意。
+        /// </summary>
+        private static readonly Point[,] hand_piece_pos =
         {
-            public HandLocation(Piece piece_, int x_, int y_)
+            // 普通の駒台の場合
             {
-                piece = piece_;
-                x = x_;
-                y = y_;
+                // 10(margin)+96(piece_width)+30(margin)+96(piece_width)+28(margin) = 260(駒台のwidth)
+                new Point(/*Piece.PAWN  ,*/  10,280),
+                new Point(/*Piece.LANCE ,*/ 135,190),
+                new Point(/*Piece.KNIGHT,*/  10,190),
+                new Point(/*Piece.SILVER,*/ 135,100),
+                new Point(/*Piece.BISHOP,*/ 135,  5),
+                new Point(/*Piece.ROOK  ,*/  10,  5),
+                new Point(/*Piece.GOLD  ,*/  10,100),
+            },
+            // 縦長の駒台の場合
+            {
+                new Point(/*Piece.PAWN  ,*/ -5,549),
+                new Point(/*Piece.LANCE ,*/ -5,459),
+                new Point(/*Piece.KNIGHT,*/ -5,369),
+                new Point(/*Piece.SILVER,*/ -5,279),
+                new Point(/*Piece.BISHOP,*/ -5, 95),
+                new Point(/*Piece.ROOK  ,*/ -5,  0),
+                new Point(/*Piece.GOLD  ,*/ -5,187),
             }
-
-            public Piece piece;
-            public int x;
-            public int y;
-        };
-
-        /// <summary>
-        /// 手駒の表示場所(駒台を左上とする)
-        /// </summary>
-        private static readonly HandLocation[] hand_location1 =
-        {
-            // 10(margin)+96(piece_width)+30(margin)+96(piece_width)+28(margin) = 260(駒台のwidth)
-            new HandLocation(Piece.ROOK,10,5),
-            new HandLocation(Piece.BISHOP, 135,5),
-            new HandLocation(Piece.GOLD,10,100),
-            new HandLocation(Piece.SILVER,135,100),
-            new HandLocation(Piece.KNIGHT,10,190),
-            new HandLocation(Piece.LANCE, 135,190),
-            new HandLocation(Piece.PAWN,10,280),
-        };
-
-        /// <summary>
-        /// 手駒の表示場所(駒台を左上とする)
-        /// 縦長の駒台の場合
-        /// </summary>
-        private static readonly HandLocation[] hand_location2 =
-        {
-            new HandLocation(Piece.ROOK,-5,0),
-            new HandLocation(Piece.BISHOP, -5,95),
-            new HandLocation(Piece.GOLD,-5,187),
-            new HandLocation(Piece.SILVER,-5,279),
-            new HandLocation(Piece.KNIGHT,-5,369),
-            new HandLocation(Piece.LANCE, -5,459),
-            new HandLocation(Piece.PAWN, -5,549),
         };
 
         /// <summary>
         /// 駒台の画面上の位置(通常の駒台)
         /// </summary>
-        private static readonly Point[] hand_table_pos1 =
+        private static readonly Point[,] hand_table_pos =
         {
-            new Point(1431,643), // 先手の駒台
-            new Point(229 , 32), // 後手の駒台
-        };
-
-        /// <summary>
-        /// 駒台の画面上の位置(細い駒台)
-        /// </summary>
-        private static readonly Point[] hand_table_pos2 =
-        {
-            new Point(1431,368), // 先手の駒台
-            new Point( 404 ,32), // 後手の駒台
+            // 普通の駒台
+            {
+                new Point(1431,643), // 先手の駒台
+                new Point(229 , 32), // 後手の駒台
+            },
+            // 細長の駒台
+            {
+                new Point(1431,368), // 先手の駒台
+                new Point( 404 ,32), // 後手の駒台
+            }
         };
 
         /// <summary>
         /// 駒台の幅と高さ
         /// </summary>
-        private static int hand_table_width1 = 260;
-        private static int hand_table_width2 = 95;
-        private static int hand_table_height1 = 388;
-        private static int hand_table_height2 = 663;
+        private static Size[] hand_table_size =
+       {
+            new Size(260 , 388) , // 駒台 Ver.1
+            new Size(95  , 663) , // 駒台 Ver.2
+        };
+
+        /// <summary>
+        /// 駒台で、同種の駒が複数あるときの数字の描画のための(当該駒からの)オフセット値
+        /// </summary>
+        private static Size hand_number_offset = new Size(60, 20);
+
+        /// <summary>
+        /// 盤の筋と段を表す素材の表示位置
+        /// </summary>
+        private static readonly Point[] board_number_pos =
+        {
+            new Point( 526, 32), // 筋
+            new Point(1397, 49), // 段
+        };
 
         /// <summary>
         /// ネームプレートの座標

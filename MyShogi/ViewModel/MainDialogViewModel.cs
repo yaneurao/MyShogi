@@ -82,18 +82,6 @@ namespace MyShogi.ViewModel
 
 
         /// <summary>
-        /// 盤面反転
-        /// 
-        /// あとで書き直す
-        /// </summary>
-        public bool BoardReverse
-        {
-            get { return GetValue<bool>("BoardReverse"); }
-            set { SetValue<bool>("BoardReverse", value); }
-        }
-
-
-        /// <summary>
         /// 対局者氏名。
         /// 
         /// あとで書き直す。

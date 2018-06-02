@@ -89,7 +89,7 @@ namespace MyShogi.View.Win2D
 
             offset_x = (w - w2) / 2;
             offset_y = menu_height;
-            scale_y = (double)h / board_img_height;
+            scale_y = (double)h / board_img_size.Height;
             scale_x = scale_y;
 
             set_komadai();

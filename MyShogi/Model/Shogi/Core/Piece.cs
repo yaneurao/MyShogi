@@ -149,6 +149,17 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// 先手の駒なら後手の駒にする。
+        /// 後手の駒なら先手の駒にする。
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <returns></returns>
+        public static Piece Inverse(this Piece piece)
+        {
+            return piece ^ Piece.WHITE;
+        }
+
+        /// <summary>
         /// pieceをInt32の値で取り出したいときに用いる。
         /// </summary>
         /// <returns></returns>

@@ -26,11 +26,16 @@ namespace MyShogi.Model.Resource
         /// 
         /// 盤面に配置する用。
         /// 後手の駒なら、180度回転させた画像が返る。
+        /// 
+        /// pc == NO_PIECEのときはnullが返る。
         /// </summary>
         /// <param name="pc"></param>
         /// <returns></returns>
         public static Sprite Piece(Piece pc)
         {
+            if (pc == Shogi.Core.Piece.NO_PIECE)
+                return null;
+
             if (pc.PieceType()!= Shogi.Core.Piece.KING && pc.IsPromote())
             {
                 if (TheApp.app.config.PromotePieceColorType == 1)

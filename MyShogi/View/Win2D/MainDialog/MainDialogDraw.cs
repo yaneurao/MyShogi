@@ -80,6 +80,10 @@ namespace MyShogi.View.Win2D
         /// <param name="sourceRect"></param>
         private void DrawSprite(Point p, Sprite src)
         {
+            // null sprite
+            if (src == null)
+                return;
+
             var dstRect = new Rectangle( Affine(p), new Size(
                 (int)(src.rect.Width * scale_x),
                 (int)(src.rect.Height * scale_y)

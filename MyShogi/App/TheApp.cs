@@ -67,8 +67,8 @@ namespace MyShogi.App
             }
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
-            mainDialogViewModel.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);
 
+            config.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems );
             config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems );

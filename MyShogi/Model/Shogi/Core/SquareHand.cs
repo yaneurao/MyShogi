@@ -16,8 +16,8 @@ namespace MyShogi.Model.Shogi.Core
 
         // 手駒
         Hand = 81,          // 手駒のスタート
-        BlackHand = 81,     // 先手の手駒のスタート
-        WhiteHand = 81 + 7, // 後手の手駒のスタート
+        HandBlack = 81,     // 先手の手駒のスタート
+        HandWhite = 81 + 7, // 後手の手駒のスタート
         HandNB = 81 + 14,   // 手駒の終端+1
 
         // ゼロと末尾
@@ -45,26 +45,27 @@ namespace MyShogi.Model.Shogi.Core
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
-        public static Color HandColorOf(this SquareHand sq)
+        public static Color PieceColor(this SquareHand sq)
         {
             if (sq < SquareHand.SquareNB)
                 return Color.NB; // 盤面
 
-            return (sq < SquareHand.WhiteHand) ? Color.BLACK : Color.WHITE;
+            return (sq < SquareHand.HandWhite) ? Color.BLACK : Color.WHITE;
         }
 
         /// <summary>
         /// sqの手駒に対して、その駒種を返す
+        /// sqは手駒でないといけない。
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
-        public static Piece HandPieceOf(this SquareHand sq)
+        public static Piece ToPiece(this SquareHand sq)
         {
-            Debug.Assert(HandColorOf(sq) != Color.NB);
+            Debug.Assert(PieceColor(sq) != Color.NB);
 
-            return (sq < SquareHand.WhiteHand)
-                ? (Piece)((sq - SquareHand.BlackHand) + Piece.PAWN)
-                : (Piece)((sq - SquareHand.WhiteHand) + Piece.PAWN);
+            return (sq < SquareHand.HandWhite)
+                ? (Piece)((sq - SquareHand.HandBlack) + Piece.PAWN)
+                : (Piece)((sq - SquareHand.HandWhite) + Piece.PAWN);
 
         }
 
@@ -76,12 +77,29 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public static string Pretty(this SquareHand sq)
         {
-            var c = HandColorOf(sq);
+            var c = PieceColor(sq);
 
             if (c == Color.NB)
                 return ((Square)sq).Pretty();
 
-            return c.Pretty() + HandPieceOf(sq).Pretty();
+            return c.Pretty() + ToPiece(sq).Pretty();
+        }
+
+    }
+
+    public static partial class Util
+    {
+        /// <summary>
+        /// 引数で指定したColorとPieceに相当するSquareHand型の値を生成する。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="pc"></param>
+        /// <returns></returns>
+        public static SquareHand ToSquareHand(Color c , Piece pc)
+        {
+            Debug.Assert(Piece.PAWN <= pc && pc < Piece.KING);
+            return 
+                (SquareHand)((int)(c == Color.BLACK ? SquareHand.HandBlack : SquareHand.HandWhite) + pc - Piece.PAWN);
         }
 
     }

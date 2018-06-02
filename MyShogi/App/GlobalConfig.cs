@@ -176,6 +176,17 @@ namespace MyShogi.App
         }
 
         /// <summary>
+        /// 盤面反転
+        /// 
+        /// これは全体設定。Viewの個別設定もある。
+        /// </summary>
+        public bool BoardReverse
+        {
+            get { return GetValue<bool>("BoardReverse"); }
+            set { SetValue<bool>("BoardReverse", value); }
+        }
+
+        /// <summary>
         /// 最終手の駒の移動元の升の背景色
         /// 0 : なし
         /// 1 : 朱色

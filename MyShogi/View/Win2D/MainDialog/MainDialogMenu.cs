@@ -54,9 +54,9 @@ namespace MyShogi.View.Win2D
                 {
                     { // -- 盤面反転
                         var item = new ToolStripMenuItem();
-                        item.Text = "盤面反転";
-                        item.Checked = (ViewModel != null) ? ViewModel.BoardReverse : false;
-                        item.Click += (sender, e) => { ViewModel.BoardReverse = !ViewModel.BoardReverse; };
+                        item.Text = "盤面反転"; // これは全体設定。個別設定もある。
+                        item.Checked = config.BoardReverse;
+                        item.Click += (sender, e) => { config.BoardReverse = !config.BoardReverse; };
 
                         item_display.DropDownItems.Add(item);
                     }
