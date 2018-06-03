@@ -191,6 +191,9 @@ namespace MyShogi.View.Win2D
                     DrawSprite(picked_sprite_location, picked_sprite);
             }
 
+            //DrawSprite(new Point(100, 200), SPRITE.PromoteDialog(PromoteDialogSelectionEnum.PROMOTE, Piece.PAWN));
+            //DrawSprite(new Point(100, 400), SPRITE.PromoteDialog(PromoteDialogSelectionEnum.UNPROMOTE, Piece.PAWN));
+
             // 描画が完了したのでDirtyフラグを戻しておく。
             ViewModel.dirty = false;
         }

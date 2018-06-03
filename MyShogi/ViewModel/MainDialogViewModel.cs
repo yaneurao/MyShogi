@@ -1,6 +1,7 @@
 ﻿using MyShogi.Controller;
 using MyShogi.Model.ObjectModel;
 using MyShogi.Model.Shogi.Core;
+using System;
 using System.Collections.Generic;
 
 namespace MyShogi.ViewModel
@@ -23,6 +24,26 @@ namespace MyShogi.ViewModel
 
             // 入玉局面
             // Pos.SetSfen("ln6+R/1+P2GKGBR/p1ppp+P+PP+P/1k7/1p7/9/PPPPP4/1B7/LNSG1GSNL b 2SNL3P 75");
+
+#if false
+            // 王手結構かかる局面 王手になる指し手の数 = 67
+            Pos.SetSfen("9/R1S1k1S2/2+P3+P2/2+P3+P2/2N3N2/B2L1L3/9/4+B4/K3L4 b R4G2S2NL14P 1");
+
+            var moves = new Move[(int)Move.MAX_MOVES];
+            int n = MoveGen.LegalAll(Pos, moves, 0);
+            Console.WriteLine(n);
+            int j = 0;
+            for (int i = 0; i < n; ++i)
+            {
+                Pos.DoMove(moves[i]);
+                if (Pos.InCheck())
+                {
+                    ++j;
+                    Console.WriteLine(j.ToString() + ":" + moves[i].Pretty());
+                }
+                Pos.UndoMove();
+            }
+#endif
 
 #if false
             // psnの読み込み

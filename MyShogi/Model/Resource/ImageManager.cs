@@ -31,6 +31,7 @@ namespace MyShogi.Model.Resource
             UpdatePieceMoveImage();
             UpdateBoardNumberImage();
             UpdateHandNumberImage();
+            UpdatePromoteDialogImage();
         }
 
         /// <summary>
@@ -211,6 +212,13 @@ namespace MyShogi.Model.Resource
             Load(ref HandNumberImage , "hand_number_v1_864_96.png");
         }
 
+        /// <summary>
+        /// 成り・不成を確認するダイアログ
+        /// </summary>
+        private void UpdatePromoteDialogImage()
+        {
+            Load(ref PromoteDialogImage, "promote_dialog.png");
+        }
 
         /// <summary>
         /// ファイル名を与えて、ImgFolderから画像を読み込む
@@ -258,5 +266,10 @@ namespace MyShogi.Model.Resource
         /// 手駒の右肩に表示する駒の枚数を示す数字画像
         /// </summary>
         public ImageLoader HandNumberImage = new ImageLoader();
+
+        /// <summary>
+        /// 成り・不成の選択ダイアログ用の画像
+        /// </summary>
+        public ImageLoader PromoteDialogImage = new ImageLoader();
     }
 }

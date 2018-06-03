@@ -74,7 +74,12 @@ namespace MyShogi.View.Win2D
             // dstRect.Width = 転送先width×scale_xなのだが、等倍なので転送先width == 転送元width
             // heightについても上記と同様。
 
-            graphics.DrawImage(src.image, dstRect, src.rect, GraphicsUnit.Pixel);
+            // dstOffsetが指定されていれば、この分だけ(affine変換してから)ずらした場所に描画する。
+            var dstOffset = AffineScale(src.dstOffset);
+            dstRect.X += dstOffset.Width;
+            dstRect.Y += dstOffset.Height;
+
+            graphics.DrawImage(src.image, dstRect , src.rect, GraphicsUnit.Pixel);
 
             // 連結スプライトならば続けてそれを描画する。
             if (src.next != null)

@@ -145,6 +145,45 @@ namespace MyShogi.Model.Resource
             return new Sprite(rank_img, srcRect);
         }
 
+        /// <summary>
+        /// PromoteDialogを連結スプライトにして返す。(駒も含めて)
+        /// pc = 成っていない駒。
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public static Sprite PromoteDialog(PromoteDialogSelectionEnum select , Piece pc)
+        {
+            var img = TheApp.app.imageManager;
+
+            var hover_offset = 205; // その素材にhoverされているときはx座標にこのオフセット値を加算する
+
+            // 成り
+            int offset = select == PromoteDialogSelectionEnum.PROMOTE ? hover_offset : 0;
+            var rect = new Rectangle(0 + offset , 0, 103, 124);
+            var sprite = new Sprite(img.PromoteDialogImage.image, rect);
+            var first_sprite = sprite; // 最後にこれをreturnで返す
+            sprite.next = Piece(Util.MakePiecePromote(Shogi.Core.Color.BLACK, pc));
+            if (sprite.next != null)
+                sprite = sprite.next;
+
+            // 不成
+            var dstOffset = new Size(103, 0);
+            offset = select == PromoteDialogSelectionEnum.UNPROMOTE ? hover_offset : 0;
+            rect = new Rectangle(103 + offset, 0, 102, 124);
+            sprite.next = new Sprite(img.PromoteDialogImage.image, rect , dstOffset);
+            sprite = sprite.next;
+            sprite.next = new Sprite(Piece(pc), dstOffset);
+            if (sprite.next != null)
+                sprite = sprite.next;
+
+            // キャンセルボタン
+            offset = select == PromoteDialogSelectionEnum.CANCEL ? hover_offset : 0;
+            rect = new Rectangle(0 + offset, 124, 205, 39);
+            sprite.next = new Sprite(img.PromoteDialogImage.image, rect , new Size (0,124));
+
+            return first_sprite;
+        }
+
         // -- 以下、画像絡みの定数。
         // これはMainDialogConst.csのほうにも同様の定義がある。
 
