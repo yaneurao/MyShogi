@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using MyShogi.Model.Resource;
 using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
@@ -35,12 +37,12 @@ namespace MyShogi.View.Win2D
         // -- 以下、各状態のときに、それに付随する情報
 
         /// <summary>
-        /// state == PiecePickedUpのときに掴んでいる駒の升(駒台の駒もありうる)
+        /// state == PiecePickedUp , PromoteDialog のときに掴んでいる駒の升(駒台の駒もありうる)
         /// </summary>
         public SquareHand picked_from;
 
         /// <summary>
-        /// state == CheckAlertDialog、RepetitionAlertDialogのときに掴んでいる駒を移動させようとした升
+        /// state == PromoteDialog , CheckAlertDialog、RepetitionAlertDialogのときに掴んでいる駒を移動させようとした升
         /// 駒台の駒はありえないが、picked_fromと同じ型にしておく。
         /// </summary>
         public SquareHand picked_to;
@@ -60,8 +62,25 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// 掴んでいる駒が行ける升の候補
+        /// PromoteDialogのときは、picked_toのみ1になっている。
         /// </summary>
         public Bitboard picked_piece_legalmovesto;
+
+        /// <summary>
+        /// state == PromoteDialogのときにそれを描画している座標(affine変換前)
+        /// </summary>
+        public Point promote_dialog_location;
+
+        /// <summary>
+        /// state == PromoteDialogのときにダイアログを描画している座標
+        /// </summary>
+        public PromoteDialogSelectionEnum promote_dialog_selection;
+
+        /// <summary>
+        /// state == PromoteDialogのときに移動元の駒の種類(成っていない駒のはず)
+        /// 先後の区別なし。
+        /// </summary>
+        public Piece moved_piece_type;
 
         /// <summary>
         /// あと何秒でダイアログが消えるかだとか、状態が遷移するだとか

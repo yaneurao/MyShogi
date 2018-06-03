@@ -50,7 +50,8 @@ namespace MyShogi.View.Win2D
             // 描画する局面
             var pos = vm.ViewModel.Pos; // MainDialogViewModel
             // 掴んでいる駒
-            var picked_from = vm.viewState.picked_from;
+            var state = vm.viewState;
+            var picked_from = state.picked_from;
             // 持ち上げている駒のスプライトと座標(最後に描画するために積んでおく)
             Sprite picked_sprite = null;
             Point picked_sprite_location = new Point(0, 0);
@@ -80,13 +81,17 @@ namespace MyShogi.View.Win2D
                     var pc = pos.PieceOn(sq);
                     var dest = PieceLocation((SquareHand)sq);
 
-                    // これが最終手の移動元の升であるなら、エフェクトを描画する。
-                    if (sq == lastMoveFrom)
-                        DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.From));
+                    // ダイアログが出ている時や、駒を掴んでいるときは最終手のエフェクトがあると紛らわしいので消す。
+                    if (state.state == GameScreenViewStateEnum.Normal)
+                    {
+                        // これが最終手の移動元の升であるなら、エフェクトを描画する。
+                        if (sq == lastMoveFrom)
+                            DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.From));
 
-                    // これが最終手の移動先の升であるなら、エフェクトを描画する。
-                    if (sq == lastMoveTo)
-                        DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.To));
+                        // これが最終手の移動先の升であるなら、エフェクトを描画する。
+                        if (sq == lastMoveTo)
+                            DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.To));
+                    }
 
                     var sprite = SPRITE.Piece(reverse ? pc.Inverse() : pc);
 
@@ -191,8 +196,12 @@ namespace MyShogi.View.Win2D
                     DrawSprite(picked_sprite_location, picked_sprite);
             }
 
-            //DrawSprite(new Point(100, 200), SPRITE.PromoteDialog(PromoteDialogSelectionEnum.PROMOTE, Piece.PAWN));
-            //DrawSprite(new Point(100, 400), SPRITE.PromoteDialog(PromoteDialogSelectionEnum.UNPROMOTE, Piece.PAWN));
+            // -- 成り、不成の選択ダイアログを出している最中であるなら
+            if (state.state == GameScreenViewStateEnum.PromoteDialog)
+            {
+                DrawSprite(state.promote_dialog_location ,
+                    SPRITE.PromoteDialog(state.promote_dialog_selection , state.moved_piece_type));
+            }
 
             // 描画が完了したのでDirtyフラグを戻しておく。
             ViewModel.dirty = false;

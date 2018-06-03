@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
-using ShogiCore = MyShogi.Model.Shogi.Core;
 using MyShogi.App;
 using MyShogi.Model.Shogi.Core;
-using System;
+using ShogiCore = MyShogi.Model.Shogi.Core;
+using SPRITE = MyShogi.Model.Resource.SpriteManager;
 
 namespace MyShogi.View.Win2D
 {
@@ -217,14 +217,35 @@ namespace MyShogi.View.Win2D
             // デバッグ用に表示する。
             //Console.WriteLine(from.Pretty() + "→" + to.Pretty());
 
-            // Promoteの判定まだ
-            // とりあえずデバッグ用。
-            Move m = Util.MakeMove(from, to , false);
-            ViewModel.ViewModel.DoMoveCmd(m);
+            // Promoteの判定
+            var pos = ViewModel.ViewModel.Pos;
+            var m = Util.MakeMove(from, to , true);
+            // この成る手を生成して、それが合法手であるなら、成り・不成のダイアログを出す必要がある。
+            var canPromote = pos.IsLegal(m);
+            if (canPromote)
+            {
+                state.state = GameScreenViewStateEnum.PromoteDialog;
+                state.moved_piece_type = pos.PieceOn(from).PieceType();
 
-            // あとで書く。
+                // この状態を初期状態にするのは少しおかしいが、どうせこのあとマウスを動かすであろうからいいや。
+                state.promote_dialog_selection = Model.Resource.PromoteDialogSelectionEnum.NO_SELECT;
 
-            StateReset();
+                // toの近くに成り・不成のダイアログを描画してやる。
+                var dest = PieceLocation(to) + new Size(-103 + 95/2,+100);
+                state.promote_dialog_location = dest;
+
+                // toの升以外は暗くする。
+                state.picked_piece_legalmovesto = new Bitboard((Square)to);
+
+                ViewModel.dirty = true;
+            }
+            else
+            {
+                // 成れないので成る選択肢は消して良い。
+                m = Util.MakeMove(from, to ,false);
+                ViewModel.ViewModel.DoMoveCmd(m);
+                StateReset();
+            }
         }
 
         /// <summary>
@@ -293,6 +314,29 @@ namespace MyShogi.View.Win2D
 
                         break;
                     }
+                case GameScreenViewStateEnum.PromoteDialog:
+                    {
+                        // PromoteDialogを出していたのであれば、
+                        switch (state.promote_dialog_selection)
+                        {
+                            case Model.Resource.PromoteDialogSelectionEnum.NO_SELECT:
+                                break; // 無視
+                            case Model.Resource.PromoteDialogSelectionEnum.CANCEL:
+                                // キャンセルするので移動の駒の選択可能状態に戻してやる。
+                                StateReset();
+                                break;
+                                // 成り・不成を選んでクリックしたのでそれに応じた移動を行う。
+                            case Model.Resource.PromoteDialogSelectionEnum.UNPROMOTE:
+                            case Model.Resource.PromoteDialogSelectionEnum.PROMOTE:
+                                var m = Util.MakeMove(state.picked_from, state.picked_to,
+                                    state.promote_dialog_selection == Model.Resource.PromoteDialogSelectionEnum.PROMOTE);
+                                ViewModel.ViewModel.DoMoveCmd(m);
+                                StateReset();
+                                break;
+                        }
+
+                        break;
+                    }
             }
         }
 
@@ -303,7 +347,7 @@ namespace MyShogi.View.Win2D
         public void OnClick(Point p)
         {
             /// 座標系を、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)にする。
-            p = ViewModel.AffineMatrix.InverseAffine(p);
+            p = InverseAffine(p);
 
             // 盤面(手駒を含む)のどこの升がクリックされたのかを調べる
             SquareHand sq = BoardAxisToSquare(p);
@@ -321,8 +365,8 @@ namespace MyShogi.View.Win2D
         public void OnDrag(Point p1, Point p2)
         {
             /// 座標系を、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)にする。
-            var p1_t = ViewModel.AffineMatrix.InverseAffine(p1);
-            var p2_t = ViewModel.AffineMatrix.InverseAffine(p2);
+            var p1_t = InverseAffine(p1);
+            var p2_t = InverseAffine(p2);
 
             // 盤面(手駒を含む)のどこの升からどこの升にドラッグされたのかを調べる
             SquareHand sq1 = BoardAxisToSquare(p1_t);
@@ -349,6 +393,36 @@ namespace MyShogi.View.Win2D
 
             // デバッグ用にドラッグされた升の名前を出力する。
             //Console.WriteLine(sq1.Pretty() + '→' + sq2.Pretty());
+        }
+
+        /// <summary>
+        /// マウスが移動したときに呼び出されるハンドラ
+        /// </summary>
+        /// <param name="p"></param>
+        public void OnMouseMove(Point p)
+        {
+            // ダイアログを表示している場合、そこにマウスがhoverすると
+            // 素材がhover状態の表示になるので、その変化を反映しなくてはならない。
+
+            var state = ViewModel.viewState;
+
+            // 成り・不成のダイアログを出している
+            if (state.state == GameScreenViewStateEnum.PromoteDialog)
+            {
+                // 与えられたpointがどこに属するか判定する。
+                // まず逆affine変換して、viewの(DrawSpriteなどで使っている)座標系にする
+                var pt = InverseAffine(p);
+                var zero = state.promote_dialog_location; // ここを原点とする
+                pt = new Point(pt.X - zero.X,pt.Y - zero.Y);
+                var selection = SPRITE.IsHoverPromoteDialog(pt);
+
+                // 前回までと違う場所が選択されたのでselectionの値を更新して、画面の描画をしなおす。
+                if (state.promote_dialog_selection != selection)
+                {
+                    state.promote_dialog_selection = selection;
+                    ViewModel.dirty = true;
+                }
+            }
         }
 
         /// <summary>

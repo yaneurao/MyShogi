@@ -219,12 +219,13 @@ namespace MyShogi.Model.Shogi.Core
 
             if (from.IsDrop())
             {
+                // 打ちと成りは共存できない
+                if (promote)
+                    return Move.NONE;
+
                 return MakeMoveDrop(from.ToPiece(), to2);
             } else
             {
-                if (from.IsDrop())
-                    return Move.NONE;
-
                 var from2 = (Square)from;
 
                 if (promote)

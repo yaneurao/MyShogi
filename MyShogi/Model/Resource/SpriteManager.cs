@@ -155,34 +155,74 @@ namespace MyShogi.Model.Resource
         {
             var img = TheApp.app.imageManager;
 
-            var hover_offset = 205; // その素材にhoverされているときはx座標にこのオフセット値を加算する
+            // その素材にhoverされているときはx座標にこのオフセット値を加算する
+            var hover_offset = promote_dialog_cancel_rect.Width;
 
-            // 成り
-            int offset = select == PromoteDialogSelectionEnum.PROMOTE ? hover_offset : 0;
-            var rect = new Rectangle(0 + offset , 0, 103, 124);
+            // -- 成り
+            var rect = promote_dialog_promote_rect;
+            if (select == PromoteDialogSelectionEnum.PROMOTE)
+                rect.X += hover_offset;
             var sprite = new Sprite(img.PromoteDialogImage.image, rect);
             var first_sprite = sprite; // 最後にこれをreturnで返す
             sprite.next = Piece(Util.MakePiecePromote(Shogi.Core.Color.BLACK, pc));
             if (sprite.next != null)
                 sprite = sprite.next;
 
-            // 不成
-            var dstOffset = new Size(103, 0);
-            offset = select == PromoteDialogSelectionEnum.UNPROMOTE ? hover_offset : 0;
-            rect = new Rectangle(103 + offset, 0, 102, 124);
+            // -- 不成
+            rect = promote_dialog_unpromote_rect;
+            var dstOffset = new Size(rect.X,rect.Y);
+            if (select == PromoteDialogSelectionEnum.UNPROMOTE)
+                rect.X += hover_offset;
+
             sprite.next = new Sprite(img.PromoteDialogImage.image, rect , dstOffset);
             sprite = sprite.next;
             sprite.next = new Sprite(Piece(pc), dstOffset);
             if (sprite.next != null)
                 sprite = sprite.next;
 
-            // キャンセルボタン
-            offset = select == PromoteDialogSelectionEnum.CANCEL ? hover_offset : 0;
-            rect = new Rectangle(0 + offset, 124, 205, 39);
-            sprite.next = new Sprite(img.PromoteDialogImage.image, rect , new Size (0,124));
+            // -- キャンセルボタン
+
+            rect = promote_dialog_cancel_rect;
+            dstOffset = new Size(rect.X, rect.Y);
+            if (select == PromoteDialogSelectionEnum.CANCEL)
+                rect.X += hover_offset;
+            sprite.next = new Sprite(img.PromoteDialogImage.image, rect , dstOffset);
 
             return first_sprite;
         }
+
+        /// <summary>
+        /// 成り・不成のダイアログを(0,0)に描画したとして、そのときに座標pが
+        /// どこのパーツに属するかを返す
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static PromoteDialogSelectionEnum IsHoverPromoteDialog(Point p)
+        {
+            if (promote_dialog_promote_rect.Contains(p))
+                return PromoteDialogSelectionEnum.PROMOTE;
+            if (promote_dialog_unpromote_rect.Contains(p))
+                return PromoteDialogSelectionEnum.UNPROMOTE;
+            if (promote_dialog_cancel_rect.Contains(p))
+                return PromoteDialogSelectionEnum.CANCEL;
+            return PromoteDialogSelectionEnum.NO_SELECT;
+        }
+
+        /// <summary>
+        /// 成り・不成のダイアログの成りのほうのrect
+        /// </summary>
+        private static Rectangle promote_dialog_promote_rect = new Rectangle(0 , 0, 103, 124);
+
+        /// <summary>
+        /// 成り・不成のダイアログの不成のほうのrect
+        /// </summary>
+        private static Rectangle promote_dialog_unpromote_rect = new Rectangle(103, 0, 102, 124);
+
+        /// <summary>
+        /// 成り・不成のダイアログのキャンセルのrect
+        /// </summary>
+        private static Rectangle promote_dialog_cancel_rect = new Rectangle(0, 124, 205, 39);
+
 
         // -- 以下、画像絡みの定数。
         // これはMainDialogConst.csのほうにも同様の定義がある。

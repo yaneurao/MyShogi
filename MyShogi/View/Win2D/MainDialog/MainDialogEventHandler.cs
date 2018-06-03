@@ -101,8 +101,7 @@ namespace MyShogi.View.Win2D
 
         private void MainDialog_MouseMove(object sender, MouseEventArgs e)
         {
-            // ドラッグ中。
-            // これは無視する
+            gameScreen.OnMouseMove(e.Location);
         }
 
         /// <summary>
