@@ -165,6 +165,7 @@ namespace MyShogi.Model.Shogi.Converter
                 case Move.WIN:
                     return kif.Append("勝ち宣言").ToString();
             }
+            Piece fromPieceType = move.IsDrop() ? move.DroppedPiece() : pos.PieceOn(move.From()).PieceType();
             // 普通の指し手
             if (!move.IsDrop() && lastMove.IsOk() && lastMove.To() == move.To())
             {
@@ -182,7 +183,6 @@ namespace MyShogi.Model.Shogi.Converter
                         break;
                     // KI2形式では成香・成桂・成銀・成り動作での空白は入らない
                     case SamePosFormat.KI2sp: {
-                        Piece fromPieceType = pos.PieceOn(move.From()).PieceType();
                         if (
                             move.IsPromote() ||
                             fromPieceType == Piece.PRO_LANCE ||
@@ -211,7 +211,7 @@ namespace MyShogi.Model.Shogi.Converter
             {
                 kif.Append(format(move.To()));
             }
-            kif.Append(PIECE_KIF[pos.PieceOn(move.From()).ToInt()]);
+            kif.Append(PIECE_KIF[fromPieceType.ToInt()]);
             switch (fromsqFmt) {
                 case FromSqFormat.NONE:
                     break;
@@ -222,7 +222,6 @@ namespace MyShogi.Model.Shogi.Converter
                         // KIF形式では持駒からの着手は必ず"打"と表記する
                         kif.Append("打");
                     } else {
-                        Piece fromPieceType = pos.PieceOn(move.From()).PieceType();
                         if (move.IsPromote())
                         {
                             kif.Append("成");
@@ -260,7 +259,6 @@ namespace MyShogi.Model.Shogi.Converter
                         kif.Append("成");
                         break;
                     }
-                    Piece fromPieceType = pos.PieceOn(move.From()).PieceType();
                     if (
                         !fromPieceType.IsPromote() &&
                         fromPieceType != Piece.GOLD &&
