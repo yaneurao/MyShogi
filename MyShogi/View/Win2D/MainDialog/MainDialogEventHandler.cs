@@ -67,9 +67,24 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void timer1_Tick(object sender, System.EventArgs e)
         {
+            if (first_tick)
+            {
+                // コンストラクタでの初期化が間に合わなかったコントロールの初期化はここで行う。
+                first_tick = false;
+                ResizeKifuControl();
+            }
+
             // 自分が保有しているScreenがdirtyになっていることを検知したら、Invalidateを呼び出す。
             if (gameScreen.Dirty)
                 Invalidate();
+
+            // 棋譜が1行増えていたならこれを画面に描画する。
+            if (ViewModel != null && ViewModel.move_text != null)
+            {
+                // あとでメッセージングを使って書き直す
+                gameScreen.ViewModel.kifuControl.AddMoveText(ViewModel.move_text_game_ply , ViewModel.move_text , "00:00:01");
+                ViewModel.move_text = null;
+            }
 
             // ここでInvalidate()にScreenに対応する(Screenのなかに含まれる)Rectangleを渡して、
             // 特定のgameScreenだけを再描画するようにしないと、GameScreenを画面上に16個ぐらい
@@ -77,6 +92,8 @@ namespace MyShogi.View.Win2D
 
             // TODO : マルチスクリーン対応のときにちゃんと書く
         }
+
+        private bool first_tick = true;
 
         // -- 以下、マウスのクリック、ドラッグ(による駒移動)を検知するためのハンドラ
         // クリックイベントは使えないので、MouseDown,MouseUp,MouseMoveからクリックとドラッグを判定する。

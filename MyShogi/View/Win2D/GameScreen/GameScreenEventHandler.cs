@@ -24,6 +24,8 @@ namespace MyShogi.View.Win2D
             var size = new Size(265, 423);
             kifu.Size = AffineScale(size);
 
+            kifu.OnResize(ViewModel.AffineMatrix.Scale.X);
+
             // kifuControl内の文字サイズも変更しないといけない。
             // あとで考える。
 

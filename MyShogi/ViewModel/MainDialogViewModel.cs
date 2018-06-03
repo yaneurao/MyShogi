@@ -1,5 +1,6 @@
 ﻿using MyShogi.Controller;
 using MyShogi.Model.ObjectModel;
+using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace MyShogi.ViewModel
         public MainDialogViewModel()
         {
             // デバッグ中。あとで削除する。
-            // Pos.InitBoard(BoardType.NoHandicap);
+            Pos.InitBoard(BoardType.NoHandicap);
 
             // 指し手生成祭りの局面
             //            Pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
@@ -26,7 +27,7 @@ namespace MyShogi.ViewModel
             //Pos.SetSfen("ln6+R/1+P2GKGBR/p1ppp+P+PP+P/1k7/1p7/9/PPPPP4/1B7/LNSG1GSNL b 2SNL3P 75");
 
             //  成駒がいっぱいある局面
-            Pos.SetSfen("ln6+R/1+P2GK+GBR/p1ppp+P+PP+P/1k7/1p7/9/PPPPP4/1B7/+L+N+SG1GSNL b 2SNL3P 75");
+            //Pos.SetSfen("ln6+R/1+P2GKGBR/p1ppp+P+PP+P/1k7/1p7/9/PPPPP4/1B7/+L+N+SG1GSNL b 2SNL3P 75");
 
 #if false
             // 王手結構かかる局面 王手になる指し手の数 = 67
@@ -132,13 +133,26 @@ namespace MyShogi.ViewModel
             // デバッグ用。あとで書き直す。
             if (Pos.IsLegal(m))
             {
+                var lastMove = Pos.State().lastMove;
+                // Viewのほうに棋譜をappendする
+                move_text = Pos.ToKi2(m, lastMove);
+                move_text_game_ply = Pos.gamePly;
+
                 Pos.DoMove(m);
 
                 // ここをUIスレッド以外で行うためにViewに対して
                 // Invalidate()する必要がある。
                 // あとで考える
+                
+                // TODO : これあとでちゃんとメッセージングを使って書き直す
             }
         }
 
+        /// <summary>
+        /// 指し手が指されたときに生成される1行の棋譜文字列
+        /// あとでメッセージングを使って書き直す。
+        /// </summary>
+        public string move_text;
+        public int move_text_game_ply;
     }
 }

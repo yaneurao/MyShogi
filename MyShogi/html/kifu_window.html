@@ -6,12 +6,11 @@
 </head>
 <body>
 <style>
-.move {
-color : #000000;
-font-size : 1em;
-}
+  body { margin: 0; padding 0; }
+  p { font : 80% 'Verdana' , sans-serif ; margin: 1em; padding: 0; text-align:center; }
+  .move { font : 80% 'Verdana' , sans-serif ; margin: 0.3em; padding: 0; }
 </style>
-<div id='kifu' class='move'>
+<div id='kifu' style='font : 80%' class='move'>
 	<div id='kifu_end'></div>
 	<!-- 棋譜の終端 -->
 </div>
@@ -26,6 +25,12 @@ function add_move_text(text) {
 	var element = document.createElement('div');
 	element.innerText = text;
 	kifu.insertBefore(element , kifu_end);
+}
+
+<!-- 文字フォント自体の縮小化 -->
+function on_resize(scale) {
+	var kifu = document.getElementById('kifu');
+	kifu.style.font = scale + ';';
 }
 
 window.onload = function () {
