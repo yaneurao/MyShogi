@@ -618,7 +618,7 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// sfen文字列でこのクラスを初期化する
-        /// 
+        ///
         /// 読み込みに失敗した場合、SfenException例外が投げられる。
         /// </summary>
         /// <param name="sfen"></param>
@@ -707,12 +707,16 @@ namespace MyShogi.Model.Shogi.Core
             // 手駒なしでなければ
             if (hand_sfen[0] != '-')
             {
-                var count = 1;
+                var count = 0;
                 foreach (var c in hand_sfen)
                 {
-                    if ('1' <= c && c <= '9')
+                    if ('0' <= c && c <= '9')
                     {
-                        count = c - '0';
+                        count = count * 10 + (c - '0');
+                        if (count == 0 || count > 18)
+                        {
+                            throw new SfenException("持ち駒の枚数指定が正しくありません。");
+                        }
                     }
                     else
                     {
@@ -725,6 +729,8 @@ namespace MyShogi.Model.Shogi.Core
                         var color = piece.PieceColor();
                         var pr = piece.RawPieceType();
 
+                        if (count == 0) count = 1;
+
                         // 手駒を加算する
                         Hand(color).Add(pr, count);
 
@@ -733,7 +739,7 @@ namespace MyShogi.Model.Shogi.Core
                             HandPieceNo(color, pr, i) = lastPieceNo++;
                         }
 
-                        count = 1;
+                        count = 0;
                     }
                 }
             }
@@ -866,7 +872,7 @@ namespace MyShogi.Model.Shogi.Core
                     st.capturedPiece = Piece.NO_PIECE;
                 }
 
-                Piece moved_after_pc = (Piece)(moved_pc.ToInt() + (m.IsPromote() ? Piece.PROMOTE.ToInt() : 0));  
+                Piece moved_after_pc = (Piece)(moved_pc.ToInt() + (m.IsPromote() ? Piece.PROMOTE.ToInt() : 0));
                 PutPiece(to, moved_after_pc , pn);
 
                 // fromにあったmoved_pcがtoにmoved_after_pcとして移動した。
@@ -979,7 +985,7 @@ namespace MyShogi.Model.Shogi.Core
         /// <summary>
         /// USIのpositionコマンドの"position"以降を解釈してその局面にする
         /// "position [sfen <sfenstring> | startpos ] moves <move1> ... <movei>"
-        /// 
+        ///
         /// 解釈で失敗した場合、例外が飛ぶ
         /// </summary>
         /// <param name="pos_cmd"></param>
@@ -1297,10 +1303,10 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// 宣言勝ちできる局面であるかを判定する。
-        /// 
+        ///
         /// 宣言勝ちできる局面でなければMove.NONEが返る。
         /// 宣言勝ちできる局面であればMove.WINが返る。
-        /// 
+        ///
         /// ruleでトライルール(TRY_RULE)を指定している場合は、トライ(玉を51の升に移動させること)出来る条件を
         /// 満たしているなら、その指し手を返す。
         /// </summary>
