@@ -166,10 +166,7 @@ namespace MyShogi.Model.Shogi.Converter
                     return kif.Append("勝ち宣言").ToString();
             }
             // 普通の指し手
-            // 着手元の駒種
-            Piece fromPiece = pos.PieceOn(move.From());
-            Piece fromPieceType = fromPiece.PieceType();
-            if (lastMove.IsOk() && lastMove.To() == move.To())
+            if (!move.IsDrop() && lastMove.IsOk() && lastMove.To() == move.To())
             {
                 // 一つ前の指し手の移動先と、今回の移動先が同じ場合、"同"金のように表示する。
                 switch (sameposFmt)
@@ -184,7 +181,8 @@ namespace MyShogi.Model.Shogi.Converter
                         kif.Append("同　");
                         break;
                     // KI2形式では成香・成桂・成銀・成り動作での空白は入らない
-                    case SamePosFormat.KI2sp:
+                    case SamePosFormat.KI2sp: {
+                        Piece fromPieceType = pos.PieceOn(move.From()).PieceType();
                         if (
                             move.IsPromote() ||
                             fromPieceType == Piece.PRO_LANCE ||
@@ -200,6 +198,7 @@ namespace MyShogi.Model.Shogi.Converter
                             kif.Append("同　");
                             break;
                         }
+                    }
                     // 座標 + "同"
                     case SamePosFormat.Verbose:
                         kif.Append(format(move.To())).Append("同");
@@ -223,12 +222,13 @@ namespace MyShogi.Model.Shogi.Converter
                         // KIF形式では持駒からの着手は必ず"打"と表記する
                         kif.Append("打");
                     } else {
+                        Piece fromPieceType = pos.PieceOn(move.From()).PieceType();
                         if (move.IsPromote())
                         {
                             kif.Append("成");
                         }
                         else if (
-                            !fromPiece.IsPromote() &&
+                            !fromPieceType.IsPromote() &&
                             fromPieceType != Piece.GOLD &&
                             fromPieceType != Piece.KING &&
                             (Util.CanPromote(pos.sideToMove, move.To()) ||
@@ -260,8 +260,9 @@ namespace MyShogi.Model.Shogi.Converter
                         kif.Append("成");
                         break;
                     }
+                    Piece fromPieceType = pos.PieceOn(move.From()).PieceType();
                     if (
-                        !fromPiece.IsPromote() &&
+                        !fromPieceType.IsPromote() &&
                         fromPieceType != Piece.GOLD &&
                         fromPieceType != Piece.KING &&
                         (Util.CanPromote(pos.sideToMove, move.To()) ||
