@@ -36,9 +36,7 @@ namespace MyShogi.ViewModel
             Pos = pos;
 #endif
 
-            // 合法手を設定しておいてやる。
-            LegalMoves = new Move[(int)Move.MAX_MOVES];
-            LegalMovesLength = MoveGen.LegalAll(Pos, LegalMoves, 0);
+            // デバッグ中
             CanMove = true;
         }
 
@@ -98,10 +96,25 @@ namespace MyShogi.ViewModel
         public bool CanMove { get; private set;}
 
         /// <summary>
-        /// この局面の合法手。CanMoveがtrueになるときに設定される。
+        /// ユーザーがマウス操作によってmの指し手を入力した。
+        /// ユーザーはこれを合法手だと思っているが、これが受理されるかどうかは別の話。
+        /// (時間切れなどがあるので)
+        /// 
+        /// これを受理するのは、UIスレッドではない。
         /// </summary>
-        public Move[] LegalMoves { get; private set; }
-        public int LegalMovesLength { get; private set; }
+        /// <param name="m"></param>
+        public void DoMoveCmd(Move m)
+        {
+            // デバッグ用。あとで書き直す。
+            if (Pos.IsLegal(m))
+            {
+                Pos.DoMove(m);
+
+                // ここをUIスレッド以外で行うためにViewに対して
+                // Invalidate()する必要がある。
+                // あとで考える
+            }
+        }
 
     }
 }

@@ -199,6 +199,42 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// 指し手を生成する
+        /// 
+        /// from : 盤上の升のみでなく手駒もありうる
+        /// to   : 盤上の升
+        /// promote : 成るかどうか
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="promote"></param>
+        /// <returns></returns>
+        public static Move MakeMove(SquareHand from , SquareHand to , bool promote)
+        {
+            // ありえないはずだが…。
+            if (to.IsDrop())
+                return Move.NONE;
+
+            var to2 = (Square)to;
+
+            if (from.IsDrop())
+            {
+                return MakeMoveDrop(from.ToPiece(), to2);
+            } else
+            {
+                if (from.IsDrop())
+                    return Move.NONE;
+
+                var from2 = (Square)from;
+
+                if (promote)
+                    return MakeMovePromote(from2, to2);
+                else
+                    return MakeMove(from2,to2);
+            }
+        }
+
+        /// <summary>
         /// USIの指し手文字列からMoveに変換
         /// 変換できないときはMove.NONEが返る。
         /// 盤面を考慮していないので指し手の合法性は考慮しない。

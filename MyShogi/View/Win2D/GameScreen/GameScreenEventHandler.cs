@@ -215,7 +215,12 @@ namespace MyShogi.View.Win2D
             var state = ViewModel.viewState;
 
             // デバッグ用に表示する。
-            Console.WriteLine(from.Pretty() + "→" + to.Pretty());
+            //Console.WriteLine(from.Pretty() + "→" + to.Pretty());
+
+            // Promoteの判定まだ
+            // とりあえずデバッグ用。
+            Move m = Util.MakeMove(from, to , false);
+            ViewModel.ViewModel.DoMoveCmd(m);
 
             // あとで書く。
 

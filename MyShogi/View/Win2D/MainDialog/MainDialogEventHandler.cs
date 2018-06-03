@@ -95,6 +95,7 @@ namespace MyShogi.View.Win2D
                 gameScreen.OnClick(p);
             else
                 gameScreen.OnDrag(mouseLastDown, p);
+
             mouseLastDown = new Point(-1, -1); // また意味のない地点を指すようにしておく
         }
 
