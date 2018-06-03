@@ -618,27 +618,147 @@ namespace MyShogi.Model.Shogi.Kifu
             */
 
             string line = string.Empty;
+            var posLines = new List<string>();
+            var headFlag = true;
+            var move = Move.NONE;
             for (; lineNo <= lines.Length; ++lineNo)
             {
                 line = lines[lineNo - 1];
 
-                if (line.StartsWith("N+"))
+                // コメント文
+                if (line.StartsWith("'"))
                 {
-                    playerName[(int)Color.BLACK] = line.Substring(2);
+                    Tree.currentNode.comment += line.Substring(1).TrimEnd('\r', '\n') + "\n";
                     continue;
                 }
-                if (line.StartsWith("N-"))
+                // セパレータ検出
+                if (line.StartsWith("/"))
                 {
-                    playerName[(int)Color.WHITE] = line.Substring(2);
-                    continue;
+                    // "/"だけの行を挟んで、複数の棋譜・局面を記述することができる。
+                    // 現時点ではこのに対応せず、先頭の棋譜のみを読み込む。
+                    // そもそも初期局面が異なる可能性もあり、Treeを構成できるとは限らないため。
+                    break;
+                }
+                // マルチステートメント検出
+                string[] sublines = line.Split(',');
+                foreach (var subline in sublines)
+                {
+                    if (subline.StartsWith("$"))
+                    {
+                        // ToDo: 各種棋譜情報
+                        continue;
+                    }
+                    if (subline.StartsWith("N+"))
+                    {
+                        playerName[(int)Color.BLACK] = subline.Substring(2);
+                        continue;
+                    }
+                    if (subline.StartsWith("N-"))
+                    {
+                        playerName[(int)Color.WHITE] = subline.Substring(2);
+                        continue;
+                    }
+                    if (subline.StartsWith("P"))
+                    {
+                        posLines.Add(subline);
+                        continue;
+                    }
+                    if (subline.StartsWith("+") || subline.StartsWith("-"))
+                    {
+                        if (headFlag)
+                        {
+                            // 1回目は局面の先後とみなす
+                            headFlag = false;
+                            posLines.Add(subline);
+                            Tree.rootSfen = CsaExtensions.CsaToSfen(posLines.ToArray());
+                            Tree.position.SetSfen(Tree.rootSfen);
+                            continue;
+                        }
+                        // 2回目以降は指し手とみなす
+                        // 消費時間の情報がまだないが、取り敢えず追加
+                        move = Tree.position.FromCSA(subline);
+                        Tree.Add(move, new TimeSpan());
+                        // 特殊な指し手や不正な指し手ならDoMove()しない
+                        if (move.IsSpecial() || !Tree.position.IsLegal(move))
+                        {
+                            continue;
+                        }
+                        Tree.DoMove(move);
+                        continue;
+                    }
+                    if (subline.StartsWith("T"))
+                    {
+                        // 着手時間
+                        var state = Tree.position.State();
+                        if (state == null)
+                        {
+                            return string.Format("line {0}: 初期局面で着手時間が指定されました。", lineNo);
+                        }
+                        var time = long.Parse(subline.Substring(1));
+                        // 1手戻って一旦枝を削除する（時間情報を追加できないので）
+                        var lastMove = state.lastMove;
+                        if (move == lastMove)
+                        {
+                            Tree.UndoMove();
+                        }
+                        Tree.Remove(move);
+                        // 改めて指し手を追加
+                        Tree.Add(move, TimeSpan.FromSeconds(time));
+                        // 特殊な指し手や不正な指し手ならDoMove()しない
+                        if (move.IsSpecial() || !Tree.position.IsLegal(move))
+                        {
+                            continue;
+                        }
+                        Tree.DoMove(move);
+                        continue;
+                    }
+                    if (subline.StartsWith("%"))
+                    {
+                        var match = new Regex("^%[A-Z_+-]+").Match(subline);
+                        if (!match.Success)
+                        {
+                            continue;
+                        }
+                        switch (match.Groups[0].Value)
+                        {
+                            case "%TORYO":
+                                move = Move.RESIGN;
+                                break;
+                            case "%CHUDAN":
+                                move = Move.INTERRUPT;
+                                break;
+                            case "%SENNICHITE":
+                                move = Move.REPETITION_DRAW;
+                                break;
+                            case "%TIME_UP":
+                                move = Move.TIME_UP;
+                                break;
+                            case "%JISHOGI":
+                                move = Move.MAX_MOVES_DRAW;
+                                break;
+                            case "%KACHI":
+                                move = Move.WIN;
+                                break;
+                            // 以下、適切な変換先不明
+                            case "%HIKIWAKE":
+                            case "%TSUMI":
+                            case "%FUZUMI":
+                            case "%MATTA":
+                            case "%ILLEGAL_MOVE":
+                            case "%+ILLEGAL_ACTION":
+                            case "%-ILLEGAL_ACTION":
+                            case "%ERROR":
+                            default:
+                                move = Move.NONE;
+                                break;
+                        }
+                        Tree.Add(move, new TimeSpan());
+                        continue;
+                    }
                 }
             }
-
-            if (!line.StartsWith("P1")) // 局面図が来た
+            if (headFlag) // まだ局面図が終わってない
                 return string.Format("CSA形式の{0}行目で局面図が来ずにファイルが終了しました。", lineNo);
-
-            // 書きかけ
-
 
             return string.Empty;
         }

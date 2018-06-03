@@ -80,6 +80,7 @@
     <Compile Include="Model\Resource\SpriteEnum\PromoteDialogEnum.cs" />
     <Compile Include="Model\Resource\SpriteManager.cs" />
     <Compile Include="Model\Shogi\Core\SquareHand.cs" />
+    <Compile Include="Model\Shogi\Converter\DetectEncoding.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuLog.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ViewModel\MainDialogViewModel.cs" />

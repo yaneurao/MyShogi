@@ -2,6 +2,7 @@
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using SysMath = System.Math;
 
 namespace MyShogi.Model.Shogi.Converter
 {
@@ -102,6 +103,19 @@ namespace MyShogi.Model.Shogi.Converter
                     return "%TORYO";
                 case Move.WIN:
                     return "%WIN";
+                case Move.INTERRUPT:
+                    return "%CHUDAN";
+                case Move.REPETITION_DRAW:
+                    return "%SENNICHITE";
+                case Move.MAX_MOVES_DRAW:
+                    return "%JISHOGI";
+                case Move.TIME_UP:
+                    return "%TIME_UP";
+                // ToDo: 他にも対応を確認
+            }
+            if (move.IsSpecial())
+            {
+                return "";
             }
 
             StringBuilder csa = new StringBuilder();
@@ -280,7 +294,7 @@ namespace MyShogi.Model.Shogi.Converter
                     {
                         restCount[p.ToInt()] -= hand[Color.BLACK.ToInt()].Count(p);
                         restCount[p.ToInt()] -= hand[Color.WHITE.ToInt()].Count(p);
-                        hand[Color.BLACK.ToInt()].Add(p, System.Math.Max(restCount[p.ToInt()], 0));
+                        hand[Color.BLACK.ToInt()].Add(p, SysMath.Max(restCount[p.ToInt()], 0));
                     }
                     continue;
                 }
@@ -297,7 +311,7 @@ namespace MyShogi.Model.Shogi.Converter
                     {
                         restCount[p.ToInt()] -= hand[Color.BLACK.ToInt()].Count(p);
                         restCount[p.ToInt()] -= hand[Color.WHITE.ToInt()].Count(p);
-                        hand[Color.WHITE.ToInt()].Add(p, System.Math.Max(restCount[p.ToInt()], 0));
+                        hand[Color.WHITE.ToInt()].Add(p, SysMath.Max(restCount[p.ToInt()], 0));
                     }
                     continue;
                 }

@@ -337,7 +337,7 @@ namespace MyShogi.Model.Test
         // 棋譜の読み込みテスト
         public static void Test2()
         {
-            using (var sr = new StreamReader("records20151115.sfen"))
+            using (var sr = new StreamReader("kif/records20151115.sfen"))
             {
                 string line;
                 // 行番号

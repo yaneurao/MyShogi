@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using System.Text;
 
 namespace MyShogi.Model.Shogi.Converter
 {
@@ -88,6 +86,7 @@ namespace MyShogi.Model.Shogi.Converter
             for (var i = 0; i < normStr.Length; i += (char.IsSurrogate(normStr, i) ? 2 : 1))
             {
                 int code = char.ConvertToUtf32(normStr, i);
+                // 二分探索
                 var low = 0;
                 var high = eawData.Length;
                 while (low < high)
@@ -107,6 +106,7 @@ namespace MyShogi.Model.Shogi.Converter
                     // Console.Out.WriteLine(String.Format("{0} {1:X4} {2}", char.ConvertFromUtf32(code), code, eawData[mid].mode));
                     goto success;
                 }
+                // 表外の文字はNeutralとして扱う
                 len += widthDef(EawVal.N);
                 success:;
             }

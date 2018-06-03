@@ -2,6 +2,7 @@
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using SysMath = System.Math;
 
 namespace MyShogi.Model.Shogi.Converter
 {
@@ -655,7 +656,7 @@ namespace MyShogi.Model.Shogi.Converter
                     var hMatches = hRegex.Matches(line);
                     foreach (Match hMatch in hMatches)
                     {
-                        hand[Color.BLACK.ToInt()].Add(FromKifPieceType(hMatch.Groups[1].Value), System.Math.Max(FromNum(hMatch.Groups[2].Value), 1));
+                        hand[Color.BLACK.ToInt()].Add(FromKifPieceType(hMatch.Groups[1].Value), SysMath.Max(FromNum(hMatch.Groups[2].Value), 1));
                     }
                     continue;
                 }
@@ -665,7 +666,7 @@ namespace MyShogi.Model.Shogi.Converter
                     var hMatches = hRegex.Matches(line);
                     foreach (Match hMatch in hMatches)
                     {
-                        hand[Color.WHITE.ToInt()].Add(FromKifPieceType(hMatch.Groups[1].Value), System.Math.Max(FromNum(hMatch.Groups[2].Value), 1));
+                        hand[Color.WHITE.ToInt()].Add(FromKifPieceType(hMatch.Groups[1].Value), SysMath.Max(FromNum(hMatch.Groups[2].Value), 1));
                     }
                     continue;
                 }

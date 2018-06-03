@@ -1,6 +1,7 @@
 ﻿using MyShogi.App;
 using System.Drawing;
 using System.Drawing.Imaging;
+using MyShogi.Model.Resource;
 using System.IO;
 using System.Windows.Forms;
 
@@ -19,7 +20,7 @@ namespace MyShogi.Model.Resource
 
         /// <summary>
         /// TheApp.app.configの内容に従い、画像を読み込む。
-        /// 
+        ///
         /// これらの画像を描画するのはUIスレッドのみ。
         /// また、読み直しもUIスレッドが行うので、スレッド競合の問題はない。
         /// </summary>
