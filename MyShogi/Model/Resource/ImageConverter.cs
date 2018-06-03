@@ -61,6 +61,7 @@ namespace MyShogi.Model.Resource
 
                 // 元素材、ベースラインがずれているのでそれを修正するコード
 
+#if false
                 switch (to_x)
                 {
                     case 0: ox += +1; break;
@@ -72,15 +73,19 @@ namespace MyShogi.Model.Resource
                     case 6: ox += -1; break;
                     case 7: ox += -3; break;
                 }
+#endif
 
+#if false
                 switch (from_y)
                 {
                     case 1: oy += 2; break;
-                    case 2: oy += 6; ox += 3;  break;
-                    case 6: oy -= 6; ox -= 3;  break;
+                    case 2: oy += 6; /*ox += 3;*/  break;
+                    case 6: oy -= 6; /*ox -= 3;*/  break;
                     case 7: oy -= 2; break;
                 }
+#endif
 
+#if false
                 // さらに駒ごとの微調整
                 int pc = to_x + to_y * 8;
                 switch (pc & ~ 8/* Piece.PROMOTE*/ ) // 成り駒に関しては同様
@@ -100,6 +105,26 @@ namespace MyShogi.Model.Resource
                     case 16+7: ox += 2; break;
                     case 16 + 8: ox -= 3; break;
                 }
+#endif
+
+                // さらに駒ごとの微調整
+                var y2 = to_y;
+                if (y2 == 2 || y2 == 3 || y2 == 5)
+                    y2 = 2; // 後手
+                else
+                    y2 = 0;
+                int pc = to_x + y2 * 8;
+                switch (pc)
+                {
+                    case 1: ox += 1; break;
+                    case 2: ox += 2; break;
+                    case 3: ox += 2; break;
+                    case 16 + 1: ox -= 2; break;
+                    case 17 + 1: ox -= 2; break;
+                    case 18 + 1: ox -= 2; break;
+                }
+
+
 
                 var srcRect = new Rectangle(0 + ox, 0 + oy, x, y);
                 int ox2 = to_x * x;

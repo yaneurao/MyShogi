@@ -20,10 +20,13 @@ namespace MyShogi.ViewModel
             //            Pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
 
             // 手駒が1種ずつあある局面
-            Pos.SetSfen("l6n1/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GSG/R8/LN5KL w rbgsnl5p 1");
+            //Pos.SetSfen("l6n1/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GSG/R8/LN5KL w rbgsnl5p 1");
 
             // 入玉局面
-            // Pos.SetSfen("ln6+R/1+P2GKGBR/p1ppp+P+PP+P/1k7/1p7/9/PPPPP4/1B7/LNSG1GSNL b 2SNL3P 75");
+            //Pos.SetSfen("ln6+R/1+P2GKGBR/p1ppp+P+PP+P/1k7/1p7/9/PPPPP4/1B7/LNSG1GSNL b 2SNL3P 75");
+
+            //  成駒がいっぱいある局面
+            Pos.SetSfen("ln6+R/1+P2GK+GBR/p1ppp+P+PP+P/1k7/1p7/9/PPPPP4/1B7/+L+N+SG1GSNL b 2SNL3P 75");
 
 #if false
             // 王手結構かかる局面 王手になる指し手の数 = 67
