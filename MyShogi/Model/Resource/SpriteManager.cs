@@ -158,13 +158,21 @@ namespace MyShogi.Model.Resource
             // その素材にhoverされているときはx座標にこのオフセット値を加算する
             var hover_offset = promote_dialog_cancel_rect.Width;
 
+            // 駒を画像に対してセンタリングするためのmargin
+            var piece_margin = new Size(
+                (promote_dialog_promote_rect.Width - piece_img_width) / 2 ,
+                (promote_dialog_promote_rect.Height - piece_img_height) / 2
+
+                );
+
+
             // -- 成り
             var rect = promote_dialog_promote_rect;
             if (select == PromoteDialogSelectionEnum.PROMOTE)
                 rect.X += hover_offset;
             var sprite = new Sprite(img.PromoteDialogImage.image, rect);
             var first_sprite = sprite; // 最後にこれをreturnで返す
-            sprite.next = Piece(Util.MakePiecePromote(Shogi.Core.Color.BLACK, pc));
+            sprite.next = new Sprite(Piece(Util.MakePiecePromote(Shogi.Core.Color.BLACK, pc)), piece_margin);
             if (sprite.next != null)
                 sprite = sprite.next;
 
@@ -176,7 +184,7 @@ namespace MyShogi.Model.Resource
 
             sprite.next = new Sprite(img.PromoteDialogImage.image, rect , dstOffset);
             sprite = sprite.next;
-            sprite.next = new Sprite(Piece(pc), dstOffset);
+            sprite.next = new Sprite(Piece(pc), dstOffset + piece_margin);
             if (sprite.next != null)
                 sprite = sprite.next;
 
