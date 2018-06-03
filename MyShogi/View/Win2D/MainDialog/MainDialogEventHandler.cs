@@ -37,6 +37,11 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void ScreenRedraw()
         {
+            // まだ初期化(GameScreenのbind)が終わっていない段階での呼び出しは無視。
+            // ※　InitalizeComponent()から抜ける前にresizeイベントが発生したなど。
+            if (gameScreen == null)
+                return;
+
             // 画面に合わせたaffine行列を求める
             FitToClientSize();
 
