@@ -145,6 +145,31 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// 盤上、手駒上のsqの位置にある駒。
+        /// 手駒の場合、その手駒を持っていなければPiece.NO_PIECEが返る。
+        /// また、後手の場合、後手の駒(Piece.W_PAWNなど)が返る。
+        /// SquareHand.NBに対してもPiece.NO_PIECEが返る。
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public Piece PieceOn(SquareHand sq)
+        {
+            if (sq == SquareHand.NB)
+                return Piece.NO_PIECE;
+
+            var c = sq.PieceColor();
+            if (c == Color.NB)
+                return PieceOn((Square)sq);
+
+            var pt = sq.ToPiece();
+            if (Hand(c).Count(pt) > 0)
+            {
+                return Util.MakePiece(c, pt);
+            }
+            return Piece.NO_PIECE;
+        }
+
+        /// <summary>
         /// 盤面上、sqの升にある駒のPieceNoの参照
         /// </summary>
         /// <param name="sq"></param>

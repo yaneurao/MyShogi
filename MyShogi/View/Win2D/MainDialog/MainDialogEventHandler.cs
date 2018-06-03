@@ -106,7 +106,6 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// MouseDownが最後に発生した場所
-        /// InverseAffine()を通した値になっている。
         /// </summary>
         private Point mouseLastDown = new Point(-1,-1); // 意味のない地点
 

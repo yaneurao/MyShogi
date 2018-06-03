@@ -141,6 +141,157 @@ namespace MyShogi.View.Win2D
         public Move[] moves_buf { get; } = new Move[(int)Move.MAX_MOVES];
 
         /// <summary>
+        /// sqの駒を掴む
+        /// sqの駒が自駒であることは確定している。
+        /// 行き先の候補の升情報を更新する。
+        /// </summary>
+        /// <param name="sq"></param>
+        public void pick_up(SquareHand sq)
+        {
+            var pos = ViewModel.ViewModel.Pos;
+
+            // この駒をユーザーが掴んで動かそうとしていることを示す
+            ViewModel.viewState.picked_from = sq;
+            ViewModel.viewState.picked_to = SquareHand.NB;
+            ViewModel.viewState.state = GameScreenViewStateEnum.PiecePickedUp;
+
+            // デバッグ用に出力する。
+            //Console.WriteLine("pick up : " + sq.Pretty() );
+
+            // 簡単に利きを表示する。
+            // ここで連続王手による千日手などを除外すると
+            // 「ユーザーが駒が動かせない、バグだ」をみたいなことを言い出しかねない。
+            // 移動後に連続王手の千日手を回避していないという警告を出すようにしなくてはならない。
+
+            // 合法手を生成して、そこに含まれるものだけにする。
+            // この生成、局面が変わったときに1回でいいような気はするが..
+            // 何回もクリックしまくらないはずなのでまあいいや。
+
+            int n = MoveGen.LegalAll(pos, moves_buf, 0);
+
+            var is_drop = sq.IsDrop();
+            var pt = pos.PieceOn(sq).PieceType();
+            Bitboard bb = Bitboard.ZeroBB();
+
+            // 生成されたすべての合法手に対して移動元の升が合致する指し手の移動先の升を
+            // Bitboardに反映させていく。
+            for (int i = 0; i < n; ++i)
+            {
+                var m = moves_buf[i];
+                if (is_drop)
+                {
+                    // 駒の打てる先。これは合法手でなければならない。
+                    // 二歩とか打ち歩詰めなどがあるので合法手のみにしておく。
+                    // (打ち歩詰めなので打てませんの警告ダイアログ、用意してないので…)
+
+                    // 合法手には自分の手番の駒しか含まれないのでこれでうまくいくはず
+                    if (m.IsDrop() && m.DroppedPiece() == pt)
+                        bb |= m.To();
+                } else
+                {
+                    // 駒の移動できる先
+                    if (!m.IsDrop() && m.From() == (Square)sq)
+                        bb |= m.To();
+                }
+            }
+
+            ViewModel.viewState.picked_piece_legalmovesto = bb;
+            ViewModel.viewState.state = GameScreenViewStateEnum.PiecePickedUp;
+
+            // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
+            ViewModel.dirty = true;
+
+        }
+
+        /// <summary>
+        /// 駒の移動
+        /// ただし成り・不成が選べるときはここでそれを尋ねるダイアログが出る。
+        /// また、連続王手の千日手局面に突入するときもダイアログが出る。
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        public void move_piece(SquareHand from,SquareHand to)
+        {
+            var state = ViewModel.viewState;
+
+            // デバッグ用に表示する。
+            Console.WriteLine(from.Pretty() + "→" + to.Pretty());
+
+            // あとで書く。
+
+            StateReset();
+        }
+
+        /// <summary>
+        /// ViewModel.viewStateをNormalの状態に戻す
+        /// (これは駒を再度掴める状態)
+        /// </summary>
+        public void StateReset()
+        {
+            var state = ViewModel.viewState;
+            state.Reset();
+
+            // 画面上の状態が変わるのでリセットするために再描画が必要
+            ViewModel.dirty = true;
+        }
+
+        /// <summary>
+        /// 盤面のsqの升(手駒も含む)がクリックされた
+        /// </summary>
+        /// <param name="sq"></param>
+        public void OnBoardClick(SquareHand sq)
+        {
+            var pos = ViewModel.ViewModel.Pos;
+            var state = ViewModel.viewState;
+            var pc = pos.PieceOn(sq);
+
+            //Console.WriteLine(sq.Pretty());
+
+            switch (state.state)
+            {
+                case GameScreenViewStateEnum.Normal:
+                    {
+                        // 掴んだのが自分の駒であるか
+                        if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove)
+                            pick_up(sq); // sqの駒を掴んで行き先の候補の升情報を更新する
+
+                        break;
+                    }
+                case GameScreenViewStateEnum.PiecePickedUp:
+                    {
+                        // 次の4つのケースが考えられる
+                        // 1.駒を掴んでいる状態なので移動先のクリック
+                        // 2.自駒を再度掴んだ(掴んでいたのをキャンセルする)
+                        // 3.別の自分の駒を掴んだ(掴み直し)
+                        // 4.無縁の升をクリックした(掴んでいたのをキャンセルする)
+
+                        // 1. 駒の移動
+
+                        // いま掴んでいる駒の移動できる先であるのか。
+                        var bb = state.picked_piece_legalmovesto;
+                        if (!sq.IsDrop() && bb.IsSet((Square)sq))
+                        {
+                            state.picked_to = sq;
+                            move_piece(state.picked_from, state.picked_to);
+                        }
+                        // 2. 掴んでいた駒の再クリック
+                        else if (sq == state.picked_from)
+                            StateReset();
+
+                        // 3. 別の駒のクリック
+                        else if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove)
+                            pick_up(sq);
+
+                        // 4. 掴む動作のキャンセル
+                        else
+                            StateReset();
+
+                        break;
+                    }
+            }
+        }
+
+        /// <summary>
         /// 盤面がクリックされたときに呼び出されるハンドラ
         /// </summary>
         /// <param name="p"></param>
@@ -151,75 +302,7 @@ namespace MyShogi.View.Win2D
 
             // 盤面(手駒を含む)のどこの升がクリックされたのかを調べる
             SquareHand sq = BoardAxisToSquare(p);
-
-            if (sq != SquareHand.NB)
-            {
-                // 前回と異なる駒を掴んだ。
-                if (ViewModel.viewState.picked_from != sq)
-                {
-                    var pos = ViewModel.ViewModel.Pos;
-                    if (sq.PieceColor() == ShogiCore.Color.NB)
-                    {
-                        // 盤上の駒
-                        var pc = pos.PieceOn((Square)sq);
-                        if (pc != Piece.NO_PIECE && pos.sideToMove == pc.PieceColor())
-                        {
-                            // この駒をユーザーが掴んで動かそうとしていることを示す
-                            ViewModel.viewState.picked_from = sq;
-
-                            // 簡単に利きを表示する。
-                            // ここで連続王手による千日手などを除外すると
-                            // 「ユーザーが駒が動かせない、バグだ」をみたいなことを言い出しかねない。
-                            // 移動後に連続王手の千日手を回避していないという警告を出すようにしなくてはならない。
-
-                            // 合法手を生成して、そこに含まれるものだけにする。
-                            // この生成、局面が変わったときに1回でいいような気はするが..
-                            // 何回もクリックしまくらないはずなのでまあいいや。
-                            int n = MoveGen.LegalAll(pos, moves_buf, 0);
-
-                            Bitboard bb = Bitboard.ZeroBB();
-                            for(int i=0;i<n;++i)
-                            {
-                                var m = moves_buf[i];
-                                if (!m.IsDrop() && m.From() == (Square)sq)
-                                    bb |= m.To();
-                            }
-
-                            ViewModel.viewState.picked_piece_legalmovesto = bb;
-
-                            // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
-                            ViewModel.dirty = true;
-                        }
-                    } else
-                    {
-                        // 手駒
-                        var pc = sq.ToPiece();
-                        var color = sq.PieceColor();
-                        if (pos.sideToMove == color && pos.Hand(color).Count(pc) >= 1) // この駒を持っていなくてはならない。
-                        {
-                            // この駒をユーザーが掴んで動かそうとしていることを示す
-                            ViewModel.viewState.picked_from = sq;
-
-                            // 駒の打てる先。これは合法手でなければならない。
-                            // 二歩とか打ち歩詰めなどがあるので合法手のみにしておく。
-                            // (打ち歩詰めなので打てませんの警告ダイアログ、用意してないので…)
-
-                            int n = MoveGen.LegalAll(pos, moves_buf, 0);
-
-                            Bitboard bb = Bitboard.ZeroBB();
-                            for (int i = 0; i < n; ++i)
-                            {
-                                var m = moves_buf[i];
-                                if (m.IsDrop() && m.DroppedPiece() == pc)
-                                    bb |= m.To();
-                            }
-
-                            ViewModel.viewState.picked_piece_legalmovesto = bb;
-                            ViewModel.dirty = true;
-                        }
-                    }
-                }
-            }
+            OnBoardClick(sq);
 
             // デバッグ用にクリックされた升の名前を出力する。
             //Console.WriteLine(sq.Pretty());
@@ -243,8 +326,12 @@ namespace MyShogi.View.Win2D
             // 同じ升がクリックされていれば、これはOnClick()として処理してやる。
             if (sq1 == sq2 && sq1 != SquareHand.NB)
             {
-                OnClick(p1);
+                // affine変換前のもの
+                OnBoardClick(sq1);
                 return;
+            } else
+            {
+                // これ、真面目に考えると難しい。あとでよく考える。
             }
 
             // デバッグ用にドラッグされた升の名前を出力する。

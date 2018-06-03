@@ -24,8 +24,7 @@ namespace MyShogi.View.Win2D
     {
         public GameScreenViewState()
         {
-            state = GameScreenViewStateEnum.Normal;
-            picked_from = picked_to = SquareHand.NB;
+            Reset();
         }
 
         /// <summary>
@@ -45,6 +44,19 @@ namespace MyShogi.View.Win2D
         /// 駒台の駒はありえないが、picked_fromと同じ型にしておく。
         /// </summary>
         public SquareHand picked_to;
+
+        /// <summary>
+        /// picked_fromとpicked_toをリセットして、
+        /// stateをNormalに戻す。
+        /// picked_piece_legalmovestoをZeroBB()にする。
+        /// (これが初期状態)
+        /// </summary>
+        public void Reset()
+        {
+            state = GameScreenViewStateEnum.Normal;
+            picked_from = picked_to = SquareHand.NB;
+            picked_piece_legalmovesto = Bitboard.ZeroBB();
+        }
 
         /// <summary>
         /// 掴んでいる駒が行ける升の候補

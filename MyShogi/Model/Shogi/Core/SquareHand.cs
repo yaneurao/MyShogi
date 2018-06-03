@@ -54,6 +54,16 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// 駒打ちを意味する升であるか？
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public static bool IsDrop(this SquareHand sq)
+        {
+            return sq >= SquareHand.Hand;
+        }
+
+        /// <summary>
         /// sqの手駒に対して、その駒種を返す
         /// sqは手駒でないといけない。
         /// 
