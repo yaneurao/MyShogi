@@ -158,6 +158,9 @@ namespace MyShogi.Model.Resource
                     case 1: c = Color.FromArgb((int)(255 * 0.30), (int)(243 * 0.7), (int)(230 * 0.7), (int)(187 * 0.7)); break;
                     case 2: c = Color.FromArgb((int)(255 * 0.30), (int)(243 * 0.5), (int)(230 * 0.5), (int)(187 * 0.5)); break;
                     case 3: c = Color.FromArgb((int)(255 * 0.30), (int)(243 * 0.2), (int)(230 * 0.2), (int)(187 * 0.2)); break;
+                    case 4: c = Color.FromArgb((int)(255 * 0.3), 255, 255, 255); break;
+                    case 5: c = Color.FromArgb((int)(255 * 0.6), 255, 255, 255); break;
+
                     default: c = Color.FromArgb(0, 0, 0, 0); break;
                 }
                 return c;

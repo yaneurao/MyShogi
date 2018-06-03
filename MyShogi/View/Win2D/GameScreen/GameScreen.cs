@@ -110,9 +110,18 @@ namespace MyShogi.View.Win2D
                             continue;
                         } else
                         {
-                            // 駒を持ち上げてはいるので移動先の候補以外の升を暗めに描画する。
-                            if (!vm.viewState.picked_piece_legalmovesto.IsSet(sq))
+                            // 駒を持ち上げてはいる時の移動先の候補の升のエフェクト
+
+                            // 移動先の候補の升か？
+                            var movable = vm.viewState.picked_piece_legalmovesto.IsSet(sq);
+
+                            if (movable && config.PickedMoveToColorType >= 4)
+                                // 移動先の候補の升を明るく
                                 DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedTo));
+                            else if (!movable && config.PickedMoveToColorType < 4)
+                                // 移動先の候補以外の升を暗く
+                                DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedTo));
+
                         }
                     }
 

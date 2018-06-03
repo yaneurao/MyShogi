@@ -267,10 +267,10 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "駒を掴んだ時の移動出来ない升";
+                        item.Text = "駒を掴んだ時の移動候補";
 
                         var item0 = new ToolStripMenuItem();
-                        item0.Text = "何もしない";
+                        item0.Text = "エフェクトなし";
                         item0.Checked = config.PickedMoveToColorType == 0;
                         item0.Click += (sender, e) => { config.PickedMoveToColorType = 0; };
                         item.DropDownItems.Add(item0);
@@ -292,6 +292,18 @@ namespace MyShogi.View.Win2D
                         item3.Checked = TheApp.app.config.PickedMoveToColorType == 3;
                         item3.Click += (sender, e) => { config.PickedMoveToColorType = 3; };
                         item.DropDownItems.Add(item3);
+
+                        var item4 = new ToolStripMenuItem();
+                        item4.Text = "移動できる升を少し明るくする";
+                        item4.Checked = TheApp.app.config.PickedMoveToColorType == 4;
+                        item4.Click += (sender, e) => { config.PickedMoveToColorType = 4; };
+                        item.DropDownItems.Add(item4);
+
+                        var item5 = new ToolStripMenuItem();
+                        item5.Text = "移動できる升を明るくする";
+                        item5.Checked = TheApp.app.config.PickedMoveToColorType == 5;
+                        item5.Click += (sender, e) => { config.PickedMoveToColorType = 5; };
+                        item.DropDownItems.Add(item5);
 
                         item_display.DropDownItems.Add(item);
                     }
