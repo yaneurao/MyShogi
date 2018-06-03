@@ -1,17 +1,13 @@
-﻿using MyShogi.Model.Shogi.Core;
-using System;
+﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
 using SysMath = System.Math;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Converter
 {
-    /// <summary>
-    /// ToDo : なんやかや書くかも
-    /// </summary>
-    public class KifConverter
-    {
-    }
+
+    // KIF/KI2形式の文字列を取り扱うクラス群
 
     public enum ColorFormat
     {
@@ -67,13 +63,16 @@ namespace MyShogi.Model.Shogi.Converter
             this.sameposFmt = sameposFmt;
             this.fromsqFmt = fromsqFmt;
         }
-        public static KifFormatter Kif() => new KifFormatter(
+
+        // singleton object
+        public static KifFormatter Kif { get; private set; } = new KifFormatter(
             ColorFormat.NONE,
             SquareFormat.FullWidthMix,
             SamePosFormat.KIFsp,
             FromSqFormat.KIF
         );
-        public static KifFormatter Ki2() => new KifFormatter(
+
+        public static KifFormatter Ki2 { get; private set; } = new KifFormatter(
             ColorFormat.NONE,
             SquareFormat.FullWidthMix,
             SamePosFormat.KI2sp,
@@ -470,7 +469,7 @@ namespace MyShogi.Model.Shogi.Converter
         /// <param name="move"></param>
         /// <returns></returns>
         public static string ToKif(this Position pos, Move move, Move lastMove = Move.NONE) =>
-            KifFormatter.Kif().format(pos, move, lastMove);
+            KifFormatter.Kif.format(pos, move, lastMove);
 
         /// <summary>
         /// ある指し手をKI2形式で出力する
@@ -480,7 +479,7 @@ namespace MyShogi.Model.Shogi.Converter
         /// <param name="move"></param>
         /// <returns></returns>
         public static string ToKi2(this Position pos, Move move, Move lastMove = Move.NONE) =>
-            KifFormatter.Ki2().format(pos, move, lastMove);
+            KifFormatter.Ki2.format(pos, move, lastMove);
 
         /// <summary>
         /// KIF/KI2形式の指し手を与えて、Moveに変換する。指し手の合法性のチェックはここでは行わない。

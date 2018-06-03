@@ -1,9 +1,9 @@
-﻿using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Converter;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Converter;
 
 namespace MyShogi.Model.Shogi.Kifu
 {

@@ -1,20 +1,15 @@
-﻿using MyShogi.Model.Shogi.Core;
-using System;
+﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
 using SysMath = System.Math;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Converter
 {
-    /// <summary>
-    /// ToDo : なんやかや書くかも
-    /// </summary>
-    public class CsaConverter
-    {
-    }
+    // CSA形式の文字列を取り扱うクラス群
 
     /// <summary>
-    /// kif形式の入出力
+    /// csa形式の入出力
     /// </summary>
     public static class CsaExtensions
     {
