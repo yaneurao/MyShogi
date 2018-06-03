@@ -103,14 +103,13 @@ namespace MyShogi.ViewModel
         /// </summary>
         public Position Pos { get; private set; } = new Position();
 
-
         /// <summary>
         /// 対局者氏名。
         /// 
         /// あとで書き直す。
         /// </summary>
-        public string Player1Name { get; private set; } = "ワイ";
-        public string Player2Name { get; private set; } = "あんた";
+        public string Player1Name { get; private set; } = "わたし";
+        public string Player2Name { get; private set; } = "あなた";
 
         /// <summary>
         /// いまユーザーの手番で、ユーザーはマウス操作によって駒を動かせるのか？
