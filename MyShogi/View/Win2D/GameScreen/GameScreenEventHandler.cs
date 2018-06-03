@@ -316,22 +316,30 @@ namespace MyShogi.View.Win2D
         public void OnDrag(Point p1, Point p2)
         {
             /// 座標系を、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)にする。
-            p1 = ViewModel.AffineMatrix.InverseAffine(p1);
-            p2 = ViewModel.AffineMatrix.InverseAffine(p2);
+            var p1_t = ViewModel.AffineMatrix.InverseAffine(p1);
+            var p2_t = ViewModel.AffineMatrix.InverseAffine(p2);
 
             // 盤面(手駒を含む)のどこの升からどこの升にドラッグされたのかを調べる
-            SquareHand sq1 = BoardAxisToSquare(p1);
-            SquareHand sq2 = BoardAxisToSquare(p2);
+            SquareHand sq1 = BoardAxisToSquare(p1_t);
+            SquareHand sq2 = BoardAxisToSquare(p2_t);
 
             // 同じ升がクリックされていれば、これはOnClick()として処理してやる。
-            if (sq1 == sq2 && sq1 != SquareHand.NB)
+            // 単一クリックが間違えて、ドラッグになってしまった可能性が高い。
+            // sq1 == SquareHand.NBの場合もそう。
+            if (sq1 == sq2)
             {
                 // affine変換前のもの
-                OnBoardClick(sq1);
+                OnClick(p1);
                 return;
             } else
             {
-                // これ、真面目に考えると難しい。あとでよく考える。
+                // 通常の移動であるが、これが駒の移動の条件を満たすことを確認しなければならない。
+
+                // p1がクリックされたあとにp2がクリックされたことにしてお茶を濁す
+                OnClick(p1);
+                OnClick(p2);
+
+                // 簡単なhackだが、これでだいたい意図通りの動作になるようだ。
             }
 
             // デバッグ用にドラッグされた升の名前を出力する。
