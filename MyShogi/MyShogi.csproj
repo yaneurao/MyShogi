@@ -130,6 +130,12 @@
     </Compile>
     <Compile Include="View\Win2D\GameScreen\GameScreen.cs" />
     <Compile Include="View\Win2D\GameScreen\GameScreenEventHandler.cs" />
+    <Compile Include="View\Win2D\GameSettingDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\GameSettingDialog.Designer.cs">
+      <DependentUpon>GameSettingDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\KifuControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -166,6 +172,9 @@
     </Compile>
     <EmbeddedResource Include="View\Win2D\AboutYaneuraOu.resx">
       <DependentUpon>AboutYaneuraOu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\GameSettingDialog.resx">
+      <DependentUpon>GameSettingDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\KifuControl.resx">
       <DependentUpon>KifuControl.cs</DependentUpon>

@@ -48,7 +48,7 @@ namespace MyShogi.Model.Resource
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="format"></param>
-        public void CreateBitmap(int width,int height , PixelFormat format)
+        public void CreateBitmap(int width,int height , PixelFormat format = PixelFormat.Format24bppRgb)
         {
             if (image == null)
             {
@@ -60,6 +60,24 @@ namespace MyShogi.Model.Resource
             }
         }
         
+        /// <summary>
+        /// width×heightのbitmapを作成してそこに現在の内容を(拡大・縮小)コピーして返す
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        public ImageLoader CreateAndCopy(int width , int height , PixelFormat format = PixelFormat.Format24bppRgb)
+        {
+            var img = new ImageLoader();
+            img.CreateBitmap(width, height,format);
+            using (var g = Graphics.FromImage(img.image))
+            {
+                var dstRect = new Rectangle(0, 0, width, height);
+                var srcRect = new Rectangle(0, 0, image.Width, image.Height);
+                g.DrawImage(this.image, dstRect, srcRect, GraphicsUnit.Pixel);
+            }
+            return img;
+        }
+
         /// <summary>
         /// 外部で生成されたBitmapのインスタンスを渡して、
         /// このクラスの管理下におく。

@@ -352,6 +352,18 @@ namespace MyShogi.View.Win2D
                 }
 
 #if DEBUG
+                {
+                    var item_demo = new ToolStripMenuItem();
+                    item_demo.Text = "デモ用";
+
+                    var item1 = new ToolStripMenuItem();
+                    item1.Text = "対局画面";
+                    item1.Click += (sender, e) => { new GameSettingDialog().Show(); };
+                    item_demo.DropDownItems.Add(item1);
+
+                    menu.Items.Add(item_demo);
+                }
+
                 // デバッグ用にメニューにテストコードを実行する項目を追加する。
                 {
                     var item_debug = new ToolStripMenuItem();

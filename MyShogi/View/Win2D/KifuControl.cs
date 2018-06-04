@@ -65,13 +65,16 @@ namespace MyShogi.View.Win2D
         /// <param name="scale"></param>
         public void OnResize(double scale)
         {
+            // 最小化したのかな？
+            if (this.Width == 0 || ClientSize.Width == 0)
+                return;
+
             // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
             double font_size = 18 * scale;
 
             // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ
             // fontを小さく表示してやる。
-            if (this.Width != 0)
-                font_size *= ClientSize.Width / this.Width;
+            font_size *= ClientSize.Width / this.Width;
 
             listBox1.Font = new Font("MS Gothic", (int)font_size, FontStyle.Regular , GraphicsUnit.Pixel);
         }
