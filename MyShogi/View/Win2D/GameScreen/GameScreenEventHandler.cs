@@ -233,7 +233,21 @@ namespace MyShogi.View.Win2D
                 state.promote_dialog_selection = Model.Resource.PromoteDialogSelectionEnum.NO_SELECT;
 
                 // toの近くに成り・不成のダイアログを描画してやる。
-                var dest = PieceLocation(to) + new Size(-103 + 95/2,+100);
+                // これは移動先の升の少し下に出す。
+                // ただし、1段目であると画面外に行ってしまうので
+                // 1,2段目であれば上に変位させる必要がある。
+                // あと、棋譜ウィンドウもこの手前に描画できないので
+                // ここも避ける必要がある。
+                
+                var dest = PieceLocation(to);
+                if (dest.Y >= board_img_size.Height * 0.8) // 画面の下らへんである..
+                    dest += new Size(-130 + 95 / 2, -200);
+                else
+                    dest += new Size(-103 + 95 / 2, +100);
+
+                if (dest.X < board_location.X)
+                    dest += new Size(150, 0);
+
                 state.promote_dialog_location = dest;
 
                 // toの升以外は暗くする。

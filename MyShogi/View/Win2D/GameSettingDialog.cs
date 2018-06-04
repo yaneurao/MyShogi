@@ -19,12 +19,17 @@ namespace MyShogi.View.Win2D
 
             // デモ用にバナーを描画しておく
 
+            // (w,h)=(320,100)のつもりだが、dpi scalingのせいで
+            // 環境によって異なるのでここで再取得してそれに合わせる。
+            int w = pictureBox1.Width;
+            int h = pictureBox1.Height;
+
             banner1.Load(@"engine/tanuki2018/banner.png");
-            banner1mini = banner1.CreateAndCopy(320, 100);
+            banner1mini = banner1.CreateAndCopy(w, h);
             pictureBox1.Image = banner1mini.image;
 
             banner2.Load(@"engine/yaneuraou2018/banner.png");
-            banner2mini = banner2.CreateAndCopy(320, 100);
+            banner2mini = banner2.CreateAndCopy(w, h);
             pictureBox2.Image = banner2mini.image;
 
             comboBox1.SelectedIndex = 0;

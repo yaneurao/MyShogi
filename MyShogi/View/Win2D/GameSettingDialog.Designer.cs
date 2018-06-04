@@ -453,7 +453,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(425, 845);
+            this.button3.Location = new System.Drawing.Point(425, 836);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(200, 55);
             this.button3.TabIndex = 9;
@@ -480,7 +480,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(175, 845);
+            this.button6.Location = new System.Drawing.Point(175, 836);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(200, 55);
             this.button6.TabIndex = 9;
@@ -489,8 +489,8 @@
             // 
             // GameSettingDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 27F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(774, 929);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button3);
