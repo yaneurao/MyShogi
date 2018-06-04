@@ -33,6 +33,8 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public GameScreenViewModel ViewModel { get; private set; } = new GameScreenViewModel();
 
+        public KifuControl kifuControl { get { return ViewModel.kifuControl; } }
+
         /// <summary>
         /// 描画時に呼び出される。
         /// 対局盤面を描画する。

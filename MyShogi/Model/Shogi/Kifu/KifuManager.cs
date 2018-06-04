@@ -16,7 +16,7 @@ namespace MyShogi.Model.Shogi.Kifu
     /// ・千日手の管理、検出をサポート
     ///
     /// 使用上の注意)
-    /// ・Bind(Position)で、Positionのインスタンスを関連付けてから使うこと。
+    /// ・bind()で、Positionのインスタンスを関連付けてから使うこと。
     /// ・また、必要ならば、そのあとにInit()を呼び出すこと。
     /// </summary>
     public class KifuManager

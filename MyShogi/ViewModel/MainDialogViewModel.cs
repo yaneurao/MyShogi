@@ -63,41 +63,15 @@ namespace MyShogi.ViewModel
 
             // デバッグ中
             CanMove = true;
+            KifuList = new List<string>();
         }
 
         /// <summary>
-        /// 新しく対局controller(GameController)を、このクラスの管理下に加える。
+        /// 対局はN個、並列対局できるので、GameControllerのインスタンスをN個保持している
+        /// あとで修正する。
         /// </summary>
-        /// <param name="game"></param>
-        public void Add(GameController game)
-        {
-            Games.Add(game);
-            if (VisibleGames.Count == 0)
-                VisibleGames.Add(game);
-            if (ActiveGame == null)
-                ActiveGame = game;
-        }
-
-        // 対局はN個、並列対局できるので、GameControllerのインスタンスをN個保持している
-        public List<GameController> Games { get; private set; } = new List<GameController>();
-
-        /// <summary>
-        /// これを画面上に表示させるものとする。これは、Gamesのなかの、画面に表示させたいインスタンスが格納されている。
-        /// VisibleGames.Length == 1のときは対局盤面は1つ。
-        /// VisibleGames.Length >= 2のときは対局盤面が2つ以上。(工夫して表示させる)
-        /// </summary>
-        public List<GameController> VisibleGames { get; private set; } = new List<GameController>();
-
-        // -- 以下、盤面関連の情報
-        // あとで書き直す
-
-        /// <summary>
-        /// 現在activeなゲーム。対局棋譜ウィンドゥは、singletonであることを想定しているので
-        /// activeなゲームに関する情報しか表示できない。なので、どのGameがActiveであるかを選択できるようになっている。
-        /// VisibleGamesのなかのいずれかのインスタンス。
-        /// </summary>
-        public GameController ActiveGame;
-
+        public GameController game { get; set; }
+        
         /// <summary>
         /// 盤面。あとで書き直す。デバッグ用。
         /// </summary>
@@ -133,25 +107,30 @@ namespace MyShogi.ViewModel
             if (Pos.IsLegal(m))
             {
                 var lastMove = Pos.State().lastMove;
+
                 // Viewのほうに棋譜をappendする
-                move_text = Pos.ToKi2(m, lastMove);
-                move_text_game_ply = Pos.gamePly;
+                var move_text = Pos.ToKi2(m, lastMove);
+                var move_text_game_ply = Pos.gamePly;
+
+                move_text = string.Format("{0,-4}", move_text);
+                move_text = move_text.Replace(' ', '　'); // 半角スペースから全角スペースへの置換
+
+                var text = string.Format("{0,3}.{1} {2}", move_text_game_ply, move_text , "00:00:01");
+                KifuList.Add(text);
+                RaisePropertyChanged("KifuList", KifuList); // ここでイベントが発生したとする。
 
                 Pos.DoMove(m);
-
-                // ここをUIスレッド以外で行うためにViewに対して
-                // Invalidate()する必要がある。
-                // あとで考える
-                
-                // TODO : これあとでちゃんとメッセージングを使って書き直す
             }
         }
 
         /// <summary>
-        /// 指し手が指されたときに生成される1行の棋譜文字列
-        /// あとでメッセージングを使って書き直す。
+        /// 棋譜ウィンドウに表示する棋譜のリスト
+        /// これがデータバインドされていて、KifuControlにそのまま描画される。
         /// </summary>
-        public string move_text;
-        public int move_text_game_ply;
+        public List<string> KifuList
+        {
+            get { return GetValue<List<string>>("KifuList"); }
+            set { SetValue<List<string>>("KifuList",value); }
+        }
     }
 }

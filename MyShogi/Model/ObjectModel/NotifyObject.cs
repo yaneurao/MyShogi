@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 
+// WPFで使うNotifyObjectっぽい何か。
 namespace MyShogi.Model.ObjectModel
 {
     /// <summary>
     /// プロパティが変更されたときに呼び出されるハンドラの型
     /// </summary>
     public delegate void PropertyChangedEventHandler();
+    public delegate void PropertyChangedEventHandler2(object o);
 
     /// <summary>
     /// MVVMのViewModelで用いる、プロパティが変更されたときに、それをsubscribe(購読)しているobserverに
@@ -32,7 +34,7 @@ namespace MyShogi.Model.ObjectModel
                     // 値が異なるときだけ代入して、そのときにイベントが発火する。
                     // 一度目はイベントは発火しない。
                     properties[name] = value;
-                    RaisePropertyChanged(name);
+                    RaisePropertyChanged(name , value);
                 }
             }
         }
@@ -60,12 +62,17 @@ namespace MyShogi.Model.ObjectModel
         /// name の propertyが変更されたときに、これを購読しているobserverに更新通知を送る。
         /// </summary>
         /// <param name="name"></param>
-        protected void RaisePropertyChanged(string name)
+        protected void RaisePropertyChanged(string name , object o)
         {
             // このpropertyをsubscribeしているobserverに更新通知を送る
             foreach(var prop in propery_changed_handlers)
                 if (prop.Key == name)
                     prop.Value();
+
+            // こちらは引数にobjectをとり、変更のあったobjectを引数にもらえる。
+            foreach (var prop in propery_changed_handlers2)
+                if (prop.Key == name)
+                    prop.Value(o);
         }
 
         /// <summary>
@@ -81,6 +88,17 @@ namespace MyShogi.Model.ObjectModel
                     propery_changed_handlers.Add(name,h);
                 else
                     propery_changed_handlers[name] += h;
+            }
+        }
+
+        public void AddPropertyChangedHandler(string name, PropertyChangedEventHandler2 h)
+        {
+            lock (lockObject)
+            {
+                if (!propery_changed_handlers2.ContainsKey(name))
+                    propery_changed_handlers2.Add(name, h);
+                else
+                    propery_changed_handlers2[name] += h;
             }
         }
 
@@ -103,6 +121,20 @@ namespace MyShogi.Model.ObjectModel
             }
         }
 
+        public void RemovePropertyChangedHandler(string name, PropertyChangedEventHandler2 h)
+        {
+            lock (lockObject)
+            {
+                if (propery_changed_handlers2.ContainsKey(name))
+                {
+                    propery_changed_handlers2[name] -= h;
+                    // delegateを削除した結果、nullになったなら、このentryを削除しておく。
+                    if (propery_changed_handlers2[name] == null)
+                        propery_changed_handlers2.Remove(name);
+                }
+            }
+        }
+
         // --- 以下 private 
 
         /// <summary>
@@ -116,7 +148,9 @@ namespace MyShogi.Model.ObjectModel
         /// </summary>
         private Dictionary<string,PropertyChangedEventHandler> propery_changed_handlers 
             = new Dictionary<string, PropertyChangedEventHandler>();
-        
+        private Dictionary<string, PropertyChangedEventHandler2> propery_changed_handlers2
+            = new Dictionary<string, PropertyChangedEventHandler2>();
+
         /// <summary>
         /// lockに用いるobject
         /// </summary>

@@ -134,6 +134,32 @@ namespace MyShogi.Model.Shogi.Core
         // -------------------------------------------------------------------------
 
         /// <summary>
+        /// このオブジェクトをコピーする。
+        /// 参照透明なオブジェクトが欲しいときに用いる。
+        /// </summary>
+        /// <returns></returns>
+        public Position clone()
+        {
+            var pos = new Position();
+
+            Array.Copy(board, pos.board, board.Length);
+            Array.Copy(board_pn, pos.board_pn, board_pn.Length);
+            Array.Copy(hand, pos.hand , hand.Length);
+            Array.Copy(hand_pn, pos.hand_pn, hand_pn.Length);
+            pos.lastPieceNo = lastPieceNo;
+            pos.sideToMove = sideToMove;
+            Array.Copy(kingSquare, pos.kingSquare, kingSquare.Length);
+            pos.gamePly = gamePly;
+            pos.st = st; // stの先は参照透明なはず..
+            Array.Copy(byColorBB, pos.byColorBB, byColorBB.Length);
+            Array.Copy(byTypeBB, pos.byTypeBB, byTypeBB.Length);
+
+            return pos;
+        }
+
+        // -------------------------------------------------------------------------
+
+        /// <summary>
         /// 盤面上、sqの升にある駒の参照
         /// </summary>
         /// <param name="sq"></param>

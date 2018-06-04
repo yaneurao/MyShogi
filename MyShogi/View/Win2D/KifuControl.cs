@@ -22,41 +22,46 @@ namespace MyShogi.View.Win2D
             listBox1.SelectedIndex = 0;
         }
 
+        /// <summary>
+        /// リストが変更されたときに呼び出されるハンドラ
+        /// </summary>
+        public void OnListChanged(object o)
+        {
+            Invoke(new Action(() =>
+            {
+                var list = o as List<string>;
+                var listbox = listBox1;
+
+                listbox.BeginUpdate();
+
+                int j = 0;
+
+                // 値の違う場所のみ書き換える
+                // 値の違うところを探す
+                for (int i = 0; i < list.Count; ++i)
+                {
+                    if (listbox.Items.Count <= i || list[i] != listbox.Items[i].ToString())
+                    {
+                        // ここ以降を書き換える。
+                        while (listbox.Items.Count > i)
+                            listbox.Items.RemoveAt(i);
+
+                        j = i; // あとでここにフォーカスを置く
+                        for(; i < list.Count; ++i)
+                            listbox.Items.Add(list[i]);
+
+                        break;
+                    }
+                }
+
+                // カーソルを異なる項目が最初に見つかったところに置いておく。
+                listbox.SelectedIndex = j;
+
+                listbox.EndUpdate();
+            }));
+        }
+
         // -- 以下、棋譜ウインドウに対するオペレーション
-
-        /// <summary>
-        /// 棋譜ウインドウに指し手文字列を追加する。(末尾に)
-        /// </summary>
-        /// <param name="text"></param>
-        public void AddMoveText(string text)
-        {
-            listBox1.Items.Add(text);
-
-            // カーソルを末尾に移動させておく。
-            listBox1.SelectedIndex = listBox1.Items.Count-1;
-        }
-
-        /// <summary>
-        /// 棋譜文字列を追加する
-        /// </summary>
-        /// <param name="gamePly"></param>
-        /// <param name="move"></param>
-        /// <param name="time"></param>
-        public void AddMoveText(int gamePly, string move, string time)
-        {
-            // moveの最大文字数は5か？
-            // 34銀引成みたいな?? レアケースなのでそこだけ表示が崩れてもまあいいだろう。
-
-            // 4文字になるようにpaddingしても、半角文字だと、表示が崩れるので
-            // 全角スペースでpaddingがなされなくてはならない。
-            move = string.Format("{0,-4}", move);
-            move = move.Replace(' ', '　'); // 半角スペースから全角スペースへの置換
-
-            var text = string.Format("{0,3}.{1} {2}", gamePly, move, time);
-            AddMoveText(text);
-
-            //Console.WriteLine(text);
-        }
 
         /// <summary>
         /// 親ウインドウがリサイズされた時にそれに収まるようにこのコントロール内の文字の大きさを
@@ -98,6 +103,9 @@ namespace MyShogi.View.Win2D
             last_scale = scale;
 
             listBox1.Font = new Font("MS Gothic", font_size, FontStyle.Regular , GraphicsUnit.Pixel);
+
+            // font変更の結果、選択しているところがlistboxの表示範囲外になってしまうことがある。
+            // これ、あとで修正を考える。
         }
 
         private double last_scale = 0;

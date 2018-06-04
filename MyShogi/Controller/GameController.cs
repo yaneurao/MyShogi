@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Kifu;
 
 namespace MyShogi.Controller
 {
@@ -12,6 +13,15 @@ namespace MyShogi.Controller
     /// </summary>
     public class GameController
     {
+        public GameController()
+        {
+            kifuManager = new KifuManager();
+            position = new Position();
+            kifuManager.Bind(position);
+        }
 
+        public Position position { get; private set;}
+
+        public KifuManager kifuManager { get; private set; }
     }
 }

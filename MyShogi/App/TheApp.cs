@@ -65,7 +65,7 @@ namespace MyShogi.App
             // -- 対局controllerを1つ生成して、メインの対局ウィンドゥのViewModelに加える
             {
                 var game = new GameController();
-                mainDialogViewModel.Add(game);
+                mainDialogViewModel.game = game;
             }
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
@@ -81,6 +81,10 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("LastMoveToColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems);
+
+            // MainDialogViewModelが変更されたときにMainDialogに変更がかからないといけないのでそのハンドラの設定。
+
+            mainDialogViewModel.AddPropertyChangedHandler("KifuList", mainDialog.gameScreen.kifuControl.OnListChanged);
 
             // Notifyクラスのテスト(あとで消す)
             //NotifyTest.Test();

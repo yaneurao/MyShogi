@@ -78,14 +78,6 @@ namespace MyShogi.View.Win2D
             if (gameScreen.Dirty)
                 Invalidate();
 
-            // 棋譜が1行増えていたならこれを画面に描画する。
-            if (ViewModel != null && ViewModel.move_text != null)
-            {
-                // あとでメッセージングを使って書き直す
-                gameScreen.ViewModel.kifuControl.AddMoveText(ViewModel.move_text_game_ply , ViewModel.move_text , "00:00:01");
-                ViewModel.move_text = null;
-            }
-
             // ここでInvalidate()にScreenに対応する(Screenのなかに含まれる)Rectangleを渡して、
             // 特定のgameScreenだけを再描画するようにしないと、GameScreenを画面上に16個ぐらい
             // 描画するときに非常に重くなる。
