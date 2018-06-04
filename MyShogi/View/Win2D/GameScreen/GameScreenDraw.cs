@@ -97,7 +97,7 @@ namespace MyShogi.View.Win2D
             // 文字フォントサイズは、scaleの影響を受ける。
             var scale = ViewModel.AffineMatrix.Scale.X;
 
-            var size = (int)(font_size * scale);
+            var size = (float)(font_size * scale);
             // こんな小さいものは視認できないので描画しなくて良い。
             if (size <= 2)
                 return;

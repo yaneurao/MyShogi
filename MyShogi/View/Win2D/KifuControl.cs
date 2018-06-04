@@ -66,18 +66,41 @@ namespace MyShogi.View.Win2D
         public void OnResize(double scale)
         {
             // 最小化したのかな？
-            if (this.Width == 0 || ClientSize.Width == 0)
+            if (this.Width == 0 || listBox1.ClientSize.Width == 0)
                 return;
 
             // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
-            double font_size = 18 * scale;
+            var font_size = (float)(22 * scale);
 
-            // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ
-            // fontを小さく表示してやる。
-            font_size *= ClientSize.Width / this.Width;
+            /*
+                // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ
+                // fontを小さく表示してやる。
+                font_size *= (float)listBox1.ClientSize.Width / this.Width;
 
-            listBox1.Font = new Font("MS Gothic", (int)font_size, FontStyle.Regular , GraphicsUnit.Pixel);
+                Console.WriteLine(listBox1.ClientSize.Width + "/" + this.Width);
+            */
+
+            // スクロールバーが出たために文字の横幅が収まらない可能性を考慮してItems.Add()ごとに
+            // OnResize()を都度呼び出してやりたい…が、スクロールバーが出た結果、文字を縮小して、
+            // その結果、スクロールバーが消えるという現象が…。
+
+            // →　結論的には、スクロールバーの有無によって文字フォントサイズを変更するのは
+            // 筋が良くないということに。最初からスクロールバーの分だけ控えて描画すべき。
+
+            // ところがスクロールバーの横幅不明。実測34だったが、環境によって異なる可能性が..
+            font_size *= ((float)Width - 34 /* scroll bar */) / Width;
+
+            // 前回のフォントサイズと異なるときだけ再設定する
+            if (last_font_size == font_size)
+                return;
+
+            last_font_size = font_size;
+            last_scale = scale;
+
+            listBox1.Font = new Font("MS Gothic", font_size, FontStyle.Regular , GraphicsUnit.Pixel);
         }
 
+        private double last_scale = 0;
+        private float last_font_size = 0;
     }
 }
