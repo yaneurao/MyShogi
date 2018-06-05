@@ -10,6 +10,10 @@ namespace MyShogi.Controller
     /// 内部に棋譜管理クラス(KifuManager)を持つ
     /// 
     /// 思考エンジンへの参照を持つ
+    /// プレイヤー入力へのインターフェースを持つ
+    /// 時間を管理している。
+    /// 
+    /// // TODO : あとでなおす
     /// </summary>
     public class GameController
     {

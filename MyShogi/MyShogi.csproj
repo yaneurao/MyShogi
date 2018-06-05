@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
+    <Compile Include="Model\Shogi\Engine\EngineNegotiator.cs" />
     <Compile Include="Controller\GameController.cs" />
     <Compile Include="Model\Math\AffineMatrix.cs" />
     <Compile Include="Model\Math\Vector2D.cs" />
@@ -81,6 +82,11 @@
     <Compile Include="Model\Resource\SpriteManager.cs" />
     <Compile Include="Model\Shogi\Core\SquareHand.cs" />
     <Compile Include="Model\Shogi\Converter\DetectEncoding.cs" />
+    <Compile Include="Model\Shogi\Engine\HumanPlayer.cs" />
+    <Compile Include="Model\Shogi\Engine\Player.cs" />
+    <Compile Include="Model\Shogi\Engine\PlayerType.cs" />
+    <Compile Include="Model\Shogi\Engine\UsiConnectionData.cs" />
+    <Compile Include="Model\Shogi\Engine\UsiEnginePlayer.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuLog.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ViewModel\MainDialogViewModel.cs" />

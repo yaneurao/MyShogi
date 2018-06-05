@@ -62,8 +62,10 @@ namespace MyShogi.ViewModel
 #endif
 
             // デバッグ中
+            // あとで書き直す。
             CanMove = true;
             KifuList = new List<string>();
+            KifuList.Add("   === 開始局面 ===");
         }
 
         /// <summary>

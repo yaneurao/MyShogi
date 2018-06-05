@@ -15,11 +15,6 @@ namespace MyShogi.View.Win2D
         public KifuControl()
         {
             InitializeComponent();
-
-            // とりま初期メッセージを入れておく。
-            // これはあとで修正する。
-            listBox1.Items.Add("   === 開始局面 ===");
-            listBox1.SelectedIndex = 0;
         }
 
         /// <summary>
