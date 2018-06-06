@@ -1,9 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using MyShogi.Model.Common.Utility;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MyShogi.Model.Shogi.Usi
 {
     /// <summary>
     /// optionの各パラメータを保持します。
+    /// 
+    /// 要件
+    /// ・default値を保持している。
+    /// ・ユーザーが値を変更できる。
+    /// 
+    /// 翻訳名は、このクラスでは管理しない。
+    /// (シリアライズしたものを復元したときに、古い翻訳テキストに基づいたものだと更新するのが面倒)
     /// </summary>
     public sealed class UsiOption
     {
@@ -18,75 +28,6 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
-        /// USIのsetoptionの行のparseをする。
-        /// 
-        /// translationDic : option名に対応する翻訳名があるなら、それをTranslateNameとして設定する。
-        /// </summary>
-        public static UsiOption Parse(string command,
-                                      Dictionary<string, string> translationDic = null)
-        {
-            if (string.IsNullOrEmpty(command))
-            {
-                throw new UsiException("Parse()でcommand == null");
-            }
-
-            var option = new UsiOption();
-
-#if false
-            var scanner = new Scanner(command);
-            scanner.SetDelimiters(" ");
-
-            if (scanner.ParseText() != "option")
-            {
-                throw new UsiException(
-                    command + ": invalid command.");
-            }
-
-            var value = string.Empty;
-            while (!scanner.IsEof)
-            {
-                switch (scanner.ParseText())
-                {
-                    case "name":
-                        option.Name = ParseName(scanner);
-                        option.TranslatedName = Translate(option.Name, null, translationDic);
-                        break;
-                    case "type":
-                        option.OptionType = ParseType(scanner.ParseText());
-                        break;
-                    case "default":
-                        value = scanner.ParseText();
-                        value = Translate(value, value, translationDic);
-                        break;
-                    case "min":
-                        option.MinValue = int.Parse(scanner.ParseText());
-                        break;
-                    case "max":
-                        option.MaxValue = int.Parse(scanner.ParseText());
-                        break;
-                    case "var":
-                        var varText = scanner.ParseText();
-                        varText = Translate(varText, varText, translationDic);
-                        option.ComboList.Add(varText);
-                        break;
-                    default:
-                        throw new UsiException(
-                            "invalid command: " + command);
-                }
-            }
-
-            // 範囲調整を行っているため、値は最後に設定する。
-            if (!string.IsNullOrEmpty(value))
-            {
-                option.SetDefault(value);
-            }
-#endif
-
-            return option;
-        }
-
-
-        /// <summary>
         /// オプション名を取得します。
         /// 
         /// これは、Engineから直接渡された名前で、
@@ -96,33 +37,6 @@ namespace MyShogi.Model.Shogi.Usi
         {
             get;
             private set;
-        }
-
-        /// <summary>
-        /// オプションの翻訳名を取得します。
-        /// 
-        /// 日本語テキストなどがある場合は、これが設定される。
-        /// </summary>
-        public string TranslatedName
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// オプションの表示名を取得する。
-        /// </summary>
-        public string DisplayName
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(TranslatedName))
-                {
-                    return TranslatedName;
-                }
-
-                return Name;
-            }
         }
 
         /// <summary>
@@ -161,13 +75,16 @@ namespace MyShogi.Model.Shogi.Usi
             private set;
         }
 
+        /// --- ↑のものは、Parse()の結果として設定される。
+        /// --- ↓のものは、Parse()の結果として設定されるが、そのあと外部から値を変更することが出来る。
+
         /// <summary>
-        /// デフォルト値(bool型)を取得する。
+        /// デフォルト値(bool型)を設定/取得する。
         /// OptionTypeがCheckBoxの時に有効。
         /// </summary>
         public bool DefaultBool
         {
-            get; private set;
+            get; set;
         }
 
         /// <summary>
@@ -176,7 +93,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public string DefaultText
         {
-            get; private set;
+            get; set;
         }
 
         /// <summary>
@@ -185,40 +102,29 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public long DefaultValue
         {
-            get { return this.defaultValue; }
-            private set
+            get { return defaultValue; }
+            set
             {
                 // valueがMinValue～MaxValueの間であることを保証する。
                 value = System.Math.Max(value, MinValue);
                 value = System.Math.Min(value, MaxValue);
-                this.defaultValue = value;
+                defaultValue = value;
             }
         }
         private long defaultValue;
-
 
         /// <summary>
         /// 文字列化する。これは表示に使うものではなく、デバッグに使うためのもの。
         /// </summary>
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(TranslatedName))
-            {
-                return string.Format(
-                    "(Name={0}, Value={1})",
-                    Name, GetDefault());
-            }
-            else
-            {
-                return string.Format(
-                    "(Name={0}, DisplayName={1}, Value={2})",
-                    Name, DisplayName, GetDefault());
-            }
+            return string.Format("(Name={0}, Value={1})", Name, GetDefault());
         }
 
-
         /// <summary>
-        /// 各オプション型ごとのデフォルト値を設定します。
+        /// 各OptionTypeごとのデフォルト値を(文字列から)設定する。
+        /// 
+        /// このmethodを用いずにDefaultBoolやDefaultValueなどに直接設定することも出来る。
         /// </summary>
         public void SetDefault(string text)
         {
@@ -248,7 +154,7 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
-        /// 各オプション型ごとのデフォルト値を文字列で取得します。
+        /// 各OptionTypeごとのデフォルト値を文字列で取得する。
         /// </summary>
         public string GetDefault()
         {
@@ -275,27 +181,152 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
-        /// USIで出力するコマンド
+        /// USIのsetoptionの行のparseをする。
+        /// 
+        /// translationDic : option名に対応する翻訳名があるなら、それをTranslateNameとして設定する。
         /// </summary>
-        public string UsiCommand
+        public static UsiOption Parse(string command)
         {
-            get
+            if (string.IsNullOrEmpty(command))
             {
-                return string.Format("option name {0} type {1} default {2}" , Name,Util.ToUsiString(OptionType) , DefaultText);
+                throw new UsiException("Parse()でcommand == null");
             }
+
+            var option = new UsiOption();
+
+            // スペースをセパレータとして分離する
+            var scanner = new Scanner(command);
+            scanner.SetDelimiters(" ");
+
+            if (scanner.ParseText() != "option")
+            {
+                throw new UsiException(
+                    command + ": invalid command.");
+            }
+
+            var value = string.Empty;
+            while (!scanner.IsEof)
+            {
+                switch (scanner.ParseText())
+                {
+                    case "name":
+                        option.Name = ParseName(scanner);
+                        break;
+                    case "type":
+                        option.OptionType = ParseType(scanner.ParseText());
+                        break;
+                    case "default":
+                        value = scanner.ParseText();
+                        break;
+                    case "min":
+                        option.MinValue = long.Parse(scanner.ParseText());
+                        break;
+                    case "max":
+                        option.MaxValue = long.Parse(scanner.ParseText());
+                        break;
+                    case "var":
+                        var varText = scanner.ParseText();
+                        option.ComboList.Add(varText);
+                        break;
+                    default:
+                        throw new UsiException(
+                            "invalid command: " + command);
+                }
+            }
+
+            // 範囲調整を行っているため、値は最後に設定する。
+            if (!string.IsNullOrEmpty(value))
+            {
+                option.SetDefault(value);
+            }
+
+            return option;
+        }
+
+
+        /// <summary>
+        /// 現在のこのクラスの状態に基づいて、USIのsetoption用の文字列を作成する。
+        /// </summary>
+        public string MakeSetOptionCommand()
+        {
+            var result = new List<string>();
+
+            result.Add("setoption");
+            result.Add("name");
+            result.Add(Name);
+
+            if (OptionType != UsiOptionType.Button)
+            {
+                result.Add("value");
+                result.Add(GetDefault());
+            }
+
+            return string.Join(" ", result);
+        }
+
+        // --- 以下、private method
+
+        /// <summary>
+        /// 名前をパースします。
+        /// </summary>
+        /// <remarks>
+        /// 名前に空白が含まれることがあるため、その対策を行います。
+        /// </remarks>
+        private static string ParseName(Scanner scanner)
+        {
+            var keywords = new string[]
+            {
+                "name", "type", "default", "min", "max", "var"
+            };
+            var result = new List<string>();
+
+            while (true)
+            {
+                var peek = scanner.PeekText();
+                if (string.IsNullOrEmpty(peek))
+                {
+                    return string.Join(" ", result);
+                }
+
+                // 次の単語がキーワードであれば、次に進みます。
+                if (keywords.Contains(peek))
+                {
+                    return string.Join(" ", result);
+                }
+
+                // キーワードでなければ名前の一部なので、
+                // オプション名として処理します。
+                result.Add(peek);
+            }
+        }
+
+        /// <summary>
+        /// <paramref name="type"/>をオプションの各型に変換します。
+        /// </summary>
+        private static UsiOptionType ParseType(string type)
+        {
+            var result = Util.FromUsiString(type);
+
+            if (result == UsiOptionType.None)
+            {
+                throw new UsiException(
+                    type + ": オプションの型が不明です。");
+            }
+
+            return result;
         }
 
         // --- 以下、static field
 
-        ///// <summary>
-        ///// USI_Hashを扱うオプションです。
-        ///// </summary>
-        //public static readonly UsiOption USI_Hash = new UsiOption("option name USI_Hash type spin default 256");
+        /// <summary>
+        /// USI_Hashを扱うオプションです。
+        /// </summary>
+        public static readonly UsiOption USI_Hash = Parse("option name USI_Hash type spin default 256");
 
-        ///// <summary>
-        ///// USI_Ponderを扱うオプションです。
-        ///// </summary>
-        //public static readonly UsiOption USI_Ponder = new UsiOption("option name USI_Ponder type check default false");
+        /// <summary>
+        /// USI_Ponderを扱うオプションです。
+        /// </summary>
+        public static readonly UsiOption USI_Ponder = Parse("option name USI_Ponder type check default false");
 
     }
 

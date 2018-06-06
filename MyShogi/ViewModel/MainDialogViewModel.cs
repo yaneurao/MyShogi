@@ -1,9 +1,9 @@
-﻿using MyShogi.Controller;
-using MyShogi.Model.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
-using System;
-using System.Collections.Generic;
+using MyShogi.Controller;
 
 namespace MyShogi.ViewModel
 {

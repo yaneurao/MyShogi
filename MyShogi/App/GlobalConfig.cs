@@ -1,7 +1,7 @@
-﻿using MyShogi.Model.ObjectModel;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Xml.Serialization;
+using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.App
 {

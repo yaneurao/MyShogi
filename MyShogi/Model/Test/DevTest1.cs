@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Test
 {
@@ -482,10 +483,16 @@ namespace MyShogi.Model.Test
 
         public static void Test4()
         {
-            //var option = UsiOption.USI_Hash;
-            //Console.WriteLine(option.UsiCommand);
-            //option = UsiOption.USI_Ponder;
-            //Console.WriteLine(option.UsiCommand);
+#if false
+            var option = UsiOption.USI_Hash;
+            Console.WriteLine(option.MakeSetOptionCommand());
+            Console.WriteLine(option.OptionType.ToUsiString());
+            option.DefaultValue = 1024;
+            Console.WriteLine(option.MakeSetOptionCommand());
+            option = UsiOption.USI_Ponder;
+            Console.WriteLine(option.MakeSetOptionCommand());
+            Console.WriteLine(option.OptionType.ToUsiString());
+#endif
         }
 
     }

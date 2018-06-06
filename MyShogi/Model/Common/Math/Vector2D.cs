@@ -1,4 +1,4 @@
-﻿namespace MyShogi.Model.Math
+﻿namespace MyShogi.Model.Common.Math
 {
     /// <summary>
     /// 2次元ベクトル

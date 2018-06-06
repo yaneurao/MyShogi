@@ -68,13 +68,15 @@
   <ItemGroup>
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
+    <Compile Include="Model\Common\Utility\Scanner.cs" />
+    <Compile Include="Model\Common\Utility\ScannerException.cs" />
     <Compile Include="Model\Shogi\Player\NullPlayer.cs" />
     <Compile Include="Model\Shogi\Player\PlayerBuilder.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngineNegotiator.cs" />
     <Compile Include="Controller\GameController.cs" />
-    <Compile Include="Model\Math\AffineMatrix.cs" />
-    <Compile Include="Model\Math\Vector2D.cs" />
-    <Compile Include="Model\ObjectModel\NotifyObject.cs" />
+    <Compile Include="Model\Common\Math\AffineMatrix.cs" />
+    <Compile Include="Model\Common\Math\Vector2D.cs" />
+    <Compile Include="Model\Common\ObjectModel\NotifyObject.cs" />
     <Compile Include="Model\Resource\ImageConverter.cs" />
     <Compile Include="Model\Resource\ImageLoader.cs" />
     <Compile Include="Model\Resource\ImageManager.cs" />
@@ -132,7 +134,7 @@
     <Compile Include="Model\Shogi\Core\UInt128.cs" />
     <Compile Include="Model\Shogi\Core\Zobrist.cs" />
     <Compile Include="Model\Test\DevTest2.cs" />
-    <Compile Include="Model\TimeMan\TimeLimit.cs" />
+    <Compile Include="Model\Shogi\Player\TimeLimit.cs" />
     <Compile Include="App\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\Win2D\AboutYaneuraOu.cs">

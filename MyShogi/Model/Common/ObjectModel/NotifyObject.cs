@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 
 // WPFで使うNotifyObjectっぽい何か。
-namespace MyShogi.Model.ObjectModel
+namespace MyShogi.Model.Common.ObjectModel
 {
     /// <summary>
     /// プロパティが変更されたときに呼び出されるハンドラの型

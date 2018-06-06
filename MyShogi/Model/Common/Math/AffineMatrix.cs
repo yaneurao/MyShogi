@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
-namespace MyShogi.Model.Math
+namespace MyShogi.Model.Common.Math
 {
     /// <summary>
     /// Affine変換用の行列(ただし、いまのところ回転は含まない)

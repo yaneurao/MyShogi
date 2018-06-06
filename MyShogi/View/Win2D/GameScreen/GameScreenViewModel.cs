@@ -1,4 +1,4 @@
-﻿using MyShogi.Model.Math;
+﻿using MyShogi.Model.Common.Math;
 using MyShogi.ViewModel;
 
 namespace MyShogi.View.Win2D
