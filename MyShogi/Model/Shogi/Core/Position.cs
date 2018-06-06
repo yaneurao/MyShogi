@@ -138,7 +138,7 @@ namespace MyShogi.Model.Shogi.Core
         /// 参照透明なオブジェクトが欲しいときに用いる。
         /// </summary>
         /// <returns></returns>
-        public Position clone()
+        public Position Clone()
         {
             var pos = new Position();
 

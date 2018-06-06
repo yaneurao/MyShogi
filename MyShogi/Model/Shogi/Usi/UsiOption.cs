@@ -1,5 +1,4 @@
 ﻿using MyShogi.Model.Common.Utility;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +12,7 @@ namespace MyShogi.Model.Shogi.Usi
     /// ・ユーザーが値を変更できる。
     /// 
     /// 翻訳名は、このクラスでは管理しない。
-    /// (シリアライズしたものを復元したときに、古い翻訳テキストに基づいたものだと更新するのが面倒)
+    /// ファイルへの保存は、UsiOptionMinを用いる。
     /// </summary>
     public sealed class UsiOption
     {

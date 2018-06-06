@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MyShogi.Model.Shogi.Player
+﻿namespace MyShogi.Model.Shogi.Player
 {
     /// <summary>
     /// USIプロトコルでやりとりする思考エンジンを
