@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyShogi.Model.Shogi.Engine
+namespace MyShogi.Model.Shogi.Usi
 {
     /// <summary>
     /// USIプロトコルで実行ファイルに接続するときに必要なデータ

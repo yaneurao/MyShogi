@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MyShogi.Model.Shogi.Engine
+namespace MyShogi.Model.Shogi.Usi
 {
     /// <summary>
     /// USIエンジンの状態を示します。(大雑把に)

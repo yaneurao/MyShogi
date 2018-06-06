@@ -480,5 +480,13 @@ namespace MyShogi.Model.Test
 
         }
 
+        public static void Test4()
+        {
+            //var option = UsiOption.USI_Hash;
+            //Console.WriteLine(option.UsiCommand);
+            //option = UsiOption.USI_Ponder;
+            //Console.WriteLine(option.UsiCommand);
+        }
+
     }
 }

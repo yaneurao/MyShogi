@@ -385,9 +385,14 @@ namespace MyShogi.View.Win2D
                     item_debug.DropDownItems.Add(item3);
 
                     var item4 = new ToolStripMenuItem();
-                    item4.Text = "DevTest2.Test1()";
-                    item4.Click += (sender, e) => { DevTest2.Test1(); };
+                    item4.Text = "DevTest1.Test4()";
+                    item4.Click += (sender, e) => { DevTest1.Test4(); };
                     item_debug.DropDownItems.Add(item4);
+
+                    var item5 = new ToolStripMenuItem();
+                    item5.Text = "DevTest2.Test1()";
+                    item5.Click += (sender, e) => { DevTest2.Test1(); };
+                    item_debug.DropDownItems.Add(item5);
 
                     menu.Items.Add(item_debug);
                 }

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MyShogi.Model.Shogi.Engine
+﻿namespace MyShogi.Model.Shogi.Player
 {
     /// <summary>
     /// プレイヤーの種類を表す定数。
     /// 人間も思考エンジンも同一のインターフェースで取り扱う。
     /// </summary>
-    public enum PlayerType
+    public enum PlayerTypeEnum
     {
         /// <summary>
         /// ダミーエンジンです。
