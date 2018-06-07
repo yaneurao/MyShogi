@@ -232,6 +232,87 @@ namespace MyShogi.Model.Resource
         }
 
         /// <summary>
+        /// 細長いの駒台時の手番画像
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite TurnSlim(Shogi.Core.Color sideToMove,bool reverse)
+        {
+            // 非表示ならnull spriteを返す。
+            if (TheApp.app.config.TurnDisplay == 0)
+                return null;
+
+            // 「後」　　　　「先」
+            // みたいなスプライトを返す。
+            // ・手番のないほうを薄暗い素材に。
+            // ・reverseがtrueなら先後入れ替え。
+
+            var image = TheApp.app.imageManager.TurnSlimImage.image;
+            int w = 60;
+            var srcRect1 = new Rectangle(0, 0, w, w);                   // 後手素材
+            var srcRect2 = new Rectangle(turn_slim_width - w, 0, w, w); // 先手素材
+            if (sideToMove == Shogi.Core.Color.BLACK)
+                srcRect1.Y = turn_slim_height - w; // 後手側を手番がない素材に変更
+            else
+                srcRect2.Y = turn_slim_height - w; // 先手側を手番がない素材に変更
+
+            if (reverse)
+                swap(ref srcRect1, ref srcRect2);
+
+            var sprite1 = new Sprite(image, srcRect1);
+            var sprite2 = new Sprite(image, srcRect2, new Size(turn_slim_width - w, 0));
+            sprite1.next = sprite2;
+
+            return sprite1;
+        }
+
+        /// <summary>
+        /// 細長い駒台時のネームプレート素材
+        /// </summary>
+        /// <param name="sideToMove"></param>
+        /// <param name="reverse"></param>
+        /// <returns></returns>
+        public static Sprite NamePlateSlim(Shogi.Core.Color sideToMove, bool reverse)
+        {
+            // TurnSlim()と同様
+
+            var image = TheApp.app.imageManager.TurnSlimImage.image;
+            int w = 60;
+            int center = turn_slim_width / 2;
+            int width = center - w; // 横幅
+
+            var srcRect1 = new Rectangle(w      , 0, width , w); // 後手素材
+            var srcRect2 = new Rectangle(center , 0, width , w); // 先手素材
+
+            if (reverse)
+                sideToMove = sideToMove.Not();
+
+            if (sideToMove == Shogi.Core.Color.BLACK)
+                srcRect1.Y = turn_slim_height - w; // 後手側を手番がない素材に変更
+            else
+                srcRect2.Y = turn_slim_height - w; // 先手側を手番がない素材に変更
+
+            var sprite1 = new Sprite(image, srcRect1, new Size(w     , 0));
+            var sprite2 = new Sprite(image, srcRect2, new Size(center, 0));
+            sprite1.next = sprite2;
+
+            return sprite1;
+
+        }
+
+        /// <summary>
+        /// a,bの入れ替え
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        private static void swap<T> (ref T a , ref T b)
+        {
+            T t = a;
+            a = b;
+            b = t;
+        }
+
+        /// <summary>
         /// 成り・不成のダイアログの成りのほうのrect
         /// </summary>
         private static Rectangle promote_dialog_promote_rect = new Rectangle(0 , 0, 103, 124);
@@ -258,6 +339,12 @@ namespace MyShogi.Model.Resource
         // これが横に8つ、縦に4つ、計32個並んでいる。
         public static readonly int piece_img_width = 97;
         public static readonly int piece_img_height = 106;
+
+        /// <summary>
+        /// 手番素材、駒台が細長い用
+        /// </summary>
+        public static readonly int turn_slim_width = 1057;
+        public static readonly int turn_slim_height = 157;
 
     }
 }

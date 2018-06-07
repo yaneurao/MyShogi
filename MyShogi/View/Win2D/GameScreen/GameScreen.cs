@@ -193,11 +193,18 @@ namespace MyShogi.View.Win2D
 
             // -- 対局者氏名
             {
-                // 氏名の描画は通常状態の駒台表示の場合のみ
-                if (config.KomadaiImageVersion == 1)
+                // 通常状態の駒台表示
+                switch (config.KomadaiImageVersion)
                 {
-                    DrawString(name_plate[reverse ? 1 : 0], vm.ViewModel.Player1Name, 28);
-                    DrawString(name_plate[reverse ? 0 : 1], vm.ViewModel.Player2Name, 28);
+                    case 1:
+                        DrawString(name_plate_name[0], vm.ViewModel.PlayerName(reverse ? 1 : 0), 28);
+                        DrawString(name_plate_name[1], vm.ViewModel.PlayerName(reverse ? 0 : 1), 28);
+                        break;
+                    case 2:
+                        DrawSprite(turn_slim_pos, SPRITE.NamePlateSlim(pos.sideToMove, reverse));
+                        DrawString(name_plate_slim_name[0], vm.ViewModel.PlayerName(reverse ? 1 : 0), 28 , new DrawStringOption(Brushes.White, 2,10));
+                        DrawString(name_plate_slim_name[1], vm.ViewModel.PlayerName(reverse ? 0 : 1), 28 , new DrawStringOption(Brushes.White, 0, 0));
+                        break;
                 }
             }
 
@@ -207,9 +214,10 @@ namespace MyShogi.View.Win2D
                 int side = pos.sideToMove == ShogiCore.Color.BLACK ? 0 : 1;
                 side = reverse ? (side ^ 1) : side;
 
-                if (config.KomadaiImageVersion == 1)
+                switch (config.KomadaiImageVersion)
                 {
-                    DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal());
+                    case 1: DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal()); break;
+                    case 2: DrawSprite(turn_slim_pos , SPRITE.TurnSlim(pos.sideToMove,reverse)); break;
                 }
 
             }

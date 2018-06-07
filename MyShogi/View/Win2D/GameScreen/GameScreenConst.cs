@@ -103,12 +103,21 @@ namespace MyShogi.View.Win2D
         };
 
         /// <summary>
-        /// ネームプレートの座標
+        /// 通常の駒台用のネームプレートの氏名用の座標
         /// </summary>
-        private static readonly Point[] name_plate =
+        private static readonly Point[] name_plate_name =
         {
             new Point(1437+2,485+2), // 先手のネームプレート
             new Point(239+2,446+2),  // 後手のネームプレート
+        };
+
+        /// <summary>
+        /// 細長い駒台用のネームプレートの氏名用の座標
+        /// </summary>
+        private static readonly Point[] name_plate_slim_name =
+        {
+            new Point(430 + 65 +1057/2 + 155 ,1030+10), // 先手のネームプレート
+            new Point(430 + 65               ,1030+10), // 後手のネームプレート
         };
 
         /// <summary>
@@ -119,6 +128,11 @@ namespace MyShogi.View.Win2D
             new Point(1680 - 100,479),  // 先手手番
             new Point(490 - 100,438),   // 後手手番
         };
+
+        /// <summary>
+        /// 細長いの駒台用の手番素材の表示場所
+        /// </summary>
+        private static readonly Point turn_slim_pos = new Point(430, 1030);
 
     }
 }

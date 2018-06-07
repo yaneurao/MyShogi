@@ -88,6 +88,18 @@ namespace MyShogi.ViewModel
         public string Player2Name { get; private set; } = "あなた";
 
         /// <summary>
+        /// 対局者氏名
+        /// player == 0 : 先手
+        /// player == 1 : 後手
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        public string PlayerName(int player)
+        {
+            return player == 0 ? Player1Name : Player2Name;
+        }
+
+        /// <summary>
         /// いまユーザーの手番で、ユーザーはマウス操作によって駒を動かせるのか？
         /// 
         /// デバッグ用。あとで書き直す。

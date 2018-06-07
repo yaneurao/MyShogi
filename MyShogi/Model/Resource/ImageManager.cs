@@ -63,7 +63,7 @@ namespace MyShogi.Model.Resource
                 g.DrawImage(komadai.image, rect, rect, GraphicsUnit.Pixel);
                 if (config.KomadaiImageVersion == 1)
                     g.DrawImage(name_plate.image, rect, rect, GraphicsUnit.Pixel);
-                // 駒台が縦長のとき、ネームプレート表示できない
+                // 駒台が縦長のとき、ネームプレートは別の素材
             }
 
             // しばらく使わないと思うので開放しておく
@@ -232,6 +232,7 @@ namespace MyShogi.Model.Resource
         {
             // 小さな画像なので読み直す必要はない。
             Load(ref TurnNormalImage, "turn_v1_106_43.png");
+            Load(ref TurnSlimImage, "turn_v1_1057_157.png");
         }
 
         /// <summary>
@@ -290,6 +291,7 @@ namespace MyShogi.Model.Resource
         /// 手番画像
         /// </summary>
         public ImageLoader TurnNormalImage = new ImageLoader();
+        public ImageLoader TurnSlimImage = new ImageLoader();
 
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using MyShogi.Model.Resource;
 
 namespace MyShogi.View.Win2D
@@ -92,7 +93,7 @@ namespace MyShogi.View.Win2D
         /// <param name="g"></param>
         /// <param name="dstPoint"></param>
         /// <param name="mes"></param>
-        private void DrawString(Point dstPoint, string mes, int font_size)
+        private void DrawString(Point dstPoint, string mes, int font_size , DrawStringOption option = null)
         {
             // 文字フォントサイズは、scaleの影響を受ける。
             var scale = ViewModel.AffineMatrix.Scale.X;
@@ -102,10 +103,53 @@ namespace MyShogi.View.Win2D
             if (size <= 2)
                 return;
 
+            if (option != null)
+            {
+                switch(option.align)
+                {
+                    case 1:
+                        // センタリング
+                        int pad = (option.text_width - mes.Length)/2 + mes.Length;
+                        pad = Math.Max(0, pad);
+                        mes = mes.PadLeft(pad).Replace(' ', '　');
+                        break;
+
+                    case 2:
+                        // 右寄せ
+                        mes = mes.PadLeft(option.text_width).Replace(' ','　');
+                        break;
+                }
+            }
+
+
             using (var font = new Font("MSPゴシック", size, GraphicsUnit.Pixel))
             {
-                graphics.DrawString(mes, font, Brushes.Black, Affine(dstPoint));
+                var brush = option != null ? option.brush : Brushes.Black;
+                graphics.DrawString(mes, font, brush , Affine(dstPoint));
             }
+        }
+
+        /// <summary>
+        /// DrawString()で指定するオプション
+        /// </summary>
+        private class DrawStringOption
+        {
+            public DrawStringOption(Brush brush_ , int align_ , int text_width_)
+            {
+                brush = brush_;
+                align = align_;
+                text_width = text_width_;
+            }
+
+            // テキストの色
+            public Brush brush;
+
+            // テキストの描画位置
+            // 0 = 左寄せ , 1 = 中央 , 2 右寄せ
+            public int align;
+
+            // alignするときのテキストの幅(文字数)
+            public int text_width;
         }
 
     }
