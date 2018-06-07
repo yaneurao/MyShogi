@@ -111,5 +111,14 @@ namespace MyShogi.View.Win2D
             new Point(239+2,446+2),  // 後手のネームプレート
         };
 
+        /// <summary>
+        /// 通常の駒台用の手番素材の表示場所
+        /// </summary>
+        private static readonly Point[] turn_normal_pos =
+        {
+            new Point(1680 - 100,479),  // 先手手番
+            new Point(490 - 100,438),   // 後手手番
+        };
+
     }
 }

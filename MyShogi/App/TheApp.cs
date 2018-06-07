@@ -81,7 +81,8 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("LastMoveToColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems);
-
+            config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems);
+            
             // MainDialogViewModelが変更されたときにMainDialogに変更がかからないといけないのでそのハンドラの設定。
 
             mainDialogViewModel.AddPropertyChangedHandler("KifuList", mainDialog.gameScreen.kifuControl.OnListChanged);

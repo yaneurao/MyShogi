@@ -201,6 +201,19 @@ namespace MyShogi.View.Win2D
                 }
             }
 
+            // -- 手番の表示
+            {
+                // 手番側が先手なら0、後手なら1。ただし、盤面反転しているなら、その逆。
+                int side = pos.sideToMove == ShogiCore.Color.BLACK ? 0 : 1;
+                side = reverse ? (side ^ 1) : side;
+
+                if (config.KomadaiImageVersion == 1)
+                {
+                    DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal());
+                }
+
+            }
+
             // -- 持ち上げている駒があるなら、一番最後に描画する。
             {
                 if (picked_sprite != null)

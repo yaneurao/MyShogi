@@ -29,6 +29,7 @@ namespace MyShogi.App
             PickedMoveFromColorType = 1;
             PickedMoveToColorType = 2;
             PromotePieceColorType = 0;
+            TurnDisplay = 1;
         }
 
         /// <summary>
@@ -238,6 +239,17 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("PickedMoveToColorType"); }
             set { SetValue<int>("PickedMoveToColorType", value); }
+        }
+
+        /// <summary>
+        /// 手番表示の有無
+        /// 0 : なし
+        /// 1 : あり
+        /// </summary>
+        public int TurnDisplay
+        {
+            get { return GetValue<int>("TurnDisplay"); }
+            set { SetValue<int>("TurnDisplay", value); }
         }
     }
 }

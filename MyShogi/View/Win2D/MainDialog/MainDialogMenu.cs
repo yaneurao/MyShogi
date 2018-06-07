@@ -328,10 +328,30 @@ namespace MyShogi.View.Win2D
                         item_display.DropDownItems.Add(item);
                     }
 
+                    { // -- 手番プレートの表示
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "手番表示";
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "なし";
+                        item1.Checked = config.TurnDisplay == 0;
+                        item1.Click += (sender, e) => { config.TurnDisplay = 0; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "あり";
+                        item2.Checked = TheApp.app.config.TurnDisplay == 1;
+                        item2.Click += (sender, e) => { config.TurnDisplay = 1; };
+                        item.DropDownItems.Add(item2);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
                 }
 
-                    // 「その他」
-                    {
+                // 「その他」
+                {
                     var item_others = new ToolStripMenuItem();
                     item_others.Text = "その他";
                     menu.Items.Add(item_others);

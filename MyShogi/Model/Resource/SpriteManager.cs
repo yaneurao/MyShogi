@@ -217,6 +217,21 @@ namespace MyShogi.Model.Resource
         }
 
         /// <summary>
+        /// 通常の駒台時の手番画像
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite TurnNormal()
+        {
+            // 非表示ならnull spriteを返す。
+            if (TheApp.app.config.TurnDisplay == 0)
+                return null;
+
+            var image = TheApp.app.imageManager.TurnNormalImage.image;
+            var sprite = new Sprite(image);
+            return sprite;
+        }
+
+        /// <summary>
         /// 成り・不成のダイアログの成りのほうのrect
         /// </summary>
         private static Rectangle promote_dialog_promote_rect = new Rectangle(0 , 0, 103, 124);

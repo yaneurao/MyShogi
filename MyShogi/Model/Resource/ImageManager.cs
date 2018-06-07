@@ -33,6 +33,7 @@ namespace MyShogi.Model.Resource
             UpdateBoardNumberImage();
             UpdateHandNumberImage();
             UpdatePromoteDialogImage();
+            UpdateTurnImage();
         }
 
         /// <summary>
@@ -225,6 +226,15 @@ namespace MyShogi.Model.Resource
         }
 
         /// <summary>
+        /// 手番を示す画像素材
+        /// </summary>
+        private void UpdateTurnImage()
+        {
+            // 小さな画像なので読み直す必要はない。
+            Load(ref TurnNormalImage, "turn_v1_106_43.png");
+        }
+
+        /// <summary>
         /// ファイル名を与えて、ImgFolderから画像を読み込む
         /// </summary>
         /// <param name="name"></param>
@@ -275,5 +285,11 @@ namespace MyShogi.Model.Resource
         /// 成り・不成の選択ダイアログ用の画像
         /// </summary>
         public ImageLoader PromoteDialogImage = new ImageLoader();
+
+        /// <summary>
+        /// 手番画像
+        /// </summary>
+        public ImageLoader TurnNormalImage = new ImageLoader();
+
     }
 }

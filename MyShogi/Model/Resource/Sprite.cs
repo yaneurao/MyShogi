@@ -14,10 +14,21 @@ namespace MyShogi.Model.Resource
         /// </summary>
         /// <param name="srcImageLoader"></param>
         /// <param name="srcRect"></param>
-        public Sprite(Image srcImageLoader , Rectangle srcRect)
+        public Sprite(Image src , Rectangle srcRect)
         {
-            image = srcImageLoader;
+            image = src;
             rect = srcRect;
+            dstOffset = new Size(0, 0);
+        }
+
+        /// <summary>
+        /// ソース画像のrect丸ごとをスプライトにする時用のコンストラクタ
+        /// </summary>
+        /// <param name="srcImageLoader"></param>
+        public Sprite(Image src)
+        {
+            image = src;
+            rect = new Rectangle(0,0,src.Width,src.Height);
             dstOffset = new Size(0, 0);
         }
 
@@ -27,9 +38,9 @@ namespace MyShogi.Model.Resource
         /// <param name="srcImageLoader"></param>
         /// <param name="srcRect"></param>
         /// <param name="dstOffset_"></param>
-        public Sprite(Image srcImageLoader, Rectangle srcRect , Size dstOffset_)
+        public Sprite(Image src, Rectangle srcRect , Size dstOffset_)
         {
-            image = srcImageLoader;
+            image = src;
             rect = srcRect;
             dstOffset = dstOffset_;
         }
