@@ -96,7 +96,9 @@
     <Compile Include="Model\Shogi\Usi\UsiEngineException.cs" />
     <Compile Include="Model\Shogi\Usi\UsiException.cs" />
     <Compile Include="Model\Shogi\Usi\UsiOption.cs" />
+    <Compile Include="Model\Shogi\Usi\UsiOptionMin.cs" />
     <Compile Include="Model\Shogi\Usi\UsiOptionType.cs" />
+    <Compile Include="Model\Shogi\Usi\UsiTimeData.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="ViewModel\MainDialogViewModel.cs" />
     <Compile Include="Model\Shogi\Converter\Csa.cs" />
