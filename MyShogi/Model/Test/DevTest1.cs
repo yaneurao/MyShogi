@@ -493,6 +493,16 @@ namespace MyShogi.Model.Test
             Console.WriteLine(option.MakeSetOptionCommand());
             Console.WriteLine(option.OptionType.ToUsiString());
 #endif
+
+            var neg = new UsiEngineNegotiator();
+            var data = new UsiEngineData("engine/gpsfish/gpsfish.exe");
+            neg.Connect(data);
+            while(true)
+            {
+                neg.Read();
+                //Console.WriteLine(".");
+            }
+
         }
 
     }

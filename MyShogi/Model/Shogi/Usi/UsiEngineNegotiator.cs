@@ -3,6 +3,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using MyShogi.Model.Common.Network;
 
 namespace MyShogi.Model.Shogi.Usi
 {
@@ -40,24 +41,34 @@ namespace MyShogi.Model.Shogi.Usi
                     RedirectStandardOutput = true,
                     RedirectStandardError = false,
                 };
-
+                
                 var process = new Process
                 {
                     StartInfo = info,
                 };
                 process.Start();
 
-                // Exe用のプロセスをこっそり設定します。
-                this.exeProcess = process;
+                // EXE用のprocess
+                exeProcess = process;
 
-                this.readStream = process.StandardOutput.BaseStream;
-                this.writeStream = process.StandardInput.BaseStream;
+                // remote service
+                remoteService = new RemoteService(
+                    process.StandardOutput.BaseStream, // read stream
+                    process.StandardInput.BaseStream,  // write stream
+                    true);
 
-                // 別スレッドで受信処理を開始する。
-                worker_valid = true;
-                var thread = new Thread(thread_worker);
-                thread.Start();
+                remoteService.CommandReceived += (e) => { Console.WriteLine(e); };
             }
+        }
+
+        /// <summary>
+        /// 接続している子プロセスから行を読み込む。
+        /// 読み込む行がなければ、ブロッキングせずにすぐ戻る。
+        /// 行を読み込んだ時は、...
+        /// </summary>
+        public void Read()
+        {
+            remoteService.Read();
         }
 
         /// <summary>
@@ -73,8 +84,7 @@ namespace MyShogi.Model.Shogi.Usi
                     exeProcess.Close();
                     exeProcess = null;
                 }
-                readCts.Cancel();
-                worker_valid = false;
+                remoteService.Dispose();
             }
         }
 
@@ -85,37 +95,6 @@ namespace MyShogi.Model.Shogi.Usi
 
         public UsiEngineState state { get; set; }
 
-        // --- 以下private methods
-
-        // 別スレッドで受信処理を行う。
-        private void thread_worker()
-        {
-            // 受信バッファ
-            var readBuffer = new byte[1024];
-
-            try
-            {
-                while (worker_valid)
-                {
-                    readStream.ReadAsync(readBuffer, 0, readBuffer.Length, readCts.Token)
-                        .ContinueWith(HandleRecvCommand);
-
-                }
-            } catch (Exception /*ex*/)
-            {
-                //NotifyDisconnected();
-            }
-        }
-
-        /// <summary>
-        /// readStreamに文字列を受信したときに非同期に呼び出されるハンドラ
-        /// </summary>
-        /// <param name="task"></param>
-        private void HandleRecvCommand(Task<int> task)
-        {
-
-        }
-
         // --- 以下private members
 
         /// <summary>
@@ -123,32 +102,12 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private Process exeProcess;
 
-        /// <summary>
-        /// 子プロセスからリダイレクトしている入力stream
-        /// </summary>
-        private Stream readStream;
-
-        /// <summary>
-        /// 子プロセスへの出力stream
-        /// </summary>
-        private Stream writeStream;
-
-        /// <summary>
-        /// 別スレッドを終了させるためのシグナル
-        /// これがfalseになると終了する。
-        /// </summary>
-        private bool worker_valid = false;
-
-        /// <summary>
-        /// ReadAsync()の途中キャンセル用。
-        /// </summary>
-        private CancellationTokenSource readCts = new CancellationTokenSource();
+        private RemoteService remoteService;
 
         /// <summary>
         /// 排他用
         /// </summary>
         private object lockObject = new object();
-
 
     }
 }

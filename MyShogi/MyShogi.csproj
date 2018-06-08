@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
+    <Compile Include="Model\Common\Network\RemoteService.cs" />
     <Compile Include="Model\Common\Utility\Scanner.cs" />
     <Compile Include="Model\Common\Utility\ScannerException.cs" />
     <Compile Include="Model\Shogi\Player\NullPlayer.cs" />
