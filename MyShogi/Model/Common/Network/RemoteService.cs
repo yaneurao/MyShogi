@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MyShogi.Model.Common.Network
 {
     /// <summary>
-    /// RemoteService.read()でコマンドを受信したときに呼び出されるハンドラの型
+    /// RemoteService.Read()でコマンドを受信したときに呼び出されるハンドラの型
     /// </summary>
     /// <param name="command"></param>
     public delegate void CommandRecieveHandler(string command);
@@ -62,7 +62,16 @@ namespace MyShogi.Model.Common.Network
         /// <summary>
         /// read()で例外が起きたときにここにその例外が格納される
         /// </summary>
-        public Exception Exception
+        public Exception ReadException
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// write()で例外が起きたときにここにその例外が格納される。
+        /// </summary>
+        public Exception WriteException
         {
             get;
             set;
@@ -122,15 +131,35 @@ namespace MyShogi.Model.Common.Network
             }
             catch (Exception ex)
             {
-                Exception = ex;
+                ReadException = ex;
                 //NotifyDisconnected();
             }
         }
 
         /// <summary>
         /// コマンドの受信時に呼ばれるイベントです。
+        /// 引数として1行文のstringが来るが、そこに改行コードは含まれない。
         /// </summary>
         public CommandRecieveHandler CommandReceived;
+
+        /// <summary>
+        /// WriteStreamに書き出し。改行は自動的に付与されるので引数で渡すstringには付与してはならない。
+        /// </summary>
+        /// <param name="command"></param>
+        public void Write(string command)
+        {
+            try
+            {
+                // 送信で待たされることは現実的にはないはずなので非同期処理はしていない。
+                byte[] buffer = Encoding.GetBytes($"{command}\n");
+                writeStream.Write(buffer, 0, buffer.Length);
+                writeStream.Flush(); // これを行わないとエンジンに渡されないことがある。
+            }
+            catch (Exception ex)
+            {
+                WriteException = ex;
+            }
+        }
 
         // --- 以下private methods
 
@@ -142,9 +171,15 @@ namespace MyShogi.Model.Common.Network
             for(int i = 0;i<size;++i)
             {
                 var c = readBytes[i];
-                readLine.Add(c);
+                if (c == '\r')
+                    continue; // この文字列はskipする。
 
-                if (c == '\n')
+                // 改行コードは追加しない。
+                if (c != '\n')
+                {
+                    readLine.Add(c);
+                }
+                else
                 {
                     yield return Encoding.GetString(readLine.ToArray());
                     readLine.Clear();
@@ -185,6 +220,5 @@ namespace MyShogi.Model.Common.Network
         /// </summary>
         private Task<int> task;
 
-        private bool disposed;
     }
 }

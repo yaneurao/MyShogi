@@ -497,10 +497,13 @@ namespace MyShogi.Model.Test
             var neg = new UsiEngineNegotiator();
             var data = new UsiEngineData("engine/gpsfish/gpsfish.exe");
             neg.Connect(data);
-            while(true)
+            neg.Read();
+            neg.Read();
+            neg.Write("usi");
+            while (true)
             {
-                neg.Read();
                 //Console.WriteLine(".");
+                neg.Read();
             }
 
         }

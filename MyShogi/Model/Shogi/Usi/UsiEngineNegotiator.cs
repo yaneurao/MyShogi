@@ -1,9 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using MyShogi.Model.Common.Network;
+using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
-using MyShogi.Model.Common.Network;
 
 namespace MyShogi.Model.Shogi.Usi
 {
@@ -15,7 +12,6 @@ namespace MyShogi.Model.Shogi.Usi
     {
         public UsiEngineNegotiator()
         {
-            state = UsiEngineState.Init;
         }
 
         /// <summary>
@@ -57,6 +53,7 @@ namespace MyShogi.Model.Shogi.Usi
                     process.StandardInput.BaseStream,  // write stream
                     true);
 
+                // 行が来ていたときのコールバック
                 remoteService.CommandReceived += (e) => { Console.WriteLine(e); };
             }
         }
@@ -64,11 +61,19 @@ namespace MyShogi.Model.Shogi.Usi
         /// <summary>
         /// 接続している子プロセスから行を読み込む。
         /// 読み込む行がなければ、ブロッキングせずにすぐ戻る。
-        /// 行を読み込んだ時は、...
         /// </summary>
         public void Read()
         {
             remoteService.Read();
+        }
+
+        /// <summary>
+        /// 接続している子プロセスに行を流し込む。
+        /// </summary>
+        /// <param name="s"></param>
+        public void Write(string s)
+        {
+            remoteService.Write(s);
         }
 
         /// <summary>
@@ -93,8 +98,6 @@ namespace MyShogi.Model.Shogi.Usi
             Disconnect();
         }
 
-        public UsiEngineState state { get; set; }
-
         // --- 以下private members
 
         /// <summary>
@@ -102,6 +105,9 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private Process exeProcess;
 
+        /// <summary>
+        /// 入出力のリダイレクトをして、入力があったときにコールバックするためのヘルパー。
+        /// </summary>
         private RemoteService remoteService;
 
         /// <summary>
