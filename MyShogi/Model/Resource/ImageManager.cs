@@ -1,9 +1,7 @@
-﻿using MyShogi.App;
+﻿using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
-using MyShogi.Model.Resource;
-using System.IO;
-using System.Windows.Forms;
+using MyShogi.App;
 
 namespace MyShogi.Model.Resource
 {
@@ -181,6 +179,12 @@ namespace MyShogi.Model.Resource
 
             // 確保したBitmapをImageLoaderの管理下に置く。
             PieceMoveImage.SetBitmap(bmp);
+
+#if false
+            // 駒の移動元と移動先の候補の影
+            if (config.LastMoveFromColorType == 4 || config.PickedMoveToColorType == 6)
+                Load(ref PieceShadowImage, "piece_v0_776_636.png");
+#endif
         }
 
         /// <summary>
@@ -263,6 +267,11 @@ namespace MyShogi.Model.Resource
         /// 指し手の移動元や移動先の升の背景色を変更するのに用いる。
         /// </summary>
         public ImageLoader PieceMoveImage = new ImageLoader();
+
+        /// <summary>
+        /// 指し手の移動元や移動先の候補の升に描画する駒の影
+        /// </summary>
+        public ImageLoader PieceShadowImage = new ImageLoader();
 
         /// <summary>
         /// 駒の移動方向が描いてある画像

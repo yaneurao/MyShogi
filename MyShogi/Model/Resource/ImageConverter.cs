@@ -10,6 +10,7 @@ namespace MyShogi.Model.Resource
         /// </summary>
         public static void ConvertPieceImage()
         {
+            ConvertPieceImage_(0); // shadow
             ConvertPieceImage_(1);
             ConvertPieceImage_(2);
             ConvertPieceImage_(3);

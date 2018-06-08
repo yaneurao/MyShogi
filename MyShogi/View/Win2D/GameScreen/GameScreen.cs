@@ -88,7 +88,10 @@ namespace MyShogi.View.Win2D
                     {
                         // これが最終手の移動元の升であるなら、エフェクトを描画する。
                         if (sq == lastMoveFrom)
-                            DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.From));
+                        {
+                            var piece_to = pos.PieceOn(lastMoveTo);
+                            DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.From, piece_to));
+                        }
 
                         // これが最終手の移動先の升であるなら、エフェクトを描画する。
                         if (sq == lastMoveTo)
@@ -118,8 +121,11 @@ namespace MyShogi.View.Win2D
                             var movable = vm.viewState.picked_piece_legalmovesto.IsSet(sq);
 
                             if (movable && config.PickedMoveToColorType >= 4)
-                                // 移動先の候補の升を明るく
-                                DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedTo));
+                            // 移動先の候補の升を明るく
+                            {
+                                var picked_pc = pos.PieceOn(picked_from);
+                                DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedTo, picked_pc));
+                            }
                             else if (!movable && config.PickedMoveToColorType < 4)
                                 // 移動先の候補以外の升を暗く
                                 DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedTo));

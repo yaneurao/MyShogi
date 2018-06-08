@@ -71,11 +71,11 @@ namespace MyShogi.Model.Resource
         /// </summary>
         /// <param name="pc"></param>
         /// <returns></returns>
-        public static Sprite PieceMove(PieceMoveEffect pc)
+        public static Sprite PieceMove(PieceMoveEffect pe , Piece pc = Shogi.Core.Piece.NO_PIECE)
         {
             // 効果を「オフ」にしているならnull spriteを返してやる。
             var config = TheApp.app.config;
-            switch(pc)
+            switch(pe)
             {
                 case PieceMoveEffect.To:
                     if (config.LastMoveToColorType == 0) return null;
@@ -91,10 +91,26 @@ namespace MyShogi.Model.Resource
                     break;
             }
 
+#if false
+            // シャドウの表現
+            if ((pe == PieceMoveEffect.From && config.LastMoveFromColorType == 4)
+                || (pe == PieceMoveEffect.PickedTo && config.PickedMoveToColorType == 6))
+            {
+                var srcRect2 = new Rectangle(
+                ((int)pc % 8) * piece_img_width,
+                ((int)pc / 8) * piece_img_height,
+                piece_img_width, piece_img_height);
+
+                var image2 = TheApp.app.imageManager.PieceShadowImage.image;
+
+                return new Sprite(image2, srcRect2);
+            }
+#endif
+
             var srcRect = new Rectangle(
-                    ((int)pc % 8) * piece_img_width,
-                    ((int)pc / 8) * piece_img_height,
-                    piece_img_width, piece_img_height);
+            ((int)pe % 8) * piece_img_width,
+            ((int)pe / 8) * piece_img_height,
+            piece_img_width, piece_img_height);
 
             var image = TheApp.app.imageManager.PieceMoveImage.image;
 

@@ -24,10 +24,10 @@ namespace MyShogi.App
             PieceImageVersion = 1;
             PieceAttackImageVersion = 0;
             BoardNumberImageVersion = 1;
-            LastMoveFromColorType = 0;
+            LastMoveFromColorType = 1;
             LastMoveToColorType = 1;
             PickedMoveFromColorType = 1;
-            PickedMoveToColorType = 2;
+            PickedMoveToColorType = 1;
             PromotePieceColorType = 0;
             TurnDisplay = 1;
         }
@@ -195,6 +195,7 @@ namespace MyShogi.App
         /// 1 : 朱色
         /// 2 : 青色
         /// 3 : 緑色
+        /// 4 : 駒のシャドウのみ
         /// </summary>
         public int LastMoveFromColorType
         {
@@ -221,6 +222,7 @@ namespace MyShogi.App
         /// 1 : 朱色
         /// 2 : 青色
         /// 3 : 緑色
+        /// 4 : 駒のシャドウのみ
         /// </summary>
         public int PickedMoveFromColorType
         {
