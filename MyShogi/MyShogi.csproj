@@ -90,7 +90,7 @@
     <Compile Include="Model\Shogi\Player\HumanPlayer.cs" />
     <Compile Include="Model\Shogi\Player\Player.cs" />
     <Compile Include="Model\Shogi\Player\PlayerTypeEnum.cs" />
-    <Compile Include="Model\Shogi\Usi\UsiConnectionData.cs" />
+    <Compile Include="Model\Shogi\Usi\UsiEngineData.cs" />
     <Compile Include="Model\Shogi\Player\UsiEnginePlayer.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuLog.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngineException.cs" />

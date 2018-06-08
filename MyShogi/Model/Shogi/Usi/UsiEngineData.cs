@@ -6,9 +6,9 @@ namespace MyShogi.Model.Shogi.Usi
     /// USIプロトコルで実行ファイルに接続するときに必要なデータ
     /// あとで(ネットワークごしのエンジンに接続する場合などに向けて)抽象化するかも。
     /// </summary>
-    public class UsiConnectionData
+    public class UsiEngineData
     {
-        public UsiConnectionData(string file_path , string working_dir = null , string args = null)
+        public UsiEngineData(string file_path , string working_dir = null , string args = null)
         {
             ExeFilePath = file_path;
             ExeWorkingDirectory = working_dir;

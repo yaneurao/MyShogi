@@ -96,6 +96,9 @@ namespace MyShogi.Model.Resource
             if ((pe == PieceMoveEffect.From && config.LastMoveFromColorType == 4)
                 || (pe == PieceMoveEffect.PickedTo && config.PickedMoveToColorType == 6))
             {
+                // 盤面反転しているときは相手の駒にしないといけない。
+                // if (reverse) pc = pc.Flip();
+
                 var srcRect2 = new Rectangle(
                 ((int)pc % 8) * piece_img_width,
                 ((int)pc / 8) * piece_img_height,
