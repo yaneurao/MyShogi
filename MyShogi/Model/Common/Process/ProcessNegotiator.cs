@@ -51,9 +51,6 @@ namespace MyShogi.Model.Common.Process
                     process.StandardOutput.BaseStream, // read stream
                     process.StandardInput.BaseStream,  // write stream
                     true);
-
-                // 行が来ていたときのコールバック
-                remoteService.CommandReceived += CommandReceived;
             }
         }
 
@@ -88,7 +85,11 @@ namespace MyShogi.Model.Common.Process
                     exeProcess.Close();
                     exeProcess = null;
                 }
-                remoteService.Dispose();
+                if (remoteService != null)
+                {
+                    remoteService.Dispose();
+                    remoteService = null;
+                }
             }
         }
 
@@ -99,10 +100,14 @@ namespace MyShogi.Model.Common.Process
 
         /// <summary>
         /// 子プロセスの標準出力から新しい行を受信したときのコールバック
-        /// Connect()までにセットしておくこと。
+        /// Connect()のあとにRead()までにセットしておくこと。
         /// </summary>
-        public CommandRecieveHandler CommandReceived { get; set; }
-        
+        public CommandRecieveHandler CommandReceived
+        {
+            get { return remoteService.CommandReceived; }
+            set { remoteService.CommandReceived = value; }
+        }
+
         // --- 以下private members
 
         /// <summary>

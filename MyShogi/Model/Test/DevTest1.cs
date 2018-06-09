@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using MyShogi.Model.Common.Process;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Usi;
@@ -509,10 +510,15 @@ namespace MyShogi.Model.Test
             }
 #endif
 
-#if false
+#if true
+            Log.log = new FileLog("log.txt");
+
             var engine = new UsiEngine();
             var data = new ProcessNegotiatorData("engine/gpsfish/gpsfish.exe");
             engine.Connect(data);
+            engine.SendCommand("usi");
+
+            engine.SendSetOptionList();
 
             while (true)
             {

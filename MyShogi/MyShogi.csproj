@@ -69,8 +69,8 @@
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
     <Compile Include="Model\Common\Process\RemoteService.cs" />
+    <Compile Include="Model\Common\Utility\Log.cs" />
     <Compile Include="Model\Common\Utility\Scanner.cs" />
-    <Compile Include="Model\Common\Utility\ScannerException.cs" />
     <Compile Include="Model\Shogi\Player\NullPlayer.cs" />
     <Compile Include="Model\Shogi\Player\PlayerBuilder.cs" />
     <Compile Include="Model\Common\Process\ProcessNegotiator.cs" />

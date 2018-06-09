@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MyShogi.Model.Shogi.Usi
+﻿namespace MyShogi.Model.Shogi.Usi
 {
     /// <summary>
     /// USIエンジンの状態を示します。(大雑把に)
@@ -18,6 +12,7 @@ namespace MyShogi.Model.Shogi.Usi
 
         /// <summary>
         /// 接続済
+        /// (子プロセスの起動に成功)
         /// </summary>
         Connected,
 

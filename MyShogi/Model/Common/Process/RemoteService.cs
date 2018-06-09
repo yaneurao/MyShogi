@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyShogi.Model.Common.Utility;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -117,6 +118,8 @@ namespace MyShogi.Model.Common.Process
                     {
                         foreach (var command in SplitCommand(readBuffer, task.Result))
                         {
+                            Log.Write(LogInfoType.ReceiveCommandFromEngine, command);
+
                             //if (IsOutLog)
                             //{
                             //    LibGlobal.DebugFormViewModel.AddLine(command, LogName, true);
@@ -151,9 +154,16 @@ namespace MyShogi.Model.Common.Process
             try
             {
                 // 送信で待たされることは現実的にはないはずなので非同期処理はしていない。
-                byte[] buffer = Encoding.GetBytes($"{command}\n");
-                writeStream.Write(buffer, 0, buffer.Length);
-                writeStream.Flush(); // これを行わないとエンジンに渡されないことがある。
+                // しかし、UIスレッドからもコマンド送信を行う可能性があるので排他処理は必要である。
+
+                lock (writeLockObjcet)
+                {
+                    byte[] buffer = Encoding.GetBytes($"{command}\n");
+                    writeStream.Write(buffer, 0, buffer.Length);
+                    writeStream.Flush(); // これを行わないとエンジンに渡されないことがある。
+                }
+
+                Log.Write(LogInfoType.SendCommandToEngine , command);
             }
             catch (Exception ex)
             {
@@ -219,6 +229,11 @@ namespace MyShogi.Model.Common.Process
         /// read()で非同期処理しないといけないのでそのためのtask
         /// </summary>
         private Task<int> task;
+
+        /// <summary>
+        /// Write()で排他する用。
+        /// </summary>
+        private object writeLockObjcet = new object();
 
     }
 }

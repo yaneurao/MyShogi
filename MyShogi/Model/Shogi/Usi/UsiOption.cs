@@ -19,11 +19,20 @@ namespace MyShogi.Model.Shogi.Usi
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        private UsiOption()
+        public UsiOption()
         {
             ComboList = new List<string>();
             MinValue = long.MinValue;
             MaxValue = long.MaxValue;
+        }
+
+        /// <summary>
+        /// このオブジェクトを複製して返す。
+        /// </summary>
+        /// <returns></returns>
+        public UsiOption Clone()
+        {
+            return MemberwiseClone() as UsiOption;
         }
 
         /// <summary>

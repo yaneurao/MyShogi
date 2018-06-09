@@ -4,6 +4,35 @@ using System.Text;
 namespace MyShogi.Model.Common.Utility
 {
     /// <summary>
+    /// 解析失敗時に投げられる例外です。
+    /// </summary>
+    public class ScannerException : Exception
+    {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ScannerException()
+        {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ScannerException(string message)
+            : base(message)
+        {
+        }
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ScannerException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+    }
+
+    /// <summary>
     /// 1行を渡して字句解析を行う。
     /// スペースを区切り文字として扱いながらトークンを読みこんで行く。
     /// 複数のスペースが連続する場合は、1つのスペースとして扱う。
