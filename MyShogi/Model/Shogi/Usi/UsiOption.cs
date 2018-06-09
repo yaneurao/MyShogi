@@ -281,7 +281,7 @@ namespace MyShogi.Model.Shogi.Usi
             while (true)
             {
                 var peek = scanner.PeekText();
-                if (string.IsNullOrEmpty(peek))
+                if (peek == null)
                 {
                     return string.Join(" ", result);
                 }
@@ -294,6 +294,7 @@ namespace MyShogi.Model.Shogi.Usi
 
                 // キーワードでなければ名前の一部なので、
                 // オプション名として処理します。
+                scanner.ParseText();
                 result.Add(peek);
             }
         }

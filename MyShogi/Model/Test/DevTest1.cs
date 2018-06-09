@@ -484,7 +484,7 @@ namespace MyShogi.Model.Test
 
         public static void Test4()
         {
-#if true
+#if false
             var option = UsiOption.USI_Hash;
             Console.WriteLine(option.MakeSetOptionCommand());
             Console.WriteLine(option.OptionType.ToUsiString());
