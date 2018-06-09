@@ -96,7 +96,7 @@
             this.toolStripButton3.Name = "toolStripButton3";
             this.toolStripButton3.Size = new System.Drawing.Size(63, 54);
             this.toolStripButton3.Text = "急";
-            this.toolStripButton3.ToolTipText = "コンピューターにいまずく指させます。";
+            this.toolStripButton3.ToolTipText = "コンピューターにいますぐ指させます。";
             // 
             // toolStripButton4
             // 
