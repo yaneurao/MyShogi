@@ -73,7 +73,7 @@
     <Compile Include="Model\Common\Utility\ScannerException.cs" />
     <Compile Include="Model\Shogi\Player\NullPlayer.cs" />
     <Compile Include="Model\Shogi\Player\PlayerBuilder.cs" />
-    <Compile Include="Model\Shogi\Usi\UsiEngineNegotiator.cs" />
+    <Compile Include="Model\Common\Process\ProcessNegotiator.cs" />
     <Compile Include="Controller\GameController.cs" />
     <Compile Include="Model\Common\Math\AffineMatrix.cs" />
     <Compile Include="Model\Common\Math\Vector2D.cs" />
@@ -91,7 +91,7 @@
     <Compile Include="Model\Shogi\Player\HumanPlayer.cs" />
     <Compile Include="Model\Shogi\Player\Player.cs" />
     <Compile Include="Model\Shogi\Player\PlayerTypeEnum.cs" />
-    <Compile Include="Model\Shogi\Usi\UsiEngineData.cs" />
+    <Compile Include="Model\Common\Process\ProcessNegotiatorData.cs" />
     <Compile Include="Model\Shogi\Player\UsiEnginePlayer.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuLog.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngineException.cs" />

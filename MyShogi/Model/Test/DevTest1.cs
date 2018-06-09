@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using MyShogi.Model.Common.Process;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
-using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Test
 {
@@ -494,8 +494,8 @@ namespace MyShogi.Model.Test
             Console.WriteLine(option.OptionType.ToUsiString());
 #endif
 
-            var neg = new UsiEngineNegotiator();
-            var data = new UsiEngineData("engine/gpsfish/gpsfish.exe");
+            var neg = new ProcessNegotiator();
+            var data = new ProcessNegotiatorData("engine/gpsfish/gpsfish.exe");
             neg.Connect(data);
             neg.Read();
             neg.Read();

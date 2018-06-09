@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace MyShogi.Model.Shogi.Usi
+﻿namespace MyShogi.Model.Common.Process
 {
     /// <summary>
     /// USIプロトコルで実行ファイルに接続するときに必要なデータ
     /// あとで(ネットワークごしのエンジンに接続する場合などに向けて)抽象化するかも。
     /// </summary>
-    public class UsiEngineData
+    public class ProcessNegotiatorData
     {
-        public UsiEngineData(string file_path , string working_dir = null , string args = null)
+        public ProcessNegotiatorData(string file_path , string working_dir = null , string args = null)
         {
             ExeFilePath = file_path;
             ExeWorkingDirectory = working_dir;

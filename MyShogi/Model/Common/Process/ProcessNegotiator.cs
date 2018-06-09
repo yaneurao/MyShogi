@@ -1,23 +1,23 @@
-﻿using MyShogi.Model.Common.Network;
-using System;
+﻿using System;
 using System.Diagnostics;
+using MyShogi.Model.Common.Network;
 
-namespace MyShogi.Model.Shogi.Usi
+namespace MyShogi.Model.Common.Process
 {
     /// <summary>
-    /// 思考エンジンとやりとりするためのクラス
-    /// エンジンはUSIプロトコルでやりとりする。
+    /// 子プロセスを生成して、リダイレクトされた標準入出力経由でやりとりするためのクラス
+    /// ローカルの思考エンジンに接続するときに用いる。
     /// </summary>
-    public class UsiEngineNegotiator
+    public class ProcessNegotiator
     {
-        public UsiEngineNegotiator()
+        public ProcessNegotiator()
         {
         }
 
         /// <summary>
         /// 思考エンジンに接続する。
         /// </summary>
-        public void Connect(UsiEngineData engineData)
+        public void Connect(ProcessNegotiatorData engineData)
         {
             lock (lockObject)
             {
@@ -38,7 +38,7 @@ namespace MyShogi.Model.Shogi.Usi
                     RedirectStandardError = false,
                 };
                 
-                var process = new Process
+                var process = new System.Diagnostics.Process
                 {
                     StartInfo = info,
                 };
@@ -103,7 +103,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// <summary>
         /// Connect()で接続したプロセス
         /// </summary>
-        private Process exeProcess;
+        private System.Diagnostics.Process exeProcess;
 
         /// <summary>
         /// 入出力のリダイレクトをして、入力があったときにコールバックするためのヘルパー。
