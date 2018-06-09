@@ -4,6 +4,7 @@ using System.Text;
 using MyShogi.Model.Common.Process;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Test
 {
@@ -483,7 +484,7 @@ namespace MyShogi.Model.Test
 
         public static void Test4()
         {
-#if false
+#if true
             var option = UsiOption.USI_Hash;
             Console.WriteLine(option.MakeSetOptionCommand());
             Console.WriteLine(option.OptionType.ToUsiString());
@@ -494,6 +495,7 @@ namespace MyShogi.Model.Test
             Console.WriteLine(option.OptionType.ToUsiString());
 #endif
 
+#if false
             var neg = new ProcessNegotiator();
             var data = new ProcessNegotiatorData("engine/gpsfish/gpsfish.exe");
             neg.Connect(data);
@@ -505,6 +507,18 @@ namespace MyShogi.Model.Test
                 //Console.WriteLine(".");
                 neg.Read();
             }
+#endif
+
+#if false
+            var engine = new UsiEngine();
+            var data = new ProcessNegotiatorData("engine/gpsfish/gpsfish.exe");
+            engine.Connect(data);
+
+            while (true)
+            {
+                engine.OnIdle();
+            }
+#endif
 
         }
 

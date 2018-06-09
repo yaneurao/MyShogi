@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using MyShogi.Model.Common.Network;
 
 namespace MyShogi.Model.Common.Process
 {
@@ -54,7 +53,7 @@ namespace MyShogi.Model.Common.Process
                     true);
 
                 // 行が来ていたときのコールバック
-                remoteService.CommandReceived += (e) => { Console.WriteLine(e); };
+                remoteService.CommandReceived += CommandReceived;
             }
         }
 
@@ -98,6 +97,12 @@ namespace MyShogi.Model.Common.Process
             Disconnect();
         }
 
+        /// <summary>
+        /// 子プロセスの標準出力から新しい行を受信したときのコールバック
+        /// Connect()までにセットしておくこと。
+        /// </summary>
+        public CommandRecieveHandler CommandReceived { get; set; }
+        
         // --- 以下private members
 
         /// <summary>

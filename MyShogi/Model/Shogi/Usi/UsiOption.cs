@@ -195,7 +195,6 @@ namespace MyShogi.Model.Shogi.Usi
 
             // スペースをセパレータとして分離する
             var scanner = new Scanner(command);
-            scanner.SetDelimiters(" ");
 
             if (scanner.ParseText() != "option")
             {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MyShogi.Model.Common.Network
+namespace MyShogi.Model.Common.Process
 {
     /// <summary>
     /// RemoteService.Read()でコマンドを受信したときに呼び出されるハンドラの型

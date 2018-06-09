@@ -68,7 +68,7 @@
   <ItemGroup>
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
-    <Compile Include="Model\Common\Network\RemoteService.cs" />
+    <Compile Include="Model\Common\Process\RemoteService.cs" />
     <Compile Include="Model\Common\Utility\Scanner.cs" />
     <Compile Include="Model\Common\Utility\ScannerException.cs" />
     <Compile Include="Model\Shogi\Player\NullPlayer.cs" />
@@ -87,6 +87,7 @@
     <Compile Include="Model\Resource\SpriteManager.cs" />
     <Compile Include="Model\Shogi\Core\SquareHand.cs" />
     <Compile Include="Model\Shogi\Converter\DetectEncoding.cs" />
+    <Compile Include="Model\Shogi\Usi\UsiEngine.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngineState.cs" />
     <Compile Include="Model\Shogi\Player\HumanPlayer.cs" />
     <Compile Include="Model\Shogi\Player\Player.cs" />

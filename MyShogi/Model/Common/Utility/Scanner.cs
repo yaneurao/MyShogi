@@ -1,11 +1,16 @@
 ﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
+using System.Text;
 
 namespace MyShogi.Model.Common.Utility
 {
     /// <summary>
     /// 1行を渡して字句解析を行う。
+    /// スペースを区切り文字として扱いながらトークンを読みこんで行く。
+    /// 複数のスペースが連続する場合は、1つのスペースとして扱う。
+    /// スペース以外にもタブも同じ意味と解釈する。
+    /// そこそこ高速。
+    /// 
+    /// また、区切り文字を","にしたい場合などは、string.Split()してしまうほうが良いと思う…。
     /// </summary>
     public class Scanner
     {
@@ -15,12 +20,6 @@ namespace MyShogi.Model.Common.Utility
         /// </summary>
         public Scanner(string text_)
         {
-            if (string.IsNullOrEmpty(text_))
-            {
-                throw new ArgumentNullException("text");
-            }
-
-            SetDelimiters(",");
             text = text_;
             index = 0;
         }
@@ -63,99 +62,94 @@ namespace MyShogi.Model.Common.Utility
         }
 
         /// <summary>
-        /// int型の整数をパースします。
+        /// 整数をパースします。
         /// 読み込んだ分だけindex(解析位置)を進める。
+        /// 整数がなければ例外をなげる　。
         /// </summary>
-        public int ParseInt()
+        public long ParseInt()
         {
+            if (peek != null)
+                throw new ScannerException(
+                    "PeekText()したあと、ParseText()を呼び出していない。");
+
+            SkipSpace();
             CheckEof();
 
-            var m = this.intRegex.Match(this.text, this.index);
-            if (!m.Success)
+            var sb = new StringBuilder();
+            while (index < Text.Length)
+            {
+                var c = Text[index];
+                if ('0' <= c && c <= '9')
+                {
+                    sb.Append(c);
+                    index++;
+                }
+                else
+                {
+                    // ここの文字が何であるかは知らん..
+                    break;
+                }
+            }
+
+            long result;
+            if (!long.TryParse(sb.ToString(), out result))
             {
                 throw new ScannerException(
                     "整数値の解析に失敗しました。");
             }
 
-            var result = int.Parse(m.Groups[1].Value);
-            this.index += m.Length;
-            return result;
-        }
-
-
-        /// <summary>
-        /// long型の整数をパースします。
-        /// 読み込んだ分だけindex(解析位置)を進める。
-        /// </summary>
-        public long ParseLong()
-        {
-            CheckEof();
-
-            var m = this.intRegex.Match(this.text, this.index);
-            if (!m.Success)
-            {
-                throw new ScannerException(
-                    "整数値の解析に失敗しました。");
-            }
-
-            var result = long.Parse(m.Groups[1].Value);
-            this.index += m.Length;
-            return result;
-        }
-
-        /// <summary>
-        /// 小数をパースします。
-        /// 読み込んだ分だけindex(解析位置)を進める。
-        /// </summary>
-        public double ParseDouble()
-        {
-            CheckEof();
-
-            var m = this.doubleRegex.Match(this.text, this.index);
-            if (!m.Success)
-            {
-                throw new ScannerException(
-                    "小数値の解析に失敗しました。");
-            }
-
-            var result = double.Parse(m.Groups[1].Value);
-            this.index += m.Length;
             return result;
         }
 
         /// <summary>
         /// 次の単語を取得します。
         /// 読み込んだ分だけindex(解析位置)を進める。
+        /// 文字列がなければ例外を投げる。
         /// </summary>
         public string ParseWord()
         {
+            if (peek != null)
+                throw new ScannerException(
+                    "PeekText()したあと、ParseText()を呼び出していない。");
+
+            SkipSpace();
             CheckEof();
 
-            var m = WordRegex.Match(this.text, this.index);
-            if (!m.Success)
+            var sb = new StringBuilder();
+            while (index < Text.Length)
+            {
+                var c = Text[index++];
+                if (c == ' ' || c == '\t')
+                {
+                    break;
+                }
+                sb.Append(c);
+            }
+
+            if (sb.Length == 0)
             {
                 throw new ScannerException(
                     "文字列の解析に失敗しました。");
             }
 
-            this.index += m.Length;
-            return m.Groups[1].Value;
+            return sb.ToString();
         }
 
         /// <summary>
-        /// 文字列を読み込み、その読み込んだ文字列を取得します。
+        /// 文字列を読み込み、その読み込んだ文字列を取得する。
         /// </summary>
         /// <remarks>
-        /// 前にPeekTextした場合は、そこで先読みした文字列を取得します。
-        /// そうでない場合は、新規に文字列の解析を行います。
+        /// 前にPeekText()した場合は、そこで先読みした文字列を取得する。
+        /// そうでない場合は、新規に文字列の解析を行う。
         /// 
-        /// 先頭に"がある場合は、次の"までをまとめて取得します。
+        /// 先頭に"がある場合は、次の"までをまとめて取得する。
+        /// 例外は投げない。文字列がない場合nullが返る。
         /// </remarks>
         public string ParseText()
         {
-            var result = (this.peek != null ? this.peek : PeekText());
+            var result = (peek != null ? peek : PeekText());
 
-            this.peek = null;
+            peek = null;
             return result;
         }
 
@@ -165,47 +159,80 @@ namespace MyShogi.Model.Common.Utility
         /// EOFなら、nullが返る。
         /// </summary>
         /// <remarks>
-        /// ここで先読みされた文字列が、次のParseTextでも使われます。
-        /// 先頭に"がある場合は、次の"までをまとめて取得します。
+        /// ここで先読みされた文字列が、次のParseText()でも使わる。
+        /// 先頭に"がある場合は、次の"までをまとめて取得する。
         /// PeekText()と対応するのはParseText()のみ。ParseInt()などは対応していない。
+        /// 複数回、連続してPeekText()を呼ぶのは合法
         /// </remarks>
         public string PeekText()
         {
+            // 複数回呼び出された時対策
+            if (peek != null)
+                return peek;
+
+            SkipSpace();
             if (IsEof)
             {
+                // このメソッドは例外を投げない
                 return null;
             }
 
-            string result;
+            var sb = new StringBuilder();
+            bool quote = false; // 先頭に " があったか
+            bool first = true;
 
-            var m = this.quotedTextRegex.Match(this.text, this.index);
-            if (m.Success)
+            while (index < Text.Length)
             {
-                // ""で囲まれた文字列の場合は、
-                // 文字のエスケープを行います。
-                result = m.Groups[1].Value.Replace(@"\n", "\n");
-                result = result.Replace(@"\t", "\t");
-                result = result.Replace(@"\\", "\\");
-            }
-            else
-            {
-                m = this.textRegex.Match(this.text, this.index);
-                if (!m.Success)
+                var c = Text[index++];
+                if (first)
                 {
-                    throw new ScannerException(
-                        "文字列の解析に失敗しました。");
+                    if (c == '"')
+                    {
+                        quote = true;
+                        continue;
+                    }
+                    first = false;
                 }
 
-                result = m.Groups[1].Value;
+                if (!quote && (c == ' ' || c == '\t'))
+                {
+                    // スペースかタブに遭遇したらそこまで
+                    break;
+                } else if (quote && c == '"')
+                {
+                    // quoteスタートなので "に遭遇したら終了
+                    break;
+                }
+
+                sb.Append(c);
             }
 
-            this.index += m.Length;
-            this.peek = result;
+            var result = sb.Length == 0 ? null : sb.ToString();
+
+            peek = result;
             return result;
         }
 
-
         // -- 以下 private
+
+        /// <summary>
+        /// 現在の解析位置からスペース相当の文字列を読み飛ばす。
+        /// </summary>
+        private void SkipSpace()
+        {
+            while (index < Text.Length)
+            {
+                var c = Text[index];
+                if (c == ' ' && c == '\t')
+                {
+                    // 読み飛ばす
+                    index++;
+                    continue;
+                }
+
+                break;
+            }
+        }
 
         /// <summary>
         /// 現在解析しているテキスト
@@ -218,93 +245,9 @@ namespace MyShogi.Model.Common.Utility
         private int index;
 
         /// <summary>
-        /// 先読みした文字列。次回のpeekなどで使い回される。
+        /// 先読みした文字列。次回のParseText()で使い回される。
         /// </summary>
         private string peek;
-
-        private Regex quotedTextRegex;
-        private Regex textRegex;
-        private Regex intRegex;
-        private Regex doubleRegex;
-
-        // 区切り文字列の集合
-        private string[] delimiters = { "," };
-
-        // intやdoubleなどの正規表現文字列
-
-        private static readonly string WordRegexPattern = @"\G\s*(\w+)(\s+|$)";
-        private static readonly string QuotedTextRegexPattern = @"\G\s*""((\""|[^""])*?)""";
-        private static readonly string TextRegexPattern = @"\G\s*(.*?)";
-        private static readonly string IntRegexPattern = @"\G\s*((\+|\-)?[0-9]+)";
-        private static readonly string DoubleRegexPattern = @"\G\s*((\+|\-)?[0-9]+([.][0-9.]+)?)";
-
-        // カンマで区切られた時用の正規表現文字列
-        // よく使うので事前に生成しておく。
-
-        private static readonly Regex WordRegex = new Regex(
-            WordRegexPattern, RegexOptions.Compiled);
-        private static readonly Regex CommaQuotedTextRegex = CreateRegexWithDelimiters(
-            QuotedTextRegexPattern, RegexOptions.Compiled, ",");
-        private static readonly Regex CommaTextRegex = CreateRegexWithDelimiters(
-            TextRegexPattern, RegexOptions.Compiled, ",");
-        private static readonly Regex CommaIntRegex = CreateRegexWithDelimiters(
-            IntRegexPattern, RegexOptions.Compiled, ",");
-        private static readonly Regex CommaDoubleRegex = CreateRegexWithDelimiters(
-            DoubleRegexPattern, RegexOptions.Compiled, ",");
-
-        /// <summary>
-        /// 最後にデリミタを付加した、正規表現オブジェクトを作成します。
-        /// </summary>
-        private static Regex CreateRegexWithDelimiters(string pattern,
-                                                       RegexOptions options,
-                                                       params string[] delimiters)
-        {
-            var escapedDelimiters =
-                string.Join(
-                    "|",
-                    delimiters.Select(_ => Regex.Escape(_))
-                    .ToArray());
-
-            var newPattern = string.Format(
-                @"{0}\s*(({1})\s*|$)",
-                pattern,
-                escapedDelimiters);
-
-            return new Regex(newPattern, options);
-        }
-
-        /// <summary>
-        /// 区切り文字を設定します。
-        /// </summary>
-        public void SetDelimiters(params string[] delimiters)
-        {
-            if (delimiters == null)
-            {
-                return;
-            }
-
-            this.delimiters = delimiters;
-
-            if (delimiters.Count() == 1 && delimiters[0] == ",")
-            {
-                this.quotedTextRegex = CommaQuotedTextRegex;
-                this.textRegex = CommaTextRegex;
-                this.intRegex = CommaIntRegex;
-                this.doubleRegex = CommaDoubleRegex;
-            }
-            else
-            {
-                this.quotedTextRegex = CreateRegexWithDelimiters(
-                    QuotedTextRegexPattern, RegexOptions.None, delimiters);
-                this.textRegex = CreateRegexWithDelimiters(
-                    TextRegexPattern, RegexOptions.None, delimiters);
-                this.intRegex = CreateRegexWithDelimiters(
-                    IntRegexPattern, RegexOptions.None, delimiters);
-                this.doubleRegex = CreateRegexWithDelimiters(
-                    DoubleRegexPattern, RegexOptions.None, delimiters);
-            }
-        }
-
 
     }
 }

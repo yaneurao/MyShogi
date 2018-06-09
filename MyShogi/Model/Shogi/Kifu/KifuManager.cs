@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Converter;
+using MyShogi.Model.Common.Utility;
 
 namespace MyShogi.Model.Shogi.Kifu
 {
@@ -161,62 +162,70 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="sfen"></param>
         private string FromSfenString(string sfen)
         {
-            // Position.UsiPositionCmd()からの移植。
-
-            // スペースをセパレータとして分離する
-            var split = sfen.Split(
-                new char[] { ' ' },
-                StringSplitOptions.RemoveEmptyEntries);
-
-            //// どうなっとるねん..
-            //if (split.Length == 0)
-            //    return;
-
-            // 現在の指し手が書かれている場所 split[cur_pos]
-            var cur_pos = 1;
-            if (split[0] == "sfen")
+            try
             {
-                // "sfen ... moves ..."形式かな..
-                // movesの手前までをくっつけてSetSfen()する
-                while (cur_pos < split.Length && split[cur_pos] != "moves")
+                // Position.UsiPositionCmd()からの移植。
+
+                // Scannerを用いた字句解析
+                var scanner = new Scanner(sfen);
+
+                //// どうなっとるねん..
+                //if (split.Length == 0)
+                //    return;
+
+                if (scanner.PeekText() == "sfen")
                 {
-                    ++cur_pos;
+                    scanner.ParseText();
+
+                    // "sfen ... moves ..."形式かな..
+                    // movesの手前までをくっつけてSetSfen()する
+                    var sfen_pos = new List<string>();
+                    while (scanner.PeekText() != "moves")
+                    {
+                        if (sfen_pos.Count >= 4)
+                            break;
+
+                        sfen_pos.Add(scanner.ParseText());
+                    }
+
+                    Tree.rootSfen = string.Join(" ", sfen_pos.ToArray());
+                    Tree.position.SetSfen(Tree.rootSfen);
+                    Tree.rootBoardType = BoardType.Others;
+                }
+                else if (scanner.PeekText() == "startpos")
+                {
+                    scanner.ParseText();
+
+                    Tree.rootSfen = Position.SFEN_HIRATE;
+                    Tree.position.SetSfen(Tree.rootSfen);
+                    Tree.rootBoardType = BoardType.NoHandicap;
                 }
 
-                if (!(cur_pos == 4 || cur_pos == 5))
-                    throw new PositionException("Position.UsiPositionCmd()に渡された文字列にmovesが出てこない");
-
-                if (cur_pos == 4)
-                    Tree.rootSfen = string.Format("{0} {1} {2}", split[1], split[2], split[3]);
-                else // if (cur_pos == 5)
-                    Tree.rootSfen = string.Format("{0} {1} {2} {3}", split[1], split[2], split[3], split[4]);
-
-                Tree.position.SetSfen(Tree.rootSfen);
-                Tree.rootBoardType = BoardType.Others;
-            }
-            else if (split[0] == "startpos")
-            {
-                Tree.rootSfen = Position.SFEN_HIRATE;
-                Tree.position.SetSfen(Tree.rootSfen);
-                Tree.rootBoardType = BoardType.NoHandicap;
-            }
-
-            // "moves"以降の文字列をUSIの指し手と解釈しながら、局面を進める。
-            if (cur_pos < split.Length && split[cur_pos] == "moves")
-                for (int i = cur_pos + 1; i < split.Length; ++i)
+                // "moves"以降の文字列をUSIの指し手と解釈しながら、局面を進める。
+                if (scanner.PeekText() == "moves")
                 {
-                    // デバッグ用に盤面を出力
-                    //Console.WriteLine(Pretty());
+                    scanner.ParseWord();
+                    int ply = 1;
+                    while (scanner.PeekText() != null)
+                    {
+                        // デバッグ用に盤面を出力
+                        //Console.WriteLine(Pretty());
 
-                    var move = Util.FromUsiMove(split[i]);
-                    if (!Tree.position.IsLegal(move))
-                        // throw new PositionException(string.Format("{0}手目が非合法手です。", i - cur_pos));
-                        return string.Format("{0}手目が非合法手です。", i - cur_pos);
+                        var move = Util.FromUsiMove(scanner.ParseText());
+                        if (!Tree.position.IsLegal(move))
+                            // throw new PositionException(string.Format("{0}手目が非合法手です。", i - cur_pos));
+                            return string.Format("{0}手目が非合法手です。", ply);
 
-                    // この指し手で局面を進める
-                    Tree.Add(move , new TimeSpan());
-                    Tree.DoMove(move);
+                        // この指し手で局面を進める
+                        Tree.Add(move, new TimeSpan());
+                        Tree.DoMove(move);
+                        ++ply;
+                    }
                 }
+            } catch (Exception e)
+            {
+                return e.Message;
+            }
 
             return string.Empty;
         }
