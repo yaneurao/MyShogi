@@ -1,5 +1,6 @@
 ﻿using MyShogi.Model.Common.Process;
 using MyShogi.Model.Common.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,6 +11,11 @@ namespace MyShogi.Model.Shogi.Usi
     /// </summary>
     public class UsiEngine
     {
+        public UsiEngine()
+        {
+            State = UsiEngineState.Init;
+        }
+
         /// <summary>
         /// 思考エンジンに接続する。
         /// </summary>
@@ -18,11 +24,21 @@ namespace MyShogi.Model.Shogi.Usi
         {
             Disconnect(); // 前の接続があるなら切断する。
 
-            negotiator = new ProcessNegotiator();
-            negotiator.Connect(data);
-            negotiator.CommandReceived += UsiCommandHandler;
-            // ProcessNegotiator.Read()を呼び出すまではハンドラの処理が行われないので、
-            // この形で書いても、最初のメッセージを取りこぼすことはない。
+            try
+            {
+                negotiator = new ProcessNegotiator();
+                negotiator.Connect(data);
+                negotiator.CommandReceived += UsiCommandHandler;
+                // ProcessNegotiator.Read()を呼び出すまではハンドラの処理が行われないので、
+                // この形で書いても、最初のメッセージを取りこぼすことはない。
+
+                ChangeState(UsiEngineState.Connected);
+            }
+            catch
+            {
+                // 思考エンジンに接続できないとき、Win32Exceptionが飛んでくる
+                ChangeState(UsiEngineState.ConnectionFailed);
+            }
         }
 
         /// <summary>
@@ -31,11 +47,24 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public void OnIdle()
         {
+            switch(State)
+            {
+                case UsiEngineState.Connected:
+                    if (DateTime.Now - connected_time >= new TimeSpan(0, 0, 30))
+                    {
+                        ChangeState(UsiEngineState.ConnectionTimeout);
+                    }
+                    break;
+            }
+
             negotiator.Read();
         }
 
         public void Disconnect()
         {
+            if (State != UsiEngineState.Init)
+                    SendCommand("quit");
+
             if (negotiator != null)
             {
                 negotiator.Dispose();
@@ -71,14 +100,62 @@ namespace MyShogi.Model.Shogi.Usi
         /// </remarks>
         public List<UsiOptionMin> DefaultOptionList { get; set; }
 
+        /// <summary>
+        /// エンジンの設定ダイアログ用であるか？
+        /// Connect()の前に設定すべし。
+        /// 
+        /// これがtrueだと"usi"コマンドは送信するが、"isready"コマンドの送信はしない。
+        /// これがfalseだと"usi"送信→"usiok"受信→"isready"送信→"readyok"受信→"usinewgame"送信 まで待つ。
+        /// </summary>
+        public bool EngineSetting { get; set; }
+
         // -- private members
 
         private ProcessNegotiator negotiator;
 
         private UsiEngineState State {get;set;}
-
+        
+        /// <summary>
+        /// "usi"コマンドを思考ンジンに送信した時刻。思考エンジンは起動時にすぐに応答するように作るべき。
+        /// 一応、タイムアウトを監視する。
+        /// </summary>
+        private DateTime connected_time;
 
         // -- private methods
+
+        private void ChangeState(UsiEngineState state)
+        {
+            switch(state)
+            {
+                case UsiEngineState.Connected:
+                    // 接続されたので"usi"と送信
+                    // これ、接続タイムアウトがある。
+                    connected_time = DateTime.Now;
+                    SendCommand("usi");
+                    break;
+
+                case UsiEngineState.UsiOk:
+                    // このタイミングで状態が変更になったことを通知すべき
+                    // エンジン設定時には、この状態で待たせておけば良い。
+
+                    // 対局時には、このあと "isready"を送信して readyokを待つ。
+                    if (!EngineSetting)
+                    {
+                        // これ時間制限はなく、タイムアウトは監視しない。どこかでisreadyは完了するものとする。
+                        SendCommand("isready");
+                    }
+                    break;
+
+                case UsiEngineState.InTheGame:
+                    SendCommand("usinewgame");
+                    break;
+            }
+            var oldState = State;
+            State = state;
+
+            Log.Write(LogInfoType.UsiServer,$"ChangeState()で{oldState.ToString()}から{state.ToString()}に状態が変化した。");
+        }
+
 
         /// <summary>
         /// 思考エンジンの標準出力から送られてきたコマンドの解釈用
@@ -137,17 +214,17 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private void HandleUsiOk()
         {
-#if false
             if (State != UsiEngineState.Connected)
             {
                 throw new UsiException(
                     "usiコマンドが不正なタイミングで送られました。");
             }
-#endif
+
+            // "usiok"に対してエンジン設定などを渡してやる。
 
             ComplementOptions();
             LoadDefaultOption();
-            //EndGoState(UsiEngineState.UsiOk);
+            ChangeState(UsiEngineState.UsiOk);
         }
 
         /// <summary>

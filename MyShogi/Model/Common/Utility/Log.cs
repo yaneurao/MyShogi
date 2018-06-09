@@ -10,6 +10,7 @@ namespace MyShogi.Model.Common.Utility
     {
         SendCommandToEngine      , // エンジンへのコマンドの送信
         ReceiveCommandFromEngine , // エンジンからのコマンドの受信
+        UsiServer                , // USIのコマンドを受理している側のメッセージ
         SystemError              , // システムエラー
     }
 
@@ -57,7 +58,11 @@ namespace MyShogi.Model.Common.Utility
                     break;
 
                 case LogInfoType.SystemError:
-                    log = $"{date} {time}'{ms}";
+                    log = $"{date} {time}'{ms} Error : {log}";
+                    break;
+
+                case LogInfoType.UsiServer:
+                    log = $"{date} {time}'{ms} USI Server : {log}";
                     break;
             }
             sw.WriteLine(log);

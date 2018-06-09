@@ -511,6 +511,8 @@ namespace MyShogi.Model.Test
 #endif
 
 #if true
+            // エンジンへのコマンドの送受信テスト
+
             Log.log = new FileLog("log.txt");
 
             var engine = new UsiEngine();

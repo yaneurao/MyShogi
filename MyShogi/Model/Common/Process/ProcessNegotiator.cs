@@ -18,6 +18,8 @@ namespace MyShogi.Model.Common.Process
         /// </summary>
         public void Connect(ProcessNegotiatorData engineData)
         {
+            Disconnect();
+
             lock (lockObject)
             {
                 if (engineData == null)
@@ -41,6 +43,8 @@ namespace MyShogi.Model.Common.Process
                 {
                     StartInfo = info,
                 };
+
+                // 子プロセスがいないとき、ここで例外が発生する。
                 process.Start();
 
                 // EXE用のprocess
@@ -60,7 +64,8 @@ namespace MyShogi.Model.Common.Process
         /// </summary>
         public void Read()
         {
-            remoteService.Read();
+            if (remoteService != null)
+                remoteService.Read();
         }
 
         /// <summary>
@@ -69,7 +74,8 @@ namespace MyShogi.Model.Common.Process
         /// <param name="s"></param>
         public void Write(string s)
         {
-            remoteService.Write(s);
+            if (remoteService != null)
+                remoteService.Write(s);
         }
 
         /// <summary>
@@ -83,6 +89,7 @@ namespace MyShogi.Model.Common.Process
                 if (exeProcess != null)
                 {
                     exeProcess.Close();
+                    exeProcess.Kill();
                     exeProcess = null;
                 }
                 if (remoteService != null)
