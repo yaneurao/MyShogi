@@ -1,11 +1,183 @@
 ﻿
-ToDo : 次に何とかするやつ
-- UIスレッドとGameControllerとのメッセージングの仕組み
+
+■　2018/06/10
+
+
+- readme.mdにレーティング計測協力をしていただいたuuunuuunさんのこと追記。
+
+
+- UsiEngine.HandleBestMove()少し書いた
+	- 続きは、GameServerみたいなクラス書いてから。
+
+
+- ProcessNegotiatorDataにIsLowPriority追加
+- UsiEngineのusinewgameのときにプロセス優先度を下げる処理追加
+- USIコマンドのusiok,readyok,idのハンドラ書いた。
+- ProcessNegotiatorDataでworking_dirが省略されたときに実行ファイルと同じフォルダをworking directoryとするようにした。
+
+
+
+■　2018/06/09
+
+
+- いますぐ指す　の tooltipが いまずく指す　になっていたの修正(whitebellさん)
+
+
+- LogInfoTypeにUsiServer追加。
+- UsiEngine.ChangeState()追加
+- UsiEngineState.ToString()追加。
+- エンジンが見つからない時の例外を処理するようにした。
+
+
+- ScannerException.cs削除
+- Model.Utility.Log追加
+	- Log.cs追加。
+- UsiEngineの初期化まわり修正。
+
+
+- Scannerの仕様変更に伴い、setoptionのparser修正。
+
+
+- Scanner、正規表現を使うの生成が重いような気がするので、全面的に書き直す。
+- sfenの読み込み部も、これを使って書き直す。
+	- KifuManager.FromSfenString()を書き直した。少し読みやすくなった。
+		- 動作は未確認。まあ、あとでええやろ。
+
+
+- UsiEngineNegotiatorをProcessNegotiatorリネームしてCommon.Networkに移動
+	- Common.Processにしとこう。
+
+
+- RemoteSerivceのWrite書く。
+	- 書けた。エンジンに対してうまく送信できた。
+
+
+- RemoteServiceのReadなんとなく書けた。子プロセスからRead()できるようになった。
+
+
+
+■　2018/06/08
+
+
+- Model.Common.Network/RemoteService.cs追加
+
+
+- UsiConnectionData.cs →リネーム UsiEngineData.cs
+- UsiEngineNegotiator、少し書いた
+	- いまひとつ..
+
+
+- 駒の移動元、移動先のシャドウ追加
+	- piece_shadow_v1.png
+	- あまり思っている感じではなかったのでコードを無効にする。
+
+
+- 細長い駒台用のネームプレートと手番素材追加
+	- turn_v1_1057_157.png
+	- DrawStringに右寄せ描画追加
+	- DrawStringで文字色の指定ができるようにした
+
+
+- 手番素材修正
+	- turn_v1_106_43.png
+	- メニューで表示のオン/オフ追加
+
+
+■　2018/06/07
+
+
+- 手番素材追加。
+	- image/turn_v1_158_54.png
+	- ImageManagerなどこの素材の読み込みに対応。
+
+
+- 「マイナビ」という表記を「マイナビ出版」に変更。
+
+
+- オープンソース版のaboutダイアログにMyShogiのロゴ画像追加。
+	- html修正。
+
+
+
+■　2018/06/06
+
+
+- UsiOptionMin.cs追加
+- UsiTimeData.cs追加
+- Position.clone()をClone()にリネーム
+
+
+- UsiOption.Parse()など実装
+- Shogi.TimeMan.cs移動。Shogi.Playerへ移動
+- Shogi.Model.MathとShogi.Model.ObjectModelをShogi.Model.Commonに移動。
+- Shogi.Model.Common.Utility追加。
+	- Scanner.cs追加
+	- ScannerException.cs追加
+	- Scannerを用いてKifuManagerのsfen解析部を少し書いてみるか？
+	- Scannerを使うほどでなさそう。とりまUSIのoption解析に使おう。
+- UsiOption.Parse()書けた。
+	※　WhaleWatcherライブラリを参考にさせてもらいました。
+
+
+- 名前空間変更。USIエンジンとPlayerを抽象化したものは、以下のnamespaceに移動。
+	- Model.Shogi.Player
+	- Model.Shogi.Usi
+		- UsiException.cs追加
+		- UsiOption.cs追加
+			- 書きかけ。よく考える。
+		- UsiOptionType.cs追加
+		- UsiEngineException.cs追加
+
+
+■　2018/06/05
+
+
+- 対局コントローラーみたいなのが必要。
+- 先にエンジンとのやりとりをする部分を作る。
+	- Model.Shogi.Engine
+		- EngineNegotiator.cs追加
+		- PlayerType.cs追加
+		- Player.cs追加
+		- HumanPlayer.cs追加
+		- UsiEnginePlayer.cs追加
+		- UsiConnectionData.cs追加
+		- UsiState.cs追加
+	- engine、やりとりまわりだけであと1万行ぐらい書かないといけない模様。吐きそう。
+
+
+- 連続王手の千日手を回避していないダイアログ
+	- ダイアログやめて、即座に負け扱いで終局したほうがいいのでは…。
+	- なら、これはこれでいいや。指し手の処理まわりを実装すれば自然に解決するだろう。
+
+- Object間の更新通知の仕組み作る
+- ちゃんとDataBindの仕組みを使って書かないと変なバグ産みそう..
+	仕方ないのでちゃんとやるか…。
+                // ここをUIスレッド以外で行うためにViewに対して
+                // Invalidate()する必要がある。
+                // あとで考える
+                // TODO : これあとでちゃんとメッセージングを使って書き直す
+- NotifyObjectでのイベントハンドラ、変更されたobjectを受け取れるようにしよう..
+	- 修正した。少し使いやすくなった。
+- Positionのclone()実装する。
+- GameControllerのコード、これいまやっていると時間もったいないので、マルチスクリーンまわりの作業はいったん保留。削除。
+
+
+- Fontのサイズをfloatで指定するように変更。
+- 棋譜ウィンドウのScrollbarの計算、修正。
+- 駒を掴んだときにマウスカーソルにへばりつくモード
+	- これやめとこう。
 
 
 
 ■　2018/06/04
 
+
+- MainDialog、GameSettingDialogのAutoScaleModeをdpiに変更。
+- 成り・不成のダイアログ、一段目付近の場合、画面外に出ていたの修正。
+	- 棋譜ウィンドウに重なるように出ていたのも修正。
+
+
+- readme.mdの作業状況、更新
 
 - エンジンダイアログの作業開始
 	- パッケージ用の画面写真のためにとりま、何か作らねばならない。
