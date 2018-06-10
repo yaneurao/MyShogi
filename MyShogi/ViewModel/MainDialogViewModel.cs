@@ -64,8 +64,10 @@ namespace MyShogi.ViewModel
             // デバッグ中
             // あとで書き直す。
             CanMove = true;
-            KifuList = new List<string>();
-            KifuList.Add("   === 開始局面 ===");
+
+            var list = new List<string>();
+            list.Add("   === 開始局面 ===");
+            KifuList = list;
         }
 
         /// <summary>
@@ -130,8 +132,11 @@ namespace MyShogi.ViewModel
                 move_text = move_text.Replace(' ', '　'); // 半角スペースから全角スペースへの置換
 
                 var text = string.Format("{0,3}.{1} {2}", move_text_game_ply, move_text , "00:00:01");
-                KifuList.Add(text);
-                RaisePropertyChanged("KifuList", KifuList); // ここでイベントが発生したとする。
+
+                // KifuListに1行追加して、部分更新通知を出す
+                var list = new List<string>(KifuList);
+                list.Add(text);
+                SetValue<List<string>>("KifuList", list, list.Count - 1);
 
                 Pos.DoMove(m);
             }
@@ -146,5 +151,6 @@ namespace MyShogi.ViewModel
             get { return GetValue<List<string>>("KifuList"); }
             set { SetValue<List<string>>("KifuList",value); }
         }
+
     }
 }

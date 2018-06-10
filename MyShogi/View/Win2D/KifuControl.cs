@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.View.Win2D
 {
@@ -20,20 +17,34 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// リストが変更されたときに呼び出されるハンドラ
         /// </summary>
-        public void OnListChanged(object o)
+        public void OnListChanged(PropertyChangedEventArgs args)
         {
             Invoke(new Action(() =>
             {
-                var list = o as List<string>;
-                var listbox = listBox1;
+                List<string> list = args.value as List<string>;
 
+                int start;
+                if (args.start == -1)
+                    start = 0; // 丸ごと更新された
+                else
+                    start = args.start; // 部分更新された
+
+                // endの指定は無視される。
+
+                var listbox = listBox1;
                 listbox.BeginUpdate();
 
                 int j = 0;
 
                 // 値の違う場所のみ書き換える
                 // 値の違うところを探す
-                for (int i = 0; i < list.Count; ++i)
+                // start以降、endまでしか更新されていないことは保証されているものとする。
+
+                // デバッグ用に、startまで要素が足りていなければとりあえず埋めておく。
+                for (int i = listbox.Items.Count; i < start; ++i)
+                    listbox.Items.Add(list[i]);
+
+                for (int i = start; i < list.Count ; ++i)
                 {
                     if (listbox.Items.Count <= i || list[i] != listbox.Items[i].ToString())
                     {

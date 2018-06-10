@@ -4,10 +4,29 @@
 namespace MyShogi.Model.Common.ObjectModel
 {
     /// <summary>
+    /// プロパティに代入が起きたときに呼び出されるハンドラ用の引数
+    /// </summary>
+    public class PropertyChangedEventArgs
+    {
+        public PropertyChangedEventArgs(string name_ , object value_ , int start_ = -1, int end_ = -1)
+        {
+            name = name_;
+            value = value_;
+            start = start_;
+            end = end_;
+        }
+
+        public string name;
+        public object value;  // プロパティに代入された値
+        public int start;     // 配列の場合など、部分更新が起こった場合、ここにその数値が入る。(さもなくば-1)
+        public int end;       // 配列の場合など、部分更新が起こった場合、ここにその数値が入る。(さもなくば-1)
+    }
+
+    /// <summary>
     /// プロパティが変更されたときに呼び出されるハンドラの型
     /// </summary>
-    public delegate void PropertyChangedEventHandler();
-    public delegate void PropertyChangedEventHandler2(object o);
+    public delegate void PropertyChangedEventHandler(PropertyChangedEventArgs args);
+
 
     /// <summary>
     /// MVVMのViewModelで用いる、プロパティが変更されたときに、それをsubscribe(購読)しているobserverに
@@ -15,7 +34,6 @@ namespace MyShogi.Model.Common.ObjectModel
     /// </summary>
     public class NotifyObject
     {
-
         /// <summary>
         /// propertyのsetterを実装するときに使う。
         /// 値が変わった時に変更通知が来るようになる。
@@ -23,7 +41,7 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        protected void SetValue<T>(string name, T value)
+        protected void SetValue<T>(string name, T value , int start = -1 , int end = -1)
         {
             lock (lockObject)
             {
@@ -34,7 +52,7 @@ namespace MyShogi.Model.Common.ObjectModel
                     // 値が異なるときだけ代入して、そのときにイベントが発火する。
                     // 一度目はイベントは発火しない。
                     properties[name] = value;
-                    RaisePropertyChanged(name , value);
+                    RaisePropertyChanged(name , value , start , end);
                 }
             }
         }
@@ -62,17 +80,12 @@ namespace MyShogi.Model.Common.ObjectModel
         /// name の propertyが変更されたときに、これを購読しているobserverに更新通知を送る。
         /// </summary>
         /// <param name="name"></param>
-        protected void RaisePropertyChanged(string name , object o)
+        protected void RaisePropertyChanged(string name , object value , int start , int end)
         {
             // このpropertyをsubscribeしているobserverに更新通知を送る
             foreach(var prop in propery_changed_handlers)
                 if (prop.Key == name)
-                    prop.Value();
-
-            // こちらは引数にobjectをとり、変更のあったobjectを引数にもらえる。
-            foreach (var prop in propery_changed_handlers2)
-                if (prop.Key == name)
-                    prop.Value(o);
+                    prop.Value(new PropertyChangedEventArgs(name , value , start , end));
         }
 
         /// <summary>
@@ -88,17 +101,6 @@ namespace MyShogi.Model.Common.ObjectModel
                     propery_changed_handlers.Add(name,h);
                 else
                     propery_changed_handlers[name] += h;
-            }
-        }
-
-        public void AddPropertyChangedHandler(string name, PropertyChangedEventHandler2 h)
-        {
-            lock (lockObject)
-            {
-                if (!propery_changed_handlers2.ContainsKey(name))
-                    propery_changed_handlers2.Add(name, h);
-                else
-                    propery_changed_handlers2[name] += h;
             }
         }
 
@@ -121,20 +123,6 @@ namespace MyShogi.Model.Common.ObjectModel
             }
         }
 
-        public void RemovePropertyChangedHandler(string name, PropertyChangedEventHandler2 h)
-        {
-            lock (lockObject)
-            {
-                if (propery_changed_handlers2.ContainsKey(name))
-                {
-                    propery_changed_handlers2[name] -= h;
-                    // delegateを削除した結果、nullになったなら、このentryを削除しておく。
-                    if (propery_changed_handlers2[name] == null)
-                        propery_changed_handlers2.Remove(name);
-                }
-            }
-        }
-
         // --- 以下 private 
 
         /// <summary>
@@ -146,10 +134,8 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <summary>
         /// プロパティが変更されたときに呼び出されるイベントハンドラ
         /// </summary>
-        private Dictionary<string,PropertyChangedEventHandler> propery_changed_handlers 
+        private Dictionary<string, PropertyChangedEventHandler> propery_changed_handlers 
             = new Dictionary<string, PropertyChangedEventHandler>();
-        private Dictionary<string, PropertyChangedEventHandler2> propery_changed_handlers2
-            = new Dictionary<string, PropertyChangedEventHandler2>();
 
         /// <summary>
         /// lockに用いるobject

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using MyShogi.App;
+using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.Model.Resource
 {
@@ -37,7 +38,7 @@ namespace MyShogi.Model.Resource
         /// <summary>
         /// TheApp.app.config.BoardImageVersionの設定が変わったときに画像を読み込む。
         /// </summary>
-        public void UpdateBoardImage()
+        public void UpdateBoardImage(PropertyChangedEventArgs args = null)
         {
             var config = TheApp.app.config;
             var board = new ImageLoader();
@@ -72,13 +73,13 @@ namespace MyShogi.Model.Resource
         /// <summary>
         /// TheApp.app.config.PieceImageVersionが変わったときに呼び出されるハンドラ
         /// </summary>
-        public void UpdatePieceImage()
+        public void UpdatePieceImage(PropertyChangedEventArgs args = null)
         {
             var config = TheApp.app.config;
             Load(ref PieceImage, $"piece_v{config.PieceImageVersion}_776_636.png");
         }
 
-        public void UpdatePieceAttackImage()
+        public void UpdatePieceAttackImage(PropertyChangedEventArgs args = null)
         {
             var config = TheApp.app.config;
             var version = config.PieceAttackImageVersion;
@@ -92,7 +93,7 @@ namespace MyShogi.Model.Resource
         /// 着手の移動元、移動先のエフェクト画像の生成。
         /// TheApp.app.config.LastMoveColorTypeが変わったときなどに呼び出されるハンドラ
         /// </summary>
-        public void UpdatePieceMoveImage()
+        public void UpdatePieceMoveImage(PropertyChangedEventArgs args = null)
         {
             var config = TheApp.app.config;
 
@@ -190,7 +191,7 @@ namespace MyShogi.Model.Resource
         /// <summary>
         /// 駒番号の画像を読み込む
         /// </summary>
-        public void UpdateBoardNumberImage()
+        public void UpdateBoardNumberImage(PropertyChangedEventArgs args = null)
         {
             var config = TheApp.app.config;
             var version = config.BoardNumberImageVersion;

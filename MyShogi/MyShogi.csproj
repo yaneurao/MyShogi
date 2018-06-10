@@ -74,7 +74,7 @@
     <Compile Include="Model\Shogi\Player\NullPlayer.cs" />
     <Compile Include="Model\Shogi\Player\PlayerBuilder.cs" />
     <Compile Include="Model\Common\Process\ProcessNegotiator.cs" />
-    <Compile Include="Controller\GameController.cs" />
+    <Compile Include="Controller\LocalGameServer.cs" />
     <Compile Include="Model\Common\Math\AffineMatrix.cs" />
     <Compile Include="Model\Common\Math\Vector2D.cs" />
     <Compile Include="Model\Common\ObjectModel\NotifyObject.cs" />
@@ -116,7 +116,7 @@
     <Compile Include="Model\Shogi\Kifu\KifuFileType.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuNode.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuManager.cs" />
-    <Compile Include="Model\Shogi\Network\CsaConnectData.cs" />
+    <Compile Include="Model\Shogi\Network\Csa\CsaConnectData.cs" />
     <Compile Include="Model\Shogi\Core\Bitboard.cs" />
     <Compile Include="Model\Shogi\Core\BitOp.cs" />
     <Compile Include="Model\Shogi\Core\BoardType.cs" />

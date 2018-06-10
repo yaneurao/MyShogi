@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Test;
 
 namespace MyShogi.View.Win2D
@@ -13,7 +14,7 @@ namespace MyShogi.View.Win2D
         /// メニューのitemを動的に追加する。
         /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
         /// </summary>
-        public void UpdateMenuItems()
+        public void UpdateMenuItems(PropertyChangedEventArgs args = null)
         {
             var app = TheApp.app;
             var config = app.config;
