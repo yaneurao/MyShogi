@@ -1,4 +1,7 @@
-﻿namespace MyShogi.Model.Shogi.Usi
+﻿using System;
+using MyShogi.Model.Shogi.Core;
+
+namespace MyShogi.Model.Shogi.Usi
 {
     /// <summary>
     /// USIエンジンのoption項目の種別
@@ -65,6 +68,11 @@
                 case "string": return UsiOptionType.TextBox;
             }
             return UsiOptionType.None;
+        }
+
+        internal static Move FromUsiMove(string moveSfen)
+        {
+            throw new NotImplementedException();
         }
     }
 }

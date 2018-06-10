@@ -1,5 +1,6 @@
 ﻿using MyShogi.Model.Common.Process;
 using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -203,17 +204,17 @@ namespace MyShogi.Model.Shogi.Usi
                     HandleId(scanner);
                     break;
 
-#if false
                 case "option":
                     HandleOption(scanner);
                     break;
+
                 case "bestmove":
                     HandleBestMove(scanner);
                     break;
+
                 case "info":
                     HandleInfo(scanner);
                     break;
-#endif
 
                 // u2bやBonadapterのためのスペシャルコマンド
                 case "B<":
@@ -346,6 +347,117 @@ namespace MyShogi.Model.Shogi.Usi
                     throw new UsiException(
                         "invalid command: " + scanner.Text);
             }
+        }
+
+        /// <summary>
+        /// option コマンドを処理します。
+        /// </summary>
+        private void HandleOption(Scanner scanner)
+        {
+            var option = UsiOption.Parse(scanner.Text);
+
+            // "usi"は一度しか送っていないので同じ名前のoptionが二度送られてくることは想定しなくて良いはずなのだが、
+            // 一応きちんと処理しておく。
+            AddOption(option);
+        }
+
+        /// <summary>
+        /// OptionListにoptionを追加する。
+        /// nameが重複していれば追加せずに置き換える。
+        /// </summary>
+        /// <param name="option"></param>
+        private void AddOption(UsiOption option)
+        {
+            for (int i = 0; i < OptionList.Count; ++i)
+                if (OptionList[i].Name == option.Name)
+                {
+                    OptionList[i] = option;
+                    return;
+                }
+
+            OptionList.Add(option);
+        }
+
+        /// <summary>
+        /// bestmove コマンドを処理します。
+        /// </summary>
+        private void HandleBestMove(Scanner scanner)
+        {
+            try
+            {
+                Move move, ponder = Move.NONE;
+                var moveSfen = scanner.ParseText();
+
+#if false
+                // まず、特殊な指し手を調べます。
+                switch (moveSfen)
+                {
+                    case "resign":
+                        EndThink(new UsiThinkEventArgs(GameResult.Lose, GameReason.Resign));
+                        return;
+                    case "win":
+                        EndThink(new UsiThinkEventArgs(GameResult.Win, GameReason.Jishogi));
+                        return;
+                    case "lose":
+                        EndThink(new UsiThinkEventArgs(GameResult.Lose, GameReason.Jishogi));
+                        return;
+                }
+#endif
+
+                // 通常のSFENの指し手
+                move = Core.Util.FromUsiMove(moveSfen);
+                if (move == Move.NONE /* || !Position.IsValid() */)
+                {
+                    throw new UsiException(
+                        moveSfen + ": SFEN形式の指し手が正しくありません。");
+                }
+
+                if (!scanner.IsEof)
+                {
+                    if (scanner.ParseText() != "ponder")
+                    {
+                        throw new UsiException(
+                            "invalid command: " + scanner.Text);
+                    }
+
+                    // ponderの指し手は'(null)'などが指定されることもあるので、
+                    // 指せなくてもエラーにはしません。
+                    var ponderSfen = scanner.ParseText();
+                    var ponderTmp = Core.Util.FromUsiMove(ponderSfen);
+                    if (ponderTmp != Move.NONE /*&& ponderTmp.Validate() */)
+                    {
+                        ponder = ponderTmp;
+                    }
+                }
+
+                //EndThink(new UsiThinkEventArgs(move, ponder));
+            }
+            catch (UsiException /*ex*/)
+            {
+                //EndThink(new UsiThinkEventArgs(ex));
+            }
+        }
+
+        /// <summary>
+        /// infoコマンドを処理します。
+        /// </summary>
+        private void HandleInfo(Scanner scanner)
+        {
+#if false
+            var report = new UsiThinkReport(this);
+
+            // reportの情報をエンジンにも設定する
+            if (!report.Parse(CurrBoard, scanner, this))
+            {
+                return;
+            }
+
+            if ((report.PVSeq != null && report.PVSeq.Any()) ||
+                report.InfoString != null)
+            {
+                AddThinkReport(report);
+            }
+#endif
         }
 
     }
