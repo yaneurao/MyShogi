@@ -518,11 +518,18 @@ namespace MyShogi.Model.Test
             var engine = new UsiEngine();
             var data = new ProcessNegotiatorData("engine/gpsfish/gpsfish.exe");
             engine.Connect(data);
-            engine.SendCommand("usi");
-
             engine.SendSetOptionList();
 
-            while (true)
+            var t = DateTime.Now;
+            while( DateTime.Now - t < new TimeSpan(0,0,5))
+            {
+                engine.OnIdle();
+            }
+            engine.SendCommand("position startpos");
+            engine.SendCommand("go btime 1000 wtime 1000 byoyomi 2000");
+
+            t = DateTime.Now;
+            while (DateTime.Now - t < new TimeSpan(0, 0, 5))
             {
                 engine.OnIdle();
             }

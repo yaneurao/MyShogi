@@ -109,6 +109,20 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public bool EngineSetting { get; set; }
 
+        // -- 以下、engine側から渡された情報など
+
+        /// <summary>
+        /// エンジンのオリジナル名を取得または設定します。
+        /// "id name ..."と渡されたもの。
+        /// </summary>
+        public string OriginalName { get; set;}
+
+        /// <summary>
+        /// エンジンの開発者名を取得または設定します。
+        /// </summary>
+        public string Author { get; set; }
+
+
         // -- private members
 
         private ProcessNegotiator negotiator;
@@ -147,6 +161,7 @@ namespace MyShogi.Model.Shogi.Usi
                     break;
 
                 case UsiEngineState.InTheGame:
+                    // "readyok"が来たのでusinewgameを送信して、対局の局面を送信できるようにしておく。
                     SendCommand("usinewgame");
                     break;
             }
@@ -180,7 +195,6 @@ namespace MyShogi.Model.Shogi.Usi
                     HandleUsiOk();
                     break;
 
-#if false
                 case "readyok":
                     HandleReadyOk();
                     break;
@@ -188,6 +202,8 @@ namespace MyShogi.Model.Shogi.Usi
                 case "id":
                     HandleId(scanner);
                     break;
+
+#if false
                 case "option":
                     HandleOption(scanner);
                     break;
@@ -293,6 +309,43 @@ namespace MyShogi.Model.Shogi.Usi
             // 応答を待つ必要はない。どんどん流し込む。
             foreach (var command in list)
                 SendCommand(command);
+        }
+
+        /// <summary>
+        /// readyok コマンドを処理します。
+        /// </summary>
+        private void HandleReadyOk()
+        {
+            if (State != UsiEngineState.UsiOk)
+            {
+                throw new UsiException(
+                    "readyokコマンドが不正なタイミングで送られました。");
+            }
+
+            // 読み込みが終わったタイミングでエンジンの優先度を下げます。
+            negotiator.UpdateProcessPriority();
+
+            ChangeState(UsiEngineState.InTheGame);
+        }
+
+        /// <summary>
+        /// id name などのコマンドを処理します。
+        /// </summary>
+        private void HandleId(Scanner scanner)
+        {
+            switch (scanner.ParseWord())
+            {
+                case "name":
+                    OriginalName = scanner.LastText;
+                    break;
+                case "author":
+                case "auther": // typoも受け入れる
+                    Author = scanner.LastText;
+                    break;
+                default:
+                    throw new UsiException(
+                        "invalid command: " + scanner.Text);
+            }
         }
 
     }

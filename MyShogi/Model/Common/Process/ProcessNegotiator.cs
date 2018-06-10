@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyShogi.Model.Common.Utility;
+using System;
 using System.Diagnostics;
 
 namespace MyShogi.Model.Common.Process
@@ -55,6 +56,8 @@ namespace MyShogi.Model.Common.Process
                     process.StandardOutput.BaseStream, // read stream
                     process.StandardInput.BaseStream,  // write stream
                     true);
+
+                IsLowPriority = engineData.IsLowPriority;
             }
         }
 
@@ -114,6 +117,42 @@ namespace MyShogi.Model.Common.Process
             get { return remoteService.CommandReceived; }
             set { remoteService.CommandReceived = value; }
         }
+
+        /// <summary>
+        /// 接続した実行ファイルの優先度を変更します。
+        /// IsLowPriorityがtrueであれば通常より低い優先度にします。
+        /// (GUIがもっさりするときなど用)
+        /// </summary>
+        public void UpdateProcessPriority()
+        {
+            if (exeProcess == null)
+            {
+                throw new InvalidOperationException("exeProcess");
+            }
+
+            try
+            {
+                var priority = (IsLowPriority ?
+                    ProcessPriorityClass.BelowNormal :
+                    ProcessPriorityClass.Normal);
+
+                if (this.exeProcess.PriorityClass != priority)
+                {
+                    this.exeProcess.PriorityClass = priority;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Write(LogInfoType.SystemError,"エンジンの実行優先順位を下げることができませんでした。:" + ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// 実行ファイルの優先度を普通より下げる。
+        /// UpdateProcessPriority()したときに反映される。
+        /// デフォルト = false
+        /// </summary>
+        public bool IsLowPriority { get; set; }
 
         // --- 以下private members
 
