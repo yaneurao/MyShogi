@@ -148,6 +148,64 @@ namespace MyShogi.Model.Shogi.Kifu
             return result;
         }
 
+        /// <summary>
+        /// KIF2形式の棋譜リストを常に生成する。
+        /// これをtrueにする KifuList というpropertyが有効になる。
+        /// 
+        /// デフォルト : true
+        /// 
+        /// 棋譜の読み込み前に設定を行うこと。
+        /// </summary>
+        public bool EnableKifuList
+        {
+            get { return Tree.EnableKifuList; }
+            set { Tree.EnableKifuList = value; }
+        }
+
+        /// <summary>
+        /// 現局面までの棋譜。
+        /// EnableKifuListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
+        /// </summary>
+        public List<string> KifuList
+        {
+            get { return Tree.KifuList; }
+            set { Tree.KifuList = value; }
+        }
+
+        /// <summary>
+        /// USIの指し手文字列の形式の棋譜リストを常に生成する。
+        /// これをtrueにする EnableUsiMoveList というpropertyが有効になる。
+        /// 
+        /// デフォルト : true
+        ///
+        /// 棋譜の読み込み前に設定を行うこと。
+        /// </summary>
+        public bool EnableUsiMoveList
+        {
+            get { return Tree.EnableUsiMoveList; }
+            set { Tree.EnableUsiMoveList = value; }
+        }
+
+        /// <summary>
+        /// 現局面までの棋譜。USIの指し手文字列
+        /// EnableUsiMoveListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
+        /// これをstring.Join(" ",UsiMoveList)すると"position"に渡す文字列が出来上がる。
+        /// cf. UsiPositionString()
+        /// </summary>
+        public List<string> UsiMoveList
+        {
+            get { return Tree.UsiMoveList; }
+            set { Tree.UsiMoveList = value; }
+        }
+
+        /// <summary>
+        /// USIの"position"コマンドで用いる局面図
+        /// </summary>
+        public string UsiPositionString
+        {
+            get { return Tree.UsiPositionString; }
+        }
+
         // -------------------------------------------------------------------------
         // private members
         // -------------------------------------------------------------------------

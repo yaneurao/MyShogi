@@ -427,8 +427,11 @@ namespace MyShogi.Model.Test
             var psn2 = manager.ToString(KifuFileType.PSN);
             Console.WriteLine(psn2);
 
-            // USIの"position"コマンドで用いる局面図を意味する文字列のリストを取得
-            // Console.WriteLine(manager.Tree.UsiPositionString);
+            // 棋譜文字列がきちんと記録されているかのチェック
+            Console.WriteLine(string.Join(" ",manager.KifuList));
+            // USIの"position"コマンドで送信する文字列がきちんと記録されているかのチェック
+            Console.WriteLine(manager.UsiPositionString);
+
 #endif
 
 #if false

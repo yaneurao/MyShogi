@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Kifu
@@ -21,9 +22,12 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public KifuTree()
         {
-        //    position = new Position(); // 結構重いのでコンストラクタで1度だけ作成。
-        //    UsiMoveStringList = new List<string>();
-        //    Init();
+            //    position = new Position(); // 結構重いのでコンストラクタで1度だけ作成。
+            //    UsiMoveStringList = new List<string>();
+            //    Init();
+
+            EnableKifuList = true;
+            EnableUsiMoveList = true;
         }
 
         /// <summary>
@@ -31,12 +35,12 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public void Init()
         {
-            Debug.Assert(position != null , "Bind(Position)を呼び出してからInit()を呼ぶようにしてください。");
+            Debug.Assert(position != null, "Bind(Position)を呼び出してからInit()を呼ぶようにしてください。");
 
             position.InitBoard();
 
             currentNode = rootNode = new KifuNode(null);
-        //    UsiMoveStringList.Clear();
+            //    UsiMoveStringList.Clear();
             rootBoardType = BoardType.NoHandicap;
             rootSfen = Position.SFEN_HIRATE;
         }
@@ -84,34 +88,39 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// rootの局面図。sfen形式で。
         /// </summary>
-        public string rootSfen;
-
-        // この設計、よくない気がする。あとでよく考える。
-#if false
-        /// <summary>
-        /// ここまでの指し手を意味する文字列(USIプロトコルでの指し手文字列)
-        /// DoMove(),UndoMove()を呼び出すごとに自動的に更新される。
-        /// これを
-        ///   "position " + rootSfen + " " + String.Join(" ",usiMoveString)
-        /// とすれば、currentNodeまでのUSIのposition文字列が出来上がる。
-        ///
-        /// ※　usiPositionStringのほうではこの処理を行っている。
-        /// </summary>
-        public List<string> UsiMoveStringList { get; private set; }
-
-        /// <summary>
-        /// USIの"Position"コマンドで用いる局面図
-        /// </summary>
-        public string UsiPositionString
+        public string rootSfen
         {
-            get {
-                // rootが平手の初期局面のときは、sfen形式ではなく、"startpos"と省略記法が使えるのでそれを活用する。
-                return string.Format("{0} moves {1}",
-                    ( rootBoardType == BoardType.NoHandicap) ? "startpos" : rootSfen
-                    , string.Join(" ", UsiMoveStringList));
+            get { return rootSfen_; }
+            set
+            {
+                // これが設定されたときに局面リストを更新しなければならない。
+                rootSfen_ = value;
+
+                if (EnableKifuList)
+                {
+                    KifuList = new List<string>();
+                    KifuList.Add("   === 開始局面 ===");
+                }
+
+                if (EnableUsiMoveList)
+                {
+                    // 初期局面のsfenであれば簡略できるので簡略して記録する。
+                    // (USIエンジンに対して"position"コマンドで送信する必要があるので、
+                    // そのときに素のsfen文字列で初期局面を送ると長すぎるため。)
+
+                    UsiMoveList = new List<string>();
+                    if (rootSfen_ == Position.SFEN_HIRATE)
+                        UsiMoveList.Add("startpos moves");
+                    else
+                        UsiMoveList.Add($"sfen {rootSfen_} moves");
+
+                    // 2つ目以降の要素があるなら"moves"の文字列が必要だからここで付与しておく。
+                    // 要素が1つしかないときは末尾の"moves"を取って渡す。
+                    // cf. UsiPositionString
+                }
             }
         }
-#endif
+        private string rootSfen_;
 
         // -------------------------------------------------------------------------
         // 局面に対する操作子
@@ -128,9 +137,14 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             Debug.Assert(m != null);
 
+            if (EnableKifuList)
+                KifuList.Add(position.ToKi2(m.nextMove));
+
+            if (EnableUsiMoveList)
+                UsiMoveList.Add(m.nextMove.ToUsi());
+
             position.DoMove(m.nextMove);
             currentNode = m.nextNode;
-        //    UsiMoveStringList.Add(m.nextMove.ToUsi());
         }
 
         /// <summary>
@@ -150,7 +164,12 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             position.UndoMove();
             currentNode = currentNode.prevNode;
-        //    UsiMoveStringList.RemoveAt(UsiMoveStringList.Count-1); // RemoveLast()
+
+            if (EnableKifuList)
+                KifuList.RemoveAt(KifuList.Count - 1); // RemoveLast()
+
+            if (EnableUsiMoveList)
+                UsiMoveList.RemoveAt(UsiMoveList.Count - 1); // RemoveLast()
         }
 
         /// <summary>
@@ -165,16 +184,16 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         /// <param name="move"></param>
         /// <param name="thinkingTime"></param>
-        public void Add(Move move , TimeSpan thinkingTime , TimeSpan? totalTime = null)
+        public void Add(Move move, TimeSpan thinkingTime, TimeSpan? totalTime = null)
         {
-            var m = currentNode.moves.FirstOrDefault((x)=>x.nextMove == move);
+            var m = currentNode.moves.FirstOrDefault((x) => x.nextMove == move);
             if (m == null)
             {
                 // -- 見つからなかったので次のnodeを追加してやる
 
                 KifuNode nextNode = new KifuNode(currentNode);
-                currentNode.moves.Add(new KifuMove(move,nextNode,thinkingTime
-                    , totalTime ?? TotalConsumptionTime() + RoundTime(thinkingTime) ));
+                currentNode.moves.Add(new KifuMove(move, nextNode, thinkingTime
+                    , totalTime ?? TotalConsumptionTime() + RoundTime(thinkingTime)));
             }
         }
 
@@ -247,5 +266,62 @@ namespace MyShogi.Model.Shogi.Kifu
             for (int i = moves.Count() - 1; i >= 0; --i)
                 DoMove(moves[i]);
         }
+
+        /// <summary>
+        /// KIF2形式の棋譜リストを常に生成する。
+        /// これをtrueにする KifuList というpropertyが有効になる。
+        /// 
+        /// デフォルト : true
+        /// </summary>
+        public bool EnableKifuList
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// 現局面までの棋譜。
+        /// EnableKifuListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
+        /// </summary>
+        public List<string> KifuList
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// USIの指し手文字列の形式の棋譜リストを常に生成する。
+        /// これをtrueにする EnableUsiMoveList というpropertyが有効になる。
+        /// 
+        /// デフォルト : true
+        /// </summary>
+        public bool EnableUsiMoveList
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// 現局面までの棋譜。USIの指し手文字列
+        /// EnableUsiMoveListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
+        /// 
+        /// cf. UsiPositionString()
+        /// </summary>
+        public List<string> UsiMoveList
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// USIの"position"コマンドで用いる局面図
+        /// </summary>
+        public string UsiPositionString
+        {
+            get
+            {
+                if (UsiMoveList.Count == 1)
+                    return UsiMoveList[0].Replace(" moves", ""); /* movesの部分を除去して返す*/
+
+                return string.Join(" ", UsiMoveList);
+            }
+        }
+
     }
 }
