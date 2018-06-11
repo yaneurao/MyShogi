@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Controller;
+using MyShogi.Model.LocalServer;
 
 namespace MyShogi.ViewModel
 {
@@ -74,7 +74,7 @@ namespace MyShogi.ViewModel
         /// 対局はN個、並列対局できるので、GameControllerのインスタンスをN個保持している
         /// あとで修正する。
         /// </summary>
-        public GameController game { get; set; }
+        public LocalGameServer game { get; set; }
         
         /// <summary>
         /// 盤面。あとで書き直す。デバッグ用。

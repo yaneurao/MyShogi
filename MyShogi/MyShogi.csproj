@@ -74,7 +74,7 @@
     <Compile Include="Model\Shogi\Player\NullPlayer.cs" />
     <Compile Include="Model\Shogi\Player\PlayerBuilder.cs" />
     <Compile Include="Model\Common\Process\ProcessNegotiator.cs" />
-    <Compile Include="Controller\LocalGameServer.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer.cs" />
     <Compile Include="Model\Common\Math\AffineMatrix.cs" />
     <Compile Include="Model\Common\Math\Vector2D.cs" />
     <Compile Include="Model\Common\ObjectModel\NotifyObject.cs" />

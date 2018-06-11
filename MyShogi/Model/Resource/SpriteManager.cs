@@ -319,6 +319,16 @@ namespace MyShogi.Model.Resource
         }
 
         /// <summary>
+        /// エンジンの初期化時のダイアログ
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite EngineInit()
+        {
+            var image = TheApp.app.imageManager.EngineInitImage.image;
+            return new Sprite(image);
+        }
+
+        /// <summary>
         /// a,bの入れ替え
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -362,8 +372,8 @@ namespace MyShogi.Model.Resource
         /// <summary>
         /// 手番素材、駒台が細長い用
         /// </summary>
-        public static readonly int turn_slim_width = 1057;
-        public static readonly int turn_slim_height = 157;
+        public static readonly int turn_slim_width = 1057 ;
+        public static readonly int turn_slim_height = 157 ;
 
     }
 }

@@ -1,7 +1,7 @@
 ﻿using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 
-namespace MyShogi.Controller
+namespace MyShogi.Model.LocalServer
 {
     /// <summary>
     /// 対局を管理するクラス
@@ -15,9 +15,9 @@ namespace MyShogi.Controller
     /// 
     /// // TODO : あとでなおす
     /// </summary>
-    public class GameController
+    public class LocalGameServer
     {
-        public GameController()
+        public LocalGameServer()
         {
             kifuManager = new KifuManager();
             position = new Position();

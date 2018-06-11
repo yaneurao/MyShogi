@@ -241,6 +241,10 @@ namespace MyShogi.View.Win2D
                     SPRITE.PromoteDialog(state.promote_dialog_selection , state.moved_piece_type));
             }
 
+            // -- エンジン初期化中のダイアログ
+
+            // DrawSprite(engine_init_pos,SPRITE.EngineInit());
+
             // 描画が完了したのでDirtyフラグを戻しておく。
             ViewModel.dirty = false;
         }

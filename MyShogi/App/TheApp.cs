@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using MyShogi.Controller;
+using MyShogi.Model.LocalServer;
 using MyShogi.Model.Resource;
 
 // とりま、Windows用
@@ -64,7 +64,7 @@ namespace MyShogi.App
 
             // -- 対局controllerを1つ生成して、メインの対局ウィンドゥのViewModelに加える
             {
-                var game = new GameController();
+                var game = new LocalGameServer();
                 mainDialogViewModel.game = game;
             }
 

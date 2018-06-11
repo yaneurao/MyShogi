@@ -33,6 +33,7 @@ namespace MyShogi.Model.Resource
             UpdateHandNumberImage();
             UpdatePromoteDialogImage();
             UpdateTurnImage();
+            UpdateEngineInitImage();
         }
 
         /// <summary>
@@ -241,6 +242,15 @@ namespace MyShogi.Model.Resource
         }
 
         /// <summary>
+        /// エンジンの初期化時の描画
+        /// </summary>
+        private void UpdateEngineInitImage()
+        {
+            Load(ref EngineInitImage, "engine_init.png");
+        }
+
+
+        /// <summary>
         /// ファイル名を与えて、ImgFolderから画像を読み込む
         /// </summary>
         /// <param name="name"></param>
@@ -303,5 +313,9 @@ namespace MyShogi.Model.Resource
         public ImageLoader TurnNormalImage = new ImageLoader();
         public ImageLoader TurnSlimImage = new ImageLoader();
 
+        /// <summary>
+        /// エンジン初期化中の画像
+        /// </summary>
+        public ImageLoader EngineInitImage = new ImageLoader();
     }
 }

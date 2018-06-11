@@ -134,5 +134,9 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private static readonly Point turn_slim_pos = new Point(430, 1030);
 
+        /// <summary>
+        /// エンジン初期化時のダイアログ
+        /// </summary>
+        private static readonly Point engine_init_pos = new Point(534 + 230, 53 + 360);
     }
 }
