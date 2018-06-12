@@ -86,6 +86,7 @@
             this.toolStripButton2.Size = new System.Drawing.Size(63, 54);
             this.toolStripButton2.Text = "待";
             this.toolStripButton2.ToolTipText = "待ったをします。";
+            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
             // 
             // toolStripButton3
             // 

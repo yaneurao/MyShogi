@@ -192,6 +192,17 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 「待」ボタン。待ったの処理。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton2_Click(object sender, System.EventArgs e)
+        {
+            var gameServer = ViewModel.gameServer;
+            gameServer.UserUndo();
+        }
+
+        /// <summary>
         /// 「急」ボタン。いますぐに指させる。
         /// </summary>
         /// <param name="sender"></param>
@@ -203,7 +214,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 「待」ボタン。待ったの処理。
+        /// 「転」ボタン。盤面反転の処理。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

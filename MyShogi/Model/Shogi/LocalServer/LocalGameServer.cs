@@ -149,13 +149,11 @@ namespace MyShogi.Model.LocalServer
             var stm = Position.sideToMove;
             var stmPlayer = Player(stm);
 
+            // Human以外であれば受理しない。
             if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
             {
                 // これを積んでおけばworker_threadのほうでいずれ処理される。
                 stmPlayer.BestMove = m;
-            } else
-            {
-                // Human以外であれば受理しない。
             }
         }
 
@@ -168,15 +166,40 @@ namespace MyShogi.Model.LocalServer
             var stm = Position.sideToMove;
             var stmPlayer = Player(stm);
 
+            // エンジン以外であれば受理しない。
             if (stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine)
             {
                 var enginePlayer = stmPlayer as UsiEnginePlayer;
                 enginePlayer.MoveNow();
             }
-            else
+        }
+
+        /// <summary>
+        /// ユーザーによる対局中の2手戻し
+        /// 受理できるかどうかは別
+        /// </summary>
+        public void UserUndo()
+        {
+            var stm = Position.sideToMove;
+            var stmPlayer = Player(stm);
+
+            // 人間の手番でなければ受理しない
+            if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
             {
-                // エンジン以外であれば受理しない。
+                // 棋譜を消すUndo()
+                kifuManager.UndoMoveInTheGame();
+                kifuManager.UndoMoveInTheGame();
+
+                // 盤面に反映
+                Position = kifuManager.Position.Clone();
+
+                // 棋譜ウィンドウに反映。
+                KifuList = new List<string>(kifuManager.KifuList); // よくわからんから丸ごと反映させておく。
+
+                // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
+                NotifyTurnChanged();
             }
+
         }
 
         // -- private members

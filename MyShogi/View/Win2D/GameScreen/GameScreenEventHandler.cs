@@ -30,10 +30,20 @@ namespace MyShogi.View.Win2D
         {
             StateReset();
 
+            // TooltipにあるButtonの状態更新
+            UpdateTooltipButtons();
+        }
+
+        private void UpdateTooltipButtons()
+        {
             // この時、エンジン側の手番であるなら、メインウインドウのメニューの「急」ボタンをenableにしなければならない。
             var gameServer = ViewModel.ViewModel.gameServer;
             var engineTurn = gameServer.EngineTurn;
             SetButton(MainDialogButtonEnum.MOVE_NOW, engineTurn);
+
+            // この時、人間側の手番であるなら、メインウインドウのメニューの「待」ボタンをenableにしなければならない。
+            var humanTurn = gameServer.CanUserMove && !gameServer.EngineInitializing;
+            SetButton(MainDialogButtonEnum.UNDO_MOVE, humanTurn);
         }
 
         /// <summary>
@@ -52,6 +62,7 @@ namespace MyShogi.View.Win2D
         /// <param name="args"></param>
         public void EngineInitializingChanged(PropertyChangedEventArgs args)
         {
+            UpdateTooltipButtons();
             ViewModel.dirty = true;
         }
 

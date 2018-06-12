@@ -255,6 +255,16 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
+        /// currentNode(現在のnode)から、次のnodeがnextNodeである枝を削除する。
+        /// 対局時の待ったの処理用。
+        /// </summary>
+        /// <param name="nextNode"></param>
+        public void Remove(KifuNode nextNode)
+        {
+            currentNode.moves.RemoveAll((x) => x.nextNode == nextNode);
+        }
+
+        /// <summary>
         /// ここまでの総消費時間
         /// </summary>
         /// <returns></returns>

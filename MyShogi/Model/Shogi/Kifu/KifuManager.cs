@@ -134,6 +134,23 @@ namespace MyShogi.Model.Shogi.Kifu
             Tree.UndoMove();
         }
 
+        /// <summary>
+        /// 対局中の「待った」用のUndo
+        /// 棋譜から、現局面への指し手を削除してのUndo
+        /// </summary>
+        public bool UndoMoveInTheGame()
+        {
+            var node = Tree.currentNode;
+            if (node.prevNode == null)
+                return false;
+
+            // undoできる
+            Tree.UndoMove();
+            Tree.Remove(node); // この枝を削除しておく。
+
+            return true;
+        }
+
         // -- 以下、棋譜処理
 
         /// <summary>

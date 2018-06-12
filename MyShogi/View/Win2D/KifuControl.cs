@@ -34,7 +34,7 @@ namespace MyShogi.View.Win2D
                 var listbox = listBox1;
                 listbox.BeginUpdate();
 
-                int j = 0;
+                int j = -1;
 
                 // 値の違う場所のみ書き換える
                 // 値の違うところを探す
@@ -50,7 +50,7 @@ namespace MyShogi.View.Win2D
                     {
                         // ここ以降を書き換える。
                         while (listbox.Items.Count > i)
-                            listbox.Items.RemoveAt(i);
+                            listbox.Items.RemoveAt(listbox.Items.Count -1); // RemoveLast
 
                         j = i; // あとでここにフォーカスを置く
                         for(; i < list.Count; ++i)
@@ -59,6 +59,15 @@ namespace MyShogi.View.Win2D
                         break;
                     }
                 }
+
+                // ここまで完全一致なので、末尾にフォーカスがあって良い。
+                if (j == -1)
+                    j = list.Count - 1;
+
+                // そのあとの要素が多すぎるなら削除する。(ユーザーが待ったした時などにそうなる)
+                while (listbox.Items.Count > list.Count)
+                    listbox.Items.RemoveAt(listbox.Items.Count - 1); // RemoveLast
+
 
                 // カーソルを異なる項目が最初に見つかったところに置いておく。
                 listbox.SelectedIndex = j;
