@@ -63,10 +63,10 @@ namespace MyShogi.App
             mainDialog.ViewModel = mainDialogViewModel;
 
             // -- 対局controllerを1つ生成して、メインの対局ウィンドゥのViewModelに加える
-            {
-                var game = new LocalGameServer();
-                mainDialogViewModel.game = game;
-            }
+
+            var gameServer = new LocalGameServer();
+            mainDialogViewModel.gameServer = gameServer;
+            gameServer.AddPropertyChangedHandler("KifuList", mainDialog.gameScreen.kifuControl.OnListChanged);
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 
@@ -85,7 +85,6 @@ namespace MyShogi.App
             
             // MainDialogViewModelが変更されたときにMainDialogに変更がかからないといけないのでそのハンドラの設定。
 
-            mainDialogViewModel.AddPropertyChangedHandler("KifuList", mainDialog.gameScreen.kifuControl.OnListChanged);
 
             // Notifyクラスのテスト(あとで消す)
             //NotifyTest.Test();

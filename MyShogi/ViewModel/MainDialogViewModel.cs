@@ -15,7 +15,7 @@ namespace MyShogi.ViewModel
         public MainDialogViewModel()
         {
             // デバッグ中。あとで削除する。
-            Pos.InitBoard(BoardType.NoHandicap);
+            //Pos.InitBoard(BoardType.NoHandicap);
 
             // 指し手生成祭りの局面
             //            Pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
@@ -63,23 +63,28 @@ namespace MyShogi.ViewModel
 
             // デバッグ中
             // あとで書き直す。
-            CanMove = true;
+            //CanMove = true;
 
-            var list = new List<string>();
-            list.Add("   === 開始局面 ===");
-            KifuList = list;
+            //var list = new List<string>();
+            //list.Add("   === 開始局面 ===");
+            //KifuList = list;
+        }
+
+        public void Dispose()
+        {
+            gameServer.Dispose();
         }
 
         /// <summary>
         /// 対局はN個、並列対局できるので、GameControllerのインスタンスをN個保持している
         /// あとで修正する。
         /// </summary>
-        public LocalGameServer game { get; set; }
+        public LocalGameServer gameServer { get; set; }
         
         /// <summary>
         /// 盤面。あとで書き直す。デバッグ用。
         /// </summary>
-        public Position Pos { get; private set; } = new Position();
+        public Position Pos { get { return gameServer.position; } }
 
         /// <summary>
         /// 対局者氏名。
@@ -119,37 +124,8 @@ namespace MyShogi.ViewModel
         /// <param name="m"></param>
         public void DoMoveCmd(Move m)
         {
-            // デバッグ用。あとで書き直す。
-            if (Pos.IsLegal(m))
-            {
-                var lastMove = Pos.State().lastMove;
-
-                // Viewのほうに棋譜をappendする
-                var move_text = Pos.ToKi2(m, lastMove);
-                var move_text_game_ply = Pos.gamePly;
-
-                move_text = string.Format("{0,-4}", move_text);
-                move_text = move_text.Replace(' ', '　'); // 半角スペースから全角スペースへの置換
-
-                var text = string.Format("{0,3}.{1} {2}", move_text_game_ply, move_text , "00:00:01");
-
-                // KifuListに1行追加して、部分更新通知を出す
-                var list = new List<string>(KifuList);
-                list.Add(text);
-                SetValue<List<string>>("KifuList", list, list.Count - 1);
-
-                Pos.DoMove(m);
-            }
-        }
-
-        /// <summary>
-        /// 棋譜ウィンドウに表示する棋譜のリスト
-        /// これがデータバインドされていて、KifuControlにそのまま描画される。
-        /// </summary>
-        public List<string> KifuList
-        {
-            get { return GetValue<List<string>>("KifuList"); }
-            set { SetValue<List<string>>("KifuList",value); }
+            // UIから指し手が指された
+            gameServer.DoMoveFromUI(m);
         }
 
     }

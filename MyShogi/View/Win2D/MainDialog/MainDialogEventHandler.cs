@@ -87,6 +87,18 @@ namespace MyShogi.View.Win2D
 
         private bool first_tick = true;
 
+        /// <summary>
+        /// フォームが閉じるときのハンドラ
+        /// ViewModel側のDispose()を呼び出して終了処理を行う。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainDialog_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (ViewModel != null)
+                ViewModel.Dispose();
+        }
+
         // -- 以下、マウスのクリック、ドラッグ(による駒移動)を検知するためのハンドラ
         // クリックイベントは使えないので、MouseDown,MouseUp,MouseMoveからクリックとドラッグを判定する。
 

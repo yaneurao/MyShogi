@@ -122,6 +122,64 @@ namespace MyShogi.Model.Shogi.Kifu
         }
         private string rootSfen_;
 
+        // -- 以下、文字列化された棋譜絡み
+
+        /// <summary>
+        /// KIF2形式の棋譜リストを常に生成する。
+        /// これをtrueにする KifuList というpropertyが有効になる。
+        /// 
+        /// デフォルト : true
+        /// </summary>
+        public bool EnableKifuList
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// 現局面までの棋譜。
+        /// EnableKifuListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
+        /// </summary>
+        public List<string> KifuList
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// USIの指し手文字列の形式の棋譜リストを常に生成する。
+        /// これをtrueにする EnableUsiMoveList というpropertyが有効になる。
+        /// 
+        /// デフォルト : true
+        /// </summary>
+        public bool EnableUsiMoveList
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// 現局面までの棋譜。USIの指し手文字列
+        /// EnableUsiMoveListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
+        /// 
+        /// cf. UsiPositionString()
+        /// </summary>
+        public List<string> UsiMoveList
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// USIの"position"コマンドで用いる局面図
+        /// </summary>
+        public string UsiPositionString
+        {
+            get
+            {
+                if (UsiMoveList.Count == 1)
+                    return UsiMoveList[0].Replace(" moves", ""); /* movesの部分を除去して返す*/
+
+                return string.Join(" ", UsiMoveList);
+            }
+        }
+
         // -------------------------------------------------------------------------
         // 局面に対する操作子
         // -------------------------------------------------------------------------
@@ -137,11 +195,8 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             Debug.Assert(m != null);
 
-            if (EnableKifuList)
-                KifuList.Add(position.ToKi2(m.nextMove));
-
-            if (EnableUsiMoveList)
-                UsiMoveList.Add(m.nextMove.ToUsi());
+            // 棋譜の更新
+            AddKifu(m.nextMove);
 
             position.DoMove(m.nextMove);
             currentNode = m.nextNode;
@@ -165,11 +220,8 @@ namespace MyShogi.Model.Shogi.Kifu
             position.UndoMove();
             currentNode = currentNode.prevNode;
 
-            if (EnableKifuList)
-                KifuList.RemoveAt(KifuList.Count - 1); // RemoveLast()
-
-            if (EnableUsiMoveList)
-                UsiMoveList.RemoveAt(UsiMoveList.Count - 1); // RemoveLast()
+            // 棋譜の更新
+            RemoveKifu();
         }
 
         /// <summary>
@@ -267,60 +319,44 @@ namespace MyShogi.Model.Shogi.Kifu
                 DoMove(moves[i]);
         }
 
-        /// <summary>
-        /// KIF2形式の棋譜リストを常に生成する。
-        /// これをtrueにする KifuList というpropertyが有効になる。
-        /// 
-        /// デフォルト : true
-        /// </summary>
-        public bool EnableKifuList
-        {
-            get; set;
-        }
+
+        // -- 以下private
 
         /// <summary>
-        /// 現局面までの棋譜。
-        /// EnableKifuListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
+        /// DoMove()のときに棋譜に追加する
         /// </summary>
-        public List<string> KifuList
+        /// <param name="m"></param>
+        private void AddKifu(Move m)
         {
-            get; set;
-        }
-
-        /// <summary>
-        /// USIの指し手文字列の形式の棋譜リストを常に生成する。
-        /// これをtrueにする EnableUsiMoveList というpropertyが有効になる。
-        /// 
-        /// デフォルト : true
-        /// </summary>
-        public bool EnableUsiMoveList
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// 現局面までの棋譜。USIの指し手文字列
-        /// EnableUsiMoveListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
-        /// 
-        /// cf. UsiPositionString()
-        /// </summary>
-        public List<string> UsiMoveList
-        {
-            get; set;
-        }
-
-        /// <summary>
-        /// USIの"position"コマンドで用いる局面図
-        /// </summary>
-        public string UsiPositionString
-        {
-            get
+            if (EnableKifuList)
             {
-                if (UsiMoveList.Count == 1)
-                    return UsiMoveList[0].Replace(" moves", ""); /* movesの部分を除去して返す*/
+                // 棋譜をappendする
 
-                return string.Join(" ", UsiMoveList);
+                var move_text = position.ToKi2(m);
+                var move_text_game_ply = position.gamePly;
+
+                move_text = string.Format("{0,-4}", move_text);
+                move_text = move_text.Replace(' ', '　'); // 半角スペースから全角スペースへの置換
+
+                var text = string.Format("{0,3}.{1} {2}", move_text_game_ply, move_text, "00:00:01");
+
+                KifuList.Add(text);
             }
+
+            if (EnableUsiMoveList)
+                UsiMoveList.Add(m.ToUsi());
+        }
+
+        /// <summary>
+        /// UndoMove()のときに棋譜を1行取り除く。
+        /// </summary>
+        private void RemoveKifu()
+        {
+            if (EnableKifuList)
+                KifuList.RemoveAt(KifuList.Count - 1); // RemoveLast()
+
+            if (EnableUsiMoveList)
+                UsiMoveList.RemoveAt(UsiMoveList.Count - 1); // RemoveLast()
         }
 
     }

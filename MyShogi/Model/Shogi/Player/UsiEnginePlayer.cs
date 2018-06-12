@@ -1,4 +1,7 @@
-﻿namespace MyShogi.Model.Shogi.Player
+﻿using MyShogi.Model.Common.Process;
+using MyShogi.Model.Shogi.Core;
+
+namespace MyShogi.Model.Shogi.Player
 {
     /// <summary>
     /// USIプロトコルでやりとりする思考エンジンを
@@ -31,6 +34,24 @@
         /// これがnullか空の文字列であれば、RawNameがそのままNameになる。
         /// </summary>
         public string AliasName { get; set; }
+
+        /// <summary>
+        /// このプレイヤーが指した指し手
+        /// </summary>
+        public Move BestMove { get; set; }
+
+        /// <summary>
+        /// このプレイヤーのponderの指し手
+        /// </summary>
+        public Move PonderMove { get; set; }
+
+        public ProcessNegotiator negotiator = new ProcessNegotiator();
+
+        public void OnIdle()
+        {
+            // 受信処理を行う。
+            negotiator.Read();
+        }
 
     }
 }

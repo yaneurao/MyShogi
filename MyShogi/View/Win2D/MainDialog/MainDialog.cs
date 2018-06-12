@@ -55,6 +55,7 @@ namespace MyShogi.View.Win2D
             // それぞれに移譲すれば良い。
             gameScreen.OnDraw(e.Graphics);
         }
+
     }
 }
 

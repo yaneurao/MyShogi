@@ -1,4 +1,6 @@
-﻿namespace MyShogi.Model.Shogi.Player
+﻿using MyShogi.Model.Shogi.Core;
+
+namespace MyShogi.Model.Shogi.Player
 {
     /// <summary>
     /// ユーザーの操作を受け付けるクラスを
@@ -14,5 +16,19 @@
         public string Name { get; set; }
 
         public string DisplayName { get { return Name; } }
+
+        /// <summary>
+        /// このプレイヤーが指した指し手
+        /// </summary>
+        public Move BestMove { get; set; }
+
+        /// <summary>
+        /// このプレイヤーのponderの指し手
+        /// </summary>
+        public Move PonderMove { get; set; }
+
+        public void OnIdle()
+        {
+        }
     }
 }

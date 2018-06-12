@@ -181,6 +181,7 @@
             this.MinimumSize = new System.Drawing.Size(400, 200);
             this.Name = "MainDialog";
             this.Text = "MyShogi";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainDialog_FormClosed);
             this.SizeChanged += new System.EventHandler(this.MainDialog_SizeChanged);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainDialog_Paint);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainDialog_MouseDown);
