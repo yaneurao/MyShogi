@@ -43,6 +43,7 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <param name="value"></param>
         protected void SetValue<T>(string name, T value , int start = -1 , int end = -1)
         {
+            var propertyChanged = false;
             lock (lockObject)
             {
                 object current;
@@ -52,9 +53,18 @@ namespace MyShogi.Model.Common.ObjectModel
                     // 値が異なるときだけ代入して、そのときにイベントが発火する。
                     // 一度目はイベントは発火しない。
                     properties[name] = value;
-                    RaisePropertyChanged(name , value , start , end);
+                    propertyChanged = true;
                 }
             }
+
+            // UI以外のスレッドがInvoke()するときにUIスレッドがこのlockObject待ちになっていると
+            // dead lockしてしまうので、このlockが解除されてからRaisePropertyChanged()が呼び出されて欲しい。
+
+            // LazyLockみたいなのを作って、そのlockが解除されたときにまとめて変更通知を行うモデルにしても良いが、
+            // 遅延して呼び出したいのはここに限るので、そこまでするほどのことでもないと思う。
+
+            if (propertyChanged)
+                RaisePropertyChanged(name, value, start, end);
         }
 
         /// <summary>

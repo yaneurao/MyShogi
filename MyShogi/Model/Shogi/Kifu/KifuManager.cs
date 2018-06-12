@@ -15,10 +15,6 @@ namespace MyShogi.Model.Shogi.Kifu
     /// ・対局相手の名前をサポート
     /// ・KIF/KI2/CSA/SFEN/PSN形式での入出力をサポート
     /// ・千日手の管理、検出をサポート
-    ///
-    /// 使用上の注意)
-    /// ・bind()で、Positionのインスタンスを関連付けてから使うこと。
-    /// ・また、必要ならば、そのあとにInit()を呼び出すこと。
     /// </summary>
     public class KifuManager
     {
@@ -100,19 +96,17 @@ namespace MyShogi.Model.Shogi.Kifu
             get { return Tree.UsiPositionString; }
         }
 
+        /// <summary>
+        /// このクラスが保持しているPosition。これはDoMove()/UndoMove()に対して変化するのでimmutableではない。
+        /// data bindするならば、これをClone()して用いること。
+        /// 
+        /// また、このクラスが生成された時点では、局面は初期化されていないので、何らかの方法で初期化してから用いること。
+        /// </summary>
+        public Position Position { get { return Tree.position; } }
+
         // -------------------------------------------------------------------------
         // public methods
         // -------------------------------------------------------------------------
-
-        /// <summary>
-        /// このメソッドを用いて、必ず外部からPositionのインスタンスを関連付けてから
-        /// このクラスのメソッドを呼び出すこと。
-        /// </summary>
-        /// <param name="pos"></param>
-        public void Bind(Position pos)
-        {
-            Tree.Bind(pos);
-        }
 
         /// <summary>
         /// このクラスを初期化する。new KifuManager()とした時の状態になる。
@@ -309,7 +303,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             return string.Format("{0}手目が非合法手です。", ply);
 
                         // この指し手で局面を進める
-                        Tree.Add(move, new TimeSpan());
+                        Tree.AddNode(move, new TimeSpan());
                         Tree.DoMove(move);
                         ++ply;
                     }
@@ -664,7 +658,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
                     // -- DoMove()
 
-                    Tree.Add(move , thinking_time , total_time);
+                    Tree.AddNode(move , thinking_time , total_time);
 
                     // 特殊な指し手、もしくはLegalでないならDoMove()は行わない
                     if (move.IsSpecial() || !Tree.position.IsLegal(move))
@@ -778,7 +772,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         // 2回目以降は指し手とみなす
                         // 消費時間の情報がまだないが、取り敢えず追加
                         move = Tree.position.FromCSA(subline);
-                        Tree.Add(move, new TimeSpan());
+                        Tree.AddNode(move, new TimeSpan());
                         // 特殊な指し手や不正な指し手ならDoMove()しない
                         if (move.IsSpecial() || !Tree.position.IsLegal(move))
                         {
@@ -804,7 +798,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         }
                         Tree.Remove(move);
                         // 改めて指し手を追加
-                        Tree.Add(move, TimeSpan.FromSeconds(time));
+                        Tree.AddNode(move, TimeSpan.FromSeconds(time));
                         // 特殊な指し手や不正な指し手ならDoMove()しない
                         if (move.IsSpecial() || !Tree.position.IsLegal(move))
                         {
@@ -853,7 +847,7 @@ namespace MyShogi.Model.Shogi.Kifu
                                 move = Move.NONE;
                                 break;
                         }
-                        Tree.Add(move, new TimeSpan());
+                        Tree.AddNode(move, new TimeSpan());
                         continue;
                     }
                 }

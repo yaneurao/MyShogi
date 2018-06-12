@@ -49,6 +49,8 @@ namespace MyShogi.Model.Shogi.Player
 
         public void OnIdle()
         {
+            // 思考するように命令が来ていれば、エンジンに対して思考を指示する。
+
             // 受信処理を行う。
             negotiator.Read();
         }

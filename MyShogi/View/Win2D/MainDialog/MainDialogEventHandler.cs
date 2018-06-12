@@ -62,6 +62,11 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// 定期的に呼び出されるタイマー
+        /// 
+        /// このタイマーは15msごとに呼び出される。
+        /// dirtyフラグが立っていなければ即座に帰るのでさほど負荷ではないという考え。
+        /// 
+        /// 1000ms / 60fps ≒ 16.67 ms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

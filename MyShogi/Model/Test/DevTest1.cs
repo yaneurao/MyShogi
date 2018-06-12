@@ -414,8 +414,6 @@ namespace MyShogi.Model.Test
 
             // psnの読み込み
             var manager = new KifuManager();
-            var pos = new Position();
-            manager.Bind(pos);
 
             var psn = System.IO.File.ReadAllText("kif/4.psn" , Encoding.GetEncoding("Shift_JIS"));
             var error = manager.FromString(psn);
@@ -513,7 +511,7 @@ namespace MyShogi.Model.Test
             }
 #endif
 
-#if true
+#if false
             // エンジンへのコマンドの送受信テスト
 
             Log.log = new FileLog("log.txt");
@@ -538,7 +536,19 @@ namespace MyShogi.Model.Test
             }
 #endif
 
+            //X x = new X();
+            //x.a[1] = 5;
+            //X x2 = x.Clone();
+            //Console.WriteLine(x2.a[1]);
+            // MemerwiseClone()で配列がコピーされるかのテスト。
         }
+
+        //public class X
+        //{
+        //    public int[] a = new int[10];
+
+        //    public X Clone() { return this.MemberwiseClone() as X; }
+        //}
 
     }
 }

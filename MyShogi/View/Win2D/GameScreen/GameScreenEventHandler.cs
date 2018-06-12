@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using MyShogi.App;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Core;
 using ShogiCore = MyShogi.Model.Shogi.Core;
 using SPRITE = MyShogi.Model.Resource.SpriteManager;
@@ -12,6 +13,23 @@ namespace MyShogi.View.Win2D
     /// </summary>
     public partial class GameScreen
     {
+        /// <summary>
+        /// 画面が汚れているかどうかのフラグ。
+        /// これを定期的に監視して、trueになっていれば、親からOnDraw()を呼び出してもらうものとする。
+        /// </summary>
+        public bool Dirty
+        {
+            get { return ViewModel.dirty; }
+        }
+
+        /// <summary>
+        /// 盤面情報が更新された時に呼び出されるハンドラ。
+        /// </summary>
+        public void PositionChanged(PropertyChangedEventArgs args)
+        {
+            ViewModel.dirty = true;
+        }
+        
         /// <summary>
         /// Formのリサイズに応じて棋譜コントロールの移動などを行う。
         /// </summary>
@@ -128,19 +146,10 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 画面が汚れているかどうかのフラグ。
-        /// これを定期的に監視して、trueになっていれば、親からOnDraw()を呼び出してもらうものとする。
-        /// </summary>
-        public bool Dirty
-        {
-            get { return ViewModel.dirty; }
-        }
-
-        /// <summary>
         /// 指し手生成用のバッファ
         /// UIスレッドからしか使わない。マウスクリックのときの合法手を表示するために使う。
         /// </summary>
-        public Move[] moves_buf { get; } = new Move[(int)Move.MAX_MOVES];
+        private Move[] moves_buf { get; } = new Move[(int)Move.MAX_MOVES];
 
         /// <summary>
         /// sqの駒を掴む

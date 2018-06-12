@@ -82,9 +82,9 @@ namespace MyShogi.ViewModel
         public LocalGameServer gameServer { get; set; }
         
         /// <summary>
-        /// 盤面。あとで書き直す。デバッグ用。
+        /// 画面に描画すべき盤面。immutable objectなのでこのままdata bindするようにして描画すれば良い。
         /// </summary>
-        public Position Pos { get { return gameServer.position; } }
+        public Position Pos { get { return gameServer.Position; } }
 
         /// <summary>
         /// 対局者氏名。

@@ -16,18 +16,16 @@ namespace MyShogi.Model.Shogi.Kifu
     {
         /// <summary>
         /// コンストラクタ
-        ///
-        /// このクラスにはPositionのインスタンスは持っていない。
-        /// Bind(Position)で、外部からPositionのインスタンスを設定して使うこと。
+        /// 
+        /// このクラスが内部的なPositionのインスタンスも保持している。
         /// </summary>
         public KifuTree()
         {
-            //    position = new Position(); // 結構重いのでコンストラクタで1度だけ作成。
-            //    UsiMoveStringList = new List<string>();
-            //    Init();
-
             EnableKifuList = true;
             EnableUsiMoveList = true;
+
+            position = new Position();
+            Init();
         }
 
         /// <summary>
@@ -50,12 +48,11 @@ namespace MyShogi.Model.Shogi.Kifu
         // -------------------------------------------------------------------------
 
         /// <summary>
-        /// 現在の局面を表現している
-        /// これは、Bind()で渡すことになっている。
+        /// 現在の局面を表現している。
+        /// immutableではないので(DoMove()/UndoMove()によって変化するので)、
+        /// data bindするときはClone()してからにすること。
         /// </summary>
         public Position position { get; private set; }
-
-        public void Bind(Position pos) { position = pos; }
 
         /// <summary>
         /// 棋譜の初期局面を示すnode。これを数珠つなぎに、樹形図状に持っている。
@@ -185,6 +182,7 @@ namespace MyShogi.Model.Shogi.Kifu
         // -------------------------------------------------------------------------
 
         // DoMove(),UndoMove()以外はcurrentNode.movesに自分で足すなり引くなりすれば良い
+        // CurrentNodeが設定されていないと局面を進められない。
 
         /// <summary>
         /// posの現在の局面から指し手mで進める。
@@ -236,7 +234,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         /// <param name="move"></param>
         /// <param name="thinkingTime"></param>
-        public void Add(Move move, TimeSpan thinkingTime, TimeSpan? totalTime = null)
+        public void AddNode(Move move, TimeSpan thinkingTime, TimeSpan? totalTime = null)
         {
             var m = currentNode.moves.FirstOrDefault((x) => x.nextMove == move);
             if (m == null)

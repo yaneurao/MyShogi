@@ -18,15 +18,13 @@ namespace MyShogi.Model.LocalServer
     /// プレイヤー入力へのインターフェースを持つ
     /// 時間を管理している。
     /// 
-    /// </summary>
+    /// </summary>ない)
     public class LocalGameServer : NotifyObject
     {
         public LocalGameServer()
         {
             kifuManager = new KifuManager();
-            position = new Position();
-            
-            kifuManager.Bind(position);
+            Position = kifuManager.Position.Clone(); // immutableでなければならないので、Clone()してセットしておく。
 
             // 起動時に平手の初期局面が表示されるようにしておく。
             kifuManager.Init();
@@ -39,8 +37,8 @@ namespace MyShogi.Model.LocalServer
             Players = new Player[2]
             {
                 new HumanPlayer(),
-//                new HumanPlayer(),
-                usiEngine,
+                new HumanPlayer(),
+                //usiEngine,
             };
 
             // 対局監視スレッドを起動して回しておく。
@@ -56,14 +54,14 @@ namespace MyShogi.Model.LocalServer
 
         // -- public members
 
-        public Position position { get; private set;}
-
-        public KifuManager kifuManager { get; private set; }
-
         /// <summary>
-        /// 対局しているプレイヤー
+        /// 局面。これはimmutableなので、メインウインドウの対局画面にdata bindする。
         /// </summary>
-        public Player[] Players;
+        public Position Position
+        {
+            get { return GetValue<Position>("Position"); }
+            set { SetValue<Position>("Position", value); }
+        }
 
         /// <summary>
         /// 棋譜。これをメインウィンドウの棋譜ウィンドウとdata bindする。
@@ -75,9 +73,14 @@ namespace MyShogi.Model.LocalServer
         }
 
         /// <summary>
-        /// これがtrueになれば、これを購読しているViewの更新が起きるものとする。
+        /// 対局棋譜管理クラス
         /// </summary>
-        public bool dirty;
+        public KifuManager kifuManager { get; private set; }
+
+        /// <summary>
+        /// 対局しているプレイヤー
+        /// </summary>
+        public Player[] Players;
 
         // -- public methods
 
@@ -100,7 +103,7 @@ namespace MyShogi.Model.LocalServer
         /// <param name="m"></param>
         public void DoMoveFromUI(Move m)
         {
-            var stm = position.sideToMove;
+            var stm = Position.sideToMove;
             var stmPlayer = Players[(int)stm];
 
             if (stmPlayer is HumanPlayer)
@@ -123,7 +126,7 @@ namespace MyShogi.Model.LocalServer
         /// 対局中であるかを示すフラグ。
         /// これがfalseであれば対局中ではないので自由に駒を動かせる。
         /// </summary>
-        private bool inTheGame = false;
+        private bool inTheGame = true;
 
         /// <summary>
         /// 対局の監視スレッド。
@@ -156,32 +159,38 @@ namespace MyShogi.Model.LocalServer
         private void CheckMove()
         {
             // 現状の局面の手番側
-            var stm = position.sideToMove;
+            var stm = Position.sideToMove;
             var stmPlayer = Players[(int)stm];
             var bestMove = stmPlayer.BestMove; // 指し手
             if (bestMove != Move.NONE)
             {
                 stmPlayer.BestMove = Move.NONE; // クリア
 
-                if (position.IsLegal(bestMove))
+                // 駒が動かせる状況でかつ合法手であるなら、受理する。
+                if (inTheGame && Position.IsLegal(bestMove))
                 {
-                    // 受理する
+                    // -- bestMoveを受理して、局面を更新する。
 
                     var thinkingTime = new TimeSpan(0, 0, 1);
-                    kifuManager.Tree.Add(bestMove, thinkingTime);
+                    kifuManager.Tree.AddNode(bestMove, thinkingTime);
                     kifuManager.Tree.DoMove(bestMove);
 
-                    // -- 局面が変更になったことを通知する。
+                    // -- このクラスのpropertyのPositionを更新する
 
-                    dirty = true;
+                    // immutableにするためにClone()してからセットする。
+                    // これを更新すると自動的にViewに通知される。
 
-                    // 棋譜が1行追加になったはずなので、それを反映させる。
+                    Position = kifuManager.Position.Clone();
 
-                    KifuList = new List<string>(kifuManager.KifuList);
-                    SetValue("KifuList", KifuList, KifuList.Count - 1); // 末尾が変更になったことを通知
+                    // -- 棋譜が1行追加になったはずなので、それを反映させる。
+
+                    // immutableにするためにClone()してセットしてやり、
+                    // 末尾にのみ更新があったことをViewに通知する。
+
+                    var kifuList = new List<string>(kifuManager.KifuList);
+                    SetValue("KifuList", kifuList, kifuList.Count - 1); // 末尾が変更になったことを通知
                 }
             }
         }
-
     }
 }

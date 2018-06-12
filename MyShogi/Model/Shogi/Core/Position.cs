@@ -140,21 +140,10 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public Position Clone()
         {
-            var pos = new Position();
+            // stの参照先は、immutableだと考えられるので単にMemberwiseClone()で良い。
+            // なお、MemberwiseClone()で配列はコピーされる模様。
 
-            Array.Copy(board, pos.board, board.Length);
-            Array.Copy(board_pn, pos.board_pn, board_pn.Length);
-            Array.Copy(hand, pos.hand , hand.Length);
-            Array.Copy(hand_pn, pos.hand_pn, hand_pn.Length);
-            pos.lastPieceNo = lastPieceNo;
-            pos.sideToMove = sideToMove;
-            Array.Copy(kingSquare, pos.kingSquare, kingSquare.Length);
-            pos.gamePly = gamePly;
-            pos.st = st; // stの先は参照透明なはず..
-            Array.Copy(byColorBB, pos.byColorBB, byColorBB.Length);
-            Array.Copy(byTypeBB, pos.byTypeBB, byTypeBB.Length);
-
-            return pos;
+            return this.MemberwiseClone() as Position;
         }
 
         // -------------------------------------------------------------------------
