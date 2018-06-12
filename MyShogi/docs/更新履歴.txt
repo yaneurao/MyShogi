@@ -1,9 +1,43 @@
 ﻿
 
+■　2018/06/12
+
+
+- KifuTreeの棋譜の更新部分、整理した。
+- KifuTree.AddKifu()で棋譜ウィンドウにbindする形式で出力するように修正。
+
+
+■　2018/06/11
+
+
+- KifuManagerに棋譜ウィンドウに表示する用のKIF配列追加する。
+	- List<string> KifuList
+	- KifuTreeに持たせる
+		- UsiのPosition文字列も必要
+		- List<string> UsiList これをJoin(' ',UsiList)すればUSIプロトコルの"position"文字列ができそう。
+		- UsiPositionString追加
+
+
+- エンジン初期化時のダイアログ素材追加
+	- "engine_init.png"
+
+
+- Controller/ 削除 。Shogi.LocalServer追加。
+	- LocalGameServer.cs、後者に移動。
+
+
 ■　2018/06/10
 
 
-- readme.mdにレーティング計測協力をしていただいたuuunuuunさんのこと追記。
+- CsaConnectDataをNetwork　→ Network.Csaに移動
+- GameController →　Controller.LocalGameServerに移動
+- Listが変更になったときにNotifyObjectで通知するの、もう少し方法を考えたほうがよさげ。
+	- NotifyObjectにListの部分通知のメソッドを用意した。
+	- その他、新しいNotifyObjectに準じてソースコードを修正。
+- 棋譜、ウィンドウに新しいNotifyObjectのListの部分更新の仕組みで更新されるようにした。
+
+
+- readme.mdにレーティング計測の協力をしていただいたuuunuuunさんのこと追記。
 
 
 - UsiEngine.HandleBestMove()少し書いた
