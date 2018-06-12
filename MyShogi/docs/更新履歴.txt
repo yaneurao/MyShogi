@@ -1,6 +1,61 @@
 ﻿
+ToDo : 明日の予定
+- 対局開始のダイアログでの対局開始
+- 対局の開始と中断の処理
+・終局の処理
+・終局後の局面移動
+・時間管理
+・棋譜への消費時間の記入
+・棋譜の書き出し
+・棋譜の読み込み
+
+
+■　2018/06/13
+
+
+- readme.md、実装済みの項目更新
+
+
+- 待ったの処理
+	- 「待」ボタン
+- 自分の手番でしか効かないように
+- 棋譜ウィンドウのdata bindの処理、おかしかったの修正。
+- エンジン初期化中には待ったボタンを無効化する処理追加
+- 待ったボタン実装完了
+
 
 ■　2018/06/12
+
+
+- すぐ指すの実装。
+	- 「急」ボタン
+- コンピューターの思考中のみ「急」がenableになるように。
+- エンジン初期化中は、ユーザーが駒を掴めないようにした。
+- MainDialogButtonEnum追加。
+- MainDialogのPaint用のハンドラで、メニュー領域に対する更新を区別していなかったのを修正。
+
+
+- エンジン初期化中のダイアログ表示
+- MainDialogViewModleからCanUserMoveなど少しメソッド減らす。
+
+
+- MainDialogViewModel、リファクタリング。
+- NotifyObjectのRaise..をpublicに変更。lockを忘れていたの修正。
+- LocalGameServerで後手をGPS将棋にしてとりあえず対局できた。終局処理などはまだ。
+
+
+- PlayerにCanMoveプロパティ追加。
+- UI側から自分が動かせるかどうかの判定のために、このフラグを見に行くようにする。
+
+
+- LocalGameServer、UsiEnginePlayer側の実装
+- KifuMananager.Bind()削除
+- Position.Clone()をMemberwiseClone()を用いて書き換え。
+- NotifyObject、propertyの変更通知、lockが終わってから行うように修正。
+
+
+- LocalGameServerのほうのKifuListから棋譜ウィンドウに反映するようにした
+- LocalGameServerの処理、だいぶ実装した。
 
 
 - KifuTreeの棋譜の更新部分、整理した。
