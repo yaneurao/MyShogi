@@ -69,10 +69,5 @@ namespace MyShogi.Model.Shogi.Usi
             }
             return UsiOptionType.None;
         }
-
-        internal static Move FromUsiMove(string moveSfen)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

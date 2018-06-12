@@ -36,12 +36,27 @@ namespace MyShogi.Model.Shogi.Player
         Move PonderMove { get; set; }
 
         /// <summary>
+        /// 駒を動かして良いフェーズであるか？
+        /// LocalGameServerのほうから設定される。
+        /// 人間プレイヤーの場合、UIがこのフラグを見て、UIで操作して良いかどうかを判断する。
+        /// </summary>
+        bool CanMove { get; set; }
+
+        /// <summary>
         /// 通信の受信などのためにhost側から定期的に呼び出される。
         /// (コールバックが任意のタイミングで起きると制御しにくいので、
         /// このOnIdle()のタイミングで、このOnIdle()を呼び出したスレッドからしか
         /// コールバックが行われないことを保証する。)
         /// </summary>
         void OnIdle();
+
+        /// <summary>
+        /// 自分の手番なので思考を開始して、BestMoveとPonderMoveに指し手を返す。
+        /// PonderMoveに指し手を返すのは、UsiEnginePlayerのときのみ。
+        /// HumanPlayerのときは、usiPositionを生成するコストがもったいないのでnullが渡ってくることになっている。
+        /// </summary>
+        /// <param name="usiPosition"></param>
+        void Think(string usiPosition);
     }
 }
 

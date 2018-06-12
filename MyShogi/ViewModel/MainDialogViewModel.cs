@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using MyShogi.Model.Common.ObjectModel;
-using MyShogi.Model.Shogi.Converter;
-using MyShogi.Model.Shogi.Core;
+﻿using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.LocalServer;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.ViewModel
 {
@@ -60,14 +57,6 @@ namespace MyShogi.ViewModel
 
             Pos = pos;
 #endif
-
-            // デバッグ中
-            // あとで書き直す。
-            //CanMove = true;
-
-            //var list = new List<string>();
-            //list.Add("   === 開始局面 ===");
-            //KifuList = list;
         }
 
         public void Dispose()
@@ -84,7 +73,7 @@ namespace MyShogi.ViewModel
         /// <summary>
         /// 画面に描画すべき盤面。immutable objectなのでこのままdata bindするようにして描画すれば良い。
         /// </summary>
-        public Position Pos { get { return gameServer.Position; } }
+        public Position Position { get { return gameServer.Position; } }
 
         /// <summary>
         /// 対局者氏名。
@@ -96,23 +85,22 @@ namespace MyShogi.ViewModel
 
         /// <summary>
         /// 対局者氏名
-        /// player == 0 : 先手
-        /// player == 1 : 後手
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public string PlayerName(int player)
+        public string PlayerName(Color player)
         {
-            return player == 0 ? Player1Name : Player2Name;
+            return player == Color.BLACK ? Player1Name : Player2Name;
         }
 
         /// <summary>
         /// いまユーザーの手番で、ユーザーはマウス操作によって駒を動かせるのか？
-        /// 
-        /// デバッグ用。あとで書き直す。
         /// </summary>
         /// <returns></returns>
-        public bool CanMove { get; private set;}
+        public bool CanUserMove
+        {
+            get { return gameServer.CanUserMove; }
+        }
 
         /// <summary>
         /// ユーザーがマウス操作によってmの指し手を入力した。

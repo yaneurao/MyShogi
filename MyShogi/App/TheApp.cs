@@ -72,6 +72,7 @@ namespace MyShogi.App
 
             gameServer.AddPropertyChangedHandler("KifuList", mainDialog.gameScreen.kifuControl.OnListChanged);
             gameServer.AddPropertyChangedHandler("Position", mainDialog.gameScreen.PositionChanged);
+            gameServer.AddPropertyChangedHandler("TurnChanged", mainDialog.gameScreen.TurnChanged);
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 

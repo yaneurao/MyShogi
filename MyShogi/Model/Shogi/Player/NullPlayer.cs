@@ -32,8 +32,21 @@ namespace MyShogi.Model.Shogi.Player
         /// </summary>
         public Move PonderMove { get; set; }
 
+        /// <summary>
+        /// プレイヤーの手番であるか。
+        /// これはLocalGameServerのほうから設定される。
+        /// </summary>
+        public bool CanMove { get; set; }
+
         public void OnIdle()
         {
         }
+
+        public void Think(string usiPosition)
+        {
+            // 次の指し手。投了する
+            BestMove = Move.RESIGN;
+        }
+
     }
 }

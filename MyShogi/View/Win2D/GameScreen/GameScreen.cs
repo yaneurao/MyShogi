@@ -4,6 +4,7 @@ using MyShogi.App;
 using MyShogi.Model.Resource;
 using MyShogi.Model.Shogi.Core;
 using ShogiCore = MyShogi.Model.Shogi.Core;
+using SColor = MyShogi.Model.Shogi.Core.Color; // 将棋のほうのColor
 using SPRITE = MyShogi.Model.Resource.SpriteManager;
 
 namespace MyShogi.View.Win2D
@@ -50,9 +51,16 @@ namespace MyShogi.View.Win2D
             var config = app.config;
             var vm = ViewModel;
             // 描画する局面
-            var pos = vm.ViewModel.Pos; // MainDialogViewModel
+            var pos = vm.ViewModel.Position; // MainDialogViewModel
             // 掴んでいる駒
             var state = vm.viewState;
+
+            // ユーザーが駒を動かせない状態であるなら駒を持ち上げている状態などをリセットしておく。
+            // 普通ならイベント通知型で書くべきで少しダサいコードだが、state.Reset()は非常に軽い処理だし、こう書いたほうが
+            // コードがシンプルになるのでこうしておく。
+            if (!vm.ViewModel.CanUserMove)
+                state.Reset();
+
             var picked_from = state.picked_from;
             // 持ち上げている駒のスプライトと座標(最後に描画するために積んでおく)
             Sprite picked_sprite = null;
@@ -161,7 +169,7 @@ namespace MyShogi.View.Win2D
                             var dest = PieceLocation(piece);
 
                             // 物理画面で後手側の駒台への描画であるか(駒を180度回転さて描画しないといけない)
-                            var is_white_in_display = (c == ShogiCore.Color.WHITE) ^ reverse;
+                            var is_white_in_display = (c == SColor.WHITE) ^ reverse;
 
                             var sprite = SPRITE.Piece(is_white_in_display ? pc.Inverse() : pc);
 
@@ -203,13 +211,13 @@ namespace MyShogi.View.Win2D
                 switch (config.KomadaiImageVersion)
                 {
                     case 1:
-                        DrawString(name_plate_name[0], vm.ViewModel.PlayerName(reverse ? 1 : 0), 28);
-                        DrawString(name_plate_name[1], vm.ViewModel.PlayerName(reverse ? 0 : 1), 28);
+                        DrawString(name_plate_name[0], vm.ViewModel.PlayerName(reverse ? SColor.WHITE : SColor.BLACK), 28);
+                        DrawString(name_plate_name[1], vm.ViewModel.PlayerName(reverse ? SColor.BLACK : SColor.WHITE), 28);
                         break;
                     case 2:
                         DrawSprite(turn_slim_pos, SPRITE.NamePlateSlim(pos.sideToMove, reverse));
-                        DrawString(name_plate_slim_name[0], vm.ViewModel.PlayerName(reverse ? 1 : 0), 28 , new DrawStringOption(Brushes.White, 2,10));
-                        DrawString(name_plate_slim_name[1], vm.ViewModel.PlayerName(reverse ? 0 : 1), 28 , new DrawStringOption(Brushes.White, 0, 0));
+                        DrawString(name_plate_slim_name[0], vm.ViewModel.PlayerName(reverse ? SColor.WHITE : SColor.BLACK ), 28 , new DrawStringOption(Brushes.White, 2,10));
+                        DrawString(name_plate_slim_name[1], vm.ViewModel.PlayerName(reverse ? SColor.BLACK : SColor.WHITE ), 28 , new DrawStringOption(Brushes.White, 0, 0));
                         break;
                 }
             }
@@ -217,7 +225,7 @@ namespace MyShogi.View.Win2D
             // -- 手番の表示
             {
                 // 手番側が先手なら0、後手なら1。ただし、盤面反転しているなら、その逆。
-                int side = pos.sideToMove == ShogiCore.Color.BLACK ? 0 : 1;
+                int side = pos.sideToMove == SColor.BLACK ? 0 : 1;
                 side = reverse ? (side ^ 1) : side;
 
                 switch (config.KomadaiImageVersion)

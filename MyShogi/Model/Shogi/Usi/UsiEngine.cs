@@ -3,6 +3,7 @@ using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace MyShogi.Model.Shogi.Usi
@@ -48,7 +49,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public void OnIdle()
         {
-            switch(State)
+            switch (State)
             {
                 case UsiEngineState.Connected:
                     if (DateTime.Now - connected_time >= new TimeSpan(0, 0, 30))
@@ -61,21 +62,35 @@ namespace MyShogi.Model.Shogi.Usi
             negotiator.Read();
         }
 
-        public void Disconnect()
+        /// <summary>
+        /// エンジンに思考させる。
+        /// Thinkingのときにこのmethodの呼び出しは不正であるものとする。
+        /// 呼び出し側できちんと管理すべし。
+        /// </summary>
+        /// <param name="usiPositionString"></param>
+        public void Think(string usiPositionString)
         {
-            if (State != UsiEngineState.Init)
-                    SendCommand("quit");
-
-            if (negotiator != null)
+#if false
+            if (thinking)
             {
-                negotiator.Dispose();
-                negotiator = null;
+                // これ呼び出し側がまずい気がする。
+
+                // ponderなどで思考させている途中で次の思考開始命令が来たので、stopを送信する。
+                SendCommand("stop");
+
+                // ここで"bestmove"が返ってくるのを待つ必要があるがこの仕組みではそれができない。あとで考える。
             }
+#endif
+            Debug.Assert(Thinking == false);
+
+            Thinking = true;
+            SendCommand($"position {usiPositionString}");
+            SendCommand("go btime 10000 wtime 10000 byoyomi 1000"); // 1手1秒でとりあえず指させる。
         }
 
         /// <summary>
         /// エンジンに対してコマンドを送信する。(デバッグ用)
-        /// 普段は、このクラスが自動的にやりとりをするので外部からこのメソッドを呼び出すことはない。
+        /// 普段は、このクラスが自動的にやりとりをするので外部からこのメソッドを呼び出すことはない。(はず)
         /// 
         /// 基本的にノンブロッキングだと考えられる。
         /// </summary>
@@ -84,6 +99,20 @@ namespace MyShogi.Model.Shogi.Usi
         {
             negotiator.Write(command);
         }
+
+        public void Disconnect()
+        {
+            if (State != UsiEngineState.Init)
+                SendCommand("quit");
+
+            if (negotiator != null)
+            {
+                negotiator.Dispose();
+                negotiator = null;
+            }
+        }
+
+        // -- public members
 
         /// <summary>
         /// エンジンから受け取ったoptionの一覧
@@ -116,13 +145,28 @@ namespace MyShogi.Model.Shogi.Usi
         /// エンジンのオリジナル名を取得または設定します。
         /// "id name ..."と渡されたもの。
         /// </summary>
-        public string OriginalName { get; set;}
+        public string OriginalName { get; set; }
 
         /// <summary>
         /// エンジンの開発者名を取得または設定します。
         /// </summary>
         public string Author { get; set; }
 
+        /// <summary>
+        /// エンジンから送られてきた文字列の解釈などでエラーがあった場合に、
+        /// ここに格納される。
+        /// </summary>
+        public Exception exception { get; private set; }
+
+        /// <summary>
+        /// USIプロトコルによってengine側から送られてきた"bestmove .."を解釈した指し手
+        /// </summary>
+        public Move BestMove { get; set;}
+    
+        /// <summary>
+        /// USIプロトコルによってengine側から送られてきた"bestmove .. ponder .."のponderで指定された指し手を解釈した指し手
+        /// </summary>
+        public Move PonderMove { get; set; }
 
         // -- private members
 
@@ -135,6 +179,11 @@ namespace MyShogi.Model.Shogi.Usi
         /// 一応、タイムアウトを監視する。
         /// </summary>
         private DateTime connected_time;
+
+        /// <summary>
+        /// 現在思考中であるかどうかのフラグ
+        /// </summary>
+        private bool Thinking { get; set; }
 
         // -- private methods
 
@@ -385,37 +434,41 @@ namespace MyShogi.Model.Shogi.Usi
         {
             try
             {
-                Move move, ponder = Move.NONE;
+                // 指し手が返ってきた以上、思考中ではない。
+                Thinking = false;
+
+                Move move = Move.NONE , ponder = Move.NONE;
                 var moveSfen = scanner.ParseText();
 
-#if false
                 // まず、特殊な指し手を調べます。
                 switch (moveSfen)
                 {
                     case "resign":
-                        EndThink(new UsiThinkEventArgs(GameResult.Lose, GameReason.Resign));
-                        return;
+                        move = Move.RESIGN;
+                        break;
                     case "win":
-                        EndThink(new UsiThinkEventArgs(GameResult.Win, GameReason.Jishogi));
-                        return;
-                    case "lose":
-                        EndThink(new UsiThinkEventArgs(GameResult.Lose, GameReason.Jishogi));
-                        return;
+                        move = Move.WIN;
+                        break;
                 }
-#endif
 
-                // 通常のSFENの指し手
-                move = Core.Util.FromUsiMove(moveSfen);
-                if (move == Move.NONE /* || !Position.IsValid() */)
+                // 上記に該当しなかった。
+                if (move == Move.NONE)
                 {
-                    throw new UsiException(
-                        moveSfen + ": SFEN形式の指し手が正しくありません。");
+                    move = Core.Util.FromUsiMove(moveSfen);
+                    if (move == Move.NONE)
+                    {
+                        // 解釈できない文字列
+                        throw new UsiException(
+                            moveSfen + ": SFEN形式の指し手が正しくありません。");
+                    }
                 }
 
+                // 後続があって、"ponder"と書いてある。
                 if (!scanner.IsEof)
                 {
                     if (scanner.ParseText() != "ponder")
                     {
+                        // "ponder"以外はこれないはずなのに…。
                         throw new UsiException(
                             "invalid command: " + scanner.Text);
                     }
@@ -423,18 +476,17 @@ namespace MyShogi.Model.Shogi.Usi
                     // ponderの指し手は'(null)'などが指定されることもあるので、
                     // 指せなくてもエラーにはしません。
                     var ponderSfen = scanner.ParseText();
-                    var ponderTmp = Core.Util.FromUsiMove(ponderSfen);
-                    if (ponderTmp != Move.NONE /*&& ponderTmp.Validate() */)
-                    {
-                        ponder = ponderTmp;
-                    }
+                    ponder = Core.Util.FromUsiMove(ponderSfen);
                 }
 
-                //EndThink(new UsiThinkEventArgs(move, ponder));
+                // 確定したので格納しておく。
+                BestMove = move;
+                PonderMove = ponder;
+
             }
-            catch (UsiException /*ex*/)
+            catch (UsiException ex)
             {
-                //EndThink(new UsiThinkEventArgs(ex));
+                exception = ex;
             }
         }
 
@@ -443,6 +495,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private void HandleInfo(Scanner scanner)
         {
+            // あとで書く。
 #if false
             var report = new UsiThinkReport(this);
 

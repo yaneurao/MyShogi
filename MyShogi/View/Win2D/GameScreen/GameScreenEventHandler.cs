@@ -31,6 +31,16 @@ namespace MyShogi.View.Win2D
         }
         
         /// <summary>
+        /// 手番が変わったので何はともあれ、いま掴んでいる駒はいったん離す
+        /// (逆の手番側の駒を掴んだままになるとおかしいので)
+        /// </summary>
+        /// <param name="args"></param>
+        public void TurnChanged(PropertyChangedEventArgs args)
+        {
+            StateReset();
+        }
+
+        /// <summary>
         /// Formのリサイズに応じて棋譜コントロールの移動などを行う。
         /// </summary>
         public void ResizeKifuControl()
@@ -159,7 +169,7 @@ namespace MyShogi.View.Win2D
         /// <param name="sq"></param>
         public void pick_up(SquareHand sq)
         {
-            var pos = ViewModel.ViewModel.Pos;
+            var pos = ViewModel.ViewModel.Position;
 
             // この駒をユーザーが掴んで動かそうとしていることを示す
             ViewModel.viewState.picked_from = sq;
@@ -229,7 +239,7 @@ namespace MyShogi.View.Win2D
             //Console.WriteLine(from.Pretty() + "→" + to.Pretty());
 
             // Promoteの判定
-            var pos = ViewModel.ViewModel.Pos;
+            var pos = ViewModel.ViewModel.Position;
             var m = Util.MakeMove(from, to , true);
             // この成る手を生成して、それが合法手であるなら、成り・不成のダイアログを出す必要がある。
             var canPromote = pos.IsLegal(m);
@@ -292,7 +302,7 @@ namespace MyShogi.View.Win2D
         /// <param name="sq"></param>
         public void OnBoardClick(SquareHand sq)
         {
-            var pos = ViewModel.ViewModel.Pos;
+            var pos = ViewModel.ViewModel.Position;
             var state = ViewModel.viewState;
             var pc = pos.PieceOn(sq);
 

@@ -27,8 +27,15 @@ namespace MyShogi.Model.Shogi.Player
         /// </summary>
         public Move PonderMove { get; set; }
 
-        public void OnIdle()
-        {
-        }
+        /// <summary>
+        /// 駒を動かして良いフェーズであるか？
+        /// 人間プレイヤーの場合、UIがこのフラグを見て判断する。
+        /// </summary>
+        public bool CanMove { get; set; }
+
+        public void OnIdle() { }
+
+        public void Think(string usiPosition){ }
+
     }
 }

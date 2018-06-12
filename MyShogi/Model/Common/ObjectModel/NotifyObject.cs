@@ -88,14 +88,27 @@ namespace MyShogi.Model.Common.ObjectModel
 
         /// <summary>
         /// name の propertyが変更されたときに、これを購読しているobserverに更新通知を送る。
+        /// SetValue()を使わずに自力で名前に対応するイベントハンドラを呼びたい時にも用いる。
         /// </summary>
         /// <param name="name"></param>
-        protected void RaisePropertyChanged(string name , object value , int start , int end)
+        public void RaisePropertyChanged(string name , object value , int start = -1 , int end = -1)
         {
-            // このpropertyをsubscribeしているobserverに更新通知を送る
-            foreach(var prop in propery_changed_handlers)
-                if (prop.Key == name)
-                    prop.Value(new PropertyChangedEventArgs(name , value , start , end));
+            PropertyChangedEventHandler h = null;
+            lock (lockObject)
+            {
+                // このpropertyをsubscribeしているobserverに更新通知を送る
+                // 重複名はないことは保証されている。
+                foreach (var prop in propery_changed_handlers)
+                    if (prop.Key == name)
+                    {
+                        h = prop.Value;
+                        break;
+                    }
+            }
+
+            // lockの外側でコールバックしないとデッドロックになる。
+            if (h != null)
+                h(new PropertyChangedEventArgs(name, value, start, end));
         }
 
         /// <summary>

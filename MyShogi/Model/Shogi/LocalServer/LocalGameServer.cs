@@ -33,26 +33,27 @@ namespace MyShogi.Model.LocalServer
 
             var usiEngine = new UsiEnginePlayer();
 
+            Players = new Player[2];
 
-            Players = new Player[2]
-            {
-                new HumanPlayer(),
-                new HumanPlayer(),
-                //usiEngine,
-            };
+#if true
+            //GameStart(new HumanPlayer(), new HumanPlayer());
+
+            // デバッグ中 後手をUsiEnginePlayerにしてみる。
+            GameStart(new HumanPlayer(), usiEngine);
+#endif
 
             // 対局監視スレッドを起動して回しておく。
-            thread = new Thread(thread_worker);
+            var thread = new Thread(thread_worker);
             thread.Start();
         }
 
         public void Dispose()
         {
             // スレッドを停止させる。
-            stop = true;
+            workerStop = true;
         }
 
-        // -- public members
+        // -- public properties
 
         /// <summary>
         /// 局面。これはimmutableなので、メインウインドウの対局画面にdata bindする。
@@ -78,9 +79,27 @@ namespace MyShogi.Model.LocalServer
         public KifuManager kifuManager { get; private set; }
 
         /// <summary>
+        /// ユーザーがUI上で操作できるのか？
+        /// </summary>
+        public bool CanUserMove { get; set; }
+
+        // 仮想プロパティ。Turnが変化した時に"TurnChanged"ハンドラが呼び出される。
+        //public bool TurnChanged { }
+
+        /// <summary>
         /// 対局しているプレイヤー
         /// </summary>
         public Player[] Players;
+
+        /// <summary>
+        /// c側のプレイヤー
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public Player Player(Color c)
+        {
+            return Players[(int)c];
+        }
 
         // -- public methods
 
@@ -95,6 +114,8 @@ namespace MyShogi.Model.LocalServer
             Players[1] = player2;
 
             KifuList = new List<string>(kifuManager.KifuList);
+
+            NotifyTurnChanged();
         }
 
         /// <summary>
@@ -106,7 +127,7 @@ namespace MyShogi.Model.LocalServer
             var stm = Position.sideToMove;
             var stmPlayer = Players[(int)stm];
 
-            if (stmPlayer is HumanPlayer)
+            if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
             {
                 // これを積んでおけばworker_threadのほうでいずれ処理される。
                 stmPlayer.BestMove = m;
@@ -120,7 +141,7 @@ namespace MyShogi.Model.LocalServer
         /// スレッドの終了フラグ。
         /// 終了するときにtrueになる。
         /// </summary>
-        private bool stop = false;
+        private bool workerStop = false;
 
         /// <summary>
         /// 対局中であるかを示すフラグ。
@@ -129,16 +150,13 @@ namespace MyShogi.Model.LocalServer
         private bool inTheGame = true;
 
         /// <summary>
-        /// 対局の監視スレッド。
-        /// </summary>
-        private Thread thread;
-
-        /// <summary>
         /// スレッドによって実行されていて、対局を管理している。
+        /// pooling用のthread。少しダサいが、通知によるコールバックモデルでやるよりコードがシンプルになる。
+        /// どのみち持ち時間の監視などを行わないといけないので、このようなworker threadは必要だと思う。
         /// </summary>
         private void thread_worker()
         {
-            while (!stop)
+            while (!workerStop)
             {
                 foreach (var player in Players)
                 {
@@ -160,7 +178,7 @@ namespace MyShogi.Model.LocalServer
         {
             // 現状の局面の手番側
             var stm = Position.sideToMove;
-            var stmPlayer = Players[(int)stm];
+            var stmPlayer = Player(stm);
             var bestMove = stmPlayer.BestMove; // 指し手
             if (bestMove != Move.NONE)
             {
@@ -190,7 +208,42 @@ namespace MyShogi.Model.LocalServer
                     var kifuList = new List<string>(kifuManager.KifuList);
                     SetValue("KifuList", kifuList, kifuList.Count - 1); // 末尾が変更になったことを通知
                 }
+
+                // -- 次のPlayerに、自分のturnであることを通知してやる。
+
+                NotifyTurnChanged();
             }
         }
+
+        /// <summary>
+        /// 手番側のプレイヤーに自分の手番であることを通知するためにThink()を呼び出す。また、CanMove = trueにする。
+        /// 非手番側のプレイヤーに対してCanMove = falseにする。
+        /// </summary>
+        public void NotifyTurnChanged()
+        {
+            var stm = Position.sideToMove;
+            var stmPlayer = Player(stm);
+
+            // USIエンジンのときだけ、"position"コマンドに渡す形で局面図が必要であるから、
+            // 生成して、それをPlayer.Think()の引数として渡してやる。
+            var isUsiEngine = stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine;
+            string usiPosition = isUsiEngine ? kifuManager.UsiPositionString : null;
+
+            stmPlayer.BestMove = stmPlayer.PonderMove = Move.NONE;
+            stmPlayer.CanMove = true;
+            stmPlayer.Think(usiPosition);
+
+            // 非手番側のCaMoveをfalseに
+
+            var nextPlayer = Player(stm.Not());
+            nextPlayer.CanMove = false;
+
+            // CanUserMoveを更新しておいてやる。
+
+            // 値が変わっていなくとも変更通知を送りたいので自力でハンドラを呼び出す。
+            CanUserMove = stmPlayer.PlayerType == PlayerTypeEnum.Human && stmPlayer.CanMove;
+            RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
+        }
+
     }
 }

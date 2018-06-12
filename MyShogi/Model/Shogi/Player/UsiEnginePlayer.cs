@@ -1,5 +1,6 @@
 ﻿using MyShogi.Model.Common.Process;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Shogi.Player
 {
@@ -9,9 +10,17 @@ namespace MyShogi.Model.Shogi.Player
     /// </summary>
     public class UsiEnginePlayer : Player
     {
+        public UsiEnginePlayer()
+        {
+            engine = new UsiEngine();
+            var data = new ProcessNegotiatorData("engine/gpsfish/gpsfish.exe");
+            engine.Connect(data);
+            // 接続できているものとする。
+        }
+
         public PlayerTypeEnum PlayerType
         {
-            get { return PlayerTypeEnum.Human; }
+            get { return PlayerTypeEnum.UsiEngine; }
         }
 
         /// <summary>
@@ -45,15 +54,31 @@ namespace MyShogi.Model.Shogi.Player
         /// </summary>
         public Move PonderMove { get; set; }
 
-        public ProcessNegotiator negotiator = new ProcessNegotiator();
+        /// <summary>
+        /// 駒を動かして良いフェーズであるか？
+        /// </summary>
+        public bool CanMove { get; set; }
+
+        public UsiEngine engine = new UsiEngine();
 
         public void OnIdle()
         {
             // 思考するように命令が来ていれば、エンジンに対して思考を指示する。
 
             // 受信処理を行う。
-            negotiator.Read();
+            engine.OnIdle();
+
+            var bestMove = engine.BestMove;
+            if (bestMove != Move.NONE)
+            { // エンジンから結果が返ってきているので伝播する。
+                BestMove = bestMove;
+                engine.BestMove = Move.NONE;
+            }
         }
 
+        public void Think(string usiPosition)
+        {
+            engine.Think(usiPosition);
+        }
     }
 }
