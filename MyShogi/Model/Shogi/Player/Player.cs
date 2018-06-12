@@ -43,6 +43,13 @@ namespace MyShogi.Model.Shogi.Player
         bool CanMove { get; set; }
 
         /// <summary>
+        /// 対局最初の初期化中であるか。この時は時間消費はしない。
+        /// 人間プレイヤーの場合、常にfalse
+        /// USIエンジンの場合、"readyok"が返ってくるまでtrue
+        /// </summary>
+        bool IsInit { get; }
+
+        /// <summary>
         /// 通信の受信などのためにhost側から定期的に呼び出される。
         /// (コールバックが任意のタイミングで起きると制御しにくいので、
         /// このOnIdle()のタイミングで、このOnIdle()を呼び出したスレッドからしか

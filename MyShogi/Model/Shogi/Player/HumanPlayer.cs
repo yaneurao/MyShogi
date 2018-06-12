@@ -33,6 +33,11 @@ namespace MyShogi.Model.Shogi.Player
         /// </summary>
         public bool CanMove { get; set; }
 
+        /// <summary>
+        /// 人間プレイヤーの場合、初期化処理は不要なのでこのフラグは常にfalse
+        /// </summary>
+        public bool IsInit { get; } = false;
+
         public void OnIdle() { }
 
         public void Think(string usiPosition){ }

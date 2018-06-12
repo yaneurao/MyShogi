@@ -52,14 +52,10 @@ namespace MyShogi.View.Win2D
             var vm = ViewModel;
             // 描画する局面
             var pos = vm.ViewModel.Position; // MainDialogViewModel
-            // 掴んでいる駒
+            // 掴んでいる駒などのViewの状態
             var state = vm.viewState;
-
-            // ユーザーが駒を動かせない状態であるなら駒を持ち上げている状態などをリセットしておく。
-            // 普通ならイベント通知型で書くべきで少しダサいコードだが、state.Reset()は非常に軽い処理だし、こう書いたほうが
-            // コードがシンプルになるのでこうしておく。
-            if (!vm.ViewModel.CanUserMove)
-                state.Reset();
+            // 対局を監視しているLocalGameServer
+            var gameServer = vm.ViewModel.gameServer;
 
             var picked_from = state.picked_from;
             // 持ち上げている駒のスプライトと座標(最後に描画するために積んでおく)
@@ -251,10 +247,11 @@ namespace MyShogi.View.Win2D
 
             // -- エンジン初期化中のダイアログ
 
-            // DrawSprite(engine_init_pos,SPRITE.EngineInit());
+            if (vm.ViewModel.gameServer.EngineInitializing)
+                DrawSprite(engine_init_pos, SPRITE.EngineInit());
 
             // 描画が完了したのでDirtyフラグを戻しておく。
-            ViewModel.dirty = false;
+            vm.dirty = false;
         }
 
     }

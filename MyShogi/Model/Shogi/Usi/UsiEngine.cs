@@ -1,17 +1,18 @@
-﻿using MyShogi.Model.Common.Process;
-using MyShogi.Model.Common.Utility;
-using MyShogi.Model.Shogi.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Process;
+using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Usi
 {
     /// <summary>
     /// USI engineとのやりとりを抽象化するクラス
     /// </summary>
-    public class UsiEngine
+    public class UsiEngine : NotifyObject
     {
         public UsiEngine()
         {
@@ -168,22 +169,34 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public Move PonderMove { get; set; }
 
+        /// <summary>
+        /// 現在思考中であるかどうかのフラグ
+        /// Thinking == true && BestMove == Move.NONE なら、思考中である。
+        /// Thinking == true && BestMove != Move.NONE は、ありえない(無視すべき)
+        /// Thinking == true && exception != null なら、例外が発生した。
+        /// Thinking == false && BestMove != Move.NONEなら思考が終了して思考結果が返ってきている。
+        /// Thinking == false && BestMove == Move.NONEなら思考結果取り出したあとの通常状態。
+        /// </summary>
+        public bool Thinking { get; set; }
+
         // -- private members
 
         private ProcessNegotiator negotiator;
 
-        private UsiEngineState State {get;set;}
+        /// <summary>
+        /// エンジンの状態。
+        /// </summary>
+        private UsiEngineState State
+        {
+            get { return GetValue<UsiEngineState>("State"); }
+            set { SetValue<UsiEngineState>("State", value); }
+        }
         
         /// <summary>
         /// "usi"コマンドを思考ンジンに送信した時刻。思考エンジンは起動時にすぐに応答するように作るべき。
         /// 一応、タイムアウトを監視する。
         /// </summary>
         private DateTime connected_time;
-
-        /// <summary>
-        /// 現在思考中であるかどうかのフラグ
-        /// </summary>
-        private bool Thinking { get; set; }
 
         // -- private methods
 
@@ -371,6 +384,8 @@ namespace MyShogi.Model.Shogi.Usi
                 throw new UsiException(
                     "readyokコマンドが不正なタイミングで送られました。");
             }
+
+      
 
             // 読み込みが終わったタイミングでエンジンの優先度を下げます。
             negotiator.UpdateProcessPriority();

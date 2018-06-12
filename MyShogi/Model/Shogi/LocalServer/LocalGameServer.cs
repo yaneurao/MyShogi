@@ -87,6 +87,15 @@ namespace MyShogi.Model.LocalServer
         //public bool TurnChanged { }
 
         /// <summary>
+        /// エンジンの初期化中であるか。
+        /// </summary>
+        public bool EngineInitializing
+        {
+            get { return GetValue<bool>("EngineInitializing"); }
+            set { SetValue<bool>("EngineInitializing", value); }
+        }
+
+        /// <summary>
         /// 対局しているプレイヤー
         /// </summary>
         public Player[] Players;
@@ -114,25 +123,33 @@ namespace MyShogi.Model.LocalServer
             Players[1] = player2;
 
             KifuList = new List<string>(kifuManager.KifuList);
-
+            
             NotifyTurnChanged();
         }
 
         /// <summary>
-        /// ユーザーから指し手が指された
+        /// ユーザーから指し手が指されたときにUI側から呼び出す。
+        /// 
+        /// ユーザーがマウス操作によってmの指し手を入力した。
+        /// ユーザーはこれを合法手だと思っているが、これが受理されるかどうかは別の話。
+        /// (時間切れなどがあるので)
+        /// 
+        /// 注意 : これを受理するのは、UIスレッドではない。
         /// </summary>
         /// <param name="m"></param>
         public void DoMoveFromUI(Move m)
         {
             var stm = Position.sideToMove;
-            var stmPlayer = Players[(int)stm];
+            var stmPlayer = Player(stm);
 
             if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
             {
                 // これを積んでおけばworker_threadのほうでいずれ処理される。
                 stmPlayer.BestMove = m;
+            } else
+            {
+                // Humanであれば受理しない。
             }
-
         }
 
         // -- private members
@@ -165,6 +182,9 @@ namespace MyShogi.Model.LocalServer
 
                 // 指し手が指されたかのチェック
                 CheckMove();
+
+                // 時間消費のチェック
+                CheckTime();
 
                 // 10msごとに各種処理を行う。
                 Thread.Sleep(10);
@@ -245,5 +265,15 @@ namespace MyShogi.Model.LocalServer
             RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
         }
 
+        /// <summary>
+        /// 時間チェック
+        /// </summary>
+        public void CheckTime()
+        {
+            // エンジンの初期化中であるか。この時は、時間消費は行わない。
+            bool isInit = Player(Color.BLACK).IsInit || Player(Color.WHITE).IsInit;
+
+            EngineInitializing = isInit;
+        }
     }
 }

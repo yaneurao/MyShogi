@@ -93,28 +93,5 @@ namespace MyShogi.ViewModel
             return player == Color.BLACK ? Player1Name : Player2Name;
         }
 
-        /// <summary>
-        /// いまユーザーの手番で、ユーザーはマウス操作によって駒を動かせるのか？
-        /// </summary>
-        /// <returns></returns>
-        public bool CanUserMove
-        {
-            get { return gameServer.CanUserMove; }
-        }
-
-        /// <summary>
-        /// ユーザーがマウス操作によってmの指し手を入力した。
-        /// ユーザーはこれを合法手だと思っているが、これが受理されるかどうかは別の話。
-        /// (時間切れなどがあるので)
-        /// 
-        /// これを受理するのは、UIスレッドではない。
-        /// </summary>
-        /// <param name="m"></param>
-        public void DoMoveCmd(Move m)
-        {
-            // UIから指し手が指された
-            gameServer.DoMoveFromUI(m);
-        }
-
     }
 }

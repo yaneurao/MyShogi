@@ -38,6 +38,8 @@ namespace MyShogi.Model.Shogi.Player
         /// </summary>
         public bool CanMove { get; set; }
 
+        public bool IsInit { get; } = false;
+
         public void OnIdle()
         {
         }

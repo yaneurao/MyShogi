@@ -14,22 +14,13 @@ namespace MyShogi.View.Win2D
     public partial class GameScreen
     {
         /// <summary>
-        /// 画面が汚れているかどうかのフラグ。
-        /// これを定期的に監視して、trueになっていれば、親からOnDraw()を呼び出してもらうものとする。
-        /// </summary>
-        public bool Dirty
-        {
-            get { return ViewModel.dirty; }
-        }
-
-        /// <summary>
         /// 盤面情報が更新された時に呼び出されるハンドラ。
         /// </summary>
         public void PositionChanged(PropertyChangedEventArgs args)
         {
             ViewModel.dirty = true;
         }
-        
+
         /// <summary>
         /// 手番が変わったので何はともあれ、いま掴んでいる駒はいったん離す
         /// (逆の手番側の駒を掴んだままになるとおかしいので)
@@ -38,6 +29,25 @@ namespace MyShogi.View.Win2D
         public void TurnChanged(PropertyChangedEventArgs args)
         {
             StateReset();
+        }
+
+        /// <summary>
+        /// エンジン初期化中の状態が変更になった時に呼び出されるハンドラ。
+        /// エンジン初期化中のダイアログを描画している/していないはずなので、それを新しい状態に応じて再描画する必要がある。
+        /// </summary>
+        /// <param name="args"></param>
+        public void EngineInitializingChanged(PropertyChangedEventArgs args)
+        {
+            ViewModel.dirty = true;
+        }
+
+        /// <summary>
+        /// 画面が汚れているかどうかのフラグ。
+        /// これを定期的に監視して、trueになっていれば、親からOnDraw()を呼び出してもらうものとする。
+        /// </summary>
+        public bool Dirty
+        {
+            get { return ViewModel.dirty; }
         }
 
         /// <summary>
@@ -278,7 +288,7 @@ namespace MyShogi.View.Win2D
             {
                 // 成れないので成る選択肢は消して良い。
                 m = Util.MakeMove(from, to ,false);
-                ViewModel.ViewModel.DoMoveCmd(m);
+                ViewModel.ViewModel.gameServer.DoMoveFromUI(m);
                 StateReset();
             }
         }
@@ -365,7 +375,7 @@ namespace MyShogi.View.Win2D
                             case Model.Resource.PromoteDialogSelectionEnum.PROMOTE:
                                 var m = Util.MakeMove(state.picked_from, state.picked_to,
                                     state.promote_dialog_selection == Model.Resource.PromoteDialogSelectionEnum.PROMOTE);
-                                ViewModel.ViewModel.DoMoveCmd(m);
+                                ViewModel.ViewModel.gameServer.DoMoveFromUI(m);
                                 StateReset();
                                 break;
                         }

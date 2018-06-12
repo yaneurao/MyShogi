@@ -33,8 +33,6 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public void Init()
         {
-            Debug.Assert(position != null, "Bind(Position)を呼び出してからInit()を呼ぶようにしてください。");
-
             position.InitBoard();
 
             currentNode = rootNode = new KifuNode(null);
