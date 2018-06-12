@@ -169,6 +169,7 @@
     </Compile>
     <Compile Include="View\Win2D\GameScreen\GameScreenConst.cs" />
     <Compile Include="View\Win2D\GameScreen\GameScreenDraw.cs" />
+    <Compile Include="View\Win2D\MainDialog\MainDialogButtonEnum.cs" />
     <Compile Include="View\Win2D\MainDialog\MainDialogEventHandler.cs">
       <SubType>Form</SubType>
     </Compile>

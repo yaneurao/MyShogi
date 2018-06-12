@@ -29,7 +29,21 @@ namespace MyShogi.View.Win2D
         public void TurnChanged(PropertyChangedEventArgs args)
         {
             StateReset();
+
+            // この時、エンジン側の手番であるなら、メインウインドウのメニューの「急」ボタンをenableにしなければならない。
+            var gameServer = ViewModel.ViewModel.gameServer;
+            var engineTurn = gameServer.EngineTurn;
+            SetButton(MainDialogButtonEnum.MOVE_NOW, engineTurn);
         }
+
+        /// <summary>
+        /// ボタンのEnable/Disableを切り替えたい時のcallback用のデリゲート
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="enable"></param>
+        public delegate void SetButtonHandler(MainDialogButtonEnum name, bool enable);
+
+        public SetButtonHandler SetButton { get; set; }
 
         /// <summary>
         /// エンジン初期化中の状態が変更になった時に呼び出されるハンドラ。
@@ -179,6 +193,10 @@ namespace MyShogi.View.Win2D
         /// <param name="sq"></param>
         public void pick_up(SquareHand sq)
         {
+            var gameServer = ViewModel.ViewModel.gameServer;
+            if (!(gameServer.CanUserMove && !gameServer.EngineInitializing) )
+                return;
+
             var pos = ViewModel.ViewModel.Position;
 
             // この駒をユーザーが掴んで動かそうとしていることを示す

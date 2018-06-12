@@ -80,8 +80,15 @@ namespace MyShogi.Model.LocalServer
 
         /// <summary>
         /// ユーザーがUI上で操作できるのか？
+        /// ただし、EngineInitializingなら動かしてはならない。
         /// </summary>
         public bool CanUserMove { get; set; }
+
+        /// <summary>
+        /// 思考エンジンが考え中であるか。
+        /// Engineの手番であればtrue
+        /// </summary>
+        public bool EngineTurn { get; set; }
 
         // 仮想プロパティ。Turnが変化した時に"TurnChanged"ハンドラが呼び出される。
         //public bool TurnChanged { }
@@ -148,7 +155,27 @@ namespace MyShogi.Model.LocalServer
                 stmPlayer.BestMove = m;
             } else
             {
-                // Humanであれば受理しない。
+                // Human以外であれば受理しない。
+            }
+        }
+
+        /// <summary>
+        /// エンジンに対して、いますぐに指させる。
+        /// 受理されるかどうかは別。
+        /// </summary>
+        public void MoveNow()
+        {
+            var stm = Position.sideToMove;
+            var stmPlayer = Player(stm);
+
+            if (stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine)
+            {
+                var enginePlayer = stmPlayer as UsiEnginePlayer;
+                enginePlayer.MoveNow();
+            }
+            else
+            {
+                // エンジン以外であれば受理しない。
             }
         }
 
@@ -253,15 +280,17 @@ namespace MyShogi.Model.LocalServer
             stmPlayer.CanMove = true;
             stmPlayer.Think(usiPosition);
 
-            // 非手番側のCaMoveをfalseに
+            // 非手番側のCanMoveをfalseに
 
             var nextPlayer = Player(stm.Not());
             nextPlayer.CanMove = false;
 
-            // CanUserMoveを更新しておいてやる。
+            // -- 手番が変わった時の各種propertyの更新
+
+            EngineTurn = stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine;
+            CanUserMove = stmPlayer.PlayerType == PlayerTypeEnum.Human;
 
             // 値が変わっていなくとも変更通知を送りたいので自力でハンドラを呼び出す。
-            CanUserMove = stmPlayer.PlayerType == PlayerTypeEnum.Human && stmPlayer.CanMove;
             RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
         }
 

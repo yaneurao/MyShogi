@@ -17,6 +17,31 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public Form AboutDialog;
 
+        // -- WM_PAINTのハンドラ
+
+        /// <summary>
+        /// 対局盤面の描画関係のコード一式
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainDialog_Paint(object sender, PaintEventArgs e)
+        {
+            // メニューが変更された時には、メニューのRegionに対して再描画イベントが来る。
+            // その時は、gameScreen.OnDraw()で処理してはならない。
+            // (更新してしまうと、Dirtyフラグをfalseにするのだが、実際はe.ClipRectangleがメニューの領域に
+            // 設定されているので画面に描画されない。このため、画面に描画していないのにDirtyフラグをfalseにしてしまう。)
+
+            var rect = e.ClipRectangle;
+
+            // メニューより下の領域が更新対象であるかのチェック
+            if (rect.Y >= menu_height)
+            {
+                // 描画は丸ごと、GameScreenに移譲してある。
+                // マルチスクリーン対応にするときは、GameScreenのインスタンスを作成して、それぞれに移譲すれば良い。
+                gameScreen.OnDraw(e.Graphics);
+            }
+        }
+
         // -- 以下、Windows Messageのイベントハンドラ
 
         // 画面のフルスクリーン化/ウィンドゥ化がなされたので、OnPaintが呼び出されるようにする。
@@ -138,7 +163,47 @@ namespace MyShogi.View.Win2D
         // -- 以下、ToolStripのハンドラ
 
         /// <summary>
-        /// 待ったボタンが押されたときのハンドラ
+        /// ボタンの有効/無効を切り替えるためのハンドラ
+        /// ボタンの番号が変わった時に呼び出し側を書き直すのが大変なので、
+        /// 名前で解決するものとする。
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="enable"></param>
+        private void SetButton(MainDialogButtonEnum name , bool enable)
+        {
+            ToolStripButton btn;
+            switch (name)
+            {
+                case MainDialogButtonEnum.RESIGN: btn = this.toolStripButton1; break;
+                case MainDialogButtonEnum.UNDO_MOVE: btn = this.toolStripButton2; break;
+                case MainDialogButtonEnum.MOVE_NOW: btn = this.toolStripButton3; break;
+                case MainDialogButtonEnum.INTERRUPT: btn = this.toolStripButton4; break;
+                default: btn = null; break;
+            }
+
+            // 希望する状態と現在の状態が異なるなら、この時だけ更新する。
+            if (btn.Enabled != enable)
+            {
+                Invoke(new Action(() =>
+                {
+                    btn.Enabled = enable;
+                }));
+            }
+        }
+
+        /// <summary>
+        /// 「急」ボタン。いますぐに指させる。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton3_Click(object sender, System.EventArgs e)
+        {
+            var gameServer = ViewModel.gameServer;
+            gameServer.MoveNow();
+        }
+
+        /// <summary>
+        /// 「待」ボタン。待ったの処理。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

@@ -91,6 +91,15 @@ namespace MyShogi.Model.Shogi.Player
             engine.Think(usiPosition);
         }
 
+        /// <summary>
+        /// いますぐに指させる。
+        /// Think()を呼び出してBestMoveはまだ得ていないものとする。
+        /// </summary>
+        public void MoveNow()
+        {
+            engine.MoveNow();
+        }
+
         // -- private member
 
         /// <summary>

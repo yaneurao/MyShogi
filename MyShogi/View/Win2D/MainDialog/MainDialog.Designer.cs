@@ -97,6 +97,7 @@
             this.toolStripButton3.Size = new System.Drawing.Size(63, 54);
             this.toolStripButton3.Text = "急";
             this.toolStripButton3.ToolTipText = "コンピューターにいますぐ指させます。";
+            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
             // 
             // toolStripButton4
             // 

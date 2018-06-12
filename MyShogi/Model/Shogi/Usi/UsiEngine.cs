@@ -86,7 +86,18 @@ namespace MyShogi.Model.Shogi.Usi
 
             Thinking = true;
             SendCommand($"position {usiPositionString}");
-            SendCommand("go btime 10000 wtime 10000 byoyomi 1000"); // 1手1秒でとりあえず指させる。
+            SendCommand("go btime 10000 wtime 10000 byoyomi 3000"); // 1手1秒でとりあえず指させる。
+        }
+
+        /// <summary>
+        /// いますぐに指させる。
+        /// go ponderに対して bestmoveが欲しいときにもこれを用いる。
+        /// </summary>
+        public void MoveNow()
+        {
+            // 思考中であれば、stopコマンドを送信することで思考を中断できる(はず)
+            if (Thinking)
+                SendCommand("stop");
         }
 
         /// <summary>
