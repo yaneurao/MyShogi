@@ -389,11 +389,46 @@ namespace MyShogi.Model.Test
 #endif
 
         /// <summary>
+        /// 束縛のテスト用
+        /// </summary>
+        public class RefData
+        {
+            public RefData(int x_) { x = x_; }
+            public int x;
+            public void Out() { Console.WriteLine(x); }
+        }
+
+        /// <summary>
+        /// 束縛のテスト用
+        /// </summary>
+        public class RefTest
+        {
+            public RefTest(int x) { data = new RefData(x); }
+            public RefData data;
+        }
+
+        /// <summary>
         /// KifuManager関連のテスト用コード
         /// </summary>
         public static void Test3()
         {
-#if true
+#if false
+            // 参照の束縛のテスト
+            var r1 = new RefTest(1);
+            var d = new Action( () => { r1.data.Out(); });
+            r1.data = new RefData(2);
+            // "2"が出力される。
+            // dはr1(の参照)を束縛しているのであって、r1.dataを束縛しているわけではないからである。
+
+            d();
+
+            r1 = new RefTest(3);
+            d();
+            // "3"が出力される。
+            // dが束縛しているのは、r1(の参照)だからである。
+#endif
+
+#if false
             // KifuManagerのテスト
 
             // sfenの読み込み

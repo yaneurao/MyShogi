@@ -43,11 +43,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             UpdatePosition();
             UpdateKifuList();
 
+            SetPlayer(new NullPlayer(), new NullPlayer());
+
 #if true
             // デバッグ中
 
-            //GameStartCommand(new HumanPlayer(), new HumanPlayer());
-            GameStartCommand(new HumanPlayer(), new UsiEnginePlayer());
+            GameStartCommand(new HumanPlayer(), new HumanPlayer());
+            //GameStartCommand(new HumanPlayer(), new UsiEnginePlayer());
             //GameStartCommand(new UsiEnginePlayer(), new UsiEnginePlayer());
 #endif
 
@@ -123,6 +125,13 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /*
          * UI側からのコマンドは、 delegateで渡され、対局監視スレッド側で実行される。
+         * delegateのなかのkifuManager.PositionやkifuManager.KifuListは、無名関数の束縛の性質から、
+         * 現在のものであって過去のPositionやKifuListのへ参照ではない。
+         * 
+         * また、処理するのは対局監視スレッドであるから(対局監視スレッドはシングルスレッドでかつ、対局監視スレッド側でしか
+         * Position.DoMove()は行わないので)、これが処理されるタイミングでは、kifuManager.Positionは最新のPositionであり、
+         * これを調べているときに他のスレッドが勝手にPosition.DoMove()を行ったり、他のコマンドを受け付けたり、持ち時間切れに
+         * なったりすることはない。
          */
 
         /// <summary>
@@ -229,11 +238,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                             kifuManager.UndoMoveInTheGame();
 
                             // 盤面に反映
-                            Position = kifuManager.Position.Clone();
+                            UpdatePosition();
 
                             // 棋譜ウィンドウに反映。
-                            KifuList = new List<string>(kifuManager.KifuList); // よくわからんから丸ごと反映させておく。
-
+                            // よくわからんから丸ごと反映させておく。
+                            UpdateKifuList();
+                            
                             // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
                             NotifyTurnChanged();
                         }
@@ -284,6 +294,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// Positionプロパティの更新。
         /// immutableにするためにCloneしてセットする。
+        /// 自動的にViewに通知される。
         /// </summary>
         private void UpdatePosition()
         {
@@ -293,6 +304,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// KifuListプロパティの更新。
         /// immutableにするためにCloneしてセットする。
+        /// 全行が丸ごと更新通知が送られるので部分のみの更新通知を送りたいなら自前で更新すべし。
         /// </summary>
         private void UpdateKifuList()
         {
@@ -460,15 +472,12 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // -- このクラスのpropertyのPositionを更新する
 
-                    // immutableにするためにClone()してからセットする。
-                    // これを更新すると自動的にViewに通知される。
-
-                    Position = kifuManager.Position.Clone();
+                    UpdatePosition();
 
                     // -- 棋譜が1行追加になったはずなので、それを反映させる。
 
                     // immutableにするためにClone()してセットしてやり、
-                    // 末尾にのみ更新があったことをViewに通知する。
+                    // 末尾にのみ更新があったことをViewに通知するために手動でupdateする。
 
                     var kifuList = new List<string>(kifuManager.KifuList);
                     SetValue("KifuList", kifuList, kifuList.Count - 1); // 末尾が変更になったことを通知
