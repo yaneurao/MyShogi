@@ -193,9 +193,13 @@ namespace MyShogi.Model.Shogi.Kifu
 
             // 棋譜の更新
             AddKifu(m.nextMove);
-
+            
             position.DoMove(m.nextMove);
             currentNode = m.nextNode;
+
+            // もし次がSpecialMoveの局面に到達したのであれば、棋譜に積む。
+            if (currentNode.moves.Count != 0 && currentNode.moves[0].nextMove.IsSpecial())
+                AddKifuSpecialMove(currentNode.moves[0].nextMove);
         }
 
         /// <summary>
@@ -213,6 +217,10 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public void UndoMove()
         {
+            // 棋譜の末端にspecial moveを積んでいたのであればそれを取り除く。
+            if (currentNode.moves.Count != 0 && currentNode.moves[0].nextMove.IsSpecial())
+                RemoveKifuSpecialMove();
+
             position.UndoMove();
             currentNode = currentNode.prevNode;
 
@@ -243,11 +251,9 @@ namespace MyShogi.Model.Shogi.Kifu
                 currentNode.moves.Add(new KifuMove(move, nextNode, thinkingTime
                     , totalTime ?? TotalConsumptionTime() + RoundTime(thinkingTime)));
 
+                // 特殊な指し手であるなら、この時点で棋譜の終端にその旨を記録しておく。
                 if (move.IsSpecial())
-                {
-                    // 特殊な指し手であるなら、この時点で棋譜の終端にその旨を記録しておく。
-                    AddKifu(move);
-                }
+                    AddKifuSpecialMove(move);
             }
         }
 
@@ -367,7 +373,12 @@ namespace MyShogi.Model.Shogi.Kifu
             }
 
             if (EnableUsiMoveList)
-                UsiMoveList.Add(m.ToUsi());
+            {
+                // special moveは、USIとしては規定されていない指し手になるのでここでは出力しない。
+                // ("position"コマンドで送信してしまいかねないので)
+                if (!m.IsSpecial())
+                    UsiMoveList.Add(m.ToUsi());
+            }
         }
 
         /// <summary>
@@ -382,5 +393,23 @@ namespace MyShogi.Model.Shogi.Kifu
                 UsiMoveList.RemoveAt(UsiMoveList.Count - 1); // RemoveLast()
         }
 
+        /// <summary>
+        /// KifuListの末尾にspecial moveを積む。
+        /// </summary>
+        /// <param name="m"></param>
+        private void AddKifuSpecialMove(Move m)
+        {
+            Debug.Assert(m.IsSpecial());
+            AddKifu(m);
+        }
+
+        /// <summary>
+        /// KifuListの末尾から、special moveを取り除く。
+        /// </summary>
+        private void RemoveKifuSpecialMove()
+        {
+            if (EnableKifuList)
+                KifuList.RemoveAt(KifuList.Count - 1); // RemoveLast()
+        }
     }
 }
