@@ -124,6 +124,11 @@ namespace MyShogi.Model.Shogi.Usi
             }
         }
 
+        public void Dispose()
+        {
+            Disconnect();
+        }
+
         // -- public members
 
         /// <summary>
@@ -395,8 +400,6 @@ namespace MyShogi.Model.Shogi.Usi
                 throw new UsiException(
                     "readyokコマンドが不正なタイミングで送られました。");
             }
-
-      
 
             // 読み込みが終わったタイミングでエンジンの優先度を下げます。
             negotiator.UpdateProcessPriority();

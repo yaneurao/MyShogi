@@ -41,8 +41,9 @@ namespace MyShogi.View.Win2D
             var engineTurn = gameServer.EngineTurn;
             SetButton(MainDialogButtonEnum.MOVE_NOW, engineTurn);
 
-            // この時、人間側の手番であるなら、メインウインドウのメニューの「待」ボタンをenableにしなければならない。
+            // この時、人間側の手番であるなら、メインウインドウのメニューの「投」「待」ボタンをenableにしなければならない。
             var humanTurn = gameServer.CanUserMove && !gameServer.EngineInitializing;
+            SetButton(MainDialogButtonEnum.RESIGN   , humanTurn);
             SetButton(MainDialogButtonEnum.UNDO_MOVE, humanTurn);
         }
 

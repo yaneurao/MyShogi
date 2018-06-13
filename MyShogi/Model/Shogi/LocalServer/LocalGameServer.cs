@@ -31,18 +31,14 @@ namespace MyShogi.Model.LocalServer
 
             KifuList = new List<string>();
 
-            var usiEngine = new UsiEnginePlayer();
-
-            Players = new Player[2];
 
 #if true
-            GameStart(new HumanPlayer(), new HumanPlayer());
+            //GameStart(new HumanPlayer(), new HumanPlayer());
 
             // デバッグ中 後手をUsiEnginePlayerにしてみる。
-            // GameStart(new HumanPlayer(), usiEngine);
+            GameStart(new HumanPlayer(), new UsiEnginePlayer());
 
-            //var usiEngine2 = new UsiEnginePlayer();
-            //GameStart(usiEngine, usiEngine2);
+            //GameStart(new UsiEnginePlayer(), new UsiEnginePlayer());
 #endif
 
             // 対局監視スレッドを起動して回しておく。
@@ -108,7 +104,7 @@ namespace MyShogi.Model.LocalServer
         /// <summary>
         /// 対局しているプレイヤー
         /// </summary>
-        public Player[] Players;
+        public Player[] Players = new Player[2];
 
         /// <summary>
         /// c側のプレイヤー
@@ -129,20 +125,18 @@ namespace MyShogi.Model.LocalServer
         /// <param name="player2">後手プレイヤー(駒落ちのときは上手)</param>
         public void GameStart(Player player1 , Player player2 /* 引数、あとで考える */)
         {
-            EngineInitializing = true;
+            // いったんリセット
+            GameEnd();
+
+            Initializing = true;
+            EngineInitializing = player1.PlayerType == PlayerTypeEnum.UsiEngine || player2.PlayerType == PlayerTypeEnum.UsiEngine;
 
             Players[0] = player1;
             Players[1] = player2;
 
             KifuList = new List<string>(kifuManager.KifuList);
 
-            // いったんリセット
-            GameEnd();
-
             inTheGame = true;
-
-            // エンジンの初期化中だと対局を開始してはならない。
-            //NotifyTurnChanged();
 
             // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出されるはず。
         }
@@ -228,6 +222,11 @@ namespace MyShogi.Model.LocalServer
         /// これがfalseであれば対局中ではないので自由に駒を動かせる。
         /// </summary>
         private bool inTheGame = true;
+
+        /// <summary>
+        /// GameStart()のあと、各プレイヤーの初期化中であるか。
+        /// </summary>
+        private bool Initializing;
 
         /// <summary>
         /// スレッドによって実行されていて、対局を管理している。
@@ -361,7 +360,7 @@ namespace MyShogi.Model.LocalServer
         /// 手番側のプレイヤーに自分の手番であることを通知するためにThink()を呼び出す。また、CanMove = trueにする。
         /// 非手番側のプレイヤーに対してCanMove = falseにする。
         /// </summary>
-        public void NotifyTurnChanged()
+        private void NotifyTurnChanged()
         {
             var stm = Position.sideToMove;
             var stmPlayer = Player(stm);
@@ -421,29 +420,38 @@ namespace MyShogi.Model.LocalServer
         /// <summary>
         /// 時間チェック
         /// </summary>
-        public void CheckTime()
+        private void CheckTime()
         {
             // エンジンの初期化中であるか。この時は、時間消費は行わない。
-            bool isInit = Player(Color.BLACK).IsInit || Player(Color.WHITE).IsInit;
+            bool initializing = Player(Color.BLACK).Initializing || Player(Color.WHITE).Initializing;
 
-            if (EngineInitializing && !isInit && inTheGame)
+            if (Initializing && !initializing && inTheGame)
             {
+                // エンジンの初期化終了したはず
+                EngineInitializing = false;
+
                 // 両方の対局準備ができたので対局スタート
                 NotifyTurnChanged();
             }
 
-            EngineInitializing = isInit;
+            Initializing = initializing;
         }
 
         /// <summary>
         /// ゲームの終了処理
         /// </summary>
-        public void GameEnd()
+        private void GameEnd()
         {
-            for (Color c = Color.ZERO; c < Color.NB; ++c)
+            // Playerの終了処理をしてNullPlayerを突っ込んでおく。
+            for(var c = Color.ZERO; c < Color.NB; ++c)
             {
-                Player(c).CanMove = false;
+                var player = Player(c);
+                if (player != null)
+                    player.Dispose();
+
+                Players[(int)c] = new NullPlayer(); 
             }
+
             EngineTurn = false;
             CanUserMove = false;
             RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
@@ -454,4 +462,5 @@ namespace MyShogi.Model.LocalServer
         /// </summary>
         private Move[] moves = new Move[(int)Move.MAX_MOVES];
     }
+
 }

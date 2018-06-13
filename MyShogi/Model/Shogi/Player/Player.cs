@@ -47,7 +47,7 @@ namespace MyShogi.Model.Shogi.Player
         /// 人間プレイヤーの場合、常にfalse
         /// USIエンジンの場合、"readyok"が返ってくるまでtrue
         /// </summary>
-        bool IsInit { get; }
+        bool Initializing { get; }
 
         /// <summary>
         /// 通信の受信などのためにhost側から定期的に呼び出される。
@@ -64,6 +64,8 @@ namespace MyShogi.Model.Shogi.Player
         /// </summary>
         /// <param name="usiPosition"></param>
         void Think(string usiPosition);
+
+        void Dispose();
     }
 }
 

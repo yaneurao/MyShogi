@@ -92,7 +92,11 @@ namespace MyShogi.Model.Common.Process
                 if (exeProcess != null)
                 {
                     exeProcess.Close();
-                    exeProcess.Kill();
+                    //exeProcess.Kill();
+                    
+                    // Close()してからKill()できない。
+                    // "quit"を送っているし、pipeは切断されているし、無事終了してくれることを祈るばかりだ。
+
                     exeProcess = null;
                 }
                 if (remoteService != null)

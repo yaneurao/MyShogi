@@ -13,7 +13,7 @@ namespace MyShogi.Model.Shogi.Player
     {
         public UsiEnginePlayer()
         {
-            IsInit = true;
+            Initializing = true;
 
             engine = new UsiEngine();
             engine.AddPropertyChangedHandler("State", StateChanged);
@@ -67,7 +67,7 @@ namespace MyShogi.Model.Shogi.Player
         /// <summary>
         /// "readyok"が返ってくるまでtrue
         /// </summary>
-        public bool IsInit { get; set; }
+        public bool Initializing { get; set; }
 
         public UsiEngine engine;
         
@@ -90,6 +90,13 @@ namespace MyShogi.Model.Shogi.Player
         {
             engine.Think(usiPosition);
         }
+
+        public void Dispose()
+        {
+            // エンジンを解体する
+            engine.Dispose();
+        }
+
 
         /// <summary>
         /// いますぐに指させる。
@@ -114,7 +121,7 @@ namespace MyShogi.Model.Shogi.Player
             {
                 case UsiEngineState.ReadyOk:
                 case UsiEngineState.InTheGame:
-                    IsInit = false; // 少なくとも初期化は終わっている。
+                    Initializing = false; // 少なくとも初期化は終わっている。
                     break;
             }
 

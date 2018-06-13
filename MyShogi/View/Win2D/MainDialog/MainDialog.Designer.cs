@@ -75,6 +75,7 @@
             this.toolStripButton1.Size = new System.Drawing.Size(63, 54);
             this.toolStripButton1.Text = "投";
             this.toolStripButton1.ToolTipText = "投了をします。";
+            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
             // toolStripButton2
             // 

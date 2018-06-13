@@ -38,17 +38,13 @@ namespace MyShogi.Model.Shogi.Player
         /// </summary>
         public bool CanMove { get; set; }
 
-        public bool IsInit { get; } = false;
+        public bool Initializing { get; } = false;
 
-        public void OnIdle()
-        {
-        }
+        public void OnIdle(){}
 
-        public void Think(string usiPosition)
-        {
-            // 次の指し手。投了する
-            BestMove = Move.RESIGN;
-        }
+        public void Think(string usiPosition){}
+
+        public void Dispose() { }
 
     }
 }

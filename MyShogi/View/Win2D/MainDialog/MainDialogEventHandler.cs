@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
+using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
 {
@@ -189,6 +190,18 @@ namespace MyShogi.View.Win2D
                     btn.Enabled = enable;
                 }));
             }
+        }
+
+        /// <summary>
+        /// 「投」ボタン。投了の処理。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton1_Click(object sender, System.EventArgs e)
+        {
+            var gameServer = ViewModel.gameServer;
+            // 受理されるかどうかは知らん
+            gameServer.DoMoveFromUI(SCore.Move.RESIGN);
         }
 
         /// <summary>
