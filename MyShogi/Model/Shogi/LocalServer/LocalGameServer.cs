@@ -1,57 +1,69 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Collections.Generic;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Player;
-using MyShogi.Model.Common.ObjectModel;
-using System;
 
-namespace MyShogi.Model.LocalServer
+namespace MyShogi.Model.Shogi.LocalServer
 {
     /// <summary>
     /// 対局を管理するクラス
     /// 
-    /// 内部に局面(Position)を持つ
-    /// 内部に棋譜管理クラス(KifuManager)を持つ
+    /// ・内部に棋譜管理クラス(KifuManager)を持つ
+    /// ・思考エンジンへの参照を持つ
+    /// ・プレイヤーからの入力を受け付けるコマンドインターフェースを持つ
+    /// ・対局時間を管理している。
     /// 
-    /// 思考エンジンへの参照を持つ
-    /// プレイヤー入力へのインターフェースを持つ
-    /// 時間を管理している。
-    /// 
-    /// </summary>ない)
+    /// </summary>
     public class LocalGameServer : NotifyObject
     {
+        #region 設計のガイドライン
+
+        /*
+         * 設計的には、このクラスのpropertyは、immutable objectになるようにClone()されたものをセットする。
+         * このpropertyに対して、NotifyObjectの通知の仕組みを用いて、UI側はイベントを捕捉する。
+         * UI側は、このpropertyを見ながら、画面を描画する。immutable objectなのでスレッド競合の問題は起きない。
+         * 
+         * UIからのコマンドを受け付けるのは、対局を監視するworker threadを一つ回してあり、このスレッドがコマンドを受理する。
+         * このスレッドは1つだけであり、局面をDoMove()で進めるのも、このスレッドのみである。
+         * ゆえに局面を進めている最中に他のスレッドがコマンドを受理してしまう、みたいなことは起こりえないし、
+         * 対局時間が過ぎて、対局が終了しているのに、ユーザーからの指し手コマンドを受理してしまうというようなことも起こりえない。
+         */
+
         public LocalGameServer()
         {
             kifuManager = new KifuManager();
-            Position = kifuManager.Position.Clone(); // immutableでなければならないので、Clone()してセットしておく。
 
             // 起動時に平手の初期局面が表示されるようにしておく。
             kifuManager.Init();
 
-            KifuList = new List<string>();
-
+            // Position,KifuListは、kifuManagerから手動でデータバインドする。(変なタイミングでコピーされても困るため)
+            UpdatePosition();
+            UpdateKifuList();
 
 #if true
-            //GameStart(new HumanPlayer(), new HumanPlayer());
+            // デバッグ中
 
-            // デバッグ中 後手をUsiEnginePlayerにしてみる。
-            GameStart(new HumanPlayer(), new UsiEnginePlayer());
-
-            //GameStart(new UsiEnginePlayer(), new UsiEnginePlayer());
+            //GameStartCommand(new HumanPlayer(), new HumanPlayer());
+            GameStartCommand(new HumanPlayer(), new UsiEnginePlayer());
+            //GameStartCommand(new UsiEnginePlayer(), new UsiEnginePlayer());
 #endif
 
             // 対局監視スレッドを起動して回しておく。
-            var thread = new Thread(thread_worker);
-            thread.Start();
+            new Thread(thread_worker).Start();
         }
 
         public void Dispose()
         {
-            // スレッドを停止させる。
+            // 対局監視用のworker threadを停止させる。
             workerStop = true;
         }
 
+        #endregion
+
+        #region public properties
         // -- public properties
 
         /// <summary>
@@ -73,21 +85,16 @@ namespace MyShogi.Model.LocalServer
         }
 
         /// <summary>
-        /// 対局棋譜管理クラス
-        /// </summary>
-        public KifuManager kifuManager { get; private set; }
-
-        /// <summary>
         /// ユーザーがUI上で操作できるのか？
         /// ただし、EngineInitializingなら動かしてはならない。
         /// </summary>
-        public bool CanUserMove { get; set; }
+        public bool CanUserMove { get; private set; }
 
         /// <summary>
         /// 思考エンジンが考え中であるか。
         /// Engineの手番であればtrue
         /// </summary>
-        public bool EngineTurn { get; set; }
+        public bool EngineTurn { get; private set; }
 
         // 仮想プロパティ。Turnが変化した時に"TurnChanged"ハンドラが呼び出される。
         //public bool TurnChanged { }
@@ -98,47 +105,52 @@ namespace MyShogi.Model.LocalServer
         public bool EngineInitializing
         {
             get { return GetValue<bool>("EngineInitializing"); }
-            set { SetValue<bool>("EngineInitializing", value); }
+            private set { SetValue<bool>("EngineInitializing", value); }
         }
-
-        /// <summary>
-        /// 対局しているプレイヤー
-        /// </summary>
-        public Player[] Players = new Player[2];
 
         /// <summary>
         /// c側のプレイヤー
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public Player Player(Color c)
+        public Player.Player Player(Color c)
         {
             return Players[(int)c];
         }
+        #endregion
 
-        // -- public methods
+        #region UI側からのコマンド
+
+        /*
+         * UI側からのコマンドは、 delegateで渡され、対局監視スレッド側で実行される。
+         */
 
         /// <summary>
         /// 対局スタート
         /// </summary>
         /// <param name="player1">先手プレイヤー(駒落ちのときは下手)</param>
         /// <param name="player2">後手プレイヤー(駒落ちのときは上手)</param>
-        public void GameStart(Player player1 , Player player2 /* 引数、あとで考える */)
+        public void GameStartCommand(Player.Player player1 , Player.Player player2 /* 引数、あとで考える */)
         {
-            // いったんリセット
-            GameEnd();
+            lock (UICommandLock)
+            {
+                UICommands.Add(
+                    () =>
+                    {
+                        // いったんリセット
+                        GameEnd();
 
-            Initializing = true;
-            EngineInitializing = player1.PlayerType == PlayerTypeEnum.UsiEngine || player2.PlayerType == PlayerTypeEnum.UsiEngine;
+                        Initializing = true;
+                        SetPlayer(player1, player2);
 
-            Players[0] = player1;
-            Players[1] = player2;
+                        KifuList = new List<string>(kifuManager.KifuList);
 
-            KifuList = new List<string>(kifuManager.KifuList);
+                        inTheGame = true;
 
-            inTheGame = true;
-
-            // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出されるはず。
+                        // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。
+                    }
+                    );
+            }
         }
 
         /// <summary>
@@ -147,20 +159,27 @@ namespace MyShogi.Model.LocalServer
         /// ユーザーがマウス操作によってmの指し手を入力した。
         /// ユーザーはこれを合法手だと思っているが、これが受理されるかどうかは別の話。
         /// (時間切れなどがあるので)
-        /// 
-        /// 注意 : これを受理するのは、UIスレッドではない。
         /// </summary>
         /// <param name="m"></param>
-        public void DoMoveFromUI(Move m)
+        public void DoMoveCommand(Move m)
         {
-            var stm = Position.sideToMove;
-            var stmPlayer = Player(stm);
-
-            // Human以外であれば受理しない。
-            if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+            lock (UICommandLock)
             {
-                // これを積んでおけばworker_threadのほうでいずれ処理される。
-                stmPlayer.BestMove = m;
+                UICommands.Add(
+                    () =>
+                    {
+                        var stm = kifuManager.Position.sideToMove;
+                        var stmPlayer = Player(stm);
+
+                        // Human以外であれば受理しない。
+                        if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+                        {
+                            // これを積んでおけばworker_threadのほうでいずれ処理される。(かも)
+                            // 仮に、すでに次の局面になっていたとしても、次にこのユーザーの手番になったときに
+                            // BestMove = Move.NONEとされるのでその時に破棄される。
+                            stmPlayer.BestMove = m;
+                        }
+                    });
             }
         }
 
@@ -168,16 +187,23 @@ namespace MyShogi.Model.LocalServer
         /// エンジンに対して、いますぐに指させる。
         /// 受理されるかどうかは別。
         /// </summary>
-        public void MoveNow()
+        public void MoveNowCommand()
         {
-            var stm = Position.sideToMove;
-            var stmPlayer = Player(stm);
-
-            // エンジン以外であれば受理しない。
-            if (stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine)
+            lock (UICommandLock)
             {
-                var enginePlayer = stmPlayer as UsiEnginePlayer;
-                enginePlayer.MoveNow();
+                UICommands.Add(
+                    () =>
+                    {
+                        var stm = kifuManager.Position.sideToMove;
+                        var stmPlayer = Player(stm);
+
+                        // エンジン以外であれば受理しない。
+                        if (stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine)
+                        {
+                            var enginePlayer = stmPlayer as UsiEnginePlayer;
+                            enginePlayer.MoveNow();
+                        }
+                    });
             }
         }
 
@@ -185,31 +211,109 @@ namespace MyShogi.Model.LocalServer
         /// ユーザーによる対局中の2手戻し
         /// 受理できるかどうかは別
         /// </summary>
-        public void UserUndo()
+        public void UndoCommand()
         {
-            var stm = Position.sideToMove;
-            var stmPlayer = Player(stm);
-
-            // 人間の手番でなければ受理しない
-            if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+            lock (UICommandLock)
             {
-                // 棋譜を消すUndo()
-                kifuManager.UndoMoveInTheGame();
-                kifuManager.UndoMoveInTheGame();
+                UICommands.Add(
+                    () =>
+                    {
+                        var stm = kifuManager.Position.sideToMove;
+                        var stmPlayer = Player(stm);
 
-                // 盤面に反映
-                Position = kifuManager.Position.Clone();
+                        // 人間の手番でなければ受理しない
+                        if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+                        {
+                            // 棋譜を消すUndo()
+                            kifuManager.UndoMoveInTheGame();
+                            kifuManager.UndoMoveInTheGame();
 
-                // 棋譜ウィンドウに反映。
-                KifuList = new List<string>(kifuManager.KifuList); // よくわからんから丸ごと反映させておく。
+                            // 盤面に反映
+                            Position = kifuManager.Position.Clone();
 
-                // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
-                NotifyTurnChanged();
+                            // 棋譜ウィンドウに反映。
+                            KifuList = new List<string>(kifuManager.KifuList); // よくわからんから丸ごと反映させておく。
+
+                            // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
+                            NotifyTurnChanged();
+                        }
+                    });
             }
+        }
+        #endregion
 
+        #region 依存性のあるプロパティの処理
+
+        /// <summary>
+        /// EngineInitializingはInitializingとPlayer()に依存するので、
+        /// どちらかに変更があったときにそれらのsetterで、このUpdateEngineInitializing()を呼び出してもらい、
+        /// このなかでEngineInitializingのsetterを呼び出して、その結果、"EngineInitializing"のイベントハンドラが起動する。
+        /// </summary>
+        private void UpdateEngineInitializing()
+        {
+            EngineInitializing = Initializing &&
+            (EngineInitializing = Player(Color.BLACK).PlayerType == PlayerTypeEnum.UsiEngine || Player(Color.WHITE).PlayerType == PlayerTypeEnum.UsiEngine);
         }
 
-        // -- private members
+        private void SetPlayer(Player.Player player1, Player.Player player2)
+        {
+            Players[0] = player1;
+            Players[1] = player2;
+            UpdateEngineInitializing();
+        }
+
+        /// <summary>
+        /// GameStart()のあと、各プレイヤーの初期化中であるか。
+        /// </summary>
+        private bool Initializing
+        {
+            get { return initializing; }
+            set {
+                if (initializing && !value)
+                {
+                    // 状態がtrueからfalseに変わった
+                    // 両方の対局準備ができたということなので対局スタート
+                    NotifyTurnChanged();
+                }
+                initializing = value; UpdateEngineInitializing();
+            }
+        }
+
+        private bool initializing;
+
+        /// <summary>
+        /// Positionプロパティの更新。
+        /// immutableにするためにCloneしてセットする。
+        /// </summary>
+        private void UpdatePosition()
+        {
+            Position = kifuManager.Position.Clone(); // immutableでなければならないので、Clone()してセットしておく。
+        }
+
+        /// <summary>
+        /// KifuListプロパティの更新。
+        /// immutableにするためにCloneしてセットする。
+        /// </summary>
+        private void UpdateKifuList()
+        {
+            KifuList = new List<string>(kifuManager.KifuList);
+        }
+
+        #endregion
+
+        #region private members
+
+        /// <summary>
+        /// 対局棋譜管理クラス
+        /// </summary>
+        private KifuManager kifuManager { get; set; }
+
+        /// <summary>
+        /// 対局しているプレイヤー
+        /// 設定するときはSetPlayer()を用いるべし。
+        /// 取得するときはPlayer()のほうを用いるべし。
+        /// </summary>
+        private Player.Player[] Players = new Player.Player[2];
 
         /// <summary>
         /// スレッドの終了フラグ。
@@ -219,14 +323,26 @@ namespace MyShogi.Model.LocalServer
 
         /// <summary>
         /// 対局中であるかを示すフラグ。
-        /// これがfalseであれば対局中ではないので自由に駒を動かせる。
+        /// これがfalseであれば対局中ではないので自由に駒を動かせる。(ようにするかも)
         /// </summary>
         private bool inTheGame = true;
 
         /// <summary>
-        /// GameStart()のあと、各プレイヤーの初期化中であるか。
+        /// UIから渡されるコマンド
         /// </summary>
-        private bool Initializing;
+        private delegate void UICommand();
+        private List<UICommand> UICommands = new List<UICommand>();
+        // commandsのlock用
+        private object UICommandLock = new object();
+
+        /// <summary>
+        /// 詰みの判定のために用いる指し手生成バッファ
+        /// </summary>
+        private Move[] moves = new Move[(int)Move.MAX_MOVES];
+
+        #endregion
+
+        #region 対局監視スレッド
 
         /// <summary>
         /// スレッドによって実行されていて、対局を管理している。
@@ -242,6 +358,9 @@ namespace MyShogi.Model.LocalServer
                     player.OnIdle();
                 }
 
+                // UI側からのコマンドがあるかどうか
+                CheckUICommand();
+
                 // 指し手が指されたかのチェック
                 CheckMove();
 
@@ -251,6 +370,27 @@ namespace MyShogi.Model.LocalServer
                 // 10msごとに各種処理を行う。
                 Thread.Sleep(10);
             }
+        }
+
+        /// <summary>
+        /// UI側からのコマンドがあるかどうかを調べて、あれば実行する。
+        /// </summary>
+        private void CheckUICommand()
+        {
+            List<UICommand> commands = null;
+            lock (UICommandLock)
+            {
+                if (UICommands.Count != 0)
+                {
+                    // コピーしてからList.Clear()を呼ぶぐらいなら参照をすげ替えて、newしたほうが速い。
+                    commands = UICommands;
+                    UICommands = new List<UICommand>();
+                }
+            }
+            // lockの外側で呼び出さないとdead lockになる。
+            if (commands != null)
+                foreach (var command in commands)
+                    command();
         }
 
         /// <summary>
@@ -423,18 +563,7 @@ namespace MyShogi.Model.LocalServer
         private void CheckTime()
         {
             // エンジンの初期化中であるか。この時は、時間消費は行わない。
-            bool initializing = Player(Color.BLACK).Initializing || Player(Color.WHITE).Initializing;
-
-            if (Initializing && !initializing && inTheGame)
-            {
-                // エンジンの初期化終了したはず
-                EngineInitializing = false;
-
-                // 両方の対局準備ができたので対局スタート
-                NotifyTurnChanged();
-            }
-
-            Initializing = initializing;
+            Initializing = Player(Color.BLACK).Initializing || Player(Color.WHITE).Initializing;
         }
 
         /// <summary>
@@ -457,10 +586,7 @@ namespace MyShogi.Model.LocalServer
             RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
         }
 
-        /// <summary>
-        /// 詰みの判定のために用いる指し手生成バッファ
-        /// </summary>
-        private Move[] moves = new Move[(int)Move.MAX_MOVES];
+        #endregion
     }
 
 }

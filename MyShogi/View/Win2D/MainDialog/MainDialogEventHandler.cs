@@ -201,7 +201,7 @@ namespace MyShogi.View.Win2D
         {
             var gameServer = ViewModel.gameServer;
             // 受理されるかどうかは知らん
-            gameServer.DoMoveFromUI(SCore.Move.RESIGN);
+            gameServer.DoMoveCommand(SCore.Move.RESIGN);
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ namespace MyShogi.View.Win2D
         private void toolStripButton2_Click(object sender, System.EventArgs e)
         {
             var gameServer = ViewModel.gameServer;
-            gameServer.UserUndo();
+            gameServer.UndoCommand();
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ namespace MyShogi.View.Win2D
         private void toolStripButton3_Click(object sender, System.EventArgs e)
         {
             var gameServer = ViewModel.gameServer;
-            gameServer.MoveNow();
+            gameServer.MoveNowCommand();
         }
 
         /// <summary>

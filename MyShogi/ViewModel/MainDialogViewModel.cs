@@ -1,6 +1,6 @@
 ﻿using MyShogi.Model.Common.ObjectModel;
-using MyShogi.Model.LocalServer;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.ViewModel
 {

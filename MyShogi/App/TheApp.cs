@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using MyShogi.Model.LocalServer;
 using MyShogi.Model.Resource;
+using MyShogi.Model.Shogi.LocalServer;
 
 // とりま、Windows用
 // あとで他環境用を用意する

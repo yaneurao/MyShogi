@@ -318,7 +318,7 @@ namespace MyShogi.View.Win2D
             {
                 // 成れないので成る選択肢は消して良い。
                 m = Util.MakeMove(from, to ,false);
-                ViewModel.ViewModel.gameServer.DoMoveFromUI(m);
+                ViewModel.ViewModel.gameServer.DoMoveCommand(m);
                 StateReset();
             }
         }
@@ -405,7 +405,7 @@ namespace MyShogi.View.Win2D
                             case Model.Resource.PromoteDialogSelectionEnum.PROMOTE:
                                 var m = Util.MakeMove(state.picked_from, state.picked_to,
                                     state.promote_dialog_selection == Model.Resource.PromoteDialogSelectionEnum.PROMOTE);
-                                ViewModel.ViewModel.gameServer.DoMoveFromUI(m);
+                                ViewModel.ViewModel.gameServer.DoMoveCommand(m);
                                 StateReset();
                                 break;
                         }
