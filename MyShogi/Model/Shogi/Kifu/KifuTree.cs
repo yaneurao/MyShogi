@@ -242,7 +242,24 @@ namespace MyShogi.Model.Shogi.Kifu
                 KifuNode nextNode = new KifuNode(currentNode);
                 currentNode.moves.Add(new KifuMove(move, nextNode, thinkingTime
                     , totalTime ?? TotalConsumptionTime() + RoundTime(thinkingTime)));
+
+                if (move.IsSpecial())
+                {
+                    // 特殊な指し手であるなら、この時点で棋譜の終端にその旨を記録しておく。
+                    AddKifu(move);
+                }
             }
+        }
+
+        /// <summary>
+        /// ある指し手に対するノードコメントを追加する。
+        /// </summary>
+        /// <param name="move"></param>
+        /// <param name="comment"></param>
+        public void AddNodeComment(Move move,string comment)
+        {
+            var m = currentNode.moves.FirstOrDefault((x) => x.nextMove == move);
+            m.nextNode.comment = comment;
         }
 
         /// <summary>

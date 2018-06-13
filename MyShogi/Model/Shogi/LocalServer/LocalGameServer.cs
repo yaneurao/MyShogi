@@ -39,7 +39,10 @@ namespace MyShogi.Model.LocalServer
             //GameStart(new HumanPlayer(), new HumanPlayer());
 
             // デバッグ中 後手をUsiEnginePlayerにしてみる。
-            GameStart(new HumanPlayer(), usiEngine);
+            //            GameStart(new HumanPlayer(), usiEngine);
+
+            var usiEngine2 = new UsiEnginePlayer();
+            GameStart(usiEngine, usiEngine2);
 #endif
 
             // 対局監視スレッドを起動して回しておく。
@@ -126,12 +129,22 @@ namespace MyShogi.Model.LocalServer
         /// <param name="player2">後手プレイヤー(駒落ちのときは上手)</param>
         public void GameStart(Player player1 , Player player2 /* 引数、あとで考える */)
         {
+            EngineInitializing = true;
+
             Players[0] = player1;
             Players[1] = player2;
 
             KifuList = new List<string>(kifuManager.KifuList);
-            
-            NotifyTurnChanged();
+
+            // いったんリセット
+            GameEnd();
+
+            inTheGame = true;
+
+            // エンジンの初期化中だと対局を開始してはならない。
+            //NotifyTurnChanged();
+
+            // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出されるはず。
         }
 
         /// <summary>
@@ -249,19 +262,62 @@ namespace MyShogi.Model.LocalServer
             // 現状の局面の手番側
             var stm = Position.sideToMove;
             var stmPlayer = Player(stm);
-            var bestMove = stmPlayer.BestMove; // 指し手
+            
+            // 指し手
+            var bestMove = stmPlayer.BestMove;
+
+            // 今回の思考時間
+            var thinkingTime = new TimeSpan(0, 0, 1);
+
             if (bestMove != Move.NONE)
             {
                 stmPlayer.BestMove = Move.NONE; // クリア
 
                 // 駒が動かせる状況でかつ合法手であるなら、受理する。
-                if (inTheGame && Position.IsLegal(bestMove))
+                if (inTheGame)
                 {
+                    // 送信されうる特別な指し手であるか？
+                    bool specialMove = bestMove.IsSpecial();
+
+                    // エンジンから送られてきた文字列が、illigal moveであるならエラーとして表示する必要がある。
+
+                    if (specialMove)
+                    {
+                        switch (bestMove)
+                        {
+                            case Move.WIN:
+                                if (Position.DeclarationWin(EnteringKingRule.POINT27) != Move.WIN)
+                                    // 入玉宣言条件を満たしていない入玉宣言
+                                    goto ILLEGAL_MOVE;
+                                break;
+                            case Move.RESIGN:
+                                break; // 手番側の投了は無条件で受理
+
+                            default:
+                                // それ以外は受理しない
+                                goto ILLEGAL_MOVE;
+                        }
+                    }
+                    else if (!Position.IsLegal(bestMove))
+                        // 合法手ではない
+                        goto ILLEGAL_MOVE;
+
+
                     // -- bestMoveを受理して、局面を更新する。
 
-                    var thinkingTime = new TimeSpan(0, 0, 1);
                     kifuManager.Tree.AddNode(bestMove, thinkingTime);
-                    kifuManager.Tree.DoMove(bestMove);
+
+                    if (specialMove)
+                    {
+                        // 受理できる性質の指し手であることは検証済み
+                        // ゲーム終了
+                        inTheGame = false;
+                    }
+                    else
+                    {
+                        kifuManager.Tree.DoMove(bestMove);
+                        // このDoMoveの結果、特殊な局面に至ることはあるが…
+                    }
 
                     // -- このクラスのpropertyのPositionを更新する
 
@@ -277,12 +333,28 @@ namespace MyShogi.Model.LocalServer
 
                     var kifuList = new List<string>(kifuManager.KifuList);
                     SetValue("KifuList", kifuList, kifuList.Count - 1); // 末尾が変更になったことを通知
+
                 }
 
                 // -- 次のPlayerに、自分のturnであることを通知してやる。
 
-                NotifyTurnChanged();
+                if (inTheGame)
+                    NotifyTurnChanged();
+                else
+                    GameEnd();
             }
+
+            return;
+
+        ILLEGAL_MOVE:
+            // これ、棋譜に記録すべき
+            Move m = Move.ILLIGAL;
+            kifuManager.Tree.AddNode(m, thinkingTime);
+            kifuManager.Tree.AddNodeComment(m , stmPlayer.BestMove.ToUsi() /* String あとでなおす*/ /* 元のテキスト */);
+
+            var kifuList2 = new List<string>(kifuManager.KifuList);
+            SetValue("KifuList", kifuList2, kifuList2.Count - 1); // 末尾が変更になったことを通知
+
         }
 
         /// <summary>
@@ -293,6 +365,35 @@ namespace MyShogi.Model.LocalServer
         {
             var stm = Position.sideToMove;
             var stmPlayer = Player(stm);
+
+            // 手番が変わった時に特殊な局面に至っていないかのチェック
+
+            // -- このDoMoveの結果、千日手や詰み、持将棋など特殊な局面に至ったか？
+            Move m = Move.NONE;
+            var rep = Position.IsRepetition();
+
+            // この指し手の結果、詰みの局面に至ったか
+            if (Position.IsMated(moves))
+                m = Move.MATED;
+            else if (rep != RepetitionState.NONE)
+            {
+                // 千日手関係の局面に至ったか
+                switch (rep)
+                {
+                    case RepetitionState.DRAW: m = Move.REPETITION_DRAW; break;
+                    case RepetitionState.LOSE: m = Move.REPETITION_LOSE; break;
+                    case RepetitionState.WIN : m = Move.REPETITION_WIN; break;
+                    default: break;
+                }
+            }
+            if (m != Move.NONE)
+            {
+                // この特殊な状況を棋譜に書き出して終了。
+                kifuManager.Tree.AddNode(m, TimeSpan.Zero);
+                inTheGame = false;
+                GameEnd();
+                return;
+            }
 
             // USIエンジンのときだけ、"position"コマンドに渡す形で局面図が必要であるから、
             // 生成して、それをPlayer.Think()の引数として渡してやる。
@@ -325,7 +426,32 @@ namespace MyShogi.Model.LocalServer
             // エンジンの初期化中であるか。この時は、時間消費は行わない。
             bool isInit = Player(Color.BLACK).IsInit || Player(Color.WHITE).IsInit;
 
+            if (EngineInitializing && !isInit && inTheGame)
+            {
+                // 両方の対局準備ができたので対局スタート
+                NotifyTurnChanged();
+            }
+
             EngineInitializing = isInit;
         }
+
+        /// <summary>
+        /// ゲームの終了処理
+        /// </summary>
+        public void GameEnd()
+        {
+            for (Color c = Color.ZERO; c < Color.NB; ++c)
+            {
+                Player(c).CanMove = false;
+            }
+            EngineTurn = false;
+            CanUserMove = false;
+            RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
+        }
+
+        /// <summary>
+        /// 詰みの判定のために用いる指し手生成バッファ
+        /// </summary>
+        private Move[] moves = new Move[(int)Move.MAX_MOVES];
     }
 }

@@ -154,16 +154,30 @@ namespace MyShogi.Model.Shogi.Converter
         {
             StringBuilder kif = new StringBuilder();
             kif.Append(format(pos.sideToMove));
-            switch (move)
+            if (move == Move.NONE)
+                return kif.Append("NONE").ToString();
+
+            if (move.IsSpecial())
             {
-                case Move.NONE:
-                    return kif.Append("エラー").ToString();
-                case Move.NULL:
-                    return kif.Append("パス").ToString();
-                case Move.RESIGN:
-                    return kif.Append("投了").ToString();
-                case Move.WIN:
-                    return kif.Append("勝ち宣言").ToString();
+                switch (move)
+                {
+                    case Move.NULL:
+                        return kif.Append("パス").ToString();
+                    case Move.RESIGN:
+                        return kif.Append("投了").ToString();
+                    case Move.WIN:
+                        return kif.Append("勝ち宣言").ToString();
+
+                        // 以下、棋譜ウィンドウへの出力で必要なので追加
+                    case Move.MATED:
+                        return kif.Append("詰み").ToString();
+                    case Move.REPETITION_DRAW:
+                        return kif.Append("千日手").ToString();
+                    case Move.REPETITION_WIN:
+                        return kif.Append("連続王手千日手反則勝ち").ToString();
+                    case Move.REPETITION_LOSE:
+                        return kif.Append("連続王手千日手反則負け").ToString();
+                }
             }
             Piece fromPieceType = move.IsDrop() ? move.DroppedPiece() : pos.PieceOn(move.From()).PieceType();
             // 普通の指し手

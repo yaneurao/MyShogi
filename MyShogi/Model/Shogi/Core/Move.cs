@@ -32,6 +32,7 @@ namespace MyShogi.Model.Shogi.Core
         TIME_UP        , // 時間切れによる負け
         INTERRUPT      , // ゲーム中断
         MAX_MOVES_DRAW , // 最大手数に達したために引き分け
+        ILLIGAL        , // 不正な指し手(コメントでその指し手を記録)
     }
 
     /// <summary>
