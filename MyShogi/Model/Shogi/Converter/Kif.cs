@@ -333,7 +333,7 @@ namespace MyShogi.Model.Shogi.Converter
         public static string format(this IKifFormatterOptions opt, Position pos, Move move, Move lastMove)
         {
             StringBuilder kif = new StringBuilder();
-            kif.Append(format(pos.sideToMove));
+            kif.Append(opt.format(pos.sideToMove));
 
             if (!move.IsOk())
             {
