@@ -154,13 +154,13 @@ namespace MyShogi.Model.Shogi.Converter
         {
             StringBuilder kif = new StringBuilder();
             kif.Append(format(pos.sideToMove));
-            if (move == Move.NONE)
-                return kif.Append("NONE").ToString();
 
-            if (move.IsSpecial())
+            if (!move.IsOk())
             {
                 switch (move)
                 {
+                    case Move.NONE:
+                        return kif.Append("NONE").ToString();
                     case Move.NULL:
                         return kif.Append("パス").ToString();
                     case Move.RESIGN:

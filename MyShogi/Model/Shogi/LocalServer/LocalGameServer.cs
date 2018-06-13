@@ -36,13 +36,13 @@ namespace MyShogi.Model.LocalServer
             Players = new Player[2];
 
 #if true
-            //GameStart(new HumanPlayer(), new HumanPlayer());
+            GameStart(new HumanPlayer(), new HumanPlayer());
 
             // デバッグ中 後手をUsiEnginePlayerにしてみる。
-            //            GameStart(new HumanPlayer(), usiEngine);
+            // GameStart(new HumanPlayer(), usiEngine);
 
-            var usiEngine2 = new UsiEnginePlayer();
-            GameStart(usiEngine, usiEngine2);
+            //var usiEngine2 = new UsiEnginePlayer();
+            //GameStart(usiEngine, usiEngine2);
 #endif
 
             // 対局監視スレッドを起動して回しておく。
@@ -348,7 +348,7 @@ namespace MyShogi.Model.LocalServer
 
         ILLEGAL_MOVE:
             // これ、棋譜に記録すべき
-            Move m = Move.ILLIGAL;
+            Move m = Move.ILLEGAL;
             kifuManager.Tree.AddNode(m, thinkingTime);
             kifuManager.Tree.AddNodeComment(m , stmPlayer.BestMove.ToUsi() /* String あとでなおす*/ /* 元のテキスト */);
 

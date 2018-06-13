@@ -18,6 +18,7 @@ namespace MyShogi.Model.Shogi.Core
         MAX_MOVES = 600,
 
         // 以下は、やねうら王から変更して、USIの通常の指し手文字列から変換したときに取りえない特殊な値にしておく。
+        // 以下のことをspecial moveと呼び、Move.IsSpecial()でtrueが返る。
 
         SPECIAL = DROP + PROMOTE,
 
@@ -32,7 +33,7 @@ namespace MyShogi.Model.Shogi.Core
         TIME_UP        , // 時間切れによる負け
         INTERRUPT      , // ゲーム中断
         MAX_MOVES_DRAW , // 最大手数に達したために引き分け
-        ILLIGAL        , // 不正な指し手(コメントでその指し手を記録)
+        ILLEGAL        , // 不正な指し手(コメントでその指し手を記録)
     }
 
     /// <summary>
@@ -43,18 +44,14 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// 指し手がおかしくないかをテストする
-        /// ただし、盤面のことは考慮していない。MOVE_NULLとMOVE_NONEであるとfalseが返る。
-        /// これら２つの定数は、移動元と移動先が等しい値になっている。このテストだけをする。
-        /// MOVE_WIN(宣言勝ちの指し手は)は、falseが返る。
+        /// ただし、盤面のことは考慮していない。
+        /// Move.NONEとspecial moveのみがfalse。その他はtrue。
         /// </summary>
         /// <param name="m"></param>
         /// <returns></returns>
         public static bool IsOk(this Move m)
         {
-            // return move_from(m)!=move_to(m);
-            // とやりたいところだが、駒打ちでfromのbitを使ってしまっているのでそれだとまずい。
-            // 駒打ちのbitも考慮に入れるために次のように書く。
-            return (m.ToInt() >> 7) != (m.ToInt() & 0x7f);
+            return !(m == Move.NONE || m.IsSpecial());
         }
 
         /// <summary>
@@ -107,11 +104,13 @@ namespace MyShogi.Model.Shogi.Core
         /// </summary>
         public static string ToUsi(this Move m)
         {
-            if (!m.IsOk())
+            if (m == Move.NONE)
+                return "none";
+
+            if (m.IsSpecial())
                 return ((m == Move.RESIGN) ? "resign" :
-                        (m == Move.WIN) ? "win" :
-                        (m == Move.NULL) ? "null" :
-                        (m == Move.NONE) ? "none" :
+                        (m == Move.WIN)    ? "win" :
+                        (m == Move.NULL)   ? "null" :
                     "");
 
             else if (m.IsDrop())

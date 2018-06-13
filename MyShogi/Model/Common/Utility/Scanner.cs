@@ -99,7 +99,7 @@ namespace MyShogi.Model.Common.Utility
         {
             if (peek != null)
                 throw new ScannerException(
-                    "PeekText()したあと、ParseText()を呼び出していない。");
+                    "PeekText()したあと、ParseText()を呼び出さずにParseInt()が呼び出されました。");
 
             SkipSpace();
             CheckEof();
@@ -139,7 +139,7 @@ namespace MyShogi.Model.Common.Utility
         {
             if (peek != null)
                 throw new ScannerException(
-                    "PeekText()したあと、ParseText()を呼び出していない。");
+                    "PeekText()したあと、ParseText()を呼び出していないのにParseWord()が呼び出されました。");
 
             SkipSpace();
             CheckEof();

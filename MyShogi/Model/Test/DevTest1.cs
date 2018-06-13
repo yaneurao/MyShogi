@@ -393,7 +393,7 @@ namespace MyShogi.Model.Test
         /// </summary>
         public static void Test3()
         {
-#if false
+#if true
             // KifuManagerのテスト
 
             // sfenの読み込み
@@ -404,12 +404,23 @@ namespace MyShogi.Model.Test
             Console.WriteLine(manager.Tree.position.Pretty());
             Console.WriteLine("Error = " + error);
 
+            Move m = Move.RESIGN;
+            manager.Tree.AddNode(m,TimeSpan.Zero);
+            manager.Tree.AddNodeComment(m,"投了やで");
+
             // sfenの書き出し
             var sfen2 = manager.ToString(KifuFileType.SFEN);
             Console.WriteLine(sfen2);
+
+            var sfen3 = manager.UsiPositionString;
+            Console.WriteLine(sfen3);
+
+            var kifuList = manager.KifuList;
+            Console.WriteLine(string.Join(" ", kifuList));
+
 #endif
 
-#if true
+#if false
             // KifuManagerのテスト
 
             // psnの読み込み

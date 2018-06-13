@@ -307,7 +307,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 // "moves"以降の文字列をUSIの指し手と解釈しながら、局面を進める。
                 if (scanner.PeekText() == "moves")
                 {
-                    scanner.ParseWord();
+                    scanner.ParseText();
                     int ply = 1;
                     while (scanner.PeekText() != null)
                     {
