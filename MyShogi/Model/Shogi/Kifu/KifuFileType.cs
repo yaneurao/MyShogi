@@ -11,6 +11,7 @@
         PSN  , // PSN形式
         PSN2 , // PSN2形式
         SFEN , // SFEN形式
+        JKF, // JKF形式
         JSON , // JSON形式
     }
 }

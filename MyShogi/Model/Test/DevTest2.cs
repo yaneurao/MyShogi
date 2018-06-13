@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Net;
+using System.Text;
 using System.Drawing;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
@@ -13,6 +16,57 @@ namespace MyShogi.Model.Test
     {
         public static void Test1()
         {
+#if true
+            try
+            {
+                var epoch = new DateTimeOffset(1970, 1, 1, 9, 0, 0, new TimeSpan(9, 0, 0));
+                foreach (var uri in new string[] {
+                    // 2016-04-09第1期電王戦第１局山崎隆之叡王Ponanza
+                    "https://s3-ap-northeast-1.amazonaws.com/prod-kifu-cache-strage-tokyo/caches/56f9e9f6813cd7030042378d.json",
+                    // 2018-05-26第3期叡王戦決勝七番勝負第4局金井恒太六段高見泰地六段
+                    "https://s3-ap-northeast-1.amazonaws.com/prod-kifu-cache-strage-tokyo/caches/5acf14350468f80004b24166.json",
+                })
+                {
+                    WebRequest req = WebRequest.Create(uri);
+                    WebResponse res = req.GetResponse();
+                    MemoryStream ms = new MemoryStream();
+                    Stream st = res.GetResponseStream();
+                    st.CopyTo(ms);
+                    string str = Encoding.UTF8.GetString(ms.ToArray());
+                    Console.WriteLine(str);
+                    Position pos = new Position();
+                    KifuManager man = new KifuManager();
+                    man.FromString(str);
+                    Console.WriteLine(man.ToString(KifuFileType.JSON));
+                    /*
+                    var jsonObj = LiveJsonUtil.FromString(str);
+                    foreach (var data in jsonObj.data)
+                    {
+                        Console.WriteLine(String.Format("fname:\"{0}\" event:\"{1}\"", data.fname, data.eventName));
+                        Console.WriteLine(String.Format("side:\"{0}\" player1:\"{1}\" player2:\"{2}\"", data.side, data.player1, data.player2));
+                        Console.WriteLine(String.Format("recordman:\"{0}\" handicap:\"{1}\"", data.recordman, data.handicap));
+                        foreach (var breaktime in data.breaktime)
+                        {
+                            var start = breaktime.start != null ? epoch.AddMilliseconds((double)breaktime.start).ToString("o") : null;
+                            var end = breaktime.end != null ? epoch.AddMilliseconds((double)breaktime.end).ToString("o") : null;
+                            Console.WriteLine(String.Format("reason:\"{0}\" start:{1} end:{2}", breaktime.reason, start, end));
+                        }
+                        foreach (var kif in data.kif)
+                        {
+                            var time = kif.time != null ? epoch.AddMilliseconds((double)kif.time).ToString("o") : null;
+                            Console.WriteLine(String.Format("num:{0}, move:{1}, frX:{2}, frY:{3}, toX:{4}, toY:{5}, type:{6}, prmt:{7}, spend:{8}, time:{9}", kif.num, kif.move, kif.frX, kif.frY, kif.toX, kif.toY, kif.type, kif.prmt, kif.spend, time));
+                        }
+                    }
+                    Console.WriteLine(jsonObj.ToJson());
+                    Console.WriteLine(jsonObj.ToXml());
+                    */
+                }
+            }
+            catch(Exception e)
+            {
+                Console.Error.WriteLine(e);
+            }
+#endif
 #if true
             {
                 FontFamily[] ffs = FontFamily.Families;
@@ -192,48 +246,52 @@ namespace MyShogi.Model.Test
                 // ～寄のテスト
                 pos.UsiPositionCmd("startpos moves 7g7f 8c8d 2g2f 8d8e 2f2e 4a3b 8h7g 3c3d 7i6h 2b7g+ 6h7g 3a2b 3i3h 2b3c 3h2g 7c7d 2g2f 7a7b 2f1e B*4e 6i7h 1c1d 2e2d 2c2d 1e2d P*2g 2h4h 3c2d B*5e 6c6d 5e1a+ 2a3c 1a2a 3b4b P*2c S*2h 4g4f 4e6c 2c2b+ 3c2e 4f4e 2d3e 3g3f 2e3g+ 2i3g 2h3g+ 4h6h 3e4f 2b3b");
                 Console.WriteLine(pos.Pretty());
-                Console.WriteLine(Shogi.Converter.CsaExtensions.ToCsa(pos));
-                Console.WriteLine(Shogi.Converter.KifExtensions.ToBod(pos));
+                Console.WriteLine(pos.ToCsa());
+                Console.WriteLine(pos.ToBod());
                 Move m7 = Shogi.Core.Util.FromUsiMove("4b5b");
-                Console.WriteLine(Shogi.Converter.CsaExtensions.ToCSA(pos, m7));
-                Console.WriteLine(Shogi.Converter.KifExtensions.ToKif(pos, m7, pos.State().lastMove));
-                Console.WriteLine(Shogi.Converter.KifExtensions.ToKi2(pos, m7, pos.State().lastMove));
-                Console.WriteLine(new Shogi.Converter.KifFormatter(
-                    Shogi.Converter.ColorFormat.KIF,
-                    Shogi.Converter.SquareFormat.FullWidthArabic,
-                    Shogi.Converter.SamePosFormat.KI2sp,
-                    Shogi.Converter.FromSqFormat.KI2
-                    ).format(pos, m7, pos.State().lastMove));
+                Console.WriteLine(pos.ToCSA(m7));
+                Console.WriteLine(pos.ToKif(m7));
+                Console.WriteLine(pos.ToKi2(m7));
+                Console.WriteLine(new KifFormatterOptions()
+                {
+                    color = ColorFormat.KIF,
+                    square = SquareFormat.FullWidthArabic,
+                    samepos = SamePosFormat.KI2sp,
+                    fromsq = FromSqFormat.KI2
+                }.format(pos, m7));
                 // ☗☖⛊⛉はShift_JISでは表現できないのでコンソールでは化ける
-                Console.WriteLine(new Shogi.Converter.KifFormatter(
-                    Shogi.Converter.ColorFormat.Piece,
-                    Shogi.Converter.SquareFormat.ASCII,
-                    Shogi.Converter.SamePosFormat.KI2sp,
-                    Shogi.Converter.FromSqFormat.KI2
-                    ).format(pos, m7, pos.State().lastMove));
+                Console.WriteLine(new KifFormatterOptions()
+                {
+                    color = ColorFormat.Piece,
+                    square = SquareFormat.ASCII,
+                    samepos = SamePosFormat.KI2sp,
+                    fromsq = FromSqFormat.KI2
+                }.format(pos, m7));
 
                 // 同～成のテスト
                 pos.UsiPositionCmd("startpos moves 7g7f 8c8d 2g2f 8d8e 2f2e 4a3b 8h7g 3c3d 7i6h 2b7g+ 6h7g 3a2b 3i3h 2b3c 3h2g 7c7d 2g2f 7a7b 2f1e B*4e 6i7h 1c1d 2e2d 2c2d 1e2d P*2g 2h4h 3c2d B*5e 6c6d 5e1a+ 2a3c 1a2a 3b4b P*2c S*2h 4g4f 4e6c 2c2b+ 3c2e 4f4e 2d3e 3g3f 2e3g+ 2i3g");
                 Console.WriteLine(pos.Pretty());
-                Console.WriteLine(Shogi.Converter.CsaExtensions.ToCsa(pos));
-                Console.WriteLine(Shogi.Converter.KifExtensions.ToBod(pos));
+                Console.WriteLine(pos.ToCsa());
+                Console.WriteLine(pos.ToBod());
                 Move m8 = Shogi.Core.Util.FromUsiMove("2h3g+");
-                Console.WriteLine(Shogi.Converter.CsaExtensions.ToCSA(pos, m8));
-                Console.WriteLine(Shogi.Converter.KifExtensions.ToKif(pos, m8, pos.State().lastMove));
-                Console.WriteLine(Shogi.Converter.KifExtensions.ToKi2(pos, m8, pos.State().lastMove));
-                Console.WriteLine(new Shogi.Converter.KifFormatter(
-                    Shogi.Converter.ColorFormat.KIF,
-                    Shogi.Converter.SquareFormat.FullWidthArabic,
-                    Shogi.Converter.SamePosFormat.Verbose,
-                    Shogi.Converter.FromSqFormat.KIF
-                    ).format(pos, m8, pos.State().lastMove));
+                Console.WriteLine(pos.ToCSA(m8));
+                Console.WriteLine(pos.ToKif(m8));
+                Console.WriteLine(pos.ToKi2(m8));
+                Console.WriteLine(new KifFormatterOptions()
+                {
+                    color = ColorFormat.KIF,
+                    square = SquareFormat.FullWidthArabic,
+                    samepos = SamePosFormat.Verbose,
+                    fromsq = FromSqFormat.KIF
+                }.format(pos, m8));
                 // ☗☖⛊⛉はShift_JISでは表現できないのでコンソールでは化ける
-                Console.WriteLine(new Shogi.Converter.KifFormatter(
-                    Shogi.Converter.ColorFormat.Piece,
-                    Shogi.Converter.SquareFormat.ASCII,
-                    Shogi.Converter.SamePosFormat.Verbose,
-                    Shogi.Converter.FromSqFormat.KI2
-                    ).format(pos, m8, pos.State().lastMove));
+                Console.WriteLine(new KifFormatterOptions()
+                {
+                    color = ColorFormat.Piece,
+                    square = SquareFormat.ASCII,
+                    samepos = SamePosFormat.Verbose,
+                    fromsq = FromSqFormat.KI2
+                }.format(pos, m8));
             }
 #endif
         }

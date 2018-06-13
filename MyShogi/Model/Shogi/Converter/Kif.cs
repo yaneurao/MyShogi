@@ -9,73 +9,248 @@ namespace MyShogi.Model.Shogi.Converter
 
     // KIF/KI2形式の文字列を取り扱うクラス群
 
+    /// <summary>
+    /// 手番を示す符号
+    /// </summary>
     public enum ColorFormat
     {
+        /// <summary>
+        /// 手番符号なし
+        /// </summary>
         NONE,
+        /// <summary>
+        /// +, -
+        /// </summary>
         CSA,
+        /// <summary>
+        /// ▲, △
+        /// </summary>
         KIF,
+        /// <summary>
+        /// ▲, ▽
+        /// </summary>
         KIFTurn,
+        /// <summary>
+        /// ☗, ☖
+        /// </summary>
         Piece,
+        /// <summary>
+        /// ☗, ⛉
+        /// </summary>
         PieceTurn,
         NB
     }
+
+    /// <summary>
+    /// 到達地点の筋・段を示す数字の文字種
+    /// </summary>
     public enum SquareFormat
     {
+        /// <summary>
+        /// 23銀
+        /// </summary>
         ASCII,
+        /// <summary>
+        /// ２３銀
+        /// </summary>
         FullWidthArabic,
+        /// <summary>
+        /// ２三銀
+        /// </summary>
         FullWidthMix,
         NB
     }
+
+    /// <summary>
+    /// 1手前と同じ地点に駒を動かした場合の表記
+    /// </summary>
     public enum SamePosFormat
     {
+        /// <summary>
+        /// ２三銀成, ２三銀
+        /// </summary>
         NONE,
-        SHORT,
+        /// <summary>
+        /// 同銀成, 同銀
+        /// </summary>
+        ZEROsp,
+        /// <summary>
+        /// 同　銀成, 同　銀
+        /// </summary>
         KIFsp,
+        /// <summary>
+        /// 同銀成, 同　銀
+        /// </summary>
         KI2sp,
+        /// <summary>
+        /// ２三同銀成, ２三同銀
+        /// </summary>
         Verbose,
         NB
     }
 
+    /// <summary>
+    /// 移動元の駒を判別するための表記
+    /// </summary>
     public enum FromSqFormat
     {
+        /// <summary>
+        /// ２三銀
+        /// </summary>
         NONE,
+        /// <summary>
+        /// ２三銀(14)
+        /// </summary>
         KIF,
+        /// <summary>
+        /// ２三銀右
+        /// </summary>
         KI2,
+        /// <summary>
+        /// ２三銀右(14)
+        /// </summary>
+        Verbose,
         NB
     }
 
-    public class KifFormatter
+    /// <summary>
+    /// 棋譜書式設定オプション
+    /// </summary>
+    public interface IKifFormatterOptions
     {
-        public ColorFormat colorFmt;
-        public SquareFormat squareFmt;
-        public SamePosFormat sameposFmt;
-        public FromSqFormat fromsqFmt;
+        ColorFormat color { get; }
+        SquareFormat square { get; }
+        SamePosFormat samepos { get; }
+        FromSqFormat fromsq { get; }
+    }
 
-        public KifFormatter(
-            ColorFormat colorFmt,
-            SquareFormat squareFmt,
-            SamePosFormat sameposFmt,
-            FromSqFormat fromsqFmt
+    /// <summary>
+    /// 変更可能な棋譜書式設定オプション
+    /// </summary>
+    public class KifFormatterOptions : IKifFormatterOptions
+    {
+        public ColorFormat color { get; set; } = ColorFormat.NONE;
+        public SquareFormat square { get; set; } = SquareFormat.FullWidthMix;
+        public SamePosFormat samepos { get; set; } = SamePosFormat.KI2sp;
+        public FromSqFormat fromsq { get; set; } = FromSqFormat.KI2;
+
+        public KifFormatterOptions() {}
+        public KifFormatterOptions(IKifFormatterOptions opt)
+        {
+            color = opt.color;
+            square = opt.square;
+            samepos = opt.samepos;
+            fromsq = opt.fromsq;
+        }
+        public KifFormatterOptions(
+            ColorFormat _color,
+            SquareFormat _square,
+            SamePosFormat _samepos,
+            FromSqFormat _fromsq
         )
         {
-            this.colorFmt = colorFmt;
-            this.squareFmt = squareFmt;
-            this.sameposFmt = sameposFmt;
-            this.fromsqFmt = fromsqFmt;
+            color = _color;
+            square = _square;
+            samepos = _samepos;
+            fromsq = _fromsq;
         }
+    }
+
+    /// <summary>
+    /// 変更不可能な棋譜書式設定オプション
+    /// </summary>
+    public class KifFormatterImmutableOptions : IKifFormatterOptions
+    {
+        public ColorFormat color { get; }
+        public SquareFormat square { get; }
+        public SamePosFormat samepos { get; }
+        public FromSqFormat fromsq { get; }
+
+        public KifFormatterImmutableOptions(IKifFormatterOptions opt)
+        {
+            color = opt.color;
+            square = opt.square;
+            samepos = opt.samepos;
+            fromsq = opt.fromsq;
+        }
+        public KifFormatterImmutableOptions(
+            ColorFormat _color,
+            SquareFormat _square,
+            SamePosFormat _samepos,
+            FromSqFormat _fromsq
+        )
+        {
+            color = _color;
+            square = _square;
+            samepos = _samepos;
+            fromsq = _fromsq;
+        }
+    }
+
+    public static class KifFormatter
+    {
 
         // singleton object
-        public static KifFormatter Kif { get; private set; } = new KifFormatter(
+
+        /// <summary>
+        /// KIF(手番文字なし)
+        /// </summary>
+        public static KifFormatterImmutableOptions Kif { get; } = new KifFormatterImmutableOptions(
             ColorFormat.NONE,
             SquareFormat.FullWidthMix,
             SamePosFormat.KIFsp,
             FromSqFormat.KIF
         );
 
-        public static KifFormatter Ki2 { get; private set; } = new KifFormatter(
+        /// <summary>
+        /// KIF(▲△手番文字あり)
+        /// </summary>
+        public static KifFormatterImmutableOptions KifC { get; } = new KifFormatterImmutableOptions(
+            ColorFormat.KIF,
+            SquareFormat.FullWidthMix,
+            SamePosFormat.KIFsp,
+            FromSqFormat.KIF
+        );
+
+        /// <summary>
+        /// KI2(手番文字なし)
+        /// </summary>
+        public static KifFormatterImmutableOptions Ki2 { get; } = new KifFormatterImmutableOptions(
             ColorFormat.NONE,
             SquareFormat.FullWidthMix,
             SamePosFormat.KI2sp,
+            FromSqFormat.KI2
+        );
+
+        /// <summary>
+        /// KI2(▲△手番文字あり)
+        /// </summary>
+        public static KifFormatterImmutableOptions Ki2C { get; } = new KifFormatterImmutableOptions(
+            ColorFormat.KIF,
+            SquareFormat.FullWidthMix,
+            SamePosFormat.KI2sp,
+            FromSqFormat.KI2
+        );
+
+        /// <summary>
+        /// KI2(手番文字なし,最終着手/RootPV表示向け)
+        /// 例: 同２三銀右
+        /// </summary>
+        public static KifFormatterImmutableOptions Ki2Root { get; } = new KifFormatterImmutableOptions(
+            ColorFormat.NONE,
+            SquareFormat.FullWidthMix,
+            SamePosFormat.Verbose,
+            FromSqFormat.KI2
+        );
+
+        /// <summary>
+        /// KI2(▲△手番文字あり,最終着手/RootPV表示向け)
+        /// 例: ▲同２三銀右
+        /// </summary>
+        public static KifFormatterImmutableOptions Ki2CRoot { get; } = new KifFormatterImmutableOptions(
+            ColorFormat.KIF,
+            SquareFormat.FullWidthMix,
+            SamePosFormat.Verbose,
             FromSqFormat.KI2
         );
 
@@ -96,9 +271,9 @@ namespace MyShogi.Model.Shogi.Converter
             "1","2","3","4","5","6","7","8","9",
         };
 
-        public string format(Color c)
+        public static string format(this IKifFormatterOptions opt, Color c)
         {
-            switch (colorFmt)
+            switch (opt.color)
             {
                 case ColorFormat.NONE: return "";
                 case ColorFormat.CSA: switch (c)
@@ -134,11 +309,11 @@ namespace MyShogi.Model.Shogi.Converter
                 default: throw new ConverterException();
             }
         }
-        public string format(Square sq)
+        public static string format(this IKifFormatterOptions opt, Square sq)
         {
             File f = sq.ToFile();
             Rank r = sq.ToRank();
-            switch (squareFmt)
+            switch (opt.square)
             {
                 case SquareFormat.ASCII:
                     return HW_NUMBER[f.ToInt()] + HW_NUMBER[r.ToInt()];
@@ -150,7 +325,12 @@ namespace MyShogi.Model.Shogi.Converter
                     throw new ConverterException();
             }
         }
-        public string format(Position pos, Move move, Move lastMove)
+        public static string format(this IKifFormatterOptions opt, Position pos, Move move)
+        {
+            var state = pos.State();
+            return opt.format(pos, move, state == null ? Move.NONE : state.lastMove);
+        }
+        public static string format(this IKifFormatterOptions opt, Position pos, Move move, Move lastMove)
         {
             StringBuilder kif = new StringBuilder();
             kif.Append(format(pos.sideToMove));
@@ -184,11 +364,11 @@ namespace MyShogi.Model.Shogi.Converter
             if (!move.IsDrop() && lastMove.IsOk() && lastMove.To() == move.To())
             {
                 // 一つ前の指し手の移動先と、今回の移動先が同じ場合、"同"金のように表示する。
-                switch (sameposFmt)
+                switch (opt.samepos)
                 {
                     case SamePosFormat.NONE:
                         break;
-                    case SamePosFormat.SHORT:
+                    case SamePosFormat.ZEROsp:
                         kif.Append("同");
                         break;
                     // KIF形式では"同"の後に全角空白
@@ -215,7 +395,7 @@ namespace MyShogi.Model.Shogi.Converter
                     }
                     // 座標 + "同"
                     case SamePosFormat.Verbose:
-                        kif.Append(format(move.To())).Append("同");
+                        kif.Append(opt.format(move.To())).Append("同");
                         break;
                     default:
                         throw new ConverterException();
@@ -223,10 +403,10 @@ namespace MyShogi.Model.Shogi.Converter
             }
             else
             {
-                kif.Append(format(move.To()));
+                kif.Append(opt.format(move.To()));
             }
             kif.Append(PIECE_KIF[fromPieceType.ToInt()]);
-            switch (fromsqFmt) {
+            switch (opt.fromsq) {
                 case FromSqFormat.NONE:
                     break;
                 case FromSqFormat.KIF:
@@ -250,7 +430,6 @@ namespace MyShogi.Model.Shogi.Converter
                         {
                             kif.Append("不成");
                         }
-                        Square fromSquare = move.From();
                         kif.AppendFormat("({0}{1})",
                             HW_NUMBER[move.From().ToFile().ToInt()],
                             HW_NUMBER[move.From().ToRank().ToInt()]
@@ -259,21 +438,22 @@ namespace MyShogi.Model.Shogi.Converter
                     break;
                 }
                 case FromSqFormat.KI2:
+                case FromSqFormat.Verbose:
                 {
                     if (move.IsDrop())
                     {
                         // KI2では紛らわしくない場合、"打"と表記しない。
                         Bitboard sameBB = pos.AttackersTo(pos.sideToMove, move.To()) & pos.Pieces(pos.sideToMove, move.DroppedPiece());
-                        if (!sameBB.IsZero()) kif.Append("打");
+                        if (opt.fromsq == FromSqFormat.Verbose || !sameBB.IsZero()) kif.Append("打");
                         break;
                     }
                     kif.Append(fromSqFormat_KI2(pos, move));
                     if (move.IsPromote())
                     {
                         kif.Append("成");
-                        break;
                     }
-                    if (
+                    else if
+                    (
                         !fromPieceType.IsPromote() &&
                         fromPieceType != Piece.GOLD &&
                         fromPieceType != Piece.KING &&
@@ -282,6 +462,13 @@ namespace MyShogi.Model.Shogi.Converter
                     )
                     {
                         kif.Append("不成");
+                    }
+                    if (opt.fromsq == FromSqFormat.Verbose)
+                    {
+                        kif.AppendFormat("({0}{1})",
+                            HW_NUMBER[move.From().ToFile().ToInt()],
+                            HW_NUMBER[move.From().ToRank().ToInt()]
+                        );
                     }
                     break;
                 }
@@ -318,7 +505,241 @@ namespace MyShogi.Model.Shogi.Converter
         }
     }
 
-    static class KifUtil
+    /// <summary>
+    /// 指し手情報の中間形式
+    /// 棋譜読み上げ、棋譜ファイル出力等に使えるかも？
+    /// (JKF形式への出力の際に使用)
+    /// </summary>
+    public struct KifMoveInfo
+    {
+        public int ply { get; }
+        public Color turn { get; }
+        public Move nextMove { get; }
+        public Move lastMove { get; }
+        public Piece fromPc { get; }
+        public Piece toPc { get; }
+        public Piece capPc { get; }
+        public Bitboard sameBB { get; }
+        public bool same { get; }
+        public Relative relative { get; }
+        public Behavior behavior { get; }
+        public Promote promote { get; }
+        public Drop drop { get; }
+        public bool legal { get; }
+        public bool special { get => nextMove.IsSpecial(); }
+        /// <summary>
+        /// 相対位置
+        /// </summary>
+        public enum Relative {
+            /// <summary>
+            /// 相対表記不要
+            /// </summary>
+            NONE,
+            /// <summary>
+            /// "左"
+            /// </summary>
+            LEFT,
+            /// <summary>
+            /// "直"
+            /// </summary>
+            STRAIGHT,
+            /// <summary>
+            /// "右"
+            /// </summary>
+            RIGHT
+        }
+        /// <summary>
+        /// 動作
+        /// </summary>
+        public enum Behavior {
+            /// <summary>
+            /// 動作表記不要
+            /// </summary>
+            NONE,
+            /// <summary>
+            /// "上"
+            /// </summary>
+            FORWARD,
+            /// <summary>
+            /// "寄"
+            /// </summary>
+            SLIDE,
+            /// <summary>
+            /// "引"
+            /// </summary>
+            BACKWARD
+        }
+        /// <summary>
+        /// 成/不成
+        /// </summary>
+        public enum Promote {
+            /// <summary>
+            /// 成/不成に関係ない着手（敵陣への駒打ちもこちら）
+            /// </summary>
+            NONE,
+            /// <summary>
+            /// "不成"
+            /// </summary>
+            NOPROMOTE,
+            /// <summary>
+            /// "成"
+            /// </summary>
+            PROMOTE
+        }
+        /// <summary>
+        /// 駒打ち
+        /// </summary>
+        public enum Drop {
+            /// <summary>
+            /// 駒打ちではない
+            /// </summary>
+            NONE,
+            /// <summary>
+            /// 暗黙の駒打ち（省略可）
+            /// </summary>
+            IMPLICIT,
+            /// <summary>
+            /// 明示的な駒打ち（省略不可）
+            /// </summary>
+            EXPLICIT
+        }
+        public KifMoveInfo(Position pos, Move move)
+        {
+            var state = pos.State();
+            ply = pos.gamePly;
+            turn = pos.sideToMove;
+            nextMove = move;
+            lastMove = state != null ? state.lastMove : Move.NONE;
+            if (move.IsSpecial())
+            {
+                fromPc = toPc = capPc = Piece.NO_PIECE;
+                sameBB = Bitboard.ZeroBB();
+                same = false;
+                relative = Relative.NONE;
+                behavior = Behavior.NONE;
+                promote = Promote.NONE;
+                drop = Drop.NONE;
+                legal = pos.IsLegal(move);
+            }
+            else if (move.IsDrop())
+            {
+                fromPc = toPc = Util.MakePiece(turn, move.DroppedPiece());
+                capPc = pos.PieceOn(move.To());
+                sameBB = pos.AttackersTo(turn, move.To()) & pos.Pieces(turn, move.DroppedPiece());
+                same = lastMove.IsSpecial() ? false : (lastMove.To() == move.To());
+                relative = Relative.NONE;
+                behavior = Behavior.NONE;
+                promote = move.IsPromote() ? Promote.PROMOTE : Promote.NONE;
+                drop = sameBB.IsZero() ? Drop.IMPLICIT : Drop.EXPLICIT;
+                legal = pos.IsLegal(move);
+            }
+            else
+            {
+                var fromSq = move.From();
+                var toSq = move.To();
+                fromPc = pos.PieceOn(move.From());
+                var fromPt = fromPc.PieceType();
+                toPc = move.IsPromote() ? Util.MakePiecePromote(turn, fromPt) : fromPc;
+                capPc = pos.PieceOn(move.To());
+                sameBB = pos.AttackersTo(turn, move.To()) & pos.Pieces(turn, fromPc.PieceType());
+                same = lastMove.IsSpecial() ? false : (lastMove.To() == move.To());
+
+                if (!sameBB.IsSet(fromSq) || sameBB.IsOne()) {
+                    // ""
+                    relative = Relative.NONE;
+                    behavior = Behavior.NONE;
+                }
+                else if (KifUtil.checkBB(sameBB, Bitboard.RankBB(toSq.ToRank()), fromSq))
+                {
+                    // "寄"
+                    relative = Relative.NONE;
+                    behavior = Behavior.SLIDE;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.dirBB(turn, move.To(), Direct.D), fromSq))
+                {
+                    // "上"
+                    relative = Relative.NONE;
+                    behavior = Behavior.FORWARD;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.dirBB(turn, toSq, Direct.U), fromSq))
+                {
+                    // "引"
+                    relative = Relative.NONE;
+                    behavior = Behavior.BACKWARD;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.lineDirBB(turn, toSq, Direct.D), fromSq) && (
+                    fromPt == Piece.SILVER || fromPt == Piece.GOLD ||
+                    fromPt == Piece.PRO_PAWN || fromPt == Piece.PRO_LANCE ||
+                    fromPt == Piece.PRO_KNIGHT || fromPt == Piece.PRO_SILVER
+                ))
+                {
+                    // "直"
+                    relative = Relative.STRAIGHT;
+                    behavior = Behavior.NONE;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.dirOrBB(turn, fromSq, Direct.L), fromSq))
+                {
+                    // "左"
+                    relative = Relative.LEFT;
+                    behavior = Behavior.NONE;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.dirOrBB(turn, fromSq, Direct.R), fromSq))
+                {
+                    // "右"
+                    relative = Relative.RIGHT;
+                    behavior = Behavior.NONE;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.lineDirOrBB(turn, fromSq, Direct.L) & Bitboard.RankBB(toSq.ToRank()), fromSq))
+                {
+                    // "左寄"
+                    relative = Relative.LEFT;
+                    behavior = Behavior.SLIDE;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.lineDirOrBB(turn, fromSq, Direct.R) & Bitboard.RankBB(toSq.ToRank()), fromSq))
+                {
+                    // "右寄"
+                    relative = Relative.RIGHT;
+                    behavior = Behavior.SLIDE;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.dirBB(turn, toSq, Direct.D) & KifUtil.dirOrBB(turn, fromSq, Direct.L), fromSq))
+                {
+                    // "左上"
+                    relative = Relative.LEFT;
+                    behavior = Behavior.FORWARD;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.dirBB(turn, toSq, Direct.D) & KifUtil.dirOrBB(turn, fromSq, Direct.R), fromSq))
+                {
+                    // "右上"
+                    relative = Relative.RIGHT;
+                    behavior = Behavior.FORWARD;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.dirBB(turn, toSq, Direct.U) & KifUtil.dirOrBB(turn, fromSq, Direct.L), fromSq))
+                {
+                    // "左引"
+                    relative = Relative.LEFT;
+                    behavior = Behavior.BACKWARD;
+                }
+                else if (KifUtil.checkBB(sameBB, KifUtil.dirBB(turn, toSq, Direct.U) & KifUtil.dirOrBB(turn, fromSq, Direct.R), fromSq))
+                {
+                    // "右引"
+                    relative = Relative.RIGHT;
+                    behavior = Behavior.BACKWARD;
+                }
+                else
+                {
+                    // 通常、ここまで到達することはないはず
+                    relative = Relative.NONE;
+                    behavior = Behavior.NONE;
+                }
+
+                promote = move.IsPromote() ? Promote.PROMOTE : (Util.CanPromote(pos.sideToMove, move.From()) || Util.CanPromote(pos.sideToMove, move.To())) ? Promote.NOPROMOTE : Promote.NONE;
+                drop = Drop.NONE;
+                legal = pos.IsLegal(move);
+            }
+        }
+    }
+
+    public static class KifUtil
     {
         public static bool checkBB(Bitboard samebb, Bitboard dirbb, Square sq) => (dirbb.IsSet(sq) && (samebb & dirbb).IsOne());
         static Bitboard dirBB_(Color color, Square sq, Direct dir, bool or_flag)
@@ -481,8 +902,18 @@ namespace MyShogi.Model.Shogi.Converter
         /// <param name="pos"></param>
         /// <param name="move"></param>
         /// <returns></returns>
-        public static string ToKif(this Position pos, Move move, Move lastMove = Move.NONE) =>
-            KifFormatter.Kif.format(pos, move, lastMove);
+        public static string ToKif(this Position pos, Move move) =>
+            KifFormatter.Kif.format(pos, move);
+
+        /// <summary>
+        /// ある指し手をKIF形式で出力する
+        /// Move.ToSfen()のKIF版
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="move"></param>
+        /// <returns></returns>
+        public static string ToKifC(this Position pos, Move move) =>
+            KifFormatter.KifC.format(pos, move);
 
         /// <summary>
         /// ある指し手をKI2形式で出力する
@@ -491,8 +922,18 @@ namespace MyShogi.Model.Shogi.Converter
         /// <param name="pos"></param>
         /// <param name="move"></param>
         /// <returns></returns>
-        public static string ToKi2(this Position pos, Move move, Move lastMove = Move.NONE) =>
-            KifFormatter.Ki2.format(pos, move, lastMove);
+        public static string ToKi2(this Position pos, Move move) =>
+            KifFormatter.Ki2.format(pos, move);
+
+        /// <summary>
+        /// ある指し手をKI2形式で出力する
+        /// Move.ToSfen()のKI2版
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="move"></param>
+        /// <returns></returns>
+        public static string ToKi2C(this Position pos, Move move) =>
+            KifFormatter.Ki2C.format(pos, move);
 
         /// <summary>
         /// KIF/KI2形式の指し手を与えて、Moveに変換する。指し手の合法性のチェックはここでは行わない。

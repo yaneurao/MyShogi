@@ -16,12 +16,13 @@ namespace MyShogi.Model.Shogi.Kifu
     {
         /// <summary>
         /// コンストラクタ
-        /// 
+        ///
         /// このクラスが内部的なPositionのインスタンスも保持している。
         /// </summary>
         public KifuTree()
         {
             EnableKifuList = true;
+            kifFormatter = KifFormatter.Ki2C;
             EnableUsiMoveList = true;
 
             position = new Position();
@@ -122,10 +123,18 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// KIF2形式の棋譜リストを常に生成する。
         /// これをtrueにする KifuList というpropertyが有効になる。
-        /// 
+        ///
         /// デフォルト : true
         /// </summary>
         public bool EnableKifuList
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// 生成する棋譜文字列のフォーマット
+        /// </summary>
+        public IKifFormatterOptions kifFormatter
         {
             get; set;
         }
@@ -142,7 +151,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// USIの指し手文字列の形式の棋譜リストを常に生成する。
         /// これをtrueにする EnableUsiMoveList というpropertyが有効になる。
-        /// 
+        ///
         /// デフォルト : true
         /// </summary>
         public bool EnableUsiMoveList
@@ -153,7 +162,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// 現局面までの棋譜。USIの指し手文字列
         /// EnableUsiMoveListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
-        /// 
+        ///
         /// cf. UsiPositionString()
         /// </summary>
         public List<string> UsiMoveList
@@ -361,7 +370,7 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 // 棋譜をappendする
 
-                var move_text = position.ToKi2(m);
+                var move_text = kifFormatter.format(position, m);
                 var move_text_game_ply = position.gamePly;
 
                 move_text = string.Format("{0,-4}", move_text);

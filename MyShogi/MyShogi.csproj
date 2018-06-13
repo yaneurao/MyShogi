@@ -85,6 +85,8 @@
     <Compile Include="Model\Resource\Sprite.cs" />
     <Compile Include="Model\Resource\SpriteEnum\PromoteDialogEnum.cs" />
     <Compile Include="Model\Resource\SpriteManager.cs" />
+    <Compile Include="Model\Shogi\Converter\Jkf.cs" />
+    <Compile Include="Model\Shogi\Converter\LiveJson.cs" />
     <Compile Include="Model\Shogi\Core\SquareHand.cs" />
     <Compile Include="Model\Shogi\Converter\DetectEncoding.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngine.cs" />
