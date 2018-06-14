@@ -223,6 +223,17 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 「中」ボタン。対局の中断。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton4_Click(object sender, System.EventArgs e)
+        {
+            var gameServer = ViewModel.gameServer;
+            gameServer.GameInterruptCommand();
+        }
+
+        /// <summary>
         /// 「転」ボタン。盤面反転の処理。
         /// </summary>
         /// <param name="sender"></param>

@@ -34,6 +34,9 @@ namespace MyShogi.View.Win2D
             UpdateTooltipButtons();
         }
 
+        /// <summary>
+        /// メニューのすぐ下に配置しているtooltip buttonを、現在の状態に応じてOn/Offする。
+        /// </summary>
         private void UpdateTooltipButtons()
         {
             // この時、エンジン側の手番であるなら、メインウインドウのメニューの「急」ボタンをenableにしなければならない。
@@ -45,6 +48,10 @@ namespace MyShogi.View.Win2D
             var humanTurn = gameServer.CanUserMove && !gameServer.EngineInitializing;
             SetButton(MainDialogButtonEnum.RESIGN   , humanTurn);
             SetButton(MainDialogButtonEnum.UNDO_MOVE, humanTurn);
+
+            // 「中」ボタンは、エンジン同士の対局時にも中断できるようにするため、対局中であればいつでも中断できる。
+            var canInterrupt = !gameServer.EngineInitializing && gameServer.InTheGame;
+            SetButton(MainDialogButtonEnum.INTERRUPT, canInterrupt);
         }
 
         /// <summary>

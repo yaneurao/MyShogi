@@ -78,6 +78,17 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue<List<string>>("KifuList", value); }
         }
 
+
+        /// <summary>
+        /// 対局中であるかを示すフラグ。
+        /// これがfalseであれば対局中ではないので自由に駒を動かせる。(ようにするかも)
+        /// </summary>
+        public bool InTheGame
+        {
+            get { return GetValue<bool>("InTheGame"); }
+            private set { SetValue<bool>("InTheGame",value); }
+        }
+
         /// <summary>
         /// ユーザーがUI上で操作できるのか？
         /// ただし、EngineInitializingなら動かしてはならない。
@@ -150,7 +161,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                         UpdatePosition();
                         UpdateKifuList();
 
-                        inTheGame = true;
+                        InTheGame = true;
 
                         // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。
                     }
@@ -246,6 +257,27 @@ namespace MyShogi.Model.Shogi.LocalServer
                     });
             }
         }
+
+        /// <summary>
+        /// UI側からの中断要求。
+        /// </summary>
+        public void GameInterruptCommand()
+        {
+            lock (UICommandLock)
+            {
+                UICommands.Add(
+                    () =>
+                    {
+                        // コンピューター同士の対局中であっても人間判断で中断できなければならないので常に受理する。
+                        var stm = kifuManager.Position.sideToMove;
+                        var stmPlayer = Player(stm);
+
+                        // 中断の指し手
+                        stmPlayer.BestMove = Move.INTERRUPT;
+                    });
+            }
+        }
+
         #endregion
 
         #region 依存性のあるプロパティの処理
@@ -342,12 +374,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         private bool workerStop = false;
 
         /// <summary>
-        /// 対局中であるかを示すフラグ。
-        /// これがfalseであれば対局中ではないので自由に駒を動かせる。(ようにするかも)
-        /// </summary>
-        private bool inTheGame = true;
-
-        /// <summary>
         /// UIから渡されるコマンド
         /// </summary>
         private delegate void UICommand();
@@ -433,10 +459,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                 stmPlayer.BestMove = Move.NONE; // クリア
 
                 // 駒が動かせる状況でかつ合法手であるなら、受理する。
-                if (inTheGame)
+
+                bool specialMove = false;
+                if (InTheGame)
                 {
                     // 送信されうる特別な指し手であるか？
-                    bool specialMove = bestMove.IsSpecial();
+                    specialMove = bestMove.IsSpecial();
 
                     // エンジンから送られてきた文字列が、illigal moveであるならエラーとして表示する必要がある。
 
@@ -444,14 +472,24 @@ namespace MyShogi.Model.Shogi.LocalServer
                     {
                         switch (bestMove)
                         {
+                            // 入玉宣言勝ち
                             case Move.WIN:
                                 if (Position.DeclarationWin(EnteringKingRule.POINT27) != Move.WIN)
                                     // 入玉宣言条件を満たしていない入玉宣言
                                     goto ILLEGAL_MOVE;
                                 break;
+
+                            // 中断
+                            // コンピューター同士の対局の時にも人間判断で中断できなければならないので
+                            // 対局中であればこれを無条件で受理する。
+                            case Move.INTERRUPT:
+                                break;
+
+                            // 投了
                             case Move.RESIGN:
                                 break; // 手番側の投了は無条件で受理
 
+                            // それ以外
                             default:
                                 // それ以外は受理しない
                                 goto ILLEGAL_MOVE;
@@ -470,7 +508,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                     {
                         // 受理できる性質の指し手であることは検証済み
                         // ゲーム終了
-                        inTheGame = false;
                     }
                     else
                     {
@@ -489,9 +526,10 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 // -- 次のPlayerに、自分のturnであることを通知してやる。
 
-                if (inTheGame)
+                if (!specialMove)
                     NotifyTurnChanged();
                 else
+                    // 特殊な指し手だったので、これにてゲーム終了
                     GameEnd();
             }
 
@@ -553,13 +591,14 @@ namespace MyShogi.Model.Shogi.LocalServer
                 m = Move.WIN;
             }
 
+            // 上で判定された特殊な指し手であるか？
             if (m != Move.NONE)
             {
                 // この特殊な状況を棋譜に書き出して終了。
                 kifuManager.Tree.AddNode(m, TimeSpan.Zero);
                 UpdateKifuListOfTail();
 
-                inTheGame = false;
+                InTheGame = false;
                 GameEnd();
                 return;
             }
@@ -601,8 +640,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private void GameEnd()
         {
+            InTheGame = false;
+
             // Playerの終了処理をしてNullPlayerを突っ込んでおく。
-            for(var c = Color.ZERO; c < Color.NB; ++c)
+            for (var c = Color.ZERO; c < Color.NB; ++c)
             {
                 var player = Player(c);
                 if (player != null)
