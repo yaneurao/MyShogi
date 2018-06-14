@@ -202,14 +202,17 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 盤面を特定の局面で初期化する。
-        /// これほんとうに必要か？あとで考える。
         /// </summary>
         /// <param name="boardType"></param>
         public void InitBoard(BoardType boardType)
         {
-            Tree.rootSfen = boardType.ToSfen();
-            Tree.position.SetSfen(Tree.rootSfen);
-            Tree.rootBoardType = BoardType.NoHandicap;
+            var sfen = boardType.ToSfen();
+
+            Tree.position.SetSfen(sfen);
+            Tree.rootBoardType = boardType;
+
+            // rootSfenを更新したときにイベント通知が起きるので、これを最後にしている。
+            Tree.rootSfen = sfen;
         }
 
         /// <summary>

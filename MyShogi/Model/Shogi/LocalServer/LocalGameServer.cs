@@ -307,8 +307,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             InTheGame = true;
-
-            UpdateEngineInitializing();
         }
 
         /// <summary>

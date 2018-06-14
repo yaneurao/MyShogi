@@ -125,6 +125,16 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// BoardType型がBoardType.ToSfen()でsfen化できる範囲にあるかをテストする。
+        /// </summary>
+        /// <param name="boardType"></param>
+        /// <returns></returns>
+        public static bool IsSfenOk(this BoardType boardType)
+        {
+            return BoardType.ZERO <= boardType && boardType < BoardType.Others;
+        }
+
+        /// <summary>
         /// BoardTypeに対応するsfen文字列を得る。
         /// BoardType.OthersとBoardType.Currentに対してはnullが返る。
         /// </summary>
@@ -133,7 +143,7 @@ namespace MyShogi.Model.Shogi.Core
         public static string ToSfen(this BoardType boardType)
         {
             // 範囲外
-            if (boardType < 0 || boardType >= BoardType.Others)
+            if (!boardType.IsSfenOk())
                 return null;
 
             return SFENS_OF_BOARDTYPE[(int)boardType];

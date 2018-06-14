@@ -98,8 +98,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 // これが設定されたときに局面リストを更新しなければならない。
                 rootSfen_ = value;
 
-                //RaisePropertyChanged("Position", position);
-                // このタイミングで通知すると局面がまだ更新中である可能性が..
+                // rootSfenは局面を設定して、最後に呼び出すはずなので、ここで通知しても大丈夫。
+                RaisePropertyChanged("Position", position);
 
                 if (EnableKifuList)
                 {

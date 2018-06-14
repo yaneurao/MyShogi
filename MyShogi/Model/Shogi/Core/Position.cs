@@ -485,7 +485,7 @@ namespace MyShogi.Model.Shogi.Core
         /// </summary>
         public void InitBoard(BoardType boardType = BoardType.NoHandicap)
         {
-            if (!boardType.IsOk())
+            if (!boardType.IsSfenOk())
                 throw new PositionException("範囲外のBoardTypeを指定してPosition.init()を呼び出した");
 
             // 平手で初期化
