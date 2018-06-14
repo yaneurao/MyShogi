@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
 // WPFで使うNotifyObjectっぽい何か。
 namespace MyShogi.Model.Common.ObjectModel
@@ -27,7 +29,6 @@ namespace MyShogi.Model.Common.ObjectModel
     /// </summary>
     public delegate void PropertyChangedEventHandler(PropertyChangedEventArgs args);
 
-
     /// <summary>
     /// MVVMのViewModelで用いる、プロパティが変更されたときに、それをsubscribe(購読)しているobserverに
     /// 通知を送るための仕組み。
@@ -43,8 +44,7 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <param name="value"></param>
         protected void SetValue<T>(string name, T value , int start = -1 , int end = -1)
         {
-            var propertyChanged = false;
-            lock (lockObject)
+            using (LazyLock())
             {
                 object current;
                 if (!this.properties.TryGetValue(name, out current)
@@ -53,18 +53,14 @@ namespace MyShogi.Model.Common.ObjectModel
                     // 値が異なるときだけ代入して、そのときにイベントが発火する。
                     // 一度目はイベントは発火しない。
                     properties[name] = value;
-                    propertyChanged = true;
+
+                    // UI以外のスレッドがInvoke()するときにUIスレッドがこのlockObject待ちになっていると
+                    // dead lockしてしまうので、このlockが解除されてからRaisePropertyChanged()が呼び出されて欲しい。
+
+                    // LazyLockは、lockが解除されたときにまとめて変更通知を行う。
+                    LazyRaisePropertyChanged(name, value, start, end);
                 }
             }
-
-            // UI以外のスレッドがInvoke()するときにUIスレッドがこのlockObject待ちになっていると
-            // dead lockしてしまうので、このlockが解除されてからRaisePropertyChanged()が呼び出されて欲しい。
-
-            // LazyLockみたいなのを作って、そのlockが解除されたときにまとめて変更通知を行うモデルにしても良いが、
-            // 遅延して呼び出したいのはここに限るので、そこまでするほどのことでもないと思う。
-
-            if (propertyChanged)
-                RaisePropertyChanged(name, value, start, end);
         }
 
         /// <summary>
@@ -89,17 +85,18 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <summary>
         /// name の propertyが変更されたときに、これを購読しているobserverに更新通知を送る。
         /// SetValue()を使わずに自力で名前に対応するイベントハンドラを呼びたい時にも用いる。
+        /// 遅延呼び出しではなく、即座にハンドラが呼び出される。
         /// </summary>
         /// <param name="name"></param>
-        public void RaisePropertyChanged(string name , object value , int start = -1 , int end = -1)
+        public void RaisePropertyChanged(PropertyChangedEventArgs e)
         {
+            // いますぐ呼び出す
             PropertyChangedEventHandler h = null;
             lock (lockObject)
             {
-                // このpropertyをsubscribeしているobserverに更新通知を送る
-                // 重複名はないことは保証されている。
+                // このpropertyをsubscribeしているobserverに更新通知を送る重複名はないことは保証されている。
                 foreach (var prop in propery_changed_handlers)
-                    if (prop.Key == name)
+                    if (prop.Key == e.name)
                     {
                         h = prop.Value;
                         break;
@@ -108,7 +105,19 @@ namespace MyShogi.Model.Common.ObjectModel
 
             // lockの外側でコールバックしないとデッドロックになる。
             if (h != null)
-                h(new PropertyChangedEventArgs(name, value, start, end));
+                h(e);
+        }
+
+        /// <summary>
+        /// ↑の、引数をそれぞれ指定できる版
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        public void RaisePropertyChanged(string name, object value, int start = -1, int end = -1)
+        {
+            RaisePropertyChanged(new PropertyChangedEventArgs(name, value, start, end));
         }
 
         /// <summary>
@@ -161,10 +170,68 @@ namespace MyShogi.Model.Common.ObjectModel
             = new Dictionary<string, PropertyChangedEventHandler>();
 
         /// <summary>
+        /// lockを抜けてからRaisePropertyChangedEventをまとめて呼び出す遅延lock
+        /// </summary>
+        public class LazyModelLock : IDisposable
+        {
+            public LazyModelLock(NotifyObject parent_)
+            {
+                parent = parent_;
+                Monitor.Enter(parent.lockObject, ref taken);
+
+                // いまからLockを抜けたときに呼び出すべきイベントを積んでいく。
+                parent.events = new List<PropertyChangedEventArgs>();
+            }
+
+            public void Dispose()
+            {
+                // このタイミングでイベントをコピー
+                var events = parent.events;
+                parent.events = null;
+
+                if (taken) Monitor.Exit(parent.lockObject);
+
+                // ここでそれぞれのイベントを呼び出す。
+
+                foreach(var e in events)
+                    parent.RaisePropertyChanged(e);
+            }
+
+            private NotifyObject parent;
+
+            // lockが取れたか
+            private bool taken;
+        }
+
+        /// <summary>
+        /// LazyModelLockのbuilder。using(LazyLock()) { ... }のようにして使う。
+        /// </summary>
+        /// <returns></returns>
+        public LazyModelLock LazyLock()
+        {
+            return new LazyModelLock(this);
+        }
+
+        /// <summary>
         /// lockに用いるobject
         /// </summary>
         private object lockObject = new object();
 
+        /// <summary>
+        /// LazyModelLockのDispose()のときにまとめて呼び出されるハンドラ
+        /// </summary>
+        private List<PropertyChangedEventArgs> events;
+
+        /// <summary>
+        /// name の propertyが変更されたときに、これを購読しているobserverに更新通知を送る。
+        /// SetValue()を使わずに自力で名前に対応するイベントハンドラを呼びたい時にも用いる。
+        /// </summary>
+        /// <param name="name"></param>
+        private void LazyRaisePropertyChanged(string name, object value, int start = -1, int end = -1)
+        {
+            // ここに積んでおいて、lockを抜けるときにまとめて呼び出す
+            events.Add(new PropertyChangedEventArgs(name, value, start, end));
+        }
 
         /// <summary>
         /// オブジェクトをnull値などを考慮しながら比較する。
