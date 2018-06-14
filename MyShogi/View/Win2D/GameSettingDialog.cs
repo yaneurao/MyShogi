@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Resource;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.LocalServer;
@@ -32,7 +33,8 @@ namespace MyShogi.View.Win2D
 
             comboBox1.SelectedIndex = 0;
             comboBox2.SelectedIndex = 5;
-            comboBox3.SelectedIndex = 0;
+
+            LoadGameSetting();
         }
 
         /// <summary>
@@ -53,16 +55,66 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void button3_Click(object sender, EventArgs e)
         {
-            // 人間かエンジンかを見てそれを反映させてゲームを開始させる。
+            // 現在のダイアログの状態をGlobalConfigに保存する。
+            SaveGameSetting();
+
+            var gameSetting = TheApp.app.config.GameSetting;
             var gameServer = mainDialog.ViewModel.gameServer;
-            var players = new Player[2];
+            gameServer.GameStartCommand(gameSetting);
+
+            // 対局が開始するのでこのダイアログを閉じる
+            this.Close();
+        }
+
+        /// <summary>
+        /// GlobalConfigのGameSettingから情報を復元する。
+        /// </summary>
+        private void LoadGameSetting()
+        {
+            // -- 対局設定をGlobalConfigから復元する。
+
+            // 手動データバインディングみたいなことをしている。
+
+            var gameSetting = TheApp.app.config.GameSetting;
+
+            var boardType = gameSetting.BoardType;
+            if (boardType != BoardType.Current)
+            {
+                comboBox3.SelectedIndex = (int)boardType;
+                radioButton5.Checked = true;
+            }
+            else
+            {
+                comboBox3.SelectedIndex = 0;
+                radioButton6.Checked = true;
+            }
 
             // 対局相手のラジオボタン
-            var human_radio_buttons = new []{ radioButton1 , radioButton3 };
+            var human_radio_buttons = new[] { radioButton1, radioButton3 };
             var cpu_radio_buttons = new[] { radioButton2, radioButton4 };
 
-            // 対局設定
-            var gameSetting = new GameSetting();
+            // 対局者氏名のテキストボックス
+            var playerNames = new [] { textBox1, textBox2 };
+
+            foreach (var c in All.Colors())
+            {
+                PlayerTypeEnum playerType = gameSetting.Player(c).PlayerType;
+
+                human_radio_buttons[(int)c].Checked = playerType == PlayerTypeEnum.Human;
+                cpu_radio_buttons[(int)c].Checked = playerType == PlayerTypeEnum.UsiEngine;
+
+                // 対局者氏名
+                playerNames[(int)c].Text = gameSetting.Player(c).PlayerName;
+            }
+        }
+
+        private void SaveGameSetting()
+        {
+            var gameSetting = TheApp.app.config.GameSetting;
+
+            // 対局相手のラジオボタン
+            var human_radio_buttons = new[] { radioButton1, radioButton3 };
+            var cpu_radio_buttons = new[] { radioButton2, radioButton4 };
 
             foreach (var c in All.Colors())
             {
@@ -85,7 +137,7 @@ namespace MyShogi.View.Win2D
                 // 手合割の取得
                 var index = comboBox3.SelectedIndex;
                 var boardType = (BoardType)index;
-                if (boardType < 0 || boardType >= BoardType.Others)
+                if (!boardType.IsSfenOk())
                     boardType = BoardType.NoHandicap; // なぜなのか..どこも選択されていないのか？
 
                 gameSetting.BoardType = boardType;
@@ -107,11 +159,17 @@ namespace MyShogi.View.Win2D
 
                 gameSetting.Player(c).PlayerName = playerName;
             }
+        }
 
-            gameServer.GameStartCommand(gameSetting);
-
-            // 対局が開始するのでこのダイアログを隠す
-            this.Hide();
+        /// <summary>
+        /// このフォームが閉じられる時に、設定をGlobalConfigのほうに移動させておかないと次回開いたときに
+        /// 設定が保存されていなくて気持ち悪い。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GameSettingDialog_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            SaveGameSetting();
         }
     }
 }

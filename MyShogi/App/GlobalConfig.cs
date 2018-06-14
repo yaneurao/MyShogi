@@ -2,6 +2,7 @@
 using System.Text;
 using System.Xml.Serialization;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.App
 {
@@ -24,10 +25,10 @@ namespace MyShogi.App
             PieceImageVersion = 1;
             PieceAttackImageVersion = 0;
             BoardNumberImageVersion = 1;
-            LastMoveFromColorType = 1;
+            LastMoveFromColorType = 0;
             LastMoveToColorType = 1;
             PickedMoveFromColorType = 1;
-            PickedMoveToColorType = 1;
+            PickedMoveToColorType = 4;
             PromotePieceColorType = 0;
             TurnDisplay = 1;
         }
@@ -236,6 +237,8 @@ namespace MyShogi.App
         /// 1 : 少し暗い
         /// 2 : 暗い
         /// 3 : だいぶ暗い
+        /// 4 : 少し明るい
+        /// 5 : ずいぶん明るい
         /// </summary>
         public int PickedMoveToColorType
         {
@@ -253,5 +256,10 @@ namespace MyShogi.App
             get { return GetValue<int>("TurnDisplay"); }
             set { SetValue<int>("TurnDisplay", value); }
         }
+
+        /// <summary>
+        /// 対局ダイアログの設定
+        /// </summary>
+        public GameSetting GameSetting { get; set; } = new GameSetting();
     }
 }

@@ -510,6 +510,7 @@
             this.Name = "GameSettingDialog";
             this.Text = "対局";
             this.TopMost = true;
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.GameSettingDialog_FormClosed);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

@@ -1,4 +1,5 @@
-﻿using MyShogi.Model.Shogi.Core;
+﻿using System;
+using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
 
 namespace MyShogi.Model.Shogi.LocalServer
@@ -23,15 +24,30 @@ namespace MyShogi.Model.Shogi.LocalServer
 
     /// <summary>
     /// LocalGameServer.GameStart()の引数に渡す、対局条件などを一式書いた設定データ
+    /// 
+    /// 対局ダイアログの設定情報。
+    /// GlobalConfigに保存されていて、ここから次回起動時に対局ダイアログの設定を復元もできる。
     /// </summary>
     public class GameSetting
     {
-        /// <summary>
-        /// c側の設定情報を取得する。
-        /// </summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
-        public PlayerGameSetting Player(Color c) { return players[(int)c]; }
+        public GameSetting()
+        {
+            // 初回起動時などデシリアライズに失敗した時のためにデフォルト値をきちんと設定しておく。
+
+            BoardType = BoardType.NoHandicap;
+
+            Players = new PlayerGameSetting[2]
+            { new PlayerGameSetting(), new PlayerGameSetting() };
+
+            var black = Player(Color.BLACK);
+            var white = Player(Color.WHITE);
+
+            black.PlayerName = "あなた";
+            white.PlayerName = "わたし";
+
+            black.PlayerType = PlayerTypeEnum.Human;
+            white.PlayerType = PlayerTypeEnum.Human;
+        }
 
         /// <summary>
         /// 開始局面。
@@ -40,9 +56,19 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public BoardType BoardType;
 
-        // -- private members
+        /// <summary>
+        /// c側の設定情報を取得する。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public PlayerGameSetting Player(Color c) { return Players[(int)c]; }
 
-        private PlayerGameSetting[] players = new PlayerGameSetting[2] { new PlayerGameSetting(), new PlayerGameSetting() };
+        /// <summary>
+        /// このメンバーには直接アクセスせずに、Player(Color)のほうを用いて欲しい。
+        /// XmlSerializerでシリアライズするときにpublicにしておかないとシリアライズ対象とならないので
+        /// publicにしてある。
+        /// </summary>
+        public PlayerGameSetting[] Players;
 
     }
 }
