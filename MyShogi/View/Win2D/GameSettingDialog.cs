@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using MyShogi.Model.Resource;
+using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Player;
 using SCore = MyShogi.Model.Shogi.Core;
 
@@ -60,20 +61,24 @@ namespace MyShogi.View.Win2D
             var human_radio_buttons = new []{ radioButton1 , radioButton3 };
             var cpu_radio_buttons = new[] { radioButton2, radioButton4 };
 
-            for (SCore.Color c = SCore.Color.ZERO; c < SCore.Color.NB; ++c)
+            var gameSetting = new GameSetting();
+
+            for(SCore.Color c = SCore.Color.ZERO; c < SCore.Color.NB; ++c)
             {
+                PlayerTypeEnum playerType;
                 if (human_radio_buttons[(int)c].Checked)
-                    players[(int)c] = new HumanPlayer();
+                    playerType = PlayerTypeEnum.Human;
                 else if (cpu_radio_buttons[(int)c].Checked)
-                    players[(int)c] = new UsiEnginePlayer();
+                    playerType = PlayerTypeEnum.UsiEngine;
                 else
                     // このラジオボタンどうなっとるんや…。
                     throw new Exception("どちらのプレイヤーも選択されていません");
 
+                gameSetting.Player(c).PlayerType = playerType;
                 // その他、設定を調べて受け継ぐ。
             }
 
-            gameServer.GameStartCommand(players[0], players[1]);
+            gameServer.GameStartCommand(gameSetting);
 
             // 対局が開始するのでこのダイアログを隠す
             this.Hide();

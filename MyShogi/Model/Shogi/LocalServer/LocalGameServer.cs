@@ -144,9 +144,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 対局スタート
         /// </summary>
-        /// <param name="player1">先手プレイヤー(駒落ちのときは下手)</param>
-        /// <param name="player2">後手プレイヤー(駒落ちのときは上手)</param>
-        public void GameStartCommand(Player.Player player1 , Player.Player player2 /* 引数、あとで考える */)
+        public void GameStartCommand(GameSetting gameSetting)
         {
             lock (UICommandLock)
             {
@@ -160,7 +158,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                         kifuManager.Init();
 
                         Initializing = true;
-                        SetPlayer(player1, player2);
+                        SetPlayer(gameSetting);
 
                         InTheGame = true;
 
@@ -287,10 +285,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             (EngineInitializing = Player(Color.BLACK).PlayerType == PlayerTypeEnum.UsiEngine || Player(Color.WHITE).PlayerType == PlayerTypeEnum.UsiEngine);
         }
 
-        private void SetPlayer(Player.Player player1, Player.Player player2)
+        private void SetPlayer(GameSetting gameSetting)
         {
-            Players[0] = player1;
-            Players[1] = player2;
+            for(var c = Color.ZERO; c < Color.NB; ++c )
+            {
+                var playerType = gameSetting.Player(c).PlayerType;
+                Players[(int)c] = PlayerBuilder.Create(playerType);
+            }
             UpdateEngineInitializing();
         }
 
