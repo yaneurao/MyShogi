@@ -39,7 +39,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 起動時に平手の初期局面が表示されるようにしておく。
             kifuManager.Init();
 
-            // Position,KifuListは、kifuManagerから手動でデータバインドする。(変なタイミングでコピーされても困るため)
+            // Position,KifuListは、kifuManagerから手動でデータバインドする。
+            // (棋譜書き出しの時などに局面巻き戻したり進めたりするが、その時に更新が通知されると画面が乱れるため)
             UpdatePosition();
             UpdateKifuList();
 
@@ -49,7 +50,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // デバッグ中
 
             GameStartCommand(new HumanPlayer(), new HumanPlayer());
-            //GameStartCommand(new HumanPlayer(), new UsiEnginePlayer());
+            // GameStartCommand(new HumanPlayer(), new UsiEnginePlayer());
             //GameStartCommand(new UsiEnginePlayer(), new UsiEnginePlayer());
 #endif
 
@@ -152,7 +153,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                         Initializing = true;
                         SetPlayer(player1, player2);
 
-                        KifuList = new List<string>(kifuManager.KifuList);
+                        UpdatePosition();
+                        UpdateKifuList();
 
                         inTheGame = true;
 
@@ -305,12 +307,24 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// KifuListプロパティの更新。
         /// immutableにするためにCloneしてセットする。
         /// 全行が丸ごと更新通知が送られるので部分のみの更新通知を送りたいなら自前で更新すべし。
+        /// また、末尾のみが更新になっているなら、UpdateKifuListOfTail()のほうを呼び出すべし。
         /// </summary>
         private void UpdateKifuList()
         {
             KifuList = new List<string>(kifuManager.KifuList);
         }
 
+        /// <summary>
+        /// KifuListの末尾のみが更新があったことがわかっているときに呼び出す更新。
+        /// immutableにするためにCloneしてセットする。
+        /// 全行が丸ごと更新通知が送られるので部分のみの更新通知を送りたいなら自前で更新すべし。
+        /// </summary>
+        private void UpdateKifuListOfTail()
+        {
+            var list = new List<string>(kifuManager.KifuList);
+            SetValue<List<string>>("KifuList", list, list.Count - 1); // 末尾のみ更新があったことを伝える。
+        }
+        
         #endregion
 
         #region private members
@@ -476,12 +490,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // -- 棋譜が1行追加になったはずなので、それを反映させる。
 
-                    // immutableにするためにClone()してセットしてやり、
-                    // 末尾にのみ更新があったことをViewに通知するために手動でupdateする。
-
-                    var kifuList = new List<string>(kifuManager.KifuList);
-                    SetValue("KifuList", kifuList, kifuList.Count - 1); // 末尾が変更になったことを通知
-
+                    UpdateKifuListOfTail();
                 }
 
                 // -- 次のPlayerに、自分のturnであることを通知してやる。
@@ -500,9 +509,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             kifuManager.Tree.AddNode(m, thinkingTime);
             kifuManager.Tree.AddNodeComment(m , stmPlayer.BestMove.ToUsi() /* String あとでなおす*/ /* 元のテキスト */);
 
-            var kifuList2 = new List<string>(kifuManager.KifuList);
-            SetValue("KifuList", kifuList2, kifuList2.Count - 1); // 末尾が変更になったことを通知
-
+            UpdateKifuListOfTail();
         }
 
         /// <summary>
@@ -514,30 +521,50 @@ namespace MyShogi.Model.Shogi.LocalServer
             var stm = Position.sideToMove;
             var stmPlayer = Player(stm);
 
+            var isHuman = stmPlayer.PlayerType == PlayerTypeEnum.Human;
+
             // 手番が変わった時に特殊な局面に至っていないかのチェック
 
             // -- このDoMoveの結果、千日手や詰み、持将棋など特殊な局面に至ったか？
             Move m = Move.NONE;
             var rep = Position.IsRepetition();
 
+            // 手数による引き分けの局面であるか
+            if (Position.gamePly >= int.MaxValue /* 256  あとでちゃんと書く */)
+            {
+                m = Move.MAX_MOVES_DRAW;
+            }
             // この指し手の結果、詰みの局面に至ったか
-            if (Position.IsMated(moves))
+            else if (Position.IsMated(moves))
+            {
                 m = Move.MATED;
+            }
+            // 千日手絡みの局面であるか？
             else if (rep != RepetitionState.NONE)
             {
                 // 千日手関係の局面に至ったか
                 switch (rep)
                 {
                     case RepetitionState.DRAW: m = Move.REPETITION_DRAW; break;
-                    case RepetitionState.LOSE: m = Move.REPETITION_LOSE; break;
-                    case RepetitionState.WIN : m = Move.REPETITION_WIN; break;
+                    case RepetitionState.LOSE: m = Move.REPETITION_LOSE; break; // 実際にはこれは起こりえない。
+                    case RepetitionState.WIN: m = Move.REPETITION_WIN; break;
                     default: break;
                 }
             }
+            // 人間が入玉局面の条件を満たしているなら自動的に入玉局面して勝ちとする。
+            // コンピューターの時は、これをやってしまうとコンピューターが入玉宣言の指し手(Move.WIN)をちゃんと指せているかの
+            // チェックが出来なくなってしまうので、コンピューターの時はこの処理を行わない。
+            else if (isHuman && Position.DeclarationWin(EnteringKingRule.POINT27) == Move.WIN)
+            {
+                m = Move.WIN;
+            }
+
             if (m != Move.NONE)
             {
                 // この特殊な状況を棋譜に書き出して終了。
                 kifuManager.Tree.AddNode(m, TimeSpan.Zero);
+                UpdateKifuListOfTail();
+
                 inTheGame = false;
                 GameEnd();
                 return;

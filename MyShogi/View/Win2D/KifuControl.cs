@@ -19,6 +19,9 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void OnListChanged(PropertyChangedEventArgs args)
         {
+            if (!IsHandleCreated)
+                return;
+
             Invoke(new Action(() =>
             {
                 List<string> list = args.value as List<string>;

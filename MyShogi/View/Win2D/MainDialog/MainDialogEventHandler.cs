@@ -172,6 +172,9 @@ namespace MyShogi.View.Win2D
         /// <param name="enable"></param>
         private void SetButton(MainDialogButtonEnum name , bool enable)
         {
+            if (!IsHandleCreated)
+                return;
+
             ToolStripButton btn;
             switch (name)
             {
