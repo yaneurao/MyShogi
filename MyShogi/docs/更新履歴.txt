@@ -1,16 +1,114 @@
 ﻿
-ToDo : 明日の予定
-- 対局開始のダイアログでの対局開始
-- 対局の開始と中断の処理
-・終局の処理
+ToDo:
+- 時間管理
+- 棋譜への消費時間の記入
 ・終局後の局面移動
-・時間管理
-・棋譜への消費時間の記入
 ・棋譜の書き出し
 ・棋譜の読み込み
 
 
+■　2018/06/14
+
+
+- 中断局の再開機能
+	- 対局ダイアログの持ち時間設定をLocalGameServer.GameStartに渡せるようにする。
+/// 作業中
+
+
+- readme.md、実装済みの機能をdocs/に移動
+
+
+- KI2形式で同～不成の場合、空白を取り除く (#11) Mizarさん
+
+
+- 成りしか出来ない駒に対して成り/不成のダイアログを出していたの修正。
+- ILLEGAL_MOVEに対してゲームの終了をさせていなかったの修正。
+
+
+- 中断の処理
+	- 「中」ボタンの実装。対局の「中断」
+	- 棋譜ウィンドウに「中断」と書き出されて、対局が中断されるところまで処理
+- 起動時には「投」「待」「急」「中」の4つをdisable状態にする。
+- LocalGameServer.inTheGameをInTheGameとrename。public propertyに変更。
+
+
+- KifuManagerでspecial moveを置き換える。
+	- KIF2形式、連続王手の千日手でも単に「千日手」と出力されるようなので、
+		棋譜ウィンドウにKIF2の指し手文字列をそのまま表示するのには無理がある。
+	- しかも、KIF形式のファイルでは、指し手として「千日手」が出力されるが、KIF2形式だとコメントとして「まで13手で千日手」のようになっているようだ。
+	- 以下のように置き換えた。
+
+                    case Move.NONE:            return "none"; // これは使わないはず
+                    case Move.WIN:             return "入玉宣言勝ち";
+                    case Move.REPETITION_DRAW: return "千日手引分";
+                    case Move.REPETITION_LOSE: return "千日手反則負け";
+                    case Move.REPETITION_WIN:  return "千日手反則勝ち";
+                    case Move.MATED:           return "詰み";
+                    case Move.MAX_MOVES_DRAW:  return "手数による引分";
+                    case Move.INTERRUPT:       return "中断";
+                    case Move.ILLEGAL:         return "非合法手反則負け";
+                    case Move.TIME_UP:         return "時間切れ";
+                    default:                   return "null"; // これも使わないはず..
+
+
+- 対局開始のダイアログでの「対局開始」追加。
+- メニューから「デモ用」の項目削除。
+- 対局開始ダイアログで「人間」「コンピューター」を選択しての対局開始を実装。
+	- 対局中断など実装まだ。
+
+
+- Invoke()しているところ、すべてIsHandleCreatedで判定してからすることにする。
+	- NotifyObjectだと通知が初期化タイミングで送られることがあるので、まだウィンドウハンドルが生成されておらず、
+		BeginInvokeが不正になりかねない。
+
+
+- LocalGameServerにUpdateKifuListOfTail()追加。
+- 終局の「詰み」「千日手」「連続王手千日手反則勝ち」「勝ち宣言」が出力されるようになった。
+- 棋譜ウィンドウの出力、「同　銀不成」となるのが不格好なのでMizarさんに修正を依頼。
+- 「連続王手千日手反則勝ち」はKIF2として合法な文字列ではないと思うのでMizarさんに修正を依頼。
+	- 棋譜ウィンドウへの出力文字列、KIF2の出力で不適切なものに関して、KifuManagerのほうで吸収することも
+	考えられるが、なるべくならKIF2の表記に準拠しておきたいので、それはしないことにする。
+	
+
+- LocalGameServerの初期化抜けていたの修正。
+- 参照のdelegateどう束縛されるのか、テスト
+
+
+- 人間同士の対局においてエンジン初期化中のダイアログが一瞬出うるのを修正。
+- LocalGameServerの通知モデルまわり、整理した。
+- LocalGameServer、UI側から受け付けるmethodは、名前の末尾にCommandと追加。
+
+
+
 ■　2018/06/13
+
+
+- Mizarさんの進捗分をマージ(#10)
+
+
+- 「投」ボタン 投了の受理
+- 人間プレイヤーの時だけ「投」を有効化
+- Player.Dispose()追加
+- UsiEngineの終了処理追加
+- Player.IsInit　→　Initializingにrename
+- ユーザーの投了はできるようになった。
+
+
+- KifuManager.UsiPositionStringのほうにはUSIで規定されていない指し手を書き出さないように修正。
+- KifuManager.Tree.AddNode(Move.RESIGN)が失敗するの修正。
+
+
+- KifuManager.FromSfenString()でParseWordを呼び出していたの修正。
+- Move.RESIGNをKifuManager.Tree.AddNode()に渡せるように修正。
+- Move.IsOk()の定義変更。Move.NONEとSpecialMoveに対してfalseを返すようにする。
+- Move.ILLEGALの綴り間違いの修正。
+
+
+- Ki2の出力で、詰み、千日手などの出力処理が必要なのでkif.csに追加。
+- 終局の処理
+- Move.ILLEGAL追加。
+- 千日手判定、入玉宣言の受理
+- 両方がエンジンで対局したときにエンジン初期化中に対局がスタートするの修正。
 
 
 - readme.md、実装済みの項目更新
