@@ -47,7 +47,7 @@
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.comboBox4 = new System.Windows.Forms.ComboBox();
+            this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.radioButton6 = new System.Windows.Forms.RadioButton();
             this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -288,7 +288,7 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.comboBox4);
+            this.groupBox3.Controls.Add(this.comboBox3);
             this.groupBox3.Controls.Add(this.radioButton6);
             this.groupBox3.Controls.Add(this.radioButton5);
             this.groupBox3.Location = new System.Drawing.Point(13, 457);
@@ -300,24 +300,29 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "開始局面";
             // 
-            // comboBox4
+            // comboBox3
             // 
-            this.comboBox4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Items.AddRange(new object[] {
+            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox3.FormattingEnabled = true;
+            this.comboBox3.Items.AddRange(new object[] {
             "平手",
-            "飛車落ち",
+            "香落ち",
+            "右香落ち",
             "角落ち",
-            "飛車香落ち",
+            "飛車落ち",
+            "飛香落ち",
             "二枚落ち",
+            "三枚落ち",
             "四枚落ち",
+            "五枚落ち",
+            "左五枚落ち",
             "六枚落ち",
             "八枚落ち",
             "十枚落ち"});
-            this.comboBox4.Location = new System.Drawing.Point(246, 45);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(221, 35);
-            this.comboBox4.TabIndex = 7;
+            this.comboBox3.Location = new System.Drawing.Point(246, 45);
+            this.comboBox3.Name = "comboBox3";
+            this.comboBox3.Size = new System.Drawing.Size(221, 35);
+            this.comboBox3.TabIndex = 7;
             // 
             // radioButton6
             // 
@@ -543,7 +548,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.RadioButton radioButton6;
         private System.Windows.Forms.RadioButton radioButton5;
-        private System.Windows.Forms.ComboBox comboBox4;
+        private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.RadioButton radioButton7;
         private System.Windows.Forms.RadioButton radioButton8;

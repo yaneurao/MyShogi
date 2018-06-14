@@ -32,7 +32,7 @@ namespace MyShogi.View.Win2D
 
             comboBox1.SelectedIndex = 0;
             comboBox2.SelectedIndex = 5;
-            comboBox4.SelectedIndex = 0;
+            comboBox3.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -81,7 +81,13 @@ namespace MyShogi.View.Win2D
             // 開始局面の選択
             if (radioButton5.Checked)
             {
-                gameSetting.BoardType = BoardType.NoHandicap;
+                // 手合割の取得
+                var index = comboBox3.SelectedIndex;
+                var boardType = (BoardType)index;
+                if (boardType < 0 || boardType >= BoardType.Others)
+                    boardType = BoardType.NoHandicap; // なぜなのか..どこも選択されていないのか？
+
+                gameSetting.BoardType = boardType;
             }
             else // if (radioButton6.Checked)
             {

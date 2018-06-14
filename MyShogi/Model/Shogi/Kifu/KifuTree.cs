@@ -244,7 +244,7 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             // 棋譜の末端にspecial moveを積んでいたのであればそれを取り除く。
             if (currentNode.moves.Count != 0 && currentNode.moves[0].nextMove.IsSpecial())
-                RemoveKifuSpecialMove();
+                RemoveKifu(true);
 
             position.UndoMove();
             RaisePropertyChanged("Position", position);
@@ -381,11 +381,9 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public void ClearForward()
         {
+            // 末尾にspecial moveが積んであるなら、棋譜を1行削除する必要がある。
             if (currentNode.moves.Count!=0 && currentNode.moves[0].nextMove.IsSpecial())
-            {
-                // 末尾にspecial moveが積んであるので、棋譜を1行削除する必要がある。
-                RemoveKifu();
-            }
+                RemoveKifu(true);
 
             // この枝の持つ指し手をすべて削除
             currentNode.moves.Clear();
@@ -441,7 +439,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// UndoMove()のときに棋譜を1行取り除く。
         /// </summary>
-        private void RemoveKifu()
+        private void RemoveKifu(bool isSpecialMove = false)
         {
             if (EnableKifuList)
             {
@@ -449,7 +447,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 RaisePropertyChanged("KifuList", KifuList, KifuList.Count /*末尾が削除になった*/);
             }
 
-            if (EnableUsiMoveList)
+            // UsiMoveListにはspecial moveは含まれていないので、取り除くことは出来ない。
+            if (EnableUsiMoveList && !isSpecialMove)
                 UsiMoveList.RemoveAt(UsiMoveList.Count - 1); // RemoveLast()
         }
 
@@ -463,13 +462,5 @@ namespace MyShogi.Model.Shogi.Kifu
             AddKifu(m);
         }
 
-        /// <summary>
-        /// KifuListの末尾から、special moveを取り除く。
-        /// </summary>
-        private void RemoveKifuSpecialMove()
-        {
-            if (EnableKifuList)
-                KifuList.RemoveAt(KifuList.Count - 1); // RemoveLast()
-        }
     }
 }

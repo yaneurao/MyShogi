@@ -471,36 +471,10 @@ namespace MyShogi.Model.Shogi.Core
         /// <summary>
         /// 平手の初期局面のsfen形式
         /// </summary>
-        public static readonly string SFEN_HIRATE = "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1";
-
-        /// <summary>
-        /// 以下、各種駒落ちのsfen形式
-        /// それぞれの意味については、BoardTypeのenumの定義を見ること
-        /// </summary>
-        public static readonly string SFEN_HANDICAP_KYO = "lnsgkgsn1/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_RIGHT_KYO = "1nsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_KAKU = "lnsgkgsnl/1r7/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_HISYA = "lnsgkgsnl/7b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_HISYA_KYO = "lnsgkgsn1/7b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_2 = "lnsgkgsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_3 = "lnsgkgsn1/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_4 = "1nsgkgsn1/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_5 = "2sgkgsn1/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_LEFT_5 = "1nsgkgs2/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_6 = "2sgkgs2/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_8 = "3gkg3/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-        public static readonly string SFEN_HANDICAP_10 = "4k4/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
-
-        /// <summary>
-        /// 平手、駒落ちなどのsfen文字列をひとまとめにした配列。BoardTypeのenumと対応する。
-        /// </summary>
-        public static readonly string[] SFENS_OF_BOARDTYPE =
-        {
-            SFEN_HIRATE , SFEN_HANDICAP_KYO , SFEN_HANDICAP_RIGHT_KYO , SFEN_HANDICAP_KAKU ,
-            SFEN_HANDICAP_HISYA , SFEN_HANDICAP_HISYA_KYO ,
-            SFEN_HANDICAP_2 , SFEN_HANDICAP_3 , SFEN_HANDICAP_4 , SFEN_HANDICAP_5 , SFEN_HANDICAP_LEFT_5 ,
-            SFEN_HANDICAP_6 , SFEN_HANDICAP_8 , SFEN_HANDICAP_10
-        };
+        public static readonly string SFEN_HIRATE = Sfens.HIRATE;
+        
+        /// それ以外の駒落ちなどのsfen文字列については、
+        /// BoardType.ToSfen()などで取得すること。
 
         // -------------------------------------------------------------------------
 
@@ -515,7 +489,7 @@ namespace MyShogi.Model.Shogi.Core
                 throw new PositionException("範囲外のBoardTypeを指定してPosition.init()を呼び出した");
 
             // 平手で初期化
-            SetSfen(SFENS_OF_BOARDTYPE[(int)boardType]);
+            SetSfen(boardType.ToSfen());
         }
 
         /// <summary>

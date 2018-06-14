@@ -207,8 +207,9 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="boardType"></param>
         public void InitBoard(BoardType boardType)
         {
-            // TODO : あとで実装する
-            FromSfenString("startpos");
+            Tree.rootSfen = boardType.ToSfen();
+            Tree.position.SetSfen(Tree.rootSfen);
+            Tree.rootBoardType = BoardType.NoHandicap;
         }
 
         /// <summary>
@@ -1028,72 +1029,72 @@ namespace MyShogi.Model.Shogi.Kifu
                     switch (jsonObj.initial.preset)
                     {
                         case "HIRATE":
-                            Tree.rootSfen = Position.SFEN_HIRATE;
+                            Tree.rootSfen = Sfens.HIRATE;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.NoHandicap;
                             break;
                         case "KY":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_KYO;
+                            Tree.rootSfen = Sfens.HANDICAP_KYO;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.HandicapKyo;
                             break;
                         case "KY_R":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_RIGHT_KYO;
+                            Tree.rootSfen = Sfens.HANDICAP_RIGHT_KYO;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.HandicapRightKyo;
                             break;
                         case "KA":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_KAKU;
+                            Tree.rootSfen = Sfens.HANDICAP_KAKU;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.HandicapKaku;
                             break;
                         case "HI":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_HISYA;
+                            Tree.rootSfen = Sfens.HANDICAP_HISYA;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.HandicapHisya;
                             break;
                         case "HIKY":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_HISYA_KYO;
+                            Tree.rootSfen = Sfens.HANDICAP_HISYA_KYO;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.HandicapHisyaKyo;
                             break;
                         case "2":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_2;
+                            Tree.rootSfen = Sfens.HANDICAP_2;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.Handicap2;
                             break;
                         case "3":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_3;
+                            Tree.rootSfen = Sfens.HANDICAP_3;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.Handicap3;
                             break;
                         case "4":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_4;
+                            Tree.rootSfen = Sfens.HANDICAP_4;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.Handicap4;
                             break;
                         case "5":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_5;
+                            Tree.rootSfen = Sfens.HANDICAP_5;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.Handicap5;
                             break;
                         case "5_L":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_LEFT_5;
+                            Tree.rootSfen = Sfens.HANDICAP_LEFT_5;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.HandicapLeft5;
                             break;
                         case "6":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_6;
+                            Tree.rootSfen = Sfens.HANDICAP_6;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.Handicap6;
                             break;
                         case "8":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_8;
+                            Tree.rootSfen = Sfens.HANDICAP_8;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.Handicap8;
                             break;
                         case "10":
-                            Tree.rootSfen = Position.SFEN_HANDICAP_10;
+                            Tree.rootSfen = Sfens.HANDICAP_10;
                             Tree.position.SetSfen(Tree.rootSfen);
                             Tree.rootBoardType = BoardType.Handicap10;
                             break;

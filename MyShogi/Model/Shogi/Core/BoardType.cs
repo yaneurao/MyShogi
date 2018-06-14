@@ -108,6 +108,7 @@ namespace MyShogi.Model.Shogi.Core
         ZERO = 0,
     }
 
+
     /// <summary>
     /// BoardTypeに対するextension methods
     /// </summary>
@@ -124,6 +125,21 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// BoardTypeに対応するsfen文字列を得る。
+        /// BoardType.OthersとBoardType.Currentに対してはnullが返る。
+        /// </summary>
+        /// <param name="boardType"></param>
+        /// <returns></returns>
+        public static string ToSfen(this BoardType boardType)
+        {
+            // 範囲外
+            if (boardType < 0 || boardType >= BoardType.Others)
+                return null;
+
+            return SFENS_OF_BOARDTYPE[(int)boardType];
+        }
+
+        /// <summary>
         /// BoardType型をInt32に変換する
         /// </summary>
         /// <param name="boardType"></param>
@@ -132,5 +148,16 @@ namespace MyShogi.Model.Shogi.Core
         {
             return (Int32)boardType;
         }
+
+        /// <summary>
+        /// 平手、駒落ちなどのsfen文字列をひとまとめにした配列。BoardTypeのenumと対応する。
+        /// </summary>
+        public static readonly string[] SFENS_OF_BOARDTYPE =
+        {
+            Sfens.HIRATE , Sfens.HANDICAP_KYO , Sfens.HANDICAP_RIGHT_KYO , Sfens.HANDICAP_KAKU ,
+            Sfens.HANDICAP_HISYA , Sfens.HANDICAP_HISYA_KYO ,
+            Sfens.HANDICAP_2 , Sfens.HANDICAP_3 , Sfens.HANDICAP_4 , Sfens.HANDICAP_5 , Sfens.HANDICAP_LEFT_5 ,
+            Sfens.HANDICAP_6 , Sfens.HANDICAP_8 , Sfens.HANDICAP_10
+        };
     }
 }
