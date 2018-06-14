@@ -359,9 +359,10 @@ namespace MyShogi.Model.Shogi.Converter
                         return kif.Append("連続王手千日手反則負け").ToString();
                 }
             }
-            Piece fromPieceType = move.IsDrop() ? move.DroppedPiece() : pos.PieceOn(move.From()).PieceType();
+            var moveInfo = new KifMoveInfo(pos, move);
+            var fromPieceType = moveInfo.fromPt;
             // 普通の指し手
-            if (!move.IsDrop() && lastMove.IsOk() && lastMove.To() == move.To())
+            if (moveInfo.same)
             {
                 // 一つ前の指し手の移動先と、今回の移動先が同じ場合、"同"金のように表示する。
                 switch (opt.samepos)
@@ -375,17 +376,19 @@ namespace MyShogi.Model.Shogi.Converter
                     case SamePosFormat.KIFsp:
                         kif.Append("同　");
                         break;
-                    // KI2形式では成香・成桂・成銀・成り動作・不成での空白は入らない
+                    // KI2形式では成香・成桂・成銀・成り・不成・相対位置・動作での空白は入らない
                     case SamePosFormat.KI2sp: {
                         if (
                             move.IsPromote() ||
-                            !move.IsPromote() &&
+                            !fromPieceType.IsPromote() &&
                             fromPieceType != Piece.GOLD &&
                             fromPieceType != Piece.KING &&
                             (
                                 Util.CanPromote(pos.sideToMove, move.From()) ||
                                 Util.CanPromote(pos.sideToMove, move.To())
                             ) ||
+                            moveInfo.relative != KifMoveInfo.Relative.NONE ||
+                            moveInfo.behavior != KifMoveInfo.Behavior.NONE ||
                             fromPieceType == Piece.PRO_LANCE ||
                             fromPieceType == Piece.PRO_KNIGHT ||
                             fromPieceType == Piece.PRO_SILVER
@@ -427,13 +430,7 @@ namespace MyShogi.Model.Shogi.Converter
                         {
                             kif.Append("成");
                         }
-                        else if (
-                            !fromPieceType.IsPromote() &&
-                            fromPieceType != Piece.GOLD &&
-                            fromPieceType != Piece.KING &&
-                            (Util.CanPromote(pos.sideToMove, move.To()) ||
-                            Util.CanPromote(pos.sideToMove, move.From()))
-                        )
+                        else if (moveInfo.promote == KifMoveInfo.Promote.NOPROMOTE)
                         {
                             kif.Append("不成");
                         }
@@ -447,26 +444,29 @@ namespace MyShogi.Model.Shogi.Converter
                 case FromSqFormat.KI2:
                 case FromSqFormat.Verbose:
                 {
-                    if (move.IsDrop())
+                    if (moveInfo.drop == KifMoveInfo.Drop.EXPLICIT)
                     {
                         // KI2では紛らわしくない場合、"打"と表記しない。
-                        Bitboard sameBB = pos.AttackersTo(pos.sideToMove, move.To()) & pos.Pieces(pos.sideToMove, move.DroppedPiece());
-                        if (opt.fromsq == FromSqFormat.Verbose || !sameBB.IsZero()) kif.Append("打");
+                        kif.Append("打");
                         break;
                     }
-                    kif.Append(fromSqFormat_KI2(pos, move));
+                    switch (moveInfo.relative)
+                    {
+                        case KifMoveInfo.Relative.LEFT:     kif.Append("左"); break;
+                        case KifMoveInfo.Relative.STRAIGHT: kif.Append("直"); break;
+                        case KifMoveInfo.Relative.RIGHT:    kif.Append("右"); break;
+                    }
+                    switch (moveInfo.behavior)
+                    {
+                        case KifMoveInfo.Behavior.FORWARD:  kif.Append("上"); break;
+                        case KifMoveInfo.Behavior.SLIDE:    kif.Append("寄"); break;
+                        case KifMoveInfo.Behavior.BACKWARD: kif.Append("引"); break;
+                    }
                     if (move.IsPromote())
                     {
                         kif.Append("成");
                     }
-                    else if
-                    (
-                        !fromPieceType.IsPromote() &&
-                        fromPieceType != Piece.GOLD &&
-                        fromPieceType != Piece.KING &&
-                        (Util.CanPromote(pos.sideToMove, move.To()) ||
-                        Util.CanPromote(pos.sideToMove, move.From()))
-                    )
+                    else if (moveInfo.promote == KifMoveInfo.Promote.NOPROMOTE)
                     {
                         kif.Append("不成");
                     }
@@ -484,32 +484,6 @@ namespace MyShogi.Model.Shogi.Converter
             }
             return kif.ToString();
         }
-        static string fromSqFormat_KI2(Position pos, Move move)
-        {
-            Color c = pos.sideToMove;
-            Square fromSq = move.From(), toSq = move.To();
-            Piece p = pos.PieceOn(fromSq), pt = p.PieceType();
-            Bitboard sameBB = pos.AttackersTo(c, toSq) & pos.Pieces(c, pt);
-            if (!sameBB.IsSet(fromSq)) return "";
-            if (sameBB.IsOne()) return "";
-            if (KifUtil.checkBB(sameBB, Bitboard.RankBB(toSq.ToRank()), fromSq)) return "寄";
-            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.D), fromSq)) return "上";
-            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.U), fromSq)) return "引";
-            if (KifUtil.checkBB(sameBB, KifUtil.lineDirBB(c, toSq, Direct.D), fromSq) && (
-                pt == Piece.SILVER || pt == Piece.GOLD ||
-                pt == Piece.PRO_PAWN || pt == Piece.PRO_LANCE || pt == Piece.PRO_KNIGHT || pt == Piece.PRO_SILVER
-            )) return "直";
-            if (KifUtil.checkBB(sameBB, KifUtil.dirOrBB(c, fromSq, Direct.L), fromSq)) return "左";
-            if (KifUtil.checkBB(sameBB, KifUtil.dirOrBB(c, fromSq, Direct.R), fromSq)) return "右";
-            if (KifUtil.checkBB(sameBB, KifUtil.lineDirOrBB(c, fromSq, Direct.L) & Bitboard.RankBB(toSq.ToRank()), fromSq)) return "左寄";
-            if (KifUtil.checkBB(sameBB, KifUtil.lineDirOrBB(c, fromSq, Direct.R) & Bitboard.RankBB(toSq.ToRank()), fromSq)) return "右寄";
-            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.D) & KifUtil.dirOrBB(c, fromSq, Direct.L), fromSq)) return "左上";
-            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.D) & KifUtil.dirOrBB(c, fromSq, Direct.R), fromSq)) return "右上";
-            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.U) & KifUtil.dirOrBB(c, fromSq, Direct.L), fromSq)) return "左引";
-            if (KifUtil.checkBB(sameBB, KifUtil.dirBB(c, toSq, Direct.U) & KifUtil.dirOrBB(c, fromSq, Direct.R), fromSq)) return "右引";
-            // 正常な局面・指し手でここに到達する筈は無い
-            return "";
-        }
     }
 
     /// <summary>
@@ -526,6 +500,12 @@ namespace MyShogi.Model.Shogi.Converter
         public Piece fromPc { get; }
         public Piece toPc { get; }
         public Piece capPc { get; }
+        public Piece fromPt { get => fromPc.PieceType(); }
+        public Piece toPt { get => toPc.PieceType(); }
+        public Piece capPt { get => capPc.PieceType(); }
+        public Piece fromPr { get => fromPc.RawPieceType(); }
+        public Piece toPr { get => toPc.RawPieceType(); }
+        public Piece capPr { get => capPc.RawPieceType(); }
         public Bitboard sameBB { get; }
         public bool same { get; }
         public Relative relative { get; }
@@ -739,7 +719,16 @@ namespace MyShogi.Model.Shogi.Converter
                     behavior = Behavior.NONE;
                 }
 
-                promote = move.IsPromote() ? Promote.PROMOTE : (Util.CanPromote(pos.sideToMove, move.From()) || Util.CanPromote(pos.sideToMove, move.To())) ? Promote.NOPROMOTE : Promote.NONE;
+                promote = move.IsPromote() ? Promote.PROMOTE :
+                    (
+                        !fromPt.IsPromote() &&
+                        fromPt != Piece.GOLD &&
+                        fromPt != Piece.KING &&
+                        (
+                            Util.CanPromote(pos.sideToMove, move.From()) ||
+                            Util.CanPromote(pos.sideToMove, move.To())
+                        )
+                    ) ? Promote.NOPROMOTE : Promote.NONE;
                 drop = Drop.NONE;
                 legal = pos.IsLegal(move);
             }
