@@ -48,8 +48,8 @@
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
-            this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.radioButton6 = new System.Windows.Forms.RadioButton();
+            this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
@@ -289,8 +289,8 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.comboBox4);
-            this.groupBox3.Controls.Add(this.radioButton5);
             this.groupBox3.Controls.Add(this.radioButton6);
+            this.groupBox3.Controls.Add(this.radioButton5);
             this.groupBox3.Location = new System.Drawing.Point(13, 457);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox3.Name = "groupBox3";
@@ -319,28 +319,28 @@
             this.comboBox4.Size = new System.Drawing.Size(221, 35);
             this.comboBox4.TabIndex = 7;
             // 
-            // radioButton5
-            // 
-            this.radioButton5.AutoSize = true;
-            this.radioButton5.Location = new System.Drawing.Point(27, 93);
-            this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(181, 31);
-            this.radioButton5.TabIndex = 0;
-            this.radioButton5.TabStop = true;
-            this.radioButton5.Text = "現在の局面 ";
-            this.radioButton5.UseVisualStyleBackColor = true;
-            // 
             // radioButton6
             // 
             this.radioButton6.AutoSize = true;
-            this.radioButton6.Checked = true;
-            this.radioButton6.Location = new System.Drawing.Point(27, 47);
+            this.radioButton6.Location = new System.Drawing.Point(27, 93);
             this.radioButton6.Name = "radioButton6";
-            this.radioButton6.Size = new System.Drawing.Size(151, 31);
+            this.radioButton6.Size = new System.Drawing.Size(181, 31);
             this.radioButton6.TabIndex = 0;
             this.radioButton6.TabStop = true;
-            this.radioButton6.Text = "初期局面";
+            this.radioButton6.Text = "現在の局面 ";
             this.radioButton6.UseVisualStyleBackColor = true;
+            // 
+            // radioButton5
+            // 
+            this.radioButton5.AutoSize = true;
+            this.radioButton5.Checked = true;
+            this.radioButton5.Location = new System.Drawing.Point(27, 47);
+            this.radioButton5.Name = "radioButton5";
+            this.radioButton5.Size = new System.Drawing.Size(151, 31);
+            this.radioButton5.TabIndex = 0;
+            this.radioButton5.TabStop = true;
+            this.radioButton5.Text = "初期局面";
+            this.radioButton5.UseVisualStyleBackColor = true;
             // 
             // groupBox4
             // 
@@ -541,8 +541,8 @@
         private System.Windows.Forms.RadioButton radioButton4;
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.RadioButton radioButton5;
         private System.Windows.Forms.RadioButton radioButton6;
+        private System.Windows.Forms.RadioButton radioButton5;
         private System.Windows.Forms.ComboBox comboBox4;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.RadioButton radioButton7;

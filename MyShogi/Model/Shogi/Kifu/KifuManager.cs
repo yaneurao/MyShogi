@@ -1188,21 +1188,21 @@ namespace MyShogi.Model.Shogi.Kifu
                         {
                             switch (jkfMove.special)
                             {
-                                case "TORYO": m = Move.RESIGN; break;
-                                case "CHUDAN": m = Move.INTERRUPT; break;
-                                case "SENNICHITE": m = Move.REPETITION_DRAW; break;
-                                case "TIME_UP": m = Move.TIME_UP; break;
-                                case "JISHOGI": m = Move.MAX_MOVES_DRAW; break;
-                                case "KACHI": m = Move.WIN; break;
+                                case "TORYO":           m = Move.RESIGN; break;
+                                case "CHUDAN":          m = Move.INTERRUPT; break;
+                                case "SENNICHITE":      m = Move.REPETITION_DRAW; break;
+                                case "TIME_UP":         m = Move.TIME_UP; break;
+                                case "JISHOGI":         m = Move.MAX_MOVES_DRAW; break;
+                                case "KACHI"  :         m = Move.WIN; break;
                                 // 以下、適切な変換先不明
-                                case "HIKIWAKE":
-                                case "TSUMI":
+                                case "HIKIWAKE":        m = Move.DRAW; break;
+                                case "TSUMI":           m = Move.MATED; break;
+                                case "ILLEGAL_MOVE"   : m = Move.ILLEGAL_MOVE; break;
+                                case "+ILLEGAL_ACTION": m = Move.ILLEGAL_ACTION; break;
+                                case "-ILLEGAL_ACTION": m = Move.ILLEGAL_ACTION; break;
+                                case "ERROR":
                                 case "FUZUMI":
                                 case "MATTA":
-                                case "ILLEGAL_MOVE":
-                                case "+ILLEGAL_ACTION":
-                                case "-ILLEGAL_ACTION":
-                                case "ERROR":
                                 default: m = Move.NONE; break;
                             }
                         }

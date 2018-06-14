@@ -36,12 +36,13 @@ namespace MyShogi.Model.Shogi.Kifu
         public void Init()
         {
             position.InitBoard();
-            RaisePropertyChanged("Position",position);
             
             currentNode = rootNode = new KifuNode(null);
             //    UsiMoveStringList.Clear();
             rootBoardType = BoardType.NoHandicap;
             rootSfen = Position.SFEN_HIRATE;
+
+            RaisePropertyChanged("Position", position);
         }
 
         // -------------------------------------------------------------------------
@@ -96,6 +97,9 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 // これが設定されたときに局面リストを更新しなければならない。
                 rootSfen_ = value;
+
+                //RaisePropertyChanged("Position", position);
+                // このタイミングで通知すると局面がまだ更新中である可能性が..
 
                 if (EnableKifuList)
                 {
@@ -371,6 +375,21 @@ namespace MyShogi.Model.Shogi.Kifu
                 DoMove(moves[i]);
         }
 
+        /// <summary>
+        /// 現局面以降の棋譜データを削除する。(中断局の再開など用)
+        /// 末尾にspecial moveが積んである場合、その部分の棋譜も削除する。
+        /// </summary>
+        public void ClearForward()
+        {
+            if (currentNode.moves.Count!=0 && currentNode.moves[0].nextMove.IsSpecial())
+            {
+                // 末尾にspecial moveが積んであるので、棋譜を1行削除する必要がある。
+                RemoveKifu();
+            }
+
+            // この枝の持つ指し手をすべて削除
+            currentNode.moves.Clear();
+        }
 
         // -- 以下private
 
@@ -385,24 +404,7 @@ namespace MyShogi.Model.Shogi.Kifu
             // 特殊な指し手は、KIF2フォーマットではきちんと変換できないので自前で変換する。
             // 例えば、連続王手の千日手による反則勝ちが単に「千日手」となってしまってはまずいので。
             // (『Kifu for Windoiws』ではそうなってしまう..)
-            if (!m.IsOk())
-            {
-                switch (m)
-                {
-                    case Move.NONE:            return "none"; // これは使わないはず
-                    case Move.WIN:             return "入玉宣言勝ち";
-                    case Move.REPETITION_DRAW: return "千日手引分";
-                    case Move.REPETITION_LOSE: return "千日手反則負け";
-                    case Move.REPETITION_WIN:  return "千日手反則勝ち";
-                    case Move.MATED:           return "詰み";
-                    case Move.MAX_MOVES_DRAW:  return "手数による引分";
-                    case Move.INTERRUPT:       return "中断";
-                    case Move.ILLEGAL_MOVE:    return "非合法手反則負け";
-                    case Move.TIME_UP:         return "時間切れ";
-                    default:                   return "null"; // これも使わないはず..
-                }
-            }
-            return kifFormatter.format(p, m);
+            return m.IsOk() ? kifFormatter.format(p, m) : m.SpecialMoveToKif();
         }
 
         /// <summary>

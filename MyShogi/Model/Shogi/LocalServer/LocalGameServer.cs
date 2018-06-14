@@ -153,14 +153,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     {
                         // いったんリセット
                         GameEnd();
-
-                        // 初期局面にする。(あとでちゃんと書く)
-                        kifuManager.Init();
-
-                        Initializing = true;
-                        SetPlayer(gameSetting);
-
-                        InTheGame = true;
+                        GameInit(gameSetting);
 
                         // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。
                     }
@@ -285,13 +278,36 @@ namespace MyShogi.Model.Shogi.LocalServer
             (EngineInitializing = Player(Color.BLACK).PlayerType == PlayerTypeEnum.UsiEngine || Player(Color.WHITE).PlayerType == PlayerTypeEnum.UsiEngine);
         }
 
-        private void SetPlayer(GameSetting gameSetting)
+        /// <summary>
+        /// 対局開始のためにGameSettingの設定に従い、ゲームを初期化する。
+        /// </summary>
+        /// <param name="gameSetting"></param>
+        private void GameInit(GameSetting gameSetting)
         {
-            foreach(var c in All.Colors())
+            // 初期化中である。
+            Initializing = true;
+
+            // プレイヤーの生成
+            foreach (var c in All.Colors())
             {
                 var playerType = gameSetting.Player(c).PlayerType;
                 Players[(int)c] = PlayerBuilder.Create(playerType);
             }
+
+            // 局面の設定
+            if (gameSetting.BoardType == BoardType.Current)
+            {
+                // 現在の局面からなので、いま以降の局面を削除する。
+                kifuManager.Tree.ClearForward();
+
+            } else
+            {
+                kifuManager.Init();
+                kifuManager.InitBoard(gameSetting.BoardType);
+            }
+
+            InTheGame = true;
+
             UpdateEngineInitializing();
         }
 

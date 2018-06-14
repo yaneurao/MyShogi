@@ -78,6 +78,17 @@ namespace MyShogi.View.Win2D
                 // その他、設定を調べて受け継ぐ。
             }
 
+            // 開始局面の選択
+            if (radioButton5.Checked)
+            {
+                gameSetting.BoardType = BoardType.NoHandicap;
+            }
+            else // if (radioButton6.Checked)
+            {
+                // 現在の局面から開始
+                gameSetting.BoardType = BoardType.Current;
+            }
+
             gameServer.GameStartCommand(gameSetting);
 
             // 対局が開始するのでこのダイアログを隠す

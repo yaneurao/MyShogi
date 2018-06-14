@@ -129,6 +129,41 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// Move.IsOk()ではない指し手に対して棋譜ウィンドウで使うような文字列化を行う。
+        /// KIF2ではきちんと規定されていないのでこれらの特別な指し手は棋譜ウィンドウでの表示において、
+        /// 自前で文字列化しなくてはならない。
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public static string SpecialMoveToKif(this Move m)
+        {
+            if (!m.IsOk())
+                switch (m)
+                {
+                    case Move.NONE:            return "none"; // これは使わないはず
+                    case Move.NULL:            return "null";
+                    case Move.RESIGN:          return "投了";
+                    case Move.WIN:             return "入玉宣言勝ち";
+                    case Move.DRAW:            return "引き分け";
+                    case Move.MATED:           return "詰み";
+                    case Move.REPETITION:      return "千日手";
+                    case Move.REPETITION_DRAW: return "千日手引分";
+                    case Move.REPETITION_WIN:  return "千日手反則勝ち";
+                    case Move.REPETITION_LOSE: return "千日手反則負け";
+                    case Move.TIME_UP:         return "時間切れ";
+                    case Move.INTERRUPT:       return "中断";
+                    case Move.MAX_MOVES_DRAW:  return "手数による引分";
+                    case Move.ILLEGAL_MOVE:    return "非合法手反則負け";
+                    case Move.ILLEGAL_ACTION:  return "反則勝ち";
+                    default: return "UNKNOWN"; // おかしい。なんだろう..
+                }
+            else
+                // エラーにはしないが..
+                return "NonSpecialMove";
+        }
+
+
+        /// <summary>
         /// 見た目に、わかりやすい形式で表示する
         /// (盤面情報がないので移動させる駒がわからない。デバッグ用)
         /// </summary>

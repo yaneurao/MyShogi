@@ -24,6 +24,16 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public PlayerGameSetting Player(Color c) { return players[(int)c]; }
 
-        public PlayerGameSetting[] players = new PlayerGameSetting[2] { new PlayerGameSetting(), new PlayerGameSetting() };
+        /// <summary>
+        /// 開始局面。
+        /// これがCurrentであれば、現在の局面を初期化せずに開始。
+        /// これがOthersであれば、別途、Sfenから初期化。
+        /// </summary>
+        public BoardType BoardType;
+
+        // -- private members
+
+        private PlayerGameSetting[] players = new PlayerGameSetting[2] { new PlayerGameSetting(), new PlayerGameSetting() };
+
     }
 }

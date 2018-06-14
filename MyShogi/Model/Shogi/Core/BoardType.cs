@@ -97,6 +97,12 @@ namespace MyShogi.Model.Shogi.Core
         //[LabelDescription(Label = "任意局面")]
         Others,
 
+        /// <summary>
+        /// 現在の(画面上の)局面図
+        /// </summary>
+        //[LabelDescription(Label = "現在の局面")]
+        Current,
+
         // 終わり
         NB,
         ZERO = 0,
