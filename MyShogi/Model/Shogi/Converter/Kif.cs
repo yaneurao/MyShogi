@@ -375,10 +375,17 @@ namespace MyShogi.Model.Shogi.Converter
                     case SamePosFormat.KIFsp:
                         kif.Append("同　");
                         break;
-                    // KI2形式では成香・成桂・成銀・成り動作での空白は入らない
+                    // KI2形式では成香・成桂・成銀・成り動作・不成での空白は入らない
                     case SamePosFormat.KI2sp: {
                         if (
                             move.IsPromote() ||
+                            !move.IsPromote() &&
+                            fromPieceType != Piece.GOLD &&
+                            fromPieceType != Piece.KING &&
+                            (
+                                Util.CanPromote(pos.sideToMove, move.From()) ||
+                                Util.CanPromote(pos.sideToMove, move.To())
+                            ) ||
                             fromPieceType == Piece.PRO_LANCE ||
                             fromPieceType == Piece.PRO_KNIGHT ||
                             fromPieceType == Piece.PRO_SILVER
