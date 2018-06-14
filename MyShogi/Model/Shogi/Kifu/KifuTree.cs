@@ -361,6 +361,37 @@ namespace MyShogi.Model.Shogi.Kifu
         // -- 以下private
 
         /// <summary>
+        /// メインウインドウの棋譜ウィンドウに表示する棋譜文字列に変換する。
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        private string move_to_kif_string(Position p , Move m)
+        {
+            // 特殊な指し手は、KIF2フォーマットではきちんと変換できないので自前で変換する。
+            // 例えば、連続王手の千日手による反則勝ちが単に「千日手」となってしまってはまずいので。
+            // (『Kifu for Windoiws』ではそうなってしまう..)
+            if (!m.IsOk())
+            {
+                switch (m)
+                {
+                    case Move.NONE:            return "none"; // これは使わないはず
+                    case Move.WIN:             return "入玉宣言勝ち";
+                    case Move.REPETITION_DRAW: return "千日手引分";
+                    case Move.REPETITION_LOSE: return "千日手反則負け";
+                    case Move.REPETITION_WIN:  return "千日手反則勝ち";
+                    case Move.MATED:           return "詰み";
+                    case Move.MAX_MOVES_DRAW:  return "手数による引分";
+                    case Move.INTERRUPT:       return "中断";
+                    case Move.ILLEGAL:         return "非合法手反則負け";
+                    case Move.TIME_UP:         return "時間切れ";
+                    default:                   return "null"; // これも使わないはず..
+                }
+            }
+            return kifFormatter.format(p, m);
+        }
+
+        /// <summary>
         /// DoMove()のときに棋譜に追加する
         /// </summary>
         /// <param name="m"></param>
@@ -370,7 +401,7 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 // 棋譜をappendする
 
-                var move_text = kifFormatter.format(position, m);
+                var move_text = move_to_kif_string(position, m);
                 var move_text_game_ply = position.gamePly;
 
                 move_text = string.Format("{0,-4}", move_text);
