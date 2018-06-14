@@ -35,7 +35,8 @@ namespace MyShogi.Model.Shogi.Core
         INTERRUPT      , // ゲーム中断
         MAX_MOVES_DRAW , // 最大手数に達したために引き分け
         ILLEGAL_MOVE   , // 不正な指し手などによる反則負け
-        ILLEGAL_ACTION , // 相手の不正なアクション(非手番の時に指し手を送ったなど)による反則勝ち(CSAプロトコルにある)
+        ILLEGAL_ACTION_WIN , // 相手の不正なアクション(非手番の時に指し手を送ったなど)による反則勝ち(CSAプロトコルにある)
+        ILLEGAL_ACTION_LOSE, // 自分の不正なアクション(手番時に送ってはいけない改行を送ったなど)による反則負け(CSAプロトコルにある)
     }
 
     /// <summary>
@@ -102,8 +103,8 @@ namespace MyShogi.Model.Shogi.Core
             switch (m)
             {
                 case Move.WIN:
-                case Move.ILLEGAL_ACTION:
                 case Move.REPETITION_WIN:
+                case Move.ILLEGAL_ACTION_WIN:
                     return MoveGameResult.WIN;
 
                 case Move.RESIGN:
@@ -111,6 +112,7 @@ namespace MyShogi.Model.Shogi.Core
                 case Move.REPETITION_LOSE:
                 case Move.ILLEGAL_MOVE:
                 case Move.TIME_UP:
+                case Move.ILLEGAL_ACTION_LOSE:
                     return MoveGameResult.LOSE;
 
                 case Move.DRAW:
@@ -154,7 +156,8 @@ namespace MyShogi.Model.Shogi.Core
                     case Move.INTERRUPT:       return "中断";
                     case Move.MAX_MOVES_DRAW:  return "手数による引分";
                     case Move.ILLEGAL_MOVE:    return "非合法手反則負け";
-                    case Move.ILLEGAL_ACTION:  return "反則勝ち";
+                    case Move.ILLEGAL_ACTION_WIN : return "反則勝ち";
+                    case Move.ILLEGAL_ACTION_LOSE: return "反則負け";
                     default: return "UNKNOWN"; // おかしい。なんだろう..
                 }
             else

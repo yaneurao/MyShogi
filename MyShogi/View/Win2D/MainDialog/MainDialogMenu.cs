@@ -63,7 +63,6 @@ namespace MyShogi.View.Win2D
                     { // -- 通常対局
                         var item = new ToolStripMenuItem();
                         item.Text = "通常対局";
-                        item.Checked = config.BoardReverse;
                         item.Click += (sender, e) => {
                             if (gameSettingDialog == null)
                                 gameSettingDialog = new GameSettingDialog(this);

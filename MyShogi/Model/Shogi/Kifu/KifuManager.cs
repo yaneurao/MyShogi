@@ -955,8 +955,11 @@ namespace MyShogi.Model.Shogi.Kifu
                                 break;
 
                             case "%+ILLEGAL_ACTION":
+                                move = Move.ILLEGAL_ACTION_LOSE;
+                                break;
+
                             case "%-ILLEGAL_ACTION":
-                                move = Move.ILLEGAL_ACTION;
+                                move = Move.ILLEGAL_ACTION_WIN;
                                 break;
 
                             case "%HIKIWAKE":
@@ -1202,8 +1205,8 @@ namespace MyShogi.Model.Shogi.Kifu
                                 case "HIKIWAKE":        m = Move.DRAW; break;
                                 case "TSUMI":           m = Move.MATED; break;
                                 case "ILLEGAL_MOVE"   : m = Move.ILLEGAL_MOVE; break;
-                                case "+ILLEGAL_ACTION": m = Move.ILLEGAL_ACTION; break;
-                                case "-ILLEGAL_ACTION": m = Move.ILLEGAL_ACTION; break;
+                                case "+ILLEGAL_ACTION": m = Move.ILLEGAL_ACTION_WIN; break;
+                                case "-ILLEGAL_ACTION": m = Move.ILLEGAL_ACTION_LOSE; break;
                                 case "ERROR":
                                 case "FUZUMI":
                                 case "MATTA":
