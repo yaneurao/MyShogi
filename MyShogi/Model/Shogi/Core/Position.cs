@@ -539,7 +539,7 @@ namespace MyShogi.Model.Shogi.Core
             sb.Append("【"+sideToMove.Pretty() + "番】 ");
 
             // 手駒
-            for (Color c = Color.ZERO; c < Color.NB; ++c)
+            foreach (var c in All.Colors())
             {
                 sb.Append(c.Pretty() + ":");
                 sb.Append(Hand(c).Pretty());
@@ -575,7 +575,7 @@ namespace MyShogi.Model.Shogi.Core
                 sb.AppendLine();
             }
 
-            for(Color c = Color.ZERO; c < Color.NB; ++c)
+            foreach (var c in All.Colors())
             {
                 sb.Append(c.Pretty() + ":");
                 for(Piece p = Piece.PAWN; p < Piece.HAND_NB; ++p)
@@ -1637,12 +1637,12 @@ namespace MyShogi.Model.Shogi.Core
 
             // --- hash keyの計算
             si.key = sideToMove == Color.BLACK ? Zobrist.Zero : Zobrist.Side;
-            for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
+            foreach (var sq in All.Squares())
             {
                 var pc = PieceOn(sq);
                 si.key += Zobrist.Psq(sq, pc);
             }
-            for (Color c = Color.ZERO; c < Color.NB; ++c)
+            foreach (var c in All.Colors())
                 for (Piece pr = Piece.PAWN; pr < Piece.HAND_NB; ++pr)
                     si.key += Zobrist.Hand(c, pr) * Hand(c).Count(pr); // 手駒はaddにする(差分計算が楽になるため)
         }

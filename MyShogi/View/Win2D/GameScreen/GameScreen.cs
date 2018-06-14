@@ -143,7 +143,7 @@ namespace MyShogi.View.Win2D
 
                 // -- 手駒の描画
 
-                for (var c = ShogiCore.Color.ZERO; c < ShogiCore.Color.NB; ++c)
+                foreach (var c in All.Colors())
                 {
                     Hand h = pos.Hand(c);
 

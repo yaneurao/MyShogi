@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 using MyShogi.Model.Resource;
+using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Player;
-using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
 {
@@ -63,7 +63,7 @@ namespace MyShogi.View.Win2D
 
             var gameSetting = new GameSetting();
 
-            for(SCore.Color c = SCore.Color.ZERO; c < SCore.Color.NB; ++c)
+            foreach (var c in All.Colors())
             {
                 PlayerTypeEnum playerType;
                 if (human_radio_buttons[(int)c].Checked)

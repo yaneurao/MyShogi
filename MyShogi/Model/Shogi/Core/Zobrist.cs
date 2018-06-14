@@ -67,7 +67,7 @@ namespace MyShogi.Model.Shogi.Core
                     }
 
             // またpr==NO_PIECEのときは0であることを保証したいのでSET_HASHしない。
-            for (Color c = Color.ZERO; c < Color.NB; ++c )
+            foreach (var c in All.Colors())
                 for (Piece pr = Piece.ZERO + 1; pr < Piece.HAND_NB; ++pr)
                     {
                         var r0 = rng.Rand();

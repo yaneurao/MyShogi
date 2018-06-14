@@ -287,7 +287,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         private void SetPlayer(GameSetting gameSetting)
         {
-            for(var c = Color.ZERO; c < Color.NB; ++c )
+            foreach(var c in All.Colors())
             {
                 var playerType = gameSetting.Player(c).PlayerType;
                 Players[(int)c] = PlayerBuilder.Create(playerType);
@@ -647,7 +647,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             InTheGame = false;
 
             // Playerの終了処理をしてNullPlayerを突っ込んでおく。
-            for (var c = Color.ZERO; c < Color.NB; ++c)
+            foreach (var c in All.Colors())
             {
                 var player = Player(c);
                 if (player != null)

@@ -871,20 +871,20 @@ namespace MyShogi.Model.Shogi.Core
             // 6. 近接駒(+盤上の利きを考慮しない駒)のテーブルの初期化。
             // 上で初期化した、香・馬・飛の利きを用いる。
 
-            for (var sq = Square.ZERO; sq < Square.NB; ++sq)
+            foreach (var sq in All.Squares())
             {
                 // 玉は長さ1の角と飛車の利きを合成する
                 KingEffectBB[(int)sq] = BishopEffect(sq, ALL_BB) | RookEffect(sq, ALL_BB);
             }
 
-            for (Color c = Color.ZERO; c < Color.NB; ++c)
-                for (var sq = Square.ZERO; sq < Square.NB; ++sq)
+            foreach (var c in All.Colors())
+                foreach (var sq in All.Squares())
                     // 障害物がないときの香の利き
                     // これを最初に初期化しないとlanceEffect()が使えない。
                     LanceStepEffectBB[(int)sq, (int)c] = RookFileEffect(sq, ZERO_BB) & ForwardRanks(c, sq.ToRank());
 
-            for (Color c = Color.ZERO; c < Color.NB; ++c)
-                for (var sq = Square.ZERO; sq < Square.NB; ++sq)
+            foreach (var c in All.Colors())
+                foreach (var sq in All.Squares())
                 {
                     // 歩は長さ1の香の利きとして定義できる
                     PawnEffectBB[(int)sq,(int)c] = LanceEffect(c, sq, ALL_BB);
@@ -945,8 +945,8 @@ namespace MyShogi.Model.Shogi.Core
                 UInt16 between_index = 1;
                 // BetweenBB[0] == ZERO_BBであることを保証する。
 
-                for (var s1 = Square.ZERO; s1 < Square.NB; ++s1)
-                    for (var s2 = Square.ZERO; s2 < Square.NB; ++s2)
+                foreach (var s1 in All.Squares())
+                    foreach (var s2 in All.Squares())
                     {
                         // 十字方向か、斜め方向かだけを判定して、例えば十字方向なら
                         // rookEffect(sq1,Bitboard(s2)) & rookEffect(sq2,Bitboard(s1))
@@ -977,8 +977,8 @@ namespace MyShogi.Model.Shogi.Core
                 //		    ASSERT_LV1(between_index == 785);
 
                 // 対称性を考慮して、さらにシュリンクする。
-                for (var s1 = Square.ZERO; s1 < Square.NB; ++s1)
-                    for (var s2 = Square.ZERO; s2 < Square.NB; ++s2)
+                foreach (var s1 in All.Squares())
+                    foreach (var s2 in All.Squares())
                         if (s1 > s2)
                             BetweenIndex[(int)s1, (int)s2] = BetweenIndex[(int)s2, (int)s1];
 
