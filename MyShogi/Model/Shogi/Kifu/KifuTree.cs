@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 
@@ -12,7 +13,7 @@ namespace MyShogi.Model.Shogi.Kifu
     /// 分岐棋譜の管理。
     /// 現在の局面の管理。
     /// </summary>
-    public class KifuTree
+    public class KifuTree : NotifyObject
     {
         /// <summary>
         /// コンストラクタ
@@ -35,7 +36,8 @@ namespace MyShogi.Model.Shogi.Kifu
         public void Init()
         {
             position.InitBoard();
-
+            RaisePropertyChanged("Position",position);
+            
             currentNode = rootNode = new KifuNode(null);
             //    UsiMoveStringList.Clear();
             rootBoardType = BoardType.NoHandicap;
@@ -50,6 +52,9 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 現在の局面を表現している。
         /// immutableではないので(DoMove()/UndoMove()によって変化するので)、
         /// data bindするときはClone()してからにすること。
+        /// 
+        /// また、"Position"というNotifyObjectの仮想プロパティがあり、このクラスのDoMove()/UndoMove()に対して
+        /// この"Position"のプロパティ変更通知が来る。
         /// </summary>
         public Position position { get; private set; }
 
@@ -96,6 +101,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 {
                     KifuList = new List<string>();
                     KifuList.Add("   === 開始局面 ===");
+                    RaisePropertyChanged("KifuList", KifuList);
                 }
 
                 if (EnableUsiMoveList)
@@ -142,6 +148,10 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// 現局面までの棋譜。
         /// EnableKifuListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
+        /// 
+        /// また、"KifuList"というNotifyObjectの仮想プロパティがあり、このクラスのDoMove()/UndoMove()などに対して
+        /// この"KifuList"のプロパティ変更通知が来る。
+        /// immutableではないので、data-bindなどで用いるなら、Clone()してから用いること。
         /// </summary>
         public List<string> KifuList
         {
@@ -204,6 +214,8 @@ namespace MyShogi.Model.Shogi.Kifu
             AddKifu(m.nextMove);
             
             position.DoMove(m.nextMove);
+            RaisePropertyChanged("Position", position);
+
             currentNode = m.nextNode;
 
             // もし次がSpecialMoveの局面に到達したのであれば、棋譜に積む。
@@ -231,6 +243,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 RemoveKifuSpecialMove();
 
             position.UndoMove();
+            RaisePropertyChanged("Position", position);
+
             currentNode = currentNode.prevNode;
 
             // 棋譜の更新
@@ -410,6 +424,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 var text = string.Format("{0,3}.{1} {2}", move_text_game_ply, move_text, "00:00:01");
 
                 KifuList.Add(text);
+                RaisePropertyChanged("KifuList", KifuList, KifuList.Count-1 /*末尾が変更になった*/);
             }
 
             if (EnableUsiMoveList)
@@ -427,7 +442,10 @@ namespace MyShogi.Model.Shogi.Kifu
         private void RemoveKifu()
         {
             if (EnableKifuList)
+            {
                 KifuList.RemoveAt(KifuList.Count - 1); // RemoveLast()
+                RaisePropertyChanged("KifuList", KifuList, KifuList.Count /*末尾が削除になった*/);
+            }
 
             if (EnableUsiMoveList)
                 UsiMoveList.RemoveAt(UsiMoveList.Count - 1); // RemoveLast()

@@ -58,7 +58,37 @@ namespace MyShogi.Model.Common.ObjectModel
                     // dead lockしてしまうので、このlockが解除されてからRaisePropertyChanged()が呼び出されて欲しい。
 
                     // LazyLockは、lockが解除されたときにまとめて変更通知を行う。
-                    LazyRaisePropertyChanged(name, value, start, end);
+                    if (PropertyChangedEventEnable)
+                        LazyRaisePropertyChanged(name, value, start, end);
+                }
+            }
+        }
+
+        /// <summary>
+        /// propertyのsetterを実装するときに使う。
+        /// 値が変わった時に変更通知が来るようになる。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        protected void SetValue<T>(PropertyChangedEventArgs args)
+        {
+            using (LazyLock())
+            {
+                object current;
+                if (!this.properties.TryGetValue(args.name, out current)
+                    || !GenericEquals(current, args.value))
+                {
+                    // 値が異なるときだけ代入して、そのときにイベントが発火する。
+                    // 一度目はイベントは発火しない。
+                    properties[args.name] = args.value;
+
+                    // UI以外のスレッドがInvoke()するときにUIスレッドがこのlockObject待ちになっていると
+                    // dead lockしてしまうので、このlockが解除されてからRaisePropertyChanged()が呼び出されて欲しい。
+
+                    // LazyLockは、lockが解除されたときにまとめて変更通知を行う。
+                    if (PropertyChangedEventEnable)
+                        LazyRaisePropertyChanged(args);
                 }
             }
         }
@@ -155,6 +185,13 @@ namespace MyShogi.Model.Common.ObjectModel
             }
         }
 
+        /// <summary>
+        /// このフラグがfalseの時、SetValue()でプロパティ変更イベントが発生しなくなる。
+        /// default = true
+        /// 一時的にイベントを抑制したい時に用いると良いと思う。
+        /// </summary>
+        public bool PropertyChangedEventEnable { get; set; } = true;
+
         // --- 以下 private 
 
         /// <summary>
@@ -230,7 +267,18 @@ namespace MyShogi.Model.Common.ObjectModel
         private void LazyRaisePropertyChanged(string name, object value, int start = -1, int end = -1)
         {
             // ここに積んでおいて、lockを抜けるときにまとめて呼び出す
-            events.Add(new PropertyChangedEventArgs(name, value, start, end));
+            LazyRaisePropertyChanged(new PropertyChangedEventArgs(name, value, start, end));
+        }
+
+        /// <summary>
+        /// name の propertyが変更されたときに、これを購読しているobserverに更新通知を送る。
+        /// SetValue()を使わずに自力で名前に対応するイベントハンドラを呼びたい時にも用いる。
+        /// </summary>
+        /// <param name="name"></param>
+        private void LazyRaisePropertyChanged(PropertyChangedEventArgs args)
+        {
+            // ここに積んでおいて、lockを抜けるときにまとめて呼び出す
+            events.Add(args);
         }
 
         /// <summary>

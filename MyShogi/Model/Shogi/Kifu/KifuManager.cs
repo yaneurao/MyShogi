@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.Model.Shogi.Kifu
 {

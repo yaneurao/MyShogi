@@ -37,13 +37,14 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         public LocalGameServer()
         {
+            // Position,KifuListは、kifuManagerから半自動でデータバインドする。
+            // (それぞれがimmutable objectではないため、Clone()が必要になるので)
+
+            kifuManager.Tree.AddPropertyChangedHandler("Position", PositionUpdate);
+            kifuManager.Tree.AddPropertyChangedHandler("KifuList", KifuListUpdate);
+
             // 起動時に平手の初期局面が表示されるようにしておく。
             kifuManager.Init();
-
-            // Position,KifuListは、kifuManagerから手動でデータバインドする。
-            // (棋譜書き出しの時などに局面巻き戻したり進めたりするが、その時に更新が通知されると画面が乱れるため)
-            UpdatePosition();
-            UpdateKifuList();
 
             // 対局監視スレッドを起動して回しておく。
             new Thread(thread_worker).Start();
@@ -51,6 +52,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         public void Dispose()
         {
+            // 対局中であればエンジンなどを終了させる。
+            Disconnect();
+
             // 対局監視用のworker threadを停止させる。
             workerStop = true;
         }
@@ -158,9 +162,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                         Initializing = true;
                         SetPlayer(player1, player2);
 
-                        UpdatePosition();
-                        UpdateKifuList();
-
                         InTheGame = true;
 
                         // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。
@@ -243,13 +244,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                             // 棋譜を消すUndo()
                             kifuManager.UndoMoveInTheGame();
                             kifuManager.UndoMoveInTheGame();
-
-                            // 盤面に反映
-                            UpdatePosition();
-
-                            // 棋譜ウィンドウに反映。
-                            // よくわからんから丸ごと反映させておく。
-                            UpdateKifuList();
                             
                             // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
                             NotifyTurnChanged();
@@ -313,42 +307,43 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // 両方の対局準備ができたということなので対局スタート
                     NotifyTurnChanged();
                 }
-                initializing = value; UpdateEngineInitializing();
+                initializing = value;
+
+                // このプロパティに依存しているプロパティの更新
+                UpdateEngineInitializing();
             }
         }
-
         private bool initializing;
 
         /// <summary>
         /// Positionプロパティの更新。
         /// immutableにするためにCloneしてセットする。
         /// 自動的にViewに通知される。
+        /// 
+        /// ※　KifuTreeのほうでPositionが更新された時に通知が来る。
         /// </summary>
-        private void UpdatePosition()
+        private void PositionUpdate(PropertyChangedEventArgs args)
         {
-            Position = kifuManager.Position.Clone(); // immutableでなければならないので、Clone()してセットしておく。
-        }
+            // immutableでなければならないので、Clone()してセットしておく。
+            // セットした時に、このクラスのNotifyObjectによる通知がなされる。
 
-        /// <summary>
-        /// KifuListプロパティの更新。
-        /// immutableにするためにCloneしてセットする。
-        /// 全行が丸ごと更新通知が送られるので部分のみの更新通知を送りたいなら自前で更新すべし。
-        /// また、末尾のみが更新になっているなら、UpdateKifuListOfTail()のほうを呼び出すべし。
-        /// </summary>
-        private void UpdateKifuList()
-        {
-            KifuList = new List<string>(kifuManager.KifuList);
+            Position = kifuManager.Position.Clone();
         }
 
         /// <summary>
         /// KifuListの末尾のみが更新があったことがわかっているときに呼び出す更新。
         /// immutableにするためにCloneしてセットする。
         /// 全行が丸ごと更新通知が送られるので部分のみの更新通知を送りたいなら自前で更新すべし。
+        /// 
+        /// ※　KifuTreeのほうでPositionが更新された時に通知が来る。
         /// </summary>
-        private void UpdateKifuListOfTail()
+        private void KifuListUpdate(PropertyChangedEventArgs args)
         {
-            var list = new List<string>(kifuManager.KifuList);
-            SetValue<List<string>>("KifuList", list, list.Count - 1); // 末尾のみ更新があったことを伝える。
+            // Cloneしたものをセットする。
+            args.value = new List<string>(kifuManager.KifuList);
+
+            // このクラスのNotifyObjectによる通知がなされる。
+            SetValue<List<string>>(args);
         }
 
         #endregion
@@ -511,17 +506,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                     }
                     else
                     {
-                        kifuManager.Tree.DoMove(bestMove);
+                        kifuManager.DoMove(bestMove);
                         // このDoMoveの結果、特殊な局面に至ることはあるが…
                     }
-
-                    // -- このクラスのpropertyのPositionを更新する
-
-                    UpdatePosition();
-
-                    // -- 棋譜が1行追加になったはずなので、それを反映させる。
-
-                    UpdateKifuListOfTail();
                 }
 
                 // -- 次のPlayerに、自分のturnであることを通知してやる。
@@ -540,7 +527,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             Move m = Move.ILLEGAL;
             kifuManager.Tree.AddNode(m, thinkingTime);
             kifuManager.Tree.AddNodeComment(m , stmPlayer.BestMove.ToUsi() /* String あとでなおす*/ /* 元のテキスト */);
-            UpdateKifuListOfTail();
+
             GameEnd(); // これにてゲーム終了。
         }
 
@@ -556,51 +543,53 @@ namespace MyShogi.Model.Shogi.LocalServer
             var isHuman = stmPlayer.PlayerType == PlayerTypeEnum.Human;
 
             // 手番が変わった時に特殊な局面に至っていないかのチェック
+            if (InTheGame)
+            {
 
-            // -- このDoMoveの結果、千日手や詰み、持将棋など特殊な局面に至ったか？
-            Move m = Move.NONE;
-            var rep = Position.IsRepetition();
+                // -- このDoMoveの結果、千日手や詰み、持将棋など特殊な局面に至ったか？
+                Move m = Move.NONE;
+                var rep = Position.IsRepetition();
 
-            // 手数による引き分けの局面であるか
-            if (Position.gamePly >= int.MaxValue /* 256  あとでちゃんと書く */)
-            {
-                m = Move.MAX_MOVES_DRAW;
-            }
-            // この指し手の結果、詰みの局面に至ったか
-            else if (Position.IsMated(moves))
-            {
-                m = Move.MATED;
-            }
-            // 千日手絡みの局面であるか？
-            else if (rep != RepetitionState.NONE)
-            {
-                // 千日手関係の局面に至ったか
-                switch (rep)
+                // 手数による引き分けの局面であるか
+                if (Position.gamePly >= int.MaxValue /* 256  あとでちゃんと書く */)
                 {
-                    case RepetitionState.DRAW: m = Move.REPETITION_DRAW; break;
-                    case RepetitionState.LOSE: m = Move.REPETITION_LOSE; break; // 実際にはこれは起こりえない。
-                    case RepetitionState.WIN: m = Move.REPETITION_WIN; break;
-                    default: break;
+                    m = Move.MAX_MOVES_DRAW;
                 }
-            }
-            // 人間が入玉局面の条件を満たしているなら自動的に入玉局面して勝ちとする。
-            // コンピューターの時は、これをやってしまうとコンピューターが入玉宣言の指し手(Move.WIN)をちゃんと指せているかの
-            // チェックが出来なくなってしまうので、コンピューターの時はこの処理を行わない。
-            else if (isHuman && Position.DeclarationWin(EnteringKingRule.POINT27) == Move.WIN)
-            {
-                m = Move.WIN;
-            }
+                // この指し手の結果、詰みの局面に至ったか
+                else if (Position.IsMated(moves))
+                {
+                    m = Move.MATED;
+                }
+                // 千日手絡みの局面であるか？
+                else if (rep != RepetitionState.NONE)
+                {
+                    // 千日手関係の局面に至ったか
+                    switch (rep)
+                    {
+                        case RepetitionState.DRAW: m = Move.REPETITION_DRAW; break;
+                        case RepetitionState.LOSE: m = Move.REPETITION_LOSE; break; // 実際にはこれは起こりえない。
+                        case RepetitionState.WIN: m = Move.REPETITION_WIN; break;
+                        default: break;
+                    }
+                }
+                // 人間が入玉局面の条件を満たしているなら自動的に入玉局面して勝ちとする。
+                // コンピューターの時は、これをやってしまうとコンピューターが入玉宣言の指し手(Move.WIN)をちゃんと指せているかの
+                // チェックが出来なくなってしまうので、コンピューターの時はこの処理を行わない。
+                else if (isHuman && Position.DeclarationWin(EnteringKingRule.POINT27) == Move.WIN)
+                {
+                    m = Move.WIN;
+                }
 
-            // 上で判定された特殊な指し手であるか？
-            if (m != Move.NONE)
-            {
-                // この特殊な状況を棋譜に書き出して終了。
-                kifuManager.Tree.AddNode(m, TimeSpan.Zero);
-                UpdateKifuListOfTail();
+                // 上で判定された特殊な指し手であるか？
+                if (m != Move.NONE)
+                {
+                    // この特殊な状況を棋譜に書き出して終了。
+                    kifuManager.Tree.AddNode(m, TimeSpan.Zero);
 
-                InTheGame = false;
-                GameEnd();
-                return;
+                    InTheGame = false;
+                    GameEnd();
+                    return;
+                }
             }
 
             // USIエンジンのときだけ、"position"コマンドに渡す形で局面図が必要であるから、
@@ -620,7 +609,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // -- 手番が変わった時の各種propertyの更新
 
             EngineTurn = stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine;
-            CanUserMove = stmPlayer.PlayerType == PlayerTypeEnum.Human;
+            CanUserMove = stmPlayer.PlayerType == PlayerTypeEnum.Human && InTheGame;
 
             // 値が変わっていなくとも変更通知を送りたいので自力でハンドラを呼び出す。
             RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
@@ -642,6 +631,20 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             InTheGame = false;
 
+            // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
+            // (エンジンを入れ替えたりしないといけない)
+
+            // 連続対局でないなら..
+            Disconnect();
+        }
+
+        /// <summary>
+        /// エンジンなどの切断処理
+        /// </summary>
+        private void Disconnect()
+        {
+            InTheGame = false;
+
             // Playerの終了処理をしてNullPlayerを突っ込んでおく。
             for (var c = Color.ZERO; c < Color.NB; ++c)
             {
@@ -649,12 +652,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (player != null)
                     player.Dispose();
 
-                Players[(int)c] = new NullPlayer(); 
+                Players[(int)c] = new NullPlayer();
             }
 
-            EngineTurn = false;
-            CanUserMove = false;
-            RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
+            NotifyTurnChanged();
         }
 
         #endregion
