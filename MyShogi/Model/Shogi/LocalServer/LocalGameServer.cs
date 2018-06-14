@@ -540,8 +540,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             Move m = Move.ILLEGAL;
             kifuManager.Tree.AddNode(m, thinkingTime);
             kifuManager.Tree.AddNodeComment(m , stmPlayer.BestMove.ToUsi() /* String あとでなおす*/ /* 元のテキスト */);
-
             UpdateKifuListOfTail();
+            GameEnd(); // これにてゲーム終了。
         }
 
         /// <summary>

@@ -285,12 +285,43 @@ namespace MyShogi.View.Win2D
             // デバッグ用に表示する。
             //Console.WriteLine(from.Pretty() + "→" + to.Pretty());
 
+            // この成る手を生成して、それが合法手であるなら、成り・不成のダイアログを出す必要がある。
+            // また、1段目に進む「歩」などは、不成はまずいので選択がいらない。
+
             // Promoteの判定
             var pos = ViewModel.ViewModel.Position;
-            var m = Util.MakeMove(from, to , true);
-            // この成る手を生成して、それが合法手であるなら、成り・不成のダイアログを出す必要がある。
-            var canPromote = pos.IsLegal(m);
-            if (canPromote)
+            var pro_move = Util.MakeMove(from, to , true);
+            // 成りの指し手が合法であるかどうか
+            var canPromote = pos.IsLegal(pro_move);
+
+            // 不成の指し手が合法であるかどうか
+            var unpro_move = Util.MakeMove(from, to, false);
+            var canUnpro = pos.IsLegal(unpro_move);
+
+            // canUnproとcanPromoteの組み合わせは4通り。
+            // 1. (false, false)
+            // 2. (false,  true)
+            // 3. (true , false)
+            // 4. (true ,  true)
+
+            // 上記 1.と3.
+            if (!canPromote)
+            {
+                // 成れないので成る選択肢は消して良い。
+                ViewModel.ViewModel.gameServer.DoMoveCommand(unpro_move);
+                StateReset();
+            }
+            // 上記 2.
+            else if (!canUnpro && canPromote)
+            {
+                // 成るしか出来ないので、不成は選択肢から消して良い。
+                // 成れないので成る選択肢は消して良い。
+                ViewModel.ViewModel.gameServer.DoMoveCommand(pro_move);
+                StateReset();
+            }
+            // 上記 4.
+            // これで、上記の1.～4.のすべての状態を網羅したことになる。
+            else // if (canPromote && canUnPro)
             {
                 state.state = GameScreenViewStateEnum.PromoteDialog;
                 state.moved_piece_type = pos.PieceOn(from).PieceType();
@@ -320,13 +351,6 @@ namespace MyShogi.View.Win2D
                 state.picked_piece_legalmovesto = new Bitboard((Square)to);
 
                 ViewModel.dirty = true;
-            }
-            else
-            {
-                // 成れないので成る選択肢は消して良い。
-                m = Util.MakeMove(from, to ,false);
-                ViewModel.ViewModel.gameServer.DoMoveCommand(m);
-                StateReset();
             }
         }
 
