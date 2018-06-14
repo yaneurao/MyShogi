@@ -509,6 +509,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "GameSettingDialog";
             this.Text = "対局";
+            this.TopMost = true;
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

@@ -64,9 +64,17 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Text = "通常対局";
                         item.Click += (sender, e) => {
-                            if (gameSettingDialog == null)
-                                gameSettingDialog = new GameSettingDialog(this);
+
+                            // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
+                            if (gameSettingDialog != null)
+                                gameSettingDialog.Dispose();
+
+                            gameSettingDialog = new GameSettingDialog(this);
                             gameSettingDialog.Show();
+
+                            // 閉じるときにせめて前回設定が選ばれていて欲しいが..
+                            // あとで前回設定を復元するコードを書く。
+                            // 前回設定、GlobalSettingに持たせるべきのような気がする。
                         };
 
                         item_playgame.DropDownItems.Add(item);
@@ -406,10 +414,11 @@ namespace MyShogi.View.Win2D
                     item1.Text = "about..";
                     item1.Click += (sender, e) =>
                     {
-                        if (aboutDialog == null)
-                            aboutDialog = new AboutYaneuraOu();
+                        if (aboutDialog != null)
+                            aboutDialog.Dispose();
 
-                        aboutDialog.ShowDialog();
+                        aboutDialog = new AboutYaneuraOu();
+                        aboutDialog.Show();
                     };
                     item_others.DropDownItems.Add(item1);
 
