@@ -11,13 +11,6 @@ namespace MyShogi.View.Win2D
     /// </summary>
     public partial class MainDialog
     {
-        // -- 以下、このフォームの管理下にあるDialog
-
-        /// <summary>
-        /// 「やねうら王について」のダイアログ
-        /// </summary>
-        public Form AboutDialog;
-
         // -- WM_PAINTのハンドラ
 
         /// <summary>

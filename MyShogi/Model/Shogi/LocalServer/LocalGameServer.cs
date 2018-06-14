@@ -16,6 +16,9 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// ・プレイヤーからの入力を受け付けるコマンドインターフェースを持つ
     /// ・対局時間を管理している。
     /// 
+    /// MainDialogにとってのViewModelの一部に相当すると考えられるが、MainDialogとは1:Nで対応するため、
+    /// MainDialogViewModelとは切り離してある。
+    /// 
     /// </summary>
     public class LocalGameServer : NotifyObject
     {
@@ -34,8 +37,6 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         public LocalGameServer()
         {
-            kifuManager = new KifuManager();
-
             // 起動時に平手の初期局面が表示されるようにしておく。
             kifuManager.Init();
 
@@ -43,16 +44,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             // (棋譜書き出しの時などに局面巻き戻したり進めたりするが、その時に更新が通知されると画面が乱れるため)
             UpdatePosition();
             UpdateKifuList();
-
-            SetPlayer(new NullPlayer(), new NullPlayer());
-
-#if true
-            // デバッグ中
-
-            GameStartCommand(new HumanPlayer(), new HumanPlayer());
-            // GameStartCommand(new HumanPlayer(), new UsiEnginePlayer());
-            //GameStartCommand(new UsiEnginePlayer(), new UsiEnginePlayer());
-#endif
 
             // 対局監視スレッドを起動して回しておく。
             new Thread(thread_worker).Start();
@@ -149,6 +140,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                     {
                         // いったんリセット
                         GameEnd();
+
+                        // 初期局面にする。(あとでちゃんと書く)
+                        kifuManager.Init();
 
                         Initializing = true;
                         SetPlayer(player1, player2);
@@ -324,7 +318,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             var list = new List<string>(kifuManager.KifuList);
             SetValue<List<string>>("KifuList", list, list.Count - 1); // 末尾のみ更新があったことを伝える。
         }
-        
+
         #endregion
 
         #region private members
@@ -332,14 +326,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 対局棋譜管理クラス
         /// </summary>
-        private KifuManager kifuManager { get; set; }
+        private KifuManager kifuManager { get; set; } = new KifuManager();
 
         /// <summary>
         /// 対局しているプレイヤー
         /// 設定するときはSetPlayer()を用いるべし。
         /// 取得するときはPlayer()のほうを用いるべし。
         /// </summary>
-        private Player.Player[] Players = new Player.Player[2];
+        private Player.Player[] Players = new Player.Player[2] { new NullPlayer(), new NullPlayer() };
 
         /// <summary>
         /// スレッドの終了フラグ。

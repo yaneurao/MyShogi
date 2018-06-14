@@ -10,6 +10,18 @@ namespace MyShogi.View.Win2D
     /// </summary>
     public partial class MainDialog
     {
+        // -- メニューが生成しうるダイアログ
+
+        /// <summary>
+        /// 「やねうら王について」のダイアログ
+        /// </summary>
+        public Form aboutDialog;
+
+        /// <summary>
+        /// 「通常対局」の設定ダイアログ
+        /// </summary>
+        public Form gameSettingDialog;
+
         /// <summary>
         /// メニューのitemを動的に追加する。
         /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
@@ -45,7 +57,23 @@ namespace MyShogi.View.Win2D
                 var item_playgame = new ToolStripMenuItem();
                 item_playgame.Text = "対局";
                 menu.Items.Add(item_playgame);
-                // あとで追加する。
+
+                // -- 「対局」配下のメニュー
+                {
+                    { // -- 通常対局
+                        var item = new ToolStripMenuItem();
+                        item.Text = "通常対局";
+                        item.Checked = config.BoardReverse;
+                        item.Click += (sender, e) => {
+                            if (gameSettingDialog == null)
+                                gameSettingDialog = new GameSettingDialog(this);
+                            gameSettingDialog.Show();
+                        };
+
+                        item_playgame.DropDownItems.Add(item);
+                    }
+
+                }
 
                 var item_display = new ToolStripMenuItem();
                 item_display.Text = "表示";
@@ -379,27 +407,16 @@ namespace MyShogi.View.Win2D
                     item1.Text = "about..";
                     item1.Click += (sender, e) =>
                     {
-                        if (AboutDialog == null)
-                            AboutDialog = new AboutYaneuraOu();
+                        if (aboutDialog == null)
+                            aboutDialog = new AboutYaneuraOu();
 
-                        AboutDialog.ShowDialog();
+                        aboutDialog.ShowDialog();
                     };
                     item_others.DropDownItems.Add(item1);
 
                 }
 
 #if DEBUG
-                {
-                    var item_demo = new ToolStripMenuItem();
-                    item_demo.Text = "デモ用";
-
-                    var item1 = new ToolStripMenuItem();
-                    item1.Text = "対局画面";
-                    item1.Click += (sender, e) => { new GameSettingDialog().Show(); };
-                    item_demo.DropDownItems.Add(item1);
-
-                    menu.Items.Add(item_demo);
-                }
 
                 // デバッグ用にメニューにテストコードを実行する項目を追加する。
                 {
