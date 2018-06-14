@@ -397,7 +397,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     case Move.MATED:           return "詰み";
                     case Move.MAX_MOVES_DRAW:  return "手数による引分";
                     case Move.INTERRUPT:       return "中断";
-                    case Move.ILLEGAL:         return "非合法手反則負け";
+                    case Move.ILLEGAL_MOVE:    return "非合法手反則負け";
                     case Move.TIME_UP:         return "時間切れ";
                     default:                   return "null"; // これも使わないはず..
                 }

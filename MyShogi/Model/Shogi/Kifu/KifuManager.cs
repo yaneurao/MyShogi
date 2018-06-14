@@ -947,13 +947,16 @@ namespace MyShogi.Model.Shogi.Kifu
                                 break;
 
                             case "%ILLEGAL_MOVE":
+                                move = Move.ILLEGAL_MOVE;
+                                break;
+
                             case "%+ILLEGAL_ACTION":
                             case "%-ILLEGAL_ACTION":
-                                move = Move.ILLEGAL;
+                                move = Move.ILLEGAL_ACTION;
                                 break;
 
                             case "%HIKIWAKE":
-                                move = Move.MAX_MOVES_DRAW; // たぶんこれ？
+                                move = Move.DRAW;
                                 break;
 
                             // 以下、適切な変換先不明

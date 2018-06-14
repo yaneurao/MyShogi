@@ -25,6 +25,7 @@ namespace MyShogi.Model.Shogi.Core
         NULL   ,  // NULL MOVEを意味する指し手
         RESIGN ,  // << で出力したときに"resign"と表示する投了を意味する指し手。自分による手番時の投了。
         WIN    ,  // 入玉時の宣言勝ちのために使う特殊な指し手
+        DRAW   ,  // 引き分け。(CSAプロトコルにある) 引き分けの原因は不明。
         MATED  ,  // 詰み(合法手がない)局面(手番側が詰まされていて合法手がない) 
         REPETITION     , // 千日手(PSN形式で、DRAWかWINかわからない"Sennichite"という文字列が送られてくるのでその解釈用)
         REPETITION_DRAW, // 千日手引き分け
@@ -33,7 +34,19 @@ namespace MyShogi.Model.Shogi.Core
         TIME_UP        , // 時間切れによる負け
         INTERRUPT      , // ゲーム中断
         MAX_MOVES_DRAW , // 最大手数に達したために引き分け
-        ILLEGAL        , // 不正な指し手(コメントでその指し手を記録)
+        ILLEGAL_MOVE   , // 不正な指し手などによる反則負け
+        ILLEGAL_ACTION , // 相手の不正なアクション(非手番の時に指し手を送ったなど)による反則勝ち(CSAプロトコルにある)
+    }
+
+    /// <summary>
+    /// special moveの指し手が勝ち・負け・引き分けのいずれに属するかを判定する時の結果
+    /// </summary>
+    public enum MoveGameResult
+    {
+        WIN,  // 勝ち
+        LOSE, // 負け
+        DRAW, // 引き分け
+        UNKNOWN, // 分類不可のもの
     }
 
     /// <summary>
@@ -72,6 +85,47 @@ namespace MyShogi.Model.Shogi.Core
         public static bool IsSpecial(this Move m)
         {
             return m >= Move.SPECIAL;
+        }
+
+        /// <summary>
+        /// mが、勝ち・負け・引き分けのいずれに属するかを返す。
+        /// mは specail moveでなければならない。
+        /// 
+        /// 連続自己対局の時に結果の勝敗を判定する時などに用いる。
+        /// </summary>
+        /// <param name="m"></param>
+        /// <returns></returns>
+        public static MoveGameResult GameResult(this Move m)
+        {
+            Debug.Assert(m.IsSpecial());
+
+            switch (m)
+            {
+                case Move.WIN:
+                case Move.ILLEGAL_ACTION:
+                case Move.REPETITION_WIN:
+                    return MoveGameResult.WIN;
+
+                case Move.RESIGN:
+                case Move.MATED:
+                case Move.REPETITION_LOSE:
+                case Move.ILLEGAL_MOVE:
+                case Move.TIME_UP:
+                    return MoveGameResult.LOSE;
+
+                case Move.DRAW:
+                case Move.MAX_MOVES_DRAW:
+                case Move.REPETITION_DRAW:
+                    return MoveGameResult.DRAW;
+
+                case Move.NULL:       // これもないと思うが..
+                case Move.REPETITION: // 実際には使わない。PSNなどでこれがあるが、連続王手の千日手も含まれていて勝敗不明。
+                case Move.INTERRUPT:  // 中断も決着がついていないので不明扱い。
+                    return MoveGameResult.UNKNOWN;
+
+                default:
+                    return MoveGameResult.UNKNOWN;
+            }
         }
 
         /// <summary>

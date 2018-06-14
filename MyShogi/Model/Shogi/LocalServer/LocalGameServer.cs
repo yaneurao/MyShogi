@@ -525,7 +525,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         ILLEGAL_MOVE:
             // これ、棋譜に記録すべき
-            Move m = Move.ILLEGAL;
+            Move m = Move.ILLEGAL_MOVE;
             kifuManager.Tree.AddNode(m, thinkingTime);
             kifuManager.Tree.AddNodeComment(m , stmPlayer.BestMove.ToUsi() /* String あとでなおす*/ /* 元のテキスト */);
 
