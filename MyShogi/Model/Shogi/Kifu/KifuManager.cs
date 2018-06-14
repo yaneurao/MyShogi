@@ -55,6 +55,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 header["先手"] = value;
             }
         }
+
         /// <summary>
         /// 後手/上手 対局者名。
         ///   playerNameWhite : 後手の名前(駒落ちの場合、上手)
@@ -69,6 +70,21 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 header["後手"] = value;
             }
+        }
+
+        /// <summary>
+        /// PlayerNameのsetterとgetter
+        /// </summary>
+        public string GetPlayerName(Color c)
+        {
+            return c == Color.BLACK ? playerNameBlack : playerNameWhite;
+        }
+        public void SetPlayerName(Color c,string name)
+        {
+            if (c == Color.BLACK)
+                playerNameBlack = name;
+            else
+                playerNameWhite = name;
         }
 
         /// <summary>

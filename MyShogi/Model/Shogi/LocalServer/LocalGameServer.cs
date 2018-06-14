@@ -118,6 +118,29 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 画面上に表示する名前を取得する。
+        /// 文字数制限はないので注意。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public string DisplayName(Color c)
+        {
+            return kifuManager.GetPlayerName(c);
+        }
+
+        /// <summary>
+        /// 画面上に表示する短い名前を取得する。
+        /// 先頭の8文字だけ返ってくる。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public string ShortDisplayName(Color c)
+        {
+            var name = DisplayName(c);
+            return name.Substring(0,Math.Min(8, name.Length)); // 最大で8文字まで
+        }
+
+        /// <summary>
         /// c側のプレイヤー
         /// </summary>
         /// <param name="c"></param>
@@ -304,6 +327,26 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 kifuManager.Init();
                 kifuManager.InitBoard(gameSetting.BoardType);
+            }
+
+            // 対局者氏名の設定
+            // 人間の時のみ有効。エンジンの時は、エンジン設定などから取得することにする。(TODO:あとで考える)
+            foreach (var c in All.Colors())
+            {
+                var player = Player(c);
+                string name;
+                switch (player.PlayerType)
+                {
+                    case PlayerTypeEnum.Human:
+                        name = gameSetting.Player(c).PlayerName;
+                        break;
+
+                    default:
+                        name = c.Pretty();
+                        break;
+                }
+
+                kifuManager.SetPlayerName(c, name);
             }
 
             InTheGame = true;

@@ -212,8 +212,8 @@ namespace MyShogi.View.Win2D
                         break;
                     case 2:
                         DrawSprite(turn_slim_pos, SPRITE.NamePlateSlim(pos.sideToMove, reverse));
-                        DrawString(name_plate_slim_name[0], vm.ViewModel.PlayerName(reverse ? SColor.WHITE : SColor.BLACK ), 28 , new DrawStringOption(Brushes.White, 2,10));
-                        DrawString(name_plate_slim_name[1], vm.ViewModel.PlayerName(reverse ? SColor.BLACK : SColor.WHITE ), 28 , new DrawStringOption(Brushes.White, 0, 0));
+                        DrawString(name_plate_slim_name[0], vm.ViewModel.PlayerName(reverse ? SColor.WHITE : SColor.BLACK ), 28 , new DrawStringOption(Brushes.White, 2));
+                        DrawString(name_plate_slim_name[1], vm.ViewModel.PlayerName(reverse ? SColor.BLACK : SColor.WHITE ), 28 , new DrawStringOption(Brushes.White, 0));
                         break;
                 }
             }

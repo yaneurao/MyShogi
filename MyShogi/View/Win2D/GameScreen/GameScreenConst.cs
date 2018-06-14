@@ -116,7 +116,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private static readonly Point[] name_plate_slim_name =
         {
-            new Point(430 + 65 +1057/2 + 155 ,1030+10), // 先手のネームプレート
+            new Point(430 + 65 +1057/2 + 400 ,1030+10), // 先手のネームプレート
             new Point(430 + 65               ,1030+10), // 後手のネームプレート
         };
 

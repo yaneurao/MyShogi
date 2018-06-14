@@ -9,7 +9,16 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// </summary>
     public class PlayerGameSetting
     {
+        /// <summary>
+        /// 生成するプレイヤーの型
+        /// </summary>
         public PlayerTypeEnum PlayerType;
+
+        /// <summary>
+        /// プレイヤー名
+        /// </summary>
+        public string PlayerName;
+        
     }
 
     /// <summary>

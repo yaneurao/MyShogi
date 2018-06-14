@@ -29,25 +29,15 @@ namespace MyShogi.Model.Shogi.Player
         }
 
         /// <summary>
-        /// 対局者名(これが画面上に表示する名前として使われる)
-        /// </summary>
-        public string DisplayName
-        {
-            get {
-                return !string.IsNullOrEmpty(Name) ? Name : AliasName;
-            }
-        }
-
-        /// <summary>
         /// エンジンからUSIプロトコルによって渡されたエンジン名
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// ユーザーがエンジンに対して別名をつけるときの名前
-        /// これがnullか空の文字列であれば、RawNameがそのままNameになる。
+        /// 対局者名(これが画面上に表示する名前として使われる)
+        /// あとでちゃんと書く。
         /// </summary>
-        public string AliasName { get; set; }
+        public string DisplayName { get { return Name; } }
 
         /// <summary>
         /// このプレイヤーが指した指し手

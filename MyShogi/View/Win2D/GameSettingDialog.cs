@@ -61,6 +61,7 @@ namespace MyShogi.View.Win2D
             var human_radio_buttons = new []{ radioButton1 , radioButton3 };
             var cpu_radio_buttons = new[] { radioButton2, radioButton4 };
 
+            // 対局設定
             var gameSetting = new GameSetting();
 
             foreach (var c in All.Colors())
@@ -93,6 +94,18 @@ namespace MyShogi.View.Win2D
             {
                 // 現在の局面から開始
                 gameSetting.BoardType = BoardType.Current;
+            }
+
+            // 対局者氏名
+            var playerNames = new string[2] { textBox1.Text, textBox2.Text };
+            foreach (var c in All.Colors())
+            {
+                var playerName = playerNames[(int)c];
+                // 入力されていなければ、 "先手"とか"後手"とかにする。
+                if (string.IsNullOrEmpty(playerName))
+                    playerName = c.Pretty();
+
+                gameSetting.Player(c).PlayerName = playerName;
             }
 
             gameServer.GameStartCommand(gameSetting);

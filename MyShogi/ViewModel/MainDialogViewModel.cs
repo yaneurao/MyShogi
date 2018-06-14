@@ -76,21 +76,13 @@ namespace MyShogi.ViewModel
         public Position Position { get { return gameServer.Position; } }
 
         /// <summary>
-        /// 対局者氏名。
-        /// 
-        /// あとで書き直す。
-        /// </summary>
-        public string Player1Name { get; private set; } = "わたし";
-        public string Player2Name { get; private set; } = "あなた";
-
-        /// <summary>
         /// 対局者氏名
         /// </summary>
         /// <param name="player"></param>
         /// <returns></returns>
-        public string PlayerName(Color player)
+        public string PlayerName(Color c)
         {
-            return player == Color.BLACK ? Player1Name : Player2Name;
+            return gameServer.ShortDisplayName(c);
         }
 
     }

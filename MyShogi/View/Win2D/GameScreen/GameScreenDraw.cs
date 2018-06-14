@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Windows.Forms;
 using MyShogi.Model.Resource;
 
 namespace MyShogi.View.Win2D
@@ -103,29 +104,24 @@ namespace MyShogi.View.Win2D
             if (size <= 2)
                 return;
 
-            if (option != null)
-            {
-                switch(option.align)
-                {
-                    case 1:
-                        // センタリング
-                        int pad = (option.text_width - mes.Length)/2 + mes.Length;
-                        pad = Math.Max(0, pad);
-                        mes = mes.PadLeft(pad).Replace(' ', '　');
-                        break;
-
-                    case 2:
-                        // 右寄せ
-                        mes = mes.PadLeft(option.text_width).Replace(' ','　');
-                        break;
-                }
-            }
-
-
             using (var font = new Font("MSPゴシック", size, GraphicsUnit.Pixel))
             {
                 var brush = option != null ? option.brush : Brushes.Black;
-                graphics.DrawString(mes, font, brush , Affine(dstPoint));
+                var sf = new StringFormat();
+                sf.LineAlignment = StringAlignment.Near;
+                var align = option != null ? option.align : 0;
+                switch (align)
+                {
+                    // 左寄せ
+                    case 0: sf.Alignment = StringAlignment.Near; break;
+
+                    // センタリング
+                    case 1: sf.Alignment = StringAlignment.Center; break;
+
+                    // 右寄せ
+                    case 2: sf.Alignment = StringAlignment.Far; break;
+                }
+                graphics.DrawString(mes, font, brush, Affine(dstPoint),sf);
             }
         }
 
@@ -134,11 +130,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private class DrawStringOption
         {
-            public DrawStringOption(Brush brush_ , int align_ , int text_width_)
+            public DrawStringOption(Brush brush_ , int align_ )
             {
                 brush = brush_;
                 align = align_;
-                text_width = text_width_;
             }
 
             // テキストの色
@@ -148,8 +143,6 @@ namespace MyShogi.View.Win2D
             // 0 = 左寄せ , 1 = 中央 , 2 右寄せ
             public int align;
 
-            // alignするときのテキストの幅(文字数)
-            public int text_width;
         }
 
     }
