@@ -942,14 +942,23 @@ namespace MyShogi.Model.Shogi.Kifu
                             case "%KACHI":
                                 move = Move.WIN;
                                 break;
-                            // 以下、適切な変換先不明
-                            case "%HIKIWAKE":
                             case "%TSUMI":
-                            case "%FUZUMI":
-                            case "%MATTA":
+                                move = Move.MATED;
+                                break;
+
                             case "%ILLEGAL_MOVE":
                             case "%+ILLEGAL_ACTION":
                             case "%-ILLEGAL_ACTION":
+                                move = Move.ILLEGAL;
+                                break;
+
+                            case "%HIKIWAKE":
+                                move = Move.MAX_MOVES_DRAW; // たぶんこれ？
+                                break;
+
+                            // 以下、適切な変換先不明
+                            case "%FUZUMI":
+                            case "%MATTA":
                             case "%ERROR":
                             default:
                                 move = Move.NONE;
