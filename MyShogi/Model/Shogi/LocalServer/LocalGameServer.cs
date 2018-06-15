@@ -302,6 +302,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 対局設定
+        /// 
+        /// GameStart()で渡された設定。immutableであるものとする。(呼び出し側で勝手に値を変更しないものとする)
+        /// </summary>
+        private GameSetting GameSetting;
+
+        /// <summary>
         /// 対局開始のためにGameSettingの設定に従い、ゲームを初期化する。
         /// </summary>
         /// <param name="gameSetting"></param>
@@ -318,16 +325,16 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             // 局面の設定
-            if (gameSetting.BoardTypeCurrent)
+            if (gameSetting.Board.BoardTypeCurrent)
             {
                 // 現在の局面からなので、いま以降の局面を削除する。
                 kifuManager.Tree.ClearForward();
 
             }
-            else // if (gameSetting.BordTypeEnable)
+            else // if (gameSetting.Board.BordTypeEnable)
             {
                 kifuManager.Init();
-                kifuManager.InitBoard(gameSetting.BoardType);
+                kifuManager.InitBoard(gameSetting.Board.BoardType);
             }
 
             // 対局者氏名の設定
@@ -349,6 +356,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 kifuManager.SetPlayerName(c, name);
             }
+
+            // 持ち時間などの設定が必要なので、コピーしておく。
+            GameSetting = gameSetting;
 
             InTheGame = true;
         }

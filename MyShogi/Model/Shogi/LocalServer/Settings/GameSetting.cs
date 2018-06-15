@@ -1,6 +1,4 @@
-﻿using System;
-using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Player;
+﻿using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -13,13 +11,14 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// </summary>
     public class GameSetting
     {
+        /// <summary>
+        /// デフォルトコンストラクタ
+        /// </summary>
         public GameSetting()
         {
             // 初回起動時などデシリアライズに失敗した時のためにデフォルト値をきちんと設定しておく。
 
-            BoardTypeEnable = true;
-            BoardType = BoardType.NoHandicap;
-
+            Board = new BoardSetting();
             Players = new PlayerSetting[2] { new PlayerSetting(), new PlayerSetting() };
 
             foreach (var c in All.Colors())
@@ -29,22 +28,37 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 開始局面。
-        /// BoardCurrentがtrueなら、この値は無視される。
-        /// この値がCurrent,Othersは許容しない。
+        /// Clone()用のコンストラクタ
         /// </summary>
-        public BoardType BoardType;
+        /// <param name="players"></param>
+        /// <param name="board"></param>
+        /// <param name="timeSetting"></param>
+        private GameSetting(PlayerSetting[] players , BoardSetting board , TimeSetting timeSetting)
+        {
+            Players = players;
+            Board = board;
+            TimeSetting = timeSetting;
+        }
 
         /// <summary>
-        /// BoardTypeの局面から開始するのかのフラグ
-        /// BoardTypeEnableかBoardCurrentのどちらかがtrueのはず。
+        /// このインスタンスのClone()
         /// </summary>
-        public bool BoardTypeEnable;
+        /// <returns></returns>
+        public GameSetting Clone()
+        {
+            // premitive typeでないとMemberwiseClone()でClone()されないので自前でCloneする。
+
+            return new GameSetting(
+                new PlayerSetting[2] { Players[0].Clone(), Players[1].Clone() },
+                Board.Clone(),
+                TimeSetting.Clone()
+            );
+        }
 
         /// <summary>
-        /// 現在の局面から開始するのかのフラグ
+        /// 開始盤面
         /// </summary>
-        public bool BoardTypeCurrent;
+        public BoardSetting Board;
 
         /// <summary>
         /// c側の設定情報を取得する。

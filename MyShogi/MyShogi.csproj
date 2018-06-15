@@ -74,6 +74,7 @@
     <Compile Include="Model\Common\Utility\Scanner.cs" />
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
+    <Compile Include="Model\Shogi\LocalServer\Settings\BoardSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\GameSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\TimeSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\PlayerSetting.cs" />

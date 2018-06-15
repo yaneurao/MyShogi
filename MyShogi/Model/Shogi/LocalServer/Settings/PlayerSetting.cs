@@ -13,6 +13,15 @@
         }
 
         /// <summary>
+        /// このインスタンスのClone()
+        /// </summary>
+        /// <returns></returns>
+        public PlayerSetting Clone()
+        {
+            return (PlayerSetting)this.MemberwiseClone();
+        }
+
+        /// <summary>
         /// プレイヤー名
         /// </summary>
         public string PlayerName;

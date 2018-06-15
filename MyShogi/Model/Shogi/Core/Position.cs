@@ -135,15 +135,28 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// このオブジェクトをコピーする。
-        /// 参照透明なオブジェクトが欲しいときに用いる。
+        /// immutableなオブジェクトが欲しいときに用いる。
         /// </summary>
         /// <returns></returns>
         public Position Clone()
         {
-            // stの参照先は、immutableだと考えられるので単にMemberwiseClone()で良い。
-            // なお、MemberwiseClone()で配列はコピーされる模様。
+            var pos = new Position();
 
-            return this.MemberwiseClone() as Position;
+            // C#では多次元配列もこの方法でCopy()出来ることは保証されている。
+
+            Array.Copy(board, pos.board, board.Length);
+            Array.Copy(board_pn, pos.board_pn, board_pn.Length);
+            Array.Copy(hand, pos.hand, hand.Length);
+            Array.Copy(hand_pn, pos.hand_pn, hand_pn.Length);
+            pos.lastPieceNo = lastPieceNo;
+            pos.sideToMove = sideToMove;
+            Array.Copy(kingSquare, pos.kingSquare, kingSquare.Length);
+            pos.gamePly = gamePly;
+            pos.st = st; // stの先は参照透明。DoMove()の時に新規に作られ、更新はこのタイミングでしか行われないので。
+            Array.Copy(byColorBB, pos.byColorBB, byColorBB.Length);
+            Array.Copy(byTypeBB, pos.byTypeBB, byTypeBB.Length);
+
+            return pos;
         }
 
         // -------------------------------------------------------------------------

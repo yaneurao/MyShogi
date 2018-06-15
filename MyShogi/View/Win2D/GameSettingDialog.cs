@@ -55,7 +55,9 @@ namespace MyShogi.View.Win2D
         {
             var gameSetting = TheApp.app.config.GameSetting;
             var gameServer = mainDialog.ViewModel.gameServer;
-            gameServer.GameStartCommand(gameSetting);
+
+            // 設定をClone()してから渡す。(immutableにしたいため)
+            gameServer.GameStartCommand(gameSetting.Clone());
 
             // 対局が開始するのでこのダイアログを閉じる
             this.Close();
@@ -91,11 +93,11 @@ namespace MyShogi.View.Win2D
             // -- 開始局面
 
             // 手合割有効か
-            binder.Bind(setting.BoardTypeEnable, radioButton5, v => setting.BoardTypeEnable = v);
-            binder.Bind((int)setting.BoardType, comboBox3, v => setting.BoardType = (BoardType)v);
+            binder.Bind(setting.Board.BoardTypeEnable, radioButton5, v => setting.Board.BoardTypeEnable = v);
+            binder.Bind((int)setting.Board.BoardType, comboBox3, v => setting.Board.BoardType = (BoardType)v);
 
             // 現在の局面から
-            binder.Bind(setting.BoardTypeCurrent, radioButton6, v => setting.BoardTypeCurrent = v);
+            binder.Bind(setting.Board.BoardTypeCurrent, radioButton6, v => setting.Board.BoardTypeCurrent = v);
 
             // -- 対局時間設定をbindする
 

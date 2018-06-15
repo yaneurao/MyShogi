@@ -12,6 +12,15 @@
         }
 
         /// <summary>
+        /// このインスタンスのClone()
+        /// </summary>
+        /// <returns></returns>
+        public TimeSetting Clone()
+        {
+            return (TimeSetting)this.MemberwiseClone();
+        }
+
+        /// <summary>
         /// 持ち時間の[時]
         /// </summary>
         public int Hour;

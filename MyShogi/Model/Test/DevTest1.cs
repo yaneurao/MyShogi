@@ -405,7 +405,14 @@ namespace MyShogi.Model.Test
         {
             public RefTest(int x) { data = new RefData(x); }
             public RefData data;
+            public RefData[] a_data = new RefData[2] { new RefData(5), new RefData(10) };
+
+            public int[] ai = new int[2];
+
+            // MemberwiseClone()のテスト
+            public RefTest Clone() { return (RefTest)this.MemberwiseClone(); }
         }
+
 
         /// <summary>
         /// KifuManager関連のテスト用コード
@@ -426,6 +433,20 @@ namespace MyShogi.Model.Test
             d();
             // "3"が出力される。
             // dが束縛しているのは、r1(の参照)だからである。
+#endif
+
+#if false
+            // MemberwiseClone()のテスト
+            var r1 = new RefTest(1);
+            var r2 = r1.Clone();
+            r2.data.x = 3;
+            r2.a_data[0].x = 4;
+            r2.ai[0] = 5;
+
+            r1.data.Out();
+            r1.a_data[0].Out();
+            Console.WriteLine(r1.ai[0]);
+
 #endif
 
 #if false
