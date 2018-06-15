@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Player;
 
 namespace MyShogi.View.Win2D
 {
@@ -101,7 +101,7 @@ namespace MyShogi.View.Win2D
 
             // -- 対局時間設定をbindする
 
-            var timeSetting = setting.TimeSetting(Color.BLACK);
+            var timeSetting = setting.TimeSettings.Players[0];
             binder.Bind(timeSetting.Hour, numericUpDown1, v => timeSetting.Hour = v );
             binder.Bind(timeSetting.Minute, numericUpDown2, v => timeSetting.Minute = v);
             binder.Bind(timeSetting.Byoyomi, numericUpDown3, v => timeSetting.Byoyomi = v);
@@ -109,8 +109,35 @@ namespace MyShogi.View.Win2D
             binder.Bind(timeSetting.ByoyomiEnable, radioButton7, v => timeSetting.ByoyomiEnable = v);
             binder.Bind(timeSetting.IncTimeEnable, radioButton8, v => timeSetting.IncTimeEnable = v);
 
+            var timeSetting2 = setting.TimeSettings.Players[1];
+            binder.Bind(timeSetting2.Hour, numericUpDown5, v => timeSetting2.Hour = v);
+            binder.Bind(timeSetting2.Minute, numericUpDown6, v => timeSetting2.Minute = v);
+            binder.Bind(timeSetting2.Byoyomi, numericUpDown7, v => timeSetting2.Byoyomi = v);
+            binder.Bind(timeSetting2.IncTime, numericUpDown8, v => timeSetting2.IncTime = v);
+            binder.Bind(timeSetting2.ByoyomiEnable, radioButton9, v => timeSetting2.ByoyomiEnable = v);
+            binder.Bind(timeSetting2.IncTimeEnable, radioButton10, v => timeSetting2.IncTimeEnable = v);
+
             // -- 詳細設定であるか
-            
+
+            var misc = setting.MiscSettings;
+
+            if (misc.DetailEnable)
+                ChangeToWideDialog();
+            else
+                ChangeToNarrowDialog();
+
+            // 「詳細設定」ボタンのテキスト
+            binder.Bind(misc.DetailEnable, button6, v => misc.DetailEnable = v , v => v ? "簡易設定" : "詳細設定");
+
+            // -- 後手の対局時間設定を個別にするのか
+            // このチェックボックスが無効だと、それに応じてgroupBox5が無効化されなくてはならない。
+            checkBox1.CheckedChanged += (sender, args) =>
+            {
+                groupBox5.Enabled = checkBox1.Checked;
+            };
+            binder.Bind(setting.TimeSettings.WhiteSame, checkBox1, v => setting.TimeSettings.WhiteSame = v);
+            groupBox5.Enabled = checkBox1.Checked;
+
         }
 
 
@@ -121,6 +148,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void button6_Click(object sender, EventArgs e)
         {
+            SuspendLayout();
             if (button6.Text == "詳細設定")
             {
                 button6.Text = "簡易設定";
@@ -131,6 +159,7 @@ namespace MyShogi.View.Win2D
                 button6.Text = "詳細設定";
                 ChangeToNarrowDialog();
             }
+            ResumeLayout();
         }
 
         /// <summary>
@@ -138,7 +167,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void ChangeToWideDialog()
         {
+            Width = 1600;
 
+            // 後手の名前など
+            groupBox2.Location = new Point(813, 13);
         }
 
         /// <summary>
@@ -146,7 +178,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void ChangeToNarrowDialog()
         {
+            Width = 800;
 
+            // 後手の名前など
+            groupBox2.Location = new Point(13, 240);
         }
     }
 }

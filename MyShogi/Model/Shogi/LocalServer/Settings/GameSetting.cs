@@ -24,7 +24,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             foreach (var c in All.Colors())
                 Player(c).PlayerName = c.Pretty();
 
-            TimeSettings = new TimeSetting[2] { new TimeSetting(), new TimeSetting() };
+            TimeSettings = new TimeSettings();
+            MiscSettings = new MiscSettings();
         }
 
         /// <summary>
@@ -33,12 +34,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="players"></param>
         /// <param name="board"></param>
         /// <param name="timeSetting"></param>
-        private GameSetting(PlayerSetting[] players , BoardSetting board , TimeSetting[] timeSettings)
+        private GameSetting(PlayerSetting[] players , BoardSetting board ,
+            TimeSettings timeSettings , MiscSettings miscSettings )
         {
             Players = players;
             Board = board;
             TimeSettings = timeSettings;
-            TimeSettingWhiteSame = true;
+            MiscSettings = miscSettings;
         }
 
         /// <summary>
@@ -52,7 +54,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             return new GameSetting(
                 new PlayerSetting[2] { Players[0].Clone(), Players[1].Clone() },
                 Board.Clone(),
-                new TimeSetting[2] { TimeSettings[0].Clone(), TimeSettings[1].Clone() }
+                TimeSettings.Clone(),
+                MiscSettings.Clone()
             );
         }
 
@@ -70,12 +73,13 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 持ち時間設定
-        /// ただし、後手も同じ(TimeSettingWhiteSame == true)であれば、
-        /// 先手側の設定に従わなければならない。
         /// </summary>
-        public TimeSetting TimeSetting(Color c) { return TimeSettings[(int)c]; }
+        public TimeSettings TimeSettings;
 
-        public bool TimeSettingWhiteSame;
+        /// <summary>
+        /// その他の細かい設定
+        /// </summary>
+        public MiscSettings MiscSettings;
 
         /// <summary>
         /// このメンバーには直接アクセスせずに、Player(Color)のほうを用いて欲しい。
@@ -83,12 +87,5 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// publicにしてある。
         /// </summary>
         public PlayerSetting[] Players;
-
-        /// <summary>
-        /// このメンバーには直接アクセスせずに、TimeSetting(Color)のほうを用いて欲しい。
-        /// XmlSerializerでシリアライズするときにpublicにしておかないとシリアライズ対象とならないので
-        /// publicにしてある。
-        /// </summary>
-        public TimeSetting[] TimeSettings;
     }
 }

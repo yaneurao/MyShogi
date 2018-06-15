@@ -57,6 +57,38 @@ namespace MyShogi.Model.Common.Utility
             c.TextChanged += (sender, args) => { setter(c.Text); };
         }
 
+        /// <summary>
+        /// convを通してboolをstringに置き換えてからTextBoxに設定する。
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="c"></param>
+        /// <param name="setter"></param>
+        /// <param name="conv"></param>
+        public void Bind(bool v, TextBox c, Action<bool> setter , Func<bool,string> conv)
+        {
+            // -- 最初、値をControlに設定しておく。
+
+            c.Text = conv(v);
+            // 値が変更になった時にデータバインドしているほうに値を戻す。
+            c.TextChanged += (sender, args) => { setter(c.Text == conv(true)); };
+        }
+
+        /// <summary>
+        /// convを通してboolをstringに置き換えてからButtonのTextに設定する。
+        /// </summary>
+        /// <param name="v"></param>
+        /// <param name="c"></param>
+        /// <param name="setter"></param>
+        /// <param name="conv"></param>
+        public void Bind(bool v, Button c, Action<bool> setter, Func<bool, string> conv)
+        {
+            // -- 最初、値をControlに設定しておく。
+
+            c.Text = conv(v);
+            // 値が変更になった時にデータバインドしているほうに値を戻す。
+            c.TextChanged += (sender, args) => { setter(c.Text == conv(true)); };
+        }
+
         public void Bind(bool v, CheckBox c, Action<bool> setter)
         {
             // -- 最初、値をControlに設定しておく。

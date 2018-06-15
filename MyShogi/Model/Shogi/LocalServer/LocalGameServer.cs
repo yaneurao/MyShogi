@@ -172,7 +172,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public string TimeSettingString(Color c)
         {
-            return GameSetting.TimeSettings[(int)c].ToShortString();
+            return GameSetting.TimeSettings.Player(c).ToShortString();
         }
 
         /// <summary>

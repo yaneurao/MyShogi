@@ -93,6 +93,4 @@ namespace MyShogi.Model.Shogi.LocalServer
             return sb.ToString();
         }
     }
-
-
 }
