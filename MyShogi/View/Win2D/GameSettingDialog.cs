@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Player;
 
 namespace MyShogi.View.Win2D
@@ -31,10 +31,8 @@ namespace MyShogi.View.Win2D
             banner2mini = banner2.CreateAndCopy(w, h);
             pictureBox2.Image = banner2mini.image;
 
-            comboBox1.SelectedIndex = 0;
-            comboBox2.SelectedIndex = 5;
-
-            LoadGameSetting();
+            // データバインドしておく。
+            BindSetting();
         }
 
         /// <summary>
@@ -55,9 +53,6 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void button3_Click(object sender, EventArgs e)
         {
-            // 現在のダイアログの状態をGlobalConfigに保存する。
-            SaveGameSetting();
-
             var gameSetting = TheApp.app.config.GameSetting;
             var gameServer = mainDialog.ViewModel.gameServer;
             gameServer.GameStartCommand(gameSetting);
@@ -67,109 +62,51 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// GlobalConfigのGameSettingから情報を復元する。
+        /// このダイアログのControlとGlobalConfig.Settingの一部をbindしておく。
         /// </summary>
-        private void LoadGameSetting()
+        private void BindSetting()
         {
-            // -- 対局設定をGlobalConfigから復元する。
-
-            // 手動データバインディングみたいなことをしている。
-
-            var gameSetting = TheApp.app.config.GameSetting;
-
-            var boardType = gameSetting.BoardType;
-            if (boardType != BoardType.Current)
-            {
-                comboBox3.SelectedIndex = (int)boardType;
-                radioButton5.Checked = true;
-            }
-            else
-            {
-                comboBox3.SelectedIndex = 0;
-                radioButton6.Checked = true;
-            }
-
-            // 対局相手のラジオボタン
-            var human_radio_buttons = new[] { radioButton1, radioButton3 };
-            var cpu_radio_buttons = new[] { radioButton2, radioButton4 };
+            var setting = TheApp.app.config.GameSetting;
+            var binder = new ControlBinder();
 
             // 対局者氏名のテキストボックス
-            var playerNames = new [] { textBox1, textBox2 };
-
-            foreach (var c in All.Colors())
-            {
-                PlayerTypeEnum playerType = gameSetting.Player(c).PlayerType;
-
-                human_radio_buttons[(int)c].Checked = playerType == PlayerTypeEnum.Human;
-                cpu_radio_buttons[(int)c].Checked = playerType == PlayerTypeEnum.UsiEngine;
-
-                // 対局者氏名
-                playerNames[(int)c].Text = gameSetting.Player(c).PlayerName;
-            }
-        }
-
-        private void SaveGameSetting()
-        {
-            var gameSetting = TheApp.app.config.GameSetting;
+            var playerNames = new[] { textBox1, textBox2 };
 
             // 対局相手のラジオボタン
             var human_radio_buttons = new[] { radioButton1, radioButton3 };
             var cpu_radio_buttons = new[] { radioButton2, radioButton4 };
 
+            // -- プレイヤーごとの設定
             foreach (var c in All.Colors())
             {
-                PlayerTypeEnum playerType;
-                if (human_radio_buttons[(int)c].Checked)
-                    playerType = PlayerTypeEnum.Human;
-                else if (cpu_radio_buttons[(int)c].Checked)
-                    playerType = PlayerTypeEnum.UsiEngine;
-                else
-                    // このラジオボタンどうなっとるんや…。
-                    throw new Exception("どちらのプレイヤーも選択されていません");
+                // 対局者氏名
+                binder.Bind(setting.Player(c).PlayerName, playerNames[(int)c], t => setting.Player(c).PlayerName = t);
 
-                gameSetting.Player(c).PlayerType = playerType;
-                // その他、設定を調べて受け継ぐ。
+                // 対局者の種別
+                binder.Bind(setting.Player(c).IsHuman, human_radio_buttons[(int)c], v => setting.Player(c).IsHuman = v);
+                binder.Bind(setting.Player(c).IsCpu, cpu_radio_buttons[(int)c], v => setting.Player(c).IsCpu = v);
+
             }
 
-            // 開始局面の選択
-            if (radioButton5.Checked)
-            {
-                // 手合割の取得
-                var index = comboBox3.SelectedIndex;
-                var boardType = (BoardType)index;
-                if (!boardType.IsSfenOk())
-                    boardType = BoardType.NoHandicap; // なぜなのか..どこも選択されていないのか？
+            // -- 開始局面
 
-                gameSetting.BoardType = boardType;
-            }
-            else // if (radioButton6.Checked)
-            {
-                // 現在の局面から開始
-                gameSetting.BoardType = BoardType.Current;
-            }
+            // 手合割有効か
+            binder.Bind(setting.BoardTypeEnable, radioButton5, v => setting.BoardTypeEnable = v);
+            binder.Bind((int)setting.BoardType, comboBox3, v => setting.BoardType = (BoardType)v);
 
-            // 対局者氏名
-            var playerNames = new string[2] { textBox1.Text, textBox2.Text };
-            foreach (var c in All.Colors())
-            {
-                var playerName = playerNames[(int)c];
-                // 入力されていなければ、 "先手"とか"後手"とかにする。
-                if (string.IsNullOrEmpty(playerName))
-                    playerName = c.Pretty();
+            // 現在の局面から
+            binder.Bind(setting.BoardTypeCurrent, radioButton6, v => setting.BoardTypeCurrent = v);
 
-                gameSetting.Player(c).PlayerName = playerName;
-            }
+            // -- 対局時間設定をbindする
+
+            var timeSetting = setting.TimeSetting;
+            binder.Bind(timeSetting.Hour, numericUpDown1, v => timeSetting.Hour = v );
+            binder.Bind(timeSetting.Minute, numericUpDown2, v => timeSetting.Minute = v);
+            binder.Bind(timeSetting.Byoyomi, numericUpDown3, v => timeSetting.Byoyomi = v);
+            binder.Bind(timeSetting.IncTime, numericUpDown4, v => timeSetting.IncTime = v);
+            binder.Bind(timeSetting.ByoyomiEnable, radioButton7, v => timeSetting.ByoyomiEnable = v);
+            binder.Bind(timeSetting.IncTimeEnable, radioButton8, v => timeSetting.IncTimeEnable = v);
         }
 
-        /// <summary>
-        /// このフォームが閉じられる時に、設定をGlobalConfigのほうに移動させておかないと次回開いたときに
-        /// 設定が保存されていなくて気持ち悪い。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void GameSettingDialog_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            SaveGameSetting();
-        }
     }
 }

@@ -4,23 +4,6 @@ using MyShogi.Model.Shogi.Player;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
-    /// <summary>
-    /// 各プレイヤーごとの対局設定
-    /// LocalGameServer.GameStart()の引数に渡す、対局条件などを一式書いた設定データの片側のプレイヤー分。
-    /// </summary>
-    public class PlayerGameSetting
-    {
-        /// <summary>
-        /// 生成するプレイヤーの型
-        /// </summary>
-        public PlayerTypeEnum PlayerType;
-
-        /// <summary>
-        /// プレイヤー名
-        /// </summary>
-        public string PlayerName;
-        
-    }
 
     /// <summary>
     /// LocalGameServer.GameStart()の引数に渡す、対局条件などを一式書いた設定データ
@@ -34,41 +17,53 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             // 初回起動時などデシリアライズに失敗した時のためにデフォルト値をきちんと設定しておく。
 
+            BoardTypeEnable = true;
             BoardType = BoardType.NoHandicap;
 
-            Players = new PlayerGameSetting[2]
-            { new PlayerGameSetting(), new PlayerGameSetting() };
+            Players = new PlayerSetting[2] { new PlayerSetting(), new PlayerSetting() };
 
-            var black = Player(Color.BLACK);
-            var white = Player(Color.WHITE);
+            foreach (var c in All.Colors())
+                Player(c).PlayerName = c.Pretty();
 
-            black.PlayerName = "あなた";
-            white.PlayerName = "わたし";
-
-            black.PlayerType = PlayerTypeEnum.Human;
-            white.PlayerType = PlayerTypeEnum.Human;
+            TimeSetting = new TimeSetting();
         }
 
         /// <summary>
         /// 開始局面。
-        /// これがCurrentであれば、現在の局面を初期化せずに開始。
-        /// これがOthersであれば、別途、Sfenから初期化。
+        /// BoardCurrentがtrueなら、この値は無視される。
+        /// この値がCurrent,Othersは許容しない。
         /// </summary>
         public BoardType BoardType;
+
+        /// <summary>
+        /// BoardTypeの局面から開始するのかのフラグ
+        /// BoardTypeEnableかBoardCurrentのどちらかがtrueのはず。
+        /// </summary>
+        public bool BoardTypeEnable;
+
+        /// <summary>
+        /// 現在の局面から開始するのかのフラグ
+        /// </summary>
+        public bool BoardTypeCurrent;
 
         /// <summary>
         /// c側の設定情報を取得する。
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public PlayerGameSetting Player(Color c) { return Players[(int)c]; }
+        public PlayerSetting Player(Color c) { return Players[(int)c]; }
+
+        /// <summary>
+        /// 持ち時間設定
+        /// </summary>
+        public TimeSetting TimeSetting;
 
         /// <summary>
         /// このメンバーには直接アクセスせずに、Player(Color)のほうを用いて欲しい。
         /// XmlSerializerでシリアライズするときにpublicにしておかないとシリアライズ対象とならないので
         /// publicにしてある。
         /// </summary>
-        public PlayerGameSetting[] Players;
+        public PlayerSetting[] Players;
 
     }
 }

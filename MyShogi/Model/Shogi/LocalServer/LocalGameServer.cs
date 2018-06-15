@@ -313,17 +313,18 @@ namespace MyShogi.Model.Shogi.LocalServer
             // プレイヤーの生成
             foreach (var c in All.Colors())
             {
-                var playerType = gameSetting.Player(c).PlayerType;
+                var playerType = gameSetting.Player(c).IsHuman ? PlayerTypeEnum.Human : PlayerTypeEnum.UsiEngine;
                 Players[(int)c] = PlayerBuilder.Create(playerType);
             }
 
             // 局面の設定
-            if (gameSetting.BoardType == BoardType.Current)
+            if (gameSetting.BoardTypeCurrent)
             {
                 // 現在の局面からなので、いま以降の局面を削除する。
                 kifuManager.Tree.ClearForward();
 
-            } else
+            }
+            else // if (gameSetting.BordTypeEnable)
             {
                 kifuManager.Init();
                 kifuManager.InitBoard(gameSetting.BoardType);
