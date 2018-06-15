@@ -30,6 +30,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         public void GameStart()
         {
             RestTime = new TimeSpan(TimeSetting.Hour, TimeSetting.Minute, TimeSetting.Second);
+            first = true; // 初期化のIncTimeをなくすためのフラグ
         }
 
         /// <summary>
@@ -38,8 +39,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void ChangeToOurTurn()
         {
-            if (TimeSetting.IncTimeEnable)
+            // 初手はIncTimeしない。
+            if (TimeSetting.IncTimeEnable && !first)
                 RestTime += new TimeSpan(0,0,TimeSetting.IncTime);
+            first = false;
+
+            // byoyomiありかも知れないのでいったんリセットする。
+            if (RestTime < TimeSpan.Zero)
+                RestTime = TimeSpan.Zero;
 
             StartTimer();
         }
@@ -138,9 +145,25 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             var elapsed = RoundUp(ElapsedTime());
             var r = RestTime - new TimeSpan(0, 0, elapsed);
-            if (r < TimeSpan.Zero)
-                r = TimeSpan.Zero;
-            return $"{r.Hours:D2}:{r.Minutes:D2}:{r.Seconds:D2}";
+
+            // 秒読みが有効でないなら、残りの時、分、秒だけを描画しておく。
+            if (!TimeSetting.ByoyomiEnable || TimeSetting.Byoyomi == 0)
+            {
+                if (r < TimeSpan.Zero)
+                    r = TimeSpan.Zero;
+                return $"{r.Hours:D2}:{r.Minutes:D2}:{r.Seconds:D2}";
+            }
+            else
+            {
+                var rn = -r;
+                if (r < TimeSpan.Zero)
+                    r = TimeSpan.Zero;
+                if (rn < TimeSpan.Zero)
+                    rn = TimeSpan.Zero;
+
+                return $"{r.Hours:D2}:{r.Minutes:D2}:{r.Seconds:D2} {rn.TotalSeconds}/{TimeSetting.Byoyomi}";
+            }
+
         }
 
         /// <summary>
@@ -166,5 +189,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 時間計測用のタイマー
         /// </summary>
         private Stopwatch Stopwatch;
+
+        /// <summary>
+        /// GameStart()した直後であるか。
+        /// 初手はIncTimeしてはいけないのでそのためのフラグ
+        /// </summary>
+        private bool first;
     }
 }

@@ -100,25 +100,53 @@ namespace MyShogi.View.Win2D
 
             // -- 対局時間設定をbindする
 
-            var timeSetting = setting.TimeSettings.Players[0];
-            binder.Bind(timeSetting.Hour, numericUpDown1, v => timeSetting.Hour = v );
-            binder.Bind(timeSetting.Minute, numericUpDown2, v => timeSetting.Minute = v);
-            binder.Bind(timeSetting.Second, numericUpDown3, v => timeSetting.Second = v);
-            binder.Bind(timeSetting.Byoyomi, numericUpDown4, v => timeSetting.Byoyomi = v);
-            binder.Bind(timeSetting.IncTime, numericUpDown5, v => timeSetting.IncTime = v);
-            binder.Bind(timeSetting.ByoyomiEnable, radioButton7, v => timeSetting.ByoyomiEnable = v);
-            binder.Bind(timeSetting.IncTimeEnable, radioButton8, v => timeSetting.IncTimeEnable = v);
-            binder.Bind(timeSetting.IgnoreTime , checkBox2 , v => timeSetting.IgnoreTime = v);
+            {
+                var num = new[]
+                {
+                new []{ numericUpDown1, numericUpDown2 , numericUpDown3 , numericUpDown4 , numericUpDown5},
+                new []{ numericUpDown6, numericUpDown7 , numericUpDown8 , numericUpDown9 , numericUpDown10},
+            };
+                var radio = new[]
+                {
+                new [] { radioButton7  , radioButton8},
+                new [] { radioButton9  , radioButton10},
+            };
+                var check = new[] { checkBox2, checkBox3 };
 
-            var timeSetting2 = setting.TimeSettings.Players[1];
-            binder.Bind(timeSetting2.Hour, numericUpDown6, v => timeSetting2.Hour = v);
-            binder.Bind(timeSetting2.Minute, numericUpDown7, v => timeSetting2.Minute = v);
-            binder.Bind(timeSetting2.Second, numericUpDown8, v => timeSetting2.Second = v);
-            binder.Bind(timeSetting2.Byoyomi, numericUpDown9, v => timeSetting2.Byoyomi = v);
-            binder.Bind(timeSetting2.IncTime, numericUpDown10, v => timeSetting2.IncTime = v);
-            binder.Bind(timeSetting2.ByoyomiEnable, radioButton9, v => timeSetting2.ByoyomiEnable = v);
-            binder.Bind(timeSetting2.IncTimeEnable, radioButton10, v => timeSetting2.IncTimeEnable = v);
-            binder.Bind(timeSetting2.IgnoreTime, checkBox3, v => timeSetting2.IgnoreTime = v);
+                foreach (var c_ in All.Colors())
+                {
+                    int c = (int)c_;
+                    var n = num[c];
+                    var timeSetting = setting.TimeSettings.Players[c];
+                    binder.Bind(timeSetting.Hour, n[0], v => timeSetting.Hour = v);
+                    binder.Bind(timeSetting.Minute, n[1], v => timeSetting.Minute = v);
+                    binder.Bind(timeSetting.Second, n[2], v => timeSetting.Second = v);
+                    binder.Bind(timeSetting.Byoyomi, n[3], v => timeSetting.Byoyomi = v);
+                    binder.Bind(timeSetting.IncTime, n[4], v => timeSetting.IncTime = v);
+
+                    var r = radio[c];
+                    // 秒読みのラジオボタンが選択されていれば、IncTimeのほうの設定はグレーアウト。
+                    binder.Bind(timeSetting.ByoyomiEnable, r[0], v =>
+                    {
+                        timeSetting.ByoyomiEnable = v;
+                        if (v)
+                        {
+                            n[3].Enabled = true;
+                            n[4].Enabled = false;
+                        }
+                    });
+                    binder.Bind(timeSetting.IncTimeEnable, r[1], v =>
+                    {
+                        timeSetting.IncTimeEnable = v;
+                        if (v)
+                        {
+                            n[3].Enabled = false;
+                            n[4].Enabled = true;
+                        }
+                    });
+                    binder.Bind(timeSetting.IgnoreTime, check[c], v => timeSetting.IgnoreTime = v);
+                }
+            }
 
             // -- 詳細設定であるか
 
@@ -204,6 +232,5 @@ namespace MyShogi.View.Win2D
             BindSetting();
             ResumeLayout();
         }
-
     }
 }

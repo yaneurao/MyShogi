@@ -73,7 +73,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         public string ToShortString()
         {
             var sb = new StringBuilder();
-            if (Hour != 0 || Minute != 0)
+            if (Hour != 0 || Minute != 0 || Second != 0)
             {
                 //sb.Append("持ち時間");
                 if (Hour != 0)

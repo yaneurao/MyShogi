@@ -51,6 +51,8 @@
             this.radioButton6 = new System.Windows.Forms.RadioButton();
             this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.label13 = new System.Windows.Forms.Label();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
@@ -66,36 +68,34 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.radioButton10 = new System.Windows.Forms.RadioButton();
-            this.radioButton9 = new System.Windows.Forms.RadioButton();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.button7 = new System.Windows.Forms.Button();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
-            this.label13 = new System.Windows.Forms.Label();
             this.numericUpDown8 = new System.Windows.Forms.NumericUpDown();
             this.label8 = new System.Windows.Forms.Label();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
+            this.label12 = new System.Windows.Forms.Label();
             this.numericUpDown10 = new System.Windows.Forms.NumericUpDown();
+            this.radioButton10 = new System.Windows.Forms.RadioButton();
             this.numericUpDown9 = new System.Windows.Forms.NumericUpDown();
+            this.radioButton9 = new System.Windows.Forms.RadioButton();
             this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.button7 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox3.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown8)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown10)).BeginInit();
@@ -232,7 +232,7 @@
             this.button5.Location = new System.Drawing.Point(60, 141);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(165, 49);
-            this.button5.TabIndex = 7;
+            this.button5.TabIndex = 6;
             this.button5.Text = "エンジン選択";
             this.button5.UseVisualStyleBackColor = true;
             // 
@@ -241,7 +241,7 @@
             this.button2.Location = new System.Drawing.Point(576, 141);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(149, 49);
-            this.button2.TabIndex = 6;
+            this.button2.TabIndex = 7;
             this.button2.Text = "詳細設定";
             this.button2.UseVisualStyleBackColor = true;
             // 
@@ -349,7 +349,7 @@
             this.comboBox3.Location = new System.Drawing.Point(246, 45);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(221, 35);
-            this.comboBox3.TabIndex = 7;
+            this.comboBox3.TabIndex = 9;
             // 
             // radioButton6
             // 
@@ -357,7 +357,7 @@
             this.radioButton6.Location = new System.Drawing.Point(27, 93);
             this.radioButton6.Name = "radioButton6";
             this.radioButton6.Size = new System.Drawing.Size(181, 31);
-            this.radioButton6.TabIndex = 0;
+            this.radioButton6.TabIndex = 8;
             this.radioButton6.TabStop = true;
             this.radioButton6.Text = "現在の局面 ";
             this.radioButton6.UseVisualStyleBackColor = true;
@@ -369,7 +369,7 @@
             this.radioButton5.Location = new System.Drawing.Point(27, 47);
             this.radioButton5.Name = "radioButton5";
             this.radioButton5.Size = new System.Drawing.Size(151, 31);
-            this.radioButton5.TabIndex = 0;
+            this.radioButton5.TabIndex = 8;
             this.radioButton5.TabStop = true;
             this.radioButton5.Text = "初期局面";
             this.radioButton5.UseVisualStyleBackColor = true;
@@ -399,13 +399,35 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "時間設定";
             // 
+            // numericUpDown3
+            // 
+            this.numericUpDown3.Location = new System.Drawing.Point(597, 44);
+            this.numericUpDown3.Maximum = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Name = "numericUpDown3";
+            this.numericUpDown3.Size = new System.Drawing.Size(100, 34);
+            this.numericUpDown3.TabIndex = 12;
+            this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(702, 44);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(39, 27);
+            this.label13.TabIndex = 8;
+            this.label13.Text = "秒";
+            // 
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
             this.checkBox2.Location = new System.Drawing.Point(28, 183);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(304, 31);
-            this.checkBox2.TabIndex = 7;
+            this.checkBox2.TabIndex = 17;
             this.checkBox2.Text = "時間切れを負けにしない";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
@@ -419,7 +441,7 @@
             0});
             this.numericUpDown2.Name = "numericUpDown2";
             this.numericUpDown2.Size = new System.Drawing.Size(100, 34);
-            this.numericUpDown2.TabIndex = 6;
+            this.numericUpDown2.TabIndex = 11;
             this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // numericUpDown5
@@ -432,7 +454,7 @@
             0});
             this.numericUpDown5.Name = "numericUpDown5";
             this.numericUpDown5.Size = new System.Drawing.Size(120, 34);
-            this.numericUpDown5.TabIndex = 6;
+            this.numericUpDown5.TabIndex = 16;
             this.numericUpDown5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // numericUpDown4
@@ -445,7 +467,7 @@
             0});
             this.numericUpDown4.Name = "numericUpDown4";
             this.numericUpDown4.Size = new System.Drawing.Size(120, 34);
-            this.numericUpDown4.TabIndex = 6;
+            this.numericUpDown4.TabIndex = 14;
             this.numericUpDown4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericUpDown4.Value = new decimal(new int[] {
             10,
@@ -463,7 +485,7 @@
             0});
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(120, 34);
-            this.numericUpDown1.TabIndex = 6;
+            this.numericUpDown1.TabIndex = 10;
             this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label7
@@ -517,7 +539,7 @@
             this.radioButton8.Location = new System.Drawing.Point(27, 133);
             this.radioButton8.Name = "radioButton8";
             this.radioButton8.Size = new System.Drawing.Size(198, 31);
-            this.radioButton8.TabIndex = 0;
+            this.radioButton8.TabIndex = 15;
             this.radioButton8.TabStop = true;
             this.radioButton8.Text = "1手ごとの加算";
             this.radioButton8.UseVisualStyleBackColor = true;
@@ -529,7 +551,7 @@
             this.radioButton7.Location = new System.Drawing.Point(27, 87);
             this.radioButton7.Name = "radioButton7";
             this.radioButton7.Size = new System.Drawing.Size(121, 31);
-            this.radioButton7.TabIndex = 0;
+            this.radioButton7.TabIndex = 13;
             this.radioButton7.TabStop = true;
             this.radioButton7.Text = "秒読み";
             this.radioButton7.UseVisualStyleBackColor = true;
@@ -539,7 +561,7 @@
             this.button3.Location = new System.Drawing.Point(425, 876);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(200, 55);
-            this.button3.TabIndex = 9;
+            this.button3.TabIndex = 19;
             this.button3.Text = "対局開始";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
@@ -549,7 +571,7 @@
             this.button6.Location = new System.Drawing.Point(175, 876);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(200, 55);
-            this.button6.TabIndex = 9;
+            this.button6.TabIndex = 18;
             this.button6.Text = "詳細設定";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
@@ -579,90 +601,6 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "時間設定[後手/下手]";
             // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(23, 44);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(114, 27);
-            this.label12.TabIndex = 1;
-            this.label12.Text = "持ち時間";
-            // 
-            // radioButton10
-            // 
-            this.radioButton10.AutoSize = true;
-            this.radioButton10.Location = new System.Drawing.Point(27, 133);
-            this.radioButton10.Name = "radioButton10";
-            this.radioButton10.Size = new System.Drawing.Size(198, 31);
-            this.radioButton10.TabIndex = 0;
-            this.radioButton10.TabStop = true;
-            this.radioButton10.Text = "1手ごとの加算";
-            this.radioButton10.UseVisualStyleBackColor = true;
-            // 
-            // radioButton9
-            // 
-            this.radioButton9.AutoSize = true;
-            this.radioButton9.Checked = true;
-            this.radioButton9.Location = new System.Drawing.Point(27, 87);
-            this.radioButton9.Name = "radioButton9";
-            this.radioButton9.Size = new System.Drawing.Size(121, 31);
-            this.radioButton9.TabIndex = 0;
-            this.radioButton9.TabStop = true;
-            this.radioButton9.Text = "秒読み";
-            this.radioButton9.UseVisualStyleBackColor = true;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(813, 572);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(367, 31);
-            this.checkBox1.TabIndex = 10;
-            this.checkBox1.Text = "後手の時間設定を個別にする";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // button7
-            // 
-            this.button7.Location = new System.Drawing.Point(1051, 876);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(225, 55);
-            this.button7.TabIndex = 11;
-            this.button7.Text = "先後入替";
-            this.button7.UseVisualStyleBackColor = true;
-            this.button7.Click += new System.EventHandler(this.button7_Click);
-            // 
-            // checkBox3
-            // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(27, 183);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(304, 31);
-            this.checkBox3.TabIndex = 8;
-            this.checkBox3.Text = "時間切れを負けにしない";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            // 
-            // numericUpDown3
-            // 
-            this.numericUpDown3.Location = new System.Drawing.Point(597, 44);
-            this.numericUpDown3.Maximum = new decimal(new int[] {
-            60,
-            0,
-            0,
-            0});
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(100, 34);
-            this.numericUpDown3.TabIndex = 9;
-            this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(702, 44);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(39, 27);
-            this.label13.TabIndex = 8;
-            this.label13.Text = "秒";
-            // 
             // numericUpDown8
             // 
             this.numericUpDown8.Location = new System.Drawing.Point(597, 42);
@@ -673,7 +611,7 @@
             0});
             this.numericUpDown8.Name = "numericUpDown8";
             this.numericUpDown8.Size = new System.Drawing.Size(100, 34);
-            this.numericUpDown8.TabIndex = 19;
+            this.numericUpDown8.TabIndex = 23;
             this.numericUpDown8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label8
@@ -685,6 +623,16 @@
             this.label8.TabIndex = 18;
             this.label8.Text = "秒";
             // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(27, 183);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(304, 31);
+            this.checkBox3.TabIndex = 28;
+            this.checkBox3.Text = "時間切れを負けにしない";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            // 
             // numericUpDown7
             // 
             this.numericUpDown7.Location = new System.Drawing.Point(443, 42);
@@ -695,8 +643,17 @@
             0});
             this.numericUpDown7.Name = "numericUpDown7";
             this.numericUpDown7.Size = new System.Drawing.Size(100, 34);
-            this.numericUpDown7.TabIndex = 14;
+            this.numericUpDown7.TabIndex = 22;
             this.numericUpDown7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(23, 44);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(114, 27);
+            this.label12.TabIndex = 1;
+            this.label12.Text = "持ち時間";
             // 
             // numericUpDown10
             // 
@@ -708,8 +665,19 @@
             0});
             this.numericUpDown10.Name = "numericUpDown10";
             this.numericUpDown10.Size = new System.Drawing.Size(120, 34);
-            this.numericUpDown10.TabIndex = 15;
+            this.numericUpDown10.TabIndex = 27;
             this.numericUpDown10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // radioButton10
+            // 
+            this.radioButton10.AutoSize = true;
+            this.radioButton10.Location = new System.Drawing.Point(27, 133);
+            this.radioButton10.Name = "radioButton10";
+            this.radioButton10.Size = new System.Drawing.Size(198, 31);
+            this.radioButton10.TabIndex = 26;
+            this.radioButton10.TabStop = true;
+            this.radioButton10.Text = "1手ごとの加算";
+            this.radioButton10.UseVisualStyleBackColor = true;
             // 
             // numericUpDown9
             // 
@@ -721,13 +689,25 @@
             0});
             this.numericUpDown9.Name = "numericUpDown9";
             this.numericUpDown9.Size = new System.Drawing.Size(120, 34);
-            this.numericUpDown9.TabIndex = 16;
+            this.numericUpDown9.TabIndex = 25;
             this.numericUpDown9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericUpDown9.Value = new decimal(new int[] {
             10,
             0,
             0,
             0});
+            // 
+            // radioButton9
+            // 
+            this.radioButton9.AutoSize = true;
+            this.radioButton9.Checked = true;
+            this.radioButton9.Location = new System.Drawing.Point(27, 87);
+            this.radioButton9.Name = "radioButton9";
+            this.radioButton9.Size = new System.Drawing.Size(121, 31);
+            this.radioButton9.TabIndex = 24;
+            this.radioButton9.TabStop = true;
+            this.radioButton9.Text = "秒読み";
+            this.radioButton9.UseVisualStyleBackColor = true;
             // 
             // numericUpDown6
             // 
@@ -739,8 +719,17 @@
             0});
             this.numericUpDown6.Name = "numericUpDown6";
             this.numericUpDown6.Size = new System.Drawing.Size(120, 34);
-            this.numericUpDown6.TabIndex = 17;
+            this.numericUpDown6.TabIndex = 21;
             this.numericUpDown6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(368, 42);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(66, 27);
+            this.label14.TabIndex = 10;
+            this.label14.Text = "時間";
             // 
             // label9
             // 
@@ -751,15 +740,6 @@
             this.label9.TabIndex = 13;
             this.label9.Text = "秒";
             // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(368, 87);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(39, 27);
-            this.label10.TabIndex = 12;
-            this.label10.Text = "秒";
-            // 
             // label11
             // 
             this.label11.AutoSize = true;
@@ -769,14 +749,34 @@
             this.label11.TabIndex = 11;
             this.label11.Text = "分";
             // 
-            // label14
+            // label10
             // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(368, 42);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(66, 27);
-            this.label14.TabIndex = 10;
-            this.label14.Text = "時間";
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(368, 87);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(39, 27);
+            this.label10.TabIndex = 12;
+            this.label10.Text = "秒";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(813, 572);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(367, 31);
+            this.checkBox1.TabIndex = 20;
+            this.checkBox1.Text = "後手の時間設定を個別にする";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(1051, 876);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(225, 55);
+            this.button7.TabIndex = 29;
+            this.button7.Text = "先後入替";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // GameSettingDialog
             // 
@@ -808,13 +808,13 @@
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown8)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown10)).EndInit();
