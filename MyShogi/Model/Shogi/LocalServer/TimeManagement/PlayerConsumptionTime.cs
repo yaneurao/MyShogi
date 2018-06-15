@@ -63,6 +63,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             RestTime -= consume;
             if (RestTime < TimeSpan.Zero)
                 RestTime = TimeSpan.Zero;
+            // ToDo:この時に、consumeをRestTimeぴったりに補整したほうが良いのでは？
 
             return consume;
         }
@@ -107,13 +108,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// StartTimer()～StopTimer()までの消費時間を繰り上げたもの
-        /// 今回の消費時間
+        /// 今回の指し手の消費時間
+        /// StartTimer()～StopTimer()までの消費時間を計測秒に変換したもの
+        /// 計測秒とは、1秒未満1秒。1秒以上は秒未満切り捨て。(例 : 1.999秒は、計測1秒)
         /// </summary>
         /// <returns></returns>
         public TimeSpan ConsumptionTime()
         {
-            return new TimeSpan(0,0,RoundUp(endTime - startTime));
+            return new TimeSpan(0,0,RoundTime(endTime - startTime));
         }
 
         /// <summary>
@@ -127,14 +129,33 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 1秒未満を繰り上げた経過時間[s]
-        /// ConsumptionTime()やElapsedTime()を繰り上げるのに使う。
+        /// 1秒未満を繰り下げた経過時間[s]
+        /// 残り時間を表示する時に使う。
         /// </summary>
         /// <param name="elapsedTime"></param>
         /// <returns></returns>
-        public int RoundUp(long elapsedTime)
+        public int RoundDownTime(long elapsedTime)
         {
-            return (int)((elapsedTime + 999) / 1000);
+            return (int)((elapsedTime + 0) / 1000);
+        }
+
+        /// <summary>
+        /// 計測時間。
+        /// 1秒未満は1秒、それ以上は端数秒切り捨てで経過時間を計測する。
+        /// </summary>
+        /// <param name="elapsedTime"></param>
+        /// <returns></returns>
+        public int RoundTime(long elapsedTime)
+        {
+            // 1.999秒は計測1秒
+            if (elapsedTime <= 1999)
+                return 1;
+
+            // 繰り上げ
+            //return (int)((elapsedTime + 999) / 1000);
+
+            // 繰り下げ
+            return (int)((elapsedTime) / 1000);
         }
 
         /// <summary>
@@ -143,7 +164,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public string DisplayShortString()
         {
-            var elapsed = RoundUp(ElapsedTime());
+            var elapsed = RoundDownTime(ElapsedTime());
             var r = RestTime - new TimeSpan(0, 0, elapsed);
 
             // 秒読みが有効でないなら、残りの時、分、秒だけを描画しておく。

@@ -164,7 +164,14 @@ namespace MyShogi.View.Win2D
 
             // このチェックボックスが無効だと、それに応じてgroupBox5が無効化されなくてはならない。
             binder.Bind(setting.TimeSettings.WhiteEnable, checkBox1,
-                v => { setting.TimeSettings.WhiteEnable = v; groupBox5.Enabled = v; });
+                v => {
+                    setting.TimeSettings.WhiteEnable = v;
+                    groupBox5.Enabled = v;
+                    if (v)
+                        groupBox4.Text = "時間設定[先手/上手]";
+                    else
+                        groupBox4.Text = "時間設定";
+                });
         }
 
 
