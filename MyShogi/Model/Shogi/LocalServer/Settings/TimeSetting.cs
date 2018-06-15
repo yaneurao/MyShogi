@@ -34,6 +34,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         public int Minute;
 
         /// <summary>
+        /// 持ち時間の[秒]
+        /// </summary>
+        public int Second;
+
+        /// <summary>
         /// 持ち時間を使い切ったときの
         /// 秒読みの[秒]
         /// </summary>
@@ -75,6 +80,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     sb.Append($"{Hour}時間");
                 if (Minute != 0)
                     sb.Append($"{Minute}分");
+                if (Second != 0)
+                    sb.Append($"{Second}秒");
             }
             if (ByoyomiEnable)
             {

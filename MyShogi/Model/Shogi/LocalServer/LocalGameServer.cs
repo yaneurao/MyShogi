@@ -222,7 +222,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     {
                         // いったんリセット
                         GameEnd();
-                        GameInit(gameSetting);
+                        GameStart(gameSetting);
 
                         // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。
                     }
@@ -351,7 +351,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 対局開始のためにGameSettingの設定に従い、ゲームを初期化する。
         /// </summary>
         /// <param name="gameSetting"></param>
-        private void GameInit(GameSetting gameSetting)
+        private void GameStart(GameSetting gameSetting)
         {
             // 初期化中である。
             Initializing = true;
@@ -402,8 +402,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 消費時間計算用
             foreach (var c in All.Colors())
             {
-                PlayerConsumption(c).TimeSetting = GameSetting.TimeSettings.Player(c);
-                PlayerConsumption(c).GameStart();
+                var pc = PlayerConsumption(c);
+                pc.TimeSetting = GameSetting.TimeSettings.Player(c);
+                pc.GameStart();
+                SetRestTimeString(c, pc.DisplayShortString());
             }
 
             InTheGame = true;

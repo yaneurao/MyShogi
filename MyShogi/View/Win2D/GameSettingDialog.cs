@@ -103,17 +103,19 @@ namespace MyShogi.View.Win2D
             var timeSetting = setting.TimeSettings.Players[0];
             binder.Bind(timeSetting.Hour, numericUpDown1, v => timeSetting.Hour = v );
             binder.Bind(timeSetting.Minute, numericUpDown2, v => timeSetting.Minute = v);
-            binder.Bind(timeSetting.Byoyomi, numericUpDown3, v => timeSetting.Byoyomi = v);
-            binder.Bind(timeSetting.IncTime, numericUpDown4, v => timeSetting.IncTime = v);
+            binder.Bind(timeSetting.Second, numericUpDown3, v => timeSetting.Second = v);
+            binder.Bind(timeSetting.Byoyomi, numericUpDown4, v => timeSetting.Byoyomi = v);
+            binder.Bind(timeSetting.IncTime, numericUpDown5, v => timeSetting.IncTime = v);
             binder.Bind(timeSetting.ByoyomiEnable, radioButton7, v => timeSetting.ByoyomiEnable = v);
             binder.Bind(timeSetting.IncTimeEnable, radioButton8, v => timeSetting.IncTimeEnable = v);
             binder.Bind(timeSetting.IgnoreTime , checkBox2 , v => timeSetting.IgnoreTime = v);
 
             var timeSetting2 = setting.TimeSettings.Players[1];
-            binder.Bind(timeSetting2.Hour, numericUpDown5, v => timeSetting2.Hour = v);
-            binder.Bind(timeSetting2.Minute, numericUpDown6, v => timeSetting2.Minute = v);
-            binder.Bind(timeSetting2.Byoyomi, numericUpDown7, v => timeSetting2.Byoyomi = v);
-            binder.Bind(timeSetting2.IncTime, numericUpDown8, v => timeSetting2.IncTime = v);
+            binder.Bind(timeSetting2.Hour, numericUpDown6, v => timeSetting2.Hour = v);
+            binder.Bind(timeSetting2.Minute, numericUpDown7, v => timeSetting2.Minute = v);
+            binder.Bind(timeSetting2.Second, numericUpDown8, v => timeSetting2.Second = v);
+            binder.Bind(timeSetting2.Byoyomi, numericUpDown9, v => timeSetting2.Byoyomi = v);
+            binder.Bind(timeSetting2.IncTime, numericUpDown10, v => timeSetting2.IncTime = v);
             binder.Bind(timeSetting2.ByoyomiEnable, radioButton9, v => timeSetting2.ByoyomiEnable = v);
             binder.Bind(timeSetting2.IncTimeEnable, radioButton10, v => timeSetting2.IncTimeEnable = v);
             binder.Bind(timeSetting2.IgnoreTime, checkBox3, v => timeSetting2.IgnoreTime = v);

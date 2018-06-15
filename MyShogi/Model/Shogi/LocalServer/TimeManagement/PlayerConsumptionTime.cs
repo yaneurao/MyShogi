@@ -29,7 +29,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void GameStart()
         {
-            RestTime = new TimeSpan(TimeSetting.Hour, TimeSetting.Minute, 0);
+            RestTime = new TimeSpan(TimeSetting.Hour, TimeSetting.Minute, TimeSetting.Second);
         }
 
         /// <summary>
