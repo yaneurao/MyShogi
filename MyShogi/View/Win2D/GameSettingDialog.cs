@@ -31,6 +31,11 @@ namespace MyShogi.View.Win2D
             banner2mini = banner2.CreateAndCopy(w, h);
             pictureBox2.Image = banner2mini.image;
 
+            // checkbox5,6がgroupbox4,5に属すると嫌だったのでgroupboxの外に配置しておいてあったので
+            // それを移動させる。
+            checkBox5.Location = new Point(checkBox5.Location.X, checkBox5.Location.Y - 50);
+            checkBox6.Location = new Point(checkBox6.Location.X, checkBox6.Location.Y - 50);
+
             // データバインドしておく。
             BindSetting();
         }
@@ -103,15 +108,17 @@ namespace MyShogi.View.Win2D
             {
                 var num = new[]
                 {
-                new []{ numericUpDown1, numericUpDown2 , numericUpDown3 , numericUpDown4 , numericUpDown5},
-                new []{ numericUpDown6, numericUpDown7 , numericUpDown8 , numericUpDown9 , numericUpDown10},
-            };
+                    new []{ numericUpDown1, numericUpDown2 , numericUpDown3 , numericUpDown4 , numericUpDown5},
+                    new []{ numericUpDown6, numericUpDown7 , numericUpDown8 , numericUpDown9 , numericUpDown10},
+                };
                 var radio = new[]
                 {
-                new [] { radioButton7  , radioButton8},
-                new [] { radioButton9  , radioButton10},
-            };
+                    new [] { radioButton7  , radioButton8},
+                    new [] { radioButton9  , radioButton10},
+                };
                 var check = new[] { checkBox2, checkBox3 };
+                var check_unlimit_time = new[] { checkBox5, checkBox6 };
+                var group = new[] { groupBox4, groupBox5 };
 
                 foreach (var c_ in All.Colors())
                 {
@@ -145,6 +152,14 @@ namespace MyShogi.View.Win2D
                         }
                     });
                     binder.Bind(timeSetting.IgnoreTime, check[c], v => timeSetting.IgnoreTime = v);
+                    binder.Bind(timeSetting.TimeLimitless, check_unlimit_time[c], v =>
+                    {
+                        timeSetting.TimeLimitless = v;
+
+                        // 時間無制限の時、GroupBox丸ごとDisableに。]
+                        // ただし、自分のチェックボックスは除外。この除外は、コンストラクタでGroupから除外している。
+                        group[c].Enabled = !v;
+                    });
                 }
             }
 
@@ -166,7 +181,8 @@ namespace MyShogi.View.Win2D
             binder.Bind(setting.TimeSettings.WhiteEnable, checkBox1,
                 v => {
                     setting.TimeSettings.WhiteEnable = v;
-                    groupBox5.Enabled = v;
+                    groupBox5.Enabled = v && /*時間無制限*/!checkBox6.Checked;
+                    checkBox6.Enabled = v; // 時間無制限
                     if (v)
                         groupBox4.Text = "時間設定[先手/上手]";
                     else
@@ -238,6 +254,11 @@ namespace MyShogi.View.Win2D
 
             BindSetting();
             ResumeLayout();
+        }
+
+        private void groupBox5_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

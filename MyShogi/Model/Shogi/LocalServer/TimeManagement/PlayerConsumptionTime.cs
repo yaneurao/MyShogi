@@ -75,7 +75,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         public bool IsTimeUp()
         {
             // 時間切れを負けにしない
-            if (TimeSetting.IgnoreTime)
+            if (TimeSetting.IgnoreTime || TimeSetting.TimeLimitless)
                 return false;
 
             var rest = RestTime - new TimeSpan(0, 0, (int)(ElapsedTime() / 1000));
@@ -164,6 +164,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public string DisplayShortString()
         {
+            // 消費時間が減っていくのが目障りな人向けの設定
+            if (TimeSetting.TimeLimitless)
+                return "無制限";
+
             var elapsed = RoundDownTime(ElapsedTime());
             var r = RestTime - new TimeSpan(0, 0, elapsed);
 

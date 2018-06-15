@@ -67,12 +67,22 @@ namespace MyShogi.Model.Shogi.LocalServer
         public bool IgnoreTime;
 
         /// <summary>
+        /// 時間制限なし
+        /// (残り時間のところが"無制限"になる。
+        /// 消費時間が減っていくのが気になる人向け)
+        /// </summary>
+        public bool TimeLimitless;
+
+        /// <summary>
         /// この持ち時間設定を文字列化する。
         /// </summary>
         /// <returns></returns>
         public string ToShortString()
         {
             var sb = new StringBuilder();
+            if (TimeLimitless)
+                return null; /* 消費時間のところに"無制限"と表示するので、ここでは何も出力しない */
+
             if (Hour != 0 || Minute != 0 || Second != 0)
             {
                 //sb.Append("持ち時間");
