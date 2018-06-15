@@ -46,6 +46,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 起動時に平手の初期局面が表示されるようにしておく。
             kifuManager.Init();
 
+            // ゲームの対局設定。GameStart()を呼び出すまでdefaultで何かを埋めておかなくてはならない。
+            // 前回の対局時のものを描画するのもおかしいので、defaultのものを設定しておく。
+            GameSetting = new GameSetting();
+
             // 対局監視スレッドを起動して回しておく。
             new Thread(thread_worker).Start();
         }
@@ -149,6 +153,38 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             return Players[(int)c];
         }
+
+        /// <summary>
+        /// 対局設定
+        /// 
+        /// GameStart()で渡された設定。immutableであるものとする。(呼び出し側で勝手に値を変更しないものとする)
+        /// </summary>
+        public GameSetting GameSetting
+        {
+            get { return GetValue<GameSetting>("GameSetting"); }
+            set { SetValue<GameSetting>("GameSetting", value); }
+        }
+
+        /// <summary>
+        /// c側の持ち時間設定の文字列
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public string TimeSettingString(Color c)
+        {
+            return GameSetting.TimeSettings[(int)c].ToShortString();
+        }
+
+        /// <summary>
+        /// 残り時間
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public string TimeRestString(Color c)
+        {
+            return "00:00:00 99/100";
+        }
+
         #endregion
 
         #region UI側からのコマンド
@@ -300,13 +336,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             EngineInitializing = Initializing &&
             (EngineInitializing = Player(Color.BLACK).PlayerType == PlayerTypeEnum.UsiEngine || Player(Color.WHITE).PlayerType == PlayerTypeEnum.UsiEngine);
         }
-
-        /// <summary>
-        /// 対局設定
-        /// 
-        /// GameStart()で渡された設定。immutableであるものとする。(呼び出し側で勝手に値を変更しないものとする)
-        /// </summary>
-        private GameSetting GameSetting;
 
         /// <summary>
         /// 対局開始のためにGameSettingの設定に従い、ゲームを初期化する。

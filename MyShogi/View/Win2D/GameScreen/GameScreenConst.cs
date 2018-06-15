@@ -103,7 +103,8 @@ namespace MyShogi.View.Win2D
         };
 
         /// <summary>
-        /// 通常の駒台用のネームプレートの氏名用の座標
+        /// ネームプレートの氏名用の座標
+        /// 通常の駒台用
         /// </summary>
         private static readonly Point[] name_plate_name =
         {
@@ -112,7 +113,8 @@ namespace MyShogi.View.Win2D
         };
 
         /// <summary>
-        /// 細長い駒台用のネームプレートの氏名用の座標
+        /// ネームプレートの氏名用の座標
+        /// 細長い駒台用
         /// </summary>
         private static readonly Point[] name_plate_slim_name =
         {
@@ -121,7 +123,8 @@ namespace MyShogi.View.Win2D
         };
 
         /// <summary>
-        /// 通常の駒台用の手番素材の表示場所
+        /// 手番素材の表示場所
+        /// 通常の駒台用
         /// </summary>
         private static readonly Point[] turn_normal_pos =
         {
@@ -130,9 +133,52 @@ namespace MyShogi.View.Win2D
         };
 
         /// <summary>
-        /// 細長いの駒台用の手番素材の表示場所
+        /// 手番素材の表示場所
+        /// 細長い駒台用
         /// </summary>
         private static readonly Point turn_slim_pos = new Point(430, 1030);
+
+        /// <summary>
+        /// 対局時間の表示
+        /// 通常の駒台用
+        /// </summary>
+        private static readonly Point[] time_setting_pos =
+        {
+            new Point(1437+2,485+2 + 50), // 先手
+            new Point(239+2,446+2 + 50),  // 後手
+        };
+
+        /// <summary>
+        /// 対局時間の表示
+        /// 細長い駒台用
+        /// 
+        /// 表示する場所がなさげ..
+        /// </summary>
+        private static readonly Point[] time_setting_slim_pos =
+        {
+            new Point(430 + 65 +1057/2 + 400 - 150 ,1030+10 ), // 先手
+            new Point(430 + 65               + 150 ,1030+10 ), // 後手
+        };
+
+        /// <summary>
+        /// 対局時間の表示  残り時間
+        /// 通常の駒台用
+        /// </summary>
+        private static readonly Point[] time_setting_pos2 =
+        {
+            new Point(1437+2+ 120,485+2 + 85), // 先手
+            new Point(239+2 + 120,446+2 + 85),  // 後手
+        };
+
+        /// <summary>
+        /// 対局時間の表示  残り時間
+        /// 細長い駒台用
+        /// </summary>
+        private static readonly Point[] time_setting_slim_pos2 =
+        {
+            new Point(430 + 65 +1057/2 + 400 - 340 ,1030 +12 ), // 先手
+            new Point(430 + 65               + 340 ,1030 +12 ), // 後手
+        };
 
         /// <summary>
         /// エンジン初期化時のダイアログ

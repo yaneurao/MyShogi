@@ -50,12 +50,14 @@ namespace MyShogi.View.Win2D
             var app = TheApp.app;
             var config = app.config;
             var vm = ViewModel;
-            // 描画する局面
-            var pos = vm.ViewModel.Position; // MainDialogViewModel
-            // 掴んでいる駒などのViewの状態
-            var state = vm.viewState;
+
             // 対局を監視しているLocalGameServer
             var gameServer = vm.ViewModel.gameServer;
+
+            // 描画する局面
+            var pos = gameServer.Position; // MainDialogViewModel
+            // 掴んでいる駒などのViewの状態
+            var state = vm.viewState;
 
             var picked_from = state.picked_from;
             // 持ち上げている駒のスプライトと座標(最後に描画するために積んでおく)
@@ -203,17 +205,45 @@ namespace MyShogi.View.Win2D
 
             // -- 対局者氏名
             {
-                // 通常状態の駒台表示
                 switch (config.KomadaiImageVersion)
                 {
+                    // 通常状態の駒台表示
                     case 1:
-                        DrawString(name_plate_name[0], vm.ViewModel.PlayerName(reverse ? SColor.WHITE : SColor.BLACK), 28);
-                        DrawString(name_plate_name[1], vm.ViewModel.PlayerName(reverse ? SColor.BLACK : SColor.WHITE), 28);
+                        DrawString(name_plate_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK), 28);
+                        DrawString(name_plate_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE), 28);
                         break;
+                    // 細長い状態の駒台表示
                     case 2:
                         DrawSprite(turn_slim_pos, SPRITE.NamePlateSlim(pos.sideToMove, reverse));
-                        DrawString(name_plate_slim_name[0], vm.ViewModel.PlayerName(reverse ? SColor.WHITE : SColor.BLACK ), 28 , new DrawStringOption(Brushes.White, 2));
-                        DrawString(name_plate_slim_name[1], vm.ViewModel.PlayerName(reverse ? SColor.BLACK : SColor.WHITE ), 28 , new DrawStringOption(Brushes.White, 0));
+                        DrawString(name_plate_slim_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK ), 28 , new DrawStringOption(Brushes.White, 2));
+                        DrawString(name_plate_slim_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE ), 28 , new DrawStringOption(Brushes.White, 0));
+                        break;
+                }
+            }
+
+            // -- 持ち時間等
+            {
+                switch (config.KomadaiImageVersion)
+                {
+                    // 通常状態の駒台表示
+                    case 1:
+                        // 対局時間設定
+                        DrawString(time_setting_pos[0], gameServer.TimeSettingString(reverse ? SColor.WHITE : SColor.BLACK), 18);
+                        DrawString(time_setting_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18);
+                        
+                        // 残り時間
+                        DrawString(time_setting_pos2[0], gameServer.TimeRestString(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.Black, 1));
+                        DrawString(time_setting_pos2[1], gameServer.TimeRestString(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.Black, 1));
+                        break;
+                    // 細長い状態の駒台表示
+                    case 2:
+                        // 対局時間設定(表示する場所がなさげ)
+                        //DrawString(time_setting_slim_pos[0], gameServer.TimeSettingString(reverse ? SColor.WHITE : SColor.BLACK), 18 , new DrawStringOption(Brushes.Black, 2));
+                        //DrawString(time_setting_slim_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18 , new DrawStringOption(Brushes.Black, 0));
+
+                        // 残り時間
+                        DrawString(time_setting_slim_pos2[0], gameServer.TimeRestString(reverse ? SColor.WHITE : SColor.BLACK), 24 , new DrawStringOption(Brushes.Black, 1));
+                        DrawString(time_setting_slim_pos2[1], gameServer.TimeRestString(reverse ? SColor.BLACK : SColor.WHITE), 24 , new DrawStringOption(Brushes.Black, 1));
                         break;
                 }
             }

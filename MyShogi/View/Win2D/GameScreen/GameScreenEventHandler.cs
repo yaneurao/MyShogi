@@ -216,7 +216,7 @@ namespace MyShogi.View.Win2D
             if (!(gameServer.CanUserMove && !gameServer.EngineInitializing) )
                 return;
 
-            var pos = ViewModel.ViewModel.Position;
+            var pos = ViewModel.ViewModel.gameServer.Position;
 
             // この駒をユーザーが掴んで動かそうとしていることを示す
             ViewModel.viewState.picked_from = sq;
@@ -289,7 +289,7 @@ namespace MyShogi.View.Win2D
             // また、1段目に進む「歩」などは、不成はまずいので選択がいらない。
 
             // Promoteの判定
-            var pos = ViewModel.ViewModel.Position;
+            var pos = ViewModel.ViewModel.gameServer.Position;
             var pro_move = Util.MakeMove(from, to , true);
             // 成りの指し手が合法であるかどうか
             var canPromote = pos.IsLegal(pro_move);
@@ -373,7 +373,7 @@ namespace MyShogi.View.Win2D
         /// <param name="sq"></param>
         public void OnBoardClick(SquareHand sq)
         {
-            var pos = ViewModel.ViewModel.Position;
+            var pos = ViewModel.ViewModel.gameServer.Position;
             var state = ViewModel.viewState;
             var pc = pos.PieceOn(sq);
 

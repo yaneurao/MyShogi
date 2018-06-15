@@ -70,20 +70,5 @@ namespace MyShogi.ViewModel
         /// </summary>
         public LocalGameServer gameServer { get; set; }
         
-        /// <summary>
-        /// 画面に描画すべき盤面。immutable objectなのでこのままdata bindするようにして描画すれば良い。
-        /// </summary>
-        public Position Position { get { return gameServer.Position; } }
-
-        /// <summary>
-        /// 対局者氏名
-        /// </summary>
-        /// <param name="player"></param>
-        /// <returns></returns>
-        public string PlayerName(Color c)
-        {
-            return gameServer.ShortDisplayName(c);
-        }
-
     }
 }

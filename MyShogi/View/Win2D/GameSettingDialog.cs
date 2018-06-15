@@ -101,14 +101,52 @@ namespace MyShogi.View.Win2D
 
             // -- 対局時間設定をbindする
 
-            var timeSetting = setting.TimeSetting;
+            var timeSetting = setting.TimeSetting(Color.BLACK);
             binder.Bind(timeSetting.Hour, numericUpDown1, v => timeSetting.Hour = v );
             binder.Bind(timeSetting.Minute, numericUpDown2, v => timeSetting.Minute = v);
             binder.Bind(timeSetting.Byoyomi, numericUpDown3, v => timeSetting.Byoyomi = v);
             binder.Bind(timeSetting.IncTime, numericUpDown4, v => timeSetting.IncTime = v);
             binder.Bind(timeSetting.ByoyomiEnable, radioButton7, v => timeSetting.ByoyomiEnable = v);
             binder.Bind(timeSetting.IncTimeEnable, radioButton8, v => timeSetting.IncTimeEnable = v);
+
+            // -- 詳細設定であるか
+            
         }
 
+
+        /// <summary>
+        /// 「詳細設定」ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (button6.Text == "詳細設定")
+            {
+                button6.Text = "簡易設定";
+                ChangeToWideDialog();
+            }
+            else
+            {
+                button6.Text = "詳細設定";
+                ChangeToNarrowDialog();
+            }
+        }
+
+        /// <summary>
+        /// 幅広いダイアログに変更
+        /// </summary>
+        private void ChangeToWideDialog()
+        {
+
+        }
+
+        /// <summary>
+        /// 幅の狭いダイアログに変更(デフォルト)
+        /// </summary>
+        private void ChangeToNarrowDialog()
+        {
+
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             foreach (var c in All.Colors())
                 Player(c).PlayerName = c.Pretty();
 
-            TimeSetting = new TimeSetting();
+            TimeSettings = new TimeSetting[2] { new TimeSetting(), new TimeSetting() };
         }
 
         /// <summary>
@@ -33,11 +33,12 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="players"></param>
         /// <param name="board"></param>
         /// <param name="timeSetting"></param>
-        private GameSetting(PlayerSetting[] players , BoardSetting board , TimeSetting timeSetting)
+        private GameSetting(PlayerSetting[] players , BoardSetting board , TimeSetting[] timeSettings)
         {
             Players = players;
             Board = board;
-            TimeSetting = timeSetting;
+            TimeSettings = timeSettings;
+            TimeSettingWhiteSame = true;
         }
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             return new GameSetting(
                 new PlayerSetting[2] { Players[0].Clone(), Players[1].Clone() },
                 Board.Clone(),
-                TimeSetting.Clone()
+                new TimeSetting[2] { TimeSettings[0].Clone(), TimeSettings[1].Clone() }
             );
         }
 
@@ -69,8 +70,12 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 持ち時間設定
+        /// ただし、後手も同じ(TimeSettingWhiteSame == true)であれば、
+        /// 先手側の設定に従わなければならない。
         /// </summary>
-        public TimeSetting TimeSetting;
+        public TimeSetting TimeSetting(Color c) { return TimeSettings[(int)c]; }
+
+        public bool TimeSettingWhiteSame;
 
         /// <summary>
         /// このメンバーには直接アクセスせずに、Player(Color)のほうを用いて欲しい。
@@ -79,5 +84,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public PlayerSetting[] Players;
 
+        /// <summary>
+        /// このメンバーには直接アクセスせずに、TimeSetting(Color)のほうを用いて欲しい。
+        /// XmlSerializerでシリアライズするときにpublicにしておかないとシリアライズ対象とならないので
+        /// publicにしてある。
+        /// </summary>
+        public TimeSetting[] TimeSettings;
     }
 }

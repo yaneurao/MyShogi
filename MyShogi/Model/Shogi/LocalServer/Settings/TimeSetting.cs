@@ -1,7 +1,10 @@
-﻿namespace MyShogi.Model.Shogi.LocalServer
+﻿using System.Text;
+
+namespace MyShogi.Model.Shogi.LocalServer
 {
     /// <summary>
     /// 対局時間設定
+    /// 片側のプレイヤー分
     /// </summary>
     public class TimeSetting
     {
@@ -53,5 +56,43 @@
         /// </summary>
         public bool IncTimeEnable;
 
+        /// <summary>
+        /// この持ち時間設定を文字列化する。
+        /// </summary>
+        /// <returns></returns>
+        public string ToShortString()
+        {
+            var sb = new StringBuilder();
+            if (Hour != 0 || Minute != 0)
+            {
+                //sb.Append("持ち時間");
+                if (Hour != 0)
+                    sb.Append($"{Hour}時間");
+                if (Minute != 0)
+                    sb.Append($"{Minute}分");
+            }
+            if (ByoyomiEnable)
+            {
+                if (Byoyomi == 0)
+                {
+                    if (sb.Length != 0)
+                        sb.Append("切れ負け");
+                } else
+                {
+                    if (sb.Length != 0)
+                        sb.Append(" "); // 前の文字があるならスペースを放り込む
+                    sb.Append($"秒読み{Byoyomi}秒");
+                }
+            }
+            if (IncTimeEnable && IncTime != 0)
+            {
+                if (sb.Length != 0)
+                    sb.Append(" "); // 前の文字があるならスペースを放り込む
+                sb.Append($"1手{IncTime}秒加算");
+            }
+            return sb.ToString();
+        }
     }
+
+
 }
