@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 
@@ -402,7 +403,7 @@ namespace MyShogi.Model.Shogi.Kifu
             // 特殊な指し手は、KIF2フォーマットではきちんと変換できないので自前で変換する。
             // 例えば、連続王手の千日手による反則勝ちが単に「千日手」となってしまってはまずいので。
             // (『Kifu for Windoiws』ではそうなってしまう..)
-            return m.IsOk() ? kifFormatter.format(p, m) : m.SpecialMoveToKif();
+            return m.IsOk() ? kifFormatter.format(p, m) : m.SpecialMoveToKif().Left(6);
         }
 
         /// <summary>

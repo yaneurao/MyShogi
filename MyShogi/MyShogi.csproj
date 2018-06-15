@@ -72,6 +72,7 @@
     <Compile Include="Model\Common\Utility\ControlBinder.cs" />
     <Compile Include="Model\Common\Utility\Log.cs" />
     <Compile Include="Model\Common\Utility\Scanner.cs" />
+    <Compile Include="Model\Common\Utility\StringExtensions.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />

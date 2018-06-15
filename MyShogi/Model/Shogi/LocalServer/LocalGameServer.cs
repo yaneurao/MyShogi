@@ -141,7 +141,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         public string ShortDisplayName(Color c)
         {
             var name = DisplayName(c);
-            return name.Substring(0,Math.Min(8, name.Length)); // 最大で8文字まで
+            return name.PadLeft(8); // 最大で8文字まで
         }
 
         /// <summary>
@@ -686,13 +686,14 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 手番が変わった時に特殊な局面に至っていないかのチェック
             if (InTheGame)
             {
+                var misc = GameSetting.MiscSettings;
 
                 // -- このDoMoveの結果、千日手や詰み、持将棋など特殊な局面に至ったか？
                 Move m = Move.NONE;
                 var rep = Position.IsRepetition();
 
                 // 手数による引き分けの局面であるか
-                if (Position.gamePly >= int.MaxValue /* 256  あとでちゃんと書く */)
+                if (misc.MaxMovesToDrawEnable && misc.MaxMovesToDraw < Position.gamePly)
                 {
                     m = Move.MAX_MOVES_DRAW;
                 }

@@ -188,6 +188,16 @@ namespace MyShogi.View.Win2D
                     else
                         groupBox4.Text = "時間設定";
                 });
+
+            // 指定手数で引き分けにする
+            binder.Bind(misc.MaxMovesToDrawEnable, checkBox4, v =>
+            {
+                misc.MaxMovesToDrawEnable = v;
+                numericUpDown11.Enabled = v;
+
+            });
+            binder.Bind(misc.MaxMovesToDraw, numericUpDown11, v => misc.MaxMovesToDraw = v);
+
         }
 
 

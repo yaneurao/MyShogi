@@ -142,6 +142,9 @@ namespace MyShogi.Model.Shogi.Core
             if (!m.IsOk())
                 switch (m)
                 {
+                    // 棋譜ウィンドウへの出力では6文字目までしか入らないので
+                    // 6文字目でちょん切られることを考慮して文字を決めないといけない。
+
                     case Move.NONE:            return "none"; // これは使わないはず
                     case Move.NULL:            return "null";
                     case Move.RESIGN:          return "投了";
@@ -154,7 +157,7 @@ namespace MyShogi.Model.Shogi.Core
                     case Move.REPETITION_LOSE: return "千日手反則負け";
                     case Move.TIME_UP:         return "時間切れ";
                     case Move.INTERRUPT:       return "中断";
-                    case Move.MAX_MOVES_DRAW:  return "手数による引分";
+                    case Move.MAX_MOVES_DRAW:  return "最大手数引分";
                     case Move.ILLEGAL_MOVE:    return "非合法手反則負け";
                     case Move.ILLEGAL_ACTION_WIN : return "反則勝ち";
                     case Move.ILLEGAL_ACTION_LOSE: return "反則負け";
