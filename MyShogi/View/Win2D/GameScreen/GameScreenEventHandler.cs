@@ -35,6 +35,16 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 残り時間が変更になった時に呼び出されるハンドラ
+        /// 最小更新矩形を設定して更新すべき。
+        /// </summary>
+        /// <param name="args"></param>
+        public void RestTimeChanged(PropertyChangedEventArgs args)
+        {
+            ViewModel.dirty = true;
+        }
+
+        /// <summary>
         /// メニューのすぐ下に配置しているtooltip buttonを、現在の状態に応じてOn/Offする。
         /// </summary>
         private void UpdateTooltipButtons()

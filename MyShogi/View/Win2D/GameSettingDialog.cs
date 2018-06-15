@@ -107,6 +107,7 @@ namespace MyShogi.View.Win2D
             binder.Bind(timeSetting.IncTime, numericUpDown4, v => timeSetting.IncTime = v);
             binder.Bind(timeSetting.ByoyomiEnable, radioButton7, v => timeSetting.ByoyomiEnable = v);
             binder.Bind(timeSetting.IncTimeEnable, radioButton8, v => timeSetting.IncTimeEnable = v);
+            binder.Bind(timeSetting.IgnoreTime , checkBox2 , v => timeSetting.IgnoreTime = v);
 
             var timeSetting2 = setting.TimeSettings.Players[1];
             binder.Bind(timeSetting2.Hour, numericUpDown5, v => timeSetting2.Hour = v);
@@ -115,6 +116,7 @@ namespace MyShogi.View.Win2D
             binder.Bind(timeSetting2.IncTime, numericUpDown8, v => timeSetting2.IncTime = v);
             binder.Bind(timeSetting2.ByoyomiEnable, radioButton9, v => timeSetting2.ByoyomiEnable = v);
             binder.Bind(timeSetting2.IncTimeEnable, radioButton10, v => timeSetting2.IncTimeEnable = v);
+            binder.Bind(timeSetting2.IgnoreTime, checkBox3, v => timeSetting2.IgnoreTime = v);
 
             // -- 詳細設定であるか
 
@@ -200,5 +202,6 @@ namespace MyShogi.View.Win2D
             BindSetting();
             ResumeLayout();
         }
+
     }
 }

@@ -51,6 +51,7 @@
             this.radioButton6 = new System.Windows.Forms.RadioButton();
             this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
@@ -78,6 +79,7 @@
             this.radioButton9 = new System.Windows.Forms.RadioButton();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button7 = new System.Windows.Forms.Button();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -368,6 +370,7 @@
             // 
             // groupBox4
             // 
+            this.groupBox4.Controls.Add(this.checkBox2);
             this.groupBox4.Controls.Add(this.numericUpDown2);
             this.groupBox4.Controls.Add(this.numericUpDown4);
             this.groupBox4.Controls.Add(this.numericUpDown3);
@@ -383,10 +386,20 @@
             this.groupBox4.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox4.Size = new System.Drawing.Size(748, 184);
+            this.groupBox4.Size = new System.Drawing.Size(748, 224);
             this.groupBox4.TabIndex = 8;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "時間設定";
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(28, 183);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(304, 31);
+            this.checkBox2.TabIndex = 7;
+            this.checkBox2.Text = "時間切れを負けにしない";
+            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // numericUpDown2
             // 
@@ -515,7 +528,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(425, 836);
+            this.button3.Location = new System.Drawing.Point(425, 876);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(200, 55);
             this.button3.TabIndex = 9;
@@ -525,7 +538,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(175, 836);
+            this.button6.Location = new System.Drawing.Point(175, 876);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(200, 55);
             this.button6.TabIndex = 9;
@@ -535,6 +548,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.Controls.Add(this.checkBox3);
             this.groupBox5.Controls.Add(this.numericUpDown6);
             this.groupBox5.Controls.Add(this.numericUpDown8);
             this.groupBox5.Controls.Add(this.numericUpDown7);
@@ -550,7 +564,7 @@
             this.groupBox5.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox5.Size = new System.Drawing.Size(748, 184);
+            this.groupBox5.Size = new System.Drawing.Size(748, 224);
             this.groupBox5.TabIndex = 9;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "時間設定[後手/下手]";
@@ -692,7 +706,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(1051, 836);
+            this.button7.Location = new System.Drawing.Point(1051, 876);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(225, 55);
             this.button7.TabIndex = 11;
@@ -700,11 +714,21 @@
             this.button7.UseVisualStyleBackColor = true;
             this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(27, 183);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(304, 31);
+            this.checkBox3.TabIndex = 8;
+            this.checkBox3.Text = "時間切れを負けにしない";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            // 
             // GameSettingDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1574, 929);
+            this.ClientSize = new System.Drawing.Size(1574, 979);
             this.Controls.Add(this.button7);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.groupBox5);
@@ -797,5 +821,7 @@
         private System.Windows.Forms.RadioButton radioButton9;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.CheckBox checkBox3;
     }
 }

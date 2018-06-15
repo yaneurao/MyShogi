@@ -215,7 +215,7 @@ namespace MyShogi.Model.Shogi.Kifu
             Debug.Assert(m != null);
 
             // 棋譜の更新
-            AddKifu(m.nextMove);
+            AddKifu(m.nextMove , m.thinkingTime);
             
             position.DoMove(m.nextMove);
             RaisePropertyChanged("Position", position);
@@ -224,7 +224,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             // もし次がSpecialMoveの局面に到達したのであれば、棋譜に積む。
             if (currentNode.moves.Count != 0 && currentNode.moves[0].nextMove.IsSpecial())
-                AddKifuSpecialMove(currentNode.moves[0].nextMove);
+                AddKifuSpecialMove(currentNode.moves[0].nextMove , TimeSpan.Zero);
         }
 
         /// <summary>
@@ -280,7 +280,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 // 特殊な指し手であるなら、この時点で棋譜の終端にその旨を記録しておく。
                 if (move.IsSpecial())
-                    AddKifuSpecialMove(move);
+                    AddKifuSpecialMove(move , thinkingTime);
             }
         }
 
@@ -409,7 +409,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// DoMove()のときに棋譜に追加する
         /// </summary>
         /// <param name="m"></param>
-        private void AddKifu(Move m)
+        private void AddKifu(Move m , TimeSpan t)
         {
             if (EnableKifuList)
             {
@@ -421,7 +421,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 move_text = string.Format("{0,-4}", move_text);
                 move_text = move_text.Replace(' ', '　'); // 半角スペースから全角スペースへの置換
 
-                var text = string.Format("{0,3}.{1} {2}", move_text_game_ply, move_text, "00:00:01");
+                var text = string.Format("{0,3}.{1} {2}", move_text_game_ply, move_text,
+                    $"{t.Hours:D2}:{t.Minutes:D2}:{t.Seconds:D2}");
 
                 KifuList.Add(text);
                 RaisePropertyChanged("KifuList", KifuList, KifuList.Count-1 /*末尾が変更になった*/);
@@ -456,10 +457,10 @@ namespace MyShogi.Model.Shogi.Kifu
         /// KifuListの末尾にspecial moveを積む。
         /// </summary>
         /// <param name="m"></param>
-        private void AddKifuSpecialMove(Move m)
+        private void AddKifuSpecialMove(Move m , TimeSpan t)
         {
             Debug.Assert(m.IsSpecial());
-            AddKifu(m);
+            AddKifu(m , t);
         }
 
     }

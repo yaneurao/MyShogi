@@ -232,8 +232,8 @@ namespace MyShogi.View.Win2D
                         DrawString(time_setting_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18);
                         
                         // 残り時間
-                        DrawString(time_setting_pos2[0], gameServer.TimeRestString(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.Black, 1));
-                        DrawString(time_setting_pos2[1], gameServer.TimeRestString(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.Black, 1));
+                        DrawString(time_setting_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.Black, 1));
+                        DrawString(time_setting_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.Black, 1));
                         break;
                     // 細長い状態の駒台表示
                     case 2:
@@ -242,8 +242,8 @@ namespace MyShogi.View.Win2D
                         //DrawString(time_setting_slim_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18 , new DrawStringOption(Brushes.Black, 0));
 
                         // 残り時間
-                        DrawString(time_setting_slim_pos2[0], gameServer.TimeRestString(reverse ? SColor.WHITE : SColor.BLACK), 24 , new DrawStringOption(Brushes.Black, 1));
-                        DrawString(time_setting_slim_pos2[1], gameServer.TimeRestString(reverse ? SColor.BLACK : SColor.WHITE), 24 , new DrawStringOption(Brushes.Black, 1));
+                        DrawString(time_setting_slim_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 24 , new DrawStringOption(Brushes.Black, 1));
+                        DrawString(time_setting_slim_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 24 , new DrawStringOption(Brushes.Black, 1));
                         break;
                 }
             }

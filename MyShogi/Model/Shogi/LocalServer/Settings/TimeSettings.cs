@@ -34,13 +34,13 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// c側の対局設定。
-        /// ただし、WhiteSame == trueである時は、後手側の内容を無視して、先手側の対局に従うのでPlayers[0]のほうが返るので注意！
+        /// ただし、WhiteEnable == falseである時は、後手側の内容を無視して、先手側の対局に従うのでPlayers[0]のほうが返るので注意！
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
         public TimeSetting Player(Color c)
         {
-            if (WhiteEnable)
+            if (!WhiteEnable)
                 c = Color.BLACK;
 
             return Players[(int)c];

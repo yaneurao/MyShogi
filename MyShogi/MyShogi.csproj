@@ -75,6 +75,7 @@
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
+    <Compile Include="Model\Shogi\LocalServer\TimeManagement\PlayerConsumptionTime.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\BoardSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\GameSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\MiscSettings.cs" />

@@ -75,6 +75,7 @@ namespace MyShogi.App
             gameServer.AddPropertyChangedHandler("TurnChanged", mainDialog.gameScreen.TurnChanged);
             gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.gameScreen.TurnChanged);
             gameServer.AddPropertyChangedHandler("EngineInitializing", mainDialog.gameScreen.EngineInitializingChanged);
+            gameServer.AddPropertyChangedHandler("RestTimeChanged", mainDialog.gameScreen.RestTimeChanged);
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 

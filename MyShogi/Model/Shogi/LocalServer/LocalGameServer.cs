@@ -175,15 +175,25 @@ namespace MyShogi.Model.Shogi.LocalServer
             return GameSetting.TimeSettings.Player(c).ToShortString();
         }
 
+        public PlayerConsumptionTime PlayerConsumption(Color c)
+        {
+            return PlayersConsumptionTime[(int)c];
+        }
+
         /// <summary>
         /// 残り時間
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public string TimeRestString(Color c)
+        public string RestTimeString(Color c)
         {
-            return "00:00:00 99/100";
+            return restTimeStrings[(int)c];
         }
+
+        // 仮想プロパティ
+        // 残り消費時間が変更になった時に呼び出される。
+        //public bool RestTimeChanged { get; set; }
+
 
         #endregion
 
@@ -389,6 +399,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 持ち時間などの設定が必要なので、コピーしておく。
             GameSetting = gameSetting;
 
+            // 消費時間計算用
+            foreach (var c in All.Colors())
+            {
+                PlayerConsumption(c).TimeSetting = GameSetting.TimeSettings.Player(c);
+                PlayerConsumption(c).GameStart();
+            }
+
             InTheGame = true;
         }
 
@@ -459,6 +476,24 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 取得するときはPlayer()のほうを用いるべし。
         /// </summary>
         private Player.Player[] Players = new Player.Player[2] { new NullPlayer(), new NullPlayer() };
+
+        /// <summary>
+        /// プレイヤーの消費時間管理クラス
+        /// </summary>
+        private PlayerConsumptionTime[] PlayersConsumptionTime
+            = new PlayerConsumptionTime[2] { new PlayerConsumptionTime(), new PlayerConsumptionTime() };
+
+        /// <summary>
+        /// 残り時間を表現する文字列
+        /// </summary>
+        private string[] restTimeStrings = new string[2];
+        private void SetRestTimeString(Color c , string time)
+        {
+            var changed = restTimeStrings[(int)c] != time;
+            restTimeStrings[(int)c] = time;
+            if (changed)
+                RaisePropertyChanged("RestTimeChanged",c);
+        }
 
         /// <summary>
         /// スレッドの終了フラグ。
@@ -544,11 +579,14 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 指し手
             var bestMove = stmPlayer.BestMove;
 
-            // 今回の思考時間
-            var thinkingTime = new TimeSpan(0, 0, 1);
+            // 今回の指し手の消費時間
+            TimeSpan thinkingTime = TimeSpan.Zero;
 
             if (bestMove != Move.NONE)
             {
+                // 今回の思考時間
+                thinkingTime = PlayerConsumption(stm).ChageToThemTurn();
+
                 stmPlayer.BestMove = Move.NONE; // クリア
 
                 // 駒が動かせる状況でかつ合法手であるなら、受理する。
@@ -576,6 +614,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                             // コンピューター同士の対局の時にも人間判断で中断できなければならないので
                             // 対局中であればこれを無条件で受理する。
                             case Move.INTERRUPT:
+                            // 時間切れ
+                            // 時間切れになるとBestMoveに自動的にTIME_UPが積まれる。これも無条件で受理する。
+                            case Move.TIME_UP:
                                 break;
 
                             // 投了
@@ -699,6 +740,15 @@ namespace MyShogi.Model.Shogi.LocalServer
             stmPlayer.CanMove = true;
             stmPlayer.Think(usiPosition);
 
+            // 手番側のプレイヤーの時間消費を開始
+            if (InTheGame)
+            {
+                // InTheGame == trueならば、PlayerConsumptionは適切に設定されているはず。
+                // (対局開始時に初期化するので)
+
+                PlayerConsumption(stm).ChangeToOurTurn();
+            }
+
             // 非手番側のCanMoveをfalseに
 
             var nextPlayer = Player(stm.Not());
@@ -720,6 +770,17 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             // エンジンの初期化中であるか。この時は、時間消費は行わない。
             Initializing = Player(Color.BLACK).Initializing || Player(Color.WHITE).Initializing;
+
+            if (InTheGame)
+            {
+                // 手番側
+                var stm = Position.sideToMove;
+                var ct = PlayerConsumption(stm);
+                if (ct.IsTimeUp())
+                    Player(stm).BestMove = Move.TIME_UP;
+
+                SetRestTimeString(stm, ct.DisplayShortString());
+            }
         }
 
         /// <summary>
@@ -728,6 +789,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         private void GameEnd()
         {
             InTheGame = false;
+
+            // 時間消費、停止
+            foreach(var c in All.Colors())
+                PlayerConsumption(c).ChageToThemTurn();
 
             // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
             // (エンジンを入れ替えたりしないといけない)

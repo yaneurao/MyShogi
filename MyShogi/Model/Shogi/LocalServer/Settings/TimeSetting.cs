@@ -46,7 +46,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         public bool ByoyomiEnable;
 
         /// <summary>
-        /// 1手ごとの加算
+        /// 1手ごとの加算(秒)
         /// </summary>
         public int IncTime;
 
@@ -55,6 +55,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// これがfalseならIncTimeの値は無効。
         /// </summary>
         public bool IncTimeEnable;
+
+        /// <summary>
+        /// 時間切れを負けにしない
+        /// </summary>
+        public bool IgnoreTime;
 
         /// <summary>
         /// この持ち時間設定を文字列化する。
