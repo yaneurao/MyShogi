@@ -10,20 +10,20 @@ namespace MyShogi.Model.Shogi.LocalServer
         public TimeSettings()
         {
             Players = new TimeSetting[2] { new TimeSetting(), new TimeSetting() };
-            WhiteSame = true;
+            WhiteEnable = false;
         }
 
-        public TimeSettings(TimeSetting[] players , bool WhiteSame_)
+        public TimeSettings(TimeSetting[] players , bool WhiteEnable_)
         {
             Players = players;
-            WhiteSame = WhiteSame_;
+            WhiteEnable = WhiteEnable_;
         }
 
         public TimeSettings Clone()
         {
             return new TimeSettings(
                 new TimeSetting[2] { Players[0].Clone() , Players[1].Clone() },
-                WhiteSame
+                WhiteEnable
                 );
         }
 
@@ -40,16 +40,16 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public TimeSetting Player(Color c)
         {
-            if (WhiteSame)
+            if (WhiteEnable)
                 c = Color.BLACK;
 
             return Players[(int)c];
         }
 
         /// <summary>
-        /// 後手の対局時間設定も先手に従う
+        /// 後手の対局時間設定を先手とは別に設定する。
         /// </summary>
-        public bool WhiteSame;
+        public bool WhiteEnable;
 
     }
 }

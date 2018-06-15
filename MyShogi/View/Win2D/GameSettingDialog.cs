@@ -40,6 +40,7 @@ namespace MyShogi.View.Win2D
         /// コンストラクタでmainDialogの参照を受け取って、ここに保持しておく。
         /// </summary>
         private MainDialog mainDialog;
+        private ControlBinder binder = new ControlBinder();
 
         private ImageLoader banner1 = new ImageLoader();
         private ImageLoader banner2 = new ImageLoader();
@@ -69,7 +70,6 @@ namespace MyShogi.View.Win2D
         private void BindSetting()
         {
             var setting = TheApp.app.config.GameSetting;
-            var binder = new ControlBinder();
 
             // 対局者氏名のテキストボックス
             var playerNames = new[] { textBox1, textBox2 };
@@ -87,7 +87,6 @@ namespace MyShogi.View.Win2D
                 // 対局者の種別
                 binder.Bind(setting.Player(c).IsHuman, human_radio_buttons[(int)c], v => setting.Player(c).IsHuman = v);
                 binder.Bind(setting.Player(c).IsCpu, cpu_radio_buttons[(int)c], v => setting.Player(c).IsCpu = v);
-
             }
 
             // -- 開始局面
@@ -130,14 +129,10 @@ namespace MyShogi.View.Win2D
             binder.Bind(misc.DetailEnable, button6, v => misc.DetailEnable = v , v => v ? "簡易設定" : "詳細設定");
 
             // -- 後手の対局時間設定を個別にするのか
-            // このチェックボックスが無効だと、それに応じてgroupBox5が無効化されなくてはならない。
-            checkBox1.CheckedChanged += (sender, args) =>
-            {
-                groupBox5.Enabled = checkBox1.Checked;
-            };
-            binder.Bind(setting.TimeSettings.WhiteSame, checkBox1, v => setting.TimeSettings.WhiteSame = v);
-            groupBox5.Enabled = checkBox1.Checked;
 
+            // このチェックボックスが無効だと、それに応じてgroupBox5が無効化されなくてはならない。
+            binder.Bind(setting.TimeSettings.WhiteEnable, checkBox1,
+                v => { setting.TimeSettings.WhiteEnable = v; groupBox5.Enabled = v; });
         }
 
 
@@ -182,6 +177,28 @@ namespace MyShogi.View.Win2D
 
             // 後手の名前など
             groupBox2.Location = new Point(13, 240);
+        }
+
+        /// <summary>
+        /// 「先後入替」ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button7_Click(object sender, EventArgs e)
+        {
+            // 対局者氏名、エンジン、持ち時間設定を入れ替える。
+            // データバインドされているはずなので、DataSourceのほうで入替えて、
+            // rebindすればいいような..
+
+            SuspendLayout();
+            binder.UnbindAll();
+
+            var setting = TheApp.app.config.GameSetting;
+            Utility.Swap(ref setting.Players[0], ref setting.Players[1]);
+            Utility.Swap(ref setting.TimeSettings.Players[0], ref setting.TimeSettings.Players[1]);
+
+            BindSetting();
+            ResumeLayout();
         }
     }
 }

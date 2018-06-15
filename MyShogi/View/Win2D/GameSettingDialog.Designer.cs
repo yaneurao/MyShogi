@@ -698,6 +698,7 @@
             this.button7.TabIndex = 11;
             this.button7.Text = "先後入替";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // GameSettingDialog
             // 

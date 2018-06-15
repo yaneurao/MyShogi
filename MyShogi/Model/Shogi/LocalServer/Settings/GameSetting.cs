@@ -21,8 +21,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             Board = new BoardSetting();
             Players = new PlayerSetting[2] { new PlayerSetting(), new PlayerSetting() };
 
-            foreach (var c in All.Colors())
-                Player(c).PlayerName = c.Pretty();
+            // 先後入れ替えるので名前が「先手」「後手」がデフォルトだと紛らわしい。
+            // 名前を「わたし」と「あなた」にしとく。
+            Player(Color.BLACK).PlayerName = "わたし";
+            Player(Color.WHITE).PlayerName = "あなた";
 
             TimeSettings = new TimeSettings();
             MiscSettings = new MiscSettings();

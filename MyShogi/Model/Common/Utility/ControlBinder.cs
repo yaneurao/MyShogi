@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace MyShogi.Model.Common.Utility
@@ -16,6 +17,34 @@ namespace MyShogi.Model.Common.Utility
     /// </summary>
     public class ControlBinder
     {
+        /// <summary>
+        /// Bindしたものをすべて解除する。
+        /// </summary>
+        public void UnbindAll()
+        {
+            for (int i = 0; i < list.Count; ++i)
+            {
+                var o = list[i].Item1;
+                var h = list[i].Item2;
+
+                if (o is ComboBox)
+                    (o as ComboBox).SelectedIndexChanged -= h;
+                else if (o is NumericUpDown)
+                    (o as NumericUpDown).ValueChanged -= h;
+                else if (o is TextBox)
+                    (o as TextBox).TextChanged -= h;
+                else if (o is Button)
+                    (o as Button).TextChanged -= h;
+                else if (o is CheckBox)
+                    (o as CheckBox).CheckedChanged -= h;
+                else if (o is RadioButton)
+                    (o as RadioButton).CheckedChanged -= h;
+                else
+                    throw new Exception("型判定に失敗");
+            }
+            list.Clear();
+        }
+
         public void Bind(int v, ComboBox c, Action<int> setter)
         {
             // 最初、値をControlに設定しておく。
@@ -29,7 +58,9 @@ namespace MyShogi.Model.Common.Utility
 
             c.SelectedIndex = v;
             // 値が変更になった時にデータバインドしているほうに値を戻す。
-            c.SelectedIndexChanged += (sender, args) => { setter((int)(sender as ComboBox).SelectedIndex); };
+            var h = new EventHandler ((sender, args) => { setter((int)(sender as ComboBox).SelectedIndex); });
+            c.SelectedIndexChanged += h;
+            AddHandler(c, h);
         }
 
         public void Bind(int v , NumericUpDown c , Action<int> setter)
@@ -45,7 +76,9 @@ namespace MyShogi.Model.Common.Utility
 
             c.Value = v;
             // 値が変更になった時にデータバインドしているほうに値を戻す。
-            c.ValueChanged += (sender,args) => { setter((int) c.Value); };
+            var h = new EventHandler((sender, args) => { setter((int)c.Value); });
+            c.ValueChanged += h;
+            AddHandler(c, h);
         }
 
         public void Bind(string v, TextBox c, Action<string> setter)
@@ -54,7 +87,9 @@ namespace MyShogi.Model.Common.Utility
 
             c.Text = v;
             // 値が変更になった時にデータバインドしているほうに値を戻す。
-            c.TextChanged += (sender, args) => { setter(c.Text); };
+            var h = new EventHandler((sender, args) => { setter(c.Text); });
+            c.TextChanged += h;
+            AddHandler(c, h);
         }
 
         /// <summary>
@@ -70,7 +105,9 @@ namespace MyShogi.Model.Common.Utility
 
             c.Text = conv(v);
             // 値が変更になった時にデータバインドしているほうに値を戻す。
-            c.TextChanged += (sender, args) => { setter(c.Text == conv(true)); };
+            var h = new EventHandler((sender, args) => { setter(c.Text == conv(true)); });
+            c.TextChanged += h;
+            AddHandler(c, h);
         }
 
         /// <summary>
@@ -86,7 +123,9 @@ namespace MyShogi.Model.Common.Utility
 
             c.Text = conv(v);
             // 値が変更になった時にデータバインドしているほうに値を戻す。
-            c.TextChanged += (sender, args) => { setter(c.Text == conv(true)); };
+            var h = new EventHandler((sender, args) => { setter(c.Text == conv(true)); });
+            c.TextChanged += h;
+            AddHandler(c, h);
         }
 
         public void Bind(bool v, CheckBox c, Action<bool> setter)
@@ -95,7 +134,9 @@ namespace MyShogi.Model.Common.Utility
 
             c.Checked = v;
             // 値が変更になった時にデータバインドしているほうに値を戻す。
-            c.CheckedChanged += (sender, args) => { setter(c.Checked); };
+            var h = new EventHandler((sender, args) => { setter(c.Checked); });
+            c.CheckedChanged += h;
+            AddHandler(c, h);
         }
 
         public void Bind(bool v, RadioButton c, Action<bool> setter)
@@ -104,8 +145,30 @@ namespace MyShogi.Model.Common.Utility
 
             c.Checked = v;
             // 値が変更になった時にデータバインドしているほうに値を戻す。
-            c.CheckedChanged += (sender, args) => { setter(c.Checked); };
+            var h = new EventHandler((sender, args) => { setter(c.Checked); });
+            c.CheckedChanged += h;
+            AddHandler(c, h);
         }
 
+        /// <summary>
+        /// あとでUnbindAll()出来るように、このクラスのlistに追加しておく。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="h"></param>
+        private void AddHandler(Control c,EventHandler h)
+        {
+            // hの中で何か追加でセットしているかも知れないので現在のvの値にしたがって
+            // このハンドラを1度呼び出しておく必要がある。
+            h(c, null);
+
+            // 保存しておき、UnbindAll()で用いる
+            list.Add(new Tuple<Control, EventHandler>(c, h));
+        }
+
+        /// <summary>
+        /// Bind()したものを保存している。
+        /// UnbindAll()で必要になる。
+        /// </summary>
+        private List<Tuple<Control , EventHandler>> list = new List<Tuple<Control , EventHandler>>();
     }
 }
