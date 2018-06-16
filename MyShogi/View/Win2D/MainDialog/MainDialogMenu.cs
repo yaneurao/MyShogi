@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Test;
@@ -28,8 +29,17 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void UpdateMenuItems(PropertyChangedEventArgs args = null)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action( ()=> UpdateMenuItems(args)));
+                return;
+            }
+
             var app = TheApp.app;
             var config = app.config;
+
+            // コンストラクタから呼び出された時は、まだ初期化されていない。
+            var gameServer = ViewModel != null ? ViewModel.gameServer : null;
 
             // Commercial Version GUI
             bool CV_GUI = config.CommercialVersion;
@@ -63,19 +73,20 @@ namespace MyShogi.View.Win2D
                     { // -- 通常対局
                         var item = new ToolStripMenuItem();
                         item.Text = "通常対局";
-                        item.Click += (sender, e) => {
+                        item.Click += (sender, e) =>
+                        {
 
-                            // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
-                            if (gameSettingDialog != null)
+                               // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
+                               if (gameSettingDialog != null)
                                 gameSettingDialog.Dispose();
 
                             gameSettingDialog = new GameSettingDialog(this);
                             gameSettingDialog.Show();
 
-                            // 閉じるときにせめて前回設定が選ばれていて欲しいが..
-                            // あとで前回設定を復元するコードを書く。
-                            // 前回設定、GlobalSettingに持たせるべきのような気がする。
-                        };
+                               // 閉じるときにせめて前回設定が選ばれていて欲しいが..
+                               // あとで前回設定を復元するコードを書く。
+                               // 前回設定、GlobalSettingに持たせるべきのような気がする。
+                           };
 
                         item_playgame.DropDownItems.Add(item);
                     }
@@ -91,8 +102,8 @@ namespace MyShogi.View.Win2D
                     { // -- 盤面反転
                         var item = new ToolStripMenuItem();
                         item.Text = "盤面反転"; // これは全体設定。個別設定もある。
-                        item.Checked = config.BoardReverse;
-                        item.Click += (sender, e) => { config.BoardReverse = !config.BoardReverse; };
+                        item.Checked = gameServer != null ? gameServer.BoardReverse : false;
+                        item.Click += (sender, e) => { ViewModel.gameServer.BoardReverse = !ViewModel.gameServer.BoardReverse; };
 
                         item_display.DropDownItems.Add(item);
                     }

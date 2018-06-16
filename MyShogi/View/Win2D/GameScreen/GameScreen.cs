@@ -65,7 +65,7 @@ namespace MyShogi.View.Win2D
             Point picked_sprite_location = new Point(0, 0);
 
             // 盤面を反転させて描画するかどうか
-            var reverse = config.BoardReverse;
+            var reverse = gameServer.BoardReverse;
 
             // -- 盤面の描画
             {

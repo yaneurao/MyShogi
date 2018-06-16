@@ -175,6 +175,11 @@ namespace MyShogi.Model.Shogi.LocalServer
             return GameSetting.TimeSettings.Player(c).ToShortString();
         }
 
+        /// <summary>
+        /// プレイヤーの消費時間を計測する用
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
         public PlayerConsumptionTime PlayerConsumption(Color c)
         {
             return PlayersConsumptionTime[(int)c];
@@ -194,6 +199,15 @@ namespace MyShogi.Model.Shogi.LocalServer
         // 残り消費時間が変更になった時に呼び出される。
         //public bool RestTimeChanged { get; set; }
 
+        /// <summary>
+        /// 盤面反転
+        /// Viewごとに変更できるので、このクラスが保持している。
+        /// </summary>
+        public bool BoardReverse
+        {
+            get { return GetValue<bool>("BoardReverse"); }
+            set { SetValue<bool>("BoardReverse", value); }
+        }
 
         #endregion
 
@@ -407,6 +421,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 pc.GameStart();
                 SetRestTimeString(c, pc.DisplayShortString());
             }
+
+            // コンピュータ vs 人間である場合、人間側を手前にしてやる。
+            foreach (var c in All.Colors())
+                if (gameSetting.Player(c).IsHuman && gameSetting.Player(c.Not()).IsCpu)
+                    BoardReverse = (c == Color.WHITE);
 
             InTheGame = true;
         }

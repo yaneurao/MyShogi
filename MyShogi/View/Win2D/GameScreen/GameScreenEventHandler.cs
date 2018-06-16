@@ -171,7 +171,7 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Point PieceLocation(SquareHand sq)
         {
-            var reverse = TheApp.app.config.BoardReverse;
+            var reverse = ViewModel.ViewModel.gameServer.BoardReverse;
             var color = sq.PieceColor();
             Point dest;
 
@@ -548,7 +548,7 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         SquareHand BoardAxisToSquare(Point p)
         {
-            var config = TheApp.app.config;
+            var reverse = ViewModel.ViewModel.gameServer.BoardReverse;
 
             // 盤上の升かどうかの判定
             var board_rect = new Rectangle(board_location.X, board_location.Y, piece_img_size.Width * 9, piece_img_size.Height * 9);
@@ -560,7 +560,7 @@ namespace MyShogi.View.Win2D
                 if (File.ZERO <= f && f < File.NB && Rank.ZERO <= r && r < Rank.NB)
                 {
                     var sq = Util.MakeSquare(f, r);
-                    if (config.BoardReverse)
+                    if (reverse)
                         sq = sq.Inv();
 
                     return (SquareHand)sq;

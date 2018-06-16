@@ -76,10 +76,10 @@ namespace MyShogi.App
             gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.gameScreen.TurnChanged);
             gameServer.AddPropertyChangedHandler("EngineInitializing", mainDialog.gameScreen.EngineInitializingChanged);
             gameServer.AddPropertyChangedHandler("RestTimeChanged", mainDialog.gameScreen.RestTimeChanged);
+            gameServer.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 
-            config.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems );
             config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems );

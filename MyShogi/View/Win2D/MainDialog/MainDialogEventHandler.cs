@@ -240,8 +240,8 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton8_Click(object sender, EventArgs e)
         {
-            var config = TheApp.app.config;
-            config.BoardReverse = !config.BoardReverse;
+            var s = ViewModel.gameServer;
+            s.BoardReverse = !s.BoardReverse;
         }
     }
 }
