@@ -229,19 +229,15 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void GameStartCommand(GameSetting gameSetting)
         {
-            lock (UICommandLock)
+            AddCommand(
+            () =>
             {
-                UICommands.Add(
-                    () =>
-                    {
-                        // いったんリセット
-                        GameEnd();
-                        GameStart(gameSetting);
+                // いったんリセット
+                GameEnd();
+                GameStart(gameSetting);
 
-                        // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。
-                    }
-                    );
-            }
+                // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。
+            });
         }
 
         /// <summary>
@@ -254,24 +250,22 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="m"></param>
         public void DoMoveCommand(Move m)
         {
-            lock (UICommandLock)
+            AddCommand(
+            () =>
             {
-                UICommands.Add(
-                    () =>
-                    {
-                        var stm = kifuManager.Position.sideToMove;
-                        var stmPlayer = Player(stm);
+                var stm = kifuManager.Position.sideToMove;
+                var stmPlayer = Player(stm);
 
-                        // Human以外であれば受理しない。
-                        if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
-                        {
-                            // これを積んでおけばworker_threadのほうでいずれ処理される。(かも)
-                            // 仮に、すでに次の局面になっていたとしても、次にこのユーザーの手番になったときに
-                            // BestMove = Move.NONEとされるのでその時に破棄される。
-                            stmPlayer.BestMove = m;
-                        }
-                    });
+                // Human以外であれば受理しない。
+                if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+                {
+                    // これを積んでおけばworker_threadのほうでいずれ処理される。(かも)
+                    // 仮に、すでに次の局面になっていたとしても、次にこのユーザーの手番になったときに
+                    // BestMove = Move.NONEとされるのでその時に破棄される。
+                    stmPlayer.BestMove = m;
+                }
             }
+            );
         }
 
         /// <summary>
@@ -280,22 +274,19 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void MoveNowCommand()
         {
-            lock (UICommandLock)
+            AddCommand(
+            () =>
             {
-                UICommands.Add(
-                    () =>
-                    {
-                        var stm = kifuManager.Position.sideToMove;
-                        var stmPlayer = Player(stm);
+                var stm = kifuManager.Position.sideToMove;
+                var stmPlayer = Player(stm);
 
-                        // エンジン以外であれば受理しない。
-                        if (stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine)
-                        {
-                            var enginePlayer = stmPlayer as UsiEnginePlayer;
-                            enginePlayer.MoveNow();
-                        }
-                    });
-            }
+                // エンジン以外であれば受理しない。
+                if (stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine)
+                {
+                    var enginePlayer = stmPlayer as UsiEnginePlayer;
+                    enginePlayer.MoveNow();
+                }
+            });
         }
 
         /// <summary>
@@ -304,29 +295,26 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void UndoCommand()
         {
-            lock (UICommandLock)
+            AddCommand(
+            () =>
             {
-                UICommands.Add(
-                    () =>
-                    {
-                        var stm = kifuManager.Position.sideToMove;
-                        var stmPlayer = Player(stm);
+                var stm = kifuManager.Position.sideToMove;
+                var stmPlayer = Player(stm);
 
-                        // 人間の手番でなければ受理しない
-                        if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
-                        {
-                            // 棋譜を消すUndo()
-                            kifuManager.UndoMoveInTheGame();
-                            kifuManager.UndoMoveInTheGame();
+                // 人間の手番でなければ受理しない
+                if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+                {
+                    // 棋譜を消すUndo()
+                    kifuManager.UndoMoveInTheGame();
+                    kifuManager.UndoMoveInTheGame();
 
-                            // 時刻を巻き戻さないといけない
-                            PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTime());
+                    // 時刻を巻き戻さないといけない
+                    PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTime());
 
-                            // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
-                            NotifyTurnChanged();
-                        }
-                    });
-            }
+                    // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
+                    NotifyTurnChanged();
+                }
+            });
         }
 
         /// <summary>
@@ -334,19 +322,37 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void GameInterruptCommand()
         {
-            lock (UICommandLock)
+            AddCommand(
+            () =>
             {
-                UICommands.Add(
-                    () =>
-                    {
-                        // コンピューター同士の対局中であっても人間判断で中断できなければならないので常に受理する。
-                        var stm = kifuManager.Position.sideToMove;
-                        var stmPlayer = Player(stm);
+                // コンピューター同士の対局中であっても人間判断で中断できなければならないので常に受理する。
+                var stm = kifuManager.Position.sideToMove;
+                var stmPlayer = Player(stm);
 
-                        // 中断の指し手
-                        stmPlayer.BestMove = Move.INTERRUPT;
-                    });
-            }
+                // 中断の指し手
+                stmPlayer.BestMove = Move.INTERRUPT;
+            });
+        }
+
+        /// <summary>
+        /// 棋譜の選択行が変更になった。
+        /// 対局中でなければ、現在局面をその棋譜の局面に変更する。
+        /// </summary>
+        public void KifuSelectedIndexChangedCommand(int selectedIndex)
+        {
+            AddCommand(
+            () =>
+            {
+                if (!InTheGame)
+                {
+                    // 現在の局面と違う行であるかを判定して、同じ行である場合は、
+                    // このイベントを処理してはならない。
+
+                    // 無理やりではあるが棋譜のN行目に移動出来るのであった…。
+                    kifuManager.Tree.GotoSelectedIndex(selectedIndex);
+
+                }
+            });
         }
 
         #endregion
@@ -381,9 +387,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             // 局面の設定
+            kifuManager.EnableKifuList = true;
             if (gameSetting.Board.BoardTypeCurrent)
             {
                 // 現在の局面からなので、いま以降の局面を削除する。
+                // ただし、いまの局面と棋譜ウィンドウとが同期しているとは限らない。
+                // まず現在局面以降の棋譜を削除しなくてはならない。
+
                 kifuManager.Tree.ClearForward();
 
             }
@@ -567,6 +577,20 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 // 10msごとに各種処理を行う。
                 Thread.Sleep(10);
+            }
+        }
+
+        /// <summary>
+        /// UI側から、worker threadで実行して欲しいコマンドを渡す。
+        /// View-ViewModelアーキテクチャにおいてViewからViewModelにcommandを渡す感じ。
+        /// ここで渡されたコマンドは、CheckUICommand()で吸い出されて実行される。
+        /// </summary>
+        /// <param name="command"></param>
+        private void AddCommand(UICommand command)
+        {
+            lock (UICommandLock)
+            {
+                UICommands.Add(command);
             }
         }
 
@@ -823,6 +847,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 時間消費、停止
             foreach(var c in All.Colors())
                 PlayTimer(c).ChageToThemTurn();
+
+            // 棋譜ウィンドウ、勝手に書き換えられると困るのでこれでfixさせておく。
+            kifuManager.EnableKifuList = false;
 
             // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
             // (エンジンを入れ替えたりしないといけない)

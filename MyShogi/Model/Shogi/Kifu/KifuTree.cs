@@ -385,6 +385,34 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
+        /// rootから数えてselectedIndex目にある棋譜の局面に移動する。
+        /// 棋譜は消去はしない。
+        /// </summary>
+        /// <param name="index"></param>
+        public void GotoSelectedIndex(int selectedIndex)
+        {
+            // rootまで何nodeあるか数えて、selectedIndexと合致するなら、局面を変更する必要性がない
+            int n = 0;
+            for (var c = currentNode; c.prevNode != null ; ++n)
+                c = c.prevNode;
+            if (n == selectedIndex)
+                return;
+
+            RewindToRoot();
+            for(int i=0;i<selectedIndex;++i)
+            {
+                if (currentNode.moves.Count == 0)
+                    break;
+                var move = currentNode.moves[0].nextMove;
+                if (move.IsSpecial())
+                    break; // DoMove()できないので終了
+
+                // special moveでなければ、この指し手のlegalityは担保されている。
+                DoMove(move);
+            }
+        }
+
+        /// <summary>
         /// 現在の局面のKifuMoveTimesを返す。
         /// </summary>
         /// <returns></returns>

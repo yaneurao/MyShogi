@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
 
@@ -24,6 +23,10 @@ namespace MyShogi.View.Win2D
 
             Invoke(new Action(() =>
             {
+                // ここでListBoxをいじって、listBox1_SelectedIndexChanged()が呼び出されるのは嫌だから抑制する。
+
+                listBox1.SelectedIndexChanged -= listBox1_SelectedIndexChanged;
+
                 List<string> list = args.value as List<string>;
 
                 int start;
@@ -76,6 +79,9 @@ namespace MyShogi.View.Win2D
                 listbox.SelectedIndex = j;
 
                 listbox.EndUpdate();
+
+                listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+
             }));
         }
 
@@ -128,5 +134,21 @@ namespace MyShogi.View.Win2D
 
         private double last_scale = 0;
         private float last_font_size = 0;
+
+        /// <summary>
+        /// 選択行が変更されたので、ViewModelにコマンドを送信してみる。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (SelectedIndexChangedHandler != null)
+                SelectedIndexChangedHandler(listBox1.SelectedIndex);
+        }
+
+        public delegate void SelectedIndexChangedEvent(int selectedIndex);
+
+        // 棋譜ウィンドウの選択行が変更になった時に呼び出されるハンドラ
+        public SelectedIndexChangedEvent SelectedIndexChangedHandler;
     }
 }

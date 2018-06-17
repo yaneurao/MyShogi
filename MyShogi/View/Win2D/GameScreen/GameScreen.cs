@@ -24,8 +24,11 @@ namespace MyShogi.View.Win2D
         /// <param name="parent"></param>
         public void Init(Form parent)
         {
-            ViewModel.kifuControl = new KifuControl();
-            parent.Controls.Add(ViewModel.kifuControl);
+            var kif = new KifuControl();
+            ViewModel.kifuControl = kif;
+            parent.Controls.Add(kif);
+            kif.SelectedIndexChangedHandler =
+                (selectedIndex) => { ViewModel.ViewModel.gameServer.KifuSelectedIndexChangedCommand(selectedIndex); };
         }
 
         /// <summary>
