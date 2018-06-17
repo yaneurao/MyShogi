@@ -16,23 +16,25 @@ namespace MyShogi.Model.Shogi.Kifu
         /// ・1秒未満1秒に繰り上げ。
         /// ・1秒以上は秒未満繰り下げ。
         /// 計測秒。
+        /// 
+        /// immutable objectっぽく使うこと。
         /// </summary>
-        public TimeSpan ThinkingTime { get; private set; }
+        public TimeSpan ThinkingTime { get; }
 
         /// <summary>
         /// 今回の実際の消費時間。ミリ秒まで保持している。
         /// </summary>
-        public TimeSpan RealThinkingTime { get; private set; }
+        public TimeSpan RealThinkingTime { get; }
 
         /// <summary>
         /// 総消費時間
         /// </summary>
-        public TimeSpan TotalTime { get; private set; }
+        public TimeSpan TotalTime { get; }
 
         /// <summary>
         /// 残り持ち時間
         /// </summary>
-        public TimeSpan RestTime { get; private set; }
+        public TimeSpan RestTime { get; }
 
         public KifuMoveTime()
         {
@@ -40,6 +42,11 @@ namespace MyShogi.Model.Shogi.Kifu
             RealThinkingTime = TimeSpan.Zero;
             TotalTime = TimeSpan.Zero;
             RestTime = TimeSpan.Zero;
+        }
+
+        public KifuMoveTime Clone()
+        {
+            return (KifuMoveTime)MemberwiseClone();
         }
 
         /// <summary>

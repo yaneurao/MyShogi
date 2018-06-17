@@ -422,8 +422,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var pc = PlayTimer(c);
                 pc.TimeSetting = GameSetting.TimeSettings.Player(c);
                 pc.GameStart();
-                SetRestTimeString(c, pc.DisplayShortString());
             }
+            // rootの持ち時間設定をここに反映させておかないと待ったでrootまで持ち時間が戻せない。
+            kifuManager.Tree.rootKifuMoveTimes = PlayTimers.GetKifuMoveTimes();
 
             // コンピュータ vs 人間である場合、人間側を手前にしてやる。
             foreach (var c in All.Colors())
@@ -763,7 +764,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 手番側のプレイヤーの時間消費を開始
             if (InTheGame)
             {
-                // InTheGame == trueならば、PlayerConsumptionは適切に設定されているはず。
+                // InTheGame == trueならば、PlayerTimeSettingは適切に設定されているはず。
                 // (対局開始時に初期化するので)
 
                 PlayTimer(stm).ChangeToOurTurn();
@@ -793,14 +794,23 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             if (InTheGame)
             {
-                // 手番側
-                var stm = Position.sideToMove;
-                var ct = PlayTimer(stm);
-                if (ct.IsTimeUp())
-                    Player(stm).BestMove = Move.TIME_UP;
+                // 両方の残り時間を更新しておく。
+                // 前回と同じ文字列であれば実際は描画ハンドラが呼び出されないので問題ない。
+                foreach (var c in All.Colors())
+                {
+                    var ct = PlayTimer(c);
+                    // 時間切れ判定は手番側のみ
+                    if (c == Position.sideToMove && ct.IsTimeUp())
+                        Player(c).BestMove = Move.TIME_UP;
 
-                SetRestTimeString(stm, ct.DisplayShortString());
+                    SetRestTimeString(c, ct.DisplayShortString());
+                }
             }
+        }
+
+        private void UpdateTimeString(Color c)
+        {
+
         }
 
         /// <summary>

@@ -43,6 +43,8 @@ namespace MyShogi.Model.Shogi.Kifu
             rootBoardType = BoardType.NoHandicap;
             rootSfen = Position.SFEN_HIRATE;
 
+            rootKifuMoveTimes = KifuMoveTimes.Zero;
+
             RaisePropertyChanged("Position", position);
         }
 
@@ -69,6 +71,11 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 棋譜の開始局面に対してつけられる思考ログ、対局を開始した時刻などの情報
         /// </summary>
         public KifuLog rootKifuLog;
+
+        /// <summary>
+        /// rootの局面での残り時間などの情報。
+        /// </summary>
+        public KifuMoveTimes rootKifuMoveTimes;
 
         /// <summary>
         /// posの現在の局面に対応するKifuNode
@@ -375,7 +382,9 @@ namespace MyShogi.Model.Shogi.Kifu
                 // prevNodeから、この局面に至る指し手を探して、そこに記録されているKifuMoveTimeを返せば良い。
                 return prevNode.moves.Find((x) => x.nextNode == currentNode).kifuMoveTimes;
             }
-            return KifuMoveTimes.Zero;
+            else
+                // rootの局面では、rootKifuMoveTimesのほうに格納されている。
+                return rootKifuMoveTimes;
         }
 
         // -- 以下private

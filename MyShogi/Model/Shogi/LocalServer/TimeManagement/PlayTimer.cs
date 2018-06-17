@@ -23,11 +23,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         public KifuMoveTime KifuMoveTime { get; private set; }
 
         /// <summary>
-        /// いまの残り時間(リアルタイム)
-        /// </summary>
-        private TimeSpan RestTime { get; set; }
-
-        /// <summary>
         /// 持ち時間設定
         /// この設定に従って、残り時間をカウントする。
         /// このクラスを使う時に、外部からsetする。
@@ -42,6 +37,15 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// タイマーの初期化
+        /// </summary>
+        public void Init()
+        {
+            Stopwatch.Reset();
+            startTime = endTime = 0;
+        }
+
+        /// <summary>
         /// KifuMoveTimeを内部の状態に反映させる。
         /// 中断局の再開処理や待ったの時に、KifuMoveTimeによってこのクラスの状態をリセットしないといけないので
         /// そのための処理。
@@ -52,6 +56,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         public void SetKifuMoveTime(KifuMoveTime kifuMoveTime)
         {
             KifuMoveTime = kifuMoveTime;
+            Init();
         }
 
         /// <summary>
@@ -65,8 +70,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                 TimeSpan.Zero, // 総消費時間 = 0
                 new TimeSpan(TimeSetting.Hour, TimeSetting.Minute, TimeSetting.Second) // 残り持ち時間
                 );
-            RestTime = KifuMoveTime.RestTime;
             first = true; // 初期化のIncTimeをなくすためのフラグ
+            Init();
         }
 
         /// <summary>
@@ -75,14 +80,19 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void ChangeToOurTurn()
         {
+            var restTime = KifuMoveTime.RestTime;
+
             // 初手はIncTimeしない。
             if (TimeSetting.IncTimeEnable && !first)
-                RestTime += new TimeSpan(0,0,TimeSetting.IncTime);
+                restTime += new TimeSpan(0,0,TimeSetting.IncTime);
             first = false;
 
             // byoyomiありかも知れないのでいったんリセットする。
-            if (RestTime < TimeSpan.Zero)
-                RestTime = TimeSpan.Zero;
+            if (restTime < TimeSpan.Zero)
+                restTime = TimeSpan.Zero;
+
+            var k = KifuMoveTime;
+            KifuMoveTime = new KifuMoveTime(k.ThinkingTime , k.RealThinkingTime , k.ThinkingTime , restTime);
 
             StartTimer();
         }
@@ -95,17 +105,22 @@ namespace MyShogi.Model.Shogi.LocalServer
         public void ChageToThemTurn()
         {
             StopTimer();
-            var consume = ConsumptionTime();
-            // この繰り上げた時間を消費して、RestTimeから減らす
-            RestTime -= consume;
-            if (RestTime < TimeSpan.Zero)
-                RestTime = TimeSpan.Zero;
+
+            // 今回の指し手の計測時間
+            var thinkingTime = ThinkingTime();
+
+            var restTime = KifuMoveTime.RestTime;
+
+            // 計測時間をRestTimeから減らす
+            restTime -= thinkingTime;
+            if (restTime < TimeSpan.Zero)
+                restTime = TimeSpan.Zero;
 
             // 実消費時間
-            var realConsume = RealConsumptionTime();
+            var realThinkingTime = RealThinkingTime();
 
             // KifuMoveTimeに反映するので、そこから取り出すべし。
-            KifuMoveTime = new KifuMoveTime(consume, realConsume , KifuMoveTime.TotalTime + consume, RestTime);
+            KifuMoveTime = new KifuMoveTime(thinkingTime, realThinkingTime , KifuMoveTime.TotalTime + thinkingTime, restTime);
         }
 
         /// <summary>
@@ -118,7 +133,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             if (TimeSetting.IgnoreTime || TimeSetting.TimeLimitless)
                 return false;
 
-            var rest = RestTime - new TimeSpan(0, 0, (int)(ElapsedTime() / 1000));
+            var rest = KifuMoveTime.RestTime - new TimeSpan(0, 0, (int)(ElapsedTime() / 1000));
 
             // ここに秒読み時間も加算して負かどうかを調べる
             if (TimeSetting.ByoyomiEnable)
@@ -141,7 +156,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void StopTimer()
         {
-            Stopwatch.Stop();
+            if (Stopwatch.IsRunning)
+                Stopwatch.Stop();
             endTime = Stopwatch.ElapsedMilliseconds;
 
             // ここで時間切れであるかどうかは、呼び出し元でIsTimeUp()で判定すべき。
@@ -153,16 +169,16 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 計測秒とは、1秒未満1秒。1秒以上は秒未満切り捨て。(例 : 1.999秒は、計測1秒)
         /// </summary>
         /// <returns></returns>
-        public TimeSpan ConsumptionTime()
+        public TimeSpan ThinkingTime()
         {
             return new TimeSpan(0,0,RoundTime(endTime - startTime));
         }
 
         /// <summary>
-        /// ConsumptionTime()の、丸めをせずにミリ秒単位まで返すバージョン
+        /// ThinkingTime()の、丸めをせずにミリ秒単位まで返すバージョン
         /// </summary>
         /// <returns></returns>
-        public TimeSpan RealConsumptionTime()
+        public TimeSpan RealThinkingTime()
         {
             return new TimeSpan(0, 0, 0 , (int)(endTime - startTime));
         }
@@ -218,7 +234,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 return "無制限";
 
             var elapsed = RoundDownTime(ElapsedTime());
-            var r = RestTime - new TimeSpan(0, 0, elapsed);
+            var r = KifuMoveTime.RestTime - new TimeSpan(0, 0, elapsed);
 
             // 秒読みが有効でないなら、残りの時、分、秒だけを描画しておく。
             if (!TimeSetting.ByoyomiEnable || TimeSetting.Byoyomi == 0)
