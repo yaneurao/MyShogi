@@ -361,6 +361,23 @@ namespace MyShogi.Model.Shogi.Kifu
             currentNode.moves.Clear();
         }
 
+        /// <summary>
+        /// 現在の局面のKifuMoveTimesを返す。
+        /// </summary>
+        /// <returns></returns>
+        public KifuMoveTimes GetKifuMoveTime()
+        {
+            // 1つ前の局面の指し手を指した直後に記録されている。
+
+            var prevNode = currentNode.prevNode;
+            if (prevNode != null)
+            {
+                // prevNodeから、この局面に至る指し手を探して、そこに記録されているKifuMoveTimeを返せば良い。
+                return prevNode.moves.Find((x) => x.nextNode == currentNode).kifuMoveTimes;
+            }
+            return KifuMoveTimes.Zero;
+        }
+
         // -- 以下private
 
         /// <summary>

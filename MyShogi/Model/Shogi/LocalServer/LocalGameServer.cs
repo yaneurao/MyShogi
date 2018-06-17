@@ -318,7 +318,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                             // 棋譜を消すUndo()
                             kifuManager.UndoMoveInTheGame();
                             kifuManager.UndoMoveInTheGame();
-                            
+
+                            // 時刻を巻き戻さないといけない
+                            PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTime());
+
                             // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
                             NotifyTurnChanged();
                         }

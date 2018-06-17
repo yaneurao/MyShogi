@@ -42,6 +42,19 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// KifuMoveTimeを内部の状態に反映させる。
+        /// 中断局の再開処理や待ったの時に、KifuMoveTimeによってこのクラスの状態をリセットしないといけないので
+        /// そのための処理。
+        /// 
+        /// このあと、ChangeToMyTurn()が呼び出されることを前提
+        /// </summary>
+        /// <param name="kifuMoveTime"></param>
+        public void SetKifuMoveTime(KifuMoveTime kifuMoveTime)
+        {
+            KifuMoveTime = kifuMoveTime;
+        }
+
+        /// <summary>
         /// ゲーム開始なので、TimeSettingの時間をRestTimeに反映させる。
         /// </summary>
         public void GameStart()
@@ -279,6 +292,16 @@ namespace MyShogi.Model.Shogi.LocalServer
         public KifuMoveTimes GetKifuMoveTimes()
         {
             return new KifuMoveTimes(Players[0].KifuMoveTime, Players[1].KifuMoveTime);
+        }
+
+        /// <summary>
+        /// KifuMoveTimesを内部クラスにセットする。
+        /// </summary>
+        /// <param name="kifuMoveTimes"></param>
+        public void SetKifuMoveTimes(KifuMoveTimes kifuMoveTimes)
+        {
+            foreach(var c in All.Colors())
+                Player(c).SetKifuMoveTime(kifuMoveTimes.Player(c));
         }
 
         private PlayTimer[] Players;
