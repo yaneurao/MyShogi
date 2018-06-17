@@ -41,6 +41,9 @@ namespace MyShogi.View.Win2D
         /// <param name="args"></param>
         public void RestTimeChanged(PropertyChangedEventArgs args)
         {
+            //ViewModel.dirtyRestTime = true;
+            // あとでちゃんと書き直す。
+
             ViewModel.dirty = true;
         }
 
@@ -92,6 +95,12 @@ namespace MyShogi.View.Win2D
         {
             get { return ViewModel.dirty; }
         }
+
+        // 持ち時間が減っていくときに、持ち時間の部分だけの再描画をしたいのでそのためのフラグ
+        //public bool DirtyRestTime
+        //{
+        //    get { return ViewModel.dirtyRestTime; }
+        //}
 
         /// <summary>
         /// Formのリサイズに応じて棋譜コントロールの移動などを行う。

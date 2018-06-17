@@ -38,5 +38,10 @@ namespace MyShogi.View.Win2D
         /// 画面が汚れているか(OnDraw()を呼び出さないといけないか)のフラグ
         /// </summary>
         public bool dirty { get; set; }
+
+        /// <summary>
+        /// 残り持ち時間だけが更新されたので部分的に描画して欲しいフラグ
+        /// </summary>
+        public bool dirtyRestTime { get; set; }
     }
 }

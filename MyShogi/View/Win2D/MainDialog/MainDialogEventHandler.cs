@@ -102,6 +102,10 @@ namespace MyShogi.View.Win2D
             if (gameScreen.Dirty)
                 Invalidate();
 
+            // あとでちゃんと書き直す
+            //if (gameScreen.DirtyRestTime)
+            //    Invalidate(new Rectangle(100, 100, 1, 1));
+
             // ここでInvalidate()にScreenに対応する(Screenのなかに含まれる)Rectangleを渡して、
             // 特定のgameScreenだけを再描画するようにしないと、GameScreenを画面上に16個ぐらい
             // 描画するときに非常に重くなる。
