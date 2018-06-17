@@ -424,7 +424,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 pc.GameStart();
             }
             // rootの持ち時間設定をここに反映させておかないと待ったでrootまで持ち時間が戻せない。
-            kifuManager.Tree.rootKifuMoveTimes = PlayTimers.GetKifuMoveTimes();
+            kifuManager.Tree.RootKifuMoveTimes = PlayTimers.GetKifuMoveTimes();
 
             // コンピュータ vs 人間である場合、人間側を手前にしてやる。
             foreach (var c in All.Colors())

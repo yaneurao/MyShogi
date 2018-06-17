@@ -43,7 +43,8 @@ namespace MyShogi.Model.Shogi.Kifu
             rootBoardType = BoardType.NoHandicap;
             rootSfen = Position.SFEN_HIRATE;
 
-            rootKifuMoveTimes = KifuMoveTimes.Zero;
+            // 対局情報などを保存するためにここを確保する。
+            rootKifuMove = new KifuMove(Move.NONE, rootNode, KifuMoveTimes.Zero);
 
             RaisePropertyChanged("Position", position);
         }
@@ -68,19 +69,15 @@ namespace MyShogi.Model.Shogi.Kifu
         public KifuNode rootNode;
 
         /// <summary>
-        /// 棋譜の開始局面に対してつけられる思考ログ、対局を開始した時刻などの情報
-        /// </summary>
-        public KifuLog rootKifuLog;
-
-        /// <summary>
-        /// rootの局面での残り時間などの情報。
-        /// </summary>
-        public KifuMoveTimes rootKifuMoveTimes;
-
-        /// <summary>
         /// posの現在の局面に対応するKifuNode
         /// </summary>
         public KifuNode currentNode;
+
+        /// <summary>
+        /// rootの局面に至るための仮想的なKifuMove
+        /// ここに対局日の情報、対局開始局面の棋譜コメント、対局開始時の持ち時間などが記載される。
+        /// </summary>
+        public KifuMove rootKifuMove;
 
         /// <summary>
         /// rootNodeから数えて何手目であるか。
@@ -204,6 +201,25 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 return string.Join(" ", UsiMoveList);
             }
+        }
+
+        // --- 以下、rootの局面に対するproperty
+
+        /// <summary>
+        /// ここに開始局面での残り時間などが格納されている。
+        /// </summary>
+        public KifuMoveTimes RootKifuMoveTimes
+        {
+            get { return rootKifuMove.kifuMoveTimes; }
+            set { rootKifuMove.kifuMoveTimes = value; }
+        }
+
+        /// <summary>
+        /// ここに対局日、開始局面に対するコメント等の情報が格納されている。
+        /// </summary>
+        public KifuLog RootKifuLog
+        {
+            get { return rootKifuMove as KifuLog; }
         }
 
         // -------------------------------------------------------------------------
@@ -384,7 +400,7 @@ namespace MyShogi.Model.Shogi.Kifu
             }
             else
                 // rootの局面では、rootKifuMoveTimesのほうに格納されている。
-                return rootKifuMoveTimes;
+                return RootKifuMoveTimes;
         }
 
         // -- 以下private

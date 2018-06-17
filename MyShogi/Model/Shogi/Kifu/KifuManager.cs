@@ -1320,19 +1320,15 @@ namespace MyShogi.Model.Shogi.Kifu
                         playerNameWhite = data.player1;
                     }
                 }
-                if (Tree.rootKifuLog == null)
-                {
-                    Tree.rootKifuLog = new KifuLog();
-                }
                 if (data.realstarttime != null)
                 {
                     var starttime = epoch.AddMilliseconds((double)data.realstarttime);
-                    Tree.rootKifuLog.moveTime = starttime;
+                    Tree.RootKifuLog.moveTime = starttime;
                     Tree.rootNode.comment = starttime.ToString("o");
                 }
                 else if (!string.IsNullOrWhiteSpace(data.starttime))
                 {
-                    Tree.rootKifuLog.moveTime = DateTime.ParseExact(data.starttime, "s", null);
+                    Tree.RootKifuLog.moveTime = DateTime.ParseExact(data.starttime, "s", null);
                 }
                 foreach (var kif in data.kif)
                 {
@@ -1817,7 +1813,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 {
                     root.comments.Add(line);
                 }
-                foreach (var line in Tree.rootKifuLog.engineComment.Split('\n'))
+                foreach (var line in Tree.RootKifuLog.engineComment.Split('\n'))
                 {
                     root.comments.Add(line);
                 }
@@ -1973,10 +1969,10 @@ namespace MyShogi.Model.Shogi.Kifu
             data.side = "先手";
             data.player1 = playerNameBlack;
             data.player2 = playerNameWhite;
-            if (Tree.rootKifuLog != null && Tree.rootKifuLog.moveTime != null)
+            if (Tree.RootKifuLog != null && Tree.RootKifuLog.moveTime != null)
             {
-                data.realstarttime = (long)Tree.rootKifuLog.moveTime.Subtract(epoch).TotalMilliseconds;
-                data.starttime = Tree.rootKifuLog.moveTime.ToString("s");
+                data.realstarttime = (long)Tree.RootKifuLog.moveTime.Subtract(epoch).TotalMilliseconds;
+                data.starttime = Tree.RootKifuLog.moveTime.ToString("s");
             }
             var kifList = new List<LiveJson.Kif>();
             while (Tree.currentNode.moves.Count > 0)

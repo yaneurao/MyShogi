@@ -87,7 +87,7 @@ namespace MyShogi.Model.Shogi.Kifu
         public KifuMoveTime[] Players;
 
         /// <summary>
-        /// ゼロに相当するobject
+        /// ゼロに相当するstatic object
         /// </summary>
         public static KifuMoveTimes Zero = new KifuMoveTimes(new KifuMoveTime(), new KifuMoveTime());
     }
