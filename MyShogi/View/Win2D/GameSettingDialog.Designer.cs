@@ -617,7 +617,6 @@
             this.groupBox5.TabIndex = 9;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "時間設定[後手/下手]";
-            this.groupBox5.Enter += new System.EventHandler(this.groupBox5_Enter);
             // 
             // numericUpDown8
             // 

@@ -8,12 +8,11 @@ namespace MyShogi.Model.Shogi.Kifu
     /// </summary>
     public class KifuMove : KifuLog
     {
-        public KifuMove(Move nextMove_,KifuNode nextNode_ , TimeSpan thinkingTime_ , TimeSpan totalTime_)
+        public KifuMove(Move nextMove_,KifuNode nextNode_ , KifuMoveTimes kifuMoveTimes_)
         {
             nextMove = nextMove_;
             nextNode = nextNode_;
-            thinkingTime = thinkingTime_;
-            totalTime = totalTime_;
+            kifuMoveTimes = kifuMoveTimes_;
         }
 
         /// <summary>
@@ -25,16 +24,9 @@ namespace MyShogi.Model.Shogi.Kifu
         public Move nextMove;
 
         /// <summary>
-        /// 着手に要した時間(計測)
-        /// ミリ単位まで保持している。
-        /// 表示時や出力時に秒単位で繰り上げる。
+        /// 1手の消費時間、この時点での残り持ち時間、総消費時間など(両プレイヤー分)
         /// </summary>
-        public TimeSpan thinkingTime;
-
-        /// <summary>
-        /// この局面までの合計消費時間
-        /// </summary>
-        public TimeSpan totalTime;
+        public KifuMoveTimes kifuMoveTimes;
 
         /// <summary>
         /// nextMoveを指したときの次の局面

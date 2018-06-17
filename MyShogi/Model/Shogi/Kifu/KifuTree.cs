@@ -216,7 +216,9 @@ namespace MyShogi.Model.Shogi.Kifu
             Debug.Assert(m != null);
 
             // 棋譜の更新
-            AddKifu(m.nextMove , m.thinkingTime);
+            var stm = position.sideToMove;
+            var thinkingTime = m.kifuMoveTimes.Player(stm).ThinkingTime;
+            AddKifu(m.nextMove , thinkingTime);
             
             position.DoMove(m.nextMove);
             RaisePropertyChanged("Position", position);
@@ -268,7 +270,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         /// <param name="move"></param>
         /// <param name="thinkingTime"></param>
-        public void AddNode(Move move, TimeSpan thinkingTime, TimeSpan? totalTime = null)
+        public void AddNode(Move move, KifuMoveTimes kifuMoveTimes)
         {
             var m = currentNode.moves.FirstOrDefault((x) => x.nextMove == move);
             if (m == null)
@@ -276,12 +278,11 @@ namespace MyShogi.Model.Shogi.Kifu
                 // -- 見つからなかったので次のnodeを追加してやる
 
                 KifuNode nextNode = new KifuNode(currentNode);
-                currentNode.moves.Add(new KifuMove(move, nextNode, thinkingTime
-                    , totalTime ?? TotalConsumptionTime() + RoundTime(thinkingTime)));
+                currentNode.moves.Add(new KifuMove(move, nextNode, kifuMoveTimes));
 
                 // 特殊な指し手であるなら、この時点で棋譜の終端にその旨を記録しておく。
                 if (move.IsSpecial())
-                    AddKifuSpecialMove(move , thinkingTime);
+                    AddKifuSpecialMove(move , kifuMoveTimes.Player(position.sideToMove).ThinkingTime);
             }
         }
 
@@ -313,36 +314,6 @@ namespace MyShogi.Model.Shogi.Kifu
         public void Remove(KifuNode nextNode)
         {
             currentNode.moves.RemoveAll((x) => x.nextNode == nextNode);
-        }
-
-        /// <summary>
-        /// ここまでの総消費時間
-        /// </summary>
-        /// <returns></returns>
-        public TimeSpan TotalConsumptionTime()
-        {
-            // 2手前が自分の手番なので、そこに加算する。
-            var prev = currentNode.prevNode;
-            if (prev == null)
-                return new TimeSpan();
-            var prev2 = prev.prevNode;
-            if (prev2 == null)
-                return new TimeSpan();
-
-            return prev2.moves.Find((x) => x.nextNode == prev).totalTime;
-        }
-
-
-        /// <summary>
-        /// timeから秒を繰り上げた時間
-        /// 表示時や棋譜ファイルへの出力時は、こちらを用いる
-        /// </summary>
-        /// <param name="t"></param>
-        public TimeSpan RoundTime(TimeSpan t)
-        {
-            // ミリ秒が端数があれば、秒単位で繰り上げる。
-            // ToDo: t.Thiks != 0 だった場合を考慮しなくて良いか確認
-            return (t.Milliseconds == 0) ? t : t.Add(new TimeSpan(0, 0, 0, 0, 1000 - t.Milliseconds));
         }
 
         /// <summary>

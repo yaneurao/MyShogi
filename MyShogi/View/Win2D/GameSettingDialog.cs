@@ -5,6 +5,7 @@ using MyShogi.App;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource;
 using MyShogi.Model.Shogi.Core;
+using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
 {
@@ -74,6 +75,8 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void BindSetting()
         {
+            SuspendLayout();
+
             var setting = TheApp.app.config.GameSetting;
 
             // 対局者氏名のテキストボックス
@@ -124,7 +127,7 @@ namespace MyShogi.View.Win2D
                 {
                     int c = (int)c_;
                     var n = num[c];
-                    var timeSetting = setting.TimeSettings.Players[c];
+                    var timeSetting = setting.TimeSettings.RawPlayer(c_);
                     binder.Bind(timeSetting.Hour, n[0], v => timeSetting.Hour = v);
                     binder.Bind(timeSetting.Minute, n[1], v => timeSetting.Minute = v);
                     binder.Bind(timeSetting.Second, n[2], v => timeSetting.Second = v);
@@ -198,6 +201,7 @@ namespace MyShogi.View.Win2D
             });
             binder.Bind(misc.MaxMovesToDraw, numericUpDown11, v => misc.MaxMovesToDraw = v);
 
+            ResumeLayout();
         }
 
 
@@ -255,20 +259,10 @@ namespace MyShogi.View.Win2D
             // データバインドされているはずなので、DataSourceのほうで入替えて、
             // rebindすればいいような..
 
-            SuspendLayout();
             binder.UnbindAll();
-
-            var setting = TheApp.app.config.GameSetting;
-            Utility.Swap(ref setting.Players[0], ref setting.Players[1]);
-            Utility.Swap(ref setting.TimeSettings.Players[0], ref setting.TimeSettings.Players[1]);
-
+            TheApp.app.config.GameSetting.SwapPlayer();
             BindSetting();
-            ResumeLayout();
         }
 
-        private void groupBox5_Enter(object sender, EventArgs e)
-        {
-
-        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System.Text;
+using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -99,7 +101,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                 {
                     if (sb.Length != 0)
                         sb.Append("切れ負け");
-                } else
+                }
+                else
                 {
                     if (sb.Length != 0)
                         sb.Append(" "); // 前の文字があるならスペースを放り込む
@@ -114,5 +117,74 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
             return sb.ToString();
         }
+    }
+
+    /// <summary>
+    /// 対局時間設定 先後の両方の分
+    /// </summary>
+    public class TimeSettings
+    {
+        public TimeSettings()
+        {
+            Players = new TimeSetting[2] { new TimeSetting(), new TimeSetting() };
+            WhiteEnable = false;
+        }
+
+        public TimeSettings(TimeSetting[] players, bool WhiteEnable_)
+        {
+            Players = players;
+            WhiteEnable = WhiteEnable_;
+        }
+
+        public TimeSettings Clone()
+        {
+            return new TimeSettings(
+                new TimeSetting[2] { Players[0].Clone(), Players[1].Clone() },
+                WhiteEnable
+                );
+        }
+
+        /// <summary>
+        /// c側の対局設定。
+        /// ただし、WhiteEnable == falseである時は、後手側の内容を無視して、先手側の対局に従うのでPlayers[0]のほうが返るので注意！
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public TimeSetting Player(Color c)
+        {
+            if (!WhiteEnable)
+                c = Color.BLACK;
+
+            return Players[(int)c];
+        }
+
+        /// <summary>
+        /// c側のプレイヤーの対局設定
+        /// Player()との違いに注意。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public TimeSetting RawPlayer(Color c)
+        {
+            return Players[(int)c];
+        }
+
+        /// <summary>
+        /// 先手と後手のプレイヤーを入れ替える
+        /// </summary>
+        public void SwapPlayer()
+        {
+            Utility.Swap(ref Players[0], ref Players[1]);
+        }
+
+        /// <summary>
+        /// 後手の対局時間設定を先手とは別に設定する。
+        /// </summary>
+        public bool WhiteEnable;
+
+        /// <summary>
+        /// 対局時間設定、先後分
+        /// </summary>
+        private TimeSetting[] Players;
     }
 }

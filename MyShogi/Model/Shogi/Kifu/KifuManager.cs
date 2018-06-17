@@ -1,11 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.Model.Shogi.Kifu
 {
@@ -431,7 +430,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             return string.Format("{0}手目が非合法手です。", ply);
 
                         // この指し手で局面を進める
-                        Tree.AddNode(move, new TimeSpan());
+                        Tree.AddNode(move, KifuMoveTimes.Zero /* 消費時間の記録がないので書けない */);
                         Tree.DoMove(move);
                         ++ply;
                     }
@@ -786,7 +785,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
                     // -- DoMove()
 
-                    Tree.AddNode(move , thinking_time , total_time);
+                    var kifuMoveTime = KifuMoveTimes.Zero; // ToDo:あとでちゃんと書く。
+                    Tree.AddNode(move , kifuMoveTime );
 
                     // 特殊な指し手、もしくはLegalでないならDoMove()は行わない
                     if (move.IsSpecial() || !Tree.position.IsLegal(move))
@@ -900,7 +900,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         // 2回目以降は指し手とみなす
                         // 消費時間の情報がまだないが、取り敢えず追加
                         move = Tree.position.FromCSA(subline);
-                        Tree.AddNode(move, new TimeSpan());
+                        Tree.AddNode(move, KifuMoveTimes.Zero /* TODO: 消費時間あとでなんとかする*/);
                         // 特殊な指し手や不正な指し手ならDoMove()しない
                         if (move.IsSpecial() || !Tree.position.IsLegal(move))
                         {
@@ -926,7 +926,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         }
                         Tree.Remove(move);
                         // 改めて指し手を追加
-                        Tree.AddNode(move, TimeSpan.FromSeconds(time));
+                        Tree.AddNode(move, KifuMoveTimes.Zero /*TODO:あとでちゃんと書く*//* TimeSpan.FromSeconds(time)*/);
                         // 特殊な指し手や不正な指し手ならDoMove()しない
                         if (move.IsSpecial() || !Tree.position.IsLegal(move))
                         {
@@ -990,7 +990,7 @@ namespace MyShogi.Model.Shogi.Kifu
                                 move = Move.NONE;
                                 break;
                         }
-                        Tree.AddNode(move, new TimeSpan());
+                        Tree.AddNode(move, KifuMoveTimes.Zero);
                         continue;
                     }
                 }
@@ -1278,7 +1278,7 @@ namespace MyShogi.Model.Shogi.Kifu
                                     m = Util.MakeMove(frSq, toSq);
                             }
                         }
-                        Tree.AddNode(m, spend);
+                        Tree.AddNode(m, KifuMoveTimes.Zero /*ToDo:あとでちゃんと書く*/ /* spend */);
                         if (m.IsSpecial() || !Tree.position.IsLegal(m))
                             break;
                         Tree.DoMove(m);
@@ -1420,7 +1420,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         }
                     }
                     // 棋譜ツリーへの追加処理
-                    Tree.AddNode(move, TimeSpan.FromSeconds((double)(kif.spend ?? 0)));
+                    Tree.AddNode(move, KifuMoveTimes.Zero /* ToDo: あとでちゃんと書く */ /*TimeSpan.FromSeconds((double)(kif.spend ?? 0))*/);
                     if (time != null)
                     {
                         var kifumove = Tree.currentNode.moves.Find((x) => x.nextMove == move);
@@ -1634,10 +1634,12 @@ namespace MyShogi.Model.Shogi.Kifu
                     Tree.DoMove(move);
                 }
 
-                var time_string1 = (kt == KifuFileType.PSN) ? move.thinkingTime.ToString("mm\\:ss")
-                                                            : move.thinkingTime.ToString("hh\\:mm\\:ss");
+                var turn = Tree.position.sideToMove;
 
-                var time_string2 = move.totalTime.ToString("hh\\:mm\\:ss");
+                var time_string1 = (kt == KifuFileType.PSN) ? move.kifuMoveTimes.Player(turn).ThinkingTime.ToString("mm\\:ss")
+                                                            : move.kifuMoveTimes.Player(turn).ThinkingTime.ToString("hh\\:mm\\:ss");
+
+                var time_string2 = move.kifuMoveTimes.Player(turn).TotalTime.ToString("hh\\:mm\\:ss");
 
                 sb.AppendLine(string.Format("{0,-18}({1} / {2})", mes , time_string1 , time_string2));
             }
@@ -1693,16 +1695,17 @@ namespace MyShogi.Model.Shogi.Kifu
                     break;
                 }
 
+                var thinkingTime = Tree.currentNode.moves[0].kifuMoveTimes.Player(Tree.position.sideToMove).ThinkingTime;
                 if (!Tree.position.IsLegal(m))
                 {
                     sb.AppendLine("%ILLEGAL_MOVE");
                     // 現時点の実装としては秒未満切り捨てとして出力。
-                    sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), System.Math.Truncate(Tree.currentNode.moves[0].thinkingTime.TotalSeconds)).AppendLine();
+                    sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), System.Math.Truncate(thinkingTime.TotalSeconds)).AppendLine();
                     break;
                 }
 
                 // 現時点の実装としては秒未満切り捨てとして出力。
-                sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), System.Math.Truncate(Tree.currentNode.moves[0].thinkingTime.TotalSeconds)).AppendLine();
+                sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), System.Math.Truncate(thinkingTime.TotalSeconds)).AppendLine();
 
             }
             return sb.ToString();
@@ -1929,19 +1932,23 @@ namespace MyShogi.Model.Shogi.Kifu
                         };
                     }
 
+                    var turn = Tree.position.sideToMove;
+                    var kifuTime = kifMove.kifuMoveTimes.Player(turn);
+                    var thinkingTime = kifuTime.ThinkingTime;
+                    var totalTime = kifuTime.TotalTime;
                     jkfMove.time = new Jkf.Time()
                     {
                         now = new Jkf.TimeFormat()
                         {
-                            h = kifMove.thinkingTime.Days * 24 + kifMove.thinkingTime.Hours,
-                            m = kifMove.thinkingTime.Minutes,
-                            s = kifMove.thinkingTime.Seconds,
+                            h = thinkingTime.Days * 24 + thinkingTime.Hours,
+                            m = thinkingTime.Minutes,
+                            s = thinkingTime.Seconds,
                         },
                         total = new Jkf.TimeFormat()
                         {
-                            h = kifMove.totalTime.Days * 24 + kifMove.totalTime.Hours,
-                            m = kifMove.totalTime.Minutes,
-                            s = kifMove.totalTime.Seconds,
+                            h = totalTime.Days * 24 + totalTime.Hours,
+                            m = totalTime.Minutes,
+                            s = totalTime.Seconds,
                         },
                     };
 
@@ -1980,7 +1987,9 @@ namespace MyShogi.Model.Shogi.Kifu
                 {
                     kif.time = (long)(kifMove.moveTime.Subtract(epoch).TotalMilliseconds);
                 }
-                kif.spend = (long)kifMove.thinkingTime.TotalSeconds;
+                var turn = Tree.position.sideToMove;
+                var thinkingTime = kifMove.kifuMoveTimes.Player(turn).ThinkingTime;
+                kif.spend = (long)thinkingTime.TotalSeconds;
                 var nextMove = kifMove.nextMove;
                 if (nextMove.IsSpecial())
                 {

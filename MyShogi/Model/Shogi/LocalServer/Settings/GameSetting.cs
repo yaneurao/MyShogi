@@ -1,4 +1,5 @@
-﻿using MyShogi.Model.Shogi.Core;
+﻿using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -8,6 +9,13 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// 
     /// 対局ダイアログの設定情報。
     /// GlobalConfigに保存されていて、ここから次回起動時に対局ダイアログの設定を復元もできる。
+    /// 
+    /// ・BoardSetting
+    /// ・MiscSetting
+    /// ・TimeSetting
+    /// ・PlayerSettings
+    /// の集合
+    /// 
     /// </summary>
     public class GameSetting
     {
@@ -72,6 +80,16 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="c"></param>
         /// <returns></returns>
         public PlayerSetting Player(Color c) { return Players[(int)c]; }
+
+        /// <summary>
+        /// 先手と後手のプレイヤーを入れ替える。
+        /// TimeSettingsのほうも入れ替える。
+        /// </summary>
+        public void SwapPlayer()
+        {
+            Utility.Swap(ref Players[0], ref Players[1]);
+            TimeSettings.SwapPlayer();
+        }
 
         /// <summary>
         /// 持ち時間設定

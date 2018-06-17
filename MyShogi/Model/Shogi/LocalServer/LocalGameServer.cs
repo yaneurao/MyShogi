@@ -180,9 +180,9 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public PlayerConsumptionTime PlayerConsumption(Color c)
+        public PlayTimer PlayTimer(Color c)
         {
-            return PlayersConsumptionTime[(int)c];
+            return PlayTimers.Player(c);
         }
 
         /// <summary>
@@ -416,7 +416,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 消費時間計算用
             foreach (var c in All.Colors())
             {
-                var pc = PlayerConsumption(c);
+                var pc = PlayTimer(c);
                 pc.TimeSetting = GameSetting.TimeSettings.Player(c);
                 pc.GameStart();
                 SetRestTimeString(c, pc.DisplayShortString());
@@ -501,9 +501,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// プレイヤーの消費時間管理クラス
         /// </summary>
-        private PlayerConsumptionTime[] PlayersConsumptionTime
-            = new PlayerConsumptionTime[2] { new PlayerConsumptionTime(), new PlayerConsumptionTime() };
-
+        private PlayTimers PlayTimers = new PlayTimers();
+        
         /// <summary>
         /// 残り時間を表現する文字列
         /// </summary>
@@ -600,13 +599,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 指し手
             var bestMove = stmPlayer.BestMove;
 
-            // 今回の指し手の消費時間
-            TimeSpan thinkingTime = TimeSpan.Zero;
-
             if (bestMove != Move.NONE)
             {
-                // 今回の思考時間
-                thinkingTime = PlayerConsumption(stm).ChageToThemTurn();
+                PlayTimer(stm).ChageToThemTurn();
 
                 stmPlayer.BestMove = Move.NONE; // クリア
 
@@ -657,7 +652,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // -- bestMoveを受理して、局面を更新する。
 
-                    kifuManager.Tree.AddNode(bestMove, thinkingTime);
+                    kifuManager.Tree.AddNode(bestMove, PlayTimers.GetKifuMoveTimes());
 
                     if (specialMove)
                     {
@@ -685,7 +680,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         ILLEGAL_MOVE:
             // これ、棋譜に記録すべき
             Move m = Move.ILLEGAL_MOVE;
-            kifuManager.Tree.AddNode(m, thinkingTime);
+            kifuManager.Tree.AddNode(m, PlayTimers.GetKifuMoveTimes());
             kifuManager.Tree.AddNodeComment(m , stmPlayer.BestMove.ToUsi() /* String あとでなおす*/ /* 元のテキスト */);
 
             GameEnd(); // これにてゲーム終了。
@@ -745,7 +740,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (m != Move.NONE)
                 {
                     // この特殊な状況を棋譜に書き出して終了。
-                    kifuManager.Tree.AddNode(m, TimeSpan.Zero);
+                    kifuManager.Tree.AddNode(m, KifuMoveTimes.Zero);
 
                     InTheGame = false;
                     GameEnd();
@@ -768,7 +763,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // InTheGame == trueならば、PlayerConsumptionは適切に設定されているはず。
                 // (対局開始時に初期化するので)
 
-                PlayerConsumption(stm).ChangeToOurTurn();
+                PlayTimer(stm).ChangeToOurTurn();
             }
 
             // 非手番側のCanMoveをfalseに
@@ -797,7 +792,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 // 手番側
                 var stm = Position.sideToMove;
-                var ct = PlayerConsumption(stm);
+                var ct = PlayTimer(stm);
                 if (ct.IsTimeUp())
                     Player(stm).BestMove = Move.TIME_UP;
 
@@ -814,7 +809,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 時間消費、停止
             foreach(var c in All.Colors())
-                PlayerConsumption(c).ChageToThemTurn();
+                PlayTimer(c).ChageToThemTurn();
 
             // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
             // (エンジンを入れ替えたりしないといけない)

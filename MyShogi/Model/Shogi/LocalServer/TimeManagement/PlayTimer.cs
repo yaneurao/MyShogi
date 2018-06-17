@@ -1,35 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Kifu;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
+
     /// <summary>
-    /// プレイヤーの消費時間を管理する。
-    /// 片側のプレイヤー分
+    /// プレイヤーの消費時間を計測する。
+    /// 片側のプレイヤー分。
+    /// 
+    /// 両側分は、PlayTimersという複数形のものがあるのでそちらを用いる。
     /// </summary>
-    public class PlayerConsumptionTime
+    public class PlayTimer
     {
-        public PlayerConsumptionTime()
-        {
-            Stopwatch = new Stopwatch();
-            Stopwatch.Stop();
-        }
+        /// <summary>
+        /// 一手の指し手に関する消費時間など。
+        /// immutableである。
+        /// 
+        /// ChangeToThemTurn()を呼び出した時に新しい情報が反映される。
+        /// </summary>
+        public KifuMoveTime KifuMoveTime { get; private set; }
+
+        /// <summary>
+        /// いまの残り時間(リアルタイム)
+        /// </summary>
+        private TimeSpan RestTime { get; set; }
 
         /// <summary>
         /// 持ち時間設定
+        /// この設定に従って、残り時間をカウントする。
+        /// このクラスを使う時に、外部からsetする。
         /// </summary>
         public TimeSetting TimeSetting { set; get; }
+
+        public PlayTimer()
+        {
+            KifuMoveTime = new KifuMoveTime();
+            Stopwatch = new Stopwatch();
+            Stopwatch.Stop();
+        }
 
         /// <summary>
         /// ゲーム開始なので、TimeSettingの時間をRestTimeに反映させる。
         /// </summary>
         public void GameStart()
         {
-            RestTime = new TimeSpan(TimeSetting.Hour, TimeSetting.Minute, TimeSetting.Second);
+            KifuMoveTime = new KifuMoveTime(
+                TimeSpan.Zero, // まだ指してないので、指し手の時間 = 0
+                TimeSpan.Zero, // まだ指してないので、指し手の時間 = 0
+                TimeSpan.Zero, // 総消費時間 = 0
+                new TimeSpan(TimeSetting.Hour, TimeSetting.Minute, TimeSetting.Second) // 残り持ち時間
+                );
+            RestTime = KifuMoveTime.RestTime;
             first = true; // 初期化のIncTimeをなくすためのフラグ
         }
 
@@ -54,8 +77,9 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 自分の手番が終わり。
         /// タイマーを終了する。
+        /// MoveTimeに今回の消費時間等を反映させる。
         /// </summary>
-        public TimeSpan ChageToThemTurn()
+        public void ChageToThemTurn()
         {
             StopTimer();
             var consume = ConsumptionTime();
@@ -63,9 +87,12 @@ namespace MyShogi.Model.Shogi.LocalServer
             RestTime -= consume;
             if (RestTime < TimeSpan.Zero)
                 RestTime = TimeSpan.Zero;
-            // ToDo:この時に、consumeをRestTimeぴったりに補整したほうが良いのでは？
 
-            return consume;
+            // 実消費時間
+            var realConsume = RealConsumptionTime();
+
+            // KifuMoveTimeに反映するので、そこから取り出すべし。
+            KifuMoveTime = new KifuMoveTime(consume, realConsume , KifuMoveTime.TotalTime + consume, RestTime);
         }
 
         /// <summary>
@@ -116,6 +143,15 @@ namespace MyShogi.Model.Shogi.LocalServer
         public TimeSpan ConsumptionTime()
         {
             return new TimeSpan(0,0,RoundTime(endTime - startTime));
+        }
+
+        /// <summary>
+        /// ConsumptionTime()の、丸めをせずにミリ秒単位まで返すバージョン
+        /// </summary>
+        /// <returns></returns>
+        public TimeSpan RealConsumptionTime()
+        {
+            return new TimeSpan(0, 0, 0 , (int)(endTime - startTime));
         }
 
         /// <summary>
@@ -190,14 +226,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
         }
-
-        /// <summary>
-        /// 残り持ち時間
-        /// </summary>
-
-        public TimeSpan RestTime { get; set; }
         
-
         // -- private members
 
         /// <summary>
@@ -221,4 +250,38 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private bool first;
     }
+
+    /// <summary>
+    /// PlayTimerの二人分
+    /// </summary>
+    public class PlayTimers
+    {
+        public PlayTimers()
+        {
+            Players = new PlayTimer[2] { new PlayTimer(), new PlayTimer() };
+        }
+
+        /// <summary>
+        /// c側のPlayer分
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public PlayTimer Player(Color c)
+        {
+            return Players[(int)c];
+        }
+
+        /// <summary>
+        /// KifuMoveTime、二人分を返す。
+        /// KifuMoveTime自体はimmutableと考えられるのでコピーする必要はない。
+        /// </summary>
+        /// <returns></returns>
+        public KifuMoveTimes GetKifuMoveTimes()
+        {
+            return new KifuMoveTimes(Players[0].KifuMoveTime, Players[1].KifuMoveTime);
+        }
+
+        private PlayTimer[] Players;
+    }
+
 }
