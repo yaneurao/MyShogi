@@ -4,8 +4,11 @@
 		/Core       将棋用のコアライブラリ。ほとんどがやねうら王からの移植。なるべくpure C#で書かれてある。
 		/Converter  KIF/CSA形式での入出力のヘルパー
 		/IO         棋譜ファイルの入出力
+		/LocalServer 対局を監視しているworker threadなど
 		/Network    通信対局関連
-	/ObjectModel  WPFのようなMVVM用の補助クラスの自作
+	/Common		  汎用クラスなど
+		/ObjectModel  WPFのようなMVVM用の補助クラスの自作
+		/Utility	
 	/Resource     画像や音声などのリソースを動的に読み込み管理するためのマネージャー
 	/Test         テスト用のコード
 
