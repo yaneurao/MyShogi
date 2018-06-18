@@ -34,6 +34,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             KifuMoveTime = new KifuMoveTime();
             Stopwatch = new Stopwatch();
             Stopwatch.Stop();
+            TimeSetting = new TimeSetting(); // デフォルトで何かセットしておかないと起動後の描画でnull参照になってしまう。
         }
 
         /// <summary>
@@ -96,8 +97,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// タイマーを終了する。
         /// MoveTimeに今回の消費時間等を反映させる。
         /// IncTimeの時はタイマーが加算される。
+        /// 
+        /// 引数のtimeUpは、タイムアップになったかのフラグ
+        /// TimeUpのときは、IncTimeによって残り時間が増えてしまうと、
+        /// 残り時間があるにも関わらずタイムアップになったように見えるといけないので
+        /// IncTimeしない。
         /// </summary>
-        public void ChageToThemTurn()
+        public void ChageToThemTurn(bool timeUp)
         {
             StopTimer();
 
@@ -112,9 +118,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 restTime = TimeSpan.Zero;
 
             // IncTimeの処理
-            // TimeUpのときは、このメソッドが呼び出されずに、TimerStop()が呼び出されるので、
-            // TimeUpでないことは保証されている。
-            if (TimeSetting.IncTimeEnable)
+            // TimeUpのときは、IncTimeによって残り時間が増えてしまうと、
+            // 残り時間があるにも関わらずタイムアップになったように見えるといけないので
+            // IncTimeしない。
+            if (!timeUp && TimeSetting.IncTimeEnable)
                 restTime += new TimeSpan(0,0,TimeSetting.IncTime);
 
             // 実消費時間

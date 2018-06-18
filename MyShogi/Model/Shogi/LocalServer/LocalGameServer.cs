@@ -350,6 +350,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // 無理やりではあるが棋譜のN行目に移動出来るのであった…。
                     kifuManager.Tree.GotoSelectedIndex(selectedIndex);
+                    PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTime());
 
                 }
             });
@@ -434,6 +435,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 pc.GameStart();
             }
             // rootの持ち時間設定をここに反映させておかないと待ったでrootまで持ち時間が戻せない。
+            // TODO:途中の局面からだとここではなく、現局面のところに書き出す必要がある。
             kifuManager.Tree.RootKifuMoveTimes = PlayTimers.GetKifuMoveTimes();
 
             // コンピュータ vs 人間である場合、人間側を手前にしてやる。
@@ -629,7 +631,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             if (bestMove != Move.NONE)
             {
-                PlayTimer(stm).ChageToThemTurn();
+                PlayTimer(stm).ChageToThemTurn(bestMove == Move.TIME_UP);
 
                 stmPlayer.BestMove = Move.NONE; // クリア
 
@@ -816,25 +818,27 @@ namespace MyShogi.Model.Shogi.LocalServer
             // エンジンの初期化中であるか。この時は、時間消費は行わない。
             Initializing = Player(Color.BLACK).Initializing || Player(Color.WHITE).Initializing;
 
-            if (InTheGame)
-            {
-                // 両方の残り時間を更新しておく。
-                // 前回と同じ文字列であれば実際は描画ハンドラが呼び出されないので問題ない。
-                foreach (var c in All.Colors())
-                {
-                    var ct = PlayTimer(c);
-                    // 時間切れ判定は手番側のみ
-                    if (c == Position.sideToMove && ct.IsTimeUp())
-                        Player(c).BestMove = Move.TIME_UP;
+            // 双方の残り時間表示の更新
+            UpdateTimeString();
 
-                    SetRestTimeString(c, ct.DisplayShortString());
-                }
-            }
+            // 時間切れ判定(対局中かつ手番側のみ)
+            var stm = Position.sideToMove;
+            if (InTheGame && PlayTimer(stm).IsTimeUp())
+                Player(stm).BestMove = Move.TIME_UP;
         }
 
-        private void UpdateTimeString(Color c)
+        /// <summary>
+        /// 残り時間の更新
+        /// </summary>
+        /// <param name="c"></param>
+        private void UpdateTimeString()
         {
-
+            // 前回と同じ文字列であれば実際は描画ハンドラが呼び出されないので問題ない。
+            foreach (var c in All.Colors())
+            {
+                var ct = PlayTimer(c);
+                SetRestTimeString(c, ct.DisplayShortString());
+            }
         }
 
         /// <summary>

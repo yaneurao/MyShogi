@@ -26,6 +26,26 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// インスタンスがおかしい値ではないかをチェックする。
+        /// 正常値ならtrueが返る。とりま、このクラスがvalidである条件をコードで明示するために書いてある。
+        /// 
+        /// これがfalseを返す設定をした時にUI側で警告を出すべきかも。
+        /// まあ、いきなりタイムアップになるだけだから、警告、なくてもいいだろうけども。
+        /// </summary>
+        /// <returns></returns>
+        public bool IsValid()
+        {
+            // 秒読みかIncTimeかのどちらかは有効でなければならない。
+            bool b1 = ByoyomiEnable ^ IncTimeEnable;
+
+            // 持ち時間がないのに、秒読み0秒やIncTime == 0は許容できない。(いきなりタイムアップになる)
+            bool b2 = (Hour == 0 && Minute == 0 && Second == 0) &&
+                ((ByoyomiEnable && Byoyomi == 0) || (IncTimeEnable && IncTime == 0));
+            
+            return b1 && !b2; 
+        }
+
+        /// <summary>
         /// 持ち時間の[時]
         /// </summary>
         public int Hour;
@@ -95,26 +115,27 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (Second != 0)
                     sb.Append($"{Second}秒");
             }
-            if (ByoyomiEnable)
+
+            if ((ByoyomiEnable && Byoyomi == 0)
+                || (IncTimeEnable && IncTime == 0))
             {
-                if (Byoyomi == 0)
-                {
-                    if (sb.Length != 0)
-                        sb.Append("切れ負け");
-                }
-                else
-                {
-                    if (sb.Length != 0)
-                        sb.Append(" "); // 前の文字があるならスペースを放り込む
-                    sb.Append($"秒読み{Byoyomi}秒");
-                }
+                sb.Append("切れ負け");
             }
+
+            if (ByoyomiEnable && Byoyomi != 0)
+            {
+                if (sb.Length != 0)
+                    sb.Append(" "); // 前の文字があるならスペースを放り込む
+                sb.Append($"秒読み{Byoyomi}秒");
+            }
+
             if (IncTimeEnable && IncTime != 0)
             {
                 if (sb.Length != 0)
                     sb.Append(" "); // 前の文字があるならスペースを放り込む
                 sb.Append($"1手{IncTime}秒加算");
             }
+
             return sb.ToString();
         }
     }
