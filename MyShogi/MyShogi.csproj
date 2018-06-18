@@ -236,6 +236,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <None Include="docs\TODO.md" />
     <Content Include="docs\更新履歴.txt" />
     <Content Include="docs\解説.txt" />
   </ItemGroup>

@@ -846,7 +846,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 時間消費、停止
             foreach(var c in All.Colors())
-                PlayTimer(c).ChageToThemTurn();
+                PlayTimer(c).StopTimer();
 
             // 棋譜ウィンドウ、勝手に書き換えられると困るのでこれでfixさせておく。
             kifuManager.EnableKifuList = false;

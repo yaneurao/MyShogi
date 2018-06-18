@@ -70,7 +70,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                 TimeSpan.Zero, // 総消費時間 = 0
                 new TimeSpan(TimeSetting.Hour, TimeSetting.Minute, TimeSetting.Second) // 残り持ち時間
                 );
-            first = true; // 初期化のIncTimeをなくすためのフラグ
             Init();
         }
 
@@ -81,11 +80,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         public void ChangeToOurTurn()
         {
             var restTime = KifuMoveTime.RestTime;
-
-            // 初手はIncTimeしない。
-            if (TimeSetting.IncTimeEnable && !first)
-                restTime += new TimeSpan(0,0,TimeSetting.IncTime);
-            first = false;
 
             // byoyomiありかも知れないのでいったんリセットする。
             if (restTime < TimeSpan.Zero)
@@ -101,6 +95,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 自分の手番が終わり。
         /// タイマーを終了する。
         /// MoveTimeに今回の消費時間等を反映させる。
+        /// IncTimeの時はタイマーが加算される。
         /// </summary>
         public void ChageToThemTurn()
         {
@@ -115,6 +110,12 @@ namespace MyShogi.Model.Shogi.LocalServer
             restTime -= thinkingTime;
             if (restTime < TimeSpan.Zero)
                 restTime = TimeSpan.Zero;
+
+            // IncTimeの処理
+            // TimeUpのときは、このメソッドが呼び出されずに、TimerStop()が呼び出されるので、
+            // TimeUpでないことは保証されている。
+            if (TimeSetting.IncTimeEnable)
+                restTime += new TimeSpan(0,0,TimeSetting.IncTime);
 
             // 実消費時間
             var realThinkingTime = RealThinkingTime();
@@ -272,12 +273,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 時間計測用のタイマー
         /// </summary>
         private Stopwatch Stopwatch;
-
-        /// <summary>
-        /// GameStart()した直後であるか。
-        /// 初手はIncTimeしてはいけないのでそのためのフラグ
-        /// </summary>
-        private bool first;
     }
 
     /// <summary>

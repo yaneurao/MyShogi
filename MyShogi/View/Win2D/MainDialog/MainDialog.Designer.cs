@@ -180,13 +180,13 @@
             // 
             // MainDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1034, 529);
+            this.ClientSize = new System.Drawing.Size(517, 264);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(400, 200);
+            this.MinimumSize = new System.Drawing.Size(200, 100);
             this.Name = "MainDialog";
             this.Text = "MyShogi";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainDialog_FormClosed);
