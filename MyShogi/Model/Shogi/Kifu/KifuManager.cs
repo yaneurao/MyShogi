@@ -23,70 +23,6 @@ namespace MyShogi.Model.Shogi.Kifu
         // -------------------------------------------------------------------------
 
         /// <summary>
-        /// デフォルトの先手対局者名。
-        /// </summary>
-        static public string defaultPlayerNameBlack = "先手";
-        /// <summary>
-        /// デフォルトの後手対局者名。
-        /// </summary>
-        static public string defaultPlayerNameWhite = "後手";
-
-        /// <summary>
-        /// 対局ヘッダ情報。
-        /// キー文字列は柿木形式で使われているヘッダのキー文字列に準ずる。
-        /// </summary>
-        public Dictionary<string, string> header = new Dictionary<string, string>()
-        {
-            { "先手", defaultPlayerNameBlack },
-            { "後手", defaultPlayerNameWhite }
-        };
-
-        /// <summary>
-        /// 先手/下手 対局者名。
-        ///   playerNameBlack : 先手の名前(駒落ちの場合、下手)
-        /// </summary>
-        public string playerNameBlack {
-            get
-            {
-                string name;
-                return header.TryGetValue("先手", out name) ? name : defaultPlayerNameBlack;
-            } set {
-                header["先手"] = value;
-            }
-        }
-
-        /// <summary>
-        /// 後手/上手 対局者名。
-        ///   playerNameWhite : 後手の名前(駒落ちの場合、上手)
-        /// </summary>
-        public string playerNameWhite {
-            get
-            {
-                string name;
-                return header.TryGetValue("後手", out name) ? name : defaultPlayerNameWhite;
-            }
-            set
-            {
-                header["後手"] = value;
-            }
-        }
-
-        /// <summary>
-        /// PlayerNameのsetterとgetter
-        /// </summary>
-        public string GetPlayerName(Color c)
-        {
-            return c == Color.BLACK ? playerNameBlack : playerNameWhite;
-        }
-        public void SetPlayerName(Color c,string name)
-        {
-            if (c == Color.BLACK)
-                playerNameBlack = name;
-            else
-                playerNameWhite = name;
-        }
-
-        /// <summary>
         /// 棋譜本体。分岐棋譜。
         /// </summary>
         public KifuTree Tree = new KifuTree();
@@ -160,6 +96,76 @@ namespace MyShogi.Model.Shogi.Kifu
         /// また、このクラスが生成された時点では、局面は初期化されていないので、何らかの方法で初期化してから用いること。
         /// </summary>
         public Position Position { get { return Tree.position; } }
+
+        // -- 以下、棋譜ファイルからの入出力絡み
+
+        /// <summary>
+        /// デフォルトの先手対局者名。
+        /// </summary>
+        static public string defaultPlayerNameBlack = "先手";
+        /// <summary>
+        /// デフォルトの後手対局者名。
+        /// </summary>
+        static public string defaultPlayerNameWhite = "後手";
+
+        /// <summary>
+        /// 対局ヘッダ情報。
+        /// キー文字列は柿木形式で使われているヘッダのキー文字列に準ずる。
+        /// </summary>
+        public Dictionary<string, string> header = new Dictionary<string, string>()
+        {
+            { "先手", defaultPlayerNameBlack },
+            { "後手", defaultPlayerNameWhite }
+        };
+
+        /// <summary>
+        /// 先手/下手 対局者名。
+        ///   playerNameBlack : 先手の名前(駒落ちの場合、下手)
+        /// </summary>
+        public string playerNameBlack
+        {
+            get
+            {
+                string name;
+                return header.TryGetValue("先手", out name) ? name : defaultPlayerNameBlack;
+            }
+            set
+            {
+                header["先手"] = value;
+            }
+        }
+
+        /// <summary>
+        /// 後手/上手 対局者名。
+        ///   playerNameWhite : 後手の名前(駒落ちの場合、上手)
+        /// </summary>
+        public string playerNameWhite
+        {
+            get
+            {
+                string name;
+                return header.TryGetValue("後手", out name) ? name : defaultPlayerNameWhite;
+            }
+            set
+            {
+                header["後手"] = value;
+            }
+        }
+
+        /// <summary>
+        /// PlayerNameのsetterとgetter
+        /// </summary>
+        public string GetPlayerName(Color c)
+        {
+            return c == Color.BLACK ? playerNameBlack : playerNameWhite;
+        }
+        public void SetPlayerName(Color c, string name)
+        {
+            if (c == Color.BLACK)
+                playerNameBlack = name;
+            else
+                playerNameWhite = name;
+        }
 
         // -------------------------------------------------------------------------
         // public methods
@@ -557,7 +563,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     int ply = int.Parse(m5.Groups[1].Value);
 
                     // ply手目まで局面を巻き戻す
-                    while (ply < Tree.ply)
+                    while (ply < Tree.gamePly)
                         Tree.UndoMove();
 
                     continue;
@@ -1534,7 +1540,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     sb.AppendLine();
                     sb.AppendLine(string.Format("Variation:{0}", node.ply));
 
-                    while (node.ply < Tree.ply)
+                    while (node.ply < Tree.gamePly)
                         Tree.UndoMove();
 
                     select = node.select;
@@ -1554,7 +1560,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 {
                     // あとで分岐しないといけないので残りをstackに記録しておく
                     for(int i=1;i<count;++i)
-                        stack.Push(new Node(Tree.ply, i));
+                        stack.Push(new Node(Tree.gamePly, i));
                 }
 
                 SELECT:;
@@ -1598,7 +1604,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     else
                         mes = "";
 
-                    mes = Tree.ply + "." + mes;
+                    mes = Tree.gamePly + "." + mes;
                 }
                 else
                 {
@@ -1610,7 +1616,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         if (m.IsDrop())
                         {
                             pc = m.DroppedPiece().PieceType();
-                            mes = string.Format("{0}.{1}*{2}", Tree.ply, pc.ToUsi(), to.ToUsi());
+                            mes = string.Format("{0}.{1}*{2}", Tree.gamePly, pc.ToUsi(), to.ToUsi());
                         }
                         else
                         {
@@ -1618,12 +1624,12 @@ namespace MyShogi.Model.Shogi.Kifu
                             var c2 = m.IsPromote() ? "+" : "";
                             var from = m.From();
                             pc = Tree.position.PieceOn(m.From()).PieceType();
-                            mes = string.Format("{0}.{1}{2}{3}{4}{5}", Tree.ply, pc.ToUsi(), from.ToUsi(), c, to.ToUsi(), c2);
+                            mes = string.Format("{0}.{1}{2}{3}{4}{5}", Tree.gamePly, pc.ToUsi(), from.ToUsi(), c, to.ToUsi(), c2);
                         }
                     }
                     else if (kt == KifuFileType.PSN2)
                         // PSN2形式なら指し手表現はUSIの指し手文字列そのまま!!簡単すぎ!!
-                        mes = string.Format("{0}.{1}", Tree.ply, m.ToUsi());
+                        mes = string.Format("{0}.{1}", Tree.gamePly, m.ToUsi());
                     else
                         mes = "";
 
@@ -1861,7 +1867,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         var inNode = inStack.Pop();
                         var outBranches = outStack.Pop();
                         outBranches.Add(outList = new List<Jkf.MoveFormat>());
-                        while (inNode.ply < Tree.ply)
+                        while (inNode.ply < Tree.gamePly)
                             Tree.UndoMove();
                         select = inNode.select;
                     }
@@ -1877,7 +1883,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         {
                             for (int i = 1; i < count; ++i)
                             {
-                                inStack.Push(new Node(Tree.ply, i));
+                                inStack.Push(new Node(Tree.gamePly, i));
                                 outStack.Push(jkfMove.forks);
                             }
                         }

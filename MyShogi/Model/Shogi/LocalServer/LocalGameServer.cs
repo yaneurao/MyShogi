@@ -396,7 +396,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // まず現在局面以降の棋譜を削除しなくてはならない。
 
                 kifuManager.Tree.ClearForward();
-
             }
             else // if (gameSetting.Board.BordTypeEnable)
             {

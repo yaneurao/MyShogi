@@ -39,6 +39,8 @@ namespace MyShogi.Model.Shogi.Kifu
             position.InitBoard();
             
             currentNode = rootNode = new KifuNode(null);
+            pliesFromRoot = 0;
+
             //    UsiMoveStringList.Clear();
             rootBoardType = BoardType.NoHandicap;
             rootSfen = Position.SFEN_HIRATE;
@@ -80,11 +82,16 @@ namespace MyShogi.Model.Shogi.Kifu
         public KifuMove rootKifuMove;
 
         /// <summary>
-        /// rootNodeから数えて何手目であるか。
-        /// rootNodeだとply==1となる。
         /// DoMove()で1手加算され、UndoMove()で1手減算される。
+        /// 何手目の局面であるか。sfenを渡して初期化した場合、rootNodeが1以外の数から始まるので注意。
         /// </summary>
-        public int ply { get { return position.gamePly; } }
+        public int gamePly { get { return position.gamePly; } }
+
+        /// <summary>
+        /// rootの局面からの手数。
+        /// currentNode == rootNodeにおいては0。
+        /// </summary>
+        public int pliesFromRoot { get; private set; }
 
         /// <summary>
         /// rootの局面の局面タイプ
@@ -244,6 +251,8 @@ namespace MyShogi.Model.Shogi.Kifu
             AddKifu(m.nextMove , thinkingTime);
             
             position.DoMove(m.nextMove);
+            ++pliesFromRoot;
+
             RaisePropertyChanged("Position", position);
 
             currentNode = m.nextNode;
@@ -273,6 +282,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 RemoveKifu(true);
 
             position.UndoMove();
+            --pliesFromRoot;
+
             RaisePropertyChanged("Position", position);
 
             currentNode = currentNode.prevNode;
@@ -377,12 +388,23 @@ namespace MyShogi.Model.Shogi.Kifu
         public void ClearForward()
         {
             // 末尾にspecial moveが積んであるなら、棋譜を1行削除する必要がある。
-            if (currentNode.moves.Count!=0 && currentNode.moves[0].nextMove.IsSpecial())
+            if (EnableKifuList && currentNode.moves.Count!=0 && currentNode.moves[0].nextMove.IsSpecial())
                 RemoveKifu(true);
 
             // この枝の持つ指し手をすべて削除
             currentNode.moves.Clear();
+
+            // 現在の局面(currentNode)までの内容と棋譜ウィンドウを同期させる。
+            // 検討モードなどで棋譜ウィンドウと同期させていなかった時のための処理
+            if (EnableKifuList && pliesFromRoot + 1 != KifuList.Count())
+            {
+                // 棋譜が同期していないので現在行以降を削除
+
+                KifuList.RemoveRange(pliesFromRoot + 1 , KifuList.Count - (pliesFromRoot + 1));
+                RaisePropertyChanged("KifuList", KifuList);
+            }
         }
+
 
         /// <summary>
         /// rootから数えてselectedIndex目にある棋譜の局面に移動する。
@@ -401,9 +423,8 @@ namespace MyShogi.Model.Shogi.Kifu
             RewindToRoot();
             for(int i=0;i<selectedIndex;++i)
             {
-                if (currentNode.moves.Count == 0)
-                    break;
-                var move = currentNode.moves[0].nextMove;
+                // 本譜の手順を選択していく。棋譜ウィンドウに表示していたものを選んだのだからこれは合法。
+                var move = currentNode.selectedKifuMove.nextMove;
                 if (move.IsSpecial())
                     break; // DoMove()できないので終了
 

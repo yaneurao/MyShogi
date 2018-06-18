@@ -21,6 +21,21 @@ namespace MyShogi.Model.Shogi.Kifu
         public List<KifuMove> moves = new List<KifuMove>();
 
         /// <summary>
+        /// 本譜の手順のindex
+        /// moves[selectedKifuMoveIndex]が本譜(現在棋譜ウィンドウに表示されている)の手順
+        /// moves.Count!=0のときにおいて、moves[selectedKifuMoveIndex]が合法であることは保証されているものとする。
+        /// </summary>
+        public int selectedKifuMoveIndex;
+
+        /// <summary>
+        /// 本譜の手順
+        /// </summary>
+        public KifuMove selectedKifuMove
+        {
+            get { return (moves.Count == 0) ? null : moves[selectedKifuMoveIndex]; }
+        }
+
+        /// <summary>
         /// 一手前のnode
         /// </summary>
         public KifuNode prevNode;
