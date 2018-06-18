@@ -17,6 +17,12 @@ namespace MyShogi.View.Win2D
 
             mainDialog = mainDialog_;
 
+            // 現在の画面のdpiの影響を受けて、このウィンドウのWidth,Heightが大きくなっているはずなので
+            // それをベースに以降の計算を行うため、いくつかの値を保存しておく。
+
+            originalWidth = Width;
+            originalGroupBox2 = groupBox2.Location;
+
             // デモ用にバナーを描画しておく
 
             // (w,h)=(320,100)のつもりだが、dpi scalingのせいで
@@ -34,8 +40,12 @@ namespace MyShogi.View.Win2D
 
             // checkbox5,6がgroupbox4,5に属すると嫌だったのでgroupboxの外に配置しておいてあったので
             // それを移動させる。
-            checkBox5.Location = new Point(checkBox5.Location.X, checkBox5.Location.Y - 50);
-            checkBox6.Location = new Point(checkBox6.Location.X, checkBox6.Location.Y - 50);
+            {
+                // checkBox3と同じyにしたいが、これはgroupBox5に属するのでgroupBox5相対の座標になっている。
+                int y = groupBox5.Location.Y + checkBox3.Location.Y;
+                checkBox5.Location = new Point(checkBox5.Location.X, y);
+                checkBox6.Location = new Point(checkBox6.Location.X, y);
+            }
 
             // データバインドしておく。
             BindSetting();
@@ -47,6 +57,12 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private MainDialog mainDialog;
         private ControlBinder binder = new ControlBinder();
+
+        /// <summary>
+        /// ダイアログ生成時の値、各種。
+        /// </summary>
+        private int originalWidth;
+        private Point originalGroupBox2;
 
         private ImageLoader banner1 = new ImageLoader();
         private ImageLoader banner2 = new ImageLoader();
@@ -231,10 +247,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void ChangeToWideDialog()
         {
-            Width = 1600;
+            Width = originalWidth;
 
             // 後手の名前など
-            groupBox2.Location = new Point(813, 13);
+            groupBox2.Location = new Point(groupBox5.Location.X , groupBox1.Location.Y);
         }
 
         /// <summary>
@@ -242,10 +258,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void ChangeToNarrowDialog()
         {
-            Width = 800;
+            Width = originalWidth/2;
 
             // 後手の名前など
-            groupBox2.Location = new Point(13, 240);
+            groupBox2.Location = originalGroupBox2;
         }
 
         /// <summary>
