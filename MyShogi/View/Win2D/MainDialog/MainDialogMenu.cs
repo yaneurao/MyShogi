@@ -80,7 +80,8 @@ namespace MyShogi.View.Win2D
 
                             //[ファイルの種類]に表示される選択肢を指定する
                             //指定しないとすべてのファイルが表示される
-                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2;*.KIF2|PSN形式(*.PSN)|*.PSN|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
+                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2;*.KIF2|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*PSN2|"
+                                + "SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
                             fd.FilterIndex = 1;
                             fd.Title = "開く棋譜ファイルを選択してください";
                             //ダイアログを表示する
@@ -120,7 +121,8 @@ namespace MyShogi.View.Win2D
 
                             //[ファイルの種類]に表示される選択肢を指定する
                             //指定しないとすべてのファイルが表示される
-                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|PSN形式(*.PSN)|*.PSN|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
+                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
+                                + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
                             fd.FilterIndex = 1;
                             fd.Title = "保存する棋譜ファイルを選択してください";
                             //ダイアログを表示する
@@ -135,7 +137,8 @@ namespace MyShogi.View.Win2D
                                         case 1: kifuType = KifuFileType.KIF; break;
                                         case 2: kifuType = KifuFileType.KI2; break;
                                         case 3: kifuType = KifuFileType.PSN; break;
-                                        case 4: kifuType = KifuFileType.SFEN; break;
+                                        case 4: kifuType = KifuFileType.PSN2; break;
+                                        case 5: kifuType = KifuFileType.SFEN; break;
 
                                             // ファイル名から自動判別すべき
                                         default:
