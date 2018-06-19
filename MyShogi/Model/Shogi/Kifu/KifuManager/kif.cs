@@ -35,6 +35,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
             var isBody = false;
 
+            KifuHeader.header_dic.Clear();
+
             // 初期局面の遅延処理
             Func<string> lazyHead = () =>
             {
@@ -275,7 +277,8 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// Kif形式の文字列に変換
+        /// KIF形式の文字列に変換
+        /// これをこのままファイルに書き出すとKIF形式のファイルになる。
         /// </summary>
         /// <returns></returns>
         private string ToKifString()
@@ -296,6 +299,11 @@ namespace MyShogi.Model.Shogi.Kifu
             return sb.ToString();
         }
 
+        /// <summary>
+        /// KIF2形式の文字列に変換。
+        /// これをこのままファイルに書き出すとKIF2形式のファイルになる。
+        /// </summary>
+        /// <returns></returns>
         private string ToKi2String()
         {
             var sb = new StringBuilder();

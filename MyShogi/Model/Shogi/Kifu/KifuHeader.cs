@@ -81,6 +81,7 @@ namespace MyShogi.Model.Shogi.Kifu
             };
             rootBoardType = BoardType.NoHandicap;
         }
+
         #endregion
 
         #region privates

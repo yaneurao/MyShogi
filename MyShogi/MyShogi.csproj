@@ -86,6 +86,10 @@
     <Compile Include="Model\Shogi\Kifu\KifuManager\psn.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuManager\sfen.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuMoveTime.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerCommands.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerPrivates.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerProperties.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerWorker.cs" />
     <Compile Include="Model\Shogi\LocalServer\TimeManagement\PlayTimer.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\BoardSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\GameSetting.cs" />
