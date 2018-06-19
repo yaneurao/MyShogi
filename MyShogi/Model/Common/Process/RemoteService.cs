@@ -30,7 +30,7 @@ namespace MyShogi.Model.Common.Process
 
             LogName = string.Empty;
             IsOutLog = outLog;
-            Encoding = Encoding.GetEncoding("Shift_JIS");
+            Encoding = System.Text.Encoding.GetEncoding("Shift_JIS");
         }
 
         /// <summary>

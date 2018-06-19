@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Test;
 
 namespace MyShogi.View.Win2D
@@ -63,7 +64,75 @@ namespace MyShogi.View.Win2D
                 var item_file = new ToolStripMenuItem();
                 item_file.Text = "ファイル";
                 menu.Items.Add(item_file);
-                // あとで追加する。
+
+                // -- 「ファイル」配下のメニュー
+                {
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "棋譜を開く";
+                        item.Click += (sender, e) =>
+                        {
+                            var ofd = new OpenFileDialog();
+
+                            //[ファイルの種類]に表示される選択肢を指定する
+                            //指定しないとすべてのファイルが表示される
+                            ofd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2;*.KIF2|PSN形式(*.PSN)|*.PSN|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
+                            ofd.FilterIndex = 1;
+                            ofd.Title = "開く棋譜ファイルを選択してください";
+                            //ダイアログを表示する
+                            if (ofd.ShowDialog() == DialogResult.OK)
+                            {
+                                var filename = ofd.FileName;
+                                try
+                                {
+                                    var text = FileIO.ReadFile(filename);
+
+                                    //var error = manager.FromString(psn);
+
+                                    //Console.WriteLine(manager.Tree.position.Pretty());
+                                    //Console.WriteLine("Error = " + error);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("ファイル読み込みエラー");
+                                }
+                            }
+                        };
+                        item_file.DropDownItems.Add(item);
+                    }
+
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "棋譜の上書き保存";
+                        item.Click += (sender, e) =>
+                        {
+
+                        };
+                        item_file.DropDownItems.Add(item);
+                    }
+
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "棋譜の名前をつけて保存";
+                        item.Click += (sender, e) =>
+                        {
+
+                        };
+                        item_file.DropDownItems.Add(item);
+                    }
+
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "局面の保存";
+                        item.Click += (sender, e) =>
+                        {
+
+                        };
+                        item_file.DropDownItems.Add(item);
+                    }
+                }
+
+
 
                 var item_playgame = new ToolStripMenuItem();
                 item_playgame.Text = "対局";

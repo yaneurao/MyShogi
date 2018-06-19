@@ -71,6 +71,8 @@
     <Compile Include="App\TheApp.cs" />
     <Compile Include="Model\Common\Process\RemoteService.cs" />
     <Compile Include="Model\Common\Utility\ControlBinder.cs" />
+    <Compile Include="Model\Common\Utility\Encode.cs" />
+    <Compile Include="Model\Common\Utility\FileIO.cs" />
     <Compile Include="Model\Common\Utility\Log.cs" />
     <Compile Include="Model\Common\Utility\Scanner.cs" />
     <Compile Include="Model\Common\Utility\StringExtensions.cs" />
