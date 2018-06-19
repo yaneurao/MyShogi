@@ -1,19 +1,58 @@
 ﻿
-ToDo: 明日やる
+ToDo: 今日やる
 
+- 対局後の盤面を動かす処理実装その1
 - 分岐棋譜の処理
-- 棋譜の書き出し
-- 棋譜の読み込み
-//
 - エンジンのThink、ponderなどきちんと処理
-- 思考エンジンのプロセスの優先度を下げるオプションを追加(ShogiGUI、WhaleWatcherにある)
-/// 作業中
+
+
+■　2018/06/19
+
+
+- 対局棋譜の読み書きその2
+	- 対局中はメニュー項目無効化。
+	- Shogi.Kifu.KufuHeader追加。
+	- Shogi.Kifu.KifuManager/追加。KifuManagerをpartial classにしてコードの整理。
+		- Shogi.Kifu.KifuManager/sfen.cs追加。
+		- Shogi.Kifu.KifuManager/psn.cs追加。
+		- Shogi.Kifu.KifuManager/kif.cs追加。
+		- Shogi.Kifu.KifuManager/json.cs追加。
+
+
+- Model.Common.Utility.Encode.csのDetectEncoding、BOMついてる以外のencoding判定に対応をMizarさんに依頼。
+
+
+- 対局棋譜の読み書きその1
+	- メニューに、対局棋譜の読み込み、対局棋譜の書き出し追加。
+	- Common.Utility.FileIO.cs追加。
+	- Common.Utility.Encode.cs追加。
+- aboutダイアログのDesigner.csも96dpiに変更しといた。
+
+
+- 起動時に現在の局面から開始してしまうと棋譜ウィンドウに「開始局面」が表示されていない件の修正。
+	- 表示されてた。LocalGameServerのコンストラクタで対局盤面を初期化設定するから、イベントハンドラが未設定で呼び出されていないだけだった。
+	- まあいいや。
+- 棋譜ウィンドウで局面を移動させて現在の局面から対局を再開させた時の処理追加
+	- KifuTree.ply → gamePlyにrename
+	- KifuTree.pliesFromRoot追加。
+	- currentNode.selectedKifuMove追加。
+	- 対局の再開時に棋譜が同期されるようになった。
+
+	
+- 局面戻した時に時間が反映しなくなっている。修正せねば。
+	- ああ、終局後に戻す処理は未実装であった。
+	- 反映するように修正した。
+- TimeUpの時にIncTimeしていたの修正。(今度こそ！)
+- IncTimeが有効でIncTime == 0の時に持ち時間設定のところに「切れ負け」と出力していなかったの修正。
+	- TimeSetting.IsValid()追加。
+- .NET Frameworkのターゲットバージョンを4.6.1に戻す。
+	- いま、4.7.2関係ないみたいだし、4.7.2、WindowsUpdateでインストールされてないのが普通みたいだし。
 
 
 ■　2018/06/18
 
 
-- 局面戻した時に時間が反映しなくなっている。修正せねば。
+- TODO.md追加
 
 
 - IncTimeの処理、指し手を指したときにTimeUpになっていなければ加算するように修正。

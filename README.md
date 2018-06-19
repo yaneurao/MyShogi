@@ -34,7 +34,7 @@ MyShogiは、オープンソースの将棋ソフト用GUIです。
 - 盤面編集機能
 - PV(読み筋)の可視化
 - 形勢のグラフ表示
-- KIF/KI2/CSA/SFEN/PSN/[PSN2](MyShogi/docs/PSN2format.md)形式の棋譜の入出力機能。分岐棋譜対応。
+- KIF/KI2/CSA/SFEN/PSN/[PSN2](MyShogi/docs/PSN2format.md)/JSON/JKF/LiveJSON形式の棋譜の入出力機能。分岐棋譜対応。
 - 入玉宣言勝ちの条件変更(24点法、27点法、トライルール)
 
 # 商用版について
