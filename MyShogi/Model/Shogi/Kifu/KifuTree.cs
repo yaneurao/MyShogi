@@ -97,7 +97,21 @@ namespace MyShogi.Model.Shogi.Kifu
         /// rootの局面の局面タイプ
         /// 任意局面の場合は、BoardType.Others
         /// </summary>
-        public BoardType rootBoardType;
+        public BoardType rootBoardType
+        {
+            get { return rootBoardType_; }
+            set {
+                // KifuHeaderもrootBoardTypeを持っているので、そちらにも反映させなくてはならない。
+                rootBoardType_ = KifuHeader.rootBoardType = value;
+            }
+        }
+        private BoardType rootBoardType_;
+
+        /// <summary>
+        /// 棋譜ファイルからの入出力絡み
+        /// 対局者氏名などもここから取り出す。
+        /// </summary>
+        public KifuHeader KifuHeader { get; set; } = new KifuHeader();
 
         /// <summary>
         /// rootの局面図。sfen形式で。

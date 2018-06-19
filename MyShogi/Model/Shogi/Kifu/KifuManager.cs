@@ -94,10 +94,9 @@ namespace MyShogi.Model.Shogi.Kifu
         public Position Position { get { return Tree.position; } }
 
         /// <summary>
-        /// 棋譜ファイルからの入出力絡み
-        /// 対局者氏名などもここから取り出す。
+        /// 棋譜のヘッダにある対局者氏名などを格納するクラス
         /// </summary>
-        public KifuHeader KifuHeader { get; set; } = new KifuHeader();
+        public KifuHeader KifuHeader { get { return Tree.KifuHeader; } }
 
         // -------------------------------------------------------------------------
         // public methods
