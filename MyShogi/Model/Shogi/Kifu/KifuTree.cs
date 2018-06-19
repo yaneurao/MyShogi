@@ -48,6 +48,8 @@ namespace MyShogi.Model.Shogi.Kifu
             // 対局情報などを保存するためにここを確保する。
             rootKifuMove = new KifuMove(Move.NONE, rootNode, KifuMoveTimes.Zero);
 
+            kifuWindowMoves = new List<KifuMove>();
+
             RaisePropertyChanged("Position", position);
         }
 
@@ -265,6 +267,11 @@ namespace MyShogi.Model.Shogi.Kifu
             AddKifu(m.nextMove , thinkingTime);
             
             position.DoMove(m.nextMove);
+
+            // rootNodeからの指し手。これは棋譜リストと同期させている。
+            if (EnableKifuList)
+                kifuWindowMoves.Add(m);
+
             ++pliesFromRoot;
 
             RaisePropertyChanged("Position", position);
@@ -296,6 +303,11 @@ namespace MyShogi.Model.Shogi.Kifu
                 RemoveKifu(true);
 
             position.UndoMove();
+
+            // rootNodeからの指し手。これは棋譜リストと同期させている。
+            if (EnableKifuList)
+                kifuWindowMoves.RemoveAt(kifuWindowMoves.Count-1); // RemoveLast()
+
             --pliesFromRoot;
 
             RaisePropertyChanged("Position", position);
@@ -434,17 +446,22 @@ namespace MyShogi.Model.Shogi.Kifu
             if (n == selectedIndex)
                 return;
 
+            var e = EnableKifuList;
+            EnableKifuList = false; // いま棋譜リストが更新されると困る
+
             RewindToRoot();
-            for(int i=0;i<selectedIndex;++i)
+            for(int i=0;i<selectedIndex && i < kifuWindowMoves.Count; ++i)
             {
-                // 本譜の手順を選択していく。棋譜ウィンドウに表示していたものを選んだのだからこれは合法。
-                var move = currentNode.selectedKifuMove.nextMove;
-                if (move.IsSpecial())
+                // 棋譜ウィンドウに表示していたものを選んだのだからこれは合法。
+                var move = kifuWindowMoves[i];
+                if (move.nextMove.IsSpecial())
                     break; // DoMove()できないので終了
 
                 // special moveでなければ、この指し手のlegalityは担保されている。
                 DoMove(move);
             }
+
+            EnableKifuList = e; // 元の値
         }
 
         /// <summary>
@@ -466,7 +483,15 @@ namespace MyShogi.Model.Shogi.Kifu
                 return RootKifuMoveTimes;
         }
 
-        // -- 以下private
+        // -- 以下 private members
+
+        /// <summary>
+        /// 棋譜ウィンドウに表示されている指し手の集合
+        /// 棋譜ウィンドウの指し手をクリックしてcurrentNodeから先に進む時に必要となる。
+        /// 
+        /// EnableKifuListがtrueのときに、DoMove()/UndoMove()に応じて自動更新される。
+        /// </summary>
+        private List<KifuMove> kifuWindowMoves;
 
         /// <summary>
         /// メインウインドウの棋譜ウィンドウに表示する棋譜文字列に変換する。

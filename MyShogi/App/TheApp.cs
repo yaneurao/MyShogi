@@ -74,6 +74,7 @@ namespace MyShogi.App
             gameServer.AddPropertyChangedHandler("Position", mainDialog.gameScreen.PositionChanged);
             gameServer.AddPropertyChangedHandler("TurnChanged", mainDialog.gameScreen.TurnChanged);
             gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.gameScreen.TurnChanged);
+            gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.UpdateMenuItems);
             gameServer.AddPropertyChangedHandler("EngineInitializing", mainDialog.gameScreen.EngineInitializingChanged);
             gameServer.AddPropertyChangedHandler("RestTimeChanged", mainDialog.gameScreen.RestTimeChanged);
             gameServer.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);

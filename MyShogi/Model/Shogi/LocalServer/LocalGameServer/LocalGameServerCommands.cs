@@ -164,10 +164,17 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (!InTheGame)
                 {
                     var error = kifuManager.FromString(kifuText);
-                    MessageBox.Show("棋譜の読み込みに失敗しました。\n" + error , "読み込みエラー");
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        MessageBox.Show("棋譜の読み込みに失敗しました。\n" + error, "読み込みエラー");
 
-                    // 末尾の局面に..
-                    Console.WriteLine(kifuManager.Position.Pretty());
+                        kifuManager.Init(); // 不正な局面のままになるとまずいので初期化。
+
+                    } else
+                    {
+                        // 末尾の局面に..
+                        //Console.WriteLine(kifuManager.Position.Pretty());
+                    }
                 }
             });
         }

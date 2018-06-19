@@ -65,6 +65,9 @@ namespace MyShogi.View.Win2D
                 item_file.Text = "ファイル";
                 menu.Items.Add(item_file);
 
+                // 対局中は、ファイルメニュー項目は丸ごと無効化
+                item_file.Enabled = gameServer != null ? !gameServer.InTheGame : false;
+
                 // -- 「ファイル」配下のメニュー
                 {
                     {
@@ -94,9 +97,6 @@ namespace MyShogi.View.Win2D
                                 }
                             }
                         };
-                        // 対局中は、棋譜を開くメニュー項目は無効化
-                        item.Enabled = gameServer != null ? !gameServer.InTheGame : false;
-
                         item_file.DropDownItems.Add(item);
                     }
 
