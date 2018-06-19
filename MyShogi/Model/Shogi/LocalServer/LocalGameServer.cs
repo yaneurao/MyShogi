@@ -1,9 +1,5 @@
-﻿using MyShogi.Model.Common.ObjectModel;
-using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Kifu;
-using MyShogi.Model.Shogi.Player;
-using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
+using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {

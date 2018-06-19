@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Test;
 
 namespace MyShogi.View.Win2D
@@ -75,17 +76,17 @@ namespace MyShogi.View.Win2D
                         item.Text = "棋譜を開く";
                         item.Click += (sender, e) =>
                         {
-                            var ofd = new OpenFileDialog();
+                            var fd = new OpenFileDialog();
 
                             //[ファイルの種類]に表示される選択肢を指定する
                             //指定しないとすべてのファイルが表示される
-                            ofd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2;*.KIF2|PSN形式(*.PSN)|*.PSN|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
-                            ofd.FilterIndex = 1;
-                            ofd.Title = "開く棋譜ファイルを選択してください";
+                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2;*.KIF2|PSN形式(*.PSN)|*.PSN|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
+                            fd.FilterIndex = 1;
+                            fd.Title = "開く棋譜ファイルを選択してください";
                             //ダイアログを表示する
-                            if (ofd.ShowDialog() == DialogResult.OK)
+                            if (fd.ShowDialog() == DialogResult.OK)
                             {
-                                var filename = ofd.FileName;
+                                var filename = fd.FileName;
                                 try
                                 {
                                     var kifu_text = FileIO.ReadFile(filename);
@@ -115,7 +116,42 @@ namespace MyShogi.View.Win2D
                         item.Text = "棋譜の名前をつけて保存";
                         item.Click += (sender, e) =>
                         {
+                            var fd = new SaveFileDialog();
 
+                            //[ファイルの種類]に表示される選択肢を指定する
+                            //指定しないとすべてのファイルが表示される
+                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|PSN形式(*.PSN)|*.PSN|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
+                            fd.FilterIndex = 1;
+                            fd.Title = "保存する棋譜ファイルを選択してください";
+                            //ダイアログを表示する
+                            if (fd.ShowDialog() == DialogResult.OK)
+                            {
+                                var filename = fd.FileName;
+                                try
+                                {
+                                    KifuFileType kifuType;
+                                    switch(fd.FilterIndex)
+                                    {
+                                        case 1: kifuType = KifuFileType.KIF; break;
+                                        case 2: kifuType = KifuFileType.KI2; break;
+                                        case 3: kifuType = KifuFileType.PSN; break;
+                                        case 4: kifuType = KifuFileType.SFEN; break;
+
+                                            // ファイル名から自動判別すべき
+                                        default:
+                                            kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
+                                            if (kifuType == KifuFileType.UNKNOWN)
+                                                kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
+                                            break;
+                                    }
+
+                                    gameServer.KifuWriteCommand(filename , kifuType);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("ファイル書き出しエラー");
+                                }
+                            }
                         };
                         item_file.DropDownItems.Add(item);
                     }

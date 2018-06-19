@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
 
@@ -172,9 +173,27 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     } else
                     {
-                        // 末尾の局面に..
-                        //Console.WriteLine(kifuManager.Position.Pretty());
+                        // 読み込みが完了すれば自動的に末尾の局面に行っているはず。
                     }
+                }
+            });
+        }
+
+        public void KifuWriteCommand(string path , Kifu.KifuFileType type)
+        {
+            AddCommand(
+            () =>
+            {
+                // ゲーム中でも書き出せる
+                // (メニュー上、オフにはなっているが..)
+
+                try
+                {
+                    var content = kifuManager.ToString(type);
+                    FileIO.WriteFile(path, content);
+                } catch
+                {
+                    MessageBox.Show("棋譜ファイルの書き出しに失敗しました。");
                 }
             });
         }
