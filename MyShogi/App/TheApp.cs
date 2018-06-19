@@ -77,6 +77,7 @@ namespace MyShogi.App
             gameServer.AddPropertyChangedHandler("EngineInitializing", mainDialog.gameScreen.EngineInitializingChanged);
             gameServer.AddPropertyChangedHandler("RestTimeChanged", mainDialog.gameScreen.RestTimeChanged);
             gameServer.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);
+            gameServer.AddPropertyChangedHandler("GameServerStarted", mainDialog.UpdateMenuItems);
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 
@@ -92,8 +93,8 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems);
 
-            // GameServerなどの初期化が終わったのでメニュー項目の再初期化を行う。
-            mainDialog.UpdateMenuItems();
+            // 初期化が終わったのでgameServerの起動を行う。
+            gameServer.Start();
 
             // 終了するときに設定ファイルに書き出すコード
             Application.ApplicationExit += new EventHandler((sender,e) =>

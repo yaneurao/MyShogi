@@ -35,7 +35,13 @@ namespace MyShogi.Model.Shogi.LocalServer
          * 対局時間が過ぎて、対局が終了しているのに、ユーザーからの指し手コマンドを受理してしまうというようなことも起こりえない。
          */
 
-        public LocalGameServer()
+        /// <summary>
+        /// LocalGameServerのコンストラクタ的な何か。
+        /// LocalGameServerをnewした側で、このクラスのpropertyに対してAddPropertyChangedHandler()で
+        /// ハンドラを設定したあとにこのStart()を呼び出すことで、worker threadが起動して、
+        /// このクラスが使えるようになる。
+        /// </summary>
+        public void Start()
         {
             // Position,KifuListは、kifuManagerから半自動でデータバインドする。
             // (それぞれがimmutable objectではないため、Clone()が必要になるので)
@@ -49,6 +55,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             // ゲームの対局設定。GameStart()を呼び出すまでdefaultで何かを埋めておかなくてはならない。
             // 前回の対局時のものを描画するのもおかしいので、defaultのものを設定しておく。
             GameSetting = new GameSetting();
+
+            // このクラスが開始したことを示す仮想プロパティ
+            RaisePropertyChanged("GameServerStarted",null);
 
             // 対局監視スレッドを起動して回しておく。
             new Thread(thread_worker).Start();
@@ -197,7 +206,11 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         // 仮想プロパティ
         // 残り消費時間が変更になった時に呼び出される。
-        //public bool RestTimeChanged { get; set; }
+        //public bool RestTimeChanged { get; }
+
+        // 仮想プロパティ
+        // このクラスのStart()が呼び出された時に呼び出される。
+        //public bool GameServerStarted { get; }
 
         /// <summary>
         /// 盤面反転
