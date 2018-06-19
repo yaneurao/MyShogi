@@ -1,4 +1,6 @@
-﻿using MyShogi.Model.Shogi.Core;
+﻿using System;
+using System.Windows.Forms;
+using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
 
 namespace MyShogi.Model.Shogi.LocalServer
@@ -161,7 +163,11 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 if (!InTheGame)
                 {
-                    kifuManager.FromString(kifuText);
+                    var error = kifuManager.FromString(kifuText);
+                    MessageBox.Show("棋譜の読み込みに失敗しました。\n" + error , "読み込みエラー");
+
+                    // 末尾の局面に..
+                    Console.WriteLine(kifuManager.Position.Pretty());
                 }
             });
         }

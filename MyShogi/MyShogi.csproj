@@ -83,6 +83,7 @@
     <Compile Include="Model\Shogi\Kifu\KifuManager\csa.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuManager\json.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuManager\kif.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuException.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuManager\psn.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuManager\sfen.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuMoveTime.cs" />
