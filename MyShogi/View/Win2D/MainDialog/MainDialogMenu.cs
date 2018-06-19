@@ -85,12 +85,8 @@ namespace MyShogi.View.Win2D
                                 var filename = ofd.FileName;
                                 try
                                 {
-                                    var text = FileIO.ReadFile(filename);
-
-                                    //var error = manager.FromString(psn);
-
-                                    //Console.WriteLine(manager.Tree.position.Pretty());
-                                    //Console.WriteLine("Error = " + error);
+                                    var kifu_text = FileIO.ReadFile(filename);
+                                    gameServer.KifuReadCommand(kifu_text);
                                 }
                                 catch
                                 {
@@ -98,6 +94,9 @@ namespace MyShogi.View.Win2D
                                 }
                             }
                         };
+                        // 対局中は、棋譜を開くメニュー項目は無効化
+                        item.Enabled = gameServer != null ? !gameServer.InTheGame : false;
+
                         item_file.DropDownItems.Add(item);
                     }
 

@@ -129,7 +129,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public string DisplayName(Color c)
         {
-            return kifuManager.GetPlayerName(c);
+            return kifuManager.KifuHeader.GetPlayerName(c);
         }
 
         /// <summary>
@@ -356,6 +356,22 @@ namespace MyShogi.Model.Shogi.LocalServer
             });
         }
 
+        /// <summary>
+        /// 棋譜の読み込みコマンド
+        /// </summary>
+        /// <param name="kifuText"></param>
+        public void KifuReadCommand(string kifuText)
+        {
+            AddCommand(
+            () =>
+            {
+                if (!InTheGame)
+                {
+                    kifuManager.FromString(kifuText);
+                }
+            });
+        }
+
         #endregion
 
         #region 依存性のあるプロパティの処理
@@ -420,7 +436,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                         break;
                 }
 
-                kifuManager.SetPlayerName(c, name);
+                kifuManager.KifuHeader.SetPlayerName(c, name);
             }
 
             // 持ち時間などの設定が必要なので、コピーしておく。

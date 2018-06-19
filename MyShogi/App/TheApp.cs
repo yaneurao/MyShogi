@@ -91,12 +91,9 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems);
-            
-            // MainDialogViewModelが変更されたときにMainDialogに変更がかからないといけないのでそのハンドラの設定。
 
-
-            // Notifyクラスのテスト(あとで消す)
-            //NotifyTest.Test();
+            // GameServerなどの初期化が終わったのでメニュー項目の再初期化を行う。
+            mainDialog.UpdateMenuItems();
 
             // 終了するときに設定ファイルに書き出すコード
             Application.ApplicationExit += new EventHandler((sender,e) =>

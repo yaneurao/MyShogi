@@ -79,6 +79,12 @@
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuHeader.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuManager\csa.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuManager\json.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuManager\kif.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuManager\psn.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuManager\sfen.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuMoveTime.cs" />
     <Compile Include="Model\Shogi\LocalServer\TimeManagement\PlayTimer.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\BoardSetting.cs" />

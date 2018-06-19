@@ -3,7 +3,7 @@
 namespace MyShogi.Model.Common.Utility
 {
     /// <summary>
-    /// 各種Utility
+    /// Encode判定など
     /// </summary>
     public static class Encode
     {
