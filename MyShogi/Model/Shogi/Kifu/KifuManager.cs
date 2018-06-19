@@ -177,39 +177,52 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="filename"></param>
         public string FromString(string content /* , KifuFileType kf */)
         {
-            Init();
+            try
+            {
+                // イベントの一時抑制
+                Tree.PropertyChangedEventEnable = false;
 
-            var lines = content.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+                Init();
 
-            if (lines.Length == 0)
-                return "棋譜が空でした。";
-            var line = lines[0];
+                var lines = content.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
 
-            // sfen形式なのか？
-            if (line.StartsWith("sfen") || line.StartsWith("startpos"))
-                return FromSfenString(line);
+                if (lines.Length == 0)
+                    return "棋譜が空でした。";
+                var line = lines[0];
 
-            // PSN形式なのか？
-            if (line.StartsWith("[Sente"))
-                return FromPsnString(lines , KifuFileType.PSN);
+                // sfen形式なのか？
+                if (line.StartsWith("sfen") || line.StartsWith("startpos"))
+                    return FromSfenString(line);
 
-            // PSN2形式なのか？
-            if (line.StartsWith("[BLACK"))
-                return FromPsnString(lines , KifuFileType.PSN2);
+                // PSN形式なのか？
+                if (line.StartsWith("[Sente"))
+                    return FromPsnString(lines, KifuFileType.PSN);
 
-            // CSA形式なのか？
-            if (line.StartsWith("V2")) // 将棋所だと"V2.2"など書いてあるはず。
-                return FromCsaString(lines, KifuFileType.CSA);
+                // PSN2形式なのか？
+                if (line.StartsWith("[BLACK"))
+                    return FromPsnString(lines, KifuFileType.PSN2);
 
-            // JSON形式なのか？
-            if (line.StartsWith("{"))
-                return FromJsonString(content, KifuFileType.JSON);
+                // CSA形式なのか？
+                if (line.StartsWith("V2")) // 将棋所だと"V2.2"など書いてあるはず。
+                    return FromCsaString(lines, KifuFileType.CSA);
 
-            // KIF/KI2形式なのか？
-            if (line.StartsWith("#") || line.IndexOf("：") > 0)
-                return FromKifString(lines, KifuFileType.KIF);
+                // JSON形式なのか？
+                if (line.StartsWith("{"))
+                    return FromJsonString(content, KifuFileType.JSON);
 
-            return string.Empty;
+                // KIF/KI2形式なのか？
+                if (line.StartsWith("#") || line.IndexOf("：") > 0)
+                    return FromKifString(lines, KifuFileType.KIF);
+
+                return string.Empty;
+            }
+            finally
+            {
+                // イベントの一時抑制を解除して、更新通知を送る。
+                Tree.PropertyChangedEventEnable = true;
+                Tree.RaisePropertyChanged("KifuList",Tree.position);
+                Tree.RaisePropertyChanged("Position",Tree.KifuList);
+            }
         }
 
         // 読み込み形式手動指定、とりあえず各形式のルーチンを直接テストするため。
@@ -248,6 +261,10 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="kf"></param>
         public string ToString(KifuFileType kt)
         {
+            // イベントの一時抑制
+            // KifuListの更新通知がいっぱい発生すると棋譜ウィンドウが乱れるため。
+            Tree.PropertyChangedEventEnable = false;
+
             // 局面をrootに移動(あとで戻す)
             var moves = Tree.RewindToRoot();
 
@@ -289,6 +306,8 @@ namespace MyShogi.Model.Shogi.Kifu
             // 呼び出された時の局面に戻す
             Tree.RewindToRoot();
             Tree.FastForward(moves);
+
+            Tree.PropertyChangedEventEnable = true;
 
             return result;
         }

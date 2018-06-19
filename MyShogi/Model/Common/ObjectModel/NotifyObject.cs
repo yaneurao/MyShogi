@@ -120,6 +120,9 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <param name="name"></param>
         public void RaisePropertyChanged(PropertyChangedEventArgs e)
         {
+            if (!PropertyChangedEventEnable)
+                return;
+
             // いますぐ呼び出す
             PropertyChangedEventHandler h = null;
             lock (lockObject)
