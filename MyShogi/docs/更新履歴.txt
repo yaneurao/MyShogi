@@ -1,12 +1,62 @@
 ﻿
 ToDo: 今日やる
 
+- 棋譜書き込み後に棋譜ウィンドウで局面移動すると例外で落ちるの修正。
+- PSNとPSN2、消費時間書き出してないの修正。
 - 対局後の盤面を動かす処理実装その1
 - 分岐棋譜の処理
 - エンジンのThink、ponderなどきちんと処理
 
 
 ■　2018/06/19
+
+
+- 実装済みの機能.md、プロジェクトに追加。
+
+
+- PSN2形式の読み書きに対応。
+	- PSNとPSN2、消費時間書き出してないや。あとで修正する。
+
+
+- 棋譜の読み込み、書き込み時に棋譜ウィンドウがちらつくの抑制する。
+	- イベントをUpdateイベント1回で収まるようにする。
+	- NotifyObjectでイベント抑制してもRaise..を直接呼び出した時のイベントが発生していたの修正。
+	- 棋譜書き込み後に棋譜ウィンドウで局面移動すると例外で落ちるのはあとで修正する。
+	
+
+- PSNの書き出しに対応。
+	- KifuFileTypeExtensions追加
+	- PSNでの書き出し動作まで出来るようになった。
+
+
+- PSNのファイルは読み込み出来るみたいなのでこのファイルで読み込みのテストする。
+	- KifuTreeにkifuWindowMoves追加。
+	- PSNファイルの読み込み～棋譜ウィンドウクリックでの局面の移動～現在の局面からの対局、うまく動いた。
+	- 対局中はメニューのファイルを丸ごと無効に設定するようにした。
+
+
+- 対局棋譜の読み書きその3
+	- Kifファイルの読み込み、例外を投げないようにtry～catchで囲んで、エラー内容を必ずreturnするようにした。
+	- KifuException.cs追加。
+	- parseがエラーになる件は、Mizarさんに修正を依頼。
+
+
+- Kif.cs BoardTypeでの初期化部分、リファクタリング。
+- LocalGameServer/追加	LocalGameServerをpartialにして分離。
+	- LocalGameServerCommands.cs追加
+	- LocalGameServerProperties.cs追加
+	- LocalGameServerWorker.cs追加
+
+
+- Kifの読み込みルーチン、MizarさんのwipをMizarさんの許可の元、人力でマージ。
+	- そこそこマージできたのでいったんpush
+
+
+- LocalGameServerに"GameServerStarted"の仮想プロパティ追加。
+	- これを用いてMenuのupdate handlerの初期化を行うように変更。
+
+
+- TODO.mdをプロジェクトに追加。
 
 
 - 対局棋譜の読み書きその2
