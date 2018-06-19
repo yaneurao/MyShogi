@@ -97,78 +97,31 @@ namespace MyShogi.Model.Shogi.Kifu
                         case "手合割":
                             if (isBody) return $"対局開始後にヘッダが指定されました: {line}";
                             KifuHeader.header_dic.Add(headerKey, headerValue);
+
+                            // 局面を指定されたBoardTypeで初期化する。
+                            void SetTree(BoardType bt)
+                            {
+                                Tree.rootSfen = bt.ToSfen();
+                                Tree.position.SetSfen(Tree.rootSfen);
+                                Tree.rootBoardType = bt;
+                            }
                             switch (headerValue)
                             {
-                                case "平手":
-                                    Tree.rootSfen = Sfens.HIRATE;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.NoHandicap;
-                                    goto nextline;
-                                case "香落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_KYO;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.HandicapKyo;
-                                    break;
-                                case "右香落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_RIGHT_KYO;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.HandicapRightKyo;
-                                    break;
-                                case "角落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_KAKU;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.HandicapKaku;
-                                    break;
-                                case "飛車落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_HISYA;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.HandicapHisya;
-                                    break;
-                                case "飛香落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_HISYA_KYO;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.HandicapHisyaKyo;
-                                    break;
-                                case "二枚落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_2;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.Handicap2;
-                                    break;
-                                case "三枚落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_3;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.Handicap3;
-                                    break;
-                                case "四枚落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_4;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.Handicap4;
-                                    break;
-                                case "五枚落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_5;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.Handicap5;
-                                    break;
-                                case "左五枚落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_LEFT_5;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.HandicapLeft5;
-                                    break;
-                                case "六枚落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_6;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.Handicap6;
-                                    break;
-                                case "八枚落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_8;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.Handicap8;
-                                    break;
-                                case "十枚落ち":
-                                    Tree.rootSfen = Sfens.HANDICAP_10;
-                                    Tree.position.SetSfen(Tree.rootSfen);
-                                    Tree.rootBoardType = BoardType.Handicap10;
-                                    break;
+                                case "平手":   SetTree(BoardType.NoHandicap);  goto nextline;
+                                case "香落ち": SetTree(BoardType.HandicapKyo);  goto nextline;
+                                case "右香落ち": SetTree(BoardType.HandicapRightKyo); goto nextline;
+                                case "角落ち": SetTree(BoardType.HandicapKaku); goto nextline;
+                                case "飛車落ち": SetTree(BoardType.HandicapHisya); goto nextline;
+                                case "飛香落ち": SetTree(BoardType.HandicapHisyaKyo); goto nextline;
+                                case "二枚落ち": SetTree(BoardType.Handicap2); goto nextline;
+                                case "三枚落ち": SetTree(BoardType.Handicap3); goto nextline;
+                                case "四枚落ち": SetTree(BoardType.Handicap4); goto nextline;
+                                case "五枚落ち": SetTree(BoardType.Handicap5); goto nextline;
+                                case "左五枚落ち": SetTree(BoardType.HandicapLeft5); goto nextline;
+                                case "六枚落ち": SetTree(BoardType.Handicap6); goto nextline;
+                                case "八枚落ち": SetTree(BoardType.Handicap8); goto nextline;
+                                case "十枚落ち": SetTree(BoardType.Handicap10); goto nextline;
+
                                 default:
                                     Tree.rootBoardType = BoardType.Others;
                                     break;
