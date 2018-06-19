@@ -203,7 +203,10 @@ namespace MyShogi.Model.Shogi.Kifu
             return string.Empty;
         }
 
-
+        /// <summary>
+        /// 局面のCSA文字列化。これをファイルに保存するとCSA形式のファイルになる。
+        /// </summary>
+        /// <returns></returns>
         private string ToCsaString()
         {
             var sb = new StringBuilder();
@@ -225,7 +228,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
             while (Tree.currentNode.moves.Count != 0)
             {
-                var m = Tree.currentNode.moves[0].nextMove;
+                var move = Tree.currentNode.moves[0];
+                var m = move.nextMove;
 
                 switch (m)
                 {
@@ -264,6 +268,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 // 現時点の実装としては秒未満切り捨てとして出力。
                 sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), System.Math.Truncate(thinkingTime.TotalSeconds)).AppendLine();
 
+                Tree.DoMove(move);
             }
             return sb.ToString();
         }
