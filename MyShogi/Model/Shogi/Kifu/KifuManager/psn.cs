@@ -20,6 +20,7 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             // 消費時間、残り時間、消費時間を管理する。
             var times = KifuMoveTimes.Zero;
+            var timeSettings = KifuTimeSettings.TimeLimitless;
 
             var lineNo = 1;
 
@@ -34,28 +35,40 @@ namespace MyShogi.Model.Shogi.Kifu
                     var m1 = r1.Match(line);
                     if (m1.Success)
                     {
-                        var token = m1.Groups[1].Value;
+                        var token = m1.Groups[1].Value.ToLower();
                         var body = m1.Groups[2].Value;
 
                         switch (token)
                         {
-                            case "Sente":
-                            case "BLACK":
+                            case "sente":
+                            case "black":
                                 KifuHeader.PlayerNameBlack = body;
                                 break;
 
-                            case "Gote":
-                            case "WHITE":
+                            case "gote":
+                            case "white":
                                 KifuHeader.PlayerNameWhite = body;
                                 break;
 
-                            case "SFEN":
+                            case "sfen":
                                 // 将棋所で出力したPSNファイルはここに必ず"SFEN"が来るはず。平手の局面であっても…。
                                 // 互換性のためにも、こうなっているべきだろう。
 
                                 Tree.rootSfen = body;
                                 Tree.position.SetSfen(body);
                                 Tree.rootBoardType = BoardType.Others;
+                                break;
+
+                            case "blacktimesetting":
+                                var black_setting = KifuTimeSetting.FromKifuString(body);
+                                if (black_setting != null)
+                                    timeSettings.Players[(int)Color.BLACK] = black_setting;
+                                break;
+
+                            case "whitetimesetting":
+                                var white_setting = KifuTimeSetting.FromKifuString(body);
+                                if (white_setting != null)
+                                    timeSettings.Players[(int)Color.WHITE] = white_setting;
                                 break;
                         }
                     }
@@ -413,8 +426,12 @@ namespace MyShogi.Model.Shogi.Kifu
             }
             else if (kt == KifuFileType.PSN2)
             {
-                sb.AppendLine(string.Format(@"[BLACK ""{0}""]", KifuHeader.PlayerNameBlack));
-                sb.AppendLine(string.Format(@"[WHITE ""{0}""]", KifuHeader.PlayerNameWhite));
+                sb.AppendLine(string.Format(@"[Black ""{0}""]", KifuHeader.PlayerNameBlack));
+                sb.AppendLine(string.Format(@"[White ""{0}""]", KifuHeader.PlayerNameWhite));
+
+                // 持ち時間設定も合わせて書き出す
+                sb.AppendLine($"[BlackTimeSetting {Tree.KifuTimeSettings.Player(Color.BLACK).ToKifuString()}]");
+                sb.AppendLine($"[WhiteTimeSetting {Tree.KifuTimeSettings.Player(Color.WHITE).ToKifuString()}]");
             }
 
             // 初期局面

@@ -199,7 +199,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     return FromPsnString(lines, KifuFileType.PSN);
 
                 // PSN2形式なのか？
-                if (line.StartsWith("[BLACK"))
+                if (line.StartsWith("[Black"))
                     return FromPsnString(lines, KifuFileType.PSN2);
 
                 // CSA形式なのか？

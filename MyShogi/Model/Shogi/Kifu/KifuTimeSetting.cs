@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 
@@ -138,6 +139,63 @@ namespace MyShogi.Model.Shogi.Kifu
 
             return sb.ToString();
         }
+
+        /// <summary>
+        /// 設定を文字列化。
+        /// PSN2形式で保存する時などに用いる。
+        /// </summary>
+        /// <returns></returns>
+        public string ToKifuString()
+        {
+            // -- メンバーのそれぞれの値をカンマつなぎで出力する。
+
+            // boolだとparse面倒なので整数化しておく。
+            var byoyomiEnable = ByoyomiEnable ? 1 : 0;
+            var incTimeEnable = IncTimeEnable ? 1 : 0;
+            var ignoreTime = IgnoreTime ? 1 : 0;
+            var timeLimitless = TimeLimitless ? 1 : 0;
+
+            return $"{Hour},{Minute},{Second},{byoyomiEnable},{Byoyomi},{incTimeEnable},{IncTime},{ignoreTime},{timeLimitless}";
+        }
+
+        /// <summary>
+        /// ToString()の逆変換
+        /// 変換に失敗した場合、nullが返る。
+        /// </summary>
+        /// <param name="line"></param>
+        /// <returns></returns>
+        public static KifuTimeSetting FromKifuString(string line)
+        {
+            var regex = new Regex(@"(\d+),(\d+),(\d+),(\d+),(\d+),(\d+),(\d+),(\d+),(\d+)");
+            var match = regex.Match(line);
+            if (!match.Success)
+                return null;
+
+            var setting = new KifuTimeSetting();
+            for (int i = 0;i<9;++i)
+            {
+                int r;
+                if (!int.TryParse(match.Groups[i+1].Value, out r))
+                    return null; // parse失敗
+                bool b = r != 0 ? true : false;
+
+                // それぞれに代入
+                switch (i)
+                {
+                    case 0: setting.Hour = r; break;
+                    case 1: setting.Minute = r; break;
+                    case 2: setting.Second = r; break;
+                    case 3: setting.ByoyomiEnable = b; break;
+                    case 4: setting.Byoyomi = r; break;
+                    case 5: setting.IncTimeEnable = b; break;
+                    case 6: setting.IncTime = r; break;
+                    case 7: setting.IgnoreTime = b; break;
+                    case 8: setting.TimeLimitless = b; break;
+                }
+            }
+
+            return setting;
+        }
     }
 
     /// <summary>
@@ -225,7 +283,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 対局時間設定、先後分
+        /// getのときは、このメンバに直接アクセスせずにPlayer()のほうを用いること。
         /// </summary>
-        private KifuTimeSetting[] Players;
+        public KifuTimeSetting[] Players;
     }
 }
