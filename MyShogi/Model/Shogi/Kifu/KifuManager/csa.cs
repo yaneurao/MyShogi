@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using MyShogi.Model.Shogi.Converter;
@@ -6,6 +7,9 @@ using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Kifu
 {
+    // CSA標準棋譜ファイル形式 V2.2
+    // http://www2.computer-shogi.org/protocol/record_v22.html
+
     /// <summary>
     /// csaの読み書き
     /// </summary>
@@ -60,7 +64,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 if (line.StartsWith("/"))
                 {
                     // "/"だけの行を挟んで、複数の棋譜・局面を記述することができる。
-                    // 現時点ではこのに対応せず、先頭の棋譜のみを読み込む。
+                    // 現時点ではこの書式に対応せず、先頭の棋譜のみを読み込む。
                     // そもそも初期局面が異なる可能性もあり、Treeを構成できるとは限らないため。
                     break;
                 }
@@ -70,7 +74,11 @@ namespace MyShogi.Model.Shogi.Kifu
                 {
                     if (subline.StartsWith("$"))
                     {
-                        // ToDo: 各種棋譜情報
+                        // 棋譜ヘッダ
+                        var keyvalue = subline.Substring(1).Split(":".ToCharArray(), 2);
+                        if (string.IsNullOrWhiteSpace(keyvalue[0]))
+                            continue;
+                        KifuHeader.header_dic[keyvalue[0]] = (keyvalue[1] ?? "");
                         continue;
                     }
                     if (subline.StartsWith("N+"))
@@ -117,7 +125,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         var state = Tree.position.State();
                         if (state == null)
                         {
-                            return string.Format("line {0}: 初期局面で着手時間が指定されました。", lineNo);
+                            return $"line {lineNo}: 初期局面で着手時間が指定されました。";
                         }
                         var time = long.Parse(subline.Substring(1));
                         // 1手戻って一旦枝を削除する（時間情報を追加できないので）
@@ -198,7 +206,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 }
             }
             if (headFlag) // まだ局面図が終わってない
-                return string.Format("CSA形式の{0}行目で局面図が来ずにファイルが終了しました。", lineNo);
+                return $"CSA形式の{lineNo}行目で局面図が来ずにファイルが終了しました。";
 
             return string.Empty;
         }
@@ -211,8 +219,8 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             var sb = new StringBuilder();
             sb.AppendLine("V2.2");
-            sb.AppendFormat("N+", KifuHeader.PlayerNameBlack).AppendLine();
-            sb.AppendFormat("N-", KifuHeader.PlayerNameWhite).AppendLine();
+            sb.AppendLine($"N+{KifuHeader.PlayerNameBlack}");
+            sb.AppendLine($"N-{KifuHeader.PlayerNameWhite}");
             switch (Tree.rootBoardType)
             {
                 case BoardType.NoHandicap:
@@ -225,50 +233,54 @@ namespace MyShogi.Model.Shogi.Kifu
                     sb.AppendLine(Tree.position.ToCsa().TrimEnd('\r', '\n'));
                     break;
             }
+            foreach (var headerKey in KifuHeader.header_dic.Keys)
+            {
+                sb.AppendLine($"${headerKey}:{KifuHeader.header_dic[headerKey]}");
+            }
 
             while (Tree.currentNode.moves.Count != 0)
             {
                 var move = Tree.currentNode.moves[0];
                 var m = move.nextMove;
 
-                switch (m)
-                {
-                    case Move.MATED:
-                        sb.AppendLine("%TORYO"); break;
-                    case Move.INTERRUPT:
-                        sb.AppendLine("%CHUDAN"); break;
-                    case Move.REPETITION_WIN:
-                        sb.AppendLine("%SENNICHITE"); break;
-                    case Move.REPETITION_DRAW:
-                        sb.AppendLine("%SENNICHITE"); break;
-                    case Move.WIN:
-                        sb.AppendLine("%KACHI"); break;
-                    case Move.MAX_MOVES_DRAW:
-                        sb.AppendLine("%JISHOGI"); break;
-                    case Move.RESIGN:
-                        sb.AppendLine("%TORYO"); break;
-                    case Move.TIME_UP:
-                        sb.AppendLine("%TIME_UP"); break;
-                }
-
                 if (m.IsSpecial())
                 {
+                    switch (m)
+                    {
+                        case Move.MATED:
+                            sb.AppendLine("%TORYO"); break;
+                        case Move.INTERRUPT:
+                            sb.AppendLine("%CHUDAN"); break;
+                        case Move.REPETITION_WIN:
+                            sb.AppendLine("%SENNICHITE"); break;
+                        case Move.REPETITION_DRAW:
+                            sb.AppendLine("%SENNICHITE"); break;
+                        case Move.WIN:
+                            sb.AppendLine("%KACHI"); break;
+                        case Move.MAX_MOVES_DRAW:
+                            sb.AppendLine("%JISHOGI"); break;
+                        case Move.RESIGN:
+                            sb.AppendLine("%TORYO"); break;
+                        case Move.TIME_UP:
+                            sb.AppendLine("%TIME_UP"); break;
+                    }
                     break;
                 }
 
-                var thinkingTime = Tree.currentNode.moves[0].kifuMoveTimes.Player(Tree.position.sideToMove).ThinkingTime;
+                var thinkingTime = move.kifuMoveTimes.Player(Tree.position.sideToMove).ThinkingTime;
                 if (!Tree.position.IsLegal(m))
                 {
                     sb.AppendLine("%ILLEGAL_MOVE");
                     // 現時点の実装としては秒未満切り捨てとして出力。
-                    sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), System.Math.Truncate(thinkingTime.TotalSeconds)).AppendLine();
+                    sb.AppendLine($"'{Tree.position.ToCSA(m)},T{Math.Truncate(thinkingTime.TotalSeconds)}");
                     break;
                 }
 
                 // 現時点の実装としては秒未満切り捨てとして出力。
-                sb.AppendFormat("'{0},T{1}", Tree.position.ToCSA(m), System.Math.Truncate(thinkingTime.TotalSeconds)).AppendLine();
+                sb.AppendLine($"{Tree.position.ToCSA(m)},T{Math.Truncate(thinkingTime.TotalSeconds)}");
 
                 Tree.DoMove(move);
+
             }
             return sb.ToString();
         }

@@ -17,10 +17,11 @@ namespace MyShogi.Model.Shogi.Converter
             MemoryStream st = new MemoryStream(Encoding.UTF8.GetBytes(str));
             return (Jkf)serializer.ReadObject(st);
         }
-        public static Jkf FromUri(string uri)
+        public static Jkf FromUri(string uri, int timeout = 3000)
         {
             var serializer = new DataContractJsonSerializer(typeof(Jkf));
             WebRequest req = WebRequest.Create(uri);
+            req.Timeout = timeout;
             WebResponse res = req.GetResponse();
             Stream st = res.GetResponseStream();
             return (Jkf)serializer.ReadObject(st);

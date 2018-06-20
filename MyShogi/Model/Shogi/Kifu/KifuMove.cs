@@ -8,7 +8,7 @@ namespace MyShogi.Model.Shogi.Kifu
     /// </summary>
     public class KifuMove : KifuLog
     {
-        public KifuMove(Move nextMove_,KifuNode nextNode_ , KifuMoveTimes kifuMoveTimes_)
+        public KifuMove(Move nextMove_, KifuNode nextNode_, KifuMoveTimes kifuMoveTimes_)
         {
             nextMove = nextMove_;
             nextNode = nextNode_;

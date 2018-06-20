@@ -16,7 +16,150 @@ namespace MyShogi.Model.Test
     {
         public static void Test1()
         {
-#if true
+#if false
+            try
+            {
+                var man = new KifuManager();
+
+                // Blunder.Converterで書き出した棋譜の読み込み(CSA)
+                using (var fs = new FileStream(@"kif\in_csa.sfen", FileMode.Create))
+                using (var sw = new StreamWriter(fs, Encoding.GetEncoding(932)))
+                for (var i = 0; i < 66869; ++i)
+                {
+                    using (var sr = new StreamReader($"kif\\records20151115_csa\\records20151115_{i:00000}.csa", Encoding.GetEncoding(932)))
+                        man.FromString(sr.ReadToEnd());
+                    sw.WriteLine(man.ToString(KifuFileType.SFEN));
+                }
+
+                // Blunder.Converterで書き出した棋譜の読み込み(KIF)
+                using (var fs = new FileStream(@"kif\in_kif.sfen", FileMode.Create))
+                using (var sw = new StreamWriter(fs, Encoding.GetEncoding(932)))
+                for (var i = 0; i < 66869; ++i)
+                {
+                    using (var sr = new StreamReader($"kif\\records20151115_kif\\records20151115_{i:00000}.kif", Encoding.GetEncoding(932)))
+                        man.FromString(sr.ReadToEnd());
+                    sw.WriteLine(man.ToString(KifuFileType.SFEN));
+                }
+
+                // KifManagerで書き出した棋譜の読み込み(CSA)
+                using (var fs = new FileStream(@"kif\out_csa.sfen", FileMode.Create))
+                using (var sw = new StreamWriter(fs, Encoding.GetEncoding(932)))
+                for (var i = 1; i <= 66869; ++i)
+                {
+                    using (var sr = new StreamReader($"kif\\out_csa\\{i:00000000}.csa", Encoding.GetEncoding(932)))
+                        man.FromString(sr.ReadToEnd());
+                    sw.WriteLine(man.ToString(KifuFileType.SFEN));
+                }
+
+                // KifManagerで書き出した棋譜の読み込み(KIF)
+                using (var fs = new FileStream(@"kif\out_kif.sfen", FileMode.Create))
+                using (var sw = new StreamWriter(fs, Encoding.GetEncoding(932)))
+                for (var i = 1; i <= 66869; ++i)
+                {
+                    using (var sr = new StreamReader($"kif\\out_kif\\{i:00000000}.kif", Encoding.GetEncoding(932)))
+                        man.FromString(sr.ReadToEnd());
+                    sw.WriteLine(man.ToString(KifuFileType.SFEN));
+                }
+
+                // KifManagerで書き出した棋譜の読み込み(KI2)
+                using (var fs = new FileStream(@"kif\out_ki2.sfen", FileMode.Create))
+                using (var sw = new StreamWriter(fs, Encoding.GetEncoding(932)))
+                for (var i = 1; i <= 66869; ++i)
+                {
+                    using (var sr = new StreamReader($"kif\\out_ki2\\{i:00000000}.ki2", Encoding.GetEncoding(932)))
+                        man.FromString(sr.ReadToEnd());
+                    sw.WriteLine(man.ToString(KifuFileType.SFEN));
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+            }
+#endif
+#if false
+            try
+            {
+                Directory.CreateDirectory(@"kif\out_csa");
+                Directory.CreateDirectory(@"kif\out_kif");
+                Directory.CreateDirectory(@"kif\out_ki2");
+                var man = new KifuManager();
+                using (var sr = new StreamReader(@"kif\records20151115.sfen", Encoding.GetEncoding(932)))
+                for (var i = 1; !sr.EndOfStream; ++i)
+                {
+                    var line = sr.ReadLine();
+                    var res = man.FromString(line);
+
+                    using (var fs = new FileStream($"kif\\out_csa\\{i:00000000}.csa", FileMode.Create))
+                    using (var sw = new StreamWriter(fs, Encoding.GetEncoding(932)))
+                    {
+                        sw.Write(man.ToString(KifuFileType.CSA));
+                    }
+                    using (var fs = new FileStream($"kif\\out_kif\\{i:00000000}.kif", FileMode.Create))
+                    using (var sw = new StreamWriter(fs, Encoding.GetEncoding(932)))
+                    {
+                        sw.Write(man.ToString(KifuFileType.KIF));
+                    }
+                    using (var fs = new FileStream($"kif\\out_ki2\\{i:00000000}.ki2", FileMode.Create))
+                    using (var sw = new StreamWriter(fs, Encoding.GetEncoding(932)))
+                    {
+                        sw.Write(man.ToString(KifuFileType.KI2));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+            }
+#endif
+#if false
+            try
+            {
+                foreach (var uri in new string[] {
+                    // 2016-04-09第1期電王戦第１局山崎隆之叡王Ponanza
+                    "https://s3-ap-northeast-1.amazonaws.com/prod-kifu-cache-strage-tokyo/caches/56f9e9f6813cd7030042378d.json",
+                    // 2018-05-26第3期叡王戦決勝七番勝負第4局金井恒太六段高見泰地六段
+                    "https://s3-ap-northeast-1.amazonaws.com/prod-kifu-cache-strage-tokyo/caches/5acf14350468f80004b24166.json",
+                })
+                {
+                    WebRequest req = WebRequest.Create(uri);
+                    req.Timeout = 3000;
+                    WebResponse res = req.GetResponse();
+                    MemoryStream ms = new MemoryStream();
+                    Stream st = res.GetResponseStream();
+                    st.CopyTo(ms);
+                    string str = Encoding.UTF8.GetString(ms.ToArray());
+                    var man = new KifuManager();
+                    man.FromString(str);
+                    var csa = man.ToString(KifuFileType.CSA);
+                    var kif = man.ToString(KifuFileType.KIF);
+                    var ki2 = man.ToString(KifuFileType.KI2);
+                    man.FromString(csa);
+                    var sfen_csa = man.ToString(KifuFileType.JSON);
+                    man.FromString(kif);
+                    var sfen_kif = man.ToString(KifuFileType.JSON);
+                    man.FromString(ki2);
+                    var sfen_ki2 = man.ToString(KifuFileType.JSON);
+                    Console.WriteLine("# LiveJSON");
+                    Console.WriteLine(str);
+                    Console.WriteLine("# CSA");
+                    Console.WriteLine(csa);
+                    Console.WriteLine(sfen_csa);
+                    Console.WriteLine("# KIF");
+                    Console.WriteLine(kif);
+                    Console.WriteLine(sfen_kif);
+                    Console.WriteLine("# KI2");
+                    Console.WriteLine(ki2);
+                    Console.WriteLine(sfen_ki2);
+                    Console.WriteLine();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+            }
+#endif
+#if false
             try
             {
                 var epoch = new DateTimeOffset(1970, 1, 1, 9, 0, 0, new TimeSpan(9, 0, 0));
@@ -28,13 +171,13 @@ namespace MyShogi.Model.Test
                 })
                 {
                     WebRequest req = WebRequest.Create(uri);
+                    req.Timeout = 3000;
                     WebResponse res = req.GetResponse();
                     MemoryStream ms = new MemoryStream();
                     Stream st = res.GetResponseStream();
                     st.CopyTo(ms);
                     string str = Encoding.UTF8.GetString(ms.ToArray());
                     Console.WriteLine(str);
-                    Position pos = new Position();
                     KifuManager man = new KifuManager();
                     man.FromString(str);
                     Console.WriteLine(man.ToString(KifuFileType.JSON));
@@ -67,7 +210,7 @@ namespace MyShogi.Model.Test
                 Console.Error.WriteLine(e);
             }
 #endif
-#if true
+#if false
             {
                 FontFamily[] ffs = FontFamily.Families;
                 //FontFamilyの名前を列挙する
@@ -77,7 +220,7 @@ namespace MyShogi.Model.Test
                 }
             }
 #endif
-#if true
+#if false
             {
                 // 文字幅計算テスト
                 foreach (var s in new string[]{
@@ -118,7 +261,7 @@ namespace MyShogi.Model.Test
                 }
             }
 #endif
-#if true
+#if false
             {
                 // KIF形式の局面・指し手入力テスト
                 Position pos = new Position();
@@ -168,7 +311,7 @@ namespace MyShogi.Model.Test
                 }
             }
 #endif
-#if true
+#if false
             {
                 // CSA形式の局面・指し手入力テスト
                 Position pos = new Position();
@@ -238,7 +381,7 @@ namespace MyShogi.Model.Test
                 }
             }
 #endif
-#if true
+#if false
             {
                 var pos = new Position();
 

@@ -16,10 +16,11 @@ namespace MyShogi.Model.Shogi.Converter
             MemoryStream st = new MemoryStream(Encoding.UTF8.GetBytes(str));
             return (LiveJson)serializer.ReadObject(st);
         }
-        public static LiveJson FromUri(string uri)
+        public static LiveJson FromUri(string uri, int timeout = 3000)
         {
             var serializer = new DataContractJsonSerializer(typeof(LiveJson));
             WebRequest req = WebRequest.Create(uri);
+            req.Timeout = timeout;
             WebResponse res = req.GetResponse();
             Stream st = res.GetResponseStream();
             return (LiveJson)serializer.ReadObject(st);

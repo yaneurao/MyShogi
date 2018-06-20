@@ -37,10 +37,11 @@ namespace MyShogi.Model.Shogi.Kifu
         public void Init()
         {
             position.InitBoard();
-            
+
             currentNode = rootNode = new KifuNode(null);
             pliesFromRoot = 0;
 
+            //    kifFormatter = KifFormatter.Ki2C;
             //    UsiMoveStringList.Clear();
             rootBoardType = BoardType.NoHandicap;
             rootSfen = Position.SFEN_HIRATE;
@@ -62,7 +63,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 現在の局面を表現している。
         /// immutableではないので(DoMove()/UndoMove()によって変化するので)、
         /// data bindするときはClone()してからにすること。
-        /// 
+        ///
         /// また、"Position"というNotifyObjectの仮想プロパティがあり、このクラスのDoMove()/UndoMove()に対して
         /// この"Position"のプロパティ変更通知が来る。
         /// </summary>
@@ -181,7 +182,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// 現局面までの棋譜。
         /// EnableKifuListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
-        /// 
+        ///
         /// また、"KifuList"というNotifyObjectの仮想プロパティがあり、このクラスのDoMove()/UndoMove()などに対して
         /// この"KifuList"のプロパティ変更通知が来る。
         /// immutableではないので、data-bindなどで用いるなら、Clone()してから用いること。
@@ -275,8 +276,8 @@ namespace MyShogi.Model.Shogi.Kifu
             // 棋譜の更新
             var stm = position.sideToMove;
             var thinkingTime = m.kifuMoveTimes.Player(stm).ThinkingTime;
-            AddKifu(m.nextMove , thinkingTime);
-            
+            AddKifu(m.nextMove, thinkingTime);
+
             position.DoMove(m.nextMove);
 
             // rootNodeからの指し手。これは棋譜リストと同期させている。
@@ -362,11 +363,29 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         /// <param name="move"></param>
         /// <param name="comment"></param>
-        public void AddNodeComment(Move move,string comment)
+        public void AddNodeComment(Move move, string comment)
         {
             var m = currentNode.moves.FirstOrDefault((x) => x.nextMove == move);
             m.nextNode.comment = comment;
         }
+
+        /// <summary>
+        /// ある指し手に対する着手時刻を追加する。
+        /// </summary>
+        /// <param name="move"></param>
+        /// <param name="comment"></param>
+        public void AddNodeMoveTime(Move move, DateTime movetime)
+        {
+            var m = currentNode.moves.FirstOrDefault((x) => x.nextMove == move);
+            m.moveTime = movetime;
+        }
+
+        /// <summary>
+        /// ある指し手に対する着手時刻を追加する。
+        /// </summary>
+        /// <param name="move"></param>
+        /// <param name="comment"></param>
+        public void AddNodeMoveTime(Move move) => AddNodeMoveTime(move, DateTime.Now);
 
         /// <summary>
         /// currentNode(現在のnode)から、moveの指し手以降の枝を削除する

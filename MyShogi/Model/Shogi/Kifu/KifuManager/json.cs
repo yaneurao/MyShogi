@@ -83,71 +83,71 @@ namespace MyShogi.Model.Shogi.Kifu
                             var color = jsonObj.initial.data.color == 0 ? Color.BLACK : Color.WHITE;
                             var board = new Piece[81];
                             for (File f = File.FILE_1; f <= File.FILE_9; ++f)
-                                for (Rank r = Rank.RANK_1; r <= Rank.RANK_9; ++r)
+                            for (Rank r = Rank.RANK_1; r <= Rank.RANK_9; ++r)
+                            {
+                                var sqi = Util.MakeSquare(f, r).ToInt();
+                                var p = jsonObj.initial.data.board[f.ToInt(), r.ToInt()];
+                                switch (p.color)
                                 {
-                                    var sqi = Util.MakeSquare(f, r).ToInt();
-                                    var p = jsonObj.initial.data.board[f.ToInt(), r.ToInt()];
-                                    switch (p.color)
-                                    {
-                                        case 0:
-                                            switch (p.kind)
-                                            {
-                                                case "FU": board[sqi] = Piece.B_PAWN; break;
-                                                case "KY": board[sqi] = Piece.B_LANCE; break;
-                                                case "KE": board[sqi] = Piece.B_KNIGHT; break;
-                                                case "GI": board[sqi] = Piece.B_SILVER; break;
-                                                case "KA": board[sqi] = Piece.B_BISHOP; break;
-                                                case "HI": board[sqi] = Piece.B_ROOK; break;
-                                                case "KI": board[sqi] = Piece.B_GOLD; break;
-                                                case "OU": board[sqi] = Piece.B_KING; break;
-                                                case "TO": board[sqi] = Piece.B_PRO_PAWN; break;
-                                                case "NY": board[sqi] = Piece.B_PRO_LANCE; break;
-                                                case "NK": board[sqi] = Piece.B_PRO_KNIGHT; break;
-                                                case "NG": board[sqi] = Piece.B_PRO_SILVER; break;
-                                                case "UM": board[sqi] = Piece.B_HORSE; break;
-                                                case "RY": board[sqi] = Piece.B_DRAGON; break;
-                                                default: board[sqi] = Piece.NO_PIECE; break;
-                                            }
-                                            break;
-                                        case 1:
-                                            switch (p.kind)
-                                            {
-                                                case "FU": board[sqi] = Piece.W_PAWN; break;
-                                                case "KY": board[sqi] = Piece.W_LANCE; break;
-                                                case "KE": board[sqi] = Piece.W_KNIGHT; break;
-                                                case "GI": board[sqi] = Piece.W_SILVER; break;
-                                                case "KA": board[sqi] = Piece.W_BISHOP; break;
-                                                case "HI": board[sqi] = Piece.W_ROOK; break;
-                                                case "KI": board[sqi] = Piece.W_GOLD; break;
-                                                case "OU": board[sqi] = Piece.W_KING; break;
-                                                case "TO": board[sqi] = Piece.W_PRO_PAWN; break;
-                                                case "NY": board[sqi] = Piece.W_PRO_LANCE; break;
-                                                case "NK": board[sqi] = Piece.W_PRO_KNIGHT; break;
-                                                case "NG": board[sqi] = Piece.W_PRO_SILVER; break;
-                                                case "UM": board[sqi] = Piece.W_HORSE; break;
-                                                case "RY": board[sqi] = Piece.W_DRAGON; break;
-                                                default: board[sqi] = Piece.NO_PIECE; break;
-                                            }
-                                            break;
-                                        default:
-                                            board[sqi] = Piece.NO_PIECE;
-                                            break;
-                                    }
+                                    case 0:
+                                        switch (p.kind)
+                                        {
+                                            case "FU": board[sqi] = Piece.B_PAWN; break;
+                                            case "KY": board[sqi] = Piece.B_LANCE; break;
+                                            case "KE": board[sqi] = Piece.B_KNIGHT; break;
+                                            case "GI": board[sqi] = Piece.B_SILVER; break;
+                                            case "KA": board[sqi] = Piece.B_BISHOP; break;
+                                            case "HI": board[sqi] = Piece.B_ROOK; break;
+                                            case "KI": board[sqi] = Piece.B_GOLD; break;
+                                            case "OU": board[sqi] = Piece.B_KING; break;
+                                            case "TO": board[sqi] = Piece.B_PRO_PAWN; break;
+                                            case "NY": board[sqi] = Piece.B_PRO_LANCE; break;
+                                            case "NK": board[sqi] = Piece.B_PRO_KNIGHT; break;
+                                            case "NG": board[sqi] = Piece.B_PRO_SILVER; break;
+                                            case "UM": board[sqi] = Piece.B_HORSE; break;
+                                            case "RY": board[sqi] = Piece.B_DRAGON; break;
+                                            default: board[sqi] = Piece.NO_PIECE; break;
+                                        }
+                                        break;
+                                    case 1:
+                                        switch (p.kind)
+                                        {
+                                            case "FU": board[sqi] = Piece.W_PAWN; break;
+                                            case "KY": board[sqi] = Piece.W_LANCE; break;
+                                            case "KE": board[sqi] = Piece.W_KNIGHT; break;
+                                            case "GI": board[sqi] = Piece.W_SILVER; break;
+                                            case "KA": board[sqi] = Piece.W_BISHOP; break;
+                                            case "HI": board[sqi] = Piece.W_ROOK; break;
+                                            case "KI": board[sqi] = Piece.W_GOLD; break;
+                                            case "OU": board[sqi] = Piece.W_KING; break;
+                                            case "TO": board[sqi] = Piece.W_PRO_PAWN; break;
+                                            case "NY": board[sqi] = Piece.W_PRO_LANCE; break;
+                                            case "NK": board[sqi] = Piece.W_PRO_KNIGHT; break;
+                                            case "NG": board[sqi] = Piece.W_PRO_SILVER; break;
+                                            case "UM": board[sqi] = Piece.W_HORSE; break;
+                                            case "RY": board[sqi] = Piece.W_DRAGON; break;
+                                            default: board[sqi] = Piece.NO_PIECE; break;
+                                        }
+                                        break;
+                                    default:
+                                        board[sqi] = Piece.NO_PIECE;
+                                        break;
                                 }
+                            }
                             var hands = new Hand[2] { Hand.ZERO, Hand.ZERO };
                             if (jsonObj.initial.data.hands != null && jsonObj.initial.data.hands.Count >= 2)
-                                foreach (var c in new Color[] { Color.BLACK, Color.WHITE })
+                            foreach (var c in new Color[] { Color.BLACK, Color.WHITE })
+                            {
+                                if (jsonObj.initial.data.hands[c.ToInt()] != null)
+                                foreach (var p in new Piece[] { Piece.PAWN, Piece.LANCE, Piece.KNIGHT, Piece.SILVER, Piece.GOLD, Piece.BISHOP, Piece.ROOK })
                                 {
-                                    if (jsonObj.initial.data.hands[c.ToInt()] != null)
-                                        foreach (var p in new Piece[] { Piece.PAWN, Piece.LANCE, Piece.KNIGHT, Piece.SILVER, Piece.GOLD, Piece.BISHOP, Piece.ROOK })
-                                        {
-                                            int value;
-                                            if (jsonObj.initial.data.hands[c.ToInt()].TryGetValue(CSA_PIECE[p.ToInt()], out value))
-                                            {
-                                                hands[c.ToInt()].Add(p, value);
-                                            }
-                                        }
+                                    int value;
+                                    if (jsonObj.initial.data.hands[c.ToInt()].TryGetValue(CSA_PIECE[p.ToInt()], out value))
+                                    {
+                                        hands[c.ToInt()].Add(p, value);
+                                    }
                                 }
+                            }
                             Tree.rootSfen = Position.SfenFromRawdata(board, hands, color, 1);
                             Tree.position.SetSfen(Tree.rootSfen);
                             break;
@@ -161,24 +161,24 @@ namespace MyShogi.Model.Shogi.Kifu
                     foreach (var jkfMove in jsonObj.moves)
                     {
                         TimeSpan spend = (jkfMove.time != null && jkfMove.time.now != null) ?
-                            new TimeSpan(jkfMove.time.now.h ?? 0, jkfMove.time.now.m, jkfMove.time.now.s) :
+                            new TimeSpan(jkfMove.time.now.h ?? 0, jkfMove.time.now.m, jkfMove.time.now.s):
                             TimeSpan.Zero;
                         if (!string.IsNullOrWhiteSpace(jkfMove.special))
                         {
                             switch (jkfMove.special)
                             {
-                                case "TORYO": m = Move.RESIGN; break;
-                                case "CHUDAN": m = Move.INTERRUPT; break;
-                                case "SENNICHITE": m = Move.REPETITION_DRAW; break;
-                                case "TIME_UP": m = Move.TIME_UP; break;
-                                case "JISHOGI": m = Move.MAX_MOVES_DRAW; break;
-                                case "KACHI": m = Move.WIN; break;
-                                // 以下、適切な変換先不明
-                                case "HIKIWAKE": m = Move.DRAW; break;
-                                case "TSUMI": m = Move.MATED; break;
-                                case "ILLEGAL_MOVE": m = Move.ILLEGAL_MOVE; break;
+                                case "TORYO":           m = Move.RESIGN; break;
+                                case "CHUDAN":          m = Move.INTERRUPT; break;
+                                case "SENNICHITE":      m = Move.REPETITION_DRAW; break;
+                                case "TIME_UP":         m = Move.TIME_UP; break;
+                                case "JISHOGI":         m = Move.MAX_MOVES_DRAW; break;
+                                case "KACHI"  :         m = Move.WIN; break;
+                                case "HIKIWAKE":        m = Move.DRAW; break;
+                                case "TSUMI":           m = Move.MATED; break;
+                                case "ILLEGAL_MOVE"   : m = Move.ILLEGAL_MOVE; break;
                                 case "+ILLEGAL_ACTION": m = Tree.position.sideToMove == Color.BLACK ? Move.ILLEGAL_ACTION_LOSE : Move.ILLEGAL_ACTION_WIN; break;
                                 case "-ILLEGAL_ACTION": m = Tree.position.sideToMove == Color.BLACK ? Move.ILLEGAL_ACTION_WIN : Move.ILLEGAL_ACTION_LOSE; break;
+                                // 以下、適切な変換先不明
                                 case "ERROR":
                                 case "FUZUMI":
                                 case "MATTA":
@@ -385,7 +385,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     }
                     if (!Tree.position.IsLegal(move))
                     {
-                        return String.Format("{0}手目で不正着手を検出しました", Tree.position.gamePly);
+                        return $"{Tree.gamePly}手目で不正着手を検出しました";
                     }
                     Tree.DoMove(move);
                     continue;
@@ -415,48 +415,48 @@ namespace MyShogi.Model.Shogi.Kifu
             };
             switch (Tree.rootBoardType)
             {
-                case BoardType.NoHandicap: jkf.initial.preset = "HIRATE"; break;
-                case BoardType.HandicapKyo: jkf.initial.preset = "KY"; break;
+                case BoardType.NoHandicap:       jkf.initial.preset = "HIRATE"; break;
+                case BoardType.HandicapKyo:      jkf.initial.preset = "KY"; break;
                 case BoardType.HandicapRightKyo: jkf.initial.preset = "KY_R"; break;
-                case BoardType.HandicapKaku: jkf.initial.preset = "KA"; break;
-                case BoardType.HandicapHisya: jkf.initial.preset = "HI"; break;
+                case BoardType.HandicapKaku:     jkf.initial.preset = "KA"; break;
+                case BoardType.HandicapHisya:    jkf.initial.preset = "HI"; break;
                 case BoardType.HandicapHisyaKyo: jkf.initial.preset = "HIKY"; break;
-                case BoardType.Handicap2: jkf.initial.preset = "2"; break;
-                case BoardType.Handicap3: jkf.initial.preset = "3"; break;
-                case BoardType.Handicap4: jkf.initial.preset = "4"; break;
-                case BoardType.Handicap5: jkf.initial.preset = "5"; break;
-                case BoardType.HandicapLeft5: jkf.initial.preset = "5_L"; break;
-                case BoardType.Handicap6: jkf.initial.preset = "6"; break;
-                case BoardType.Handicap8: jkf.initial.preset = "8"; break;
-                case BoardType.Handicap10: jkf.initial.preset = "10"; break;
+                case BoardType.Handicap2:        jkf.initial.preset = "2"; break;
+                case BoardType.Handicap3:        jkf.initial.preset = "3"; break;
+                case BoardType.Handicap4:        jkf.initial.preset = "4"; break;
+                case BoardType.Handicap5:        jkf.initial.preset = "5"; break;
+                case BoardType.HandicapLeft5:    jkf.initial.preset = "5_L"; break;
+                case BoardType.Handicap6:        jkf.initial.preset = "6"; break;
+                case BoardType.Handicap8:        jkf.initial.preset = "8"; break;
+                case BoardType.Handicap10:       jkf.initial.preset = "10"; break;
                 default:
                     jkf.initial.preset = "OTHER";
                     jkf.initial.data = new Jkf.Data()
                     {
                         color = Tree.position.sideToMove == Color.BLACK ? 0 : 1,
-                        board = new Jkf.Board[9, 9],
+                        board = new Jkf.Board[9,9],
                         hands = new List<Dictionary<string, int>> {
                             new Dictionary<string, int>(),
                             new Dictionary<string, int>(),
                         },
                     };
                     for (File f = File.FILE_1; f <= File.FILE_9; ++f)
-                        for (Rank r = Rank.RANK_1; r <= Rank.RANK_9; ++r)
-                        {
-                            var p = Tree.position.PieceOn(Util.MakeSquare(f, r));
-                            jkf.initial.data.board[f.ToInt(), r.ToInt()] = p == Piece.NO_PIECE ?
-                                new Jkf.Board() :
-                                new Jkf.Board()
-                                {
-                                    kind = CSA_PIECE[p.PieceType().ToInt()],
-                                    color = p.PieceColor() == Color.BLACK ? 0 : 1,
-                                };
-                        }
+                    for (Rank r = Rank.RANK_1; r <= Rank.RANK_9; ++r)
+                    {
+                        var p = Tree.position.PieceOn(Util.MakeSquare(f, r));
+                        jkf.initial.data.board[f.ToInt(), r.ToInt()] = p == Piece.NO_PIECE ?
+                            new Jkf.Board():
+                            new Jkf.Board()
+                            {
+                                kind = CSA_PIECE[p.PieceType().ToInt()],
+                                color = p.PieceColor() == Color.BLACK ? 0 : 1,
+                            };
+                    }
                     foreach (var c in new Color[] { Color.BLACK, Color.WHITE })
-                        foreach (var p in new Piece[] { Piece.PAWN, Piece.LANCE, Piece.KNIGHT, Piece.SILVER, Piece.GOLD, Piece.BISHOP, Piece.ROOK })
-                        {
-                            jkf.initial.data.hands[c.ToInt()][CSA_PIECE[p.ToInt()]] = Tree.position.Hand(c).Count(p);
-                        }
+                    foreach (var p in new Piece[] { Piece.PAWN, Piece.LANCE, Piece.KNIGHT, Piece.SILVER, Piece.GOLD, Piece.BISHOP, Piece.ROOK })
+                    {
+                        jkf.initial.data.hands[c.ToInt()][CSA_PIECE[p.ToInt()]] = Tree.position.Hand(c).Count(p);
+                    }
                     break;
             }
             {
@@ -484,15 +484,15 @@ namespace MyShogi.Model.Shogi.Kifu
                     string rel, beh;
                     switch (moveInfo.relative)
                     {
-                        case KifMoveInfo.Relative.LEFT: rel = "L"; break;
+                        case KifMoveInfo.Relative.LEFT:     rel = "L"; break;
                         case KifMoveInfo.Relative.STRAIGHT: rel = "C"; break;
-                        case KifMoveInfo.Relative.RIGHT: rel = "R"; break;
+                        case KifMoveInfo.Relative.RIGHT:    rel = "R"; break;
                         default: rel = ""; break;
                     }
                     switch (moveInfo.behavior)
                     {
-                        case KifMoveInfo.Behavior.FORWARD: beh = "U"; break;
-                        case KifMoveInfo.Behavior.SLIDE: beh = "M"; break;
+                        case KifMoveInfo.Behavior.FORWARD:  beh = "U"; break;
+                        case KifMoveInfo.Behavior.SLIDE:    beh = "M"; break;
                         case KifMoveInfo.Behavior.BACKWARD: beh = "D"; break;
                         default: beh = ""; break;
                     }
@@ -548,14 +548,14 @@ namespace MyShogi.Model.Shogi.Kifu
                         endNode = true;
                         switch (m)
                         {
-                            case Move.MATED: jkfMove.special = "TYORYO"; break;
-                            case Move.INTERRUPT: jkfMove.special = "CHUDAN"; break;
-                            case Move.REPETITION_WIN: jkfMove.special = "SENNICHITE"; break;
+                            case Move.MATED:           jkfMove.special = "TYORYO"; break;
+                            case Move.INTERRUPT:       jkfMove.special = "CHUDAN"; break;
+                            case Move.REPETITION_WIN:  jkfMove.special = "SENNICHITE"; break;
                             case Move.REPETITION_DRAW: jkfMove.special = "SENNICHITE"; break;
-                            case Move.WIN: jkfMove.special = "KACHI"; break;
-                            case Move.MAX_MOVES_DRAW: jkfMove.special = "JISHOGI"; break;
-                            case Move.RESIGN: jkfMove.special = "TORYO"; break;
-                            case Move.TIME_UP: jkfMove.special = "TIME_UP"; break;
+                            case Move.WIN:             jkfMove.special = "KACHI"; break;
+                            case Move.MAX_MOVES_DRAW:  jkfMove.special = "JISHOGI"; break;
+                            case Move.RESIGN:          jkfMove.special = "TORYO"; break;
+                            case Move.TIME_UP:         jkfMove.special = "TIME_UP"; break;
                             default: continue;
                         }
                     }
@@ -667,13 +667,13 @@ namespace MyShogi.Model.Shogi.Kifu
                     var droppedPiece = nextMove.DroppedPiece();
                     switch (droppedPiece)
                     {
-                        case Piece.PAWN: kif.type = "FU"; break;
-                        case Piece.LANCE: kif.type = "KYO"; break;
+                        case Piece.PAWN:   kif.type = "FU"; break;
+                        case Piece.LANCE:  kif.type = "KYO"; break;
                         case Piece.KNIGHT: kif.type = "KEI"; break;
                         case Piece.SILVER: kif.type = "GIN"; break;
-                        case Piece.GOLD: kif.type = "KIN"; break;
+                        case Piece.GOLD:   kif.type = "KIN"; break;
                         case Piece.BISHOP: kif.type = "KAKU"; break;
-                        case Piece.ROOK: kif.type = "HI"; break;
+                        case Piece.ROOK:   kif.type = "HI"; break;
                     }
                     var state = Tree.position.State();
                     kif.move = livejsonkifformat.format(Tree.position, nextMove, state != null ? state.lastMove : Move.NONE);
@@ -682,13 +682,13 @@ namespace MyShogi.Model.Shogi.Kifu
                         kif.frY = 10;
                         switch (droppedPiece)
                         {
-                            case Piece.PAWN: kif.frX = 1; break;
-                            case Piece.LANCE: kif.frX = 2; break;
+                            case Piece.PAWN:   kif.frX = 1; break;
+                            case Piece.LANCE:  kif.frX = 2; break;
                             case Piece.KNIGHT: kif.frX = 3; break;
                             case Piece.SILVER: kif.frX = 4; break;
-                            case Piece.GOLD: kif.frX = 5; break;
+                            case Piece.GOLD:   kif.frX = 5; break;
                             case Piece.BISHOP: kif.frX = 6; break;
-                            case Piece.ROOK: kif.frY = 7; break;
+                            case Piece.ROOK:   kif.frY = 7; break;
                         }
                     }
                     else
@@ -696,13 +696,13 @@ namespace MyShogi.Model.Shogi.Kifu
                         kif.frY = 0;
                         switch (droppedPiece)
                         {
-                            case Piece.PAWN: kif.frX = 9; break;
-                            case Piece.LANCE: kif.frX = 8; break;
+                            case Piece.PAWN:   kif.frX = 9; break;
+                            case Piece.LANCE:  kif.frX = 8; break;
                             case Piece.KNIGHT: kif.frX = 7; break;
                             case Piece.SILVER: kif.frX = 6; break;
-                            case Piece.GOLD: kif.frX = 5; break;
+                            case Piece.GOLD:   kif.frX = 5; break;
                             case Piece.BISHOP: kif.frX = 4; break;
-                            case Piece.ROOK: kif.frY = 3; break;
+                            case Piece.ROOK:   kif.frY = 3; break;
                         }
                     }
                     kif.toX = nextMove.To().ToFile().ToInt() + 1;
@@ -720,23 +720,23 @@ namespace MyShogi.Model.Shogi.Kifu
                     kif.prmt = nextMove.IsPromote() ? 1 : 0;
                     switch (Tree.position.PieceOn(nextMove.From()).PieceType())
                     {
-                        case Piece.PAWN: kif.type = "FU"; break;
-                        case Piece.LANCE: kif.type = "KYO"; break;
-                        case Piece.KNIGHT: kif.type = "KEI"; break;
-                        case Piece.SILVER: kif.type = "GIN"; break;
-                        case Piece.GOLD: kif.type = "KIN"; break;
-                        case Piece.BISHOP: kif.type = "KAKU"; break;
-                        case Piece.ROOK: kif.type = "HI"; break;
-                        case Piece.KING: kif.type = "OU"; break;
-                        case Piece.PRO_PAWN: kif.type = "NFU"; break;
-                        case Piece.PRO_LANCE: kif.type = "NKYO"; break;
+                        case Piece.PAWN:       kif.type = "FU"; break;
+                        case Piece.LANCE:      kif.type = "KYO"; break;
+                        case Piece.KNIGHT:     kif.type = "KEI"; break;
+                        case Piece.SILVER:     kif.type = "GIN"; break;
+                        case Piece.GOLD:       kif.type = "KIN"; break;
+                        case Piece.BISHOP:     kif.type = "KAKU"; break;
+                        case Piece.ROOK:       kif.type = "HI"; break;
+                        case Piece.KING:       kif.type = "OU"; break;
+                        case Piece.PRO_PAWN:   kif.type = "NFU"; break;
+                        case Piece.PRO_LANCE:  kif.type = "NKYO"; break;
                         case Piece.PRO_KNIGHT: kif.type = "NKEI"; break;
                         case Piece.PRO_SILVER: kif.type = "NGIN"; break;
-                        case Piece.HORSE: kif.type = "NKAKU"; break;
-                        case Piece.DRAGON: kif.type = "NHI"; break;
+                        case Piece.HORSE:      kif.type = "NKAKU"; break;
+                        case Piece.DRAGON:     kif.type = "NHI"; break;
                     }
                 }
-                kif.num = Tree.position.gamePly;
+                kif.num = Tree.gamePly;
                 kifList.Add(kif);
                 if (nextMove.IsSpecial())
                 {

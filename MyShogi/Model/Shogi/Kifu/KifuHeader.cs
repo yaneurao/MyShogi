@@ -25,7 +25,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// 先手/下手 対局者名。
         ///   playerNameBlack : 先手の名前(駒落ちの場合、下手)
-        ///   
+        ///
         /// このgetterを呼び出す時は、rootBoardTypeが適切に設定されていなければならない。
         /// </summary>
         public string PlayerNameBlack
@@ -74,11 +74,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public void Init()
         {
-            header_dic = new Dictionary<string, string>()
-            {
-                { "先手", defaultPlayerNames[(int)Color.BLACK] },
-                { "後手", defaultPlayerNames[(int)Color.WHITE] }
-            };
+            header_dic = new Dictionary<string, string>();
             rootBoardType = BoardType.NoHandicap;
         }
 
@@ -94,12 +90,12 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// デフォルトの対局者名。
         /// </summary>
-        private static string [] defaultPlayerNames = { "先手", "後手" };
+        private static string[] defaultPlayerNames = { "先手", "後手" };
 
         /// <summary>
         /// デフォルトの駒落ち対局者名。
         /// </summary>
-        private static string [] defaultHandicapPlayerNames = { "下手", "上手" };
+        private static string[] defaultHandicapPlayerNames = { "下手", "上手" };
 
         /// <summary>
         /// c側の対局者名の取得
