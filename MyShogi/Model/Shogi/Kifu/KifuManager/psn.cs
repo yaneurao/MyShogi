@@ -18,6 +18,9 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         private string FromPsnString(string[] lines, KifuFileType kf)
         {
+            // 消費時間、残り時間、消費時間を管理する。
+            var times = KifuMoveTimes.Zero;
+
             var lineNo = 1;
 
             try
@@ -130,6 +133,9 @@ namespace MyShogi.Model.Shogi.Kifu
                         // ply手目まで局面を巻き戻す
                         while (ply < Tree.gamePly)
                             Tree.UndoMove();
+
+                        // このnodeでの残り時間に戻す
+                        times = Tree.GetKifuMoveTime();
 
                         continue;
                     }
@@ -355,9 +361,13 @@ namespace MyShogi.Model.Shogi.Kifu
                             //    return string.Format("PSN形式の{0}行目が持将棋となっているが持将棋ではないです。", lineNo);
                         }
 
+                        var turn = Tree.position.sideToMove;
+                        times.Players[(int)turn] = new KifuMoveTime(thinking_time,thinking_time,total_time,
+                            TimeSpan.Zero /*残り時間は棋譜上に記録されていない*/);
+
                         // -- DoMove()
 
-                        var kifuMoveTime = KifuMoveTimes.Zero; // ToDo:あとでちゃんと書く。
+                        var kifuMoveTime = times;
                         Tree.AddNode(move, kifuMoveTime);
 
                         // 特殊な指し手、もしくはLegalでないならDoMove()は行わない
@@ -459,8 +469,11 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 SELECT:;
                 var move = Tree.currentNode.moves[select];
+                var m = move.nextMove;
 
-                Move m = move.nextMove;
+                // DoMove()する前の現局面の手番
+                var turn = Tree.position.sideToMove;
+
                 string mes;
 
                 if (m.IsSpecial())
@@ -529,8 +542,6 @@ namespace MyShogi.Model.Shogi.Kifu
 
                     Tree.DoMove(move);
                 }
-
-                var turn = Tree.position.sideToMove;
 
                 var time_string1 = (kt == KifuFileType.PSN) ? move.kifuMoveTimes.Player(turn).ThinkingTime.ToString("mm\\:ss")
                                                             : move.kifuMoveTimes.Player(turn).ThinkingTime.ToString("hh\\:mm\\:ss");

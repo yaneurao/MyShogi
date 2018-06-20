@@ -76,7 +76,6 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 自分の手番になった。
-        /// IncTimeを加算して、タイマーを開始する。
         /// </summary>
         public void ChangeToOurTurn()
         {
@@ -87,7 +86,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 restTime = TimeSpan.Zero;
 
             var k = KifuMoveTime;
-            KifuMoveTime = new KifuMoveTime(k.ThinkingTime , k.RealThinkingTime , k.ThinkingTime , restTime);
+            KifuMoveTime = new KifuMoveTime(k.ThinkingTime , k.RealThinkingTime , k.TotalTime , restTime);
 
             StartTimer();
         }
@@ -109,6 +108,10 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 今回の指し手の計測時間
             var thinkingTime = ThinkingTime();
+
+            // ElapsedTime()が0を返すようにしておく。
+            // (そうしないとDisplayShortString()で残り時間を表示するときにさらに消費時間を引かれてしまう)
+            startTime = Stopwatch.ElapsedMilliseconds;
 
             var restTime = KifuMoveTime.RestTime;
 
@@ -188,7 +191,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public TimeSpan RealThinkingTime()
         {
-            return new TimeSpan(0, 0, 0 , (int)(endTime - startTime));
+            return new TimeSpan(0, 0, 0, 0 , (int)(endTime - startTime));
         }
 
         /// <summary>
