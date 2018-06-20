@@ -5,6 +5,9 @@ namespace MyShogi.Model.Shogi.Kifu
     /// <summary>
     /// 棋譜の表現
     /// ある局面での指し手、本譜の手順、etc..
+    /// 
+    /// 本譜の手順はmoves[0]である。
+    /// 実際の対局で指された指し手は、moves[0]とswapして、moves[0]に持ってくるようにすること。
     /// </summary>
     public class KifuNode
     {
@@ -16,24 +19,10 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// この局面での指し手(分岐があるので複数ある)
         /// moves[0]が本譜の手順。
-        /// movesの指し手は重複していないものとする。
+        /// movesの指し手は重複を許す。
+        /// (対局後、途中の局面から再度対局を再開させるケースがある)
         /// </summary>
         public List<KifuMove> moves = new List<KifuMove>();
-
-        /// <summary>
-        /// 本譜の手順のindex
-        /// moves[selectedKifuMoveIndex]が本譜(現在棋譜ウィンドウに表示されている)の手順
-        /// moves.Count!=0のときにおいて、moves[selectedKifuMoveIndex]が合法であることは保証されているものとする。
-        /// </summary>
-        public int selectedKifuMoveIndex;
-
-        /// <summary>
-        /// 本譜の手順
-        /// </summary>
-        public KifuMove selectedKifuMove
-        {
-            get { return (moves.Count == 0) ? null : moves[selectedKifuMoveIndex]; }
-        }
 
         /// <summary>
         /// 一手前のnode

@@ -261,9 +261,15 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="kf"></param>
         public string ToString(KifuFileType kt)
         {
-            // イベントの一時抑制
+            // -- イベントの一時抑制
+
             // KifuListの更新通知がいっぱい発生すると棋譜ウィンドウが乱れるため。
+            var e1 = Tree.PropertyChangedEventEnable;
             Tree.PropertyChangedEventEnable = false;
+
+            // 棋譜ウィンドウを操作してはならないので棋譜ウィンドウとのsyncを停止させておく。 
+            var e2 = Tree.EnableKifuList;
+            Tree.EnableKifuList = false;
 
             // 局面をrootに移動(あとで戻す)
             var moves = Tree.RewindToRoot();
@@ -307,7 +313,8 @@ namespace MyShogi.Model.Shogi.Kifu
             Tree.RewindToRoot();
             Tree.FastForward(moves);
 
-            Tree.PropertyChangedEventEnable = true;
+            Tree.EnableKifuList = e2;
+            Tree.PropertyChangedEventEnable = e1;
 
             return result;
         }
