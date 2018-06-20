@@ -164,7 +164,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 棋譜ファイルを読み込む。
-        /// this.Treeに反映する。また最終局面までthis.Tree.posを自動的に進める。
+        /// this.Treeに反映する。また本譜の手順の最終局面までthis.Tree.posを自動的に進める。
         /// フォーマットは自動判別。
         /// CSA/KIF/KI2/PSN/SFEN形式を読み込める。
         ///
@@ -218,6 +218,12 @@ namespace MyShogi.Model.Shogi.Kifu
             }
             finally
             {
+                // -- 本譜の手順の末尾に移動。
+                Tree.RewindToRoot();
+                // moves[0]を選択していけば本譜の手順の末尾に行けることは保証されている。
+                while (Tree.currentNode.moves.Count != 0)
+                    Tree.DoMove(Tree.currentNode.moves[0].nextMove);
+
                 // イベントの一時抑制を解除して、更新通知を送る。
                 Tree.PropertyChangedEventEnable = true;
                 Tree.RaisePropertyChanged("KifuList",Tree.position);
@@ -225,7 +231,12 @@ namespace MyShogi.Model.Shogi.Kifu
             }
         }
 
-        // 読み込み形式手動指定、とりあえず各形式のルーチンを直接テストするため。
+        /// <summary>
+        /// 読み込み形式手動指定、とりあえず各形式のルーチンを直接テストするため。
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="kf"></param>
+        /// <returns></returns>
         public string FromString(string content, KifuFileType kf)
         {
             Init();
