@@ -16,7 +16,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// リストが変更されたときに呼び出されるハンドラ
         /// </summary>
-        public void OnListChanged(PropertyChangedEventArgs args)
+            public void OnListChanged(PropertyChangedEventArgs args)
         {
             if (!IsHandleCreated)
                 return;
@@ -82,6 +82,23 @@ namespace MyShogi.View.Win2D
 
                 listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
 
+            }));
+        }
+
+        /// <summary>
+        /// 棋譜の読み込み時など、LocalServer側の要請により、棋譜ウィンドウを指定行に
+        /// フォーカスを当てるためのハンドラ
+        /// </summary>
+        public void SetKifuListIndex(int selectedIndex)
+        {
+            if (!IsHandleCreated)
+                return;
+
+            Invoke(new Action(() =>
+            {
+                if (listBox1.Items.Count <= selectedIndex)
+                    selectedIndex = listBox1.Items.Count - 1;
+                listBox1.SelectedIndex = selectedIndex;
             }));
         }
 

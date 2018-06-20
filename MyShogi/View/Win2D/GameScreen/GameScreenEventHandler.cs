@@ -48,6 +48,17 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 棋譜の読み込み時など、LocalServer側の要請により、棋譜ウィンドウを指定行に
+        /// フォーカスを当てるためのハンドラ
+        /// </summary>
+        /// <param name="args"></param>
+        public void SetKifuListIndex(PropertyChangedEventArgs args)
+        {
+            var selectedIndex = (int)args.value;
+            kifuControl.SetKifuListIndex(selectedIndex);
+        }
+
+        /// <summary>
         /// メニューのすぐ下に配置しているtooltip buttonを、現在の状態に応じてOn/Offする。
         /// </summary>
         private void UpdateTooltipButtons()

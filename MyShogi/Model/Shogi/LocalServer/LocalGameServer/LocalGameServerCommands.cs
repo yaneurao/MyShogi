@@ -173,10 +173,14 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     } else
                     {
-                        // 読み込みが完了すれば自動的に末尾の局面に行っているはず。
+                        // 読み込みが完了すれば自動的に末尾の局面に行っているはずだが、
+                        // 棋譜ウィンドウを更新した結果、分岐局面などに戻ってしまうといけない。
 
-                        // 棋譜に書かれていた持ち時間を画面に反映させる。(GameSettingには反映させない)
+                        // 棋譜に書かれていた持ち時間設定・残り時間を画面に反映させる。(GameSettingには反映させない)
                         PlayTimers.SetKifuTimeSettings( kifuManager.Tree.KifuTimeSettings );
+
+                        // 末尾の局面に移動するコマンドを叩いておく。
+                        RaisePropertyChanged("SetKifuListIndex",kifuManager.KifuList.Count - 1);
                     }
                 }
             });

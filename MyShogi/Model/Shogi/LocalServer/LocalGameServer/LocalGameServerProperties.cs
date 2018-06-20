@@ -145,6 +145,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         // このクラスのStart()が呼び出された時に呼び出される。
         //public bool GameServerStarted { get; }
 
+        // 仮想プロパティ
+        // 棋譜読み込み時など、こちら側の要請により、棋譜ウィンドウを指定行に移動させるイベント
+        //public int SetKifuListIndex { get; }
+
         /// <summary>
         /// 盤面反転
         /// Viewごとに変更できるので、このクラスが保持している。

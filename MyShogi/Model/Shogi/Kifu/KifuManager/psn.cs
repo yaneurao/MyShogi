@@ -19,7 +19,6 @@ namespace MyShogi.Model.Shogi.Kifu
         private string FromPsnString(string[] lines, KifuFileType kf)
         {
             // 消費時間、残り時間、消費時間を管理する。
-            var times = KifuMoveTimes.Zero;
             var timeSettings = KifuTimeSettings.TimeLimitless;
 
             var lineNo = 1;
@@ -68,13 +67,21 @@ namespace MyShogi.Model.Shogi.Kifu
                             case "whitetimesetting":
                                 var white_setting = KifuTimeSetting.FromKifuString(body);
                                 if (white_setting != null)
+                                {
                                     timeSettings.Players[(int)Color.WHITE] = white_setting;
+                                    timeSettings.WhiteEnable = true; // 後手は個別設定
+                                }
                                 break;
                         }
                     }
                     else
                         break;
                 }
+
+                // 残り時間の計算用。
+                var times = timeSettings.GetInitialKifuMoveTimes();
+                Tree.SetKifuMoveTimes(times.Clone()); // root局面での残り時間の設定
+                Tree.KifuTimeSettings = timeSettings.Clone();
 
                 // PSNフォーマットのサイトを見ると千日手とか宣言勝ちについて規定がない。
                 // どう見ても欠陥フォーマットである。
@@ -375,13 +382,16 @@ namespace MyShogi.Model.Shogi.Kifu
                         }
 
                         var turn = Tree.position.sideToMove;
-                        times.Players[(int)turn] = new KifuMoveTime(thinking_time,thinking_time,total_time,
-                            TimeSpan.Zero /*残り時間は棋譜上に記録されていない*/);
+                        times.Players[(int)turn] = times.Players[(int)turn].Create(
+                            timeSettings.Player(turn),
+                            thinking_time,thinking_time,
+                            total_time /*消費時間は棋譜に記録されているものをそのまま使用する*/
+                            /*残り時間は棋譜上に記録されていない*/
+                            );
 
                         // -- DoMove()
 
-                        var kifuMoveTime = times;
-                        Tree.AddNode(move, kifuMoveTime);
+                        Tree.AddNode(move, times.Clone());
 
                         // 特殊な指し手、もしくはLegalでないならDoMove()は行わない
                         if (move.IsSpecial() || !Tree.position.IsLegal(move))
@@ -430,8 +440,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 sb.AppendLine(string.Format(@"[White ""{0}""]", KifuHeader.PlayerNameWhite));
 
                 // 持ち時間設定も合わせて書き出す
-                sb.AppendLine($"[BlackTimeSetting {Tree.KifuTimeSettings.Player(Color.BLACK).ToKifuString()}]");
-                sb.AppendLine($"[WhiteTimeSetting {Tree.KifuTimeSettings.Player(Color.WHITE).ToKifuString()}]");
+                sb.AppendLine($"[BlackTimeSetting \"{Tree.KifuTimeSettings.Player(Color.BLACK).ToKifuString()}\"]");
+                sb.AppendLine($"[WhiteTimeSetting \"{Tree.KifuTimeSettings.Player(Color.WHITE).ToKifuString()}\"]");
             }
 
             // 初期局面

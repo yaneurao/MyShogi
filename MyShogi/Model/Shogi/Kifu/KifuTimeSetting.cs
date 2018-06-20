@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
@@ -267,6 +268,24 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 持ち時間制限なしのsingleton instance
         /// </summary>
         public static readonly KifuTimeSettings TimeLimitless = CreateTimeLimitless();
+
+        /// <summary>
+        /// この対局設定に従う、初期局面でのKifuMoveTimesを生成して返す。
+        /// (残り時間が持ち時間に設定されている)
+        /// </summary>
+        /// <returns></returns>
+        public KifuMoveTimes GetInitialKifuMoveTimes()
+        {
+            var k = new KifuMoveTime[2];
+            foreach (var c in All.Colors())
+            {
+                var p = Player(c);
+                var restTime = new TimeSpan(p.Hour, p.Minute, p.Second);
+                k[(int)c] = new KifuMoveTime(TimeSpan.Zero, TimeSpan.Zero, TimeSpan.Zero, restTime);
+            }
+
+            return new KifuMoveTimes(k[0],k[1]);
+        }
 
         // -- private members
 

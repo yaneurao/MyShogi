@@ -79,6 +79,7 @@ namespace MyShogi.App
             gameServer.AddPropertyChangedHandler("RestTimeChanged", mainDialog.gameScreen.RestTimeChanged);
             gameServer.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);
             gameServer.AddPropertyChangedHandler("GameServerStarted", mainDialog.UpdateMenuItems);
+            gameServer.AddPropertyChangedHandler("SetKifuListIndex", mainDialog.gameScreen.SetKifuListIndex);
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 
