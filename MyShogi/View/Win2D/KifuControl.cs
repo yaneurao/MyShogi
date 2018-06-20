@@ -11,6 +11,16 @@ namespace MyShogi.View.Win2D
         public KifuControl()
         {
             InitializeComponent();
+
+            // 文字色を変えたいのでowner drawにする。
+            listBox1.DrawMode = DrawMode.OwnerDrawFixed;
+
+#if false // うまくいかないのでfalse
+            // 棋譜ウィンドウがちらつくの嫌なのでダブルバッファリングにする。
+            this.SetStyle(ControlStyles.DoubleBuffer, true);
+            this.SetStyle(ControlStyles.UserPaint, true);
+            this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+#endif
         }
 
         /// <summary>
@@ -167,5 +177,53 @@ namespace MyShogi.View.Win2D
 
         // 棋譜ウィンドウの選択行が変更になった時に呼び出されるハンドラ
         public SelectedIndexChangedEvent SelectedIndexChangedHandler;
+
+        // 棋譜ウィンドウの各行の色をカスタムに変更したいので、描画ハンドラを自前で書く。
+        private void listBox1_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+
+            if (e.Index > -1)
+            {
+                Brush wBrush = null;
+                try
+                {
+                    if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
+                    {
+                        /*                        
+                                                //選択されていない行
+                                                if (e.Index < 2)
+                                                {
+                                                    //指定された行より小さければ青
+                                                    wBrush = new SolidBrush(Color.Blue);
+                                                }
+                                                else
+                                                {
+                                                    //指定された行より大きければ通常色
+                                                    wBrush = new SolidBrush(e.ForeColor);
+                                                }
+                        */
+                        // あとで考える。
+
+                        wBrush = new SolidBrush(e.ForeColor);
+                    }
+                    else
+                    {
+                        //選択されている行なら通常色
+                        wBrush = new SolidBrush(e.ForeColor);
+                    }
+                    //文字を設定
+                    e.Graphics.DrawString(((ListBox)sender).Items[e.Index].ToString(), e.Font, wBrush, e.Bounds);
+                }
+                finally
+                {
+                    if (wBrush != null)
+                    {
+                        wBrush.Dispose();
+                    }
+                }
+            }
+            e.DrawFocusRectangle();
+        }
     }
 }

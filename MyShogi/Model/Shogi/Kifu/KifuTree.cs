@@ -568,7 +568,10 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             if (EnableKifuList)
             {
-                // 棋譜をappendする
+                // -- 棋譜をappendする
+
+                // 分岐棋譜であれば、先頭に"+"を付与。
+                var plus = currentNode.moves.Count != 1 ? '+' : ' ';
 
                 var move_text = move_to_kif_string(position, m);
                 var move_text_game_ply = position.gamePly;
@@ -576,8 +579,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 move_text = string.Format("{0,-4}", move_text);
                 move_text = move_text.Replace(' ', '　'); // 半角スペースから全角スペースへの置換
 
-                var text = string.Format("{0,3}.{1} {2}", move_text_game_ply, move_text,
-                    $"{t.Hours:D2}:{t.Minutes:D2}:{t.Seconds:D2}");
+                var text = $"{plus}{move_text_game_ply, 3}.{move_text} {t.Hours:D2}:{t.Minutes:D2}:{t.Seconds:D2}";
 
                 KifuList.Add(text);
                 RaisePropertyChanged("KifuList", KifuList, KifuList.Count-1 /*末尾が変更になった*/);
