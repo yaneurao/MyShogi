@@ -143,7 +143,7 @@ namespace MyShogi.View.Win2D
                 {
                     int c = (int)c_;
                     var n = num[c];
-                    var timeSetting = setting.TimeSettings.RawPlayer(c_);
+                    var timeSetting = setting.KifuTimeSettings.RawPlayer(c_);
                     binder.Bind(timeSetting.Hour, n[0], v => timeSetting.Hour = v);
                     binder.Bind(timeSetting.Minute, n[1], v => timeSetting.Minute = v);
                     binder.Bind(timeSetting.Second, n[2], v => timeSetting.Second = v);
@@ -197,9 +197,9 @@ namespace MyShogi.View.Win2D
             // -- 後手の対局時間設定を個別にするのか
 
             // このチェックボックスが無効だと、それに応じてgroupBox5が無効化されなくてはならない。
-            binder.Bind(setting.TimeSettings.WhiteEnable, checkBox1,
+            binder.Bind(setting.KifuTimeSettings.WhiteEnable, checkBox1,
                 v => {
-                    setting.TimeSettings.WhiteEnable = v;
+                    setting.KifuTimeSettings.WhiteEnable = v;
                     groupBox5.Enabled = v && /*時間無制限*/!checkBox6.Checked;
                     checkBox6.Enabled = v; // 時間無制限
                     if (v)

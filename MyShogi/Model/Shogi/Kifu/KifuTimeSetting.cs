@@ -2,15 +2,15 @@
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 
-namespace MyShogi.Model.Shogi.LocalServer
+namespace MyShogi.Model.Shogi.Kifu
 {
     /// <summary>
     /// 対局時間設定
     /// 片側のプレイヤー分
     /// </summary>
-    public class TimeSetting
+    public class KifuTimeSetting
     {
-        public TimeSetting()
+        public KifuTimeSetting()
         {
             Minute = 15;
             ByoyomiEnable = true;
@@ -20,9 +20,9 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// このインスタンスのClone()
         /// </summary>
         /// <returns></returns>
-        public TimeSetting Clone()
+        public KifuTimeSetting Clone()
         {
-            return (TimeSetting)this.MemberwiseClone();
+            return (KifuTimeSetting)this.MemberwiseClone();
         }
 
         /// <summary>
@@ -143,24 +143,24 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// <summary>
     /// 対局時間設定 先後の両方の分
     /// </summary>
-    public class TimeSettings
+    public class KifuTimeSettings
     {
-        public TimeSettings()
+        public KifuTimeSettings()
         {
-            Players = new TimeSetting[2] { new TimeSetting(), new TimeSetting() };
+            Players = new KifuTimeSetting[2] { new KifuTimeSetting(), new KifuTimeSetting() };
             WhiteEnable = false;
         }
 
-        public TimeSettings(TimeSetting[] players, bool WhiteEnable_)
+        public KifuTimeSettings(KifuTimeSetting[] players, bool WhiteEnable_)
         {
             Players = players;
             WhiteEnable = WhiteEnable_;
         }
 
-        public TimeSettings Clone()
+        public KifuTimeSettings Clone()
         {
-            return new TimeSettings(
-                new TimeSetting[2] { Players[0].Clone(), Players[1].Clone() },
+            return new KifuTimeSettings(
+                new KifuTimeSetting[2] { Players[0].Clone(), Players[1].Clone() },
                 WhiteEnable
                 );
         }
@@ -171,7 +171,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public TimeSetting Player(Color c)
+        public KifuTimeSetting Player(Color c)
         {
             if (!WhiteEnable)
                 c = Color.BLACK;
@@ -185,7 +185,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public TimeSetting RawPlayer(Color c)
+        public KifuTimeSetting RawPlayer(Color c)
         {
             return Players[(int)c];
         }
@@ -203,9 +203,29 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public bool WhiteEnable;
 
+        // -- properties
+
+        /// <summary>
+        /// 持ち時間制限なしのsingleton instance
+        /// </summary>
+        public static readonly KifuTimeSettings TimeLimitless = CreateTimeLimitless();
+
+        // -- private members
+
+        /// <summary>
+        /// 持ち時間なしのinstanceの生成
+        /// </summary>
+        /// <returns></returns>
+        private static KifuTimeSettings CreateTimeLimitless()
+        {
+            var player = new KifuTimeSetting();
+            player.TimeLimitless = true;
+            return new KifuTimeSettings(new KifuTimeSetting[2] { player, player } , true);
+        }
+
         /// <summary>
         /// 対局時間設定、先後分
         /// </summary>
-        private TimeSetting[] Players;
+        private KifuTimeSetting[] Players;
     }
 }

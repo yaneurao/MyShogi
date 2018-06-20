@@ -49,6 +49,7 @@ namespace MyShogi.Model.Shogi.Kifu
             rootKifuMove = new KifuMove(Move.NONE, rootNode, KifuMoveTimes.Zero);
 
             kifuWindowMoves = new List<KifuMove>();
+            KifuTimeSettings = KifuTimeSettings.TimeLimitless;
 
             RaisePropertyChanged("Position", position);
         }
@@ -235,6 +236,16 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             get { return rootKifuMove.kifuMoveTimes; }
             set { rootKifuMove.kifuMoveTimes = value; }
+        }
+
+        /// <summary>
+        /// 棋譜に記録されていた持ち時間設定
+        /// 
+        /// 棋譜を読み書きする時、この設定を読み書きできるフォーマットであるならこの設定を書き出すこと。
+        /// </summary>
+        public KifuTimeSettings KifuTimeSettings
+        {
+            get; set;
         }
 
         /// <summary>
@@ -468,7 +479,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 現在の局面のKifuMoveTimesを返す。
         /// </summary>
         /// <returns></returns>
-        public KifuMoveTimes GetKifuMoveTime()
+        public KifuMoveTimes GetKifuMoveTimes()
         {
             // 1つ前の局面の指し手を指した直後に記録されている。
 
@@ -481,6 +492,25 @@ namespace MyShogi.Model.Shogi.Kifu
             else
                 // rootの局面では、rootKifuMoveTimesのほうに格納されている。
                 return RootKifuMoveTimes;
+        }
+
+        /// <summary>
+        /// KifuMoveTimesを現在の局面に対して設定する。
+        /// </summary>
+        /// <param name="kifuMoveTimes"></param>
+        public void SetKifuMoveTimes(KifuMoveTimes kifuMoveTimes)
+        {
+            // 1つ前の局面の指し手を指した直後に記録されている。
+
+            var prevNode = currentNode.prevNode;
+            if (prevNode != null)
+            {
+                // prevNodeから、この局面に至る指し手を探して、そこに記録されているKifuMoveTimeに設定する
+                prevNode.moves.Find((x) => x.nextNode == currentNode).kifuMoveTimes = kifuMoveTimes;
+            }
+            else
+                // rootの局面では、rootKifuMoveTimesのほうに格納されている。
+                RootKifuMoveTimes = kifuMoveTimes;
         }
 
         // -- 以下 private members

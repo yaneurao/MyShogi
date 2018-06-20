@@ -1,5 +1,6 @@
-﻿using MyShogi.Model.Common.Utility;
-using MyShogi.Model.Shogi.Core;
+﻿using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Kifu;
+using MyShogi.Model.Common.Utility;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -34,7 +35,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             Player(Color.BLACK).PlayerName = "わたし";
             Player(Color.WHITE).PlayerName = "あなた";
 
-            TimeSettings = new TimeSettings();
+            KifuTimeSettings = new KifuTimeSettings();
             MiscSettings = new MiscSettings();
         }
 
@@ -45,11 +46,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="board"></param>
         /// <param name="timeSetting"></param>
         private GameSetting(PlayerSetting[] players , BoardSetting board ,
-            TimeSettings timeSettings , MiscSettings miscSettings )
+            KifuTimeSettings kifuTimeSettings , MiscSettings miscSettings )
         {
             Players = players;
             Board = board;
-            TimeSettings = timeSettings;
+            KifuTimeSettings = kifuTimeSettings;
             MiscSettings = miscSettings;
         }
 
@@ -64,7 +65,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             return new GameSetting(
                 new PlayerSetting[2] { Players[0].Clone(), Players[1].Clone() },
                 Board.Clone(),
-                TimeSettings.Clone(),
+                KifuTimeSettings.Clone(),
                 MiscSettings.Clone()
             );
         }
@@ -88,13 +89,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         public void SwapPlayer()
         {
             Utility.Swap(ref Players[0], ref Players[1]);
-            TimeSettings.SwapPlayer();
+            KifuTimeSettings.SwapPlayer();
         }
 
         /// <summary>
         /// 持ち時間設定
         /// </summary>
-        public TimeSettings TimeSettings;
+        public KifuTimeSettings KifuTimeSettings;
 
         /// <summary>
         /// その他の細かい設定

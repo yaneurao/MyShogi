@@ -95,7 +95,7 @@
     <Compile Include="Model\Shogi\LocalServer\Settings\BoardSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\GameSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\MiscSettings.cs" />
-    <Compile Include="Model\Shogi\LocalServer\Settings\TimeSetting.cs" />
+    <Compile Include="Model\Shogi\Kifu\KifuTimeSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\PlayerSetting.cs" />
     <Compile Include="Model\Shogi\Player\NullPlayer.cs" />
     <Compile Include="Model\Shogi\Player\PlayerBuilder.cs" />

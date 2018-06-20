@@ -106,7 +106,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     kifuManager.UndoMoveInTheGame();
 
                     // 時刻を巻き戻さないといけない
-                    PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTime());
+                    PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTimes());
 
                     // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
                     NotifyTurnChanged();
@@ -147,7 +147,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // 無理やりではあるが棋譜のN行目に移動出来るのであった…。
                     kifuManager.Tree.GotoSelectedIndex(selectedIndex);
-                    PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTime());
+                    PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTimes());
 
                 }
             });
@@ -174,6 +174,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                     } else
                     {
                         // 読み込みが完了すれば自動的に末尾の局面に行っているはず。
+
+                        // 棋譜に書かれていた持ち時間を画面に反映させる。(GameSettingには反映させない)
+                        PlayTimers.SetKifuTimeSettings( kifuManager.Tree.KifuTimeSettings );
                     }
                 }
             });

@@ -135,7 +135,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             Tree.UndoMove();
 
                         // このnodeでの残り時間に戻す
-                        times = Tree.GetKifuMoveTime();
+                        times = Tree.GetKifuMoveTimes();
 
                         continue;
                     }

@@ -27,14 +27,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// この設定に従って、残り時間をカウントする。
         /// このクラスを使う時に、外部からsetする。
         /// </summary>
-        public TimeSetting TimeSetting { set; get; }
+        public KifuTimeSetting KifuTimeSetting { set; get; }
 
         public PlayTimer()
         {
             KifuMoveTime = new KifuMoveTime();
             Stopwatch = new Stopwatch();
             Stopwatch.Stop();
-            TimeSetting = new TimeSetting(); // デフォルトで何かセットしておかないと起動後の描画でnull参照になってしまう。
+            KifuTimeSetting = new KifuTimeSetting(); // デフォルトで何かセットしておかないと起動後の描画でnull参照になってしまう。
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 TimeSpan.Zero, // まだ指してないので、指し手の時間 = 0
                 TimeSpan.Zero, // まだ指してないので、指し手の時間 = 0
                 TimeSpan.Zero, // 総消費時間 = 0
-                new TimeSpan(TimeSetting.Hour, TimeSetting.Minute, TimeSetting.Second) // 残り持ち時間
+                new TimeSpan(KifuTimeSetting.Hour, KifuTimeSetting.Minute, KifuTimeSetting.Second) // 残り持ち時間
                 );
             Init();
         }
@@ -124,8 +124,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // TimeUpのときは、IncTimeによって残り時間が増えてしまうと、
             // 残り時間があるにも関わらずタイムアップになったように見えるといけないので
             // IncTimeしない。
-            if (!timeUp && TimeSetting.IncTimeEnable)
-                restTime += new TimeSpan(0,0,TimeSetting.IncTime);
+            if (!timeUp && KifuTimeSetting.IncTimeEnable)
+                restTime += new TimeSpan(0,0,KifuTimeSetting.IncTime);
 
             // 実消費時間
             var realThinkingTime = RealThinkingTime();
@@ -141,14 +141,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         public bool IsTimeUp()
         {
             // 時間切れを負けにしない
-            if (TimeSetting.IgnoreTime || TimeSetting.TimeLimitless)
+            if (KifuTimeSetting.IgnoreTime || KifuTimeSetting.TimeLimitless)
                 return false;
 
             var rest = KifuMoveTime.RestTime - new TimeSpan(0, 0, (int)(ElapsedTime() / 1000));
 
             // ここに秒読み時間も加算して負かどうかを調べる
-            if (TimeSetting.ByoyomiEnable)
-                rest += new TimeSpan(0, 0, TimeSetting.Byoyomi);
+            if (KifuTimeSetting.ByoyomiEnable)
+                rest += new TimeSpan(0, 0, KifuTimeSetting.Byoyomi);
 
             return (rest <= TimeSpan.Zero);
         }
@@ -241,14 +241,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         public string DisplayShortString()
         {
             // 消費時間が減っていくのが目障りな人向けの設定
-            if (TimeSetting.TimeLimitless)
+            if (KifuTimeSetting.TimeLimitless)
                 return "無制限";
 
             var elapsed = RoundDownTime(ElapsedTime());
             var r = KifuMoveTime.RestTime - new TimeSpan(0, 0, elapsed);
 
             // 秒読みが有効でないなら、残りの時、分、秒だけを描画しておく。
-            if (!TimeSetting.ByoyomiEnable || TimeSetting.Byoyomi == 0)
+            if (!KifuTimeSetting.ByoyomiEnable || KifuTimeSetting.Byoyomi == 0)
             {
                 if (r < TimeSpan.Zero)
                     r = TimeSpan.Zero;
@@ -262,7 +262,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (rn < TimeSpan.Zero)
                     rn = TimeSpan.Zero;
 
-                return $"{r.Hours:D2}:{r.Minutes:D2}:{r.Seconds:D2} {rn.TotalSeconds}/{TimeSetting.Byoyomi}";
+                return $"{r.Hours:D2}:{r.Minutes:D2}:{r.Seconds:D2} {rn.TotalSeconds}/{KifuTimeSetting.Byoyomi}";
             }
 
         }
@@ -323,6 +323,16 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             foreach(var c in All.Colors())
                 Player(c).SetKifuMoveTime(kifuMoveTimes.Player(c));
+        }
+
+        /// <summary>
+        /// 持ち時間設定をそれぞれのプレイヤーに反映させる。
+        /// </summary>
+        /// <param name="kifuTimeSettins"></param>
+        public void SetKifuTimeSettings(KifuTimeSettings kifuTimeSettings)
+        {
+            foreach (var c in All.Colors())
+                Player(c).KifuTimeSetting = kifuTimeSettings.Player(c);
         }
 
         private PlayTimer[] Players;

@@ -1,4 +1,5 @@
 ﻿using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
 using System.Collections.Generic;
@@ -82,7 +83,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         public string ShortDisplayName(Color c)
         {
             var name = DisplayName(c);
-            return name.PadLeft(8); // 最大で8文字まで
+            return name.Left(8); // 最大で8文字まで
         }
 
         /// <summary>
@@ -113,7 +114,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public string TimeSettingString(Color c)
         {
-            return GameSetting.TimeSettings.Player(c).ToShortString();
+            return PlayTimer(c).KifuTimeSetting.ToShortString();
         }
 
         /// <summary>
@@ -201,6 +202,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                 kifuManager.InitBoard(gameSetting.Board.BoardType);
             }
 
+            // 現在の時間設定を、KifuManager.Treeに反映させておく(棋譜保存時にこれが書き出される)
+            kifuManager.Tree.KifuTimeSettings = gameSetting.KifuTimeSettings;
+
             // 対局者氏名の設定
             // 人間の時のみ有効。エンジンの時は、エンジン設定などから取得することにする。(TODO:あとで考える)
             foreach (var c in All.Colors())
@@ -228,12 +232,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             foreach (var c in All.Colors())
             {
                 var pc = PlayTimer(c);
-                pc.TimeSetting = GameSetting.TimeSettings.Player(c);
+                pc.KifuTimeSetting = GameSetting.KifuTimeSettings.Player(c);
                 pc.GameStart();
             }
+
             // rootの持ち時間設定をここに反映させておかないと待ったでrootまで持ち時間が戻せない。
-            // TODO:途中の局面からだとここではなく、現局面のところに書き出す必要がある。
-            kifuManager.Tree.RootKifuMoveTimes = PlayTimers.GetKifuMoveTimes();
+            // 途中の局面からだとここではなく、現局面のところに書き出す必要がある。
+            kifuManager.Tree.SetKifuMoveTimes( PlayTimers.GetKifuMoveTimes() );
 
             // コンピュータ vs 人間である場合、人間側を手前にしてやる。
             foreach (var c in All.Colors())
