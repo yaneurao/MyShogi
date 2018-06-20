@@ -267,6 +267,9 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// posの現在の局面から指し手mで進める。
         /// mは、currentNodeのもつ指し手の一つであるものとする
+        /// 
+        /// speical moveの時は、Position.DoMove()は呼び出さないが次のnodeに到達できることは保証される。
+        /// (そうしないとcurrentNodeが更新されないため)
         /// </summary>
         /// <param name="m"></param>
         public void DoMove(KifuMove m)
@@ -278,7 +281,12 @@ namespace MyShogi.Model.Shogi.Kifu
             var thinkingTime = m.kifuMoveTimes.Player(stm).ThinkingTime;
             AddKifu(m.nextMove, thinkingTime);
 
-            position.DoMove(m.nextMove);
+            // special moveに対してはDoMove()を行わない。
+            if (!m.nextMove.IsSpecial())
+            {
+                position.DoMove(m.nextMove);
+                RaisePropertyChanged("Position", position);
+            }
 
             // rootNodeからの指し手。これは棋譜リストと同期させている。
             if (EnableKifuList)
@@ -286,13 +294,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             ++pliesFromRoot;
 
-            RaisePropertyChanged("Position", position);
-
             currentNode = m.nextNode;
-
-            // もし次がSpecialMoveの局面に到達したのであれば、棋譜に積む。
-            if (currentNode.moves.Count != 0 && currentNode.moves[0].nextMove.IsSpecial())
-                AddKifuSpecialMove(currentNode.moves[0].nextMove , TimeSpan.Zero);
         }
 
         /// <summary>
@@ -310,19 +312,18 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public void UndoMove()
         {
-            // 棋譜の末端にspecial moveを積んでいたのであればそれを取り除く。
-            if (currentNode.moves.Count != 0 && currentNode.moves[0].nextMove.IsSpecial())
-                RemoveKifu(true);
-
-            position.UndoMove();
+            // speical moveでこの局面に来たのであればPosition.UndoMove()は呼び出さない。
+            if (!IsLastMoveSpecialMove())
+            {
+                position.UndoMove();
+                RaisePropertyChanged("Position", position);
+            }
 
             // rootNodeからの指し手。これは棋譜リストと同期させている。
             if (EnableKifuList)
                 kifuWindowMoves.RemoveAt(kifuWindowMoves.Count-1); // RemoveLast()
 
             --pliesFromRoot;
-
-            RaisePropertyChanged("Position", position);
 
             currentNode = currentNode.prevNode;
 
@@ -339,6 +340,8 @@ namespace MyShogi.Model.Shogi.Kifu
         ///
         /// totalTimeは総消費時間。nullを指定した場合は、ここまでの総消費時間(TotalConsumptionTime()で取得できる)に
         /// thinkingTimeを秒単位に繰り上げたものが入る。
+        /// 
+        /// moveがspecial moveもありうる。
         /// </summary>
         /// <param name="move"></param>
         /// <param name="thinkingTime"></param>
@@ -351,10 +354,6 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 KifuNode nextNode = new KifuNode(currentNode);
                 currentNode.moves.Add(new KifuMove(move, nextNode, kifuMoveTimes));
-
-                // 特殊な指し手であるなら、この時点で棋譜の終端にその旨を記録しておく。
-                if (move.IsSpecial())
-                    AddKifuSpecialMove(move , kifuMoveTimes.Player(position.sideToMove).ThinkingTime);
             }
         }
 
@@ -439,14 +438,9 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 現局面以降の棋譜データを削除する。(中断局の再開など用)
-        /// 末尾にspecial moveが積んである場合、その部分の棋譜も削除する。
         /// </summary>
         public void ClearForward()
         {
-            // 末尾にspecial moveが積んであるなら、棋譜を1行削除する必要がある。
-            if (EnableKifuList && currentNode.moves.Count!=0 && currentNode.moves[0].nextMove.IsSpecial())
-                RemoveKifu(true);
-
             // この枝の持つ指し手をすべて削除
             currentNode.moves.Clear();
 
@@ -461,6 +455,19 @@ namespace MyShogi.Model.Shogi.Kifu
             }
         }
 
+        /// <summary>
+        /// 直前の指し手がspecial moveであるか
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLastMoveSpecialMove()
+        {
+            // rootNodeでは遡れない。
+            if (currentNode == rootNode)
+                return false;
+
+            var move = currentNode.prevNode.moves.Find(m => m.nextNode == currentNode);
+            return move.nextMove.IsSpecial();
+        }
 
         /// <summary>
         /// rootから数えてselectedIndex目にある棋譜の局面に移動する。
@@ -484,10 +491,7 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 // 棋譜ウィンドウに表示していたものを選んだのだからこれは合法。
                 var move = kifuWindowMoves[i];
-                if (move.nextMove.IsSpecial())
-                    break; // DoMove()できないので終了
-
-                // special moveでなければ、この指し手のlegalityは担保されている。
+                // この指し手のlegalityは担保されている。(special moveであってもDoMove()は出来る)
                 DoMove(move);
             }
 
@@ -583,15 +587,15 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 // special moveは、USIとしては規定されていない指し手になるのでここでは出力しない。
                 // ("position"コマンドで送信してしまいかねないので)
-                if (!m.IsSpecial())
-                    UsiMoveList.Add(m.ToUsi());
+                // ただし削除処理がややこしくなるのは嫌なので要素は一つ増やしておく。
+                UsiMoveList.Add(!m.IsSpecial() ? m.ToUsi() : string.Empty);
             }
         }
 
         /// <summary>
         /// UndoMove()のときに棋譜を1行取り除く。
         /// </summary>
-        private void RemoveKifu(bool isSpecialMove = false)
+        private void RemoveKifu()
         {
             if (EnableKifuList)
             {
@@ -599,19 +603,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 RaisePropertyChanged("KifuList", KifuList, KifuList.Count /*末尾が削除になった*/);
             }
 
-            // UsiMoveListにはspecial moveは含まれていないので、取り除くことは出来ない。
-            if (EnableUsiMoveList && !isSpecialMove)
+            if (EnableUsiMoveList)
                 UsiMoveList.RemoveAt(UsiMoveList.Count - 1); // RemoveLast()
-        }
-
-        /// <summary>
-        /// KifuListの末尾にspecial moveを積む。
-        /// </summary>
-        /// <param name="m"></param>
-        private void AddKifuSpecialMove(Move m , TimeSpan t)
-        {
-            Debug.Assert(m.IsSpecial());
-            AddKifu(m , t);
         }
 
     }

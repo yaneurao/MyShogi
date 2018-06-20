@@ -394,14 +394,14 @@ namespace MyShogi.Model.Shogi.Kifu
                         Tree.AddNode(move, times.Clone());
 
                         // 特殊な指し手、もしくはLegalでないならDoMove()は行わない
-                        if (move.IsSpecial() || !Tree.position.IsLegal(move))
+                        if (!move.IsSpecial() && !Tree.position.IsLegal(move))
                         {
                             // まだ次の分岐棋譜があるかも知れないので読み進める
                             continue;
                         }
 
+                        // special moveであってもTree.DoMove()は出来る
                         Tree.DoMove(move);
-
                         continue;
 
                     }
