@@ -252,7 +252,7 @@ namespace MyShogi.Model.Common.Utility
             while (index < Text.Length)
             {
                 var c = Text[index];
-                if (c == ' ' || c == '\t' || c == 0xfeff /* unicode BOM */)
+                if (c == ' ' || c == '\t' /* BOMは除去されている */)
                 {
                     // 読み飛ばす
                     index++;

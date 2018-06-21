@@ -8,20 +8,43 @@ namespace MyShogi.Model.Common.Utility
     public static class Encode
     {
         /// <summary>
+        /// ファイルから読み込んだバイト列のencodeを自動判別して、string型にして返す。
+        /// BOMがついていれば、BOMを除去して返す。
+        /// BOMがついていない場合、Shift_JISとみなしてstring型に変換して返す。
+        /// (あとでもう少し頑張って判定する。)
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static string ConvertToString(byte[] bytes)
+        {
+            var encoding = Encode.DetectBOM(bytes);
+            if (encoding != null)
+            {
+                // 先頭のBOMをskipしてdecode
+                int bomLen = encoding.GetPreamble().Length;
+                return encoding.GetString(bytes, bomLen, bytes.Length - bomLen);
+            }
+
+            // TODO : もう少し頑張って判定すべき。
+            encoding = System.Text.Encoding.GetEncoding("Shift_JIS");
+            return encoding.GetString(bytes);
+        }
+
+        /// <summary>
         /// エンコーディング判定用
         /// 
         /// BOMなどからencodingを判定する。
-        /// BOMがなくて判定できなかった場合には、引数で指定されているdefaultEncondingが返る。
+        /// BOMがなくて判定できなかった場合には、nullが返る。
         /// </summary>
         /// <param name="bytes"></param>
         /// <param name="defaultEnconding"></param>
-        public static Encoding DetectEncoding(byte[] bytes, System.Text.Encoding defaultEnconding)
+        public static Encoding DetectBOM(byte[] bytes)
         {
             // -- 2バイトBOM
 
             if (bytes.Length < 2)
             {
-                return defaultEnconding;
+                return null;
             }
 
             if ((bytes[0] == 0xfe) && (bytes[1] == 0xff))
@@ -46,7 +69,7 @@ namespace MyShogi.Model.Common.Utility
 
             if (bytes.Length < 3)
             {
-                return defaultEnconding;
+                return null;
             }
 
             if ((bytes[0] == 0xef) && (bytes[1] == 0xbb) && (bytes[2] == 0xbf))
@@ -59,7 +82,7 @@ namespace MyShogi.Model.Common.Utility
 
             if (bytes.Length < 4)
             {
-                return defaultEnconding;
+                return null;
             }
 
             if ((bytes[0] == 0x00) && (bytes[1] == 0x00) &&
@@ -69,8 +92,8 @@ namespace MyShogi.Model.Common.Utility
                 return new System.Text.UTF32Encoding(true, true);
             }
 
-            // BOMがなくEncoding不明。もう少し頑張ったほうがいいかも。
-            return defaultEnconding;
+            // BOMがなくEncoding不明。
+            return null;
         }
     }
 }

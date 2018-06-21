@@ -14,16 +14,16 @@ namespace MyShogi.Model.Common.Utility
         /// 
         /// 先頭にBOMがついていればutf8/utf16と自動的に判別する。
         /// さもなくばsjisとして読み込む。
+        /// (先頭のBOMは除去して、stringに変換して返す。)
         /// 
         /// 例外は捕捉しない。
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static string ReadFile(string path)
+        public static string ReadText(string path)
         {
             var bytes = File.ReadAllBytes(path);
-            var encoding = Encode.DetectEncoding(bytes, System.Text.Encoding.GetEncoding("Shift_JIS"));
-            return encoding.GetString(bytes);
+            return Encode.ConvertToString(bytes);
         }
 
         /// <summary>

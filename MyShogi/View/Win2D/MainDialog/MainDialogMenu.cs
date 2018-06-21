@@ -91,7 +91,7 @@ namespace MyShogi.View.Win2D
                                 var filename = fd.FileName;
                                 try
                                 {
-                                    var kifu_text = FileIO.ReadFile(filename);
+                                    var kifu_text = FileIO.ReadText(filename);
                                     gameServer.KifuReadCommand(kifu_text);
                                 }
                                 catch
