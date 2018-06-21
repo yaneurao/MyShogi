@@ -38,6 +38,7 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             position.InitBoard();
 
+            // root nodeを作る
             currentNode = rootNode = new KifuNode(null);
             pliesFromRoot = 0;
 
@@ -49,7 +50,9 @@ namespace MyShogi.Model.Shogi.Kifu
             // 対局情報などを保存するためにここを確保する。
             rootKifuMove = new KifuMove(Move.NONE, rootNode, KifuMoveTimes.Zero);
 
+            KifuList = new List<string>();
             kifuWindowMoves = new List<KifuMove>();
+            UsiMoveList = new List<string>();
             KifuTimeSettings = KifuTimeSettings.TimeLimitless;
 
             RaisePropertyChanged("Position", position);
@@ -545,7 +548,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// EnableKifuListがtrueのときに、DoMove()/UndoMove()に応じて自動更新される。
         /// </summary>
         private List<KifuMove> kifuWindowMoves;
-
+        
         /// <summary>
         /// メインウインドウの棋譜ウィンドウに表示する棋譜文字列に変換する。
         /// </summary>

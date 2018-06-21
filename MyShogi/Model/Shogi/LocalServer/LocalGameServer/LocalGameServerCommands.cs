@@ -164,7 +164,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 if (!InTheGame)
                 {
+                    // 対局中ではないので、EnableKifuList == falseになっているが、
+                    // 一時的にこれをtrueにしないと、読み込んだ棋譜に対して、Tree.KifuListが同期しない。
+                    // ゆえに、読み込みの瞬間だけtrueにして、そのあとfalseに戻す。
+                    kifuManager.EnableKifuList = true;
                     var error = kifuManager.FromString(kifuText);
+                    kifuManager.EnableKifuList = false;
+
                     if (!string.IsNullOrEmpty(error))
                     {
                         MessageBox.Show("棋譜の読み込みに失敗しました。\n" + error, "読み込みエラー");

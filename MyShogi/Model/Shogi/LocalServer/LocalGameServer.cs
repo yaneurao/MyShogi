@@ -46,6 +46,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 起動時に平手の初期局面が表示されるようにしておく。
             kifuManager.Init();
+            // 開始時は、対局中ではないので、棋譜ウィンドウと同期EnableKifuListは解除しておく。
+            // (現在表示されている局面より先の局面までの棋譜を棋譜ウィンドウに表示したいため)
+            kifuManager.EnableKifuList = false;
 
             // ゲームの対局設定。GameStart()を呼び出すまでdefaultで何かを埋めておかなくてはならない。
             // 前回の対局時のものを描画するのもおかしいので、defaultのものを設定しておく。
