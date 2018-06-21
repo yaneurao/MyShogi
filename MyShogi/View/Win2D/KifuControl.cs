@@ -12,12 +12,14 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
+#if false // うまくいかないのでfalse
+
             // 文字色を変えたいのでowner drawにする。
             // →　ちらつくし、また、遅かった…これはやめよう。
             //listBox1.DrawMode = DrawMode.OwnerDrawFixed;
 
-#if false // うまくいかないのでfalse
             // 棋譜ウィンドウがちらつくの嫌なのでダブルバッファリングにする。
+            // →　うまくいかなかった。なんで？
             this.SetStyle(ControlStyles.DoubleBuffer, true);
             this.SetStyle(ControlStyles.UserPaint, true);
             this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
