@@ -13,7 +13,8 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             // 文字色を変えたいのでowner drawにする。
-            listBox1.DrawMode = DrawMode.OwnerDrawFixed;
+            // →　ちらつくし、また、遅かった…これはやめよう。
+            //listBox1.DrawMode = DrawMode.OwnerDrawFixed;
 
 #if false // うまくいかないのでfalse
             // 棋譜ウィンドウがちらつくの嫌なのでダブルバッファリングにする。
@@ -26,7 +27,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// リストが変更されたときに呼び出されるハンドラ
         /// </summary>
-            public void OnListChanged(PropertyChangedEventArgs args)
+        public void OnListChanged(PropertyChangedEventArgs args)
         {
             if (!IsHandleCreated)
                 return;
@@ -117,16 +118,44 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 親ウインドウがリサイズされた時にそれに収まるようにこのコントロール内の文字の大きさを
         /// 調整する。
+        /// 
+        /// inTheGame == trueのときはゲーム中なので「本譜」ボタンと「次分岐」ボタンを表示しない。
         /// </summary>
         /// <param name="scale"></param>
-        public void OnResize(double scale)
+        public void OnResize(double scale , bool inTheGame)
         {
             // 最小化したのかな？
             if (this.Width == 0 || listBox1.ClientSize.Width == 0)
                 return;
 
-            // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
-            var font_size = (float)(22 * scale);
+            {
+                // ボタンの表示は対局外のときのみ
+                button1.Visible = !inTheGame;
+                button2.Visible = !inTheGame;
+
+                if (Height == 0)
+                    return; // なんぞこれ
+
+                // -- ボタンなどのリサイズ
+
+                // 全体の8%の高さのボタンを用意。
+                int bh = inTheGame ? 0 : Height * 8 / 100;
+                int x = Width / 2;
+                int y = Height - bh;
+
+                listBox1.Location = new Point(0, 0);
+                listBox1.Size = new Size(Width, y);
+
+                if (!inTheGame)
+                {
+                    button1.Location = new Point(0, y);
+                    button1.Size = new Size(Width / 2, bh);
+                    button2.Location = new Point(x, y);
+                    button2.Size = new Size(x, bh);
+                }
+            }
+                // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
+                var font_size = (float)(20 * scale);
 
             /*
                 // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ
@@ -153,10 +182,18 @@ namespace MyShogi.View.Win2D
             last_font_size = font_size;
             last_scale = scale;
 
-            listBox1.Font = new Font("MS Gothic", font_size, FontStyle.Regular , GraphicsUnit.Pixel);
+            var font = new Font("MS Gothic", font_size, FontStyle.Regular, GraphicsUnit.Pixel);
+            listBox1.Font = font;
 
             // font変更の結果、選択しているところがlistboxの表示範囲外になってしまうことがある。
             // これ、あとで修正を考える。
+
+            if (!inTheGame)
+            {
+                button1.Font = font;
+                button2.Font = font;
+            }
+
         }
 
         private double last_scale = 0;
@@ -178,6 +215,7 @@ namespace MyShogi.View.Win2D
         // 棋譜ウィンドウの選択行が変更になった時に呼び出されるハンドラ
         public SelectedIndexChangedEvent SelectedIndexChangedHandler;
 
+#if false
         // 棋譜ウィンドウの各行の色をカスタムに変更したいので、描画ハンドラを自前で書く。
         private void listBox1_DrawItem(object sender, DrawItemEventArgs e)
         {
@@ -225,5 +263,7 @@ namespace MyShogi.View.Win2D
             }
             e.DrawFocusRectangle();
         }
+#endif
+
     }
 }

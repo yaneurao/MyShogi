@@ -571,7 +571,17 @@ namespace MyShogi.Model.Shogi.Kifu
                 // -- 棋譜をappendする
 
                 // 分岐棋譜であれば、先頭に"+"を付与。
-                var plus = currentNode.moves.Count != 1 ? '+' : ' ';
+                // ただし、本譜の手順でなければ"*"を付与。
+
+                char plus;
+                if (currentNode.moves.Count != 1)
+                {
+                    // 本譜の手順なら'+',本譜以外の手順であれば'*'
+                    // ちなみに「本譜」ボタンを押した時、
+                    // 棋譜の先頭から最初の'*'のあるところまで戻って、そこを'+'にする。
+                    plus = currentNode.moves[0].nextMove == m ? '+' : '*';
+                } else
+                    plus = ' ';
 
                 var move_text = move_to_kif_string(position, m);
                 var move_text_game_ply = position.gamePly;

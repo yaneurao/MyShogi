@@ -29,7 +29,10 @@ namespace MyShogi.View.Win2D
             parent.Controls.Add(kif);
             kif.SelectedIndexChangedHandler =
                 (selectedIndex) => { ViewModel.ViewModel.gameServer.KifuSelectedIndexChangedCommand(selectedIndex); };
+            Parent = parent;
         }
+
+        public Form Parent;
 
         /// <summary>
         /// この対局盤面の描画のために必要となるViewModel

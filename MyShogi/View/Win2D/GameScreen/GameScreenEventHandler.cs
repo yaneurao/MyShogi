@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Core;
@@ -28,10 +29,34 @@ namespace MyShogi.View.Win2D
         /// <param name="args"></param>
         public void TurnChanged(PropertyChangedEventArgs args)
         {
+            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
+            if (Parent.InvokeRequired)
+            {
+                Parent.Invoke(new Action(() => TurnChanged(args)));
+                return;
+            }
+
             StateReset();
 
             // TooltipにあるButtonの状態更新
             UpdateTooltipButtons();
+        }
+
+        /// <summary>
+        /// InTheGameの値が変わった時のハンドラ
+        /// </summary>
+        /// <param name="args"></param>
+        public void InTheGameChanged(PropertyChangedEventArgs args)
+        {
+            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
+            if (Parent.InvokeRequired)
+            {
+                Parent.Invoke(new Action(() => InTheGameChanged(args)));
+                return;
+            }
+
+            TurnChanged(args);
+            ResizeKifuControl(); // 棋譜ボタンが変化するかもなので
         }
 
         /// <summary>
@@ -118,14 +143,23 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void ResizeKifuControl()
         {
+            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
+            if (Parent.InvokeRequired)
+            {
+                Parent.Invoke(new Action(() => ResizeKifuControl()));
+                return;
+            }
+
             var kifu = ViewModel.kifuControl;
+            var vm = ViewModel.ViewModel;
+            var inTheGame = vm != null ? vm.gameServer.InTheGame : false;
 
             var point = new Point(229, 600);
             kifu.Location = Affine(point);
             var size = new Size(265, 423);
             kifu.Size = AffineScale(size);
 
-            kifu.OnResize(ViewModel.AffineMatrix.Scale.X);
+            kifu.OnResize(ViewModel.AffineMatrix.Scale.X , inTheGame);
 
             // kifuControl内の文字サイズも変更しないといけない。
             // あとで考える。
