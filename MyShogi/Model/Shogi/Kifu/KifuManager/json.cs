@@ -255,7 +255,10 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             try
             {
+                var times = KifuMoveTimes.Zero;
+                var timeSettings = KifuTimeSettings.TimeLimitless.Clone();
                 var epoch = new DateTime(1970, 1, 1, 0, 0, 0).ToLocalTime();
+                DateTime? lasttime = null;
                 var jsonObj = LiveJsonUtil.FromString(content);
                 if (jsonObj == null || jsonObj.data == null || jsonObj.data.Count == 0)
                 {
@@ -279,6 +282,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 if (data.realstarttime != null)
                 {
                     var starttime = epoch.AddMilliseconds((double)data.realstarttime);
+                    lasttime = starttime;
                     Tree.RootKifuLog.moveTime = starttime;
                     Tree.rootNode.comment = starttime.ToString("o");
                 }
@@ -286,6 +290,36 @@ namespace MyShogi.Model.Shogi.Kifu
                 {
                     Tree.RootKifuLog.moveTime = DateTime.ParseExact(data.starttime, "s", null);
                 }
+                if (!string.IsNullOrWhiteSpace(data.timelimit) && int.TryParse(data.timelimit, out int time_limit))
+                {
+                    timeSettings = new KifuTimeSettings(
+                        new KifuTimeSetting[]
+                        {
+                            new KifuTimeSetting() { Hour = 0, Minute = time_limit, Second = 0 },
+                            new KifuTimeSetting() { Hour = 0, Minute = time_limit, Second = 0 },
+                        },
+                        false
+                    );
+                }
+                if (!string.IsNullOrWhiteSpace(data.countdown) && int.TryParse(data.countdown, out int countdown))
+                {
+                    foreach (var players in timeSettings.Players)
+                    {
+                        if (players.TimeLimitless)
+                        {
+                            players.Hour = 0;
+                            players.Minute = 0;
+                            players.Second = 0;
+                            players.TimeLimitless = false;
+                        }
+                        players.Byoyomi = countdown;
+                        players.ByoyomiEnable = true;
+                    }
+                }
+                // 残り時間の計算用。
+                times = timeSettings.GetInitialKifuMoveTimes();
+                Tree.SetKifuMoveTimes(times.Clone()); // root局面での残り時間の設定
+                Tree.KifuTimeSettings = timeSettings.Clone();
                 foreach (var kif in data.kif)
                 {
                     Move move;
@@ -371,10 +405,18 @@ namespace MyShogi.Model.Shogi.Kifu
                             move = Util.MakeMove(frSq, toSq);
                         }
                     }
+                    TimeSpan thinking_time = TimeSpan.FromSeconds((double)(kif.spend ?? 0));
+                    TimeSpan realthinking_time = (time != null && lasttime != null) ? time.GetValueOrDefault().Subtract(lasttime.GetValueOrDefault()) : thinking_time;
+                    var turn = Tree.position.sideToMove;
+                    times.Players[(int)turn] = times.Players[(int)turn].Create(
+                        timeSettings.Player(turn),
+                        thinking_time, realthinking_time
+                        );
                     // 棋譜ツリーへの追加処理
-                    Tree.AddNode(move, KifuMoveTimes.Zero /* ToDo: あとでちゃんと書く */ /*TimeSpan.FromSeconds((double)(kif.spend ?? 0))*/);
+                    Tree.AddNode(move, times.Clone());
                     if (time != null)
                     {
+                        lasttime = time;
                         var kifumove = Tree.currentNode.moves.Find((x) => x.nextMove == move);
                         kifumove.moveTime = (DateTime)time;
                         Tree.currentNode.comment = ((DateTime)time).ToString("o");

@@ -244,7 +244,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 棋譜に記録されていた持ち時間設定
-        /// 
+        ///
         /// 棋譜を読み書きする時、この設定を読み書きできるフォーマットであるならこの設定を書き出すこと。
         /// </summary>
         public KifuTimeSettings KifuTimeSettings
@@ -270,7 +270,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// posの現在の局面から指し手mで進める。
         /// mは、currentNodeのもつ指し手の一つであるものとする
-        /// 
+        ///
         /// speical moveの時は、Position.DoMove()は呼び出さないが次のnodeに到達できることは保証される。
         /// (そうしないとcurrentNodeが更新されないため)
         /// </summary>
@@ -343,7 +343,7 @@ namespace MyShogi.Model.Shogi.Kifu
         ///
         /// totalTimeは総消費時間。nullを指定した場合は、ここまでの総消費時間(TotalConsumptionTime()で取得できる)に
         /// thinkingTimeを秒単位に繰り上げたものが入る。
-        /// 
+        ///
         /// moveがspecial moveもありうる。
         /// </summary>
         /// <param name="move"></param>
@@ -544,11 +544,11 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// 棋譜ウィンドウに表示されている指し手の集合
         /// 棋譜ウィンドウの指し手をクリックしてcurrentNodeから先に進む時に必要となる。
-        /// 
+        ///
         /// EnableKifuListがtrueのときに、DoMove()/UndoMove()に応じて自動更新される。
         /// </summary>
         private List<KifuMove> kifuWindowMoves;
-        
+
         /// <summary>
         /// メインウインドウの棋譜ウィンドウに表示する棋譜文字列に変換する。
         /// </summary>

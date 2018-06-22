@@ -414,7 +414,7 @@ namespace MyShogi.Model.Shogi.Converter
                         {
                             kif.Append("不成");
                         }
-                        if (opt.fromsq == FromSqFormat.Verbose)
+                        if (opt.fromsq == FromSqFormat.Verbose && !move.IsDrop())
                         {
                             kif.AppendFormat("({0}{1})",
                                 HW_NUMBER[move.From().ToFile().ToInt()],

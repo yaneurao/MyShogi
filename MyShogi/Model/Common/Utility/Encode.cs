@@ -25,14 +25,14 @@ namespace MyShogi.Model.Common.Utility
                 return encoding.GetString(bytes, bomLen, bytes.Length - bomLen);
             }
 
-            // TODO : もう少し頑張って判定すべき。
-            encoding = System.Text.Encoding.GetEncoding("Shift_JIS");
+            // 先頭1024bytesからSJIS/UTF8判定してみる(判定できない時はSJIS優先)
+            encoding = Shogi.Converter.DetectEncoding.getEncoding_sj(bytes, 1024) ?? Encoding.GetEncoding(932);
             return encoding.GetString(bytes);
         }
 
         /// <summary>
         /// エンコーディング判定用
-        /// 
+        ///
         /// BOMなどからencodingを判定する。
         /// BOMがなくて判定できなかった場合には、nullが返る。
         /// </summary>

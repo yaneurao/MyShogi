@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
@@ -22,6 +23,10 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         private string FromCsaString(string[] lines, KifuFileType kf)
         {
+            // 消費時間、残り時間、消費時間を管理する。
+            var timeSettings = KifuTimeSettings.TimeLimitless;
+            var times = timeSettings.GetInitialKifuMoveTimes();
+
             var lineNo = 1;
 
             /*
@@ -49,7 +54,11 @@ namespace MyShogi.Model.Shogi.Kifu
             string line = string.Empty;
             var posLines = new List<string>();
             var headFlag = true;
+            KifuMove lastKifuMove = null;
             var move = Move.NONE;
+            var rTimeLimit = new Regex(@"([0-9]+):([0-9]+)\+([0-9]+)");
+            var rEvent = new Regex(@"^[0-9A-Za-z-_]+\+[0-9A-Za-z_]+-([0-9]+)-([0-9]+)(F?)\+");
+
             for (; lineNo <= lines.Length; ++lineNo)
             {
                 line = lines[lineNo - 1];
@@ -78,7 +87,68 @@ namespace MyShogi.Model.Shogi.Kifu
                         var keyvalue = subline.Substring(1).Split(":".ToCharArray(), 2);
                         if (string.IsNullOrWhiteSpace(keyvalue[0]))
                             continue;
-                        KifuHeader.header_dic[keyvalue[0]] = (keyvalue[1] ?? "");
+                        var key = keyvalue[0];
+                        var value = keyvalue[1] ?? "";
+                        KifuHeader.header_dic[key] = value;
+                        switch (key)
+                        {
+                            case "TIME_LIMIT":
+                                var mTimeLimit = rTimeLimit.Match(value);
+                                if (mTimeLimit.Success)
+                                {
+                                    int.TryParse(mTimeLimit.Groups[1].Value, out int hour);
+                                    int.TryParse(mTimeLimit.Groups[2].Value, out int minute);
+                                    int.TryParse(mTimeLimit.Groups[3].Value, out int byoyomi);
+                                    timeSettings = new KifuTimeSettings(
+                                        new KifuTimeSetting[]
+                                        {
+                                            new KifuTimeSetting() { Hour = hour, Minute = minute, Second = 0, Byoyomi = byoyomi, ByoyomiEnable = true, IncTime = 0 },
+                                            new KifuTimeSetting() { Hour = hour, Minute = minute, Second = 0, Byoyomi = byoyomi, ByoyomiEnable = true, IncTime = 0 },
+                                        },
+                                        false
+                                    );
+                                    times = timeSettings.GetInitialKifuMoveTimes();
+                                    Tree.SetKifuMoveTimes(times.Clone()); // root局面での残り時間の設定
+                                    Tree.KifuTimeSettings = timeSettings.Clone();
+                                }
+                                break;
+                            case "EVENT":
+                                // floodgate特例、TIME_LIMITが設定されていない時にEVENT文字列から時間設定を拾う
+                                if (KifuHeader.header_dic.ContainsKey("TIME_LIMIT"))
+                                    continue;
+                                var mEvent = rEvent.Match(value);
+                                if (mEvent.Success)
+                                {
+                                    int.TryParse(mEvent.Groups[1].Value, out int initial);
+                                    int.TryParse(mEvent.Groups[2].Value, out int add);
+                                    if (mEvent.Groups[3].Value == "F")
+                                    {
+                                        timeSettings = new KifuTimeSettings(
+                                            new KifuTimeSetting[]
+                                            {
+                                                new KifuTimeSetting() { Hour = 0, Minute = 0, Second = initial, Byoyomi = 0, ByoyomiEnable = false, IncTime = add, IncTimeEnable = true },
+                                                new KifuTimeSetting() { Hour = 0, Minute = 0, Second = initial, Byoyomi = 0, ByoyomiEnable = false, IncTime = add, IncTimeEnable = true },
+                                            },
+                                            false
+                                        );
+                                    }
+                                    else
+                                    {
+                                        timeSettings = new KifuTimeSettings(
+                                            new KifuTimeSetting[]
+                                            {
+                                                new KifuTimeSetting() { Hour = 0, Minute = 0, Second = initial, Byoyomi = add, ByoyomiEnable = true, IncTime = 0, IncTimeEnable = false },
+                                                new KifuTimeSetting() { Hour = 0, Minute = 0, Second = initial, Byoyomi = add, ByoyomiEnable = true, IncTime = 0, IncTimeEnable = false },
+                                            },
+                                            false
+                                        );
+                                    }
+                                    times = timeSettings.GetInitialKifuMoveTimes();
+                                    Tree.SetKifuMoveTimes(times.Clone()); // root局面での残り時間の設定
+                                    Tree.KifuTimeSettings = timeSettings.Clone();
+                                }
+                                break;
+                        }
                         continue;
                     }
                     if (subline.StartsWith("N+"))
@@ -110,7 +180,8 @@ namespace MyShogi.Model.Shogi.Kifu
                         // 2回目以降は指し手とみなす
                         // 消費時間の情報がまだないが、取り敢えず追加
                         move = Tree.position.FromCSA(subline);
-                        Tree.AddNode(move, KifuMoveTimes.Zero /* TODO: 消費時間あとでなんとかする*/);
+                        Tree.AddNode(move, times.Clone());
+                        lastKifuMove = Tree.currentNode.moves.FirstOrDefault((x) => x.nextMove == move);
                         // 特殊な指し手や不正な指し手ならDoMove()しない
                         if (move.IsSpecial() || !Tree.position.IsLegal(move))
                         {
@@ -127,16 +198,18 @@ namespace MyShogi.Model.Shogi.Kifu
                         {
                             return $"line {lineNo}: 初期局面で着手時間が指定されました。";
                         }
-                        var time = long.Parse(subline.Substring(1));
-                        // 1手戻って一旦枝を削除する（時間情報を追加できないので）
+                        long.TryParse(subline.Substring(1), out long time);
                         var lastMove = state.lastMove;
-                        if (move == lastMove)
+                        if (move == lastMove && move == lastKifuMove.nextMove)
                         {
-                            Tree.UndoMove();
+                            var turn = Tree.position.sideToMove.Not();
+                            var thinking_time = TimeSpan.FromSeconds(time);
+                            times.Players[(int)turn] = times.Players[(int)turn].Create(
+                                timeSettings.Player(turn),
+                                thinking_time, thinking_time
+                                );
+                            lastKifuMove.kifuMoveTimes = times.Clone();
                         }
-                        Tree.Remove(move);
-                        // 改めて指し手を追加
-                        Tree.AddNode(move, KifuMoveTimes.Zero /*TODO:あとでちゃんと書く*//* TimeSpan.FromSeconds(time)*/);
                         // 特殊な指し手や不正な指し手ならDoMove()しない
                         if (move.IsSpecial() || !Tree.position.IsLegal(move))
                         {
@@ -175,23 +248,18 @@ namespace MyShogi.Model.Shogi.Kifu
                             case "%TSUMI":
                                 move = Move.MATED;
                                 break;
-
                             case "%ILLEGAL_MOVE":
                                 move = Move.ILLEGAL_MOVE;
                                 break;
-
                             case "%+ILLEGAL_ACTION":
                                 move = Tree.position.sideToMove == Color.BLACK ? Move.ILLEGAL_ACTION_LOSE : Move.ILLEGAL_ACTION_WIN;
                                 break;
-
                             case "%-ILLEGAL_ACTION":
                                 move = Tree.position.sideToMove == Color.BLACK ? Move.ILLEGAL_ACTION_WIN : Move.ILLEGAL_ACTION_LOSE;
                                 break;
-
                             case "%HIKIWAKE":
                                 move = Move.DRAW;
                                 break;
-
                             // 以下、適切な変換先不明
                             case "%FUZUMI":
                             case "%MATTA":
@@ -200,7 +268,8 @@ namespace MyShogi.Model.Shogi.Kifu
                                 move = Move.NONE;
                                 break;
                         }
-                        Tree.AddNode(move, KifuMoveTimes.Zero);
+                        Tree.AddNode(move, times.Clone());
+                        lastKifuMove = Tree.currentNode.moves.FirstOrDefault((x) => x.nextMove == move);
                         continue;
                     }
                 }
@@ -235,7 +304,20 @@ namespace MyShogi.Model.Shogi.Kifu
             }
             foreach (var headerKey in KifuHeader.header_dic.Keys)
             {
-                sb.AppendLine($"${headerKey}:{KifuHeader.header_dic[headerKey]}");
+                switch (headerKey)
+                {
+                    case "EVENT":
+                    case "SITE":
+                    case "START_TIME":
+                    case "END_TIME":
+                    case "TIME_LIMIT":
+                    case "OPENING":
+                        sb.AppendLine($"${headerKey}:{KifuHeader.header_dic[headerKey]}");
+                        break;
+                    default:
+                        sb.AppendLine($"'{headerKey}:{KifuHeader.header_dic[headerKey]}");
+                        break;
+                }
             }
 
             while (Tree.currentNode.moves.Count != 0)

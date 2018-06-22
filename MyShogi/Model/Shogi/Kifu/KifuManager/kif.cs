@@ -20,6 +20,11 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <returns></returns>
         private string FromKifString(string[] lines, KifuFileType kf)
         {
+            // 消費時間、残り時間、消費時間を管理する。
+            // TimeLimitlessの設定を書き換えてしまう恐れがあるためCloneする
+            KifuTimeSettings timeSettings = KifuTimeSettings.TimeLimitless.Clone();
+            KifuMoveTimes times = KifuMoveTimes.Zero;
+
             var lineNo = 1;
 
             try
@@ -30,11 +35,13 @@ namespace MyShogi.Model.Shogi.Kifu
                 // 変化手数用正規表現
                 var rHenka = new Regex(@"^([0-9]+)手");
                 // KIF指し手検出用正規表現
-                var rKif = new Regex(@"^\s*(\d+)\s*(?:((?:[1-9１-９][1-9１-９一二三四五六七八九]|同\s?)成?[歩香桂銀金角飛と杏圭全馬竜龍玉王][打不成]*(?:\([1-9][1-9]\))?)|(\S+))\s*(\(\s*([0-9]+):([0-9]+)/([0-9]+):([0-9]+):([0-9])\))?");
+                var rKif = new Regex(@"^\s*([0-9]+)\s*(?:((?:[1-9１-９][1-9１-９一二三四五六七八九]|同\s?)成?[歩香桂銀金角飛と杏圭全馬竜龍玉王][打不成]*(?:\([1-9][1-9]\))?)|(\S+))\s*(\(\s*([0-9]+):([0-9]+(?:\.[0-9]+)?)\s*\/\s*([0-9]+):([0-9]+):([0-9]+(?:\.[0-9]+)?)\))?");
                 // KI2指し手検出用正規表現
                 var rKi2 = new Regex(@"[-+▲△▼▽☗☖⛊⛉](?:[1-9１-９][1-9１-９一二三四五六七八九]|同\s?)成?[歩香桂銀金角飛と杏圭全馬竜龍玉王][打不成左直右上寄引]*");
                 // 終局検出用正規表現
                 var rSpecial = new Regex(@"^まで([0-9]+)手(.+)");
+                // 持ち時間/秒読み検出用正規表現
+                var rTime = new Regex(@"^各?(\d+)(時間|分|秒)");
 
                 var bod = new List<string>();
 
@@ -53,6 +60,92 @@ namespace MyShogi.Model.Shogi.Kifu
                         Tree.position.SetSfen(Tree.rootSfen);
                         Tree.rootBoardType = BoardType.Others;
                     }
+                    if (KifuHeader.header_dic.ContainsKey("持ち時間"))
+                    {
+                        var mTime = rTime.Match(KifuHeader.header_dic["持ち時間"]);
+                        if (mTime.Success)
+                        {
+                            var sb = new StringBuilder();
+                            foreach (char c in mTime.Groups[1].Value)
+                                sb.Append((c < '０' || c > '９') ? c : (char)(c - '０' + '0'));
+                            if (int.TryParse(sb.ToString(), out int mTimeVal))
+                            //if (int.Parse(Regex.Replace(mTime.Groups[1].Value, "[０-９]", p => ((char)(p.Value[0] - '０' + '0')).ToString())), out int mTimeVal);
+                            switch (mTime.Groups[2].Value)
+                            {
+                                case "時間":
+                                    timeSettings = new KifuTimeSettings(
+                                        new KifuTimeSetting[]
+                                        {
+                                            new KifuTimeSetting() { Hour = mTimeVal, Minute = 0, Second = 0 },
+                                            new KifuTimeSetting() { Hour = mTimeVal, Minute = 0, Second = 0 },
+                                        },
+                                        false
+                                    );
+                                    break;
+                                case "分":
+                                    timeSettings = new KifuTimeSettings(
+                                        new KifuTimeSetting[]
+                                        {
+                                            new KifuTimeSetting() { Hour = 0, Minute = mTimeVal, Second = 0 },
+                                            new KifuTimeSetting() { Hour = 0, Minute = mTimeVal, Second = 0 },
+                                        },
+                                        false
+                                    );
+                                    break;
+                                case "秒":
+                                    timeSettings = new KifuTimeSettings(
+                                        new KifuTimeSetting[]
+                                        {
+                                            new KifuTimeSetting() { Hour = 0, Minute = 0, Second = mTimeVal },
+                                            new KifuTimeSetting() { Hour = 0, Minute = 0, Second = mTimeVal },
+                                        },
+                                        false
+                                    );
+                                    break;
+                            }
+                        }
+                    }
+                    if (KifuHeader.header_dic.ContainsKey("秒読み"))
+                    {
+                        var mTime = rTime.Match(KifuHeader.header_dic["秒読み"]);
+                        if (mTime.Success)
+                        {
+                            var sb = new StringBuilder();
+                            foreach (char c in mTime.Groups[1].Value)
+                                sb.Append((c < '０' || c > '９') ? c : (char)(c - '０' + '0'));
+                            if (int.TryParse(sb.ToString(), out int mTimeVal))
+                            //if (int.Parse(Regex.Replace(mTime.Groups[1].Value, "[０-９]", p => ((char)(p.Value[0] - '０' + '0')).ToString())), out int mTimeVal);
+                            foreach (var players in timeSettings.Players)
+                            {
+                                if (players.TimeLimitless)
+                                {
+                                    players.Hour = 0;
+                                    players.Minute = 0;
+                                    players.Second = 0;
+                                    players.TimeLimitless = false;
+                                }
+                                switch (mTime.Groups[2].Value)
+                                {
+                                    case "時間":
+                                        players.Byoyomi = int.Parse(mTime.Groups[1].Value) * 3600;
+                                        players.ByoyomiEnable = true;
+                                        break;
+                                    case "分":
+                                        players.Byoyomi = int.Parse(mTime.Groups[1].Value) * 60;
+                                        players.ByoyomiEnable = true;
+                                        break;
+                                    case "秒":
+                                        players.Byoyomi = int.Parse(mTime.Groups[1].Value);
+                                        players.ByoyomiEnable = true;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                    // 残り時間の計算用。
+                    times = timeSettings.GetInitialKifuMoveTimes();
+                    Tree.SetKifuMoveTimes(times.Clone()); // root局面での残り時間の設定
+                    Tree.KifuTimeSettings = timeSettings.Clone();
                     return string.Empty;
                 };
 
@@ -97,9 +190,11 @@ namespace MyShogi.Model.Shogi.Kifu
                                 if (!isBody) throw new KifuException("初期局面からは変化できません");
                                 var mHenka = rHenka.Match(headerValue);
                                 if (!mHenka.Success) throw new KifuException("変化する手数を検出できませんでした");
-                                var iHenka = int.Parse(mHenka.Groups[1].Value);
-                                while (Tree.gamePly > iHenka)
+                                var ply = int.Parse(mHenka.Groups[1].Value);
+                                while (ply < Tree.gamePly)
                                     Tree.UndoMove();
+                                // このnodeでの残り時間に戻す
+                                times = Tree.GetKifuMoveTimes();
                                 goto nextline;
                             case "手合割":
                                 if (isBody) throw new KifuException("対局開始後にヘッダが指定されました", line);
@@ -224,23 +319,27 @@ namespace MyShogi.Model.Shogi.Kifu
                         }
                         if (move == Move.NONE)
                             throw new KifuException("指し手を解析できませんでした", line);
-                        if (mKif.Groups[4].Value.Length > 0)
-                            Tree.AddNode(
-                                move,
-                                // ToDo: あとでちゃんと書く
-                                KifuMoveTimes.Zero
-                                /*
-                                TimeSpan.FromSeconds(
-                                    int.Parse(mKif.Groups[5].Value) * 60 +
-                                    int.Parse(mKif.Groups[6].Value)),
-                                TimeSpan.FromSeconds(
-                                    int.Parse(mKif.Groups[7].Value) * 3600 +
-                                    int.Parse(mKif.Groups[8].Value) * 60 +
-                                    int.Parse(mKif.Groups[9].Value))
-                                */
+                        TimeSpan thinking_time = TimeSpan.Zero;
+                        TimeSpan total_time = TimeSpan.Zero;
+                        if (mKif.Groups[4].Success)
+                        {
+                            // TimeSpan.TryParse 系では "80:00" とかを解釈しないので自前処理する
+                            thinking_time =
+                                TimeSpan.FromMinutes(double.Parse(mKif.Groups[5].Value)) +
+                                TimeSpan.FromSeconds(double.Parse(mKif.Groups[6].Value));
+                            total_time =
+                                TimeSpan.FromHours(double.Parse(mKif.Groups[7].Value)) +
+                                TimeSpan.FromMinutes(double.Parse(mKif.Groups[8].Value)) +
+                                TimeSpan.FromSeconds(double.Parse(mKif.Groups[9].Value));
+                        }
+                        var turn = Tree.position.sideToMove;
+                        times.Players[(int)turn] = times.Players[(int)turn].Create(
+                            timeSettings.Player(turn),
+                            thinking_time, thinking_time,
+                            total_time /*消費時間は棋譜に記録されているものをそのまま使用する*/
+                            /*残り時間は棋譜上に記録されていない*/
                             );
-                        else
-                            Tree.AddNode(move, KifuMoveTimes.Zero);
+                        Tree.AddNode(move, times.Clone());
                         if (move.IsOk())
                             Tree.DoMove(move);
                         goto nextline;
