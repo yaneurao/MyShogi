@@ -818,7 +818,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
                     if (plus == '*') // 本譜ではないところを選んでいる
                     {
-                        if (KifuBranch == -1 || (KifuBranch < KifuList.Count))
+                        // 最初の分岐であるか。
+                        if (KifuBranch == -1 || (KifuList.Count < KifuBranch))
                             KifuBranch = KifuList.Count;
                     } else if (plus == '+')
                     {
