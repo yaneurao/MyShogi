@@ -20,7 +20,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         /// <param name="message_"></param>
         /// <param name="line_"></param>
-        public KifuException(string message_ , string line_) : base($"{message_} : {line_}") {}
+        public KifuException(string message_, string line_) : base($"{message_} : {line_}") {}
 
         /// <summary>
         /// inner exeptionも指定できる版
@@ -28,6 +28,6 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="message_"></param>
         /// <param name="line_"></param>
         /// <param name="inner"></param>
-        public KifuException(string message_, string line_ , Exception inner) : base($"{message_} : {line_}", inner) {}
+        public KifuException(string message_, string line_, Exception inner) : base($"{message_} : {line_}", inner) {}
     }
 }

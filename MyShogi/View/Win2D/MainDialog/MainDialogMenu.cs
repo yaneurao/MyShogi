@@ -80,9 +80,17 @@ namespace MyShogi.View.Win2D
 
                             //[ファイルの種類]に表示される選択肢を指定する
                             //指定しないとすべてのファイルが表示される
-                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2;*.KIF2|CSA形式(*.CSA)|*.CSA"
-                                + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*PSN2"
-                                + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
+                            fd.Filter = string.Join("|", new string[]
+                            {
+                                "棋譜ファイル|*.kif;*.kifu;*.ki2;*.kif2;*.ki2u;*.kif2u;*.csa;*.psn;*.psn2;*.sfen;*.json;*.jkf;*.txt",
+                                "KIF形式|*.kif;*.kifu",
+                                "KIF2形式|*.ki2;*.kif2;*.ki2u;*.kif2u",
+                                "CSA形式|*.csa",
+                                "PSN形式|*.psn",
+                                "PSN2形式|*.psn2",
+                                "SFEN形式|*.sfen",
+                                "すべてのファイル|*.*",
+                            });
                             fd.FilterIndex = 1;
                             fd.Title = "開く棋譜ファイルを選択してください";
                             //ダイアログを表示する
@@ -151,7 +159,7 @@ namespace MyShogi.View.Win2D
                                             break;
                                     }
 
-                                    gameServer.KifuWriteCommand(filename , kifuType);
+                                    gameServer.KifuWriteCommand(filename, kifuType);
                                 }
                                 catch
                                 {

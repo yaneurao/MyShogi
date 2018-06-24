@@ -4,27 +4,23 @@
 <meta charset="utf-8">
 <title>dialog</title>
 <style>
-  body { margin: 0; padding 0; }
-  p { font : 70% 'Verdana' , sans-serif ; margin: 0.4em 1em; padding: 0; text-align:center; }
-  img { width: 60%; margin : 0 0 0 0.5em; }
+  body { margin: 0; padding: 0; }
+  p { font: 70% 'Verdana', sans-serif; margin: 0.4em 1em; padding: 0; text-align: center; }
+  img { width: 60%; margin: 0 0 0 0.5em; }
 </style>
 </head>
 <body>
-<br/>
 <p id='version'></p>
 <!-- C#側からInvokeScript()で呼び出してもらう -->
 <script>
-function add_version_string(v) { var e = document.getElementById('version'); e.innerText = v; }
+  function add_version_string(v) { var e = document.getElementById('version'); e.innerText = v; }
 </script>
 <p class='image'><img src="../image/myshogi_logo.png"></p>
 <p>
-<br/>
   MyShogiは、2018年にマイナビ出版から発売する『将棋神やねうら王』用のGUIとして開発をスタートしました。
 　オープンソースの将棋ソフト用GUIです。(ただし画面素材等の単体配布、流用は不可です。)
 </p>
-<p>
-  MyShogi Project : https://github.com/yaneurao/MyShogi
-  <!-- WebBrowserなので別窓で開いてくれないから、単純にhyperlinkにするの良くない -->
-</p>
+<!-- WebBrowserなので別窓で開いてくれないから、単純にhyperlinkにするの良くない -->
+<p>MyShogi Project : https://github.com/yaneurao/MyShogi</p>
 </body>
 </html>
