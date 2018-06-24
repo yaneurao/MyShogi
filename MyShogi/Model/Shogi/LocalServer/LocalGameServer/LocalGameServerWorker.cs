@@ -90,12 +90,18 @@ namespace MyShogi.Model.Shogi.LocalServer
                     kifuManager.Tree.UndoMove();
 
                 kifuManager.Tree.ClearForward();
+
+                // 分岐棋譜かも知れないので、現在のものを本譜の手順にする。
+                kifuManager.Tree.MakeCurrentNodeMainBranch();
             }
             else // if (gameSetting.Board.BordTypeEnable)
             {
                 kifuManager.Init();
                 kifuManager.InitBoard(gameSetting.Board.BoardType);
             }
+
+            // 本譜の手順に変更したので現在局面と棋譜ウィンドウのカーソルとを同期させておく。
+            UpdateKifuSelectedIndex();
 
             // 現在の時間設定を、KifuManager.Treeに反映させておく(棋譜保存時にこれが書き出される)
             kifuManager.Tree.KifuTimeSettings = gameSetting.KifuTimeSettings;

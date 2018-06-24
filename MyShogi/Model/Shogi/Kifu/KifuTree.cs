@@ -703,6 +703,42 @@ namespace MyShogi.Model.Shogi.Kifu
             EnableKifuList = e; // 元の値
         }
 
+        /// <summary>
+        /// 現在のnodeを本譜の手順に変更する。
+        /// </summary>
+        public void MakeCurrentNodeMainBranch()
+        {
+            PropertyChangedEventEnable = false;
+            var e = EnableKifuList;
+            EnableKifuList = true;
+
+            var kifuMove = new List<KifuMove> (kifuWindowMoves); // Clone()
+
+            int ply = pliesFromRoot;
+            while (pliesFromRoot > 0)
+                UndoMove();
+            for (int i = 0; i<ply;++i)
+            {
+                int n = currentNode.moves.FindIndex((x) => x == kifuMove[i]);
+
+                // 本譜の手順に変更する。
+                // ※　swap()を呼びたいのだが、Listの[]は、indexerであるからrefで渡せない。
+                var t = currentNode.moves[0];
+                currentNode.moves[0] = currentNode.moves[n];
+                currentNode.moves[n] = t;
+
+                DoMove(currentNode.moves[0]);
+            }
+
+            EnableKifuList = e;
+            PropertyChangedEventEnable = true;
+            RaisePropertyChanged("KifuList", KifuList);
+        }
+
+        /// <summary>
+        /// 対局していないときにUI上の操作で駒を動かす。
+        /// </summary>
+        /// <param name="m"></param>
         public void DoMoveUI(Move m)
         {
             if (position.IsLegal(m))
