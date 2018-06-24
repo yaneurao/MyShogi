@@ -184,6 +184,8 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                         // 棋譜に書かれていた持ち時間設定・残り時間を画面に反映させる。(GameSettingには反映させない)
                         PlayTimers.SetKifuTimeSettings( kifuManager.Tree.KifuTimeSettings );
+                        PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTimes());
+                        UpdateTimeString();
 
                         // 末尾の局面に移動するコマンドを叩いておく。
                         RaisePropertyChanged("SetKifuListIndex",kifuManager.KifuList.Count - 1);

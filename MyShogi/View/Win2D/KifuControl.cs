@@ -134,6 +134,7 @@ namespace MyShogi.View.Win2D
                 // ボタンの表示は対局外のときのみ
                 button1.Visible = !inTheGame;
                 button2.Visible = !inTheGame;
+                button3.Visible = !inTheGame;
 
                 if (Height == 0)
                     return; // なんぞこれ
@@ -142,7 +143,7 @@ namespace MyShogi.View.Win2D
 
                 // 全体の8%の高さのボタンを用意。
                 int bh = inTheGame ? 0 : Height * 8 / 100;
-                int x = Width / 2;
+                int x = Width / 3;
                 int y = Height - bh;
 
                 listBox1.Location = new Point(0, 0);
@@ -150,10 +151,12 @@ namespace MyShogi.View.Win2D
 
                 if (!inTheGame)
                 {
-                    button1.Location = new Point(0, y);
-                    button1.Size = new Size(Width / 2, bh);
-                    button2.Location = new Point(x, y);
+                    button1.Location = new Point(x*0, y);
+                    button1.Size = new Size(x, bh);
+                    button2.Location = new Point(x*1, y);
                     button2.Size = new Size(x, bh);
+                    button3.Location = new Point(x*2, y);
+                    button3.Size = new Size(x, bh);
                 }
             }
                 // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
@@ -193,9 +196,8 @@ namespace MyShogi.View.Win2D
             if (!inTheGame)
             {
                 button1.Font = font;
-                button2.Font = font;
+                button3.Font = font;
             }
-
         }
 
         private double last_scale = 0;

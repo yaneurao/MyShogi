@@ -29,7 +29,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 color = ColorFormat.Piece,
                 square = SquareFormat.FullWidthMix,
                 samepos = SamePosFormat.KI2sp,
-                fromsq = FromSqFormat.Verbose,
+                //fromsq = FromSqFormat.Verbose,
+                fromsq = FromSqFormat.KI2, // 移動元を入れると棋譜ウィンドウには入り切らないので省略する。
             };
             EnableUsiMoveList = true;
 
