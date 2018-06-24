@@ -227,6 +227,18 @@ namespace MyShogi.Model.Shogi.LocalServer
             SetValue<List<string>>(args);
         }
 
+        /// <summary>
+        /// 棋譜ウィンドウの選択行を変更する。
+        /// ply を指定しなければ(-1のとき)、現在のkifuManager.Treeに同期させる。
+        /// </summary>
+        private void UpdateKifuSelectedIndex(int ply = -1)
+        {
+            if (ply == -1)
+                ply = kifuManager.Tree.pliesFromRoot;
+            RaisePropertyChanged("SetKifuListIndex", ply);
+            KifuSelectedIndexChangedCommand(ply);
+        }
+
         #endregion
     }
 }

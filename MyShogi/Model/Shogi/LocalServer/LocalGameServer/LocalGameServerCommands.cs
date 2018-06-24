@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Player;
 
 namespace MyShogi.Model.Shogi.LocalServer
@@ -53,13 +54,24 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var stm = kifuManager.Position.sideToMove;
                 var stmPlayer = Player(stm);
 
-                // Human以外であれば受理しない。
-                if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+                if (InTheGame)
                 {
-                    // これを積んでおけばworker_threadのほうでいずれ処理される。(かも)
-                    // 仮に、すでに次の局面になっていたとしても、次にこのユーザーの手番になったときに
-                    // BestMove = Move.NONEとされるのでその時に破棄される。
-                    stmPlayer.BestMove = m;
+                    // 対局中は、Human以外であれば受理しない。
+                    if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+                    {
+                        // これを積んでおけばworker_threadのほうでいずれ処理される。(かも)
+                        // 仮に、すでに次の局面になっていたとしても、次にこのユーザーの手番になったときに
+                        // BestMove = Move.NONEとされるのでその時に破棄される。
+                        stmPlayer.BestMove = m;
+                    }
+                } else
+                {
+                    // 対局中でなければ自由に動かせる。
+                    // 受理して、必要ならば分岐棋譜を生成して…。
+                    kifuManager.Tree.DoMoveUI(m);
+
+                    // 動かした結果、棋譜の選択行と異なる可能性があるので、棋譜ウィンドウの当該行をSelectしなおす。
+                    UpdateKifuSelectedIndex();
                 }
             }
             );
@@ -232,8 +244,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     if (branch != -1)
                     {
                         // ここを選んで、局面をここに移動させておく。
-                        RaisePropertyChanged("SetKifuListIndex", branch);
-                        KifuSelectedIndexChangedCommand(branch);
+                        UpdateKifuSelectedIndex(branch);
                     }
                 }
             });

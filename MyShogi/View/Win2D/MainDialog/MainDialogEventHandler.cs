@@ -95,6 +95,11 @@ namespace MyShogi.View.Win2D
             {
                 // コンストラクタでの初期化が間に合わなかったコントロールの初期化はここで行う。
                 first_tick = false;
+
+                // 棋譜ウィンドウの更新通知のタイミングがなかったのでupdate
+                var gameServer = gameScreen.ViewModel.ViewModel.gameServer;
+                gameServer.RaisePropertyChanged("KifuList", gameServer.KifuList);
+
                 ResizeKifuControl();
             }
 

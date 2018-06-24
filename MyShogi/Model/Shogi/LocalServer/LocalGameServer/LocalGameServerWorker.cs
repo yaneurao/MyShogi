@@ -327,7 +327,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // -- 手番が変わった時の各種propertyの更新
 
             EngineTurn = stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine;
-            CanUserMove = stmPlayer.PlayerType == PlayerTypeEnum.Human && InTheGame;
+            // 対局中でなければ自由に動かせる。対局中は人間のプレイヤーでなければ駒を動かせない。
+            CanUserMove = stmPlayer.PlayerType == PlayerTypeEnum.Human || !InTheGame;
 
             // 値が変わっていなくとも変更通知を送りたいので自力でハンドラを呼び出す。
             RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"

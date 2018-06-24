@@ -51,11 +51,12 @@ namespace MyShogi.Model.Shogi.Kifu
 
             rootBoardType = BoardType.NoHandicap;
             rootSfen = Position.SFEN_HIRATE;
+            // rootSfenのsetterで初期化されているのでここではKifuListの初期化はしない
+            //KifuList = new List<string>();
 
             // 対局情報などを保存するためにここを確保する。
             rootKifuMove = new KifuMove(Move.NONE, rootNode, KifuMoveTimes.Zero);
 
-            KifuList = new List<string>();
             kifuWindowMoves = new List<KifuMove>();
             UsiMoveList = new List<string>();
             KifuTimeSettings = KifuTimeSettings.TimeLimitless;
@@ -702,6 +703,57 @@ namespace MyShogi.Model.Shogi.Kifu
             EnableKifuList = e; // 元の値
         }
 
+        public void DoMoveUI(Move m)
+        {
+            if (position.IsLegal(m))
+            {
+                var node_existed = currentNode.moves.Exists((x) => x.nextMove == m);
+                // 現在の棋譜上の指し手なので棋譜ウィンドウの更新は不要である。
+                if (node_existed && kifuWindowMoves[pliesFromRoot].nextMove == m)
+                {
+                    DoMove(m);
+                    return;
+                } 
+
+                PropertyChangedEventEnable = false;
+
+                // 新規nodeなので棋譜クリア
+                ClearKifuForward();
+
+                var e = EnableKifuList;
+                EnableKifuList = true;
+
+                // 合法っぽいので受理して次の局面に行く
+                if (node_existed)
+                {
+                    // すでにあるのでそこを辿るだけにする。
+
+                    // 現在棋譜ウィンドウの局面でないことは保証されている。
+                    DoMove(m);
+
+                    // このあと、本譜の手順を選んでいき、このnodeに戻る
+                    int ply = 0;
+                    for (; currentNode.moves.Count != 0; ++ply)
+                        DoMove(currentNode.moves[0]);
+                    EnableKifuList = false;
+                    while (ply-- != 0)
+                        UndoMove();
+                }
+                else
+                {
+                    // -- 次のnodeとして存在しなかったのでnodeを生成して局面を移動する
+                    AddNode(m, KifuMoveTimes.Zero);
+                    DoMove(m);
+
+                }
+
+                EnableKifuList = false;
+                PropertyChangedEventEnable = true;
+
+                RaisePropertyChanged("KifuList", KifuList);
+                RaisePropertyChanged("Position", position);
+            }
+        }
 
         /// <summary>
         /// 現在のnode以降のKifuList,kifuWindowMovesを削除
