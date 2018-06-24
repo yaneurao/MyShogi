@@ -27,8 +27,16 @@ namespace MyShogi.View.Win2D
             var kif = new KifuControl();
             ViewModel.kifuControl = kif;
             parent.Controls.Add(kif);
+
             kif.SelectedIndexChangedHandler =
                 (selectedIndex) => { ViewModel.ViewModel.gameServer.KifuSelectedIndexChangedCommand(selectedIndex); };
+            kif.Button1ClickedHandler =
+                () => { ViewModel.ViewModel.gameServer.MainBranchButtonCommand(); };
+            kif.Button2ClickedHandler =
+                () => { ViewModel.ViewModel.gameServer.NextBranchButtonCommand(); };
+            kif.Button3ClickedHandler =
+                () => { ViewModel.ViewModel.gameServer.EraseBranchButtonCommand(); };
+
             Parent = parent;
         }
 

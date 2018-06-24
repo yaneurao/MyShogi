@@ -63,13 +63,14 @@ namespace MyShogi.View.Win2D
                 for (int i = listbox.Items.Count; i < start; ++i)
                     listbox.Items.Add(list[i]);
 
+                // たいていは1行追加されるだけなので、AddRange()を使うより最小差分更新のほうが速いはず。
                 for (int i = start; i < list.Count ; ++i)
                 {
                     if (listbox.Items.Count <= i || list[i] != listbox.Items[i].ToString())
                     {
                         // ここ以降を書き換える。
                         while (listbox.Items.Count > i)
-                            listbox.Items.RemoveAt(listbox.Items.Count -1); // RemoveLast
+                            listbox.Items.RemoveAt(listbox.Items.Count - 1); // RemoveLast
 
                         j = i; // あとでここにフォーカスを置く
                         for(; i < list.Count; ++i)
@@ -94,7 +95,7 @@ namespace MyShogi.View.Win2D
                 listbox.EndUpdate();
 
                 listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
-
+                UpdateButtonState();
             }));
         }
 
@@ -211,13 +212,83 @@ namespace MyShogi.View.Win2D
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (SelectedIndexChangedHandler != null)
+            {
                 SelectedIndexChangedHandler(listBox1.SelectedIndex);
+                UpdateButtonState();
+            }
         }
 
         public delegate void SelectedIndexChangedEvent(int selectedIndex);
 
         // 棋譜ウィンドウの選択行が変更になった時に呼び出されるハンドラ
         public SelectedIndexChangedEvent SelectedIndexChangedHandler;
+
+        /// <summary>
+        /// 分岐棋譜の時だけ、「消分岐」「次分岐」ボタンを有効にする。
+        /// </summary>
+        private void UpdateButtonState()
+        {
+            var s = listBox1.SelectedItem;
+            if (s!=null)
+            {
+                var item = (string)s;
+
+                // 本譜ボタン
+                var e = item.StartsWith(">");
+                button1.Enabled = e;
+
+                if (e)
+                    item = item.Substring(1,1); // 1文字目をskipして2文字目を取得 
+
+                var e2 = item.StartsWith("+") || item.StartsWith("*");
+                button2.Enabled = e2;
+                button3.Enabled = e2;
+            }
+        }
+
+        /// <summary>
+        /// 本譜ボタン、次分岐ボタン、分岐消去ボタンが押された時のハンドラ
+        /// </summary>
+        public delegate void ButtonClickedEvent();
+
+        public ButtonClickedEvent Button1ClickedHandler;
+        public ButtonClickedEvent Button2ClickedHandler;
+        public ButtonClickedEvent Button3ClickedHandler;
+
+        /// <summary>
+        /// 本譜ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (Button1ClickedHandler != null)
+                Button1ClickedHandler();
+        }
+
+        /// <summary>
+        /// 次分岐ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (Button2ClickedHandler != null)
+                Button2ClickedHandler();
+        }
+
+        /// <summary>
+        /// 分岐消去ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (Button3ClickedHandler != null)
+                Button3ClickedHandler();
+        }
+
+
 
 #if false
         // 棋譜ウィンドウの各行の色をカスタムに変更したいので、描画ハンドラを自前で書く。

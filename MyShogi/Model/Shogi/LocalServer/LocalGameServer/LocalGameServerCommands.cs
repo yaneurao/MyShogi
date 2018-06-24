@@ -148,7 +148,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // 無理やりではあるが棋譜のN行目に移動出来るのであった…。
                     kifuManager.Tree.GotoSelectedIndex(selectedIndex);
                     PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTimes());
-
                 }
             });
         }
@@ -210,6 +209,61 @@ namespace MyShogi.Model.Shogi.LocalServer
                 {
                     MessageBox.Show("棋譜ファイルの書き出しに失敗しました。");
                 }
+            });
+        }
+
+        /// <summary>
+        /// 本譜の手順に戻るボタン
+        /// </summary>
+        public void MainBranchButtonCommand()
+        {
+            AddCommand(
+            () =>
+            {
+                // 対局中は使用不可
+                if (!InTheGame)
+                {
+                    // 本譜の手順に戻るので本譜に移動したあと最初の分岐の起点まで局面を移動する。
+                    int branch = kifuManager.Tree.KifuBranch;
+
+                    kifuManager.Tree.MainBranch();
+
+                    // ここが分岐の起点だったのでここのnode選択する。
+                    if (branch != -1)
+                    {
+                        // ここを選んで、局面をここに移動させておく。
+                        RaisePropertyChanged("SetKifuListIndex", branch);
+                        KifuSelectedIndexChangedCommand(branch);
+                    }
+                }
+            });
+        }
+
+        /// <summary>
+        /// 棋譜の次分岐に移動するボタン
+        /// </summary>
+        public void NextBranchButtonCommand()
+        {
+            AddCommand(
+            () =>
+            {
+                // 対局中は使用不可
+                if (!InTheGame)
+                    kifuManager.Tree.NextBranch();
+            });
+        }
+
+        /// <summary>
+        /// 棋譜の分岐削除ボタン
+        /// </summary>
+        public void EraseBranchButtonCommand()
+        {
+            AddCommand(
+            () =>
+            {
+                // 対局中は使用不可
+                if (!InTheGame)
+                    kifuManager.Tree.EraseBranch();
             });
         }
 

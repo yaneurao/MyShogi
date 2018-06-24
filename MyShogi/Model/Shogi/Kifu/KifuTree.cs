@@ -59,6 +59,7 @@ namespace MyShogi.Model.Shogi.Kifu
             kifuWindowMoves = new List<KifuMove>();
             UsiMoveList = new List<string>();
             KifuTimeSettings = KifuTimeSettings.TimeLimitless;
+            KifuBranch = -1;
 
             RaisePropertyChanged("Position", position);
         }
@@ -265,6 +266,15 @@ namespace MyShogi.Model.Shogi.Kifu
             get { return rootKifuMove as KifuLog; }
         }
 
+        /// <summary>
+        /// 棋譜上で、本譜の手順から最初に分岐した行
+        /// (この行以降は、インデントを入れたり、棋譜の文字の色を変えたりして表現すると良いと思う)
+        /// ※ この値は0を取らない。(開始局面の手前で分岐することはないため)
+        /// 
+        /// -1 : 分岐した行がない
+        /// </summary>
+        public int KifuBranch { get; set; }
+
         // -------------------------------------------------------------------------
         // 局面に対する操作子
         // -------------------------------------------------------------------------
@@ -287,18 +297,14 @@ namespace MyShogi.Model.Shogi.Kifu
             // 棋譜の更新
             var stm = position.sideToMove;
             var thinkingTime = m.kifuMoveTimes.Player(stm).ThinkingTime;
-            AddKifu(m.nextMove, thinkingTime);
+            AddKifu(m, thinkingTime);
 
-            // special moveに対してはDoMove()を行わない。
+            // special moveに対してはDoMove()を行わない。(行っても良いが盤面が変わらないのでやるだけ無駄である)
             if (!m.nextMove.IsSpecial())
             {
                 position.DoMove(m.nextMove);
                 RaisePropertyChanged("Position", position);
             }
-
-            // rootNodeからの指し手。これは棋譜リストと同期させている。
-            if (EnableKifuList)
-                kifuWindowMoves.Add(m);
 
             ++pliesFromRoot;
 
@@ -450,11 +456,11 @@ namespace MyShogi.Model.Shogi.Kifu
 
             // 現在の局面(currentNode)までの内容と棋譜ウィンドウを同期させる。
             // 検討モードなどで棋譜ウィンドウと同期させていなかった時のための処理
-            if (EnableKifuList && pliesFromRoot + 1 != KifuList.Count())
+            if (EnableKifuList)
             {
-                // 棋譜が同期していないので現在行以降を削除
+                // 棋譜が同期していない可能性があるので現在行以降を削除
+                ClearKifuForward();
 
-                KifuList.RemoveRange(pliesFromRoot + 1, KifuList.Count - (pliesFromRoot + 1));
                 RaisePropertyChanged("KifuList", KifuList);
             }
         }
@@ -540,6 +546,175 @@ namespace MyShogi.Model.Shogi.Kifu
                 RootKifuMoveTimes = kifuMoveTimes;
         }
 
+        /// <summary>
+        /// 本譜の分岐を選ぶボタン
+        /// </summary>
+        public void MainBranch()
+        {
+            if (KifuBranch == -1)
+                return;
+            if (pliesFromRoot < KifuBranch)
+                return;
+
+            // KifuBranchの手まで戻る。
+
+            PropertyChangedEventEnable = false;
+            int branch = KifuBranch;
+
+            // pliesFromRoot == branch -1 のnodeにさかのぼって本譜の手順を選択してKifuListを更新する。
+
+            while (pliesFromRoot >= branch)
+                UndoMove();
+
+            // 現在行以降のKifuList、KifuMovesを削除
+            ClearKifuForward();
+
+            var e = EnableKifuList;
+            EnableKifuList = true;
+
+            int ply = 0;
+            for (; currentNode.moves.Count != 0; ++ply)
+            {
+                var move = currentNode.moves[0]; // 0を選んでいく。
+
+                // この指し手のlegalityは担保されている。(special moveであってもDoMove()は出来る)
+                DoMove(move);
+            }
+            EnableKifuList = false; // 棋譜リストの更新が終わったので棋譜Windowをフリーズ
+            for (; ply > 0; --ply)
+                UndoMove();
+
+            PropertyChangedEventEnable = true;
+
+            RaisePropertyChanged("KifuList", KifuList);
+            RaisePropertyChanged("Position", position);
+
+            EnableKifuList = e; // 元の値
+
+        }
+
+        /// <summary>
+        /// 次の分岐を選ぶボタン
+        /// </summary>
+        public void NextBranch()
+        {
+            // 1つ前のnodeがなければNG
+            var prev = currentNode.prevNode;
+            if (prev == null)
+                return;
+
+            // 分岐がなければNG
+            if (prev.moves.Count <= 1)
+                return;
+
+            // 分岐があるので次の分岐を選択して、棋譜ウィンドウを更新する。
+            int n = prev.moves.FindIndex((x) => x.nextNode == currentNode);
+            int n2 = (n + 1) % prev.moves.Count; /* 次分岐 */
+
+            PropertyChangedEventEnable = false;
+
+            // このnodeに来て、n2を選択してKifuListを更新する。
+            UndoMove();
+
+            // 現在行以降のKifuList、KifuMovesを削除
+            ClearKifuForward();
+
+            var e = EnableKifuList;
+            EnableKifuList = true;
+
+            DoMove(prev.moves[n2]);
+
+            int ply = 0;
+            for (; currentNode.moves.Count != 0 ; ++ply)
+            {
+                var move = currentNode.moves[0]; // 0を選んでいく。
+
+                // この指し手のlegalityは担保されている。(special moveであってもDoMove()は出来る)
+                DoMove(move);
+            }
+            EnableKifuList = false; // 棋譜リストの更新が終わったので棋譜Windowをフリーズ
+            for (; ply > 0; --ply)
+                UndoMove();
+
+            PropertyChangedEventEnable = true;
+
+            RaisePropertyChanged("KifuList", KifuList);
+            RaisePropertyChanged("Position", position);
+
+            EnableKifuList = e; // 元の値
+        }
+
+        /// <summary>
+        /// 分岐を削除するボタン
+        /// </summary>
+        public void EraseBranch()
+        {
+            // 1つ前のnodeがなければNG
+            var prev = currentNode.prevNode;
+            if (prev == null)
+                return;
+
+            // 分岐がなければNG
+            if (prev.moves.Count <= 1)
+                return;
+
+            // 分岐があるので現在の分岐を削除して、棋譜ウィンドウを更新する。
+            int n = prev.moves.FindIndex((x) => x.nextNode == currentNode);
+
+            PropertyChangedEventEnable = false;
+
+            // このnodeに来て、n2を選択してKifuListを更新する。
+            UndoMove();
+
+            // 現在行以降のKifuList、KifuMovesを削除
+            ClearKifuForward();
+
+            var e = EnableKifuList;
+            EnableKifuList = true;
+
+            prev.moves.RemoveAt(n);
+            // nの要素に後続のものがあれば、それを辿る。なければmoves[0]を辿る。
+            n = n % prev.moves.Count;
+
+            // 棋譜ウィンドウ上の分岐の起点で、ここに他の分岐がなくなってしまったのであれば、KifuBranchの値を更新する。
+            if (prev.moves.Count == 1 && KifuBranch == pliesFromRoot + 1)
+                KifuBranch = -1;
+
+            DoMove(prev.moves[n]);
+
+            int ply = 0;
+            for (; currentNode.moves.Count != 0; ++ply)
+            {
+                var move = currentNode.moves[0]; // 0を選んでいく。
+
+                // この指し手のlegalityは担保されている。(special moveであってもDoMove()は出来る)
+                DoMove(move);
+            }
+            EnableKifuList = false; // 棋譜リストの更新が終わったので棋譜Windowをフリーズ
+            for (; ply > 0; --ply)
+                UndoMove();
+
+            PropertyChangedEventEnable = true;
+
+            RaisePropertyChanged("KifuList", KifuList);
+            RaisePropertyChanged("Position", position);
+
+            EnableKifuList = e; // 元の値
+        }
+
+
+        /// <summary>
+        /// 現在のnode以降のKifuList,kifuWindowMovesを削除
+        /// </summary>
+        public void ClearKifuForward()
+        {
+            if (KifuList.Count - 1 > pliesFromRoot)
+            {
+                KifuList.RemoveRange(pliesFromRoot + 1, KifuList.Count - (pliesFromRoot + 1));
+                kifuWindowMoves.RemoveRange(pliesFromRoot, kifuWindowMoves.Count - pliesFromRoot);
+            }
+        }
+
         // -- 以下 private members
 
         /// <summary>
@@ -568,10 +743,14 @@ namespace MyShogi.Model.Shogi.Kifu
         /// DoMove()のときに棋譜に追加する
         /// </summary>
         /// <param name="m"></param>
-        private void AddKifu(Move m, TimeSpan t)
+        private void AddKifu(KifuMove move, TimeSpan t)
         {
+            var m = move.nextMove;
             if (EnableKifuList)
             {
+                // rootNodeからの指し手。これは棋譜リストと同期させている。
+                kifuWindowMoves.Add(move);
+
                 // -- 棋譜をappendする
 
                 // 分岐棋譜であれば、先頭に"+"を付与。
@@ -584,8 +763,24 @@ namespace MyShogi.Model.Shogi.Kifu
                     // ちなみに「本譜」ボタンを押した時、
                     // 棋譜の先頭から最初の'*'のあるところまで戻って、そこを'+'にする。
                     plus = currentNode.moves[0].nextMove == m ? '+' : '*';
+
+                    if (plus == '*') // 本譜ではないところを選んでいる
+                    {
+                        if (KifuBranch == -1 || (KifuBranch < KifuList.Count))
+                            KifuBranch = KifuList.Count;
+                    } else if (plus == '+')
+                    {
+                        // 本譜の手順に変わったので分岐ではない。
+                        if (KifuBranch == KifuList.Count)
+                            KifuBranch = -1;
+                    }
                 } else
                     plus = ' ';
+
+                // 分岐棋譜の場合、分岐以降はインデントを入れる。
+                var indent = "";
+                if (KifuBranch != -1 && KifuBranch <= KifuList.Count)
+                    indent = ">";
 
                 var move_text = move_to_kif_string(position, m);
                 var move_text_game_ply = position.gamePly;
@@ -604,7 +799,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 var move_time = move_text.PadMidUnicode( time_string , 12 /*指し手=最大全角6文字=半角12文字*/ + 1 /* space */+ 7 /*時間文字列、1分00秒で半角7文字*/);
 
-                var text = $"{plus}{move_text_game_ply, 3}.{move_time}";
+                var text = $"{indent}{plus}{move_text_game_ply, 3}.{move_time}";
 
                 KifuList.Add(text);
                 RaisePropertyChanged("KifuList", KifuList, KifuList.Count-1 /*末尾が変更になった*/);
