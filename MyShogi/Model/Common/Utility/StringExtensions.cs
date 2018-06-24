@@ -36,5 +36,62 @@
         }
 
         // 他、また気が向いたら書く。
+
+        /// <summary>
+        /// string.PadLeft()と同じだが、全角スペースは2文字分として扱ってPadLeftする。
+        /// n : 半角何文字分にして返すか。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static string PadLeftUnicode(this string s , int n)
+        {
+            // まず全角を1文字として文字数を数える
+            int len = 0;
+            foreach (var c in s)
+                len += (c < 256) ? 1 : 2;
+
+            // 全角文字の数だけ減らしてPadLeft()する。
+            return s.PadLeft(System.Math.Max(n - (len - s.Length), 0));
+        }
+
+        /// <summary>
+        /// string.PadRight()と同じだが、全角スペースは2文字分として扱ってPadRightする。
+        /// n : 半角何文字分にして返すか。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static string PadRightUnicode(this string s, int n)
+        {
+            // まず全角を1文字として文字数を数える
+            int len = 0;
+            foreach (var c in s)
+                len += (c < 256) ? 1 : 2;
+
+            // 全角文字の数だけ減らしてPadRight()する。
+            return s.PadRight(System.Math.Max(n - (len - s.Length), 0));
+        }
+
+
+        /// <summary>
+        /// s と tの間に半角スペースを、全体が半角n文字になるようにpaddingする。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static string PadMidUnicode(this string s, string t , int n)
+        {
+            // まず全角を1文字として全体の文字数を数える
+            int len = 0;
+            foreach (var c in s)
+                len += (c < 256) ? 1 : 2;
+            foreach (var c in t)
+                len += (c < 256) ? 1 : 2;
+
+            // n - lenの数だけスペースを放り込む
+            return $"{s}{new string(' ',System.Math.Max(n - len, 0))}{t}";
+        }
+
     }
 }

@@ -42,8 +42,6 @@ namespace MyShogi.Model.Shogi.Kifu
             currentNode = rootNode = new KifuNode(null);
             pliesFromRoot = 0;
 
-            //    kifFormatter = KifFormatter.Ki2C;
-            //    UsiMoveStringList.Clear();
             rootBoardType = BoardType.NoHandicap;
             rootSfen = Position.SFEN_HIRATE;
 
@@ -322,10 +320,6 @@ namespace MyShogi.Model.Shogi.Kifu
                 RaisePropertyChanged("Position", position);
             }
 
-            // rootNodeからの指し手。これは棋譜リストと同期させている。
-            if (EnableKifuList)
-                kifuWindowMoves.RemoveAt(kifuWindowMoves.Count-1); // RemoveLast()
-
             --pliesFromRoot;
 
             currentNode = currentNode.prevNode;
@@ -589,10 +583,21 @@ namespace MyShogi.Model.Shogi.Kifu
                 var move_text = move_to_kif_string(position, m);
                 var move_text_game_ply = position.gamePly;
 
-                move_text = string.Format("{0,-4}", move_text);
-                move_text = move_text.Replace(' ', '　'); // 半角スペースから全角スペースへの置換
+                // 消費時間の文字列「1秒」のように短めの文字列で表現。
+                // 一番上の桁は、そのあとのPadMidUnicode()でpaddingされるので、PadLeft的なpaddingはしないでおく。
+                string time_string;
+                if (t.TotalSeconds < 60)
+                    time_string = $"{t.Seconds}秒";
+                else if (t.TotalMinutes < 60)
+                    time_string = $"{t.Minutes}分{t.Seconds,2}秒";
+                else if (t.TotalHours < 24)
+                    time_string = $"{t.Hours}時間{t.Minutes,2}分{t.Seconds,2}秒";
+                else
+                    time_string = $"{t.Days}日{t.Hours,2}時間{t.Minutes,2}分{t.Seconds,2}秒";
 
-                var text = $"{plus}{move_text_game_ply, 3}.{move_text} {t.Hours:D2}:{t.Minutes:D2}:{t.Seconds:D2}";
+                var move_time = move_text.PadMidUnicode( time_string , 12 /*指し手=最大全角6文字=半角12文字*/ + 1 /* space */+ 7 /*時間文字列、1分00秒で半角7文字*/);
+
+                var text = $"{plus}{move_text_game_ply, 3}.{move_time}";
 
                 KifuList.Add(text);
                 RaisePropertyChanged("KifuList", KifuList, KifuList.Count-1 /*末尾が変更になった*/);
@@ -614,7 +619,11 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             if (EnableKifuList)
             {
-                KifuList.RemoveAt(KifuList.Count - 1); // RemoveLast()
+                // rootNodeからの指し手。これは棋譜リストと同期させている。
+                kifuWindowMoves.RemoveAt(kifuWindowMoves.Count - 1);
+
+                // 棋譜ウィンドウに表示する用の文字列
+                KifuList.RemoveAt(KifuList.Count - 1);
                 RaisePropertyChanged("KifuList", KifuList, KifuList.Count /*末尾が削除になった*/);
             }
 
