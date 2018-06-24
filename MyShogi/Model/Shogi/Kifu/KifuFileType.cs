@@ -34,6 +34,7 @@
                 case KifuFileType.PSN2: return ".psn2";
                 case KifuFileType.SFEN: return ".sfen";
                 case KifuFileType.JSON: return ".json";
+                case KifuFileType.JKF: return ".jkf";
                 case KifuFileType.UNKNOWN: return ".unknown";
             }
             return "";
@@ -47,15 +48,14 @@
         public static KifuFileType StringToKifuFileType(string extentions)
         {
             var ext = extentions.ToLower();
-            if (ext.EndsWith("kif")) return KifuFileType.KIF;
-            if (ext.EndsWith("ki2") || ext.EndsWith("kif2")) return KifuFileType.KI2;
+            if (ext.EndsWith("kif") || ext.EndsWith("kifu")) return KifuFileType.KIF;
+            if (ext.EndsWith("ki2") || ext.EndsWith("kif2") || ext.EndsWith("ki2u") || ext.EndsWith("kif2u")) return KifuFileType.KI2;
             if (ext.EndsWith("csa")) return KifuFileType.CSA;
             if (ext.EndsWith("psn")) return KifuFileType.PSN;
             if (ext.EndsWith("psn2")) return KifuFileType.PSN2;
             if (ext.EndsWith("sfen")) return KifuFileType.SFEN;
             if (ext.EndsWith("json")) return KifuFileType.JSON;
-
-            // jkfの拡張子わからん。jsonだとしたら判別できない。
+            if (ext.EndsWith("jkf")) return KifuFileType.JKF;
 
             return KifuFileType.UNKNOWN;
         }

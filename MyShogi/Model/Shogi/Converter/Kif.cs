@@ -47,15 +47,15 @@ namespace MyShogi.Model.Shogi.Converter
     public enum SquareFormat
     {
         /// <summary>
-        /// 23銀
+        /// 半角数字 例: 23銀
         /// </summary>
         ASCII,
         /// <summary>
-        /// ２３銀
+        /// 全角数字 例: ２３銀
         /// </summary>
         FullWidthArabic,
         /// <summary>
-        /// ２三銀
+        /// 数字混合 例: ２三銀
         /// </summary>
         FullWidthMix,
         NB
@@ -67,23 +67,23 @@ namespace MyShogi.Model.Shogi.Converter
     public enum SamePosFormat
     {
         /// <summary>
-        /// ２三銀成, ２三銀
+        /// 同～表記なし 例: ２三銀成, ２三銀
         /// </summary>
         NONE,
         /// <summary>
-        /// 同銀成, 同銀
+        /// 空白なし 例: 同銀成, 同銀
         /// </summary>
         ZEROsp,
         /// <summary>
-        /// 同　銀成, 同　銀
+        /// KIF形式空白 例: 同　銀成, 同　銀
         /// </summary>
         KIFsp,
         /// <summary>
-        /// 同銀成, 同　銀
+        /// KI2形式空白 例: 同銀成, 同　銀
         /// </summary>
         KI2sp,
         /// <summary>
-        /// ２三同銀成, ２三同銀
+        /// 詳細 例: ２三同銀成, ２三同銀
         /// </summary>
         Verbose,
         NB
@@ -95,19 +95,19 @@ namespace MyShogi.Model.Shogi.Converter
     public enum FromSqFormat
     {
         /// <summary>
-        /// ２三銀
+        /// 表記なし 例: ２三銀
         /// </summary>
         NONE,
         /// <summary>
-        /// ２三銀(14)
+        /// KIF形式 例: ２三銀(14)
         /// </summary>
         KIF,
         /// <summary>
-        /// ２三銀右
+        /// KI2形式 例: ２三銀右
         /// </summary>
         KI2,
         /// <summary>
-        /// ２三銀右(14)
+        /// 詳細 例: ２三銀右(14)
         /// </summary>
         Verbose,
         NB
@@ -388,7 +388,7 @@ namespace MyShogi.Model.Shogi.Converter
                     case FromSqFormat.KI2:
                     case FromSqFormat.Verbose:
                     {
-                        if (moveInfo.drop == KifMoveInfo.Drop.EXPLICIT)
+                        if (moveInfo.drop == KifMoveInfo.Drop.EXPLICIT || opt.fromsq == FromSqFormat.Verbose && move.IsDrop())
                         {
                             // KI2では紛らわしくない場合、"打"と表記しない。
                             kif.Append("打");
@@ -443,13 +443,15 @@ namespace MyShogi.Model.Shogi.Converter
                             break;
                         // KI2形式では長い表記の時に空白を詰める
                         case SamePosFormat.KI2sp: {
-                            if (kif.Length > 1)
+                            switch (opt.fromsq)
                             {
-                                kif.Insert(0, "同");
-                            }
-                            else
-                            {
-                                kif.Insert(0, "同　");
+                                case FromSqFormat.KIF:
+                                case FromSqFormat.Verbose:
+                                    kif.Insert(0, kif.Length > 5 ? "同" : "同　");
+                                    break;
+                                default:
+                                    kif.Insert(0, kif.Length > 1 ? "同" : "同　");
+                                    break;
                             }
                             break;
                         }

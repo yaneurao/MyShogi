@@ -24,7 +24,13 @@ namespace MyShogi.Model.Shogi.Kifu
         public KifuTree()
         {
             EnableKifuList = true;
-            kifFormatter = KifFormatter.Ki2C;
+            kifFormatter = new KifFormatterOptions
+            {
+                color = ColorFormat.Piece,
+                square = SquareFormat.FullWidthMix,
+                samepos = SamePosFormat.KI2sp,
+                fromsq = FromSqFormat.Verbose,
+            };
             EnableUsiMoveList = true;
 
             position = new Position();
@@ -453,7 +459,7 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 // 棋譜が同期していないので現在行以降を削除
 
-                KifuList.RemoveRange(pliesFromRoot + 1 , KifuList.Count - (pliesFromRoot + 1));
+                KifuList.RemoveRange(pliesFromRoot + 1, KifuList.Count - (pliesFromRoot + 1));
                 RaisePropertyChanged("KifuList", KifuList);
             }
         }
@@ -555,7 +561,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="p"></param>
         /// <param name="m"></param>
         /// <returns></returns>
-        private string move_to_kif_string(Position p , Move m)
+        private string move_to_kif_string(Position p, Move m)
         {
             // 特殊な指し手は、KIF2フォーマットではきちんと変換できないので自前で変換する。
             // 例えば、連続王手の千日手による反則勝ちが単に「千日手」となってしまってはまずいので。
@@ -567,7 +573,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// DoMove()のときに棋譜に追加する
         /// </summary>
         /// <param name="m"></param>
-        private void AddKifu(Move m , TimeSpan t)
+        private void AddKifu(Move m, TimeSpan t)
         {
             if (EnableKifuList)
             {

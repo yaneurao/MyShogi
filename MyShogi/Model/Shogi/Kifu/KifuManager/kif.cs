@@ -35,7 +35,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 // 変化手数用正規表現
                 var rHenka = new Regex(@"^([0-9]+)手");
                 // KIF指し手検出用正規表現
-                var rKif = new Regex(@"^\s*([0-9]+)\s*(?:((?:[1-9１-９][1-9１-９一二三四五六七八九]|同\s?)成?[歩香桂銀金角飛と杏圭全馬竜龍玉王][打不成]*(?:\([1-9][1-9]\))?)|(\S+))\s*(\(\s*([0-9]+):([0-9]+(?:\.[0-9]+)?)\s*\/\s*([0-9]+):([0-9]+):([0-9]+(?:\.[0-9]+)?)\))?");
+                var rKif = new Regex(@"^\s*([0-9]+)\s*(?:((?:[1-9１-９][1-9１-９一二三四五六七八九]|同\s?)成?[歩香桂銀金角飛と杏圭全馬竜龍玉王][打不成左直右上寄引]*(?:\([1-9][1-9]\))?)|(\S+))\s*(\(\s*([0-9]+):([0-9]+(?:\.[0-9]+)?)\s*\/\s*([0-9]+):([0-9]+):([0-9]+(?:\.[0-9]+)?)\))?");
                 // KI2指し手検出用正規表現
                 var rKi2 = new Regex(@"[-+▲△▼▽☗☖⛊⛉](?:[1-9１-９][1-9１-９一二三四五六七八九]|同\s?)成?[歩香桂銀金角飛と杏圭全馬竜龍玉王][打不成左直右上寄引]*");
                 // 終局検出用正規表現
@@ -69,7 +69,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             foreach (char c in mTime.Groups[1].Value)
                                 sb.Append((c < '０' || c > '９') ? c : (char)(c - '０' + '0'));
                             if (int.TryParse(sb.ToString(), out int mTimeVal))
-                            //if (int.Parse(Regex.Replace(mTime.Groups[1].Value, "[０-９]", p => ((char)(p.Value[0] - '０' + '0')).ToString())), out int mTimeVal);
+                            //if (int.TryParse(Regex.Replace(mTime.Groups[1].Value, "[０-９]", p => ((char)(p.Value[0] - '０' + '0')).ToString())), out int mTimeVal);
                             switch (mTime.Groups[2].Value)
                             {
                                 case "時間":
@@ -114,7 +114,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             foreach (char c in mTime.Groups[1].Value)
                                 sb.Append((c < '０' || c > '９') ? c : (char)(c - '０' + '0'));
                             if (int.TryParse(sb.ToString(), out int mTimeVal))
-                            //if (int.Parse(Regex.Replace(mTime.Groups[1].Value, "[０-９]", p => ((char)(p.Value[0] - '０' + '0')).ToString())), out int mTimeVal);
+                            //if (int.TryParse(Regex.Replace(mTime.Groups[1].Value, "[０-９]", p => ((char)(p.Value[0] - '０' + '0')).ToString())), out int mTimeVal);
                             foreach (var players in timeSettings.Players)
                             {
                                 if (players.TimeLimitless)
@@ -203,7 +203,7 @@ namespace MyShogi.Model.Shogi.Kifu
                                 // 局面を指定されたBoardTypeで初期化する。
                                 void SetTree(BoardType bt)
                                 {
-                                    Tree.rootSfen = bt.ToSfen();
+                                    Tree.rootSfen = bt.ToSfen() ?? Tree.rootSfen;
                                     Tree.position.SetSfen(Tree.rootSfen);
                                     Tree.rootBoardType = bt;
                                 }
@@ -540,6 +540,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     case "後手":
                     case "上手":
                     case "下手":
+                    case "手合割":
                         break;
                     default:
                         sb.AppendLine($"{key}：{KifuHeader.header_dic[key]}");
@@ -558,6 +559,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     sides = new string[] { "下手", "上手" };
                     break;
             }
+
+            sb.AppendLine("手数----指手---------消費時間--");
 
             var stack = new Stack<Node>();
             bool endNode = false;
