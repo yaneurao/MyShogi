@@ -34,7 +34,10 @@ namespace MyShogi.Model.Resource.Sounds
         {
             if (player != null)
             {
-                player.Stop();
+                //player.Stop();
+                // Stop()ではリソースの開放がなされないようである…。
+                // 明示的にClose()を呼び出す。
+                player.Close();
                 player = null;
             }
         }
@@ -44,13 +47,13 @@ namespace MyShogi.Model.Resource.Sounds
         /// </summary>
         public void Play()
         {
-            Release();
-
-            // MediaPlayerを使う場合、毎回ファイルから読まないといけないらしい。
             try
             {
-                player = new MediaPlayer();
-                player.Open(new System.Uri(Path.GetFullPath(filename)));
+                if (player == null)
+                {
+                    player = new MediaPlayer();
+                    player.Open(new System.Uri(Path.GetFullPath(filename)));
+                }
 
                 /*
                 // player.MediaEnded += (sender,args) => { playing = false; };
@@ -59,7 +62,10 @@ namespace MyShogi.Model.Resource.Sounds
                 // WMPのバージョンが変わって、イベントの定数が変更になって、イベントが発生しないパターンっぽい。
                 */
 
+                // Positionをセットしなおすと再度Play()で頭から再生できるようだ。なんぞこの裏技。
+                player.Position = TimeSpan.Zero;
                 player.Play();
+
             } catch {  }
         }
 

@@ -62,6 +62,7 @@ namespace MyShogi.Model.Resource.Sounds
                     // 再生中のものがあるなら、その再生の終わりまで待機する。
                     if (!playing.IsPlaying())
                     {
+                        // 再生が終わっているので開放する。
                         playing.Dispose();
                         playing = null;
                     }

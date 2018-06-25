@@ -463,6 +463,10 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 連続対局でないなら..
             Disconnect();
+
+            // 成りならずの選択ダイアログや持ち上げていた駒などいったんリセットして欲しいので
+            // 手番変更イベントを発行。
+            RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
         }
 
         /// <summary>
