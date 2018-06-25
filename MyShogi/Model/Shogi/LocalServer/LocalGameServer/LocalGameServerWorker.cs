@@ -74,6 +74,9 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="gameSetting"></param>
         private void GameStart(GameSetting gameSetting)
         {
+            // 音声:「よろしくお願いします。」
+            TheApp.app.soundManager.Play(SoundEnum.Start);
+
             // 初期化中である。
             Initializing = true;
 
@@ -236,13 +239,6 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     var soundManager = TheApp.app.soundManager;
 
-                    // 初回だけ「先手」と「後手」と読み上げる。
-                    if (!sengo_read_out[(int)stm] || config.ReadOutSenteGoteEverytime != 0)
-                    {
-                        sengo_read_out[(int)stm] = true;
-                        soundManager.Play(stm == Color.BLACK ? SoundEnum.Sente : SoundEnum.Gote);
-                    }
-
                     var kif = kifuManager.KifuList[kifuManager.KifuList.Count - 1];
                     // special moveはMoveを直接渡して再生。
                     if (bestMove.IsSpecial())
@@ -269,6 +265,18 @@ namespace MyShogi.Model.Shogi.LocalServer
                         soundManager.PlayPieceSound(e);
 
                         // -- 棋譜の読み上げ
+
+                        // 「先手」と「後手」と読み上げる。
+                        if (!sengo_read_out[(int)stm] || config.ReadOutSenteGoteEverytime != 0)
+                        {
+                            sengo_read_out[(int)stm] = true;
+
+                            // 駒落ちの時は、「上手(うわて)」と「下手(したて)」
+                            if (!Position.Handicapped)
+                                soundManager.Play(stm == Color.BLACK ? SoundEnum.Sente : SoundEnum.Gote);
+                            else
+                                soundManager.Play(stm == Color.BLACK ? SoundEnum.Shitate : SoundEnum.Uwate);
+                        }
 
                         // 棋譜文字列をそのまま頑張って読み上げる。
                         soundManager.ReadOut(kif);
@@ -434,6 +442,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private void GameEnd()
         {
+            // 対局中だったものが終了したのか？
+            if (InTheGame)
+            {
+                // 音声:「ありがとうございました。またお願いします。」
+                TheApp.app.soundManager.Play(SoundEnum.End);
+            }
+
             InTheGame = false;
 
             // 時間消費、停止

@@ -131,6 +131,12 @@ namespace MyShogi.Model.Shogi.Core
         // pieces()の引数と同じく、ALL_PIECES,HDKなどのPieceで定義されている特殊な定数が使える。
         public Bitboard[] byTypeBB = new Bitboard[(int)Piece.PIECE_BB_NB];
 
+        /// <summary>
+        /// 駒落ちであるかのフラグ
+        /// 盤面を初期化した時に、駒が40枚に満たないなら駒落ちと判定。
+        /// </summary>
+        public bool Handicapped;
+
         // -------------------------------------------------------------------------
 
         /// <summary>
@@ -155,6 +161,7 @@ namespace MyShogi.Model.Shogi.Core
             pos.st = st; // stの先は参照透明。DoMove()の時に新規に作られ、更新はこのタイミングでしか行われないので。
             Array.Copy(byColorBB, pos.byColorBB, byColorBB.Length);
             Array.Copy(byTypeBB, pos.byTypeBB, byTypeBB.Length);
+            pos.Handicapped = Handicapped;
 
             return pos;
         }
@@ -803,6 +810,22 @@ namespace MyShogi.Model.Shogi.Core
 
             // このタイミングで王手関係の情報を更新しておいてやる。
             SetCheckInfo(st);
+
+            // -- 駒落ちであるかの判定
+
+            // 駒の枚数をすべて足し合わせて、40未満であれば駒落ちであると判定する。
+            {
+                int sum = 0;
+                foreach (var sq in All.Squares())
+                    if (PieceOn(sq) != Piece.NO_PIECE)
+                        ++sum;
+                foreach (var c in All.Colors())
+                    for (Piece pt = Piece.PAWN; pt < Piece.HAND_NB; ++pt)
+                        sum += Hand(c).Count(pt);
+
+                Handicapped = sum != 40;
+            }
+
         }
 
 

@@ -33,8 +33,10 @@ namespace MyShogi.Model.Resource.Sounds
 
         // 「よろしくお願いします」
         Start ,
+        // 「ありがとうございました。またお願いします。」
+        End ,
 
-        // 「先手」「後手」「上手」「下手」
+        // 「先手」「後手」「上手(うわて)」「下手(したて)」
         Sente,
         Gote ,
         Uwate , 
@@ -165,6 +167,7 @@ namespace MyShogi.Model.Resource.Sounds
             switch (e)
             {
                 case SoundEnum.Start:   return "start.wav";
+                case SoundEnum.End:     return "win.wav";
 
                 case SoundEnum.Sente:   return "sente.wav";
                 case SoundEnum.Gote:    return "gote.wav";
