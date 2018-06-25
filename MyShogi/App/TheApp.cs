@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using MyShogi.Model.Resource.Images;
+using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.LocalServer;
 
 // とりま、Windows用
@@ -98,10 +99,15 @@ namespace MyShogi.App
             // 初期化が終わったのでgameServerの起動を行う。
             gameServer.Start();
 
+            // サウンド
+            soundManager = new SoundManager();
+            soundManager.Start();
+
             // 終了するときに設定ファイルに書き出すコード
             Application.ApplicationExit += new EventHandler((sender,e) =>
             {
                 config.Save();
+                soundManager.Dispose();
             });
 
             Application.Run(mainDialog);
@@ -126,6 +132,11 @@ namespace MyShogi.App
         /// GUIの全体設定
         /// </summary>
         public GlobalConfig config { get; private set; }
+
+        /// <summary>
+        /// サウンドマネージャー
+        /// </summary>
+        public SoundManager soundManager { get; private set; }
 
         /// <summary>
         /// singletonなinstance。それぞれのViewModelなどにアクセスしたければ、これ経由でアクセスする。

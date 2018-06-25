@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Shogi.Kifu;
+using MyShogi.App;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -219,6 +220,14 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // 受理できる性質の指し手であることは検証済み
                     // special moveであってもDoMove()してしまう。
                     kifuManager.DoMove(bestMove);
+
+                    // 音声の読み上げ
+                    var kif = kifuManager.KifuList[kifuManager.KifuList.Count - 1];
+                    // 棋譜文字列をそのまま頑張って読み上げる。
+                    if (bestMove.IsSpecial())
+                        TheApp.app.soundManager.ReadOut(bestMove);
+                    else
+                        TheApp.app.soundManager.ReadOut(kif);
                 }
 
                 // -- 次のPlayerに、自分のturnであることを通知してやる。
@@ -300,6 +309,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                     kifuManager.Tree.AddNode(m, KifuMoveTimes.Zero);
                     // speical moveでもDoMoveできることは保証されている。
                     kifuManager.Tree.DoMove(m);
+
+                    // 音声の読み上げ
+                    TheApp.app.soundManager.ReadOut(m);
 
                     InTheGame = false;
                     GameEnd();

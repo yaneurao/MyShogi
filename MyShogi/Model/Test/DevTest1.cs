@@ -636,6 +636,7 @@ namespace MyShogi.Model.Test
                 //sm.Play(Piece.HORSE);
                 //sm.Play(Piece.DRAGON);
 
+                // その他の音声
                 for (int i = 0; i < 20; ++i)
                     sm.Play(SoundEnum.Sente + i);
 
