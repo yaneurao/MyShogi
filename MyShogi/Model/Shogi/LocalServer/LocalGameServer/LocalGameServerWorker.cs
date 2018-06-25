@@ -62,6 +62,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                     command();
         }
 
+        /// <summary>
+        /// 「先手」「後手」の読み上げは、ゲーム開始後、初回のみなので
+        /// そのためのフラグ
+        /// </summary>
+        private bool[] sengo_read_out;
 
         /// <summary>
         /// 対局開始のためにGameSettingの設定に従い、ゲームを初期化する。
@@ -71,6 +76,9 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             // 初期化中である。
             Initializing = true;
+
+            // 初回の指し手で、「先手」「後手」と読み上げるためのフラグ
+            sengo_read_out = new bool[2] { false, false };
 
             // プレイヤーの生成
             foreach (var c in All.Colors())
@@ -160,6 +168,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             var stm = Position.sideToMove;
             var stmPlayer = Player(stm);
 
+            var config = TheApp.app.config;
+
             // 指し手
             var bestMove = stmPlayer.BestMove;
 
@@ -224,17 +234,26 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // -- 音声の読み上げ
 
+                    var soundManager = TheApp.app.soundManager;
+
+                    // 初回だけ「先手」と「後手」と読み上げる。
+                    if (!sengo_read_out[(int)stm] || config.ReadOutSenteGoteEverytime != 0)
+                    {
+                        sengo_read_out[(int)stm] = true;
+                        soundManager.Play(stm == Color.BLACK ? SoundEnum.Sente : SoundEnum.Gote);
+                    }
+
                     var kif = kifuManager.KifuList[kifuManager.KifuList.Count - 1];
                     // special moveはMoveを直接渡して再生。
                     if (bestMove.IsSpecial())
-                        TheApp.app.soundManager.ReadOut(bestMove);
+                        soundManager.ReadOut(bestMove);
                     else
                     {
                         // -- 駒音
 
                         // 移動先の升の下に別の駒があるときは、駒がぶつかる音になる。
                         var to = bestMove.To();
-                        var delta = Position.sideToMove /* この手番は相手番 */ == Color.BLACK ? Square.SQ_U : Square.SQ_D;
+                        var delta = stm == Color.BLACK ? Square.SQ_D : Square.SQ_U;
                         var e = (Position.PieceOn(to + (int)delta) != Piece.NO_PIECE)
                             ? SoundEnum.KOMA_B1 /*ぶつかる音*/: SoundEnum.KOMA_S1 /*ぶつからない音*/;
 
@@ -247,12 +266,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                                 e = SoundEnum.KOMA_C1;
                         }
 #endif
-                        TheApp.app.soundManager.PlayPieceSound(e);
+                        soundManager.PlayPieceSound(e);
 
                         // -- 棋譜の読み上げ
 
                         // 棋譜文字列をそのまま頑張って読み上げる。
-                        TheApp.app.soundManager.ReadOut(kif);
+                        soundManager.ReadOut(kif);
                     }
 
                 }

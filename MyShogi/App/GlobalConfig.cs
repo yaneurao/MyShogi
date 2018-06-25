@@ -34,6 +34,7 @@ namespace MyShogi.App
             PieceSoundInTheGame = 1;
             //CrashPieceSoundInTheGame = 1;
             KifuReadOut = 1;
+            ReadOutSenteGoteEverytime = 1;
         }
 
         /// <summary>
@@ -292,6 +293,17 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("KifuReadOut"); }
             set { SetValue<int>("KifuReadOut", value); }
+        }
+
+        /// <summary>
+        /// 棋譜の読み上げの時の「先手」「後手」を毎回読み上げるのか
+        /// 0 : なし
+        /// 1 : あり(デフォルト)
+        /// </summary>
+        public int ReadOutSenteGoteEverytime
+        {
+            get { return GetValue<int>("ReadOutSenteGoteEverytime"); }
+            set { SetValue<int>("ReadOutSenteGoteEverytime", value); }
         }
 
         /// <summary>

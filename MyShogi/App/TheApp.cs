@@ -97,6 +97,7 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("KifuReadOut", mainDialog.UpdateMenuItems);
+            config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems);
 
             // 初期化が終わったのでgameServerの起動を行う。
             gameServer.Start();

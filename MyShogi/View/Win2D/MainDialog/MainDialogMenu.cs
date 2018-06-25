@@ -561,7 +561,17 @@ namespace MyShogi.View.Win2D
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "棋譜読み上げ";
                         item1.Checked = TheApp.app.config.KifuReadOut == 1;
+                        item1.Enabled = TheApp.app.config.CommercialVersion; // 商用版のみ選択可
                         item1.Click += (sender, e) => { TheApp.app.config.KifuReadOut ^= 1 /* 0,1反転 */; };
+                        item_sounds.DropDownItems.Add(item1);
+                    }
+
+                    {
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "「先手」「後手」を毎回読み上げる";
+                        item1.Checked = TheApp.app.config.ReadOutSenteGoteEverytime == 1;
+                        item1.Enabled = TheApp.app.config.CommercialVersion; // 商用版のみ選択可
+                        item1.Click += (sender, e) => { TheApp.app.config.ReadOutSenteGoteEverytime ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
 
