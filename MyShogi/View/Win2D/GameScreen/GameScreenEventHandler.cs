@@ -2,9 +2,10 @@
 using System.Drawing;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
 using ShogiCore = MyShogi.Model.Shogi.Core;
-using SPRITE = MyShogi.Model.Resource.SpriteManager;
+using SPRITE = MyShogi.Model.Resource.Images.SpriteManager;
 
 namespace MyShogi.View.Win2D
 {
@@ -391,7 +392,7 @@ namespace MyShogi.View.Win2D
                 state.moved_piece_type = pos.PieceOn(from).PieceType();
 
                 // この状態を初期状態にするのは少しおかしいが、どうせこのあとマウスを動かすであろうからいいや。
-                state.promote_dialog_selection = Model.Resource.PromoteDialogSelectionEnum.NO_SELECT;
+                state.promote_dialog_selection = PromoteDialogSelectionEnum.NO_SELECT;
 
                 // toの近くに成り・不成のダイアログを描画してやる。
                 // これは移動先の升の少し下に出す。
@@ -489,17 +490,17 @@ namespace MyShogi.View.Win2D
                         // PromoteDialogを出していたのであれば、
                         switch (state.promote_dialog_selection)
                         {
-                            case Model.Resource.PromoteDialogSelectionEnum.NO_SELECT:
+                            case PromoteDialogSelectionEnum.NO_SELECT:
                                 break; // 無視
-                            case Model.Resource.PromoteDialogSelectionEnum.CANCEL:
+                            case PromoteDialogSelectionEnum.CANCEL:
                                 // キャンセルするので移動の駒の選択可能状態に戻してやる。
                                 StateReset();
                                 break;
                                 // 成り・不成を選んでクリックしたのでそれに応じた移動を行う。
-                            case Model.Resource.PromoteDialogSelectionEnum.UNPROMOTE:
-                            case Model.Resource.PromoteDialogSelectionEnum.PROMOTE:
+                            case PromoteDialogSelectionEnum.UNPROMOTE:
+                            case PromoteDialogSelectionEnum.PROMOTE:
                                 var m = Util.MakeMove(state.picked_from, state.picked_to,
-                                    state.promote_dialog_selection == Model.Resource.PromoteDialogSelectionEnum.PROMOTE);
+                                    state.promote_dialog_selection == PromoteDialogSelectionEnum.PROMOTE);
                                 ViewModel.ViewModel.gameServer.DoMoveCommand(m);
                                 StateReset();
                                 break;

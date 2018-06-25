@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace MyShogi.Model.Resource
+﻿namespace MyShogi.Model.Resource.Images
 {
     /// <summary>
     /// SpriteManagerでPromoteDialogのために使うenum

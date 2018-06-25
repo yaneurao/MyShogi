@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using MyShogi.Model.Common.Process;
 using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Usi;
@@ -602,6 +604,46 @@ namespace MyShogi.Model.Test
                 engine.OnIdle();
             }
 #endif
+
+#if true
+            // サウンドの読み込みのテスト
+            using (var sm = new SoundManager())
+            {
+                sm.Start();
+
+                // 升名の読み上げテスト
+
+                //sm.Play(Square.SQ_76);
+
+                //foreach(var sq in All.Squares())
+                //    sm.Play(SoundEnum.SQ_11 + (int)sq);
+
+                // 駒名の読み上げテスト
+
+                //sm.Play(Piece.PAWN);
+                //sm.Play(Piece.LANCE);
+                //sm.Play(Piece.KNIGHT);
+                //sm.Play(Piece.SILVER);
+                //sm.Play(Piece.GOLD);
+                //sm.Play(Piece.BISHOP);
+                //sm.Play(Piece.ROOK);
+                //sm.Play(Piece.KING);
+
+                //sm.Play(Piece.PRO_PAWN);
+                //sm.Play(Piece.PRO_LANCE);
+                //sm.Play(Piece.PRO_KNIGHT);
+                //sm.Play(Piece.PRO_SILVER);
+                //sm.Play(Piece.HORSE);
+                //sm.Play(Piece.DRAGON);
+
+                for (int i = 0; i < 20; ++i)
+                    sm.Play(SoundEnum.Sente + i);
+
+                Thread.Sleep(50*1000);
+            }
+
+#endif
+
 
             //X x = new X();
             //x.a[1] = 5;

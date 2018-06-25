@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.IO;
 
-namespace MyShogi.Model.Resource
+namespace MyShogi.Model.Resource.Images
 {
     public static class ImageConverter
     {

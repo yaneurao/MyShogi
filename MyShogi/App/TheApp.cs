@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using MyShogi.Model.Resource;
+using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.LocalServer;
 
 // とりま、Windows用

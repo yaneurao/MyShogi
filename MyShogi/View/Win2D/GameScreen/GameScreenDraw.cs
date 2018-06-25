@@ -1,7 +1,5 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-using MyShogi.Model.Resource;
+﻿using System.Drawing;
+using MyShogi.Model.Resource.Images;
 
 namespace MyShogi.View.Win2D
 {

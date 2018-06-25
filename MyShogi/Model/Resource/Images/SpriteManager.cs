@@ -2,7 +2,7 @@
 using MyShogi.App;
 using MyShogi.Model.Shogi.Core;
 
-namespace MyShogi.Model.Resource
+namespace MyShogi.Model.Resource.Images
 {
     /// <summary>
     /// スプライトを返すbuilder

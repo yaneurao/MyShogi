@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace MyShogi.Model.Resource
+namespace MyShogi.Model.Resource.Images
 {
     /// <summary>
     /// スプライト。

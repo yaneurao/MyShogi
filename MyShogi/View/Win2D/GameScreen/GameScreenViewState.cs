@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using MyShogi.Model.Resource;
+using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D

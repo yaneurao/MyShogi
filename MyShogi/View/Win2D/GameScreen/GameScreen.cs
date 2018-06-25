@@ -1,11 +1,11 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
-using MyShogi.Model.Resource;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Resource.Images;
 using ShogiCore = MyShogi.Model.Shogi.Core;
 using SColor = MyShogi.Model.Shogi.Core.Color; // 将棋のほうのColor
-using SPRITE = MyShogi.Model.Resource.SpriteManager;
+using SPRITE = MyShogi.Model.Resource.Images.SpriteManager;
 
 namespace MyShogi.View.Win2D
 {

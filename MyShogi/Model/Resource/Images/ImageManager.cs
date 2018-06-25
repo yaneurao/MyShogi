@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 
-namespace MyShogi.Model.Resource
+namespace MyShogi.Model.Resource.Images
 {
     /// <summary>
     /// 画像を動的に読み込んで管理するためのクラス。

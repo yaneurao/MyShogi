@@ -169,6 +169,16 @@ namespace MyShogi.Model.Shogi.Core
         {
             return sq.ToFile().ToUsi() + sq.ToRank().ToUsi();
         }
+
+        /// <summary>
+        /// "76"のような半角数字形式の升表現にする。
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public static string ToNumString(this Square sq)
+        {
+            return $"{((int)sq.ToFile() + 1).ToString()}{((int)sq.ToRank() + 1).ToString()}";
+        }
     }
 
     /// <summary>

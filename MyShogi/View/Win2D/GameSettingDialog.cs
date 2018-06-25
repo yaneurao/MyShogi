@@ -3,9 +3,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.Utility;
-using MyShogi.Model.Resource;
+using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
-using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
 {

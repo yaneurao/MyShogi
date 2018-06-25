@@ -1,4 +1,4 @@
-﻿namespace MyShogi.Model.Resource
+﻿namespace MyShogi.Model.Resource.Images
 {
     /// <summary>
     /// 駒の移動に関するエフェクトに関する定数

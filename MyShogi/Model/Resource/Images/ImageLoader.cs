@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace MyShogi.Model.Resource
+namespace MyShogi.Model.Resource.Images
 {
     /// <summary>
     /// 画像を動的に読み込んだりするクラス。1つの画像のみを管理する。
