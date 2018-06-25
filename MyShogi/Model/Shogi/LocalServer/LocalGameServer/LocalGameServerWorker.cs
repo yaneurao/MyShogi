@@ -233,9 +233,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                         // 駒音
                         // 移動先の升の下に別の駒があるときは、駒がぶつかる音になる。
                         var to = bestMove.To();
-                        var delta = Position.sideToMove == Color.BLACK ? Square.SQ_D : Square.SQ_U;
+                        var delta = Position.sideToMove /* この手番は相手番 */ == Color.BLACK ? Square.SQ_U : Square.SQ_D;
                         var crash = Position.PieceOn(to + (int)delta) != Piece.NO_PIECE;
-                        TheApp.app.soundManager.PlayPieceSound(crash);                        
+                        TheApp.app.soundManager.PlayPieceSound(crash ? SoundEnum.KOMA_B1 : SoundEnum.KOMA_S1);                        
 
                         // 棋譜文字列をそのまま頑張って読み上げる。
                         TheApp.app.soundManager.ReadOut(kif);

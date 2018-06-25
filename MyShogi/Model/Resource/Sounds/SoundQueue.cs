@@ -54,21 +54,35 @@ namespace MyShogi.Model.Resource.Sounds
         /// </summary>
         private void worker()
         {
+            Sound playing = null;
             while (!stop)
             {
-                Sound sound = null;
-                lock (lock_object)
+                if (playing != null)
                 {
-                    if (queue.Count != 0)
-                        sound = queue.Dequeue();
+                    // 再生中のものがあるなら、その再生の終わりまで待機する。
+                    if (!playing.IsPlaying())
+                    {
+                        playing.Dispose();
+                        playing = null;
+                    }
                 }
-                if (sound != null)
+                else
                 {
-                    sound.Play();
-                } else
-                {
-                    Thread.Sleep(10); // これくらいの再生遅延は許されるであろう。
+                    // 再生中ではないので、1つqueueから取り出して再生する。
+                    Sound sound = null;
+                    lock (lock_object)
+                    {
+                        if (queue.Count != 0)
+                            sound = queue.Dequeue();
+                    }
+                    if (sound != null)
+                    {
+                        sound.Play();
+                        playing = sound;
+                        // 10msで終わるとは考えられないのでこのあとSleep()して良い。
+                    }
                 }
+                Thread.Sleep(10); // これくらいの再生遅延は許されるであろう。
             }
         }
 

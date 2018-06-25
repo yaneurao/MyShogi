@@ -1,11 +1,17 @@
 ﻿using System;
-using System.Media;
+using System.IO;
+using System.Windows.Media;
 
 namespace MyShogi.Model.Resource.Sounds
 {
     /// <summary>
     /// wavファイル一つのwrapper。
-    /// 一度読み込んだものはメモリ上の残しておく。
+    /// 
+    /// ※ MediaPlayerを使った実装に変更した。
+    ///  ・System.Windows.Media.MediaPlayerを利用するためのアセンブリ"PresentationCore.dll"アセンブリを参照に追加。
+	///	 ・System.Windows.Freezableを利用するためのアセンブリ"WindowsBase.dll"アセンブリを参照に追加。
+    ///	 
+    /// 他の環境に移植する場合は、このクラスをその環境用に再実装すべし。
     /// </summary>
     public class Sound : IDisposable
     {
@@ -18,20 +24,7 @@ namespace MyShogi.Model.Resource.Sounds
         /// <param name="filename_"></param>
         public void ReadFile(string filename_)
         {
-            // 読み込んでいるファイル名と異なる時のみ読み直す。
-            if (filename != filename_)
-            {
-                Release();
-                try
-                {
-                    player = new SoundPlayer(filename_);
-                    try
-                    {
-                        player.Load();
-                    } catch { }
-                } catch { }
-                filename = filename_;
-            }
+            filename = filename_;
         }
 
         /// <summary>
@@ -41,42 +34,46 @@ namespace MyShogi.Model.Resource.Sounds
         {
             if (player != null)
             {
-                player.Dispose();
+                player.Stop();
                 player = null;
             }
         }
 
         /// <summary>
-        /// サウンドを再生する。
-        /// 再生が終わるまで制御は戻ってこない。
-        /// ※　SoundPlayerでは再生の終了を検知できないので、このような構造になっている。
-        /// 　　専用のスレッドを生成して、そのスレッドで再生すべき。
-        /// このメソッドは例外を投げない。
+        /// サウンドを非同期に再生する。
         /// </summary>
         public void Play()
         {
-            if (player != null)
+            Release();
+
+            // MediaPlayerを使う場合、毎回ファイルから読まないといけないらしい。
+            try
             {
-                try
-                {
-                    player.PlaySync();
-                } catch { }
-            }
+                player = new MediaPlayer();
+                player.Open(new System.Uri(Path.GetFullPath(filename)));
+
+                /*
+                // player.MediaEnded += (sender,args) => { playing = false; };
+                // 再生の完了イベントを拾いたいのだが、どうもMediaEndedバグっているのではないかと…。
+                // cf. https://stackoverflow.com/questions/21231577/mediaplayer-mediaended-not-called-if-playback-is-started-from-a-task
+                // WMPのバージョンが変わって、イベントの定数が変更になって、イベントが発生しないパターンっぽい。
+                */
+
+                player.Play();
+            } catch {  }
         }
 
         /// <summary>
-        /// サウンドをいますぐ非同期で再生する。
+        /// 再生中であるかを判定して返す。
         /// </summary>
-        public void PlayNow()
+        /// <returns></returns>
+        public bool IsPlaying()
         {
-            if (player != null)
-            {
-                try
-                {
-                    player.Play();
-                }
-                catch { }
-            }
+            // 終了イベント捕捉できないので再生カーソルの位置を見て判定する(´ω｀)
+            return player != null &&
+                (! player.NaturalDuration.HasTimeSpan
+                /* これtrueになってからでないと、TimeSpanにアクセスできない。また、これがfalseである間は、再生準備中。*/
+                || player.Position != player.NaturalDuration.TimeSpan);
         }
 
         public void Dispose()
@@ -87,11 +84,12 @@ namespace MyShogi.Model.Resource.Sounds
         /// <summary>
         /// 読み込んでいるサウンド
         /// </summary>
-        private SoundPlayer player = null;
+        private MediaPlayer player = null;
 
         /// <summary>
         /// 読み込んでいるサウンドファイル名
         /// </summary>
         private string filename;
+
     }
 }

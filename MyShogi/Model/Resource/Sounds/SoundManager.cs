@@ -58,19 +58,18 @@ namespace MyShogi.Model.Resource.Sounds
             }
 
             var sound = dic[e];
-            sound.PlayNow();
+            sound.Play();
         }
 
         /// <summary>
-        /// 駒音の再生。
-        /// crash == trueだと駒がぶつかる音込み。
+        /// 駒音の再生。これは即座に再生される。
         /// </summary>
         /// <param name="crash"></param>
-        public void PlayPieceSound(bool crash)
+        public void PlayPieceSound(SoundEnum e)
         {
             if (TheApp.app.config.PieceSoundInTheGame != 0)
             {
-                TheApp.app.soundManager.PlayNow(crash ? SoundEnum.KOMA_B1 : SoundEnum.KOMA_S1);
+                TheApp.app.soundManager.PlayNow(e);
             }
         }
 
