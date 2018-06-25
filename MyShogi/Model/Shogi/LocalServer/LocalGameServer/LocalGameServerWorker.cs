@@ -230,12 +230,26 @@ namespace MyShogi.Model.Shogi.LocalServer
                         TheApp.app.soundManager.ReadOut(bestMove);
                     else
                     {
-                        // 駒音
+                        // -- 駒音
+
                         // 移動先の升の下に別の駒があるときは、駒がぶつかる音になる。
                         var to = bestMove.To();
                         var delta = Position.sideToMove /* この手番は相手番 */ == Color.BLACK ? Square.SQ_U : Square.SQ_D;
-                        var crash = Position.PieceOn(to + (int)delta) != Piece.NO_PIECE;
-                        TheApp.app.soundManager.PlayPieceSound(crash ? SoundEnum.KOMA_B1 : SoundEnum.KOMA_S1);                        
+                        var e = (Position.PieceOn(to + (int)delta) != Piece.NO_PIECE)
+                            ? SoundEnum.KOMA_B1 /*ぶつかる音*/: SoundEnum.KOMA_S1 /*ぶつからない音*/;
+
+#if false
+                        // あまりいい効果音作れなかったのでコメントアウトしとく。
+                        if (TheApp.app.config.CrashPieceSoundInTheGame != 0)
+                        {
+                            // ただし、captureか捕獲する指し手であるなら、衝撃音に変更する。
+                            if (Position.State().capturedPiece != Piece.NO_PIECE || Position.InCheck())
+                                e = SoundEnum.KOMA_C1;
+                        }
+#endif
+                        TheApp.app.soundManager.PlayPieceSound(e);
+
+                        // -- 棋譜の読み上げ
 
                         // 棋譜文字列をそのまま頑張って読み上げる。
                         TheApp.app.soundManager.ReadOut(kif);
@@ -437,6 +451,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             NotifyTurnChanged();
         }
 
-        #endregion
+#endregion
     }
 }

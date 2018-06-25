@@ -546,6 +546,17 @@ namespace MyShogi.View.Win2D
                         item_sounds.DropDownItems.Add(item1);
                     }
 
+#if false
+                        // あまりいい効果音作れなかったのでコメントアウトしとく。
+                    {
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "王手などの駒音を衝撃音に";
+                        item1.Checked = TheApp.app.config.CrashPieceSoundInTheGame == 1;
+                        item1.Click += (sender, e) => { TheApp.app.config.CrashPieceSoundInTheGame ^= 1 /* 0,1反転 */; };
+                        item_sounds.DropDownItems.Add(item1);
+                    }
+#endif
+                    
                     {
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "棋譜読み上げ";

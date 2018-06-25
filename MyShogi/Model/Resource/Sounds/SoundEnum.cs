@@ -17,6 +17,9 @@ namespace MyShogi.Model.Resource.Sounds
         // B1のBは、「ぶつかる」のBか？
         KOMA_B1, 
 
+        // 王手の時と駒を捕獲した時に衝撃音を鳴らす場合、このサウンド
+        KOMA_C1,
+
         // -- 以下、読み上げの音声
 
         // SQ_11 ～ SQ_99
@@ -55,7 +58,7 @@ namespace MyShogi.Model.Resource.Sounds
         // -- 種類ごとの開始～終了の定数
 
         KOMA_START = KOMA_S1,
-        KOMA_END = KOMA_B1,
+        KOMA_END = KOMA_C1,
         READ_OUT_START = SQ_11, // 読み上げの音声の開始
         READ_OUT_END = Jikangire,
     }
@@ -106,6 +109,7 @@ namespace MyShogi.Model.Resource.Sounds
             {
                 case SoundEnum.KOMA_S1: return "koma_s1.wav";
                 case SoundEnum.KOMA_B1: return "koma_b1.wav";
+                case SoundEnum.KOMA_C1: return "koma_c1.wav";
                 default: return "";
             }
         }

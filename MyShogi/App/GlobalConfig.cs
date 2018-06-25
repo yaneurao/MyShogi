@@ -32,6 +32,7 @@ namespace MyShogi.App
             PromotePieceColorType = 0;
             TurnDisplay = 1;
             PieceSoundInTheGame = 1;
+            //CrashPieceSoundInTheGame = 1;
             KifuReadOut = 1;
         }
 
@@ -266,6 +267,21 @@ namespace MyShogi.App
             get { return GetValue<int>("PieceSoundInTheGame"); }
             set { SetValue<int>("PieceSoundInTheGame", value); }
         }
+
+#if false
+        // あまりいい効果音作れなかったのでコメントアウトしとく。
+
+        /// <summary>
+        /// 対局時の駒音に、王手と駒を捕獲した時の衝撃音を用いるか
+        /// 0 : なし
+        /// 1 : あり(デフォルト)
+        /// </summary>
+        public int CrashPieceSoundInTheGame
+        {
+            get { return GetValue<int>("CrashPieceSoundInTheGame"); }
+            set { SetValue<int>("CrashPieceSoundInTheGame", value); }
+        }
+#endif
 
         /// <summary>
         /// 棋譜の読み上げ
