@@ -31,6 +31,8 @@ namespace MyShogi.App
             PickedMoveToColorType = 4;
             PromotePieceColorType = 0;
             TurnDisplay = 1;
+            PieceSoundInTheGame = 1;
+            KifuReadOut = 1;
         }
 
         /// <summary>
@@ -68,6 +70,13 @@ namespace MyShogi.App
             // あと、
             // 「このファイル置いたら商用版になるぜー、うひょーｗｗｗｗｗ」
             // という記事を書いて公開するのはなるべくならやめてもらいたい。
+
+            // 商用版でないなら、以下の機能は強制的にオフ。
+            if (!config.CommercialVersion)
+            {
+                // 棋譜の読み上げ(音声素材がないため)
+                config.KifuReadOut = 0;
+            }
 
             return config;
         }
@@ -244,6 +253,29 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("TurnDisplay"); }
             set { SetValue<int>("TurnDisplay", value); }
+        }
+
+
+        /// <summary>
+        /// 対局時の駒音
+        /// 0 : なし
+        /// 1 : あり(デフォルト)
+        /// </summary>
+        public int PieceSoundInTheGame
+        {
+            get { return GetValue<int>("PieceSoundInTheGame"); }
+            set { SetValue<int>("PieceSoundInTheGame", value); }
+        }
+
+        /// <summary>
+        /// 棋譜の読み上げ
+        /// 0 : なし
+        /// 1 : あり(デフォルト) : 商用版のみ素材あり。
+        /// </summary>
+        public int KifuReadOut
+        {
+            get { return GetValue<int>("KifuReadOut"); }
+            set { SetValue<int>("KifuReadOut", value); }
         }
 
         /// <summary>

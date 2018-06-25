@@ -532,6 +532,30 @@ namespace MyShogi.View.Win2D
 
                 }
 
+                // 「音声」
+                {
+                    var item_sounds = new ToolStripMenuItem();
+                    item_sounds.Text = "音声";
+                    menu.Items.Add(item_sounds);
+
+                    {
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "対局時の駒音";
+                        item1.Checked = TheApp.app.config.PieceSoundInTheGame == 1;
+                        item1.Click += (sender, e) => { TheApp.app.config.PieceSoundInTheGame ^= 1 /* 0,1反転 */; };
+                        item_sounds.DropDownItems.Add(item1);
+                    }
+
+                    {
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "棋譜読み上げ";
+                        item1.Checked = TheApp.app.config.KifuReadOut == 1;
+                        item1.Click += (sender, e) => { TheApp.app.config.KifuReadOut ^= 1 /* 0,1反転 */; };
+                        item_sounds.DropDownItems.Add(item1);
+                    }
+
+                }
+
                 // 「その他」
                 {
                     var item_others = new ToolStripMenuItem();

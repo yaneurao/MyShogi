@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using MyShogi.App;
 using MyShogi.Model.Shogi.Core;
 using SCore = MyShogi.Model.Shogi.Core;
 
@@ -42,6 +43,38 @@ namespace MyShogi.Model.Resource.Sounds
         }
 
         /// <summary>
+        /// すぐに再生する。他の再生を待たずに。
+        /// </summary>
+        /// <param name="e"></param>
+        public void PlayNow(SoundEnum e)
+        {
+            if (!dic.ContainsKey(e))
+            {
+                var subFolder = e.IsKoma() ? KomaSoundPath : ReadOutSoundPath;
+                var filename = Path.Combine(Path.Combine(SoundPath, subFolder), SoundHelper.FileNameOf(e));
+                var s = new Sound();
+                s.ReadFile(filename);
+                dic.Add(e, s);
+            }
+
+            var sound = dic[e];
+            sound.PlayNow();
+        }
+
+        /// <summary>
+        /// 駒音の再生。
+        /// crash == trueだと駒がぶつかる音込み。
+        /// </summary>
+        /// <param name="crash"></param>
+        public void PlayPieceSound(bool crash)
+        {
+            if (TheApp.app.config.PieceSoundInTheGame != 0)
+            {
+                TheApp.app.soundManager.PlayNow(crash ? SoundEnum.KOMA_B1 : SoundEnum.KOMA_S1);
+            }
+        }
+
+        /// <summary>
         /// 升の名前の読み上げ音声を再生する。
         /// </summary>
         /// <param name="sq"></param>
@@ -65,6 +98,10 @@ namespace MyShogi.Model.Resource.Sounds
         /// <param name="text"></param>
         public void ReadOut(string kif)
         {
+            // オプションの反映
+            if (TheApp.app.config.KifuReadOut == 0)
+                return;
+
             // ">+ 16.☖３六飛行成　32秒"
             // みたいなフォーマットなので"."までまず読み飛ばす。
 
@@ -183,6 +220,10 @@ namespace MyShogi.Model.Resource.Sounds
         public void ReadOut(Move m)
         {
             Debug.Assert(m.IsSpecial());
+
+            // オプションの反映
+            if (TheApp.app.config.KifuReadOut == 0)
+                return;
 
             switch (m)
             {

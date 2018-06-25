@@ -8,9 +8,14 @@ namespace MyShogi.Model.Resource.Sounds
     /// </summary>
     public enum SoundEnum
     {
-        // 駒の音声
+        // -- 駒の音声
+
+        // 駒の移動させた時の「カチ」っという音
         KOMA_S1 ,
-        KOMA_B1 ,
+
+        // 駒の移動先の升の下に別の駒があった時に駒のぶつかる音が軽く聞こえる音
+        // B1のBは、「ぶつかる」のBか？
+        KOMA_B1, 
 
         // -- 以下、読み上げの音声
 

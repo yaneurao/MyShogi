@@ -63,7 +63,22 @@ namespace MyShogi.Model.Resource.Sounds
                 } catch { }
             }
         }
-        
+
+        /// <summary>
+        /// サウンドをいますぐ非同期で再生する。
+        /// </summary>
+        public void PlayNow()
+        {
+            if (player != null)
+            {
+                try
+                {
+                    player.Play();
+                }
+                catch { }
+            }
+        }
+
         public void Dispose()
         {
             Release();

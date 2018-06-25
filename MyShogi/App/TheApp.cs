@@ -95,6 +95,8 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems);
+            config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems);
+            config.AddPropertyChangedHandler("KifuReadOut", mainDialog.UpdateMenuItems);
 
             // 初期化が終わったのでgameServerの起動を行う。
             gameServer.Start();

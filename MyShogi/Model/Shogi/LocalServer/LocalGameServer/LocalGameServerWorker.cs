@@ -4,6 +4,7 @@ using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.App;
+using MyShogi.Model.Resource.Sounds;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -221,13 +222,25 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // special moveであってもDoMove()してしまう。
                     kifuManager.DoMove(bestMove);
 
-                    // 音声の読み上げ
+                    // -- 音声の読み上げ
+
                     var kif = kifuManager.KifuList[kifuManager.KifuList.Count - 1];
-                    // 棋譜文字列をそのまま頑張って読み上げる。
+                    // special moveはMoveを直接渡して再生。
                     if (bestMove.IsSpecial())
                         TheApp.app.soundManager.ReadOut(bestMove);
                     else
+                    {
+                        // 駒音
+                        // 移動先の升の下に別の駒があるときは、駒がぶつかる音になる。
+                        var to = bestMove.To();
+                        var delta = Position.sideToMove == Color.BLACK ? Square.SQ_D : Square.SQ_U;
+                        var crash = Position.PieceOn(to + (int)delta) != Piece.NO_PIECE;
+                        TheApp.app.soundManager.PlayPieceSound(crash);                        
+
+                        // 棋譜文字列をそのまま頑張って読み上げる。
                         TheApp.app.soundManager.ReadOut(kif);
+                    }
+
                 }
 
                 // -- 次のPlayerに、自分のturnであることを通知してやる。
