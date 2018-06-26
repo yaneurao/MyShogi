@@ -126,6 +126,59 @@ namespace MyShogi.View.Win2D
 
         // -- 以下、棋譜ウインドウに対するオペレーション
 
+        public void UpdateButtonState(bool inTheGame)
+        {
+            if (!IsHandleCreated)
+                return;
+
+            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => UpdateButtonState(inTheGame)));
+                return;
+            }
+
+            // 最小化したのかな？
+            if (Width == 0 || Height == 0 || listBox1.ClientSize.Width == 0)
+                return;
+
+            // 非表示だったものを表示したのであれば、これによって棋譜が隠れてしまう可能性があるので注意。
+            var needScroll = !button1.Visible && !inTheGame;
+
+            // ボタンの表示は対局外のときのみ
+            button1.Visible = !inTheGame;
+            button2.Visible = !inTheGame;
+            button3.Visible = !inTheGame;
+
+            // -- ボタンなどのリサイズ
+
+            // 全体の8%の高さのボタンを用意。
+            int bh = inTheGame ? 0 : Height * 8 / 100;
+            int x = Width / 3;
+            int y = Height - bh;
+
+            listBox1.Location = new Point(0, 0);
+            listBox1.Size = new Size(Width, y);
+
+            if (!inTheGame)
+            {
+                button1.Location = new Point(x * 0, y);
+                button1.Size = new Size(x, bh);
+                button2.Location = new Point(x * 1, y);
+                button2.Size = new Size(x, bh);
+                button3.Location = new Point(x * 2, y);
+                button3.Size = new Size(x, bh);
+            }
+
+            if (needScroll)
+            {
+                // 選択行が隠れていないことを確認しなければ..。
+                // SelectedIndexを変更すると、SelectedIndexChangedイベントが発生してしまうので良くない。
+                // 現在は、対局が終了した瞬間であるから、棋譜の末尾に移動して良い。
+                listBox1.TopIndex = listBox1.Items.Count - 1;
+            }
+        }
+
         /// <summary>
         /// 親ウインドウがリサイズされた時にそれに収まるようにこのコントロール内の文字の大きさを
         /// 調整する。
@@ -135,41 +188,24 @@ namespace MyShogi.View.Win2D
         /// <param name="scale"></param>
         public void OnResize(double scale , bool inTheGame)
         {
-            // 最小化したのかな？
-            if (this.Width == 0 || listBox1.ClientSize.Width == 0)
+            if (!IsHandleCreated)
                 return;
 
+            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
+            if (InvokeRequired)
             {
-                // ボタンの表示は対局外のときのみ
-                button1.Visible = !inTheGame;
-                button2.Visible = !inTheGame;
-                button3.Visible = !inTheGame;
-
-                if (Height == 0)
-                    return; // なんぞこれ
-
-                // -- ボタンなどのリサイズ
-
-                // 全体の8%の高さのボタンを用意。
-                int bh = inTheGame ? 0 : Height * 8 / 100;
-                int x = Width / 3;
-                int y = Height - bh;
-
-                listBox1.Location = new Point(0, 0);
-                listBox1.Size = new Size(Width, y);
-
-                if (!inTheGame)
-                {
-                    button1.Location = new Point(x*0, y);
-                    button1.Size = new Size(x, bh);
-                    button2.Location = new Point(x*1, y);
-                    button2.Size = new Size(x, bh);
-                    button3.Location = new Point(x*2, y);
-                    button3.Size = new Size(x, bh);
-                }
+                Invoke(new Action(() => OnResize(scale,inTheGame)));
+                return;
             }
-                // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
-                var font_size = (float)(20 * scale);
+
+            // 最小化したのかな？
+            if (Width == 0 || Height == 0 || listBox1.ClientSize.Width == 0)
+                return;
+
+            UpdateButtonState(inTheGame);
+
+            // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
+            var font_size = (float)(20 * scale);
 
             /*
                 // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ
@@ -190,26 +226,19 @@ namespace MyShogi.View.Win2D
             font_size *= ((float)Width - 34 /* scroll bar */) / Width;
 
             // 前回のフォントサイズと異なるときだけ再設定する
-            if (last_font_size == font_size)
-                return;
+            //if (last_font_size == font_size)
+            //    return;
 
             last_font_size = font_size;
-            last_scale = scale;
 
-            var font = new Font("MS Gothic", font_size, FontStyle.Regular, GraphicsUnit.Pixel);
+            var font = new Font("MS Gothic", font_size, FontStyle.Regular , GraphicsUnit.Pixel);
+
             listBox1.Font = font;
-
-            // font変更の結果、選択しているところがlistboxの表示範囲外になってしまうことがある。
-            // これ、あとで修正を考える。
-
-            if (!inTheGame)
-            {
-                button1.Font = font;
-                button3.Font = font;
-            }
+            button1.Font = font;
+            button2.Font = font;
+            button3.Font = font;
         }
 
-        private double last_scale = 0;
         private float last_font_size = 0;
 
         /// <summary>

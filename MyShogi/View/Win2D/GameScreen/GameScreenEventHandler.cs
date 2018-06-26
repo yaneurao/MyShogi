@@ -57,7 +57,7 @@ namespace MyShogi.View.Win2D
             }
 
             TurnChanged(args);
-            ResizeKifuControl(); // 棋譜ボタンが変化するかもなので
+            ViewModel.kifuControl.UpdateButtonState((bool)args.value /* == inTheGame */); // 棋譜ボタンが変化するかもなので
         }
 
         /// <summary>
@@ -94,8 +94,9 @@ namespace MyShogi.View.Win2D
             var engineTurn = gameServer.EngineTurn;
             SetButton(MainDialogButtonEnum.MOVE_NOW, engineTurn);
 
-            // この時、人間側の手番であるなら、メインウインドウのメニューの「投」「待」ボタンをenableにしなければならない。
-            var humanTurn = gameServer.CanUserMove && !gameServer.EngineInitializing;
+            // この時、対局中でかつ、人間側の手番で、エンジン初期化中でなければ、
+            // メインウインドウのメニューの「投」「待」ボタンをenableにしなければならない。
+            var humanTurn = gameServer.InTheGame && gameServer.CanUserMove && !gameServer.EngineInitializing;
             SetButton(MainDialogButtonEnum.RESIGN   , humanTurn);
             SetButton(MainDialogButtonEnum.UNDO_MOVE, humanTurn);
 
