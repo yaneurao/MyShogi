@@ -47,7 +47,7 @@ namespace MyShogi.Model.Resource.Sounds
             {
                 var subFolder = e.IsKoma() ? KomaSoundPath : ReadOutSoundPath;
                 var filename = Path.Combine(Path.Combine(SoundPath, subFolder), SoundHelper.FileNameOf(e));
-                var s = new Sound();
+                var s = new SoundLoader();
                 s.ReadFile(filename);
                 dic.Add(e, s);
             }
@@ -66,7 +66,7 @@ namespace MyShogi.Model.Resource.Sounds
             {
                 var subFolder = e.IsKoma() ? KomaSoundPath : ReadOutSoundPath;
                 var filename = Path.Combine(Path.Combine(SoundPath, subFolder), SoundHelper.FileNameOf(e));
-                var s = new Sound();
+                var s = new SoundLoader();
                 s.ReadFile(filename);
                 dic.Add(e, s);
             }
@@ -290,6 +290,6 @@ namespace MyShogi.Model.Resource.Sounds
         /// <summary>
         /// SoundEnumから、それに対応するSoundへのmap
         /// </summary>
-        private Dictionary<SoundEnum,Sound> dic = new Dictionary<SoundEnum,Sound>();
+        private Dictionary<SoundEnum,SoundLoader> dic = new Dictionary<SoundEnum,SoundLoader>();
     }
 }

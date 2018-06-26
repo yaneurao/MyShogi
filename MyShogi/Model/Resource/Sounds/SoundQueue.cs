@@ -39,7 +39,7 @@ namespace MyShogi.Model.Resource.Sounds
         /// 現在再生しているものがなくなり次第(再生が終了次第)再生する。
         /// </summary>
         /// <param name="sound"></param>
-        public void AddQueue(Sound sound)
+        public void AddQueue(SoundLoader sound)
         {
             lock (lock_object)
             {
@@ -67,7 +67,7 @@ namespace MyShogi.Model.Resource.Sounds
         /// </summary>
         private void worker()
         {
-            Sound playing = null;
+            SoundLoader playing = null;
             while (!stop)
             {
                 if (playing != null)
@@ -85,7 +85,7 @@ namespace MyShogi.Model.Resource.Sounds
                 else
                 {
                     // 再生中ではないので、1つqueueから取り出して再生する。
-                    Sound sound = null;
+                    SoundLoader sound = null;
                     lock (lock_object)
                     {
                         if (queue.Count != 0)
@@ -111,7 +111,7 @@ namespace MyShogi.Model.Resource.Sounds
         /// 再生queue
         /// ここに積んだものを順番に再生する。
         /// </summary>
-        private Queue<Sound> queue = new Queue<Sound>();
+        private Queue<SoundLoader> queue = new Queue<SoundLoader>();
 
         /// <summary>
         /// queueの操作時用のlock

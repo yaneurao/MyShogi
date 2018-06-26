@@ -62,12 +62,25 @@ namespace MyShogi.App
                 config = new GlobalConfig();
             }
 
+            config.Init();
+
+            return config;
+        }
+
+        /// <summary>
+        /// ファイルから設定をデシリアライズした直後に呼び出して、ファイルから読み込んだ内容の一部を
+        /// 初期化するためのもの。
+        /// </summary>
+        private void Init()
+        {
+            // -- 商用版かどうかの判定
+
             // カレントフォルダ配下のhtmlフォルダに"CommercialVersion2018.txt"というファイルがあるなら、
             // 商用版のやねうら王用のモード。(シリアライズされた内容は関係ない)
 
-            config.CommercialVersion = 0;
+            CommercialVersion = 0;
             if (System.IO.File.Exists("html/CommercialVersion2018.txt"))
-                config.CommercialVersion = 1;
+                CommercialVersion = 1;
             // 他の商用版、今後増やすかも。
 
             // いまのところ商用版とオープンソース版とでの差別化はあまり考えていないが、
@@ -77,13 +90,21 @@ namespace MyShogi.App
             // という記事を書いて公開するのはなるべくならやめてもらいたい。
 
             // 商用版でないなら、以下の機能は強制的にオフ。
-            if (config.CommercialVersion == 0)
+            if (CommercialVersion == 0)
             {
                 // 棋譜の読み上げ(音声素材がないため)
-                config.KifuReadOut = 0;
+                KifuReadOut = 0;
             }
 
-            return config;
+            // -- その他
+            // GloablConfigに持たせてはいるが、実際は、デシリアライズされたものを使用しないフラグ群。
+
+            // 駒箱の編集のフラグがglobalかどうかという問題だが、ここでBGを合成してしまう以上、
+            // すべてのGameScreenに駒箱が表示されてしまうので、特定のscreenだけ盤面編集を行うということが出来ない。
+            // そこで、これはglobalなフラグであるとして扱い、GloablConfigに持たせることにする。
+
+            InTheBoardEdit = false;
+
         }
 
         /// <summary>
@@ -333,6 +354,16 @@ namespace MyShogi.App
         {
             get { return GetValue<bool>("FileLoggingEnable"); }
             set { SetValue<bool>("FileLoggingEnable", value); }
+        }
+
+        /// <summary>
+        /// 盤面編集中であるかのフラグ
+        /// これは、デシリアライズされない。
+        /// </summary>
+        public bool InTheBoardEdit
+        {
+            get { return GetValue<bool>("InTheBoardEdit"); }
+            set { SetValue<bool>("InTheBoardEdit", value); }
         }
 
 

@@ -13,7 +13,7 @@ namespace MyShogi.Model.Resource.Sounds
     ///	 
     /// 他の環境に移植する場合は、このクラスをその環境用に再実装すべし。
     /// </summary>
-    public class Sound : IDisposable
+    public class SoundLoader : IDisposable
     {
         /// <summary>
         /// ファイルからサウンドを読み込む。

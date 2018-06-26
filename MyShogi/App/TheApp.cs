@@ -46,6 +46,7 @@ namespace MyShogi.App
                 config.AddPropertyChangedHandler("BoardImageVersion", imageManager.UpdateBoardImage);
                 config.AddPropertyChangedHandler("TatamiImageVersion", imageManager.UpdateBoardImage);
                 config.AddPropertyChangedHandler("KomadaiImageVersion", imageManager.UpdateBoardImage);
+                config.AddPropertyChangedHandler("InTheBoardEdit", imageManager.UpdateBoardImage);
 
                 config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
                 config.AddPropertyChangedHandler("PieceAttackImageVersion", imageManager.UpdatePieceAttackImage);
@@ -103,6 +104,7 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems);
+            config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.UpdateMenuItems);
 
             // -- ロギング用のハンドラをセット
 

@@ -212,6 +212,7 @@ namespace MyShogi.View.Win2D
 
                 }
 
+
                 var item_display = new ToolStripMenuItem();
                 item_display.Text = "表示";
                 menu.Items.Add(item_display);
@@ -577,6 +578,54 @@ namespace MyShogi.View.Win2D
 
                 }
 
+                var item_boardedit = new ToolStripMenuItem();
+                item_boardedit.Text = "盤面編集";
+                menu.Items.Add(item_boardedit);
+
+                // 盤面編集の追加
+                {
+                    {   // -- 盤面編集の開始
+                        var item = new ToolStripMenuItem();
+                        item.Text = config.InTheBoardEdit ? "盤面編集の終了" : "盤面編集の開始";
+                        item.Click += (sender, e) => { config.InTheBoardEdit ^= true; };
+                        item_boardedit.DropDownItems.Add(item);
+                    }
+
+                    {   // -- 平手の初期局面
+                        var item = new ToolStripMenuItem();
+                        item.Enabled = config.InTheBoardEdit;
+                        item.Text = "平手の初期局面配置";
+                        item.Click += (sender, e) => { };
+                        item_boardedit.DropDownItems.Add(item);
+                    }
+
+                    {   // -- 駒落ちの局面
+                        var item = new ToolStripMenuItem();
+                        item.Enabled = config.InTheBoardEdit;
+                        item.Text = "駒落ち初期局面配置";
+                        item.Click += (sender, e) => { };
+                        item_boardedit.DropDownItems.Add(item);
+                    }
+
+                    {   // -- 詰将棋用の配置(駒箱に)
+                        var item = new ToolStripMenuItem();
+                        item.Enabled = config.InTheBoardEdit;
+                        item.Text = "詰将棋用に配置";
+                        item.Click += (sender, e) => { };
+                        item_boardedit.DropDownItems.Add(item);
+                    }
+
+                    {   // -- 双玉詰将棋用の局面
+                        var item = new ToolStripMenuItem();
+                        item.Enabled = config.InTheBoardEdit;
+                        item.Text = "双玉詰将棋用に配置";
+                        item.Click += (sender, e) => { };
+                        item_boardedit.DropDownItems.Add(item);
+                    }
+
+                }
+
+
                 // 「情報」
                 {
                     var item_others = new ToolStripMenuItem();
@@ -625,12 +674,11 @@ namespace MyShogi.View.Win2D
                         item1.Click += (sender, e) =>
                         {
                             // ・オープンソース版は、MyShogiのプロジェクトのサイト
-                            // ・商用版は、マイナビの公式サイト
+                            // ・商用版は、マイナビの公式サイトのアップデートの特設ページ
                             // が開くようにしておく。
                             var url = config.CommercialVersion == 0 ?
-                            "https://github.com/yaneurao/MyShogi":
-                            "https://book.mynavi.jp/yaneura/";
-                            // このURL、permanentかどうかわからん。マイナビ担当に確認中。
+                            "https://github.com/yaneurao/MyShogi" :
+                            "https://book.mynavi.jp/ec/products/detail/id=92007"; // 予定地
 
                             System.Diagnostics.Process.Start(url);
                         };
