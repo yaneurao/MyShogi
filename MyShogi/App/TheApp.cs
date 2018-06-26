@@ -60,6 +60,8 @@ namespace MyShogi.App
             // -- メインの対局ウィンドゥ
 
             var mainDialog = new MainDialog();
+            mainForm = mainDialog;
+
             mainDialogViewModel = new MainDialogViewModel();
             mainDialog.ViewModel = mainDialogViewModel;
 
@@ -116,6 +118,29 @@ namespace MyShogi.App
             Application.Run(mainDialog);
         }
 
+        /// <summary>
+        /// 最前面に来るようにしてMessageBox.Show(text)を呼び出す。
+        /// </summary>
+        /// <param name="text"></param>
+        public void MessageShow(string text)
+        {
+            if (mainForm != null)
+                MessageBox.Show(mainForm, text);
+            else
+                MessageBox.Show(text);
+        }
+
+        /// <summary>
+        /// 最前面に来るようにしてMessageBox.Show(text,caption)を呼び出す。
+        /// </summary>
+        public void MessageShow(string text , string caption)
+        {
+            if (mainForm != null)
+                MessageBox.Show(mainForm, text , caption);
+            else
+                MessageBox.Show(text , caption);
+        }
+
         // -- それぞれのViewModel
         // 他のViewModelにアクションが必要な場合は、これを経由して通知などを行えば良い。
         // 他のViewに直接アクションを起こすことは出来ない。必ずViewModelに通知などを行い、
@@ -140,6 +165,12 @@ namespace MyShogi.App
         /// サウンドマネージャー
         /// </summary>
         public SoundManager soundManager { get; private set; }
+
+        /// <summary>
+        /// メインのForm
+        /// これがないとMessageBox.Show()などで親を指定できなくて困る。
+        /// </summary>
+        public Form mainForm { get; private set; }
 
         /// <summary>
         /// singletonなinstance。それぞれのViewModelなどにアクセスしたければ、これ経由でアクセスする。

@@ -6,6 +6,7 @@ using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.Model.Shogi.Kifu
 {
@@ -328,7 +329,7 @@ namespace MyShogi.Model.Shogi.Kifu
         public void UndoMove()
         {
             // speical moveでこの局面に来たのであればPosition.UndoMove()は呼び出さない。
-            if (!IsLastMoveSpecialMove())
+            if (!IsSpecialNode())
             {
                 position.UndoMove();
                 RaisePropertyChanged("Position", position);
@@ -464,20 +465,6 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 RaisePropertyChanged("KifuList", KifuList);
             }
-        }
-
-        /// <summary>
-        /// 直前の指し手がspecial moveであるか
-        /// </summary>
-        /// <returns></returns>
-        public bool IsLastMoveSpecialMove()
-        {
-            // rootNodeでは遡れない。
-            if (currentNode == rootNode)
-                return false;
-
-            var move = currentNode.prevNode.moves.Find(m => m.nextNode == currentNode);
-            return move.nextMove.IsSpecial();
         }
 
         /// <summary>
@@ -736,59 +723,169 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
+        /// このnodeに至るための直前の指し手を返す。
+        /// root nodeであればnullが返る。
+        /// </summary>
+        /// <returns></returns>
+        public KifuMove LastMove()
+        {
+            // 直前がspecial moveであるなら、ここはspecial move後のnodeであるから、動かせない可能性がある。
+            var prev = currentNode.prevNode;
+            if (prev == null)
+                return null;
+
+            // 必ずあるはず..
+            return prev.moves.Find((x) => x.nextNode == currentNode);
+        }
+
+        /// <summary>
+        /// 現在、special nodeにいるのか。
+        /// </summary>
+        /// <returns></returns>
+        public bool IsSpecialNode()
+        {
+            var last = LastMove();
+            return last == null ? false : last.nextMove.IsSpecial();
+        }
+
+        /// <summary>
+        /// special nodeに突入するnodeなのか。
+        /// special nodeに到達するのであれば、その指し手(specail move)を返す。
+        /// 
+        /// isHuman == trueの場合、人間プレイヤーなので入玉宣言が出来る状況ならば自動的に入玉宣言を行う。
+        /// </summary>
+        /// <returns></returns>
+        public Move IsNextNodeSpecialNode(bool isHuman, MiscSettings misc)
+        {
+            // 現在、special nodeでないことを前提とする。
+            // すでにspecial nodeに突入していたら、何もしない。
+            if (IsSpecialNode())
+                return Move.NONE;
+
+            // -- このDoMoveの結果、千日手や詰み、持将棋など特殊な局面に至ったか？
+            Move m = Move.NONE;
+
+            var rep = position.IsRepetition();
+
+            // 手数による引き分けの局面であるか
+            if (misc.MaxMovesToDrawEnable && misc.MaxMovesToDraw < position.gamePly)
+            {
+                m = Move.MAX_MOVES_DRAW;
+            }
+            // この指し手の結果、詰みの局面に至ったか
+            else if (position.IsMated(moves))
+            {
+                m = Move.MATED;
+            }
+            // 千日手絡みの局面であるか？
+            else if (rep != RepetitionState.NONE)
+            {
+                // 千日手関係の局面に至ったか
+                switch (rep)
+                {
+                    case RepetitionState.DRAW: m = Move.REPETITION_DRAW; break;
+                    case RepetitionState.LOSE: m = Move.REPETITION_LOSE; break; // 実際にはこれは起こりえない。
+                    case RepetitionState.WIN: m = Move.REPETITION_WIN; break;
+                    default: break;
+                }
+            }
+            // 人間が入玉局面の条件を満たしているなら自動的に入玉局面して勝ちとする。
+            // コンピューターの時は、これをやってしまうとコンピューターが入玉宣言の指し手(Move.WIN)をちゃんと指せているかの
+            // チェックが出来なくなってしまうので、コンピューターの時はこの処理を行わない。
+            else if (isHuman && position.DeclarationWin(EnteringKingRule.POINT27) == Move.WIN)
+            {
+                m = Move.WIN;
+            }
+
+            return m;
+        }
+
+        /// <summary>
         /// 対局していないときにUI上の操作で駒を動かす。
         /// </summary>
         /// <param name="m"></param>
-        public void DoMoveUI(Move m)
+        public void DoMoveUI(Move m , MiscSettings misc)
         {
             if (position.IsLegal(m))
             {
-                var node_existed = currentNode.moves.Exists((x) => x.nextMove == m);
-                // 現在の棋譜上の指し手なので棋譜ウィンドウの更新は不要である。
-                if (node_existed && kifuWindowMoves[pliesFromRoot].nextMove == m)
+                if (IsSpecialNode())
                 {
-                    DoMove(m);
+                    // current nodeは、special moveによって到達したnodeであった。
+                    // このことからlastMove() != nullが言える。
+                    var last = LastMove();
+                    var sm = last.nextMove;
+                    if (!(sm == Move.RESIGN || sm == Move.ILLEGAL_MOVE || sm == Move.INTERRUPT || sm == Move.TIME_UP))
+                        return;
+                    // Move.DRAWとかMAX_MOVES_DRAWとかは、削除しても再度このnodeに到達してしまうのでこのspecial moveの
+                    // nodeで動かすわけにはいかない。
+
+                    // 削除して問題なさげなので、このnodeを削除して、前の局面に戻れば良い。
+                    UndoMove();
+
+                    // この枝は、上記のRESIGNなどの枝なので、削除しておく。
+                    currentNode.moves.Remove(last);
+                }
+                else if (IsNextNodeSpecialNode(true, misc) != Move.NONE)
                     return;
-                } 
-
-                PropertyChangedEventEnable = false;
-
-                // 新規nodeなので棋譜クリア
-                ClearKifuForward();
-
-                var e = EnableKifuList;
-                EnableKifuList = true;
-
-                // 合法っぽいので受理して次の局面に行く
-                if (node_existed)
-                {
-                    // すでにあるのでそこを辿るだけにする。
-
-                    // 現在棋譜ウィンドウの局面でないことは保証されている。
-                    DoMove(m);
-
-                    // このあと、本譜の手順を選んでいき、このnodeに戻る
-                    int ply = 0;
-                    for (; currentNode.moves.Count != 0; ++ply)
-                        DoMove(currentNode.moves[0]);
-                    EnableKifuList = false;
-                    while (ply-- != 0)
-                        UndoMove();
-                }
-                else
-                {
-                    // -- 次のnodeとして存在しなかったのでnodeを生成して局面を移動する
-                    AddNode(m, KifuMoveTimes.Zero);
-                    DoMove(m);
-
-                }
-
-                EnableKifuList = false;
-                PropertyChangedEventEnable = true;
-
-                RaisePropertyChanged("KifuList", KifuList);
-                RaisePropertyChanged("Position", position);
+                    // このnodeはspecial nodeではないが、すでに千日手成立局面などに到達しているのであれば、
+                    // この局面では何も出来ない。
             }
+
+            var node_existed = currentNode.moves.Exists((x) => x.nextMove == m);
+            // 現在の棋譜上の指し手なので棋譜ウィンドウの更新は不要である。
+            if (node_existed && kifuWindowMoves[pliesFromRoot].nextMove == m)
+            {
+                DoMove(m);
+                return;
+            } 
+
+            PropertyChangedEventEnable = false;
+
+            // 新規nodeなので棋譜クリア
+            ClearKifuForward();
+
+            var e = EnableKifuList;
+            EnableKifuList = true;
+
+            // 合法っぽいので受理して次の局面に行く
+            if (node_existed)
+            {
+                // すでにあるのでそこを辿るだけにする。
+
+                // 現在棋譜ウィンドウの局面でないことは保証されている。
+                DoMove(m);
+
+                // このあと、本譜の手順を選んでいき、このnodeに戻る
+                int ply = 0;
+                for (; currentNode.moves.Count != 0; ++ply)
+                    DoMove(currentNode.moves[0]);
+                EnableKifuList = false;
+                while (ply-- != 0)
+                    UndoMove();
+            }
+            else
+            {
+                // -- 次のnodeとして存在しなかったのでnodeを生成して局面を移動する
+                AddNode(m, KifuMoveTimes.Zero);
+                DoMove(m);
+
+            }
+
+            // special nodeに到達してしまった。
+            m = IsNextNodeSpecialNode(true, misc);
+            if (m != Move.NONE)
+            {
+                AddNode(m, KifuMoveTimes.Zero);
+                DoMove(m);
+            }
+
+            // この結果、special nodeに到達する可能性があるが…。
+
+            EnableKifuList = false;
+            PropertyChangedEventEnable = true;
+
+            RaisePropertyChanged("KifuList", KifuList);
+            RaisePropertyChanged("Position", position);
         }
 
         /// <summary>
@@ -922,5 +1019,9 @@ namespace MyShogi.Model.Shogi.Kifu
                 UsiMoveList.RemoveAt(UsiMoveList.Count - 1); // RemoveLast()
         }
 
+        /// <summary>
+        /// 詰み判定のための指し手生成バッファ
+        /// </summary>
+        private Move[] moves = new Move[(int)Move.MAX_MOVES];
     }
 }

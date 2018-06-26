@@ -99,7 +99,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // まず現在局面以降の棋譜を削除しなくてはならない。
 
                 // 元nodeが、special moveであるなら、それを削除しておく。
-                if (kifuManager.Tree.IsLastMoveSpecialMove())
+                if (kifuManager.Tree.IsSpecialNode())
                     kifuManager.Tree.UndoMove();
 
                 kifuManager.Tree.ClearForward();
@@ -314,47 +314,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             var stm = Position.sideToMove;
             var stmPlayer = Player(stm);
-
             var isHuman = stmPlayer.PlayerType == PlayerTypeEnum.Human;
 
             // 手番が変わった時に特殊な局面に至っていないかのチェック
             if (InTheGame)
             {
-                var misc = GameSetting.MiscSettings;
-
-                // -- このDoMoveの結果、千日手や詰み、持将棋など特殊な局面に至ったか？
-                Move m = Move.NONE;
-                var rep = Position.IsRepetition();
-
-                // 手数による引き分けの局面であるか
-                if (misc.MaxMovesToDrawEnable && misc.MaxMovesToDraw < Position.gamePly)
-                {
-                    m = Move.MAX_MOVES_DRAW;
-                }
-                // この指し手の結果、詰みの局面に至ったか
-                else if (Position.IsMated(moves))
-                {
-                    m = Move.MATED;
-                }
-                // 千日手絡みの局面であるか？
-                else if (rep != RepetitionState.NONE)
-                {
-                    // 千日手関係の局面に至ったか
-                    switch (rep)
-                    {
-                        case RepetitionState.DRAW: m = Move.REPETITION_DRAW; break;
-                        case RepetitionState.LOSE: m = Move.REPETITION_LOSE; break; // 実際にはこれは起こりえない。
-                        case RepetitionState.WIN: m = Move.REPETITION_WIN; break;
-                        default: break;
-                    }
-                }
-                // 人間が入玉局面の条件を満たしているなら自動的に入玉局面して勝ちとする。
-                // コンピューターの時は、これをやってしまうとコンピューターが入玉宣言の指し手(Move.WIN)をちゃんと指せているかの
-                // チェックが出来なくなってしまうので、コンピューターの時はこの処理を行わない。
-                else if (isHuman && Position.DeclarationWin(EnteringKingRule.POINT27) == Move.WIN)
-                {
-                    m = Move.WIN;
-                }
+                var misc = TheApp.app.config.GameSetting.MiscSettings;
+                Move m = kifuManager.Tree.IsNextNodeSpecialNode(isHuman , misc);
 
                 // 上で判定された特殊な指し手であるか？
                 if (m != Move.NONE)
@@ -463,10 +429,6 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 連続対局でないなら..
             Disconnect();
-
-            // 成りならずの選択ダイアログや持ち上げていた駒などいったんリセットして欲しいので
-            // 手番変更イベントを発行。
-            RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
         }
 
         /// <summary>

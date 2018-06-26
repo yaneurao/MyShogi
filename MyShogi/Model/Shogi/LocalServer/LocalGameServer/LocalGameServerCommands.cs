@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
@@ -64,11 +65,13 @@ namespace MyShogi.Model.Shogi.LocalServer
                         // BestMove = Move.NONEとされるのでその時に破棄される。
                         stmPlayer.BestMove = m;
                     }
-                } else
+                }
+                else
                 {
                     // 対局中でなければ自由に動かせる。
                     // 受理して、必要ならば分岐棋譜を生成して…。
-                    kifuManager.Tree.DoMoveUI(m);
+                    var misc = TheApp.app.config.GameSetting.MiscSettings;
+                    kifuManager.Tree.DoMoveUI(m , misc);
 
                     // 動かした結果、棋譜の選択行と異なる可能性があるので、棋譜ウィンドウの当該行をSelectしなおす。
                     UpdateKifuSelectedIndex();
@@ -184,7 +187,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     if (!string.IsNullOrEmpty(error))
                     {
-                        MessageBox.Show("棋譜の読み込みに失敗しました。\n" + error, "読み込みエラー");
+                        TheApp.app.MessageShow("棋譜の読み込みに失敗しました。\n" + error, "読み込みエラー");
 
                         kifuManager.Init(); // 不正な局面のままになるとまずいので初期化。
 
@@ -219,7 +222,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     FileIO.WriteFile(path, content);
                 } catch
                 {
-                    MessageBox.Show("棋譜ファイルの書き出しに失敗しました。");
+                    TheApp.app.MessageShow("棋譜ファイルの書き出しに失敗しました。");
                 }
             });
         }

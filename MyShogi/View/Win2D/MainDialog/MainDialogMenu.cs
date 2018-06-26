@@ -104,7 +104,7 @@ namespace MyShogi.View.Win2D
                                 }
                                 catch
                                 {
-                                    MessageBox.Show("ファイル読み込みエラー");
+                                    TheApp.app.MessageShow("ファイル読み込みエラー");
                                 }
                             }
                         };
@@ -163,7 +163,7 @@ namespace MyShogi.View.Win2D
                                 }
                                 catch
                                 {
-                                    MessageBox.Show("ファイル書き出しエラー");
+                                    TheApp.app.MessageShow("ファイル書き出しエラー");
                                 }
                             }
                         };
