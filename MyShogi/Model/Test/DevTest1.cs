@@ -638,7 +638,7 @@ namespace MyShogi.Model.Test
 
                 // その他の音声
                 for (int i = 0; i < 20; ++i)
-                    sm.Play(SoundEnum.Sente + i);
+                    sm.ReadOut(SoundEnum.Sente + i);
 
                 Thread.Sleep(50*1000);
             }

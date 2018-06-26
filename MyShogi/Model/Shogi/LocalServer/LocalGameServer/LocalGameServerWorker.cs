@@ -76,7 +76,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             // 音声:「よろしくお願いします。」
             TheApp.app.soundManager.Stop(); // 再生中の読み上げをすべて停止
-            TheApp.app.soundManager.Play(SoundEnum.Start);
+            TheApp.app.soundManager.ReadOut(SoundEnum.Start);
 
             // 初期化中である。
             Initializing = true;
@@ -248,22 +248,26 @@ namespace MyShogi.Model.Shogi.LocalServer
                     {
                         // -- 駒音
 
-                        // 移動先の升の下に別の駒があるときは、駒がぶつかる音になる。
-                        var to = bestMove.To();
-                        var delta = stm == Color.BLACK ? Square.SQ_D : Square.SQ_U;
-                        var e = (Position.PieceOn(to + (int)delta) != Piece.NO_PIECE)
-                            ? SoundEnum.KOMA_B1 /*ぶつかる音*/: SoundEnum.KOMA_S1 /*ぶつからない音*/;
+                        if (TheApp.app.config.PieceSoundInTheGame != 0)
+                        {
+
+                            // 移動先の升の下に別の駒があるときは、駒がぶつかる音になる。
+                            var to = bestMove.To();
+                            var delta = stm == Color.BLACK ? Square.SQ_D : Square.SQ_U;
+                            var e = (Position.PieceOn(to + (int)delta) != Piece.NO_PIECE)
+                                ? SoundEnum.KOMA_B1 /*ぶつかる音*/: SoundEnum.KOMA_S1 /*ぶつからない音*/;
 
 #if false
-                        // あまりいい効果音作れなかったのでコメントアウトしとく。
-                        if (TheApp.app.config.CrashPieceSoundInTheGame != 0)
-                        {
-                            // ただし、captureか捕獲する指し手であるなら、衝撃音に変更する。
-                            if (Position.State().capturedPiece != Piece.NO_PIECE || Position.InCheck())
-                                e = SoundEnum.KOMA_C1;
-                        }
+                            // あまりいい効果音作れなかったのでコメントアウトしとく。
+                            if (TheApp.app.config.CrashPieceSoundInTheGame != 0)
+                            {
+                                // ただし、captureか捕獲する指し手であるなら、衝撃音に変更する。
+                                if (Position.State().capturedPiece != Piece.NO_PIECE || Position.InCheck())
+                                    e = SoundEnum.KOMA_C1;
+                            }
 #endif
-                        soundManager.PlayPieceSound(e);
+                            soundManager.PlayPieceSound(e);
+                        }
 
                         // -- 棋譜の読み上げ
 
@@ -274,9 +278,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                             // 駒落ちの時は、「上手(うわて)」と「下手(したて)」
                             if (!Position.Handicapped)
-                                soundManager.Play(stm == Color.BLACK ? SoundEnum.Sente : SoundEnum.Gote);
+                                soundManager.ReadOut(stm == Color.BLACK ? SoundEnum.Sente : SoundEnum.Gote);
                             else
-                                soundManager.Play(stm == Color.BLACK ? SoundEnum.Shitate : SoundEnum.Uwate);
+                                soundManager.ReadOut(stm == Color.BLACK ? SoundEnum.Shitate : SoundEnum.Uwate);
                         }
 
                         // 棋譜文字列をそのまま頑張って読み上げる。
@@ -413,7 +417,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             if (InTheGame)
             {
                 // 音声:「ありがとうございました。またお願いします。」
-                TheApp.app.soundManager.Play(SoundEnum.End);
+                TheApp.app.soundManager.ReadOut(SoundEnum.End);
             }
 
             InTheGame = false;

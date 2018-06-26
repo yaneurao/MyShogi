@@ -34,10 +34,15 @@ namespace MyShogi.Model.Resource.Sounds
         /// <summary>
         /// 再生queueに追加する。
         /// このメソッドは毎回同じスレッドから呼び出されるものとする。
+        /// 
+        /// GlobalConfig.KifuReadOutがオフ(0)だと再生されない。
         /// </summary>
         /// <param name=""></param>
-        public void Play(SoundEnum e)
+        public void ReadOut(SoundEnum e)
         {
+            if (TheApp.app.config.KifuReadOut == 0)
+                return;
+
             if (!dic.ContainsKey(e))
             {
                 var subFolder = e.IsKoma() ? KomaSoundPath : ReadOutSoundPath;
@@ -55,7 +60,7 @@ namespace MyShogi.Model.Resource.Sounds
         /// すぐに再生する。他の再生を待たずに。
         /// </summary>
         /// <param name="e"></param>
-        public void PlayNow(SoundEnum e)
+        public void Play(SoundEnum e)
         {
             if (!dic.ContainsKey(e))
             {
@@ -78,7 +83,7 @@ namespace MyShogi.Model.Resource.Sounds
         {
             if (TheApp.app.config.PieceSoundInTheGame != 0)
             {
-                TheApp.app.soundManager.PlayNow(e);
+                TheApp.app.soundManager.Play(e);
             }
         }
 
@@ -86,18 +91,18 @@ namespace MyShogi.Model.Resource.Sounds
         /// 升の名前の読み上げ音声を再生する。
         /// </summary>
         /// <param name="sq"></param>
-        public void Play(Square sq)
+        public void ReadOut(Square sq)
         {
-            Play(SoundEnum.SQ_11 + (int)sq);
+            ReadOut(SoundEnum.SQ_11 + (int)sq);
         }
 
         /// <summary>
         /// 駒の名前の読み上げ音声を再生する。
         /// </summary>
         /// <param name="pc"></param>
-        public void Play(Piece pc)
+        public void ReadOut(Piece pc)
         {
-            Play(SoundEnum.PiecePAWN + ((int)pc - 1));
+            ReadOut(SoundEnum.PiecePAWN + ((int)pc - 1));
         }
 
         /// <summary>
@@ -161,7 +166,7 @@ namespace MyShogi.Model.Resource.Sounds
                 return;
 
             var sq = Util.MakeSquare((SCore.File)file, (Rank)rank);
-            Play(sq);
+            ReadOut(sq);
 
             Rest:;
             while (true)
@@ -174,43 +179,43 @@ namespace MyShogi.Model.Resource.Sounds
 
                 switch (c)
                 {
-                    case '歩': Play(Piece.PAWN); break;
-                    case '香': Play(Piece.LANCE); break;
-                    case '桂': Play(Piece.KNIGHT); break;
-                    case '銀': Play(Piece.SILVER); break;
-                    case '金': Play(Piece.GOLD); break;
-                    case '角': Play(Piece.BISHOP); break;
-                    case '飛': Play(Piece.ROOK); break;
-                    case '玉': Play(Piece.KING); break;
-                    case '王': Play(Piece.KING); break;
-                    case '馬': Play(Piece.HORSE); break;
-                    case '龍': Play(Piece.DRAGON); break;
-                    case 'と': Play(Piece.PRO_PAWN); break;
+                    case '歩': ReadOut(Piece.PAWN); break;
+                    case '香': ReadOut(Piece.LANCE); break;
+                    case '桂': ReadOut(Piece.KNIGHT); break;
+                    case '銀': ReadOut(Piece.SILVER); break;
+                    case '金': ReadOut(Piece.GOLD); break;
+                    case '角': ReadOut(Piece.BISHOP); break;
+                    case '飛': ReadOut(Piece.ROOK); break;
+                    case '玉': ReadOut(Piece.KING); break;
+                    case '王': ReadOut(Piece.KING); break;
+                    case '馬': ReadOut(Piece.HORSE); break;
+                    case '龍': ReadOut(Piece.DRAGON); break;
+                    case 'と': ReadOut(Piece.PRO_PAWN); break;
 
-                    case '同': Play(SoundEnum.Onajiku); break;
-                    case '右': Play(SoundEnum.Migi); break;
-                    case '左': Play(SoundEnum.Hidari); break;
-                    case '直': Play(SoundEnum.Sugu); break;
-                    case '引': Play(SoundEnum.Hiku); break;
-                    case '打': Play(SoundEnum.Utsu); break;
-                    case '寄': Play(SoundEnum.Yoru); break;
-                    case '上': Play(SoundEnum.Agaru); break;
-                    case '行': Play(SoundEnum.Yuku); break;
+                    case '同': ReadOut(SoundEnum.Onajiku); break;
+                    case '右': ReadOut(SoundEnum.Migi); break;
+                    case '左': ReadOut(SoundEnum.Hidari); break;
+                    case '直': ReadOut(SoundEnum.Sugu); break;
+                    case '引': ReadOut(SoundEnum.Hiku); break;
+                    case '打': ReadOut(SoundEnum.Utsu); break;
+                    case '寄': ReadOut(SoundEnum.Yoru); break;
+                    case '上': ReadOut(SoundEnum.Agaru); break;
+                    case '行': ReadOut(SoundEnum.Yuku); break;
 
                     case '成':
                         switch (next())
                         {
-                            case '香': Play(Piece.PRO_LANCE); break;
-                            case '桂': Play(Piece.PRO_KNIGHT); break;
-                            case '銀': Play(Piece.PRO_SILVER); break;
-                            default: Play(SoundEnum.Naru); break;
+                            case '香': ReadOut(Piece.PRO_LANCE); break;
+                            case '桂': ReadOut(Piece.PRO_KNIGHT); break;
+                            case '銀': ReadOut(Piece.PRO_SILVER); break;
+                            default: ReadOut(SoundEnum.Naru); break;
                         }
                         break;
 
                     case '不':
                         // 「不成」
                         next(); // 読み捨てる
-                        Play(SoundEnum.Narazu);
+                        ReadOut(SoundEnum.Narazu);
                         break;
 
                     default: // 送り仮名？無視する。
@@ -236,16 +241,16 @@ namespace MyShogi.Model.Resource.Sounds
             switch (m)
             {
                 // 連続王手の千日手による反則勝ちも音声上は「千日手」
-                case Move.REPETITION_WIN : Play(SoundEnum.Sennichite); break;
-                case Move.REPETITION_LOSE: Play(SoundEnum.Sennichite); break;
-                case Move.REPETITION_DRAW: Play(SoundEnum.Sennichite); break;
+                case Move.REPETITION_WIN : ReadOut(SoundEnum.Sennichite); break;
+                case Move.REPETITION_LOSE: ReadOut(SoundEnum.Sennichite); break;
+                case Move.REPETITION_DRAW: ReadOut(SoundEnum.Sennichite); break;
 
                 // 最大手数による引き分けも音声上は「持将棋」
-                case Move.WIN            : Play(SoundEnum.Jisyougi); break;
-                case Move.MAX_MOVES_DRAW : Play(SoundEnum.Jisyougi); break;
+                case Move.WIN            : ReadOut(SoundEnum.Jisyougi); break;
+                case Move.MAX_MOVES_DRAW : ReadOut(SoundEnum.Jisyougi); break;
 
-                case Move.MATED          : Play(SoundEnum.Tsumi); break;
-                case Move.TIME_UP        : Play(SoundEnum.Jikangire); break;
+                case Move.MATED          : ReadOut(SoundEnum.Tsumi); break;
+                case Move.TIME_UP        : ReadOut(SoundEnum.Jikangire); break;
             }
             // その他は知らん。
         }
