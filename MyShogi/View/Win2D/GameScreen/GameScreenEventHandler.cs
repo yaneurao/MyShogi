@@ -14,7 +14,49 @@ namespace MyShogi.View.Win2D
     /// マウスがクリックされた時の処理など
     /// </summary>
     public partial class GameScreen
-    {
+    {   
+        /// <summary>
+        /// このクラスのparentにKifuControlをぶら下げる。
+        /// </summary>
+        private void AddKifuControl()
+        {
+            var kif = new KifuControl();
+            ViewModel.kifuControl = kif;
+            Parent.Controls.Add(kif);
+
+            kif.SelectedIndexChangedHandler =
+                (selectedIndex) => { ViewModel.ViewModel.gameServer.KifuSelectedIndexChangedCommand(selectedIndex); };
+            kif.Button1ClickedHandler =
+                () => { ViewModel.ViewModel.gameServer.MainBranchButtonCommand(); };
+            kif.Button2ClickedHandler =
+                () => { ViewModel.ViewModel.gameServer.NextBranchButtonCommand(); };
+            kif.Button3ClickedHandler =
+                () => { ViewModel.ViewModel.gameServer.EraseBranchButtonCommand(); };
+        }
+
+        /// <summary>
+        /// 棋譜ウィンドウの可視/不可視を設定するハンドラ
+        /// </summary>
+        public void UpdateKifuControlVisibility(PropertyChangedEventArgs args = null)
+        {
+            if (!Parent.IsHandleCreated)
+                return;
+
+            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
+            if (Parent.InvokeRequired)
+            {
+                Parent.Invoke(new Action(() => UpdateKifuControlVisibility(args)));
+                return;
+            }
+
+            var config = TheApp.app.config;
+            ViewModel.kifuControl.Visible =
+                !config.InTheBoardEdit /*盤面編集中は非表示*/
+                &&
+                config.KomadaiImageVersion == 1 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */;
+            ;
+    }
+
         /// <summary>
         /// 盤面情報が更新された時に呼び出されるハンドラ。
         /// </summary>
@@ -168,7 +210,7 @@ namespace MyShogi.View.Win2D
 
             // 駒台が縦長のモードのときは、このコントロールは非表示にする。
             // (何か別の方法で描画する)
-            kifu.Visible = TheApp.app.config.KomadaiImageVersion == 1;
+            UpdateKifuControlVisibility();
         }
 
         /// <summary>

@@ -106,6 +106,10 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.UpdateMenuItems);
 
+            // 盤面編集時などに棋譜ウィンドウを消す
+
+            config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.gameScreen.UpdateKifuControlVisibility);
+
             // -- ロギング用のハンドラをセット
 
             config.AddPropertyChangedHandler("MemoryLoggingEnable", (args) =>
