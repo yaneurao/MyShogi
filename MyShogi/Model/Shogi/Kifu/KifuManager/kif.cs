@@ -33,7 +33,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 // ヘッダ検出用正規表現
                 var rHead = new Regex(@"^([^：]+)：(.*)");
                 // 変化手数用正規表現
-                var rHenka = new Regex(@"^([0-9]+)手");
+                var rHenka = new Regex(@"^([0-9]+)手?");
                 // KIF指し手検出用正規表現
                 var rKif = new Regex(@"^\s*([0-9]+)\s*(?:((?:[1-9１-９][1-9１-９一二三四五六七八九]|同\s?)成?[歩香桂銀金角飛と杏圭全馬竜龍玉王][打不成左直右上寄引]*(?:\([1-9][1-9]\))?)|(\S+))\s*(\(\s*([0-9]+):([0-9]+(?:\.[0-9]+)?)\s*\/\s*([0-9]+):([0-9]+):([0-9]+(?:\.[0-9]+)?)\))?");
                 // KI2指し手検出用正規表現
@@ -575,7 +575,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     var node = stack.Pop();
 
                     sb.AppendLine();
-                    sb.AppendLine($"変化：{node.ply}");
+                    sb.AppendLine($"変化：{node.ply}手");
 
                     while (node.ply < Tree.gamePly)
                         Tree.UndoMove();
