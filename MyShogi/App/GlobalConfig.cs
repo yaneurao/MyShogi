@@ -62,10 +62,13 @@ namespace MyShogi.App
                 config = new GlobalConfig();
             }
 
-            // カレントフォルダ配下のhtmlフォルダに"CommercialVersion.txt"というファイルがあるなら、
+            // カレントフォルダ配下のhtmlフォルダに"CommercialVersion2018.txt"というファイルがあるなら、
             // 商用版のやねうら王用のモード。(シリアライズされた内容は関係ない)
 
-            config.CommercialVersion = System.IO.File.Exists("html/CommercialVersion.txt");
+            config.CommercialVersion = 0;
+            if (System.IO.File.Exists("html/CommercialVersion2018.txt"))
+                config.CommercialVersion = 1;
+            // 他の商用版、今後増やすかも。
 
             // いまのところ商用版とオープンソース版とでの差別化はあまり考えていないが、
             // オープンソース版に対してこのファイルを用意した場合、素材が足りなくて落ちる可能性はある。
@@ -74,7 +77,7 @@ namespace MyShogi.App
             // という記事を書いて公開するのはなるべくならやめてもらいたい。
 
             // 商用版でないなら、以下の機能は強制的にオフ。
-            if (!config.CommercialVersion)
+            if (config.CommercialVersion == 0)
             {
                 // 棋譜の読み上げ(音声素材がないため)
                 config.KifuReadOut = 0;
@@ -110,8 +113,12 @@ namespace MyShogi.App
         /// 
         /// シリアライズするためにsetterもpublicになっているが、この値は起動時に
         /// 別の方法で判定しているので、setterには意味がない。
+        /// 
+        /// 0 : オープンソース版
+        /// 1 : やねうら王 商用版(2018年度)
+        /// 2 : 以下、来年以降の商用版の番号を振るかも。
         /// </summary>
-        public bool CommercialVersion { get; set; }
+        public int CommercialVersion { get; set; }
 
 
         /// <summary>

@@ -10,10 +10,10 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
-            var file_name = 
-                TheApp.app.config.CommercialVersion ?
-                "html/about_dialog_commercial_version.html":
-                "html/about_dialog_opensource_version.html";
+            var file_name =
+                TheApp.app.config.CommercialVersion == 0 ?
+                "html/about_dialog_opensource_version.html" :
+                "html/about_dialog_commercial_version.html";
 
             webBrowser1.Navigate(Path.Combine(Application.StartupPath,file_name).ToString());
 

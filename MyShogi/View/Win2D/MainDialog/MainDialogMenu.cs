@@ -45,7 +45,7 @@ namespace MyShogi.View.Win2D
             var gameServer = ViewModel != null ? ViewModel.gameServer : null;
 
             // Commercial Version GUI
-            bool CV_GUI = config.CommercialVersion;
+            bool CV_GUI = config.CommercialVersion != 0;
             if (CV_GUI)
                 Text = "将棋神やねうら王";
             // 商用版とどこで差別化するのか考え中
@@ -561,7 +561,7 @@ namespace MyShogi.View.Win2D
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "棋譜読み上げ";
                         item1.Checked = TheApp.app.config.KifuReadOut == 1;
-                        item1.Enabled = TheApp.app.config.CommercialVersion; // 商用版のみ選択可
+                        item1.Enabled = TheApp.app.config.CommercialVersion != 0; // 商用版のみ選択可
                         item1.Click += (sender, e) => { TheApp.app.config.KifuReadOut ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
@@ -570,7 +570,7 @@ namespace MyShogi.View.Win2D
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "「先手」「後手」を毎回読み上げる";
                         item1.Checked = TheApp.app.config.ReadOutSenteGoteEverytime == 1;
-                        item1.Enabled = TheApp.app.config.CommercialVersion; // 商用版のみ選択可
+                        item1.Enabled = TheApp.app.config.CommercialVersion != 0; // 商用版のみ選択可
                         item1.Click += (sender, e) => { TheApp.app.config.ReadOutSenteGoteEverytime ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
@@ -618,6 +618,25 @@ namespace MyShogi.View.Win2D
                         };
                         item_others.DropDownItems.Add(item1);
                     }
+
+                    {
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "アップデートの確認";
+                        item1.Click += (sender, e) =>
+                        {
+                            // ・オープンソース版は、MyShogiのプロジェクトのサイト
+                            // ・商用版は、マイナビの公式サイト
+                            // が開くようにしておく。
+                            var url = config.CommercialVersion == 0 ?
+                            "https://github.com/yaneurao/MyShogi":
+                            "https://book.mynavi.jp/yaneura/";
+                            // このURL、permanentかどうかわからん。マイナビ担当に確認中。
+
+                            System.Diagnostics.Process.Start(url);
+                        };
+                        item_others.DropDownItems.Add(item1);
+                    }
+
                 }
 
 #if DEBUG
