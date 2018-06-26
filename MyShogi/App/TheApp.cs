@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.LocalServer;
@@ -100,6 +101,33 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("KifuReadOut", mainDialog.UpdateMenuItems);
             config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems);
+            config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems);
+            config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems);
+
+            // -- ロギング用のハンドラをセット
+
+            config.AddPropertyChangedHandler("MemoryLoggingEnable", (args) =>
+            {
+                if (config.MemoryLoggingEnable)
+                    Log.log1 = new MemoryLog();
+                else
+                    Log.log1 = null;
+            });
+
+            config.AddPropertyChangedHandler("FileLoggingEnable", (args) =>
+            {
+                if (config.FileLoggingEnable)
+                {
+                    var now = DateTime.Now;
+                    Log.log2 = new FileLog($"log{now.ToString("yyyyMMddHHmm")}.txt");
+                }
+                else
+                    Log.log2 = null;
+            });
+
+            // 上のハンドラを呼び出して、必要ならばロギングを開始しておいてやる。
+            config.RaisePropertyChanged("MemoryLoggingEnable", config.MemoryLoggingEnable);
+            config.RaisePropertyChanged("FileLoggingEnable", config.FileLoggingEnable);
 
             // 初期化が終わったのでgameServerの起動を行う。
             gameServer.Start();

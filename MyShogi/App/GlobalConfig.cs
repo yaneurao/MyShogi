@@ -307,6 +307,29 @@ namespace MyShogi.App
         }
 
         /// <summary>
+        /// メモリロギング
+        /// false : なし(デフォルト)
+        ///  true : あり
+        /// </summary>
+        public bool MemoryLoggingEnable
+        {
+            get { return GetValue<bool>("MemoryLoggingEnable"); }
+            set { SetValue<bool>("MemoryLoggingEnable", value); }
+        }
+
+        /// <summary>
+        /// ファイルロギング
+        /// false : なし(デフォルト)
+        ///  true : あり
+        /// </summary>
+        public bool FileLoggingEnable
+        {
+            get { return GetValue<bool>("FileLoggingEnable"); }
+            set { SetValue<bool>("FileLoggingEnable", value); }
+        }
+
+
+        /// <summary>
         /// 対局ダイアログの設定
         /// </summary>
         public GameSetting GameSetting { get; set; } = new GameSetting();

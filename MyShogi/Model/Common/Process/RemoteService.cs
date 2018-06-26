@@ -118,7 +118,7 @@ namespace MyShogi.Model.Common.Process
                     {
                         foreach (var command in SplitCommand(readBuffer, task.Result))
                         {
-                            Log.Write(LogInfoType.ReceiveCommandFromEngine, command);
+                            Log.Write(LogInfoType.ReceiveCommandFromEngine, command , pipe_id);
 
                             //if (IsOutLog)
                             //{
@@ -163,7 +163,7 @@ namespace MyShogi.Model.Common.Process
                     writeStream.Flush(); // これを行わないとエンジンに渡されないことがある。
                 }
 
-                Log.Write(LogInfoType.SendCommandToEngine , command);
+                Log.Write(LogInfoType.SendCommandToEngine , command , pipe_id);
             }
             catch (Exception ex)
             {
@@ -219,6 +219,26 @@ namespace MyShogi.Model.Common.Process
         /// stream.Read()したものを突っ込んでおくためのバッファ
         /// </summary>
         private List<byte> readLine = new List<byte>(2048);
+
+        /// <summary>
+        /// このインスタンスのunique idが返る。これによってログに書き出した時に
+        /// どのインスタンス(思考エンジン)との通信であるかを識別する。
+        /// インスタンス生成時にunique idが割り当たる。
+        /// </summary>
+        private int pipe_id = get_unique_id();
+
+        /// <summary>
+        /// pipe_idの発行用。取得するごとに1ずつ増える
+        /// </summary>
+        private static int g_pipe_id;
+        private static object g_lock_object = new object();
+        private static int get_unique_id()
+        {
+            int result;
+            // g_pipe_idから値を取得して、インクリメントするまでがatomicであって欲しい。
+            lock (g_lock_object){ result = g_pipe_id++; }
+            return result;
+        }
 
         /// <summary>
         /// read()のcancel用
