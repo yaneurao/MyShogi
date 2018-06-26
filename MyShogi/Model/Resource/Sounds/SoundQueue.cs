@@ -47,6 +47,19 @@ namespace MyShogi.Model.Resource.Sounds
             }
         }
 
+        /// <summary>
+        /// queueに積まれているSoundをクリアする。
+        /// (以降の音声は再生されないが、現在再生されているものが停止されるわけではない。)
+        /// </summary>
+        /// <param name="sound"></param>
+        public void ClearQueue()
+        {
+            lock (lock_object)
+            {
+                queue.Clear();
+            }
+        }
+
         // -- 以下private
 
         /// <summary>
@@ -63,7 +76,9 @@ namespace MyShogi.Model.Resource.Sounds
                     if (!playing.IsPlaying())
                     {
                         // 再生が終わっているので開放する。
-                        playing.Dispose();
+                        //playing.Dispose();
+                        // Soundのメモリ使用量は知れてるので一度読み込んだものを開放しないようにする。
+
                         playing = null;
                     }
                 }

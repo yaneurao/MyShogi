@@ -1284,15 +1284,15 @@ namespace MyShogi.Model.Shogi.Core
             // 現在の局面と同じhash keyを持つ局面が4回あれば、それは千日手局面であると判定する。
 
             // n回st.previousを辿るlocal method
-            StateInfo prev(StateInfo st, int n)
+            StateInfo prev(StateInfo si, int n)
             {
                 for (int i = 0; i < n; ++i)
                 {
-                    st = st.previous;
-                    if (st == null)
+                    si = si.previous;
+                    if (si == null)
                         break;
                 }
-                return st;
+                return si;
             };
 
             // 4手かけないと千日手にはならないから、4手前から調べていく。
@@ -1303,8 +1303,13 @@ namespace MyShogi.Model.Shogi.Core
             // 同一である局面が出現した回数
             int cnt = 0;
 
+            //Console.WriteLine("--Start--");
+            //Console.WriteLine(st.key.Pretty());
+
             while (stp != null)
             {
+                //Console.WriteLine(stp.key.Pretty());
+
                 // HashKeyは128bitもあるのでこのチェックで現実的には間違いないだろう。
                 if (stp.key == st.key)
                 {

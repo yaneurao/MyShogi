@@ -23,6 +23,15 @@ namespace MyShogi.Model.Resource.Sounds
         }
 
         /// <summary>
+        /// 再生を停止させる。
+        /// queueに積まれているものをクリアする。
+        /// </summary>
+        public void Stop()
+        {
+            queue.ClearQueue();
+        }
+
+        /// <summary>
         /// 再生queueに追加する。
         /// このメソッドは毎回同じスレッドから呼び出されるものとする。
         /// </summary>

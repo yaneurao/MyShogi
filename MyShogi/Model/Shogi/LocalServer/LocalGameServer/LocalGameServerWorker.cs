@@ -75,6 +75,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         private void GameStart(GameSetting gameSetting)
         {
             // 音声:「よろしくお願いします。」
+            TheApp.app.soundManager.Stop(); // 再生中の読み上げをすべて停止
             TheApp.app.soundManager.Play(SoundEnum.Start);
 
             // 初期化中である。
