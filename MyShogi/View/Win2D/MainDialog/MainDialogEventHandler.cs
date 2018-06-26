@@ -38,20 +38,26 @@ namespace MyShogi.View.Win2D
 
         // -- 以下、Windows Messageのイベントハンドラ
 
-        // 画面のフルスクリーン化/ウィンドゥ化がなされたので、OnPaintが呼び出されるようにする。
+        /// <summary>
+        /// [UI thread] : 画面のフルスクリーン化/ウィンドゥ化がなされたので、OnPaintが呼び出されるようにする。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainDialog_SizeChanged(object sender, EventArgs e)
         {
             ScreenRedraw();
         }
 
-        // 画面がリサイズされたときにそれに収まるように盤面を描画する。
+        /// <summary>
+        /// [UI thread] : 画面がリサイズされたときにそれに収まるように盤面を描画する。
+        /// </summary>
         private void MainDialog_Resize(object sender, EventArgs e)
         {
             ScreenRedraw();
         }
 
         /// <summary>
-        /// ウィンドウのリサイズ、最大化、窓化したときに
+        /// [UI thread] : ウィンドウのリサイズ、最大化、窓化したときに
         /// このFormに配置してあるコントロールの位置などを調整する。
         /// </summary>
         private void ScreenRedraw()
@@ -72,7 +78,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// Formのリサイズに応じて棋譜コントロールの移動などを行う。
+        /// [UI thread] : Formのリサイズに応じて棋譜コントロールの移動などを行う。
         /// </summary>
         private void ResizeKifuControl()
         {
@@ -80,7 +86,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 定期的に呼び出されるタイマー
+        /// [UI thread] : 定期的に呼び出されるタイマー
         /// 
         /// このタイマーは15msごとに呼び出される。
         /// dirtyフラグが立っていなければ即座に帰るのでさほど負荷ではないという考え。
@@ -166,7 +172,7 @@ namespace MyShogi.View.Win2D
         // -- 以下、ToolStripのハンドラ
 
         /// <summary>
-        /// ボタンの有効/無効を切り替えるためのハンドラ
+        /// [UI thread] : ボタンの有効/無効を切り替えるためのハンドラ
         /// ボタンの番号が変わった時に呼び出し側を書き直すのが大変なので、
         /// 名前で解決するものとする。
         /// </summary>
@@ -174,9 +180,6 @@ namespace MyShogi.View.Win2D
         /// <param name="enable"></param>
         private void SetButton(MainDialogButtonEnum name , bool enable)
         {
-            if (!IsHandleCreated)
-                return;
-
             ToolStripButton btn;
             switch (name)
             {
@@ -189,12 +192,7 @@ namespace MyShogi.View.Win2D
 
             // 希望する状態と現在の状態が異なるなら、この時だけ更新する。
             if (btn.Enabled != enable)
-            {
-                Invoke(new Action(() =>
-                {
-                    btn.Enabled = enable;
-                }));
-            }
+                btn.Enabled = enable;
         }
 
         /// <summary>

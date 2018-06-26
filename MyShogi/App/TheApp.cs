@@ -75,40 +75,40 @@ namespace MyShogi.App
             // LocalGameServerの対局情報と棋譜ウィンドウが更新されたときにメインウインドウの盤面・棋譜ウィンドウに
             // 更新がかかるようにしておく。
 
-            gameServer.AddPropertyChangedHandler("KifuList", mainDialog.gameScreen.kifuControl.OnListChanged);
+            gameServer.AddPropertyChangedHandler("KifuList", mainDialog.gameScreen.kifuControl.OnListChanged , mainDialog);
             gameServer.AddPropertyChangedHandler("Position", mainDialog.gameScreen.PositionChanged);
-            gameServer.AddPropertyChangedHandler("TurnChanged", mainDialog.gameScreen.TurnChanged);
-            gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.gameScreen.InTheGameChanged);
-            gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.UpdateMenuItems);
-            gameServer.AddPropertyChangedHandler("EngineInitializing", mainDialog.gameScreen.EngineInitializingChanged);
+            gameServer.AddPropertyChangedHandler("TurnChanged", mainDialog.gameScreen.TurnChanged , mainDialog);
+            gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.gameScreen.InTheGameChanged , mainDialog);
+            gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.UpdateMenuItems , mainDialog);
+            gameServer.AddPropertyChangedHandler("EngineInitializing", mainDialog.gameScreen.EngineInitializingChanged , mainDialog);
             gameServer.AddPropertyChangedHandler("RestTimeChanged", mainDialog.gameScreen.RestTimeChanged);
-            gameServer.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems);
-            gameServer.AddPropertyChangedHandler("GameServerStarted", mainDialog.UpdateMenuItems);
-            gameServer.AddPropertyChangedHandler("SetKifuListIndex", mainDialog.gameScreen.SetKifuListIndex);
+            gameServer.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems , mainDialog);
+            gameServer.AddPropertyChangedHandler("GameServerStarted", mainDialog.UpdateMenuItems , mainDialog);
+            gameServer.AddPropertyChangedHandler("SetKifuListIndex", mainDialog.gameScreen.SetKifuListIndex , mainDialog);
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 
-            config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems );
-            config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems );
-            config.AddPropertyChangedHandler("PromotePieceColorType", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("PieceAttackImageVersion", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("LastMoveFromColorType", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("LastMoveToColorType", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("KifuReadOut", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems);
-            config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.UpdateMenuItems);
+            config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems , mainDialog);
+            config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("PromotePieceColorType", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("PieceAttackImageVersion", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("LastMoveFromColorType", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("LastMoveToColorType", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("KifuReadOut", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.UpdateMenuItems, mainDialog);
 
             // 盤面編集時などに棋譜ウィンドウを消す
 
-            config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.gameScreen.UpdateKifuControlVisibility);
+            config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.gameScreen.UpdateKifuControlVisibility , mainDialog);
 
             // -- ロギング用のハンドラをセット
 

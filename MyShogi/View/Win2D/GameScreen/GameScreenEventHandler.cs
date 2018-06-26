@@ -35,20 +35,10 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 棋譜ウィンドウの可視/不可視を設定するハンドラ
+        /// [UI thread] : 棋譜ウィンドウの可視/不可視を設定するハンドラ
         /// </summary>
         public void UpdateKifuControlVisibility(PropertyChangedEventArgs args = null)
         {
-            if (!Parent.IsHandleCreated)
-                return;
-
-            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
-            if (Parent.InvokeRequired)
-            {
-                Parent.Invoke(new Action(() => UpdateKifuControlVisibility(args)));
-                return;
-            }
-
             var config = TheApp.app.config;
             ViewModel.kifuControl.Visible =
                 !config.InTheBoardEdit /*盤面編集中は非表示*/
@@ -66,19 +56,12 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 手番が変わったので何はともあれ、いま掴んでいる駒はいったん離す
+        /// [UI thread] : 手番が変わったので何はともあれ、いま掴んでいる駒はいったん離す
         /// (逆の手番側の駒を掴んだままになるとおかしいので)
         /// </summary>
         /// <param name="args"></param>
         public void TurnChanged(PropertyChangedEventArgs args)
         {
-            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
-            if (Parent.InvokeRequired)
-            {
-                Parent.Invoke(new Action(() => TurnChanged(args)));
-                return;
-            }
-
             StateReset();
 
             // TooltipにあるButtonの状態更新
@@ -86,18 +69,11 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// InTheGameの値が変わった時のハンドラ
+        /// [UI thread] : InTheGameの値が変わった時のハンドラ
         /// </summary>
         /// <param name="args"></param>
         public void InTheGameChanged(PropertyChangedEventArgs args)
         {
-            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
-            if (Parent.InvokeRequired)
-            {
-                Parent.Invoke(new Action(() => InTheGameChanged(args)));
-                return;
-            }
-
             TurnChanged(args);
             ViewModel.kifuControl.UpdateButtonState((bool)args.value /* == inTheGame */); // 棋譜ボタンが変化するかもなので
         }
@@ -116,7 +92,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 棋譜の読み込み時など、LocalServer側の要請により、棋譜ウィンドウを指定行に
+        /// [UI thread] : 棋譜の読み込み時など、LocalServer側の要請により、棋譜ウィンドウを指定行に
         /// フォーカスを当てるためのハンドラ
         /// </summary>
         /// <param name="args"></param>
@@ -127,7 +103,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// メニューのすぐ下に配置しているtooltip buttonを、現在の状態に応じてOn/Offする。
+        /// [UI thread] : メニューのすぐ下に配置しているtooltip buttonを、現在の状態に応じてOn/Offする。
         /// </summary>
         private void UpdateTooltipButtons()
         {
@@ -157,7 +133,7 @@ namespace MyShogi.View.Win2D
         public SetButtonHandler SetButton { get; set; }
 
         /// <summary>
-        /// エンジン初期化中の状態が変更になった時に呼び出されるハンドラ。
+        /// [UI thread] : エンジン初期化中の状態が変更になった時に呼び出されるハンドラ。
         /// エンジン初期化中のダイアログを描画している/していないはずなので、それを新しい状態に応じて再描画する必要がある。
         /// </summary>
         /// <param name="args"></param>
@@ -183,17 +159,10 @@ namespace MyShogi.View.Win2D
         //}
 
         /// <summary>
-        /// Formのリサイズに応じて棋譜コントロールの移動などを行う。
+        /// [UI thread] : Formのリサイズに応じて棋譜コントロールの移動などを行う。
         /// </summary>
         public void ResizeKifuControl()
         {
-            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
-            if (Parent.InvokeRequired)
-            {
-                Parent.Invoke(new Action(() => ResizeKifuControl()));
-                return;
-            }
-
             var kifu = ViewModel.kifuControl;
             var vm = ViewModel.ViewModel;
             var inTheGame = vm != null ? vm.gameServer.InTheGame : false;

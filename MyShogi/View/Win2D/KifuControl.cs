@@ -27,20 +27,10 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// リストが変更されたときに呼び出されるハンドラ
+        /// [UI thread] : リストが変更されたときに呼び出されるハンドラ
         /// </summary>
         public void OnListChanged(PropertyChangedEventArgs args)
         {
-            if (!IsHandleCreated)
-                return;
-
-            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
-            if (InvokeRequired)
-            {
-                Invoke(new Action(() => OnListChanged(args)));
-                return;
-            }
-
             // ここでListBoxをいじって、listBox1_SelectedIndexChanged()が呼び出されるのは嫌だから抑制する。
 
             listBox1.SelectedIndexChanged -= listBox1_SelectedIndexChanged;
@@ -104,21 +94,11 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 棋譜の読み込み時など、LocalServer側の要請により、棋譜ウィンドウを指定行に
+        /// [UI thread] : 棋譜の読み込み時など、LocalServer側の要請により、棋譜ウィンドウを指定行に
         /// フォーカスを当てるためのハンドラ
         /// </summary>
         public void SetKifuListIndex(int selectedIndex)
         {
-            if (!IsHandleCreated)
-                return;
-
-            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
-            if (InvokeRequired)
-            {
-                Invoke(new Action(() => SetKifuListIndex(selectedIndex)));
-                return;
-            }
-
             if (listBox1.Items.Count <= selectedIndex)
                 selectedIndex = listBox1.Items.Count - 1;
             listBox1.SelectedIndex = selectedIndex;
@@ -126,18 +106,12 @@ namespace MyShogi.View.Win2D
 
         // -- 以下、棋譜ウインドウに対するオペレーション
 
+        /// <summary>
+        /// [UI thread] : 内部状態が変わったのでボタンの有効、無効を更新するためのハンドラ。
+        /// </summary>
+        /// <param name="inTheGame"></param>
         public void UpdateButtonState(bool inTheGame)
         {
-            if (!IsHandleCreated)
-                return;
-
-            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
-            if (InvokeRequired)
-            {
-                Invoke(new Action(() => UpdateButtonState(inTheGame)));
-                return;
-            }
-
             // 最小化したのかな？
             if (Width == 0 || Height == 0 || listBox1.ClientSize.Width == 0)
                 return;
@@ -180,24 +154,13 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 親ウインドウがリサイズされた時にそれに収まるようにこのコントロール内の文字の大きさを
-        /// 調整する。
+        /// [UI thread] : 親ウインドウがリサイズされた時にそれに収まるようにこのコントロール内の文字の大きさを調整する。
         /// 
         /// inTheGame == trueのときはゲーム中なので「本譜」ボタンと「次分岐」ボタンを表示しない。
         /// </summary>
         /// <param name="scale"></param>
         public void OnResize(double scale , bool inTheGame)
         {
-            if (!IsHandleCreated)
-                return;
-
-            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
-            if (InvokeRequired)
-            {
-                Invoke(new Action(() => OnResize(scale,inTheGame)));
-                return;
-            }
-
             // 最小化したのかな？
             if (Width == 0 || Height == 0 || listBox1.ClientSize.Width == 0)
                 return;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Windows.Forms;
 
 // WPFで使うNotifyObjectっぽい何か。
 namespace MyShogi.Model.Common.ObjectModel
@@ -125,8 +126,29 @@ namespace MyShogi.Model.Common.ObjectModel
 
             // いますぐ呼び出す
             PropertyChangedEventHandler h = null;
+            Form form = null;
+
             lock (lockObject)
             {
+                // UIスレッドで実行すべきなのか？
+                if (forms_dic.ContainsKey(e.name))
+                {
+                    var form2 = forms_dic[e.name];
+
+                    if (!form2.IsHandleCreated)
+                        return;
+
+                    if (form2.InvokeRequired)
+                    {
+                        // このlockのなかでInvoke()するとdead lockになるから駄目。
+                        //form.Invoke(new Action(() => RaisePropertyChanged(e)));
+                        //return;
+
+                        form = form2;
+                        // このlockを抜けてからcallbackする。
+                    }
+                }
+
                 // このpropertyをsubscribeしているobserverに更新通知を送る重複名はないことは保証されている。
                 foreach (var prop in propery_changed_handlers)
                     if (prop.Key == e.name)
@@ -138,7 +160,13 @@ namespace MyShogi.Model.Common.ObjectModel
 
             // lockの外側でコールバックしないとデッドロックになる。
             if (h != null)
-                h(e);
+            {
+                // UIスレッドからの実行が必要なのであればForm.Invoke()を用いてコールバックする。
+                if (form == null)
+                    h(e);
+                else
+                    form.Invoke(new Action(() => h(e)));
+            }
         }
 
         /// <summary>
@@ -155,13 +183,30 @@ namespace MyShogi.Model.Common.ObjectModel
 
         /// <summary>
         /// プロパティが変更されたときに呼び出されるハンドラを追加する。
+        /// form != nullなら、この名前を持つイベントはすべてUIスレッドで
+        /// callbackされることが保証される。引数としてFormを指定する。
+        /// 
+        /// "[UI thread] :"とメソッドの説明に書いてあるメソッドは、
+        /// UI threadからの呼び出しが必要であることを意味するアノテーションとする。
+        /// 
+		/// これらのメソッドはUI threadからしか呼び出されないので、このメソッド内からの呼び出しも
+        /// UI threadで実行されることが保証される。
+        /// 
+		/// UI threadとついていないところからこのメソッドを呼び出してはならない。
+		/// もしくは、このスレッドのObjectModelのUI callbackを利用する。
         /// </summary>
         /// <param name="name"></param>
         /// <param name="h"></param>
-        public void AddPropertyChangedHandler(string name , PropertyChangedEventHandler h)
+        public void AddPropertyChangedHandler(string name , PropertyChangedEventHandler h , Form form = null)
         {
             lock (lockObject)
             {
+                if (form != null)
+                    if (!forms_dic.ContainsKey(name))
+                        forms_dic.Add(name, form);
+                    else
+                        forms_dic[name] = form; // 念の為、上書きしておく。
+
                 if (!propery_changed_handlers.ContainsKey(name))
                     propery_changed_handlers.Add(name,h);
                 else
@@ -183,7 +228,12 @@ namespace MyShogi.Model.Common.ObjectModel
                     propery_changed_handlers[name] -= h;
                     // delegateを削除した結果、nullになったなら、このentryを削除しておく。
                     if (propery_changed_handlers[name] == null)
+                    {
                         propery_changed_handlers.Remove(name);
+
+                        if (!forms_dic.ContainsKey(name))
+                            forms_dic.Remove(name);
+                    }
                 }
             }
         }
@@ -210,6 +260,12 @@ namespace MyShogi.Model.Common.ObjectModel
             = new Dictionary<string, PropertyChangedEventHandler>();
 
         /// <summary>
+        /// イベントハンドラを呼び出す時にUIスレッドで実行しないといけないため、
+        /// Formが指定されているとき、それを格納しておくためのもの。
+        /// </summary>
+        private Dictionary<string, Form> forms_dic = new Dictionary<string, Form>();
+
+        /// <summary>
         /// lockを抜けてからRaisePropertyChangedEventをまとめて呼び出す遅延lock
         /// </summary>
         public class LazyModelLock : IDisposable
@@ -223,6 +279,7 @@ namespace MyShogi.Model.Common.ObjectModel
                 parent.events = new List<PropertyChangedEventArgs>();
             }
 
+            // このタイミングで溜めていたイベントがまとめて呼び出される。
             public void Dispose()
             {
                 // このタイミングでイベントをコピー

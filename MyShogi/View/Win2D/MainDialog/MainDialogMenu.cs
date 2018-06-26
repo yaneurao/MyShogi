@@ -26,18 +26,11 @@ namespace MyShogi.View.Win2D
         public Form gameSettingDialog;
 
         /// <summary>
-        /// メニューのitemを動的に追加する。
+        /// [UI thread] : メニューのitemを動的に追加する。
         /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
         /// </summary>
         public void UpdateMenuItems(PropertyChangedEventArgs args = null)
         {
-            // UIスレッド以外から呼び出された時は、UIスレッドから呼び直す。
-            if (InvokeRequired)
-            {
-                Invoke(new Action( ()=> UpdateMenuItems(args)));
-                return;
-            }
-
             var app = TheApp.app;
             var config = app.config;
 
