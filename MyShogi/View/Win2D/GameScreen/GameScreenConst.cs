@@ -31,7 +31,19 @@ namespace MyShogi.View.Win2D
             Piece.LANCE,
             Piece.PAWN,
             };
-            
+
+        // 駒箱の表示順
+        private static readonly Piece[] piece_box_list = {
+            Piece.KING,
+            Piece.ROOK,
+            Piece.BISHOP,
+            Piece.GOLD,
+            Piece.SILVER,
+            Piece.KNIGHT,
+            Piece.LANCE,
+            Piece.PAWN,
+            };
+
         /// <summary>
         /// 駒台の手駒の表示場所(駒台を左上とする)
         /// 
@@ -63,7 +75,7 @@ namespace MyShogi.View.Win2D
         };
 
         /// <summary>
-        /// 駒台の画面上の位置(通常の駒台)
+        /// 駒台の画面上の位置
         /// </summary>
         private static readonly Point[,] hand_table_pos =
         {
@@ -92,6 +104,18 @@ namespace MyShogi.View.Win2D
         /// 駒台で、同種の駒が複数あるときの数字の描画のための(当該駒からの)オフセット値
         /// </summary>
         private static Size hand_number_offset = new Size(60, 20);
+
+        /// <summary>
+        /// 駒箱の画面上の位置
+        /// </summary>
+        private static readonly Point[] hand_box_pos =
+        {
+            // 普通の駒箱
+            new Point(229,643),
+            // 細長の駒箱
+            new Point(404,663),
+        };
+
 
         /// <summary>
         /// 盤の筋と段を表す素材の表示位置

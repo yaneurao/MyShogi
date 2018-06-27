@@ -239,20 +239,23 @@ namespace MyShogi.View.Win2D
         private Point PieceLocation(SquareHand sq)
         {
             var reverse = ViewModel.ViewModel.gameServer.BoardReverse;
-            var color = sq.PieceColor();
             Point dest;
 
-            if (color == ShogiCore.Color.NB)
+            if (sq.IsBoardPiece())
             {
-                // 盤面の升
+                // -- 盤上の升
+
                 Square sq2 = reverse ? ((Square)sq).Inv() : (Square)sq;
                 int f = 8 - (int)sq2.ToFile();
                 int r = (int)sq2.ToRank();
 
                 dest = new Point(board_location.X + piece_img_size.Width * f, board_location.Y + piece_img_size.Height * r);
             }
-            else
+            else if (sq.IsHandPiece())
             {
+                // -- 手駒
+
+                var color = sq.PieceColor();
                 if (reverse)
                     color = color.Not();
 
@@ -269,6 +272,20 @@ namespace MyShogi.View.Win2D
                     dest = new Point(
                         hand_table_pos[v, (int)color].X + (hand_table_size[v].Width - hand_piece_pos[v, (int)pc - 1].X - piece_img_size.Width - 10),
                         hand_table_pos[v, (int)color].Y + (hand_table_size[v].Height - hand_piece_pos[v, (int)pc - 1].Y - piece_img_size.Height + 0)
+                    );
+            } else
+            {
+                // -- 駒箱の駒
+
+                var v = (TheApp.app.config.KomadaiImageVersion == 1) ? 0 : 1;
+                var pc = sq.ToPiece();
+
+                int x = (((int)pc - 1) % 4) * piece_img_size.Width;
+                int y = (((int)pc - 1) / 4) * piece_img_size.Height;
+
+                dest = new Point(
+                    hand_box_pos[v].X + x,
+                    hand_box_pos[v].Y + y
                     );
             }
 
@@ -314,7 +331,7 @@ namespace MyShogi.View.Win2D
 
             int n = MoveGen.LegalAll(pos, moves_buf, 0);
 
-            var is_drop = sq.IsDrop();
+            var is_drop = sq.IsHandPiece();
             var pt = pos.PieceOn(sq).PieceType();
             Bitboard bb = Bitboard.ZeroBB();
 
@@ -478,7 +495,7 @@ namespace MyShogi.View.Win2D
 
                         // いま掴んでいる駒の移動できる先であるのか。
                         var bb = state.picked_piece_legalmovesto;
-                        if (!sq.IsDrop() && bb.IsSet((Square)sq))
+                        if (sq.IsBoardPiece() && bb.IsSet((Square)sq))
                         {
                             state.picked_to = sq;
                             move_piece(state.picked_from, state.picked_to);

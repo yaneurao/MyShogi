@@ -20,8 +20,13 @@ namespace MyShogi.Model.Shogi.Core
         HandWhite = 81 + 7, // 後手の手駒のスタート
         HandNB = 81 + 14,   // 手駒の終端+1
 
+        // 駒箱
+
+        PieceBox = HandNB,        // 駒箱の駒(歩、香、桂、銀、角、飛、金、玉の8種)
+        PieceBoxNB = PieceBox + 8,// 駒箱の終端+1
+
         // ゼロと末尾
-        ZERO = 0, NB = HandNB,
+        ZERO = 0, NB = PieceBoxNB,
     }
 
     /// <summary>
@@ -41,43 +46,67 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// sqに対してどちらのColorの手駒を表現しているのかを返す。
-        /// 盤上の升ならColor.NBを返す。
+        /// 盤上、駒箱の升に対して呼び出してはならない。
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
         public static Color PieceColor(this SquareHand sq)
         {
-            if (sq < SquareHand.SquareNB)
-                return Color.NB; // 盤面
+            Debug.Assert(IsHandPiece(sq));
 
             return (sq < SquareHand.HandWhite) ? Color.BLACK : Color.WHITE;
         }
 
         /// <summary>
-        /// 駒打ちを意味する升であるか？
+        /// 盤上の升であるかを判定する。
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
-        public static bool IsDrop(this SquareHand sq)
+        public static bool IsBoardPiece(this SquareHand sq)
         {
-            return sq >= SquareHand.Hand;
+            return sq < SquareHand.SquareNB;
+        }
+
+        /// <summary>
+        /// 手駒であるかを判定する
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public static bool IsHandPiece(this SquareHand sq)
+        {
+            return SquareHand.Hand <= sq && sq < SquareHand.HandNB;
+        }
+
+        /// <summary>
+        /// 駒箱の駒であるか判定する
+        /// </summary>
+        /// <param name="sq"></param>
+        /// <returns></returns>
+        public static bool IsPieceBox(this SquareHand sq)
+        {
+            return SquareHand.PieceBox <= sq && sq < SquareHand.PieceBoxNB;
         }
 
         /// <summary>
         /// sqの手駒に対して、その駒種を返す
-        /// sqは手駒でないといけない。
-        /// 
-        /// 先後の区別はない。Piece.PAWN ～ Piece.GOLDまでの値が返る。
+        /// sqは手駒か駒箱の駒でないといけない。
         /// </summary>
         /// <param name="sq"></param>
-        /// <returns></returns>
+        /// <returns>
+        /// 返し値について先後の区別はない。
+        /// 手駒に対しては、Piece.PAWN ～ Piece.GOLDまでの値が返る。
+        /// 駒箱の駒に対しては、Piece.PAWN ～ Piece.KINGまでの値が返る。
+        /// </returns>
         public static Piece ToPiece(this SquareHand sq)
         {
-            Debug.Assert(PieceColor(sq) != Color.NB);
+            Debug.Assert(! IsBoardPiece(sq) );
 
-            return (sq < SquareHand.HandWhite)
-                ? (Piece)((sq - SquareHand.HandBlack) + Piece.PAWN)
-                : (Piece)((sq - SquareHand.HandWhite) + Piece.PAWN);
+            if (IsHandPiece(sq))
+                return (sq < SquareHand.HandWhite)
+                    ? (Piece)((sq - SquareHand.HandBlack) + Piece.PAWN)
+                    : (Piece)((sq - SquareHand.HandWhite) + Piece.PAWN);
+            // is BoxPiece
+            return (Piece)((sq - SquareHand.PieceBox) + Piece.PAWN);
 
         }
 

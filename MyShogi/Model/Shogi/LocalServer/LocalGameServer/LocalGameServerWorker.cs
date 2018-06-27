@@ -160,6 +160,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (gameSetting.Player(c).IsHuman && gameSetting.Player(c.Not()).IsCpu)
                     BoardReverse = (c == Color.WHITE);
 
+            // 盤面編集中である可能性がある。リセットする。
+            TheApp.app.config.InTheBoardEdit = false;
+
             InTheGame = true;
         }
 

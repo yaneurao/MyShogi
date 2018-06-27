@@ -46,7 +46,7 @@ namespace MyShogi.Model.Resource.Images
             var tatami = new ImageLoader();
             var komadai = new ImageLoader();
             var name_plate = new ImageLoader();
-            var koma_bako = new ImageLoader();
+            var koma_box = new ImageLoader();
             Load(ref board ,$"board_v{config.BoardImageVersion}_1920_1080.png");
             Load(ref tatami, $"tatami_v{config.TatamiImageVersion}_1920_1080.png");
             Load(ref komadai, $"komadai_v{config.KomadaiImageVersion}_1920_1080.png");
@@ -57,7 +57,7 @@ namespace MyShogi.Model.Resource.Images
 
             // 盤面編集モードであるなら駒箱を合成。
             if (config.InTheBoardEdit)
-                Load(ref koma_bako, $"koma_bako_v{config.KomadaiImageVersion}_1920_1080.png");
+                Load(ref koma_box, $"koma_bako_v{config.KomadaiImageVersion}_1920_1080.png");
 
             BoardImage.CreateBitmap(1920, 1080, PixelFormat.Format24bppRgb);
 
@@ -76,7 +76,7 @@ namespace MyShogi.Model.Resource.Images
 
                 // 駒箱を合成するのは盤面編集モードの時のみ
                 if (config.InTheBoardEdit)
-                    g.DrawImage(koma_bako.image , rect, rect, GraphicsUnit.Pixel);
+                    g.DrawImage(koma_box.image , rect, rect, GraphicsUnit.Pixel);
             }
 
             // しばらく使わないと思うので開放しておく

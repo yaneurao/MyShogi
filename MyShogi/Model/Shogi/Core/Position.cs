@@ -79,12 +79,16 @@ namespace MyShogi.Model.Shogi.Core
         /// 盤面、81升分の駒 + 1
         /// </summary>
         private Piece[] board = new Piece[Square.NB_PLUS1.ToInt()];
+        // 生の配列が欲しい時に用いる。(SfenFromRawdata()などで。普段はこのメソッドは呼び出さない。)
+        public Piece[] RawBoard { get { return board; } }
         private PieceNo[] board_pn = new PieceNo[Square.NB_PLUS1.ToInt()];
 
         /// <summary>
         /// 手駒
         /// </summary>
-        private Hand[] hand = new Hand[Color.NB.ToInt()];
+        private Hand[] hands = new Hand[(int)Color.NB + 1/*駒箱*/];
+        // 生の配列が欲しい時に用いる。(SfenFromRawdata()などで。普段はこのメソッドは呼び出さない。)
+        public Hand[] RawHands { get { return hands; } }
         private PieceNo[,,] hand_pn = new PieceNo[(int)Color.NB, (int)Piece.HAND_NB, (int)PieceNo.PAWN_MAX];
         // →　どこまで使用してあるかは、Hand(Color,Piece)を用いればわかる。
 
@@ -152,7 +156,7 @@ namespace MyShogi.Model.Shogi.Core
 
             Array.Copy(board, pos.board, board.Length);
             Array.Copy(board_pn, pos.board_pn, board_pn.Length);
-            Array.Copy(hand, pos.hand, hand.Length);
+            Array.Copy(hands, pos.hands, hands.Length);
             Array.Copy(hand_pn, pos.hand_pn, hand_pn.Length);
             pos.lastPieceNo = lastPieceNo;
             pos.sideToMove = sideToMove;
@@ -189,19 +193,59 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public Piece PieceOn(SquareHand sq)
         {
-            if (sq == SquareHand.NB)
-                return Piece.NO_PIECE;
-
-            var c = sq.PieceColor();
-            if (c == Color.NB)
-                return PieceOn((Square)sq);
-
-            var pt = sq.ToPiece();
-            if (Hand(c).Count(pt) > 0)
+            if (sq.IsBoardPiece())
             {
-                return Util.MakePiece(c, pt);
+                // -- 盤上の駒
+
+                return PieceOn((Square)sq);
             }
+            else if (sq.IsHandPiece())
+            {
+                // -- 手駒
+
+                var pt = sq.ToPiece();
+                var c = sq.PieceColor();
+                if (Hand(c).Count(pt) > 0)
+                    return Util.MakePiece(c, pt);
+
+                // この手駒を持っていないなら、ここを抜けてPiece.NO_PIECEが返る。
+
+            } else if (sq.IsPieceBox())
+            {
+                // -- 駒箱の駒
+
+                var pt = sq.ToPiece();
+
+                // 玉に関しては駒箱(Hand[Color.NB])に入っていないので、
+                // Square.NBにあれば、駒箱に入っているものとして扱い、Piece.KINGを返す。
+                if (pt == Piece.KING)
+                    return (KingSquare(Color.BLACK) == Square.NB || KingSquare(Color.WHITE) == Square.NB) ? Piece.KING : Piece.NO_PIECE;
+                // 玉以外の駒であれば駒箱を見て、1枚以上あるならそのpiece typeを返す。
+                else
+                    return Hand(Color.NB).Count(pt) > 0 ? pt : Piece.NO_PIECE;
+
+            } else // if (sq == SquareHand.NB)
+            {
+                //  return Piece.NO_PIECE;
+            }
+
             return Piece.NO_PIECE;
+        }
+
+        /// <summary>
+        /// 駒箱にある駒の数を返す。
+        /// </summary>
+        /// <param name="pt">Piece.PAWN～KINGまで。</param>
+        /// <returns></returns>
+        public int PieceBoxCount(Piece pt)
+        {
+            Debug.Assert(Piece.PAWN <= pt && pt <= Piece.KING);
+
+            if (pt == Piece.KING)
+                return (KingSquare(Color.BLACK) == Square.NB ? 1 : 0) +
+                       (KingSquare(Color.WHITE) == Square.NB ? 1 : 0);
+            else
+                return hands[(int)Color.NB].Count(pt);
         }
 
         /// <summary>
@@ -229,16 +273,20 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// c側の手駒の参照
+        /// 
+        /// c==Color.NBを渡すと駒箱にある駒が返る。
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
         public ref Hand Hand(Color c)
         {
-            return ref hand[(int)c];
+            return ref hands[(int)c];
         }
 
         /// <summary>
         /// c側の玉のSquareへの参照
+        /// 
+        /// 玉が盤上にいない場合はSquare.NBが返ることが保証されている。
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
@@ -736,7 +784,7 @@ namespace MyShogi.Model.Shogi.Core
             if (string.IsNullOrEmpty(hand_sfen))
                 throw new SfenException("SFEN形式の手駒がありません。");
 
-            Array.Clear(hand, 0, hand.Length);
+            Array.Clear(hands, 0, hands.Length);
 
             // 手駒なしでなければ
             if (hand_sfen[0] != '-')
@@ -813,17 +861,33 @@ namespace MyShogi.Model.Shogi.Core
 
             // -- 駒落ちであるかの判定
 
-            // 駒の枚数をすべて足し合わせて、40未満であれば駒落ちであると判定する。
+            // 不要駒は駒箱に入っているものとして処理する。
             {
-                int sum = 0;
+                var h = Core.Hand.ALL;
+
                 foreach (var sq in All.Squares())
-                    if (PieceOn(sq) != Piece.NO_PIECE)
-                        ++sum;
+                {
+                    var pt = PieceOn(sq).PieceType();
+                    if (pt != Piece.NO_PIECE && pt!=Piece.KING && h.Count(pt) >= 1) // 0以下ならこれ以上削れない。玉もノーカウント
+                        h.Sub(pt);
+                }
+
                 foreach (var c in All.Colors())
                     for (Piece pt = Piece.PAWN; pt < Piece.HAND_NB; ++pt)
-                        sum += Hand(c).Count(pt);
+                    {
+                        int count = Hand(c).Count(pt);
 
-                Handicapped = sum != 40;
+                        if (h.Count(pt) < count)
+                            h.Sub(pt, h.Count(pt)); // 無い駒は引けないので0にしておく。
+                        else
+                            h.Sub(pt, count);
+                    }
+
+                // 駒箱に駒があるので駒落ちの局面である。(片玉の場合は駒落ちとして扱わない)
+                Handicapped = h != 0;
+
+                // 駒箱の駒
+                hands[(int)Color.NB] = h;
             }
 
         }
@@ -976,9 +1040,9 @@ namespace MyShogi.Model.Shogi.Core
                 Piece pt = moved_after_pc.RawPieceType();
 
                 var pn = PieceNoOn(to);
-                HandPieceNo(us, pt, hand[(int)us].Count(pt)) = pn;
+                HandPieceNo(us, pt, hands[(int)us].Count(pt)) = pn;
 
-                hand[(int)us].Add(pt);
+                hands[(int)us].Add(pt);
 
                 // toの場所から駒を消す
                 RemovePiece(to);
@@ -1006,12 +1070,12 @@ namespace MyShogi.Model.Shogi.Core
                     Piece pr = to_pc.RawPieceType();
 
                     // 盤面のtoの地点に捕獲されていた駒を復元する
-                    var pn2 = HandPieceNo(us, pr, hand[(int)us].Count(pr) - 1);
+                    var pn2 = HandPieceNo(us, pr, hands[(int)us].Count(pr) - 1);
                     PutPiece(to, to_pc , pn2);
                     PutPiece(from, moved_pc , pn);
 
                     // 手駒から減らす
-                    hand[(int)us].Sub(pr);
+                    hands[(int)us].Sub(pr);
                 }
                 else
                 {
@@ -1481,14 +1545,14 @@ namespace MyShogi.Model.Shogi.Core
         /// <param name="turn"></param>
         /// <param name="gamePly"></param>
         /// <returns></returns>
-        public static string SfenFromRawdata(Piece[/*81*/] board, Hand[/*2*/] hands, Color turn, int gamePly)
+        public static string SfenFromRawdata(Piece[/*81*/] board, Hand[/*2 or 3*/] hands, Color turn, int gamePly)
         {
             // 内部的な構造体にコピーして、sfen()を呼べば、変換過程がそこにしか依存していないならば
             // これで正常に変換されるのでは…。
             var pos = new Position();
 
             Array.Copy(board, pos.board , 81);
-            Array.Copy(hands, pos.hand  ,  2);
+            Array.Copy(hands, pos.hands  , 2);
             pos.sideToMove = turn;
             pos.gamePly = gamePly;
 

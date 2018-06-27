@@ -590,6 +590,19 @@ namespace MyShogi.View.Win2D
                         item_boardedit.DropDownItems.Add(item);
                     }
 
+                    {   // -- 手番の変更
+                        var item = new ToolStripMenuItem();
+                        item.Enabled = config.InTheBoardEdit;
+                        item.Text = "手番の変更";
+                        item.Click += (sender, e) =>
+                        {
+                            var pos = ViewModel.gameServer.Position;
+                            var sfen = Position.SfenFromRawdata(pos.RawBoard, pos.RawHands, pos.sideToMove.Not(), pos.gamePly);
+                            ViewModel.gameServer.SetSfenCommand(sfen);
+                        };
+                        item_boardedit.DropDownItems.Add(item);
+                    }
+
                     {   // -- 平手の初期局面
                         var item = new ToolStripMenuItem();
                         item.Enabled = config.InTheBoardEdit;
@@ -693,6 +706,13 @@ namespace MyShogi.View.Win2D
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "十枚落ち";
                             item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.Handicap10.ToSfen()); };
+                            item_handicap.DropDownItems.Add(item);
+                        }
+                        {
+                            var item = new ToolStripMenuItem();
+                            item.Enabled = config.InTheBoardEdit;
+                            item.Text = "歩三枚";
+                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.HANDICAP_PAWN3.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
 

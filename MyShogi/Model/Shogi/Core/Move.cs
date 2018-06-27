@@ -307,12 +307,12 @@ namespace MyShogi.Model.Shogi.Core
         public static Move MakeMove(SquareHand from , SquareHand to , bool promote)
         {
             // ありえないはずだが…。
-            if (to.IsDrop())
+            if (!to.IsBoardPiece())
                 return Move.NONE;
 
             var to2 = (Square)to;
 
-            if (from.IsDrop())
+            if (from.IsHandPiece())
             {
                 // 打ちと成りは共存できない
                 if (promote)

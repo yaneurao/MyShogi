@@ -198,6 +198,23 @@ namespace MyShogi.View.Win2D
                     }
 
                 }
+
+                // -- 駒箱の駒の描画(盤面編集時のみ)
+                {
+                    // 駒箱の駒
+                    var h = pos.Hand(SColor.NB);
+
+                    foreach(var pt in piece_box_list)
+                    {
+                        int count = pos.PieceBoxCount(pt);
+                        if (count > 0)
+                        {
+                            var dest = PieceLocation((int)(pt - 1) + SquareHand.PieceBox);
+                            DrawSprite(dest, SPRITE.Piece(pt));
+                            DrawSprite(dest + hand_number_offset, SPRITE.HandNumber(count));
+                        }
+                    }
+                }
             }
 
             // -- 盤の段・筋を表す数字の表示

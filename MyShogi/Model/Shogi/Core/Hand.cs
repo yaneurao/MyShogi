@@ -12,6 +12,7 @@ namespace MyShogi.Model.Shogi.Core
     public enum Hand : Int32
     {
         ZERO = 0,
+        ALL = 0x42244412, // 全駒持っている状態(使用していない駒を数える時などに用いる)
     }
 
 
