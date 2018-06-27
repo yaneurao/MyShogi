@@ -232,9 +232,12 @@ namespace MyShogi.Model.Shogi.Core
                 // -- 手駒
 
                 var pt = sq.ToPiece();
-                var c = sq.PieceColor();
-                if (Hand(c).Count(pt) > 0)
-                    return Util.MakePiece(c, pt);
+                if (pt != Piece.NO_PIECE)
+                {
+                    var c = sq.PieceColor();
+                    if (Hand(c).Count(pt) > 0)
+                        return Util.MakePiece(c, pt);
+                }
 
                 // この手駒を持っていないなら、ここを抜けてPiece.NO_PIECEが返る。
 
@@ -259,14 +262,17 @@ namespace MyShogi.Model.Shogi.Core
         /// 
         /// 銀が5枚のような局面はSetSfen()で例外が出るので存在しないはず。
         /// ただし玉が3枚あるような局面はありうる。そのときはPieceBoxCount(Piece.KING)は -1 が返る。
+        /// 
         /// </summary>
-        /// <param name="pt">Piece.PAWN～KINGまで。</param>
+        /// <param name="pt">Piece.NO_PIECE～KINGまで。Piece.NO_PIECEを渡した時は0が返る。</param>
         /// <returns></returns>
         public int PieceBoxCount(Piece pt)
         {
             Debug.Assert(Piece.PAWN <= pt && pt <= Piece.KING);
 
-            if (pt == Piece.KING)
+            if (pt == Piece.NO_PIECE)
+                return 0;
+            else if (pt == Piece.KING)
             {
                 // bitboardから枚数を数える。
                 var king_bb = Pieces(Piece.HDK) & ~(Pieces(Piece.BISHOP_HORSE) | Pieces(Piece.ROOK_DRAGON));

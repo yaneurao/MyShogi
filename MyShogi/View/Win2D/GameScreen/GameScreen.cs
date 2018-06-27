@@ -167,7 +167,7 @@ namespace MyShogi.View.Win2D
                         if (count != 0)
                         {
                             // この駒の描画されるべき位置を求めるためにSquareHand型に変換する。
-                            var piece = Util.ToSquareHand(c, pc);
+                            var piece = Util.ToHandPiece(c, pc);
                             var dest = PieceLocation(piece);
 
                             // 物理画面で後手側の駒台への描画であるか(駒を180度回転さて描画しないといけない)
@@ -209,7 +209,7 @@ namespace MyShogi.View.Win2D
                         int count = pos.PieceBoxCount(pt);
                         if (count > 0)
                         {
-                            var dest = PieceLocation((int)(pt - 1) + SquareHand.PieceBox);
+                            var dest = PieceLocation(Util.ToPieceBoxPiece(pt));
                             DrawSprite(dest, SPRITE.Piece(pt));
                             // 数字の描画(枚数が2枚以上のとき)
                             if (count >= 2)

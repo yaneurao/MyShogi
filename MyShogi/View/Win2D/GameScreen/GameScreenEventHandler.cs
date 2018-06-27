@@ -516,6 +516,7 @@ namespace MyShogi.View.Win2D
 
             // 何にせよ、移動、もしくは交換をする。
             var from_pc = pos.PieceOn(from);
+            var from_pt = from_pc.PieceType();
             var to_pc = pos.PieceOn(to);
 
             if (to.IsBoardPiece())
@@ -531,6 +532,15 @@ namespace MyShogi.View.Win2D
                         raw.board[(int)from] = to_pc;
                         raw.board[(int)to] = from_pc;
                     });
+                } else if(from.IsHandPiece())
+                {
+                    // -- 手駒を盤面に
+
+                    BoardEditCommand(raw =>
+                    {
+                        raw.hands[(int)from.PieceColor()].Sub(from_pt);
+                        raw.board[(int)to] = from_pc;
+                    });
                 }
             }
             else if (to.IsHandPiece())
@@ -540,7 +550,6 @@ namespace MyShogi.View.Win2D
                     // -- 盤上の駒を手駒に移動させる。
 
                     // 手駒に出来る駒種でなければキャンセル
-                    var from_pt = from_pc.PieceType();
                     if (from_pt == Piece.KING)
                         return;
 
@@ -853,12 +862,18 @@ namespace MyShogi.View.Win2D
             }
             else
             {
-                // 手駒かどうかの判定
-                // 細長駒台があるのでわりと面倒。何も考えずに描画位置で判定する。
+                // -- 手駒かどうかの判定
 
-                for (var sq = SquareHand.Hand; sq < SquareHand.HandNB; ++sq)
-                    if (new Rectangle(PieceLocation(sq), piece_img_size).Contains(p))
-                        return sq;
+                // 細長駒台があるのでわりと面倒。何も考えずに描画位置で判定する。
+                // それ以外の駒台の位置である判定も必要…。あとで書く。
+
+                foreach (var c in All.Colors())
+                    for (var pc = Piece.PAWN; pc < Piece.KING; ++pc)
+                    {
+                        var sq = Util.ToHandPiece(c, pc);
+                        if (new Rectangle(PieceLocation(sq), piece_img_size).Contains(p))
+                            return sq;
+                    }
             }
 
             // not found

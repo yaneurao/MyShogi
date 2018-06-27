@@ -7,6 +7,12 @@ namespace MyShogi.Model.Shogi.Core
     /// 
     /// Square型だと手駒の場所が表現できないので、マウスでクリックした駒を表現するのに表現力が不足している。
     /// このため、手駒も含めて表現できる型が必要となる。
+    /// 
+    /// 例)
+    /// Hand : 先手の駒台の駒以外の升の領域を表現する
+    /// HandBlack + Piece.PAWN = 先手の駒台の歩
+    /// 同様に
+    /// Piece pcに対して PieceBox+(int)pc は駒箱のpc
     /// </summary>
     public enum SquareHand
     {
@@ -17,13 +23,13 @@ namespace MyShogi.Model.Shogi.Core
         // 手駒
         Hand = 81,          // 手駒のスタート
         HandBlack = 81,     // 先手の手駒のスタート
-        HandWhite = 81 + 7, // 後手の手駒のスタート
-        HandNB = 81 + 14,   // 手駒の終端+1
+        HandWhite = 81 + 8, // 後手の手駒のスタート
+        HandNB = 81 + 16,   // 手駒の終端+1
 
         // 駒箱
 
-        PieceBox = HandNB,        // 駒箱の駒(歩、香、桂、銀、角、飛、金、玉の8種)
-        PieceBoxNB = PieceBox + 8,// 駒箱の終端+1
+        PieceBox = HandNB,        // 駒箱の駒(NO_PIECE、歩、香、桂、銀、角、飛、金、玉の9種)
+        PieceBoxNB = PieceBox + 9,// 駒箱の終端+1
 
         // ゼロと末尾
         ZERO = 0, NB = PieceBoxNB,
@@ -94,8 +100,8 @@ namespace MyShogi.Model.Shogi.Core
         /// <param name="sq"></param>
         /// <returns>
         /// 返し値について先後の区別はない。
-        /// 手駒に対しては、Piece.PAWN ～ Piece.GOLDまでの値が返る。
-        /// 駒箱の駒に対しては、Piece.PAWN ～ Piece.KINGまでの値が返る。
+        /// 手駒に対しては、Piece.NO_PIECE ～ Piece.GOLDまでの値が返る。(Piece.KINGは返らない)
+        /// 駒箱の駒に対しては、Piece.NO_PIECE ～ Piece.KINGまでの値が返る。
         /// </returns>
         public static Piece ToPiece(this SquareHand sq)
         {
@@ -103,10 +109,10 @@ namespace MyShogi.Model.Shogi.Core
 
             if (IsHandPiece(sq))
                 return (sq < SquareHand.HandWhite)
-                    ? (Piece)((sq - SquareHand.HandBlack) + Piece.PAWN)
-                    : (Piece)((sq - SquareHand.HandWhite) + Piece.PAWN);
+                    ? (Piece)((sq - SquareHand.HandBlack))
+                    : (Piece)((sq - SquareHand.HandWhite));
             // is BoxPiece
-            return (Piece)((sq - SquareHand.PieceBox) + Piece.PAWN);
+            return (Piece)(sq - SquareHand.PieceBox);
 
         }
 
@@ -131,16 +137,31 @@ namespace MyShogi.Model.Shogi.Core
     public static partial class Util
     {
         /// <summary>
-        /// 引数で指定したColorとPieceに相当するSquareHand型の値を生成する。
+        /// 引数で指定したColorとPieceに相当するSquareHand型の駒台の駒の値を生成する。
+        /// 
+        /// pc == NO_PIECEも許容する。
         /// </summary>
         /// <param name="c"></param>
         /// <param name="pc"></param>
         /// <returns></returns>
-        public static SquareHand ToSquareHand(Color c , Piece pc)
+        public static SquareHand ToHandPiece(Color c , Piece pc)
         {
-            Debug.Assert(Piece.PAWN <= pc && pc < Piece.KING);
-            return 
-                (SquareHand)((int)(c == Color.BLACK ? SquareHand.HandBlack : SquareHand.HandWhite) + pc - Piece.PAWN);
+            Debug.Assert(Piece.NO_PIECE <= pc && pc < Piece.KING);
+            return (c == Color.BLACK ? SquareHand.HandBlack : SquareHand.HandWhite) + (int)pc;
+        }
+
+        /// <summary>
+        /// 引数で指定したColorとPieceに相当するSquareHand型の駒箱の駒の値を生成する。
+        /// 
+        /// pc == NO_PIECEも許容する。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="pc"></param>
+        /// <returns></returns>
+        public static SquareHand ToPieceBoxPiece(Piece pc)
+        {
+            Debug.Assert(Piece.NO_PIECE <= pc && pc <= Piece.KING);
+            return SquareHand.PieceBox + (int)pc;
         }
 
     }
