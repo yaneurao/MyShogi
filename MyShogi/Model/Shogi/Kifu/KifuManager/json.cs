@@ -246,7 +246,7 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 return e.ToString();
             }
-            return string.Empty;
+            return null;
 
         }
 
@@ -340,8 +340,14 @@ namespace MyShogi.Model.Shogi.Kifu
                             case "封じ手":
                                 move = Move.INTERRUPT;
                                 break;
+                            case "千日手":
+                                move = Move.REPETITION_DRAW;
+                                break;
+                            case "持将棋":
+                                move = Move.DRAW;
+                                break;
                             default:
-                                return string.Empty;
+                                return "不明な終局理由です";
                         }
                     }
                     // varidation
@@ -423,7 +429,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     }
                     if (move.IsSpecial())
                     {
-                        return string.Empty;
+                        return null;
                     }
                     if (!Tree.position.IsLegal(move))
                     {
@@ -437,7 +443,7 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 return e.ToString();
             }
-            return string.Empty;
+            return null;
         }
 
         private string ToJkfString()
@@ -660,7 +666,7 @@ namespace MyShogi.Model.Shogi.Kifu
             // 平手以外の出力は現状対応しない
             if (Tree.rootBoardType != BoardType.NoHandicap)
             {
-                return string.Empty;
+                return "平手以外の初期局面には対応していません";
             }
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0).ToLocalTime();
             var data = new LiveJson.Data();

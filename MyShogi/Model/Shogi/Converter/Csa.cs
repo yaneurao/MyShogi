@@ -278,13 +278,9 @@ namespace MyShogi.Model.Shogi.Converter
                 }
                 if (line.StartsWith("P+00AL"))
                 {
-                    int[] restCount = { 2, 18, 4, 4, 4, 2, 2, 4 };
-                    for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
-                    {
-                        var p = board[sq.ToInt()];
-                        if (p == Piece.NO_PIECE) continue;
-                        restCount[p.RawPieceType().ToInt()] -= 1;
-                    }
+                    int[] restCount = { 99, 18, 4, 4, 4, 2, 2, 4, 2 };
+                    foreach (Square sq in All.Squares())
+                        restCount[(int)board[(int)sq].RawPieceType()] -= 1;
                     for (Piece p = Piece.PAWN; p < Piece.KING; ++p)
                     {
                         restCount[p.ToInt()] -= hand[Color.BLACK.ToInt()].Count(p);
@@ -295,13 +291,9 @@ namespace MyShogi.Model.Shogi.Converter
                 }
                 if (line.StartsWith("P-00AL"))
                 {
-                    int[] restCount = { 2, 18, 4, 4, 4, 2, 2, 4 };
-                    for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
-                    {
-                        var p = board[sq.ToInt()];
-                        if (p == Piece.NO_PIECE) continue;
-                        restCount[p.RawPieceType().ToInt()] -= 1;
-                    }
+                    int[] restCount = { 99, 18, 4, 4, 4, 2, 2, 4, 2 };
+                    foreach (Square sq in All.Squares())
+                        restCount[(int)board[(int)sq].RawPieceType()] -= 1;
                     for (Piece p = Piece.PAWN; p < Piece.KING; ++p)
                     {
                         restCount[p.ToInt()] -= hand[Color.BLACK.ToInt()].Count(p);

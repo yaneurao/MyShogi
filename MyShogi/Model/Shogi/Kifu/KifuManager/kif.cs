@@ -445,7 +445,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 return $"棋譜読み込みエラー : {lineNo}行目\n{e.Message}";
             }
 
-            return string.Empty;
+            return null;
         }
 
         /// <summary>

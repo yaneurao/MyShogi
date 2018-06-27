@@ -277,7 +277,7 @@ namespace MyShogi.Model.Shogi.Kifu
             if (headFlag) // まだ局面図が終わってない
                 return $"CSA形式の{lineNo}行目で局面図が来ずにファイルが終了しました。";
 
-            return string.Empty;
+            return null;
         }
 
         /// <summary>
