@@ -804,9 +804,9 @@ namespace MyShogi.Model.Shogi.Core
                     else
                     {
                         var piece = Util.FromUsiPiece(c);
-                        if (piece == Piece.NO_PIECE)
+                        if (piece == Piece.NO_PIECE || piece.RawPieceType() == Piece.KING)
                         {
-                            throw new SfenException("SFEN形式の持ち駒'" + c + "'が正しくありません。");
+                            throw new SfenException($"SFEN形式の持ち駒、{piece.Pretty()}が正しくありません。");
                         }
 
                         var color = piece.PieceColor();
@@ -863,14 +863,20 @@ namespace MyShogi.Model.Shogi.Core
             // -- 駒落ちであるかの判定
 
             // 不要駒は駒箱に入っているものとして処理する。
+            // 同種の駒が規定枚数以上ないこともここでチェックしている。
             {
                 var h = Core.Hand.ALL;
 
                 foreach (var sq in All.Squares())
                 {
                     var pt = PieceOn(sq).RawPieceType();
-                    if (pt != Piece.NO_PIECE && pt!=Piece.KING && h.Count(pt) >= 1) // 0以下ならこれ以上削れない。玉もノーカウント
+                    if (pt != Piece.NO_PIECE && pt != Piece.KING) // 0以下ならこれ以上削れない。玉もノーカウント
+                    {
+                        if (h.Count(pt) == 0)
+                            throw new SfenException($"SFEN形式で、{pt.Pretty()}の駒の数が多すぎます。");
+
                         h.Sub(pt);
+                    }
                 }
 
                 foreach (var c in All.Colors())
@@ -879,9 +885,9 @@ namespace MyShogi.Model.Shogi.Core
                         int count = Hand(c).Count(pt);
 
                         if (h.Count(pt) < count)
-                            h.Sub(pt, h.Count(pt)); // 無い駒は引けないので0にしておく。
-                        else
-                            h.Sub(pt, count);
+                            throw new SfenException($"SFEN形式で、{pt.Pretty()}の駒の数が多すぎます。");
+
+                        h.Sub(pt, count);
                     }
 
                 // 駒箱に駒があるので駒落ちの局面である。(片玉の場合は駒落ちとして扱わない)

@@ -16,7 +16,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// USIプロトコルの"position"コマンドで使う文字列を読み込む。
         /// 便宜上、ここではsfenと呼んでいるが、本来はsfenには"moves .."は含まれない。
         /// エラーがあった場合は、そのエラーの文字列が返る。
-        /// エラーがなければstring.Emptyが返る。
+        /// エラーがなければnullが返る。
         /// </summary>
         /// <param name="sfen"></param>
         private string FromSfenString(string sfen)
@@ -87,7 +87,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 return e.Message;
             }
 
-            return string.Empty;
+            return null;
         }
 
         /// <summary>

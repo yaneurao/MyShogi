@@ -169,8 +169,13 @@ namespace MyShogi.App
         /// <param name="text"></param>
         public void MessageShow(string text)
         {
-            if (mainForm != null)
-                MessageBox.Show(mainForm, text);
+            if (mainForm != null && mainForm.IsHandleCreated && !mainForm.IsDisposed)
+            {
+                if (mainForm.InvokeRequired)
+                    mainForm.Invoke(new Action(() => { MessageBox.Show(mainForm, text); }));
+                else
+                    MessageBox.Show(mainForm, text);
+            }
             else
                 MessageBox.Show(text);
         }

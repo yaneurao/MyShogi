@@ -14,7 +14,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// PSN形式の棋譜ファイルのparser
         /// エラーがあった場合は、そのエラーの文字列が返る。
-        /// エラーがなければstring.Emptyが返る。
+        /// エラーがなければnullが返る。
         /// </summary>
         private string FromPsnString(string[] lines, KifuFileType kf)
         {
@@ -416,7 +416,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 return $"棋譜読み込みエラー : {lineNo}行目\n{e.Message}";
             }
 
-            return string.Empty;
+            return null;
         }
 
 

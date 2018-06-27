@@ -172,7 +172,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 読み込めたところまでの棋譜を反映させる。読み込めなかった部分やエラーなどは無視する。
         ///
         /// エラーがあった場合は、そのエラーの文字列が返る。
-        /// エラーがなければstring.Emptyが返る。
+        /// エラーがなければnullが返る。
         /// </summary>
         /// <param name="filename"></param>
         public string FromString(string content /* , KifuFileType kf */)
@@ -214,7 +214,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 if (line.StartsWith("#") || line.IndexOf("：") > 0)
                     return FromKifString(lines, KifuFileType.KIF);
 
-                return string.Empty;
+                return null;
             }
             finally
             {
