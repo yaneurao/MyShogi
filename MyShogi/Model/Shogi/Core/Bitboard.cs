@@ -9,6 +9,8 @@ namespace MyShogi.Model.Shogi.Core
     /// Bitboard
     /// 駒の利きなどを表現する
     /// やねうら王から移植
+    /// 
+    /// classではなくstructなので注意。
     /// </summary>
     public struct Bitboard
     {
@@ -207,7 +209,8 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public IEnumerator<Square> GetEnumerator()
         {
-            var bb = this;
+            var bb = this; // BitboardはstructなのでこれはClone()相当
+
             while (bb.IsNotZero())
                 yield return bb.Pop();
         }

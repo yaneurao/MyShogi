@@ -326,6 +326,22 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// c側の駒台の領域を返す。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        private Rectangle HandTableRectangle(ShogiCore.Color c)
+        {
+            var reverse = ViewModel.ViewModel.gameServer.BoardReverse;
+            if (reverse)
+                c = c.Not();
+
+            var v = (TheApp.app.config.KomadaiImageVersion == 1) ? 0 : 1;
+
+            return new Rectangle(hand_table_pos[v,(int)c], hand_table_size[v]);
+        }
+
+        /// <summary>
         /// 指し手生成用のバッファ
         /// UIスレッドからしか使わない。マウスクリックのときの合法手を表示するために使う。
         /// </summary>
@@ -540,6 +556,8 @@ namespace MyShogi.View.Win2D
                     {
                         raw.hands[(int)from.PieceColor()].Sub(from_pt);
                         raw.board[(int)to] = from_pc;
+                        // このtoの位置にもし駒があったとしたら、それは駒箱に移動する。
+                        // (その駒が欠落するので..)
                     });
                 }
             }
@@ -596,6 +614,8 @@ namespace MyShogi.View.Win2D
 
             if (inTheBoardEdit)
             {
+                // -- 盤面編集中
+
                 switch (state.state)
                 {
                     case GameScreenViewStateEnum.Normal:
@@ -616,7 +636,8 @@ namespace MyShogi.View.Win2D
 
             } else
             {
-                // 対局中、もしくは、対局終了後である。
+                // -- 対局中、もしくは、対局終了後である。
+
                 switch (state.state)
                 {
                     case GameScreenViewStateEnum.Normal:
@@ -864,16 +885,20 @@ namespace MyShogi.View.Win2D
             {
                 // -- 手駒かどうかの判定
 
-                // 細長駒台があるのでわりと面倒。何も考えずに描画位置で判定する。
-                // それ以外の駒台の位置である判定も必要…。あとで書く。
-
                 foreach (var c in All.Colors())
+                {
                     for (var pc = Piece.PAWN; pc < Piece.KING; ++pc)
                     {
                         var sq = Util.ToHandPiece(c, pc);
+                        // 細長駒台があるのでわりと面倒。何も考えずに描画位置で判定する。
                         if (new Rectangle(PieceLocation(sq), piece_img_size).Contains(p))
                             return sq;
                     }
+
+                    // それ以外の駒台の位置である判定も必要。
+                    if (HandTableRectangle(c).Contains(p))
+                        return Util.ToHandPiece(c,Piece.NO_PIECE);
+                }
             }
 
             // not found
