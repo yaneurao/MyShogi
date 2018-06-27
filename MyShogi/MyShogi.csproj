@@ -223,6 +223,12 @@
     </Compile>
     <Compile Include="View\Win2D\GameScreen\GameScreenViewModel.cs" />
     <Compile Include="View\Win2D\GameScreen\GameScreenViewState.cs" />
+    <Compile Include="View\Win2D\SystemInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\SystemInfo.Designer.cs">
+      <DependentUpon>SystemInfo.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -247,6 +253,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\MainDialog\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\SystemInfo.resx">
+      <DependentUpon>SystemInfo.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
     <None Include="docs\PSN2format.md" />

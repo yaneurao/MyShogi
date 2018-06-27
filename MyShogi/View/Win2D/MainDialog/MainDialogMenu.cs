@@ -27,6 +27,11 @@ namespace MyShogi.View.Win2D
         public Form gameSettingDialog;
 
         /// <summary>
+        /// CPU infoを表示するダイアログ
+        /// </summary>
+        public Form cpuInfoDialog;
+
+        /// <summary>
         /// デバッグウィンドウ
         /// </summary>
         public Form debugDialog;
@@ -793,6 +798,23 @@ namespace MyShogi.View.Win2D
                         item1.Text = TheApp.app.config.FileLoggingEnable ? "ロギング終了" : "ロギング開始";
                         item1.Checked = TheApp.app.config.FileLoggingEnable;
                         item1.Click += (sender, e) => { TheApp.app.config.FileLoggingEnable ^= true; };
+                        item_others.DropDownItems.Add(item1);
+                    }
+
+                    
+                    {
+                        // システム情報ダイアログ
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "システム情報";
+                        item1.Click += (sender, e) =>
+                        {
+                            if (cpuInfoDialog != null)
+                                cpuInfoDialog.Dispose();
+
+                            cpuInfoDialog = new SystemInfo();
+                            cpuInfoDialog.Show();
+                        };
                         item_others.DropDownItems.Add(item1);
                     }
 

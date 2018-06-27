@@ -533,6 +533,7 @@ namespace MyShogi.View.Win2D
             // 何にせよ、移動、もしくは交換をする。
             var from_pc = pos.PieceOn(from);
             var from_pt = from_pc.PieceType();
+            var from_pr = from_pc.RawPieceType();
             var to_pc = pos.PieceOn(to);
 
             if (to.IsBoardPiece())
@@ -574,7 +575,7 @@ namespace MyShogi.View.Win2D
                     BoardEditCommand(raw =>
                     {
                         raw.board[(int)from] = Piece.NO_PIECE;
-                        raw.hands[(int)to.PieceColor()].Add(from_pt);
+                        raw.hands[(int)to.PieceColor()].Add(from_pr);
                     });
                 }
             }

@@ -191,9 +191,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void MainDialog_MouseMove(object sender, MouseEventArgs e)
         {
-            // ドラッグ的な操作
-            if ( e.Button == MouseButtons.Left)
-                gameScreen.OnMouseMove(e.Location);
+            gameScreen.OnMouseMove(e.Location);
         }
 
         /// <summary>
