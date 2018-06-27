@@ -210,7 +210,24 @@ namespace MyShogi.View.Win2D
                         if (count > 0)
                         {
                             var dest = PieceLocation(Util.ToPieceBoxPiece(pt));
-                            DrawSprite(dest, SPRITE.Piece(pt));
+                            var sprite = SPRITE.Piece(pt);
+                            var piece = Util.ToPieceBoxPiece(pt);
+
+                            // この駒、選択されているならば
+                            if (picked_from == piece)
+                            {
+                                // 移動元の升に適用されるエフェクトを描画する。
+                                DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
+
+                                picked_sprite_location = dest + new Size(-5, -20);
+                                picked_sprite = sprite;
+                            }
+                            else
+                            {
+                                // 駒の描画
+                                DrawSprite(dest, sprite);
+                            }
+
                             // 数字の描画(枚数が2枚以上のとき)
                             if (count >= 2)
                                 DrawSprite(dest + hand_number_offset2, SPRITE.HandBoxNumber(count));

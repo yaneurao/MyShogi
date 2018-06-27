@@ -608,6 +608,17 @@ namespace MyShogi.View.Win2D
                             raw.hands[(int)from.PieceColor()].Sub(from_pr);
                             raw.hands[(int)  to.PieceColor()].Add(from_pr);
                         });
+                    }else
+                    {
+                        // 手駒を同じ駒台に移動させることは出来ないし、
+                        // 選び直しているのでは？
+
+                        if (to_pr != Piece.NO_PIECE)
+                        {
+                            pick_up_for_edit(to);
+                            return;
+                        }
+
                     }
                 } else if (from.IsPieceBoxPiece())
                 {
@@ -630,6 +641,17 @@ namespace MyShogi.View.Win2D
                     // -- 駒台の駒を駒箱に
 
                     BoardEditCommand(raw => raw.hands[(int)from.PieceColor()].Sub(from_pr));
+
+                } else if (from.IsPieceBoxPiece())
+                {
+                    // 駒箱の駒を移動させることは出来ないし、
+                    // 選び直しているのでは？
+
+                    if (to_pr != Piece.NO_PIECE)
+                    {
+                        pick_up_for_edit(to);
+                        return;
+                    }
                 }
 
             }
