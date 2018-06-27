@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Resource.Sounds;
@@ -112,15 +113,18 @@ namespace MyShogi.App
 
             // -- ロギング用のハンドラをセット
 
-            config.AddPropertyChangedHandler("MemoryLoggingEnable", (args) =>
+            var MemoryLoggingEnableHandler = new PropertyChangedEventHandler((args) =>
             {
                 if (config.MemoryLoggingEnable)
                     Log.log1 = new MemoryLog();
                 else
+                {
+                    if (Log.log1 != null)
+                        Log.log1.Dispose();
                     Log.log1 = null;
+                }
             });
-
-            config.AddPropertyChangedHandler("FileLoggingEnable", (args) =>
+            var FileLoggingEnable = new PropertyChangedEventHandler((args) =>
             {
                 if (config.FileLoggingEnable)
                 {
@@ -128,12 +132,19 @@ namespace MyShogi.App
                     Log.log2 = new FileLog($"log{now.ToString("yyyyMMddHHmm")}.txt");
                 }
                 else
+                {
+                    if (Log.log2 != null)
+                        Log.log2.Dispose();
                     Log.log2 = null;
+                }
             });
 
+            config.AddPropertyChangedHandler("MemoryLoggingEnable", MemoryLoggingEnableHandler);
+            config.AddPropertyChangedHandler("FileLoggingEnable", FileLoggingEnable);
+
             // 上のハンドラを呼び出して、必要ならばロギングを開始しておいてやる。
-            config.RaisePropertyChanged("MemoryLoggingEnable", config.MemoryLoggingEnable);
-            config.RaisePropertyChanged("FileLoggingEnable", config.FileLoggingEnable);
+            MemoryLoggingEnableHandler(null);
+            FileLoggingEnable(null);
 
             // 初期化が終わったのでgameServerの起動を行う。
             gameServer.Start();

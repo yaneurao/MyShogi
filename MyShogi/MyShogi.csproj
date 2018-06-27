@@ -181,6 +181,12 @@
     <Compile Include="View\Win2D\AboutYaneuraOu.Designer.cs">
       <DependentUpon>AboutYaneuraOu.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\DebugWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\DebugWindow.Designer.cs">
+      <DependentUpon>DebugWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\GameScreen\GameScreen.cs" />
     <Compile Include="View\Win2D\GameScreen\GameScreenEventHandler.cs" />
     <Compile Include="View\Win2D\GameSettingDialog.cs">
@@ -227,6 +233,9 @@
     </Compile>
     <EmbeddedResource Include="View\Win2D\AboutYaneuraOu.resx">
       <DependentUpon>AboutYaneuraOu.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\DebugWindow.resx">
+      <DependentUpon>DebugWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\GameSettingDialog.resx">
       <DependentUpon>GameSettingDialog.cs</DependentUpon>

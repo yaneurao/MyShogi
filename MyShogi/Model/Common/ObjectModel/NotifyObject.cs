@@ -165,7 +165,9 @@ namespace MyShogi.Model.Common.ObjectModel
                 if (form == null)
                     h(e);
                 else
-                    form.Invoke(new Action(() => h(e)));
+                // 対局中だとFormがDisposeされているのにcallbackが起きることがある。
+                    if (!form.Disposing)
+                        form.Invoke(new Action(() => h(e)));
             }
         }
 

@@ -254,7 +254,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                             // 移動先の升の下に別の駒があるときは、駒がぶつかる音になる。
                             var to = bestMove.To();
                             var delta = stm == Color.BLACK ? Square.SQ_D : Square.SQ_U;
-                            var e = (Position.PieceOn(to + (int)delta) != Piece.NO_PIECE)
+                            var to2 = to + (int)delta;
+                            // to2が盤外であることがあるので、IsOk()を通すこと。
+                            var e = (to2.IsOk() && Position.PieceOn(to2) != Piece.NO_PIECE)
                                 ? SoundEnum.KOMA_B1 /*ぶつかる音*/: SoundEnum.KOMA_S1 /*ぶつからない音*/;
 
 #if false

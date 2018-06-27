@@ -18,7 +18,7 @@ namespace MyShogi.Model.Common.Utility
     /// <summary>
     /// Logクラスの基底
     /// </summary>
-    public interface ILog
+    public interface ILog : IDisposable
     {
         void Write(LogInfoType logType, string log , int pipe_id = -1);
     }
@@ -29,6 +29,7 @@ namespace MyShogi.Model.Common.Utility
     public class NullLog : ILog
     {
         public void Write(LogInfoType logType, string log , int pipe_id = -1) { }
+        public void Dispose() { }
     }
 
     /// <summary>
@@ -71,6 +72,8 @@ namespace MyShogi.Model.Common.Utility
         }
     }
 
+    public delegate void ListAddedEventHandler(object sender);
+
     /// <summary>
     /// メモリ上に記録するタイプのログ
     /// </summary>
@@ -79,13 +82,35 @@ namespace MyShogi.Model.Common.Utility
         public void Write(LogInfoType logType, string log , int pipe_id)
         {
             var f_log = LogHelpper.Format(logType, log , pipe_id);
-            LogList.Add(f_log);
+
+            List<string> c = null;
+            lock (lock_object)
+            {
+                LogList.Add(f_log);
+
+                if (ListAdded != null)
+                    c = new List<string>(LogList); // clone
+            }
+
+            // イベントハンドラが設定されていればcallbackしたいが、lock解除してからでないとdead lockになる。
+            // かと言って、LogListはmutableだし…。仕方ないのでClone()しといてそれ渡す。オーバーヘッドすごすぎ…。
+            if (ListAdded != null)
+                ListAdded(c);
         }
+
+        public void Dispose() { }
 
         /// <summary>
         /// 書き出されたログ
         /// </summary>
         public List<string> LogList { get; private set; } = new List<string>();
+
+        /// <summary>
+        /// LogListが変更になった時のイベントハンドラ
+        /// </summary>
+        public ListAddedEventHandler ListAdded;
+
+        private object lock_object = new object();
     }
 
     /// <summary>
@@ -101,8 +126,11 @@ namespace MyShogi.Model.Common.Utility
         public void Write(LogInfoType logType, string log , int pipe_id)
         {
             var f_log = LogHelpper.Format(logType, log , pipe_id);
-            sw.WriteLine(f_log);
-            sw.Flush();
+            lock (lock_object)
+            {
+                sw.WriteLine(f_log);
+                sw.Flush();
+            }
         }
 
         public void Dispose()
@@ -110,6 +138,7 @@ namespace MyShogi.Model.Common.Utility
             sw.Dispose();
         }
 
+        private object lock_object = new object();
         private StreamWriter sw;
     }
 

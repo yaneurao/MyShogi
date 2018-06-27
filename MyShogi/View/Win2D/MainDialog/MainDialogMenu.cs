@@ -26,6 +26,11 @@ namespace MyShogi.View.Win2D
         public Form gameSettingDialog;
 
         /// <summary>
+        /// デバッグウィンドウ
+        /// </summary>
+        public Form debugDialog;
+
+        /// <summary>
         /// [UI thread] : メニューのitemを動的に追加する。
         /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
         /// </summary>
@@ -631,7 +636,39 @@ namespace MyShogi.View.Win2D
                         var item1 = new ToolStripMenuItem();
                         item1.Text = TheApp.app.config.MemoryLoggingEnable ? "デバッグ終了" : "デバッグ開始";
                         item1.Checked = TheApp.app.config.MemoryLoggingEnable;
-                        item1.Click += (sender, e) => { TheApp.app.config.MemoryLoggingEnable ^= true; };
+                        item1.Click += (sender, e) => {
+                            TheApp.app.config.MemoryLoggingEnable ^= true;
+                            if (!TheApp.app.config.MemoryLoggingEnable && debugDialog != null)
+                                debugDialog.Dispose(); // 終了させておく。
+                        };
+                        item_others.DropDownItems.Add(item1);
+                    }
+
+                    {
+                        // デバッグウィンドウ
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "デバッグウィンドウ";
+                        item1.Enabled = TheApp.app.config.MemoryLoggingEnable;
+                        item1.Click += (sender, e) => {
+                            if (debugDialog != null && debugDialog.IsDisposed)
+                            {
+                                debugDialog.Dispose();
+                                debugDialog = null;
+                            }
+
+                            if (debugDialog == null)
+                            {
+                                var log = Log.log1;
+                                if (log != null)
+                                {
+                                    // セットされているはずなんだけどなぁ…。おかしいなぁ…。
+                                    debugDialog = new DebugWindow((MemoryLog)log);
+                                }
+                            }
+                            if (debugDialog != null)
+                                debugDialog.Show();
+                        };
                         item_others.DropDownItems.Add(item1);
                     }
 
