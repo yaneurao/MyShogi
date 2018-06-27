@@ -277,16 +277,49 @@ namespace MyShogi.View.Win2D
             {
                 // -- 駒箱の駒
 
-                var v = (TheApp.app.config.KomadaiImageVersion == 1) ? 0 : 1;
-                var pc = sq.ToPiece();
+                if (TheApp.app.config.KomadaiImageVersion == 1)
+                {
+                    // 駒箱の1段目に3枚、2段目に2枚、3段目に3枚表示する。
 
-                int x = (((int)pc - 1) % 4) * piece_img_size.Width;
-                int y = (((int)pc - 1) / 4) * piece_img_size.Height;
+                    var pc = (int)sq.ToPiece() - 1;
 
-                dest = new Point(
-                    hand_box_pos[v].X + x,
-                    hand_box_pos[v].Y + y
-                    );
+                    // 並び替える
+                    // 歩=0,香=1,桂=2,銀=3,金=4,角=5,飛=6,玉=7
+
+                    if (pc == 6)
+                        pc = 4;
+                    else if (pc == 4 || pc == 5)
+                        ++pc;
+
+                    // 5を欠番にして2段目を2枚にする。
+                    if (pc >= 5)
+                        ++pc;
+
+                    int file = pc % 3;
+                    int rank = pc / 3;
+
+                    int x = (int)(file * piece_img_size.Width * .8);
+                    int y = (int)(rank * piece_img_size.Height * .88);
+
+                    if (rank == 1)
+                        x += (int)(piece_img_size.Width / 2 * 0.8);
+
+                    dest = new Point(
+                        hand_box_pos[0].X + x,
+                        hand_box_pos[0].Y + y
+                        );
+                } else
+                {
+                    var pc = sq.ToPiece();
+
+                    int x = 0;
+                    int y = ((int)pc - 1) * piece_img_size.Height / 2;
+
+                    dest = new Point(
+                        hand_box_pos[0].X + x,
+                        hand_box_pos[0].Y + y
+                        );
+                }
             }
 
             return dest;

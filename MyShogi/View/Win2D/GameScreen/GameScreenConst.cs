@@ -106,12 +106,17 @@ namespace MyShogi.View.Win2D
         private static Size hand_number_offset = new Size(60, 20);
 
         /// <summary>
+        /// 駒箱で、同種の駒が複数あるときの数字の描画のための(当該駒からの)オフセット値
+        /// </summary>
+        private static Size hand_number_offset2 = new Size(50, 15);
+
+        /// <summary>
         /// 駒箱の画面上の位置
         /// </summary>
         private static readonly Point[] hand_box_pos =
         {
             // 普通の駒箱
-            new Point(229,643),
+            new Point(229,643+52),
             // 細長の駒箱
             new Point(404,663),
         };

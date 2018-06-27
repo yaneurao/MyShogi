@@ -54,6 +54,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 var stm = kifuManager.Position.sideToMove;
                 var stmPlayer = Player(stm);
+                var config = TheApp.app.config;
 
                 if (InTheGame)
                 {
@@ -66,11 +67,15 @@ namespace MyShogi.Model.Shogi.LocalServer
                         stmPlayer.BestMove = m;
                     }
                 }
-                else
+                else if (config.InTheBoardEdit)
                 {
-                    // 対局中でなければ自由に動かせる。
+                    // 盤面編集中
+
+                } else {
+
+                    // 対局中でなく、盤面編集中でなければ自由に動かせる。
                     // 受理して、必要ならば分岐棋譜を生成して…。
-                    var misc = TheApp.app.config.GameSetting.MiscSettings;
+                    var misc = config.GameSetting.MiscSettings;
                     kifuManager.Tree.DoMoveUI(m , misc);
 
                     // 動かした結果、棋譜の選択行と異なる可能性があるので、棋譜ウィンドウの当該行をSelectしなおす。

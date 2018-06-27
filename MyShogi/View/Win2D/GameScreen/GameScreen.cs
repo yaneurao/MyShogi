@@ -211,7 +211,9 @@ namespace MyShogi.View.Win2D
                         {
                             var dest = PieceLocation((int)(pt - 1) + SquareHand.PieceBox);
                             DrawSprite(dest, SPRITE.Piece(pt));
-                            DrawSprite(dest + hand_number_offset, SPRITE.HandNumber(count));
+                            // 数字の描画(枚数が2枚以上のとき)
+                            if (count >= 2)
+                                DrawSprite(dest + hand_number_offset2, SPRITE.HandNumber(count));
                         }
                     }
                 }

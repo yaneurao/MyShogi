@@ -86,25 +86,13 @@ namespace MyShogi.Model.Resource.Images
                 }
 #endif
 
-#if false
+#if true
                 // さらに駒ごとの微調整
-                int pc = to_x + to_y * 8;
-                switch (pc & ~ 8/* Piece.PROMOTE*/ ) // 成り駒に関しては同様
+                int pc2 = to_x + to_y * 8;
+                switch (pc2 & ~ 8/* Piece.PROMOTE*/ ) // 成り駒に関しては同様
                 {
-                    case 1: ox += 4; break;
-                    case 2: ox += 2; break;
-                    case 3: ox += 0; break;
-                    case 4: ox += 2; break;
-                    case 5: ox += 2; break;
-                    case 7: ox += 2; break;
-                    case 8: ox -= 3; break;
-                    case 16 + 1: ox -= 4; break;
-                    case 16 +2: ox -= 2; break;
-                    case 16 + 3: ox += 0; break;
-                    case 16 + 4: ox += 2; break;
-                    case 16+ 5: ox += 2; break;
-                    case 16+7: ox += 2; break;
-                    case 16 + 8: ox -= 3; break;
+                    case 1     : oy -= 5; break;
+                    case 16 + 1: oy += 5; break;
                 }
 #endif
 
@@ -124,8 +112,6 @@ namespace MyShogi.Model.Resource.Images
                     case 17 + 1: ox -= 2; break;
                     case 18 + 1: ox -= 2; break;
                 }
-
-
 
                 var srcRect = new Rectangle(0 + ox, 0 + oy, x, y);
                 int ox2 = to_x * x;
