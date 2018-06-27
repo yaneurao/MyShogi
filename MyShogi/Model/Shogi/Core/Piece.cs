@@ -136,7 +136,7 @@ namespace MyShogi.Model.Shogi.Core
         /// </summary>
         public static Piece RawPieceType(this Piece piece)
         {
-            if (piece == Piece.NO_PIECE && piece == Piece.WHITE)
+            if (piece == Piece.NO_PIECE || piece == Piece.WHITE)
                 return Piece.NO_PIECE;
 
             // KINGがNO_PIECEになってしまうといけないので、1引いてから下位3bit取り出して、1足しておく。

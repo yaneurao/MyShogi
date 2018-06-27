@@ -88,7 +88,7 @@ namespace MyShogi.Model.Shogi.Core
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
-        public static bool IsPieceBox(this SquareHand sq)
+        public static bool IsPieceBoxPiece(this SquareHand sq)
         {
             return SquareHand.PieceBox <= sq && sq < SquareHand.PieceBoxNB;
         }

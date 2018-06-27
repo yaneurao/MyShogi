@@ -341,6 +341,19 @@ namespace MyShogi.View.Win2D
             return new Rectangle(hand_table_pos[v,(int)c], hand_table_size[v]);
         }
 
+        
+        /// <summary>
+        /// 駒箱の領域を返す。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        private Rectangle PieceBoxRectangle()
+        {
+            var v = (TheApp.app.config.KomadaiImageVersion == 1) ? 0 : 1;
+
+            return new Rectangle(piece_box_pos[v], piece_box_size[v]);
+        }
+
         /// <summary>
         /// 指し手生成用のバッファ
         /// UIスレッドからしか使わない。マウスクリックのときの合法手を表示するために使う。
@@ -535,6 +548,7 @@ namespace MyShogi.View.Win2D
             var from_pt = from_pc.PieceType();
             var from_pr = from_pc.RawPieceType();
             var to_pc = pos.PieceOn(to);
+            var to_pr = to_pc.RawPieceType();
 
             if (to.IsBoardPiece())
             {
@@ -560,6 +574,11 @@ namespace MyShogi.View.Win2D
                         // このtoの位置にもし駒があったとしたら、それは駒箱に移動する。
                         // (その駒が欠落するので..)
                     });
+                } else if (from.IsPieceBoxPiece())
+                {
+                    // -- 駒箱の駒を盤面に
+
+                    BoardEditCommand(raw => raw.board[(int)to] = from_pc );
                 }
             }
             else if (to.IsHandPiece())
@@ -577,7 +596,42 @@ namespace MyShogi.View.Win2D
                         raw.board[(int)from] = Piece.NO_PIECE;
                         raw.hands[(int)to.PieceColor()].Add(from_pr);
                     });
+                } else if (from.IsHandPiece())
+                {
+                    // -- 手駒を手駒に。手番が違うならこれは合法。
+
+                    if (from.PieceColor() != to.PieceColor())
+                    {
+                        BoardEditCommand(raw =>
+                        {
+                            // 同種の駒が駒台から駒台に移動するので、to_prは関係ない。
+                            raw.hands[(int)from.PieceColor()].Sub(from_pr);
+                            raw.hands[(int)  to.PieceColor()].Add(from_pr);
+                        });
+                    }
+                } else if (from.IsPieceBoxPiece())
+                {
+                    // -- 駒箱の駒を手駒に
+
+                    // 玉は移動手駒に出来ない
+                    if (from_pt != Piece.KING)
+                        BoardEditCommand(raw => raw.hands[(int)to.PieceColor()].Add(from_pr) );
                 }
+            }
+            else if (to.IsPieceBoxPiece())
+            {
+                if (from.IsBoardPiece())
+                {
+                    // -- 盤上の駒を駒箱に
+                    BoardEditCommand(raw => raw.board[(int)from] = Piece.NO_PIECE );
+
+                } else if (from.IsHandPiece())
+                {
+                    // -- 駒台の駒を駒箱に
+
+                    BoardEditCommand(raw => raw.hands[(int)from.PieceColor()].Sub(from_pr));
+                }
+
             }
 
             StateReset();
@@ -644,7 +698,7 @@ namespace MyShogi.View.Win2D
                     case GameScreenViewStateEnum.Normal:
                         {
                             // 掴んだのが自分の駒であるか
-                            if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove)
+                            if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove && !sq.IsPieceBoxPiece())
                                 pick_up(sq); // sqの駒を掴んで行き先の候補の升情報を更新する
 
                             break;
@@ -671,7 +725,7 @@ namespace MyShogi.View.Win2D
                                 StateReset();
 
                             // 3. 別の駒のクリック
-                            else if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove)
+                            else if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove && !sq.IsPieceBoxPiece())
                                 pick_up(sq);
 
                             // 4. 掴む動作のキャンセル
@@ -897,9 +951,28 @@ namespace MyShogi.View.Win2D
                     }
 
                     // それ以外の駒台の位置である判定も必要。
+                    // これを一番最後にしないと、この領域の部分領域が判定できなくなってしまう。
                     if (HandTableRectangle(c).Contains(p))
-                        return Util.ToHandPiece(c,Piece.NO_PIECE);
+                        return Util.ToHandPiece(c, Piece.NO_PIECE);
                 }
+
+                // -- 駒箱であるかの判定
+
+                var config = TheApp.app.config;
+                if (config.InTheBoardEdit)
+                {
+                    for (var pc = Piece.PAWN; pc <= Piece.KING; ++pc)
+                    {
+                        var sq = Util.ToPieceBoxPiece(pc);
+                        if (new Rectangle(PieceLocation(sq), piece_img_size).Contains(p))
+                            return sq;
+                    }
+
+                    // それ以外の駒箱の位置である判定も必要。
+                    if (PieceBoxRectangle().Contains(p))
+                        return Util.ToPieceBoxPiece(Piece.NO_PIECE);
+                }
+
             }
 
             // not found

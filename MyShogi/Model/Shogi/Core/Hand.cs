@@ -135,6 +135,8 @@ namespace MyShogi.Model.Shogi.Core
         /// <param name="c"></param>
         public static void Add(this ref Hand hand, Piece pr, int c = 1)
         {
+            Debug.Assert(Piece.PAWN <= pr && pr < Piece.KING);
+
             hand = (Hand)(hand.ToInt() + (Int32)PIECE_TO_HAND[pr.ToInt()] * c);
         }
 
@@ -146,6 +148,8 @@ namespace MyShogi.Model.Shogi.Core
         /// <param name="c"></param>
         public static void Sub(this ref Hand hand, Piece pr, int c = 1)
         {
+            Debug.Assert(Piece.PAWN <= pr && pr < Piece.KING);
+
             hand = (Hand)(hand.ToInt() - (Int32)PIECE_TO_HAND[pr.ToInt()] * c);
         }
 

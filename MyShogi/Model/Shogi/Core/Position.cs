@@ -241,7 +241,7 @@ namespace MyShogi.Model.Shogi.Core
 
                 // この手駒を持っていないなら、ここを抜けてPiece.NO_PIECEが返る。
 
-            } else if (sq.IsPieceBox())
+            } else if (sq.IsPieceBoxPiece())
             {
                 // -- 駒箱の駒
 
@@ -268,7 +268,7 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public int PieceBoxCount(Piece pt)
         {
-            Debug.Assert(Piece.PAWN <= pt && pt <= Piece.KING);
+            Debug.Assert(Piece.NO_PIECE <= pt && pt <= Piece.KING);
 
             if (pt == Piece.NO_PIECE)
                 return 0;
