@@ -121,7 +121,7 @@ namespace MyShogi.Model.Resource.Images
         }
 
         /// <summary>
-        /// 同一種の手駒の枚数のための数字
+        /// 同一種の手駒の枚数のための数字(駒台用)
         /// 
         /// 例えば、count == 1なら「1」という数字が返る。
         /// </summary>
@@ -132,6 +132,22 @@ namespace MyShogi.Model.Resource.Images
             var srcRect = new Rectangle(48 * (count - 1), 0, 48, 48);
 
             var image = TheApp.app.imageManager.HandNumberImage.image;
+
+            return new Sprite(image, srcRect);
+        }
+
+        /// <summary>
+        /// 同一種の手駒の枚数のための数字(駒箱用)
+        /// 
+        /// 例えば、count == 1なら「1」という数字が返る。
+        /// </summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
+        public static Sprite HandBoxNumber(int count)
+        {
+            var srcRect = new Rectangle(48 * (count - 1), 0, 48, 48);
+
+            var image = TheApp.app.imageManager.HandBoxNumberImage.image;
 
             return new Sprite(image, srcRect);
         }

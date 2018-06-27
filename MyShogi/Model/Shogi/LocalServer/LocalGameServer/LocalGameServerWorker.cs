@@ -74,6 +74,9 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="gameSetting"></param>
         private void GameStart(GameSetting gameSetting)
         {
+            // 以下の初期化中に駒が動かされるの気持ち悪いのでユーザー操作を禁止しておく。
+            CanUserMove = false;
+
             // 音声:「よろしくお願いします。」
             TheApp.app.soundManager.Stop(); // 再生中の読み上げをすべて停止
             TheApp.app.soundManager.ReadOut(SoundEnum.Start);

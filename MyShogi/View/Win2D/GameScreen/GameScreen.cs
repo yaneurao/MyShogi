@@ -213,7 +213,7 @@ namespace MyShogi.View.Win2D
                             DrawSprite(dest, SPRITE.Piece(pt));
                             // 数字の描画(枚数が2枚以上のとき)
                             if (count >= 2)
-                                DrawSprite(dest + hand_number_offset2, SPRITE.HandNumber(count));
+                                DrawSprite(dest + hand_number_offset2, SPRITE.HandBoxNumber(count));
                         }
                     }
                 }

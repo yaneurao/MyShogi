@@ -45,7 +45,7 @@ namespace MyShogi.View.Win2D
                 &&
                 config.KomadaiImageVersion == 1 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */;
             ;
-    }
+        }
 
         /// <summary>
         /// 盤面情報が更新された時に呼び出されるハンドラ。
@@ -399,6 +399,28 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// sqの駒を掴む(盤面編集用に)
+        /// </summary>
+        /// <param name="sq"></param>
+        public void pick_up_for_edit(SquareHand sq)
+        {
+            var gameServer = ViewModel.ViewModel.gameServer;
+            var pos = gameServer.Position;
+
+            // この駒をユーザーが掴んで動かそうとしていることを示す
+            ViewModel.viewState.picked_from = sq;
+            ViewModel.viewState.picked_to = SquareHand.NB;
+            ViewModel.viewState.state = GameScreenViewStateEnum.PiecePickedUp;
+
+            // 生成されたすべての合法手に対して移動元の升が合致する指し手の移動先の升を
+            ViewModel.viewState.picked_piece_legalmovesto = Bitboard.ZeroBB();
+            ViewModel.viewState.state = GameScreenViewStateEnum.PiecePickedUp;
+
+            // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
+            ViewModel.dirty = true;
+        }
+
+        /// <summary>
         /// 駒の移動
         /// ただし成り・不成が選べるときはここでそれを尋ねるダイアログが出る。
         /// また、連続王手の千日手局面に突入するときもダイアログが出る。
@@ -481,6 +503,58 @@ namespace MyShogi.View.Win2D
             }
         }
 
+
+        /// <summary>
+        /// 駒の移動 盤面編集
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        public void move_piece_for_edit(SquareHand from, SquareHand to)
+        {
+            var gameServer = ViewModel.ViewModel.gameServer;
+            var pos = gameServer.Position;
+
+            // 何にせよ、移動、もしくは交換をする。
+            var from_pc = pos.PieceOn(from);
+            var to_pc = pos.PieceOn(to);
+
+            if (to.IsBoardPiece())
+            {
+                if (from.IsBoardPiece())
+                {
+                    // -- 盤上と盤上の駒
+
+                    // fromとtoの升の駒を交換する。
+                    // fromに駒があることは確定している。toに駒があろうがなかろうが良い。
+                    BoardEditCommand(raw =>
+                    {
+                        raw.board[(int)from] = to_pc;
+                        raw.board[(int)to] = from_pc;
+                    });
+                }
+            }
+            else if (to.IsHandPiece())
+            {
+                if (from.IsBoardPiece())
+                {
+                    // -- 盤上の駒を手駒に移動させる。
+
+                    // 手駒に出来る駒種でなければキャンセル
+                    var from_pt = from_pc.PieceType();
+                    if (from_pt == Piece.KING)
+                        return;
+
+                    BoardEditCommand(raw =>
+                    {
+                        raw.board[(int)from] = Piece.NO_PIECE;
+                        raw.hands[(int)to.PieceColor()].Add(from_pt);
+                    });
+                }
+            }
+
+            StateReset();
+        }
+
         /// <summary>
         /// ViewModel.viewStateをNormalの状態に戻す
         /// (これは駒を再度掴める状態)
@@ -500,76 +574,105 @@ namespace MyShogi.View.Win2D
         /// <param name="sq"></param>
         public void OnBoardClick(SquareHand sq)
         {
-            var pos = ViewModel.ViewModel.gameServer.Position;
+            var gameServer = ViewModel.ViewModel.gameServer;
+
+            var pos = gameServer.Position;
             var state = ViewModel.viewState;
             var pc = pos.PieceOn(sq);
 
             //Console.WriteLine(sq.Pretty());
 
-            switch (state.state)
+            var inTheGame = gameServer.InTheGame;
+            var inTheBoardEdit = TheApp.app.config.InTheBoardEdit;
+
+            if (inTheBoardEdit)
             {
-                case GameScreenViewStateEnum.Normal:
-                    {
-                        // 掴んだのが自分の駒であるか
-                        if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove)
-                            pick_up(sq); // sqの駒を掴んで行き先の候補の升情報を更新する
-
-                        break;
-                    }
-                case GameScreenViewStateEnum.PiecePickedUp:
-                    {
-                        // 次の4つのケースが考えられる
-                        // 1.駒を掴んでいる状態なので移動先のクリック
-                        // 2.自駒を再度掴んだ(掴んでいたのをキャンセルする)
-                        // 3.別の自分の駒を掴んだ(掴み直し)
-                        // 4.無縁の升をクリックした(掴んでいたのをキャンセルする)
-
-                        // 1. 駒の移動
-
-                        // いま掴んでいる駒の移動できる先であるのか。
-                        var bb = state.picked_piece_legalmovesto;
-                        if (sq.IsBoardPiece() && bb.IsSet((Square)sq))
+                switch (state.state)
+                {
+                    case GameScreenViewStateEnum.Normal:
                         {
+                            // 盤面編集中はどの駒でも掴める
+                            if (pc != Piece.NO_PIECE)
+                                pick_up_for_edit(sq);
+                            break;
+                        }
+                    case GameScreenViewStateEnum.PiecePickedUp:
+                        {
+                            // 盤面編集中はどの駒でも掴める
                             state.picked_to = sq;
-                            move_piece(state.picked_from, state.picked_to);
+                            move_piece_for_edit(state.picked_from, state.picked_to);
+                            break;
                         }
-                        // 2. 掴んでいた駒の再クリック
-                        else if (sq == state.picked_from)
-                            StateReset();
+                }
 
-                        // 3. 別の駒のクリック
-                        else if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove)
-                            pick_up(sq);
-
-                        // 4. 掴む動作のキャンセル
-                        else
-                            StateReset();
-
-                        break;
-                    }
-                case GameScreenViewStateEnum.PromoteDialog:
-                    {
-                        // PromoteDialogを出していたのであれば、
-                        switch (state.promote_dialog_selection)
+            } else
+            {
+                // 対局中、もしくは、対局終了後である。
+                switch (state.state)
+                {
+                    case GameScreenViewStateEnum.Normal:
                         {
-                            case PromoteDialogSelectionEnum.NO_SELECT:
-                                break; // 無視
-                            case PromoteDialogSelectionEnum.CANCEL:
-                                // キャンセルするので移動の駒の選択可能状態に戻してやる。
-                                StateReset();
-                                break;
-                                // 成り・不成を選んでクリックしたのでそれに応じた移動を行う。
-                            case PromoteDialogSelectionEnum.UNPROMOTE:
-                            case PromoteDialogSelectionEnum.PROMOTE:
-                                var m = Util.MakeMove(state.picked_from, state.picked_to,
-                                    state.promote_dialog_selection == PromoteDialogSelectionEnum.PROMOTE);
-                                ViewModel.ViewModel.gameServer.DoMoveCommand(m);
-                                StateReset();
-                                break;
-                        }
+                            // 掴んだのが自分の駒であるか
+                            if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove)
+                                pick_up(sq); // sqの駒を掴んで行き先の候補の升情報を更新する
 
-                        break;
-                    }
+                            break;
+                        }
+                    case GameScreenViewStateEnum.PiecePickedUp:
+                        {
+                            // 次の4つのケースが考えられる
+                            // 1.駒を掴んでいる状態なので移動先のクリック
+                            // 2.自駒を再度掴んだ(掴んでいたのをキャンセルする)
+                            // 3.別の自分の駒を掴んだ(掴み直し)
+                            // 4.無縁の升をクリックした(掴んでいたのをキャンセルする)
+
+                            // 1. 駒の移動
+
+                            // いま掴んでいる駒の移動できる先であるのか。
+                            var bb = state.picked_piece_legalmovesto;
+                            if (sq.IsBoardPiece() && bb.IsSet((Square)sq))
+                            {
+                                state.picked_to = sq;
+                                move_piece(state.picked_from, state.picked_to);
+                            }
+                            // 2. 掴んでいた駒の再クリック
+                            else if (sq == state.picked_from)
+                                StateReset();
+
+                            // 3. 別の駒のクリック
+                            else if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove)
+                                pick_up(sq);
+
+                            // 4. 掴む動作のキャンセル
+                            else
+                                StateReset();
+
+                            break;
+                        }
+                    case GameScreenViewStateEnum.PromoteDialog:
+                        {
+                            // PromoteDialogを出していたのであれば、
+                            switch (state.promote_dialog_selection)
+                            {
+                                case PromoteDialogSelectionEnum.NO_SELECT:
+                                    break; // 無視
+                                case PromoteDialogSelectionEnum.CANCEL:
+                                    // キャンセルするので移動の駒の選択可能状態に戻してやる。
+                                    StateReset();
+                                    break;
+                                // 成り・不成を選んでクリックしたのでそれに応じた移動を行う。
+                                case PromoteDialogSelectionEnum.UNPROMOTE:
+                                case PromoteDialogSelectionEnum.PROMOTE:
+                                    var m = Util.MakeMove(state.picked_from, state.picked_to,
+                                        state.promote_dialog_selection == PromoteDialogSelectionEnum.PROMOTE);
+                                    ViewModel.ViewModel.gameServer.DoMoveCommand(m);
+                                    StateReset();
+                                    break;
+                            }
+
+                            break;
+                        }
+                }
             }
         }
 
@@ -597,24 +700,34 @@ namespace MyShogi.View.Win2D
                     // 玉であっても裏返せる。
                     if (pc != Piece.NO_PIECE)
                     {
-                        var RawBoard = new Piece[pos.RawBoard.Length];
-                        pos.RawBoard.CopyTo(RawBoard, 0);
-
                         Piece nextPc;
                         // 成っていない駒なら、成駒に。成っている駒なら相手番の成っていない駒に。
                         if (pc.CanPromote())
                             nextPc = pc.ToPromotePiece();
                         else
                             nextPc = Util.MakePiece(pc.PieceColor().Not() /*相手番の駒に*/,pc.RawPieceType());
-                        RawBoard[(int)sq] = nextPc;
 
-                        var sfen = Position.SfenFromRawdata(RawBoard, pos.RawHands, pos.sideToMove, pos.gamePly);
-                        gameServer.SetSfenCommand(sfen);
+                        BoardEditCommand((raw_pos) => { raw_pos.board[(int)sq] = nextPc; });
                     }
                 }
 
                 //Console.WriteLine(sq.Pretty());
             }
+        }
+
+        /// <summary>
+        /// 盤面を編集する時に用いる。
+        /// BoardEditCommand((raw_pos) => { raw_pos.board[(int)sq] = nextPc; });
+        /// のように書くと、その内容の盤面の更新依頼をGameServerのほうに依頼する。
+        /// </summary>
+        /// <param name="func"></param>
+        public void BoardEditCommand(Action<RawPosition> func)
+        {
+            var gameServer = ViewModel.ViewModel.gameServer;
+            var raw_pos = gameServer.Position.CreateRawPosition(); // Clone()
+            func(raw_pos);
+            var sfen = Position.SfenFromRawPosition(raw_pos);
+            gameServer.SetSfenCommand(sfen);
         }
 
         /// <summary>

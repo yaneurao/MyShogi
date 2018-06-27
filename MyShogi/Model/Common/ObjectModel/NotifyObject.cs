@@ -165,9 +165,13 @@ namespace MyShogi.Model.Common.ObjectModel
                 if (form == null)
                     h(e);
                 else
-                // 対局中だとFormがDisposeされているのにcallbackが起きることがある。
-                    if (!form.Disposing)
+                    // 対局中だとFormがDisposeされているのにcallbackが起きることがある。
+                    // form.Disposingとform.Disposedだけで判定できると言えないので、try～catchで書いておく。
+                    try
+                    {
                         form.Invoke(new Action(() => h(e)));
+                    }
+                    catch { }
             }
         }
 

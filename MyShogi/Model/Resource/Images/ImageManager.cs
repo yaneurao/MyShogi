@@ -234,6 +234,7 @@ namespace MyShogi.Model.Resource.Images
         private void UpdateHandNumberImage()
         {
             Load(ref HandNumberImage , "hand_number_v1_864_96.png");
+            Load(ref HandBoxNumberImage , "hand_box_number_v1_864_96.png");
         }
 
         /// <summary>
@@ -312,8 +313,12 @@ namespace MyShogi.Model.Resource.Images
 
         /// <summary>
         /// 手駒の右肩に表示する駒の枚数を示す数字画像
+        /// 
+        /// HandNumberImage    : 駒台の駒の枚数用の数字
+        /// HandBoxNumberImage : 駒箱の駒の枚数用の数字
         /// </summary>
         public ImageLoader HandNumberImage = new ImageLoader();
+        public ImageLoader HandBoxNumberImage = new ImageLoader();
 
         /// <summary>
         /// 成り・不成の選択ダイアログ用の画像

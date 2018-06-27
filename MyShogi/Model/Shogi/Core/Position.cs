@@ -69,6 +69,20 @@ namespace MyShogi.Model.Shogi.Core
     }
 
     /// <summary>
+    /// 局面クラスでsfenを生成するのに最小限必要なデータ構造。
+    /// 
+    /// Position.CreateRawPosition()でコピーして、書き換え後、
+    /// Position.SfenFromRawPosition()でsfenを構築できる。
+    /// </summary>
+    public class RawPosition
+    {
+        public Piece[] board = new Piece[(int)Square.NB_PLUS1];
+        public Hand[] hands = new Hand[(int)Color.NB + 1];
+        public Color sideToMove;
+        public int gamePly;
+    }
+
+    /// <summary>
     /// 盤面を表現するクラス
     /// </summary>
     public class Position
@@ -78,17 +92,13 @@ namespace MyShogi.Model.Shogi.Core
         /// <summary>
         /// 盤面、81升分の駒 + 1
         /// </summary>
-        private Piece[] board = new Piece[Square.NB_PLUS1.ToInt()];
-        // 生の配列が欲しい時に用いる。(SfenFromRawdata()などで。普段はこのメソッドは呼び出さない。)
-        public Piece[] RawBoard { get { return board; } }
+        private Piece[] board = new Piece[(int)Square.NB_PLUS1];
         private PieceNo[] board_pn = new PieceNo[Square.NB_PLUS1.ToInt()];
 
         /// <summary>
         /// 手駒
         /// </summary>
         private Hand[] hands = new Hand[(int)Color.NB + 1/*駒箱*/];
-        // 生の配列が欲しい時に用いる。(SfenFromRawdata()などで。普段はこのメソッドは呼び出さない。)
-        public Hand[] RawHands { get { return hands; } }
         private PieceNo[,,] hand_pn = new PieceNo[(int)Color.NB, (int)Piece.HAND_NB, (int)PieceNo.PAWN_MAX];
         // →　どこまで使用してあるかは、Hand(Color,Piece)を用いればわかる。
 
@@ -171,6 +181,23 @@ namespace MyShogi.Model.Shogi.Core
             return pos;
         }
 
+        /// <summary>
+        /// このクラスのsfenの構築に必要な部分のみをClone()して返す。
+        /// Position.CreateRawPosition()でコピーして、書き換え後、Position.SfenFromRawPosition()でsfenを構築できる。
+        /// </summary>
+        /// <returns></returns>
+        public RawPosition CreateRawPosition()
+        {
+            var raw = new RawPosition();
+
+            Array.Copy(board, raw.board, board.Length);
+            Array.Copy(hands, raw.hands, hands.Length);
+            raw.sideToMove = sideToMove;
+            raw.gamePly = gamePly;
+
+            return raw;
+        }
+
         // -------------------------------------------------------------------------
 
         /// <summary>
@@ -215,15 +242,9 @@ namespace MyShogi.Model.Shogi.Core
             {
                 // -- 駒箱の駒
 
+                // 駒箱を見て、1枚以上あるならそのpiece typeを返す。
                 var pt = sq.ToPiece();
-
-                // 玉に関しては駒箱(Hand[Color.NB])に入っていないので、
-                // Square.NBにあれば、駒箱に入っているものとして扱い、Piece.KINGを返す。
-                if (pt == Piece.KING)
-                    return (KingSquare(Color.BLACK) == Square.NB || KingSquare(Color.WHITE) == Square.NB) ? Piece.KING : Piece.NO_PIECE;
-                // 玉以外の駒であれば駒箱を見て、1枚以上あるならそのpiece typeを返す。
-                else
-                    return Hand(Color.NB).Count(pt) > 0 ? pt : Piece.NO_PIECE;
+                return PieceBoxCount(pt) > 0 ? pt : Piece.NO_PIECE;
 
             } else // if (sq == SquareHand.NB)
             {
@@ -1577,6 +1598,23 @@ namespace MyShogi.Model.Shogi.Core
 
             // ↑の実装、美しいが、いかんせん遅い。
             // 棋譜を大量に読み込ませて学習させるときにここがボトルネックになるので直接unpackする関数を書く。(べき)
+        }
+
+        /// <summary>
+        /// RawPositionを与えて、sfen文字列を生成して返す。
+        /// </summary>
+        /// <param name="raw"></param>
+        /// <returns></returns>
+        public static string SfenFromRawPosition(RawPosition raw)
+        {
+            var pos = new Position();
+
+            Array.Copy(raw.board, pos.board, 81);
+            Array.Copy(raw.hands, pos.hands, 2);
+            pos.sideToMove = raw.sideToMove;
+            pos.gamePly = raw.gamePly;
+
+            return pos.ToSfen();
         }
 
         /// <summary>

@@ -596,8 +596,9 @@ namespace MyShogi.View.Win2D
                         item.Text = "手番の変更";
                         item.Click += (sender, e) =>
                         {
-                            var pos = ViewModel.gameServer.Position;
-                            var sfen = Position.SfenFromRawdata(pos.RawBoard, pos.RawHands, pos.sideToMove.Not(), pos.gamePly);
+                            var raw_pos = ViewModel.gameServer.Position.CreateRawPosition();
+                            raw_pos.sideToMove = raw_pos.sideToMove.Not();
+                            var sfen = Position.SfenFromRawPosition(raw_pos);
                             ViewModel.gameServer.SetSfenCommand(sfen);
                         };
                         item_boardedit.DropDownItems.Add(item);
