@@ -23,6 +23,9 @@ namespace MyShogi.Model.Common.Utility
         void Write(LogInfoType logType, string log , int pipe_id = -1);
     }
 
+#if false
+    // メソッドの呼び出しのオーバーヘッドが嫌なのでnull objectを使う実装、好ましくない。
+
     /// <summary>
     /// 何も出力しないLogクラス
     /// </summary>
@@ -31,6 +34,7 @@ namespace MyShogi.Model.Common.Utility
         public void Write(LogInfoType logType, string log , int pipe_id = -1) { }
         public void Dispose() { }
     }
+#endif
 
     /// <summary>
     /// ログ出力の補助クラス
@@ -94,6 +98,7 @@ namespace MyShogi.Model.Common.Utility
 
             // イベントハンドラが設定されていればcallbackしたいが、lock解除してからでないとdead lockになる。
             // かと言って、LogListはmutableだし…。仕方ないのでClone()しといてそれ渡す。オーバーヘッドすごすぎ…。
+            // まあ、ロギングしていない時は、オーバーヘッドなしと考えられるので、これはこれでいいや…。
             if (ListAdded != null)
                 ListAdded(c);
         }
@@ -153,6 +158,9 @@ namespace MyShogi.Model.Common.Utility
     {
         public static void Write(LogInfoType logType, string message , int pipe_id = -1)
         {
+            // logがアタッチされていないときは、なるべく小さなオーバーヘッドで済むように、
+            // Format()はここでは呼び出さない。
+
             if (log1 != null)
                 log1.Write(logType, message , pipe_id);
 

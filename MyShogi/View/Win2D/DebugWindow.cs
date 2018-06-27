@@ -1,9 +1,9 @@
-﻿using MyShogi.Model.Common.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using MyShogi.Model.Common.Utility;
 
 namespace MyShogi.View.Win2D
 {
