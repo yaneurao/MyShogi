@@ -92,6 +92,18 @@ namespace MyShogi.Model.Shogi.Core
         Handicap10,
 
         /// <summary>
+        /// 詰将棋用の局面
+        /// (玉は後手玉が51にいて、あとの手駒はすべて後手側に)
+        /// </summary>
+        Mate1,
+
+        /// <summary>
+        /// 双玉詰将棋用の局面
+        /// (玉が51,59にいて、あとの手駒はすべて後手側に)
+        /// </summary>
+        Mate2,
+
+        /// <summary>
         /// それ以外の局面図
         /// </summary>
         //[LabelDescription(Label = "任意局面")]
@@ -167,7 +179,7 @@ namespace MyShogi.Model.Shogi.Core
             Sfens.HIRATE , Sfens.HANDICAP_KYO , Sfens.HANDICAP_RIGHT_KYO , Sfens.HANDICAP_KAKU ,
             Sfens.HANDICAP_HISYA , Sfens.HANDICAP_HISYA_KYO ,
             Sfens.HANDICAP_2 , Sfens.HANDICAP_3 , Sfens.HANDICAP_4 , Sfens.HANDICAP_5 , Sfens.HANDICAP_LEFT_5 ,
-            Sfens.HANDICAP_6 , Sfens.HANDICAP_8 , Sfens.HANDICAP_10
+            Sfens.HANDICAP_6 , Sfens.HANDICAP_8 , Sfens.HANDICAP_10 , Sfens.MATE_1 , Sfens.MATE_2,
         };
     }
 }

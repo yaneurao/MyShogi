@@ -23,6 +23,9 @@
         public static readonly string HANDICAP_8 = "3gkg3/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
         public static readonly string HANDICAP_10 = "4k4/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1";
 
+        public static readonly string MATE_1 = "4k4/9/9/9/9/9/9/9/9 b 18p4l4n4s4g2b2r 1";
+        public static readonly string MATE_2 = "4k4/9/9/9/9/9/9/9/4K4 b 18p4l4n4s4g2b2r 1";
+
         // あとで何か追加するかも。
     }
 }

@@ -282,6 +282,24 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 編集した盤面を代入する
+        /// 盤面編集用。
+        /// </summary>
+        public void SetSfenCommand(string sfen)
+        {
+            AddCommand(
+            ()=>
+            {
+                // 盤面編集中以外使用不可
+                var config = TheApp.app.config;
+                if (config.InTheBoardEdit)
+                    kifuManager.FromString($"sfen {sfen}");
+                // sfenのparser経由で代入するのが楽ちん。
+            }
+            );
+        }
+
+        /// <summary>
         /// UI側から、worker threadで実行して欲しいコマンドを渡す。
         /// View-ViewModelアーキテクチャにおいてViewからViewModelにcommandを渡す感じ。
         /// ここで渡されたコマンドは、CheckUICommand()で吸い出されて実行される。
