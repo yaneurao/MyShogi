@@ -205,7 +205,7 @@ namespace MyShogi.Model.Common.Utility
                     Array.Copy(basic[0].bytes,  4, venderBytes, 0, 4);
                     Array.Copy(basic[0].bytes, 12, venderBytes, 4, 4);
                     Array.Copy(basic[0].bytes,  8, venderBytes, 8, 4);
-                    return Encoding.ASCII.GetString(venderBytes).Trim('\0');
+                    return Encoding.ASCII.GetString(venderBytes).Trim('\0').TrimStart(' ').TrimEnd(' ');
                 }
             }
             public string brand
@@ -217,7 +217,7 @@ namespace MyShogi.Model.Common.Utility
                     extend[2].bytes.CopyTo(brandBytes, 0);
                     extend[3].bytes.CopyTo(brandBytes, 16);
                     extend[4].bytes.CopyTo(brandBytes, 32);
-                    return Encoding.ASCII.GetString(brandBytes).Trim('\0');
+                    return Encoding.ASCII.GetString(brandBytes).Trim('\0').TrimStart(' ').TrimEnd(' ');
                 }
             }
         }

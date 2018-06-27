@@ -5,6 +5,7 @@ using System.Text;
 using System.Drawing;
 using System.Management;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Converter;
@@ -16,75 +17,64 @@ namespace MyShogi.Model.Test
     /// </summary>
     public static class DevTest2
     {
-        public static void EnvInfo()
-        {
-            Console.WriteLine($"Environment.Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
-            Console.WriteLine($"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
-            Console.WriteLine($"Environment.ProcessorCount: {Environment.ProcessorCount}");
-        }
-
-        public static void CpuInfo()
-        {
-            var cpuid = Model.Common.Utility.CpuId.flags;
-            //*
-            for (UInt32 i = 0; i < cpuid.basicLength; ++i)
-            for (UInt32 j = 0; j < 4; ++j)
-            {
-                Console.WriteLine($"{(i):X8}{(char)(j + 'a')}: {cpuid.getBasic(i, j):X8}");
-            }
-            for (UInt32 i = 0; i < cpuid.extendLength; ++i)
-            for (UInt32 j = 0; j < 4; ++j)
-            {
-                Console.WriteLine($"{(i | 0x80000000):X8}{(char)(j + 'a')}: {cpuid.getExtend(i, j):X8}");
-            }
-            //*/
-            Console.WriteLine($"cpuTarget: {cpuid.cpuTarget}");
-            Console.WriteLine($"vendorId: {cpuid.vendorId}");
-            Console.WriteLine($"brand: {cpuid.brand}");
-            Console.WriteLine($"hasSSE2: {cpuid.hasSSE2}");
-            Console.WriteLine($"hasSSE41: {cpuid.hasSSE41}");
-            Console.WriteLine($"hasSSE42: {cpuid.hasSSE42}");
-            Console.WriteLine($"hasAVX2: {cpuid.hasAVX2}");
-            Console.WriteLine($"hasAVX512F: {cpuid.hasAVX512F}");
-        }
-        public static void MemoryInfo()
-        {
-            using (ManagementClass mc = new ManagementClass("Win32_OperatingSystem"))
-            using (ManagementObjectCollection moc = mc.GetInstances())
-            foreach (ManagementObject mo in moc)
-            {
-                foreach (string key in new[] {
-                    // OSに利用可能な物理メモリのサイズ(kB)
-                    "TotalVisibleMemorySize",
-                    // 現在使用されていない利用可能な物理メモリのサイズ(kB)
-                    "FreePhysicalMemory",
-                    // 仮想メモリのサイズ(kB)
-                    "TotalVirtualMemorySize",
-                    // 現在使用されていない利用可能な仮想メモリのサイズ(kB)
-                    "FreeVirtualMemory",
-                    // ほかのページをスワップアウトすることなくOSのページングファイルにマップできるサイズ(kB)
-                    "FreeSpaceInPagingFiles",
-                    // OSのページングファイルで格納されるサイズ(kB)
-                    "SizeStoredInPagingFiles",
-                })
-                {
-                    Console.WriteLine($"{key}: {mo[key]:N0}kB");
-                }
-                mo.Dispose();
-            }
-        }
         public static void Test1()
         {
-            foreach (var i in new[] { 85, 139, 236, 129, 236, 192, 0, 0, 0, 83, 86, 87, 141, 189, 64, 255, 255, 255, 185, 48, 0, 0, 0, 184, 204, 204, 204, 204, 243, 171, 184, 0, 0, 0, 0, 51, 210, 15, 162, 137, 85, 252, 137, 69, 248, 184, 1, 0, 0, 0, 51, 201, 51, 210, 15, 162, 137, 85, 244, 137, 69, 240, 139, 69, 252, 137, 69, 236, 139, 69, 248, 137, 69, 232, 139, 69, 244, 137, 69, 228, 139, 69, 240, 137, 69, 224, 141, 69, 236, 95, 94, 91, 139, 229, 93, 195 })
-            {
-                Console.Write($"\\x{i:X2}");
-            }
 #if true
             try
             {
-                EnvInfo();
-                CpuInfo();
-                MemoryInfo();
+                var sb = new StringBuilder();
+
+                sb.AppendLine($"Environment.Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
+                sb.AppendLine($"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
+                sb.AppendLine($"Environment.ProcessorCount: {Environment.ProcessorCount}");
+
+                var cpuid = Model.Common.Utility.CpuId.flags;
+
+                for (UInt32 i = 0; i < cpuid.basicLength; ++i)
+                for (UInt32 j = 0; j < 4; ++j)
+                {
+                    Console.WriteLine($"{(i):X8}{(char)(j + 'a')}: {cpuid.getBasic(i, j):X8}");
+                }
+                for (UInt32 i = 0; i < cpuid.extendLength; ++i)
+                for (UInt32 j = 0; j < 4; ++j)
+                {
+                    Console.WriteLine($"{(i | 0x80000000):X8}{(char)(j + 'a')}: {cpuid.getExtend(i, j):X8}");
+                }
+
+                sb.AppendLine($"cpuTarget: {cpuid.cpuTarget}");
+                sb.AppendLine($"vendorId: {cpuid.vendorId}");
+                sb.AppendLine($"brand: {cpuid.brand}");
+                sb.AppendLine($"hasSSE2: {cpuid.hasSSE2}");
+                sb.AppendLine($"hasSSE41: {cpuid.hasSSE41}");
+                sb.AppendLine($"hasSSE42: {cpuid.hasSSE42}");
+                sb.AppendLine($"hasAVX2: {cpuid.hasAVX2}");
+                sb.AppendLine($"hasAVX512F: {cpuid.hasAVX512F}");
+
+                using (ManagementClass mc = new ManagementClass("Win32_OperatingSystem"))
+                using (ManagementObjectCollection moc = mc.GetInstances())
+                foreach (ManagementObject mo in moc)
+                {
+                    foreach (string key in new[] {
+                        // OSに利用可能な物理メモリのサイズ(kB)
+                        "TotalVisibleMemorySize",
+                        // 現在使用されていない利用可能な物理メモリのサイズ(kB)
+                        "FreePhysicalMemory",
+                        // 仮想メモリのサイズ(kB)
+                        "TotalVirtualMemorySize",
+                        // 現在使用されていない利用可能な仮想メモリのサイズ(kB)
+                        "FreeVirtualMemory",
+                        // ほかのページをスワップアウトすることなくOSのページングファイルにマップできるサイズ(kB)
+                        "FreeSpaceInPagingFiles",
+                        // OSのページングファイルで格納されるサイズ(kB)
+                        "SizeStoredInPagingFiles",
+                    })
+                    {
+                        sb.AppendLine($"{key}: {mo[key]:N0}kB");
+                    }
+                    mo.Dispose();
+                }
+
+                MessageBox.Show(sb.ToString(), "SystemInfo", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
             catch (Exception e)
             {
