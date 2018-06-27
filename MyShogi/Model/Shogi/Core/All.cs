@@ -21,6 +21,13 @@ namespace MyShogi.Model.Shogi.Core
                 yield return sq;
         }
 
+        public static IEnumerable<File> Files()
+        {
+            for (var f = File.ZERO; f < File.NB; ++f)
+                yield return f;
+        }
+
+
         // 他、気が向いたら追加する。
     }
 }

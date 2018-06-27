@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace MyShogi.Model.Shogi.Core
@@ -139,6 +141,7 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public Square Pop()
         {
+            Debug.Assert(!IsZero());
             return (p.p0 != 0) ? (Square)(BitOp.LSB64(ref p.p0)) : (Square)(BitOp.LSB64(ref p.p1) + 63);
         }
 
@@ -195,6 +198,18 @@ namespace MyShogi.Model.Shogi.Core
         public static Bitboard LineBB(Square sq,int type)
         {
             return LineBB_[(int)sq, type];
+        }
+
+        /// <summary>
+        /// foreach(var sq in bb) .. のように書くためのもの。
+        /// そこそこ遅いので速度が要求されるところで使わないこと。
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<Square> GetEnumerator()
+        {
+            var bb = this;
+            while (bb.IsNotZero())
+                yield return bb.Pop();
         }
 
         // -------------------------------------------------------------------------

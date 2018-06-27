@@ -234,7 +234,10 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// 駒箱にある駒の数を返す。
+        /// 駒箱(使っていない駒を入れておく箱)にある駒の数を返す。
+        /// 
+        /// 銀が5枚のような局面はSetSfen()で例外が出るので存在しないはず。
+        /// ただし玉が3枚あるような局面はありうる。そのときはPieceBoxCount(Piece.KING)は -1 が返る。
         /// </summary>
         /// <param name="pt">Piece.PAWN～KINGまで。</param>
         /// <returns></returns>
@@ -243,8 +246,12 @@ namespace MyShogi.Model.Shogi.Core
             Debug.Assert(Piece.PAWN <= pt && pt <= Piece.KING);
 
             if (pt == Piece.KING)
-                return (KingSquare(Color.BLACK) == Square.NB ? 1 : 0) +
-                       (KingSquare(Color.WHITE) == Square.NB ? 1 : 0);
+            {
+                // bitboardから枚数を数える。
+                var king_bb = Pieces(Piece.HDK) & ~(Pieces(Piece.BISHOP_HORSE) | Pieces(Piece.ROOK_DRAGON));
+                var king = king_bb.PopCount(); // 玉の枚数がわかる
+                return 2 - king;
+            }
             else
                 return hands[(int)Color.NB].Count(pt);
         }
@@ -703,6 +710,9 @@ namespace MyShogi.Model.Shogi.Core
         /// sfen文字列でこのクラスを初期化する
         ///
         /// 読み込みに失敗した場合、SfenException例外が投げられる。
+        /// ・2歩、行き場のない駒の配置、非手番側への王手、片玉、先手玉が2枚などのチェックはあえて行っていない。
+        /// ・銀が5枚は不正。銀3枚(1枚は駒箱)は合法。
+        /// ・玉は手駒に出来ない。
         /// </summary>
         /// <param name="sfen"></param>
         public void SetSfen(string sfen)
@@ -1567,6 +1577,84 @@ namespace MyShogi.Model.Shogi.Core
 
             // ↑の実装、美しいが、いかんせん遅い。
             // 棋譜を大量に読み込ませて学習させるときにここがボトルネックになるので直接unpackする関数を書く。(べき)
+        }
+
+        /// <summary>
+        /// 局面が合法かどうかをチェックする。
+        /// 次の4つをチェックする。
+        /// ・二歩
+        /// ・行き場のない駒
+        /// ・非手番側への王手がかかっている
+        /// ・同じ手番側の玉が2枚ある。もしくは、3枚以上の玉がある。(引数のfor_mateがtrueのときは詰将棋用なので片玉は可)
+        /// 次の項目はチェックしない
+        /// ・千日手の成立
+        /// ・駒が足りない(銀が3枚など)
+        /// </summary>
+        /// <param name="for_mate">詰将棋用であるか。trueであれば片玉は可。</param>
+        /// <returns>合法であったならnull。非合法であったなら、その内容が文字列として返る。</returns>
+        public string IsValid(bool for_mate = false)
+        {
+            // 1.二歩のチェック
+            foreach (var c in All.Colors())
+            {
+                var pawn_bb = Pieces(c, Piece.PAWN);
+                foreach (var f in All.Files())
+                {
+                    if ((pawn_bb & Bitboard.FileBB(f)).PopCount() >= 2)
+                        return $"{f.Pretty()}筋に{c.Pretty()}の歩が2枚あります。(二歩)";
+                }
+            }
+
+            // 2.行き場のない駒
+            {
+                // 歩、香、桂に対してチェックするより、全駒を列挙して行き場が本当にないのかを
+                // チェックするほうが美しいコードになるが…。
+
+                // 駒種を限定して、1,2,3段目に限定して全駒列挙して行き場を調べるか…。
+                var bb = Pieces(Piece.PAWN, Piece.LANCE, Piece.KNIGHT) &
+                    (Bitboard.EnemyField(Color.BLACK) | Bitboard.EnemyField(Color.WHITE));
+
+                var zero_bb = Bitboard.ZeroBB();
+                foreach(var sq in bb)
+                {
+                    var pc = PieceOn(sq);
+                    if (Bitboard.EffectsFrom(pc, sq, zero_bb).IsZero())
+                        return $"{sq.Pretty()}の{pc.PieceColor().Pretty()}の{pc.PieceType().Pretty2()}に移動できる升がないです。";
+                }
+            }
+
+            // 3.非手番側への王手
+            {
+                var them = sideToMove.Not();
+                var them_king = KingSquare(them);
+                if (them_king != Square.NB && EffectedTo(sideToMove, them_king))
+                    return $"非手番側である{them.Pretty()}に王手がかかっています。";
+            }
+
+            // 4.片玉など
+            {
+                var king_bb = Pieces(Piece.HDK) & ~(Pieces(Piece.BISHOP_HORSE) | Pieces(Piece.ROOK_DRAGON));
+                int k = king_bb.PopCount();
+                if (k == 0)
+                    return "盤上に玉がありません。";
+
+                if (k == 1 && !for_mate)
+                    return "盤上に玉が1枚しかありません。";
+
+                if (k == 2)
+                {
+                    // 同じ手番側の玉が配置されているかも知れん。
+                    var k1_sq = king_bb.Pop();
+                    var k2_sq = king_bb.Pop();
+                    if (PieceOn(k1_sq) == PieceOn(k2_sq))
+                        return $"盤上に{PieceOn(k1_sq).PieceColor().Pretty()}側の玉が2枚あります。";
+                }
+
+                if (k >= 3)
+                    return $"盤上に玉が{k}枚あります。";
+            }
+
+            return null;
         }
 
         // -------------------------------------------------------------------------

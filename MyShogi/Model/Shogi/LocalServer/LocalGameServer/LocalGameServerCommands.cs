@@ -31,6 +31,17 @@ namespace MyShogi.Model.Shogi.LocalServer
             AddCommand(
             () =>
             {
+                // 局面が非合法局面であれば受理しない。
+                if (gameSetting.Board.BoardTypeCurrent)
+                {
+                    var error = Position.IsValid();
+                    if (error != null)
+                    {
+                        TheApp.app.MessageShow(error);
+                        return;
+                    }
+                }
+
                 // いったんリセット
                 GameEnd();
                 GameStart(gameSetting);

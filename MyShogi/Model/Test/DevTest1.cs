@@ -202,10 +202,12 @@ namespace MyShogi.Model.Test
             //Console.WriteLine(pos.Pretty());
 #endif
 
+#if false
             // 指し手生成祭りの局面
             pos.SetSfen("l6nl/5+P1gk/2np1S3/p1p4Pp/3P2Sp1/1PPb2P1P/P5GS1/R8/LN4bKL w RGgsn5p 1");
             Console.WriteLine(pos.ToSfen());
             Console.WriteLine(pos.Pretty());
+#endif
 
 #if false
             // 駒番号のデバッグ
@@ -335,6 +337,59 @@ namespace MyShogi.Model.Test
             Console.WriteLine(pos2.Pretty());
             Console.WriteLine(pos2.PrettyPieceNo());
 
+#endif
+
+#if true
+            {
+                // -- 局面の合法性のチェック
+
+                // 平手
+                pos.SetSfen("lnsgkgsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+
+                // 先手2歩
+                pos.SetSfen("lnsgkgsnl/9/9/P8/9/9/P8/1B5R1/LNSGKGSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+
+                // 後手2歩
+                pos.SetSfen("lnsgkgsnl/9/8p/8p/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+
+                // 玉なし
+                pos.SetSfen("lnsg1gsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSG1GSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+
+                // 片玉
+                pos.SetSfen("lnsg1gsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+
+                // 片玉(詰将棋時) これは合法
+                pos.SetSfen("lnsg1gsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1");
+                Console.WriteLine("詰将棋片玉 : "+pos.IsValid(true));
+
+                // 先手玉が2枚
+                pos.SetSfen("lnsgKgsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+
+                // 玉3枚
+                pos.SetSfen("lnsgkksnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+
+                // 非手番側に王手
+                pos.SetSfen("lnsgkgsnl/9/ppppppBpp/9/9/9/PPPPPPPPP/25R1/LNSGKGSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+
+                // 行き場の無い駒
+                pos.SetSfen("Lnsgkgsnl/9/pppppp1pp/9/9/9/PPPPPPPPP/25R1/LNSGKGSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+                pos.SetSfen("l1sgkgsnl/N8/pppppp1pp/9/9/9/PPPPPPPPP/25R1/LNSGKGSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+                pos.SetSfen("P1sgkgsnl/9/pppppp1pp/9/9/9/9/25R1/LNSGKGSNL b - 1");
+                Console.WriteLine(pos.IsValid());
+                pos.SetSfen("2sgkgsnl/9/9/9/9/9/9/25R1/LNSGKGSNp b - 1");
+                Console.WriteLine(pos.IsValid());
+
+            }
 #endif
 
         }

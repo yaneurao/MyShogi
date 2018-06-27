@@ -593,8 +593,9 @@ namespace MyShogi.View.Win2D
                 {
                     var pc = pos.PieceOn(sq);
                     var rp = pc.RawPieceType();
-                    // 玉は裏返らないし、敵玉にもならない。(それが出来てしまうと先手玉が2枚の局面が作れてしまうため)
-                    if (pc != Piece.NO_PIECE && rp != Piece.KING)
+
+                    // 玉であっても裏返せる。
+                    if (pc != Piece.NO_PIECE)
                     {
                         var RawBoard = new Piece[pos.RawBoard.Length];
                         pos.RawBoard.CopyTo(RawBoard, 0);
