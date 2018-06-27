@@ -462,7 +462,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 盤面のsqの升(手駒も含む)がクリックされた
+        /// [UI thread] : 盤面のsqの升(手駒も含む)がクリックされた
         /// </summary>
         /// <param name="sq"></param>
         public void OnBoardClick(SquareHand sq)
@@ -541,7 +541,50 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 盤面がクリックされたときに呼び出されるハンドラ
+        /// [UI thread] : 盤面のsqの升(手駒・駒箱の駒も含む)が右クリックされた
+        /// </summary>
+        /// <param name="sq"></param>
+        public void OnBoardRightClick(SquareHand sq)
+        {
+            var config = TheApp.app.config;
+
+            if (config.InTheBoardEdit)
+            {
+                // -- 盤面編集中
+
+                var gameServer = ViewModel.ViewModel.gameServer;
+                var pos = gameServer.Position;
+
+                // 盤上の駒はクリックされるごとに先手→先手成駒→後手→後手成駒のように駒の変化
+                if (sq.IsBoardPiece())
+                {
+                    var pc = pos.PieceOn(sq);
+                    var rp = pc.RawPieceType();
+                    // 玉は裏返らないし、敵玉にもならない。(それが出来てしまうと先手玉が2枚の局面が作れてしまうため)
+                    if (pc != Piece.NO_PIECE && rp != Piece.KING)
+                    {
+                        var RawBoard = new Piece[pos.RawBoard.Length];
+                        pos.RawBoard.CopyTo(RawBoard, 0);
+
+                        Piece nextPc;
+                        // 成っていない駒なら、成駒に。成っている駒なら相手番の成っていない駒に。
+                        if (pc.CanPromote())
+                            nextPc = pc.ToPromotePiece();
+                        else
+                            nextPc = Util.MakePiece(pc.PieceColor().Not() /*相手番の駒に*/,pc.RawPieceType());
+                        RawBoard[(int)sq] = nextPc;
+
+                        var sfen = Position.SfenFromRawdata(RawBoard, pos.RawHands, pos.sideToMove, pos.gamePly);
+                        gameServer.SetSfenCommand(sfen);
+                    }
+                }
+
+                //Console.WriteLine(sq.Pretty());
+            }
+        }
+
+        /// <summary>
+        /// [UI thread] : 盤面がクリックされたときに呼び出されるハンドラ
         /// </summary>
         /// <param name="p"></param>
         public void OnClick(Point p)
@@ -555,6 +598,17 @@ namespace MyShogi.View.Win2D
 
             // デバッグ用にクリックされた升の名前を出力する。
             //Console.WriteLine(sq.Pretty());
+        }
+
+        /// <summary>
+        /// [UI thread] : 盤面が右クリックされたときに呼び出されるハンドラ
+        /// </summary>
+        /// <param name="p"></param>
+        public void OnRightClick(Point p)
+        {
+            p = InverseAffine(p);
+            SquareHand sq = BoardAxisToSquare(p);
+            OnBoardRightClick(sq);
         }
 
         /// <summary>

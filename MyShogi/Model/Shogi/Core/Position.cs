@@ -137,7 +137,8 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// 駒落ちであるかのフラグ
-        /// 盤面を初期化した時に、駒が40枚に満たないなら駒落ちと判定。
+        /// 盤面を初期化した時に、駒箱に駒があれば駒落ちと判定。
+        /// (片玉は駒落ちとして扱わない)
         /// </summary>
         public bool Handicapped;
 
@@ -867,7 +868,7 @@ namespace MyShogi.Model.Shogi.Core
 
                 foreach (var sq in All.Squares())
                 {
-                    var pt = PieceOn(sq).PieceType();
+                    var pt = PieceOn(sq).RawPieceType();
                     if (pt != Piece.NO_PIECE && pt!=Piece.KING && h.Count(pt) >= 1) // 0以下ならこれ以上削れない。玉もノーカウント
                         h.Sub(pt);
                 }

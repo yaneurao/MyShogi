@@ -131,12 +131,40 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// 成ってない駒を返す。後手という属性も消去する。
-        /// 例) 成銀→銀 , 後手の馬→先手の角
-        /// ただし、pc == KINGでの呼び出しはNO_PIECEが返るものとする。
+        /// 例) 成銀→銀 , 後手の馬→先手の角 , 先手玉　→　先手の玉
+        /// NO_PIECEはNO_PIECEが返る。
         /// </summary>
         public static Piece RawPieceType(this Piece piece)
         {
-            return (Piece)(piece.ToInt() & 7);
+            if (piece == Piece.NO_PIECE && piece == Piece.WHITE)
+                return Piece.NO_PIECE;
+
+            // KINGがNO_PIECEになってしまうといけないので、1引いてから下位3bit取り出して、1足しておく。
+            return (Piece)((((int)piece-1) & 7)+1);
+        }
+
+        /// <summary>
+        /// 成れる駒であるか。
+        /// 歩、香、桂、銀、角、飛のときのみtrueが返る。
+        /// </summary>
+        /// <param name="piece"></param>
+        /// <returns></returns>
+        public static bool CanPromote(this Piece piece)
+        {
+            var pt = piece.PieceType();
+            return Piece.PAWN <= pt && pt < Piece.KING && pt != Piece.GOLD; 
+        }
+
+        /// <summary>
+        /// 成った駒を返す
+        /// </summary>
+        /// <param name="piece">渡していいのは、歩、香、桂、銀、角、飛のみ(後手の駒でも可)</param>
+        /// <returns></returns>
+        public static Piece ToPromotePiece(this Piece piece)
+        {
+            Debug.Assert(piece.CanPromote());
+
+            return piece + (int)Piece.PROMOTE;
         }
 
         /// <summary>

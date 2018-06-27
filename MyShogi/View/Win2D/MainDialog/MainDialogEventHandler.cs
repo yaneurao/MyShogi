@@ -141,27 +141,59 @@ namespace MyShogi.View.Win2D
         // -- 以下、マウスのクリック、ドラッグ(による駒移動)を検知するためのハンドラ
         // クリックイベントは使えないので、MouseDown,MouseUp,MouseMoveからクリックとドラッグを判定する。
 
+        /// <summary>
+        /// [UI thread] : Mouse Downのイベントハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainDialog_MouseDown(object sender, MouseEventArgs e)
         {
-            mouseLastDown = e.Location;
+            if (e.Button == MouseButtons.Left)
+            {
+                mouseLastDown = e.Location;
+            } else if (e.Button == MouseButtons.Right)
+            {
+                // 右クリックによるドラッグは操作として存在しない。
+                // これはクリックイベントとみなす。
+                gameScreen.OnRightClick(e.Location);
+            }
         }
 
+        /// <summary>
+        /// [UI thread] : Mouse Upのイベントハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainDialog_MouseUp(object sender, MouseEventArgs e)
         {
             var p = e.Location;
-            
-            // 移動がないので、これはクリックイベントとして扱う
-            if (mouseLastDown == p)
-                gameScreen.OnClick(p);
-            else
-                gameScreen.OnDrag(mouseLastDown, p);
+
+            if (e.Button == MouseButtons.Left)
+            {
+                // 移動がないので、これはクリックイベントとして扱う
+                if (mouseLastDown == p)
+                    gameScreen.OnClick(p);
+                else
+                    gameScreen.OnDrag(mouseLastDown, p);
+            } else if (e.Button == MouseButtons.Left)
+            {
+                // 右クリックによるドラッグは操作として存在しない。
+                gameScreen.OnRightClick(p);
+            }
 
             mouseLastDown = new Point(-1, -1); // また意味のない地点を指すようにしておく
         }
 
+        /// <summary>
+        /// [UI thread] : Mouse Moveのイベントハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainDialog_MouseMove(object sender, MouseEventArgs e)
         {
-            gameScreen.OnMouseMove(e.Location);
+            // ドラッグ的な操作
+            if ( e.Button == MouseButtons.Left)
+                gameScreen.OnMouseMove(e.Location);
         }
 
         /// <summary>
