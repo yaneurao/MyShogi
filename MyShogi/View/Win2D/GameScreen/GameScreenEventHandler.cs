@@ -76,6 +76,9 @@ namespace MyShogi.View.Win2D
         {
             TurnChanged(args);
             ViewModel.kifuControl.UpdateButtonState((bool)args.value /* == inTheGame */); // 棋譜ボタンが変化するかもなので
+
+            // Tooltipの◁▷本譜ボタンの状態更新
+            UpdateTooltipButtons2();
         }
 
         /// <summary>
@@ -122,6 +125,18 @@ namespace MyShogi.View.Win2D
             var canInterrupt = !gameServer.EngineInitializing && gameServer.InTheGame;
             SetButton(MainDialogButtonEnum.INTERRUPT, canInterrupt);
         }
+
+        /// <summary>
+        /// Tooltipの◁▷本譜ボタンの状態更新
+        /// </summary>
+        private void UpdateTooltipButtons2()
+        {
+            var consideration = ViewModel.ViewModel.gameServer.Consideration;
+            SetButton(MainDialogButtonEnum.REWIND, consideration);
+            SetButton(MainDialogButtonEnum.FORWARD, consideration);
+            SetButton(MainDialogButtonEnum.MAIN_BRANCH, consideration);
+        }
+
 
         /// <summary>
         /// ボタンのEnable/Disableを切り替えたい時のcallback用のデリゲート
@@ -685,8 +700,8 @@ namespace MyShogi.View.Win2D
 
             //Console.WriteLine(sq.Pretty());
 
-            var inTheGame = gameServer.InTheGame;
             var inTheBoardEdit = TheApp.app.config.InTheBoardEdit;
+            //var inTheGame = gameServer.InTheGame;
 
             if (inTheBoardEdit)
             {

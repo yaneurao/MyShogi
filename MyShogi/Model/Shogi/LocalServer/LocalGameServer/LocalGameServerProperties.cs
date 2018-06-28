@@ -1,8 +1,9 @@
-﻿using MyShogi.Model.Common.ObjectModel;
+﻿using System.Collections.Generic;
+using MyShogi.App;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
-using System.Collections.Generic;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -31,12 +32,22 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 対局中であるかを示すフラグ。
-        /// これがfalseであれば対局中ではないので自由に駒を動かせる。(ようにするかも)
         /// </summary>
         public bool InTheGame
         {
             get { return GetValue<bool>("InTheGame"); }
             private set { SetValue<bool>("InTheGame", value); }
+        }
+
+        /// <summary>
+        /// 検討中であるかを示すフラグ。
+        /// これがtrueであれば対局中ではなく、盤面編集中ではないので自由に駒を動かせる。
+        /// 
+        /// この変更イベントは用意されていない。
+        /// </summary>
+        public bool Consideration
+        {
+            get { return !InTheGame && !TheApp.app.config.InTheBoardEdit; }
         }
 
         /// <summary>

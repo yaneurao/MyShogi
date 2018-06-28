@@ -99,9 +99,35 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void SetKifuListIndex(int selectedIndex)
         {
-            if (listBox1.Items.Count <= selectedIndex)
+            // 選べる要素が存在しない。
+            if (listBox1.Items.Count == 0)
+                return;
+
+            // 範囲外なら押し戻す。
+            if (selectedIndex < 0)
+                selectedIndex = 0;
+            else if (listBox1.Items.Count <= selectedIndex)
                 selectedIndex = listBox1.Items.Count - 1;
+
             listBox1.SelectedIndex = selectedIndex;
+        }
+
+        /// <summary>
+        /// 棋譜ウィンドウ上、一手戻るボタン
+        /// 局面が一手戻るとは限らない。
+        /// </summary>
+        public void RewindKifuListIndex()
+        {
+            SetKifuListIndex(listBox1.SelectedIndex - 1);
+        }
+
+        /// <summary>
+        /// 棋譜ウィンドウ上、一手進むボタン
+        /// 局面が一手進むとは限らない。
+        /// </summary>
+        public void ForwardKifuListIndex()
+        {
+            SetKifuListIndex(listBox1.SelectedIndex + 1);
         }
 
         // -- 以下、棋譜ウインドウに対するオペレーション

@@ -216,10 +216,13 @@ namespace MyShogi.View.Win2D
             ToolStripButton btn;
             switch (name)
             {
-                case MainDialogButtonEnum.RESIGN: btn = this.toolStripButton1; break;
-                case MainDialogButtonEnum.UNDO_MOVE: btn = this.toolStripButton2; break;
-                case MainDialogButtonEnum.MOVE_NOW: btn = this.toolStripButton3; break;
-                case MainDialogButtonEnum.INTERRUPT: btn = this.toolStripButton4; break;
+                case MainDialogButtonEnum.RESIGN     : btn = this.toolStripButton1; break;
+                case MainDialogButtonEnum.UNDO_MOVE  : btn = this.toolStripButton2; break;
+                case MainDialogButtonEnum.MOVE_NOW   : btn = this.toolStripButton3; break;
+                case MainDialogButtonEnum.INTERRUPT  : btn = this.toolStripButton4; break;
+                case MainDialogButtonEnum.REWIND     : btn = this.toolStripButton9; break;
+                case MainDialogButtonEnum.FORWARD    : btn = this.toolStripButton10; break;
+                case MainDialogButtonEnum.MAIN_BRANCH: btn = this.toolStripButton11; break;
                 default: btn = null; break;
             }
 
@@ -283,5 +286,36 @@ namespace MyShogi.View.Win2D
             var s = ViewModel.gameServer;
             s.BoardReverse = !s.BoardReverse;
         }
+
+        /// <summary>
+        /// ◁　ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton9_Click(object sender, System.EventArgs e)
+        {
+            gameScreen.kifuControl.RewindKifuListIndex();
+        }
+
+        /// <summary>
+        /// ▷　ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton10_Click(object sender, System.EventArgs e)
+        {
+            gameScreen.kifuControl.ForwardKifuListIndex();
+        }
+
+        /// <summary>
+        /// 本譜ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton11_Click(object sender, System.EventArgs e)
+        {
+            gameScreen.kifuControl.Button1ClickedHandler();
+        }
+
     }
 }

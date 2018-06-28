@@ -1,7 +1,7 @@
 ﻿namespace MyShogi.View.Win2D
 {
     /// <summary>
-    /// メインダイアログのToolTipについているボタンに対応する定数
+    /// メインダイアログのToolStripについているボタンに対応する定数
     /// ボタン番号で呼ぶのはわかりにくいので名前をつける。
     /// </summary>
     public enum MainDialogButtonEnum
@@ -10,5 +10,9 @@
         UNDO_MOVE , // 待った
         MOVE_NOW  , // 急いで指させる
         INTERRUPT , // 中断
+
+        REWIND    , // ◁ボタン
+        FORWARD   , // ▷ボタン
+        MAIN_BRANCH , // 本譜
     }
 }
