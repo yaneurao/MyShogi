@@ -66,7 +66,7 @@ namespace MyShogi.Model.Resource.Images
         /// 転送元矩形
         /// </summary>
         public Rectangle rect { get; private set; }
-
+        
         /// <summary>
         /// 転送先オフセット。この値の分だけ(affine変換されたあと)移動させたところに描画すべき。
         /// </summary>

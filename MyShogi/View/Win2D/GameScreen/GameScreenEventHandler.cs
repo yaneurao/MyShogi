@@ -43,7 +43,7 @@ namespace MyShogi.View.Win2D
             ViewModel.kifuControl.Visible =
                 !config.InTheBoardEdit /*盤面編集中は非表示*/
                 &&
-                config.KomadaiImageVersion == 1 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */;
+                config.PieceTableImageVersion == 1 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */;
             ;
         }
 
@@ -227,7 +227,7 @@ namespace MyShogi.View.Win2D
             double ratio = (double)screenRect.Width / screenRect.Height;
             //Console.WriteLine(ratio);
 
-            TheApp.app.config.KomadaiImageVersion = (ratio < 1.36) ? 2 : 1;
+            TheApp.app.config.PieceTableImageVersion = (ratio < 1.36) ? 2 : 1;
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace MyShogi.View.Win2D
                 if (reverse)
                     color = color.Not();
 
-                var v = (TheApp.app.config.KomadaiImageVersion == 1) ? 0 : 1;
+                var v = (TheApp.app.config.PieceTableImageVersion == 1) ? 0 : 1;
 
                 var pc = sq.ToPiece();
 
@@ -277,19 +277,17 @@ namespace MyShogi.View.Win2D
             {
                 // -- 駒箱の駒
 
-                if (TheApp.app.config.KomadaiImageVersion == 1)
+                // 並び替える
+                // pc : 歩=0,香=1,桂=2,銀=3,金=4,角=5,飛=6,玉=7にする。
+                var pc = (int)sq.ToPiece() - 1;
+                if (pc == 6)
+                    pc = 4;
+                else if (pc == 4 || pc == 5)
+                    ++pc;
+
+                if (TheApp.app.config.PieceTableImageVersion == 1)
                 {
                     // 駒箱の1段目に3枚、2段目に2枚、3段目に3枚表示する。
-
-                    var pc = (int)sq.ToPiece() - 1;
-
-                    // 並び替える
-                    // 歩=0,香=1,桂=2,銀=3,金=4,角=5,飛=6,玉=7
-
-                    if (pc == 6)
-                        pc = 4;
-                    else if (pc == 4 || pc == 5)
-                        ++pc;
 
                     // 5を欠番にして2段目を2枚にする。
                     if (pc >= 5)
@@ -310,14 +308,15 @@ namespace MyShogi.View.Win2D
                         );
                 } else
                 {
-                    var pc = sq.ToPiece();
+                    int file = pc % 2;
+                    int rank = pc / 2;
 
-                    int x = 0;
-                    int y = ((int)pc - 1) * piece_img_size.Height / 2;
+                    int x = (int)(file * piece_img_size.Width * .5);
+                    int y = (int)(rank * piece_img_size.Height * .65);
 
                     dest = new Point(
-                        hand_box_pos[0].X + x,
-                        hand_box_pos[0].Y + y
+                        hand_box_pos[1].X + x,
+                        hand_box_pos[1].Y + y
                         );
                 }
             }
@@ -336,7 +335,7 @@ namespace MyShogi.View.Win2D
             if (reverse)
                 c = c.Not();
 
-            var v = (TheApp.app.config.KomadaiImageVersion == 1) ? 0 : 1;
+            var v = (TheApp.app.config.PieceTableImageVersion == 1) ? 0 : 1;
 
             return new Rectangle(hand_table_pos[v,(int)c], hand_table_size[v]);
         }
@@ -349,7 +348,7 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Rectangle PieceBoxRectangle()
         {
-            var v = (TheApp.app.config.KomadaiImageVersion == 1) ? 0 : 1;
+            var v = (TheApp.app.config.PieceTableImageVersion == 1) ? 0 : 1;
 
             return new Rectangle(piece_box_pos[v], piece_box_size[v]);
         }
@@ -983,10 +982,17 @@ namespace MyShogi.View.Win2D
                 var config = TheApp.app.config;
                 if (config.InTheBoardEdit)
                 {
+                    // 小さい駒の表示倍率
+                    var ratio = 0.6f;
+
+                    var size = config.PieceTableImageVersion == 1 ?
+                        piece_img_size :
+                        new Size((int)(piece_img_size.Width * ratio), (int)(piece_img_size.Height * ratio));
+
                     for (var pc = Piece.PAWN; pc <= Piece.KING; ++pc)
                     {
                         var sq = Util.ToPieceBoxPiece(pc);
-                        if (new Rectangle(PieceLocation(sq), piece_img_size).Contains(p))
+                        if (new Rectangle(PieceLocation(sq), size).Contains(p))
                             return sq;
                     }
 

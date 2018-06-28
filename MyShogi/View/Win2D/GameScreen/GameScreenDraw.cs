@@ -56,21 +56,22 @@ namespace MyShogi.View.Win2D
         public Graphics graphics;
 
         /// <summary>
-        // スプライトを描画するコード
-        // 以下の描画を移植性を考慮してすべてスプライトの描画に抽象化しておく。
-        // pの地点に等倍でSpriteを描画する。(描画するときにaffine変換を行うものとする)
+        /// スプライトを描画するコード
+        /// 以下の描画を移植性を考慮してすべてスプライトの描画に抽象化しておく。
+        /// pの地点に等倍でSpriteを描画する。(描画するときにaffine変換を行うものとする)
+        /// ratioは表示倍率。デフォルトでは1.0
         /// </summary>
         /// <param name="g"></param>
         /// <param name="img"></param>
         /// <param name="destRect"></param>
         /// <param name="sourceRect"></param>
-        private void DrawSprite(Point p, Sprite src)
+        private void DrawSprite(Point p, Sprite src , float ratio = 1.0f)
         {
             // null sprite
             if (src == null)
                 return;
 
-            var dstRect = Affine(p, new Size(src.rect.Width, src.rect.Height));
+            var dstRect = Affine(p, new Size((int)(src.rect.Width * ratio) , (int)(src.rect.Height * ratio)));
             // dstRect.Width = 転送先width×scale_xなのだが、等倍なので転送先width == 転送元width
             // heightについても上記と同様。
 
@@ -83,7 +84,16 @@ namespace MyShogi.View.Win2D
 
             // 連結スプライトならば続けてそれを描画する。
             if (src.next != null)
-                DrawSprite(p, src.next);
+                DrawSprite(p, src.next , ratio);
+        }
+
+        /// <summary>
+        /// SpriteEx型のスプライトを渡して、それを描画する。
+        /// </summary>
+        /// <param name="sprite"></param>
+        private void DrawSprite(SpriteEx sprite)
+        {
+            DrawSprite(sprite.dstPoint, sprite.sprite, sprite.ratio);
         }
 
         /// <summary>

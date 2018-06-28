@@ -46,7 +46,7 @@ namespace MyShogi.App
 
                 config.AddPropertyChangedHandler("BoardImageVersion", imageManager.UpdateBoardImage);
                 config.AddPropertyChangedHandler("TatamiImageVersion", imageManager.UpdateBoardImage);
-                config.AddPropertyChangedHandler("KomadaiImageVersion", imageManager.UpdateBoardImage);
+                config.AddPropertyChangedHandler("PieceTableImageVersion", imageManager.UpdateBoardImage);
                 config.AddPropertyChangedHandler("InTheBoardEdit", imageManager.UpdateBoardImage);
 
                 config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);

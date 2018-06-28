@@ -63,6 +63,7 @@ namespace MyShogi.Model.Resource.Images
 
             return sprite;
         }
+        
 
         /// <summary>
         /// 着手の移動先、移動元などのエフェクト画像の取得。

@@ -12,14 +12,14 @@ namespace MyShogi.View.Win2D
         // -- 各種定数
 
         // 盤面素材の画像サイズ
-        public static readonly Size board_img_size = new Size(1920,1080);
+        public static readonly Size board_img_size = new Size(1920, 1080);
 
         // 盤面素材における、駒を配置する升の左上。
         public static readonly Point board_location = new Point(524, 53);
 
         // 駒素材の画像サイズ(駒1つ分)
         // これが横に8つ、縦に4つ、計32個並んでいる。
-        public static readonly Size piece_img_size = new Size(97,106);
+        public static readonly Size piece_img_size = new Size(97, 106);
 
         // 駒台の手駒の表示順
         private static readonly Piece[] hand_piece_list = {
@@ -126,7 +126,10 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 駒箱で、同種の駒が複数あるときの数字の描画のための(当該駒からの)オフセット値
         /// </summary>
-        private static Size hand_number_offset2 = new Size(50, 15);
+        private static Size[] hand_number_offset2 = {
+            new Size(50, 15),
+            new Size(30, 10),
+        };
 
         /// <summary>
         /// 駒箱の画面上の位置
@@ -136,7 +139,7 @@ namespace MyShogi.View.Win2D
             // 普通の駒箱
             new Point(229,643+52),
             // 細長の駒箱
-            new Point(404,663),
+            new Point(404-10,730),
         };
 
 

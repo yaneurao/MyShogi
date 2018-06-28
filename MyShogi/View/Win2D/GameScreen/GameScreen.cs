@@ -64,12 +64,15 @@ namespace MyShogi.View.Win2D
             var state = vm.viewState;
 
             var picked_from = state.picked_from;
+
             // 持ち上げている駒のスプライトと座標(最後に描画するために積んでおく)
-            Sprite picked_sprite = null;
-            Point picked_sprite_location = new Point(0, 0);
+
+            SpriteEx picked_sprite = null;
 
             // 盤面を反転させて描画するかどうか
             var reverse = gameServer.BoardReverse;
+
+            var piece_table_ver = config;
 
             // -- 盤面の描画
             {
@@ -120,8 +123,7 @@ namespace MyShogi.View.Win2D
                             // 移動元の升に適用されるエフェクトを描画する。
                             DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
 
-                            picked_sprite_location = dest + new Size(-5,-20);
-                            picked_sprite = sprite;
+                            picked_sprite = new SpriteEx(sprite , dest + new Size(-5,-20));
                             continue;
                         } else
                         {
@@ -182,8 +184,7 @@ namespace MyShogi.View.Win2D
                                 // 移動元の升に適用されるエフェクトを描画する。
                                 DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
 
-                                picked_sprite_location = dest + new Size(-5, -20);
-                                picked_sprite = sprite;
+                                picked_sprite = new SpriteEx(sprite , dest + new Size(-5, -20));
                             }
                             else 
                             {
@@ -201,36 +202,42 @@ namespace MyShogi.View.Win2D
 
                 // -- 駒箱の駒の描画(盤面編集時のみ)
                 {
+
+                    // 通常の駒台 0 , 細長い駒台なら1
+                    var v = config.PieceTableImageVersion == 1 ? 0 : 1;
+                    // 表示倍率
+                    var ratio = v == 0 ? 1.0f : 0.6f;
+
                     // 駒箱の駒
                     var h = pos.Hand(SColor.NB);
 
-                    foreach(var pt in piece_box_list)
+                    foreach (var pt in piece_box_list)
                     {
                         int count = pos.PieceBoxCount(pt);
                         if (count > 0)
                         {
                             var dest = PieceLocation(Util.ToPieceBoxPiece(pt));
                             var sprite = SPRITE.Piece(pt);
+
                             var piece = Util.ToPieceBoxPiece(pt);
 
                             // この駒、選択されているならば
                             if (picked_from == piece)
                             {
                                 // 移動元の升に適用されるエフェクトを描画する。
-                                DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
+                                DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom), ratio);
 
-                                picked_sprite_location = dest + new Size(-5, -20);
-                                picked_sprite = sprite;
+                                picked_sprite = new SpriteEx( sprite , dest + new Size(-5, -20) , ratio);
                             }
                             else
                             {
                                 // 駒の描画
-                                DrawSprite(dest, sprite);
+                                DrawSprite(dest, sprite , ratio);
                             }
 
                             // 数字の描画(枚数が2枚以上のとき)
                             if (count >= 2)
-                                DrawSprite(dest + hand_number_offset2, SPRITE.HandBoxNumber(count));
+                                DrawSprite(dest + hand_number_offset2[v], SPRITE.HandBoxNumber(count) , ratio);
                         }
                     }
                 }
@@ -245,7 +252,7 @@ namespace MyShogi.View.Win2D
 
             // -- 対局者氏名
             {
-                switch (config.KomadaiImageVersion)
+                switch (config.PieceTableImageVersion)
                 {
                     // 通常状態の駒台表示
                     case 1:
@@ -263,7 +270,7 @@ namespace MyShogi.View.Win2D
 
             // -- 持ち時間等
             {
-                switch (config.KomadaiImageVersion)
+                switch (config.PieceTableImageVersion)
                 {
                     // 通常状態の駒台表示
                     case 1:
@@ -294,7 +301,7 @@ namespace MyShogi.View.Win2D
                 int side = pos.sideToMove == SColor.BLACK ? 0 : 1;
                 side = reverse ? (side ^ 1) : side;
 
-                switch (config.KomadaiImageVersion)
+                switch (config.PieceTableImageVersion)
                 {
                     case 1: DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal()); break;
                     case 2: DrawSprite(turn_slim_pos , SPRITE.TurnSlim(pos.sideToMove,reverse)); break;
@@ -305,7 +312,7 @@ namespace MyShogi.View.Win2D
             // -- 持ち上げている駒があるなら、一番最後に描画する。
             {
                 if (picked_sprite != null)
-                    DrawSprite(picked_sprite_location, picked_sprite);
+                    DrawSprite(picked_sprite);
             }
 
             // -- 成り、不成の選択ダイアログを出している最中であるなら

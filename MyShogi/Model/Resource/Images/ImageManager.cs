@@ -49,7 +49,7 @@ namespace MyShogi.Model.Resource.Images
             var koma_box = new ImageLoader();
             Load(ref board ,$"board_v{config.BoardImageVersion}_1920_1080.png");
             Load(ref tatami, $"tatami_v{config.TatamiImageVersion}_1920_1080.png");
-            Load(ref komadai, $"komadai_v{config.KomadaiImageVersion}_1920_1080.png");
+            Load(ref komadai, $"komadai_v{config.PieceTableImageVersion}_1920_1080.png");
             Load(ref name_plate, "name_plate_v1_1920_1080.png");
 
             // 盤面編集に切り替えるごとにBGの再生成、無駄すぎない？
@@ -57,7 +57,7 @@ namespace MyShogi.Model.Resource.Images
 
             // 盤面編集モードであるなら駒箱を合成。
             if (config.InTheBoardEdit)
-                Load(ref koma_box, $"koma_bako_v{config.KomadaiImageVersion}_1920_1080.png");
+                Load(ref koma_box, $"koma_bako_v{config.PieceTableImageVersion}_1920_1080.png");
 
             BoardImage.CreateBitmap(1920, 1080, PixelFormat.Format24bppRgb);
 
@@ -71,7 +71,7 @@ namespace MyShogi.Model.Resource.Images
                 g.DrawImage(komadai.image, rect, rect, GraphicsUnit.Pixel);
 
                 // 駒台が縦長のとき、ネームプレートは別の素材
-                if (config.KomadaiImageVersion == 1)
+                if (config.PieceTableImageVersion == 1)
                     g.DrawImage(name_plate.image, rect, rect, GraphicsUnit.Pixel);
 
                 // 駒箱を合成するのは盤面編集モードの時のみ
