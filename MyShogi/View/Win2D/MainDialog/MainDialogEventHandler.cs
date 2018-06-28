@@ -107,6 +107,9 @@ namespace MyShogi.View.Win2D
                 gameServer.RaisePropertyChanged("KifuList", gameServer.KifuList);
 
                 ResizeKifuControl();
+
+                // メニューもGameServerが初期化されているタイミングで更新できていなかったのでupdate
+                UpdateMenuItems();
             }
 
             // 自分が保有しているScreenがdirtyになっていることを検知したら、Invalidateを呼び出す。

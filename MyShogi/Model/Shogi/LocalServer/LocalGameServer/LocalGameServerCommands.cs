@@ -321,6 +321,27 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 盤面編集が出来る状態にする/しない。
+        /// </summary>
+        public void ChangeBoardEditingCommand(bool edit_enable)
+        {
+            AddCommand(
+            () =>
+            {
+                // いずれにせよ、対局中は受理しない。
+
+                // InTheGameの値を変更するのは、このworker threadのみなので、
+                // これにより、「!InTheGameならInTheBoardEditをtrueにする」という操作のatomic性が保証される。
+                if (!InTheGame)
+                {
+                    var config = TheApp.app.config;
+                    config.InTheBoardEdit = edit_enable;
+                }
+            }
+            );
+        }
+
+        /// <summary>
         /// UI側から、worker threadで実行して欲しいコマンドを渡す。
         /// View-ViewModelアーキテクチャにおいてViewからViewModelにcommandを渡す感じ。
         /// ここで渡されたコマンドは、CheckUICommand()で吸い出されて実行される。

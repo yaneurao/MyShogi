@@ -46,6 +46,10 @@ namespace MyShogi.View.Win2D
             var config = app.config;
 
             // コンストラクタから呼び出された時は、まだ初期化されていない。
+            // そのときはnullになる。そのあとタイマーが起動して、初回にこのUpdateMenuItems()が呼び出される。
+            // そのタイミングではgameServer!=nullなので
+            // xxx.Enable = gameServer != null && gameServer.YYY;
+            // のような書き方をすると良い。
             var gameServer = ViewModel != null ? ViewModel.gameServer : null;
 
             // Commercial Version GUI
@@ -71,7 +75,7 @@ namespace MyShogi.View.Win2D
                 menu.Items.Add(item_file);
 
                 // 対局中は、ファイルメニュー項目は丸ごと無効化
-                item_file.Enabled = gameServer != null ? !gameServer.InTheGame : false;
+                item_file.Enabled = gameServer != null && !gameServer.InTheGame;
 
                 // -- 「ファイル」配下のメニュー
                 {
@@ -226,8 +230,8 @@ namespace MyShogi.View.Win2D
                     { // -- 盤面反転
                         var item = new ToolStripMenuItem();
                         item.Text = "盤面反転"; // これは全体設定。個別設定もある。
-                        item.Checked = gameServer != null ? gameServer.BoardReverse : false;
-                        item.Click += (sender, e) => { ViewModel.gameServer.BoardReverse = !ViewModel.gameServer.BoardReverse; };
+                        item.Checked = gameServer != null && gameServer.BoardReverse;
+                        item.Click += (sender, e) => { ViewModel.gameServer.BoardReverse ^= true; };
 
                         item_display.DropDownItems.Add(item);
                     }
@@ -584,6 +588,7 @@ namespace MyShogi.View.Win2D
 
                 var item_boardedit = new ToolStripMenuItem();
                 item_boardedit.Text = "盤面編集";
+                item_boardedit.Enabled = gameServer!=null && !gameServer.InTheGame;
                 menu.Items.Add(item_boardedit);
 
                 // 盤面編集の追加
@@ -591,7 +596,7 @@ namespace MyShogi.View.Win2D
                     {   // -- 盤面編集の開始
                         var item = new ToolStripMenuItem();
                         item.Text = config.InTheBoardEdit ? "盤面編集の終了" : "盤面編集の開始";
-                        item.Click += (sender, e) => { config.InTheBoardEdit ^= true; };
+                        item.Click += (sender, e) => { gameServer.ChangeBoardEditingCommand(!config.InTheBoardEdit); };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
