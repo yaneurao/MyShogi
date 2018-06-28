@@ -159,9 +159,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             kifuManager.Tree.SetKifuMoveTimes(PlayTimers.GetKifuMoveTimes());
 
             // コンピュータ vs 人間である場合、人間側を手前にしてやる。
-            foreach (var c in All.Colors())
-                if (gameSetting.Player(c).IsHuman && gameSetting.Player(c.Not()).IsCpu)
-                    BoardReverse = (c == Color.WHITE);
+            // 人間 vs 人間の場合も最初の手番側を手前にしてやる。
+            var stm = kifuManager.Position.sideToMove;
+            if (gameSetting.Player(stm).IsHuman)
+                    BoardReverse = (stm == Color.WHITE);
 
             // 盤面編集中である可能性がある。リセットする。
             TheApp.app.config.InTheBoardEdit = false;

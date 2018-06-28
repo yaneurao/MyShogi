@@ -52,14 +52,15 @@ namespace MyShogi.Model.Shogi.Kifu
 
             rootBoardType = BoardType.NoHandicap;
             rootSfen = Position.SFEN_HIRATE;
-            // rootSfenのsetterで初期化されているのでここではKifuListの初期化はしない
+
+            // rootSfenのsetterで初期化されているのでここではKifuList、UsiMoveListの初期化はしない
             //KifuList = new List<string>();
+            //UsiMoveList = new List<string>();
 
             // 対局情報などを保存するためにここを確保する。
             rootKifuMove = new KifuMove(Move.NONE, rootNode, KifuMoveTimes.Zero);
 
             kifuWindowMoves = new List<KifuMove>();
-            UsiMoveList = new List<string>();
             KifuTimeSettings = KifuTimeSettings.TimeLimitless;
             KifuBranch = -1;
 
