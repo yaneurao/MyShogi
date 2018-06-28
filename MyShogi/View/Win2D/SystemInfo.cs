@@ -27,6 +27,7 @@ namespace MyShogi.View.Win2D
 
             var cpuid = Model.Common.Utility.CpuId.flags;
 
+#if false
             for (UInt32 i = 0; i < cpuid.basicLength; ++i)
                 for (UInt32 j = 0; j < 4; ++j)
                 {
@@ -37,6 +38,7 @@ namespace MyShogi.View.Win2D
                 {
                     Console.WriteLine($"{(i | 0x80000000):X8}{(char)(j + 'a')}: {cpuid.getExtend(i, j):X8}");
                 }
+#endif
 
             sb.AppendLine($"cpuTarget: {cpuid.cpuTarget}");
             sb.AppendLine($"vendorId: {cpuid.vendorId}");

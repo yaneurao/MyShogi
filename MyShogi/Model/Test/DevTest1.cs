@@ -1,13 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Threading;
-using MyShogi.Model.Common.Process;
-using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Kifu;
-using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Test
 {
