@@ -244,6 +244,32 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 現在の局面のファイルへの書き出しコマンド
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="type"></param>
+        public void PositionWriteCommand(string path , Kifu.KifuFileType type)
+        {
+            AddCommand(
+            () =>
+            {
+                try
+                {
+                    var sfen = Position.ToSfen();
+                    // 経路を消すためにsfen化して代入しなおして書き出す
+                    var kifu = new KifuManager();
+                    kifu.FromString($"sfen {sfen}");
+                    var content = kifu.ToString(type);
+                    FileIO.WriteFile(path, content);
+                }
+                catch
+                {
+                    TheApp.app.MessageShow("棋譜ファイルの書き出しに失敗しました。");
+                }
+            });
+        }
+
+        /// <summary>
         /// 本譜の手順に戻るボタン
         /// </summary>
         public void MainBranchButtonCommand()
