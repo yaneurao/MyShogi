@@ -36,6 +36,8 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public Form debugDialog;
 
+        private string lastFileName;
+
         /// <summary>
         /// [UI thread] : メニューのitemを動的に追加する。
         /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
@@ -109,6 +111,7 @@ namespace MyShogi.View.Win2D
                                 {
                                     var kifu_text = FileIO.ReadText(filename);
                                     gameServer.KifuReadCommand(kifu_text);
+                                    lastFileName = filename; // 最後に開いたファイルを記録しておく。
                                 }
                                 catch
                                 {
@@ -124,7 +127,18 @@ namespace MyShogi.View.Win2D
                         item.Text = "棋譜の上書き保存";
                         item.Click += (sender, e) =>
                         {
-
+                            try
+                            {
+                                // 「開く」もしくは「名前をつけて保存無したファイルに上書きする。
+                                // 「局面の保存」は棋譜ではないのでこれは無視する。
+                                // ファイル形式は、拡張子から自動判別する。
+                                gameServer.KifuWriteCommand(lastFileName, 
+                                    KifuFileTypeExtensions.StringToKifuFileType(lastFileName));
+                            }
+                            catch
+                            {
+                                TheApp.app.MessageShow("ファイル書き出しエラー");
+                            }
                         };
                         item_file.DropDownItems.Add(item);
                     }
@@ -168,6 +182,7 @@ namespace MyShogi.View.Win2D
                                     }
 
                                     gameServer.KifuWriteCommand(filename, kifuType);
+                                    lastFileName = filename; // 最後に保存したファイルを記録しておく。
                                 }
                                 catch
                                 {
@@ -226,6 +241,14 @@ namespace MyShogi.View.Win2D
                         };
                         item_file.DropDownItems.Add(item);
                     }
+
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "終了";
+                        item.Click += (sender, e) => { Close(); };
+                        item_file.DropDownItems.Add(item);
+                    }
+
                 }
 
 
