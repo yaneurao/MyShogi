@@ -118,6 +118,16 @@ namespace MyShogi.Model.Resource.Images
                 int oy2 = to_y * y;
                 var destRect = new Rectangle(0 + ox2, 0 + oy2, x, y);
                 g.DrawImage(image, destRect, srcRect, GraphicsUnit.Pixel);
+
+                //{
+                //    // 後手玉は先手玉を上下反転させたものにする。
+                //    if (pc2 == 8)
+                //    {
+                //        var destRect2 = new Rectangle(0 + ox2, 0 + oy2 + 3 * y, x, -y);
+                //        g.DrawImage(image, destRect2, srcRect, GraphicsUnit.Pixel);
+                //    }
+                //}
+
                 g.Dispose();
             }
 
@@ -131,6 +141,8 @@ namespace MyShogi.Model.Resource.Images
                     img = img2 = aka;
 
                 var c = i == 2 || i==3 || i==5; // IsWhite?
+
+                // 後手玉は先手玉を上下反転させたものにする。
 
                 if (i==1 || i==3 || i==5)
                     copy(img2, 4, 8, 0, i, c); // 王   59の王を、(0,0)に移動。
