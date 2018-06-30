@@ -4,6 +4,7 @@ using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.LocalServer;
 using ShogiCore = MyShogi.Model.Shogi.Core;
 using SPRITE = MyShogi.Model.Resource.Images.SpriteManager;
 
@@ -131,7 +132,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void UpdateTooltipButtons2()
         {
-            var consideration = ViewModel.ViewModel.gameServer.Consideration;
+            var consideration = ViewModel.ViewModel.gameServer.GameMode.IsConsideration();
             SetButton(MainDialogButtonEnum.REWIND, consideration);
             SetButton(MainDialogButtonEnum.FORWARD, consideration);
             SetButton(MainDialogButtonEnum.MAIN_BRANCH, consideration);
@@ -700,10 +701,7 @@ namespace MyShogi.View.Win2D
 
             //Console.WriteLine(sq.Pretty());
 
-            var inTheBoardEdit = TheApp.app.config.InTheBoardEdit;
-            //var inTheGame = gameServer.InTheGame;
-
-            if (inTheBoardEdit)
+            if (gameServer.InTheBoardEdit)
             {
                 // -- 盤面編集中
 
@@ -803,13 +801,12 @@ namespace MyShogi.View.Win2D
         /// <param name="sq"></param>
         public void OnBoardRightClick(SquareHand sq)
         {
-            var config = TheApp.app.config;
+            var gameServer = ViewModel.ViewModel.gameServer;
 
-            if (config.InTheBoardEdit)
+            if (gameServer.InTheBoardEdit)
             {
                 // -- 盤面編集中
 
-                var gameServer = ViewModel.ViewModel.gameServer;
                 var pos = gameServer.Position;
 
                 // 盤上の駒はクリックされるごとに先手→先手成駒→後手→後手成駒のように駒の変化
@@ -954,7 +951,8 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         SquareHand BoardAxisToSquare(Point p)
         {
-            var reverse = ViewModel.ViewModel.gameServer.BoardReverse;
+            var gameServer = ViewModel.ViewModel.gameServer;
+            var reverse = gameServer.BoardReverse;
 
             // 盤上の升かどうかの判定
             var board_rect = new Rectangle(board_location.X, board_location.Y, piece_img_size.Width * 9, piece_img_size.Height * 9);
@@ -994,12 +992,12 @@ namespace MyShogi.View.Win2D
 
                 // -- 駒箱であるかの判定
 
-                var config = TheApp.app.config;
-                if (config.InTheBoardEdit)
+                if (gameServer.InTheBoardEdit)
                 {
                     // 小さい駒の表示倍率
                     var ratio = 0.6f;
 
+                    var config = TheApp.app.config;
                     var size = config.PieceTableImageVersion == 1 ?
                         piece_img_size :
                         new Size((int)(piece_img_size.Width * ratio), (int)(piece_img_size.Height * ratio));

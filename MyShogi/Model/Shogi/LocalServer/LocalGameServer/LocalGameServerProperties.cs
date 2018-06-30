@@ -31,23 +31,43 @@ namespace MyShogi.Model.Shogi.LocalServer
 
 
         /// <summary>
-        /// 対局中であるかを示すフラグ。
+        /// 対局中であるかなどを示すフラグ。
+        /// </summary>
+        public GameModeEnum GameMode
+        {
+            get { return GetValue<GameModeEnum>("GameMode"); }
+            private set {
+                SetValue<GameModeEnum>("GameMode", value);
+
+                // 依存プロパティの更新
+                InTheGame = value == GameModeEnum.InTheGame;
+                InTheBoardEdit = value == GameModeEnum.InTheBoardEdit;
+            }
+        }
+
+        /// <summary>
+        /// 対局中であるかを返す。これは、GameModeに依存している依存プロパティ。
+        /// このsetterを呼び出してはならない。
         /// </summary>
         public bool InTheGame
         {
             get { return GetValue<bool>("InTheGame"); }
-            private set { SetValue<bool>("InTheGame", value); }
+            private set { SetValue<bool>("InTheGame",value); }
         }
 
         /// <summary>
-        /// 検討中であるかを示すフラグ。
-        /// これがtrueであれば対局中ではなく、盤面編集中ではないので自由に駒を動かせる。
-        /// 
-        /// この変更イベントは用意されていない。
+        /// 盤面編集中であるかを返す。これは、GameModeに依存している依存プロパティ。
+        /// このsetterを呼び出してはならない。
         /// </summary>
-        public bool Consideration
+        public bool InTheBoardEdit
         {
-            get { return !InTheGame && !TheApp.app.config.InTheBoardEdit; }
+            get { return GetValue<bool>("InTheBoardEdit"); }
+            private set {
+                SetValue<bool>("InTheBoardEdit", value);
+
+                // 依存プロパティの更新
+                TheApp.app.config.InTheBoardEdit = value;
+            }
         }
 
         /// <summary>

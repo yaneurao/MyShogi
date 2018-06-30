@@ -968,6 +968,7 @@ namespace MyShogi.View.Win2D
                 PerformLayout();
             }
 
+            // 画面の描画が必要になるときがあるので..
             Invalidate();
         }
 

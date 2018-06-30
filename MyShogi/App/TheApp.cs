@@ -47,7 +47,6 @@ namespace MyShogi.App
                 config.AddPropertyChangedHandler("BoardImageVersion", imageManager.UpdateBoardImage);
                 config.AddPropertyChangedHandler("TatamiImageVersion", imageManager.UpdateBoardImage);
                 config.AddPropertyChangedHandler("PieceTableImageVersion", imageManager.UpdateBoardImage);
-                config.AddPropertyChangedHandler("InTheBoardEdit", imageManager.UpdateBoardImage);
 
                 config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
                 config.AddPropertyChangedHandler("PieceAttackImageVersion", imageManager.UpdatePieceAttackImage);
@@ -105,10 +104,11 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
+
+            // -- 盤面編集時
+
+            config.AddPropertyChangedHandler("InTheBoardEdit", imageManager.UpdateBoardImage); // 駒箱のBGに変更。
             config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.UpdateMenuItems, mainDialog);
-
-            // 盤面編集時などに棋譜ウィンドウを消す
-
             config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.gameScreen.UpdateKifuControlVisibility , mainDialog);
 
             // -- ロギング用のハンドラをセット

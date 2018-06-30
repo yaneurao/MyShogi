@@ -88,6 +88,7 @@
     <Compile Include="Model\Resource\Sounds\SoundQueue.cs" />
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
+    <Compile Include="Model\Shogi\EvaluationGraph\EvaluationGraphData.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuHeader.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuManager\csa.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuManager\json.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Model\Shogi\Kifu\KifuManager\psn.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuManager\sfen.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuMoveTime.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\GameModeEnum.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerCommands.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerPrivates.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerProperties.cs" />

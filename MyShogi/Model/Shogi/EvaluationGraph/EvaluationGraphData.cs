@@ -37,7 +37,7 @@ namespace MyShogi.Model.Shogi.EvaluationGraph
         /// 各局面での評価値。
         /// 値が記録されていないところは、int.MinValueになっているのでそれは描画してはならない。
         /// </summary>
-        List<int> values;
+        public List<int> values;
     }
 
     /// <summary>

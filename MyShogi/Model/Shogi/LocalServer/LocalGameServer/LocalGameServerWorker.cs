@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Collections.Generic;
+using MyShogi.App;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Shogi.Kifu;
-using MyShogi.App;
 using MyShogi.Model.Resource.Sounds;
 
 namespace MyShogi.Model.Shogi.LocalServer
@@ -167,7 +167,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 盤面編集中である可能性がある。リセットする。
             TheApp.app.config.InTheBoardEdit = false;
 
-            InTheGame = true;
+            GameMode = GameModeEnum.InTheGame;
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 駒が動かせる状況でかつ合法手であるなら、受理する。
 
                 bool specialMove = false;
-                if (InTheGame)
+                if (GameMode == GameModeEnum.InTheGame)
                 {
                     // 送信されうる特別な指し手であるか？
                     specialMove = bestMove.IsSpecial();
@@ -331,7 +331,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             var isHuman = stmPlayer.PlayerType == PlayerTypeEnum.Human;
 
             // 手番が変わった時に特殊な局面に至っていないかのチェック
-            if (InTheGame)
+            if (GameMode == GameModeEnum.InTheGame)
             {
                 var misc = TheApp.app.config.GameSetting.MiscSettings;
                 Move m = kifuManager.Tree.IsNextNodeSpecialNode(isHuman , misc);
@@ -347,7 +347,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // 音声の読み上げ
                     TheApp.app.soundManager.ReadOut(m);
 
-                    InTheGame = false;
                     GameEnd();
                     return;
                 }
@@ -363,7 +362,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             stmPlayer.Think(usiPosition);
 
             // 手番側のプレイヤーの時間消費を開始
-            if (InTheGame)
+            if (GameMode == GameModeEnum.InTheGame)
             {
                 // InTheGame == trueならば、PlayerTimeSettingは適切に設定されているはず。
                 // (対局開始時に初期化するので)
@@ -380,7 +379,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             EngineTurn = stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine;
             // 対局中でなければ自由に動かせる。対局中は人間のプレイヤーでなければ駒を動かせない。
-            CanUserMove = stmPlayer.PlayerType == PlayerTypeEnum.Human || !InTheGame;
+            CanUserMove = stmPlayer.PlayerType == PlayerTypeEnum.Human || GameMode.CanUserMove();
 
             // 値が変わっていなくとも変更通知を送りたいので自力でハンドラを呼び出す。
             RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
@@ -399,7 +398,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 時間切れ判定(対局中かつ手番側のみ)
             var stm = Position.sideToMove;
-            if (InTheGame && PlayTimer(stm).IsTimeUp())
+            if (GameMode == GameModeEnum.InTheGame && PlayTimer(stm).IsTimeUp())
                 Player(stm).BestMove = Move.TIME_UP;
         }
 
@@ -423,13 +422,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         private void GameEnd()
         {
             // 対局中だったものが終了したのか？
-            if (InTheGame)
+            if (GameMode == GameModeEnum.InTheGame)
             {
                 // 音声:「ありがとうございました。またお願いします。」
                 TheApp.app.soundManager.ReadOut(SoundEnum.End);
             }
 
-            InTheGame = false;
+            GameMode = GameModeEnum.ConsiderationWithoutEngine;
 
             // 時間消費、停止
             foreach (var c in All.Colors())
@@ -450,7 +449,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private void Disconnect()
         {
-            InTheGame = false;
+            GameMode = GameModeEnum.ConsiderationWithoutEngine;
 
             // Playerの終了処理をしてNullPlayerを突っ込んでおく。
             foreach (var c in All.Colors())

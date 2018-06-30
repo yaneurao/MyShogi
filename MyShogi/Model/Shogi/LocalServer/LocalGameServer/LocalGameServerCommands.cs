@@ -31,22 +31,25 @@ namespace MyShogi.Model.Shogi.LocalServer
             AddCommand(
             () =>
             {
-                // 局面が非合法局面であれば受理しない。
-                if (gameSetting.Board.BoardTypeCurrent)
+                if (!InTheGame)
                 {
-                    var error = Position.IsValid();
-                    if (error != null)
+                    // 局面が非合法局面であれば受理しない。
+                    if (gameSetting.Board.BoardTypeCurrent)
                     {
-                        TheApp.app.MessageShow(error);
-                        return;
+                        var error = Position.IsValid();
+                        if (error != null)
+                        {
+                            TheApp.app.MessageShow(error);
+                            return;
+                        }
                     }
+
+                    // いったんリセット
+                    GameEnd();
+                    GameStart(gameSetting);
+
+                    // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。
                 }
-
-                // いったんリセット
-                GameEnd();
-                GameStart(gameSetting);
-
-                // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。
             });
         }
 
@@ -77,15 +80,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                         // BestMove = Move.NONEとされるのでその時に破棄される。
                         stmPlayer.BestMove = m;
                     }
-                }
-                else if (config.InTheBoardEdit)
-                {
-                    // 盤面編集中
-
-                } else {
+                } else if (GameMode.IsConsideration()){
 
                     // 対局中でなく、盤面編集中でなければ自由に動かせる。
                     // 受理して、必要ならば分岐棋譜を生成して…。
+
                     var misc = config.GameSetting.MiscSettings;
                     kifuManager.Tree.DoMoveUI(m , misc);
 
@@ -105,14 +104,17 @@ namespace MyShogi.Model.Shogi.LocalServer
             AddCommand(
             () =>
             {
-                var stm = kifuManager.Position.sideToMove;
-                var stmPlayer = Player(stm);
-
-                // エンジン以外であれば受理しない。
-                if (stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine)
+                if (InTheGame)
                 {
-                    var enginePlayer = stmPlayer as UsiEnginePlayer;
-                    enginePlayer.MoveNow();
+                    var stm = kifuManager.Position.sideToMove;
+                    var stmPlayer = Player(stm);
+
+                    // エンジン以外であれば受理しない。
+                    if (stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine)
+                    {
+                        var enginePlayer = stmPlayer as UsiEnginePlayer;
+                        enginePlayer.MoveNow();
+                    }
                 }
             });
         }
@@ -126,21 +128,24 @@ namespace MyShogi.Model.Shogi.LocalServer
             AddCommand(
             () =>
             {
-                var stm = kifuManager.Position.sideToMove;
-                var stmPlayer = Player(stm);
-
-                // 人間の手番でなければ受理しない
-                if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+                if (InTheGame)
                 {
-                    // 棋譜を消すUndo()
-                    kifuManager.UndoMoveInTheGame();
-                    kifuManager.UndoMoveInTheGame();
+                    var stm = kifuManager.Position.sideToMove;
+                    var stmPlayer = Player(stm);
 
-                    // 時刻を巻き戻さないといけない
-                    PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTimes());
+                    // 人間の手番でなければ受理しない
+                    if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+                    {
+                        // 棋譜を消すUndo()
+                        kifuManager.UndoMoveInTheGame();
+                        kifuManager.UndoMoveInTheGame();
 
-                    // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
-                    NotifyTurnChanged();
+                        // 時刻を巻き戻さないといけない
+                        PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTimes());
+
+                        // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
+                        NotifyTurnChanged();
+                    }
                 }
             });
         }
@@ -153,12 +158,15 @@ namespace MyShogi.Model.Shogi.LocalServer
             AddCommand(
             () =>
             {
-                // コンピューター同士の対局中であっても人間判断で中断できなければならないので常に受理する。
-                var stm = kifuManager.Position.sideToMove;
-                var stmPlayer = Player(stm);
+                if (InTheGame)
+                {
+                    // コンピューター同士の対局中であっても人間判断で中断できなければならないので常に受理する。
+                    var stm = kifuManager.Position.sideToMove;
+                    var stmPlayer = Player(stm);
 
-                // 中断の指し手
-                stmPlayer.BestMove = Move.INTERRUPT;
+                    // 中断の指し手
+                    stmPlayer.BestMove = Move.INTERRUPT;
+                }
             });
         }
 
@@ -171,7 +179,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             AddCommand(
             () =>
             {
-                if (!InTheGame)
+                if (GameMode.IsConsideration())
                 {
                     // 現在の局面と違う行であるかを判定して、同じ行である場合は、
                     // このイベントを処理してはならない。
@@ -192,7 +200,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             AddCommand(
             () =>
             {
-                if (!InTheGame)
+                if (GameMode.CanUserMove())
                 {
                     // 対局中ではないので、EnableKifuList == falseになっているが、
                     // 一時的にこれをtrueにしないと、読み込んだ棋譜に対して、Tree.KifuListが同期しない。
@@ -278,7 +286,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             () =>
             {
                 // 対局中は使用不可
-                if (!InTheGame)
+                if (GameMode.IsConsideration())
                 {
                     // 本譜の手順に戻るので本譜に移動したあと最初の分岐の起点まで局面を移動する。
                     int branch = kifuManager.Tree.KifuBranch;
@@ -304,7 +312,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             () =>
             {
                 // 対局中は使用不可
-                if (!InTheGame)
+                if (GameMode.IsConsideration())
                     kifuManager.Tree.NextBranch();
             });
         }
@@ -318,7 +326,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             () =>
             {
                 // 対局中は使用不可
-                if (!InTheGame)
+                if (GameMode.IsConsideration())
                     kifuManager.Tree.EraseBranch();
             });
         }
@@ -333,8 +341,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             ()=>
             {
                 // 盤面編集中以外使用不可
-                var config = TheApp.app.config;
-                if (config.InTheBoardEdit)
+                if (InTheBoardEdit)
                 {
                     var error = kifuManager.FromString($"sfen {sfen}");
                     // sfenのparser経由で代入するのが楽ちん。
@@ -358,11 +365,12 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 // InTheGameの値を変更するのは、このworker threadのみなので、
                 // これにより、「!InTheGameならInTheBoardEditをtrueにする」という操作のatomic性が保証される。
+
                 if (!InTheGame)
                 {
-                    var config = TheApp.app.config;
-                    config.InTheBoardEdit = edit_enable;
+                    GameMode =  GameModeEnum.InTheBoardEdit;
                 }
+                // TODO : エンジンでの検討中ならばエンジンを停止させる処理
             }
             );
         }
