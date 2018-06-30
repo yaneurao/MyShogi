@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using MyShogi.Model.Shogi.LocalServer;
+﻿using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.View.Win2D
 {

@@ -1,4 +1,5 @@
-﻿using MyShogi.Model.Shogi.LocalServer;
+﻿using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.View.Win2D
 {
@@ -19,7 +20,15 @@ namespace MyShogi.View.Win2D
         /// <param name="enable"></param>
         public delegate void SetButtonHandler(ToolStripButtonEnum name, bool enable);
 
+        /// <summary>
+        /// ToolStripのボタンの変更delegate
+        /// </summary>
         public SetButtonHandler SetButton { get; set; }
+
+        /// <summary>
+        /// メインウィンドウ側のMenuを更新するためのハンドラ
+        /// </summary>
+        public PropertyChangedEventHandler UpdateMenuItems { get; set; }
 
         /// <summary>
         /// ゲームサーバー本体。外部で生成して渡す。

@@ -68,14 +68,6 @@ namespace MyShogi.App
             var gameServer = new LocalGameServer();
             mainDialog.Init(gameServer);
 
-            // LocalGameServerの対局情報と棋譜ウィンドウが更新されたときにメインウインドウの盤面・棋譜ウィンドウに
-            // 更新がかかるようにしておく。
-
-            gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.UpdateMenuItems, mainDialog);
-            gameServer.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems, mainDialog);
-            gameServer.AddPropertyChangedHandler("GameServerStarted", mainDialog.UpdateMenuItems, mainDialog);
-            gameServer.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.UpdateMenuItems, mainDialog);
-
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 
             config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems , mainDialog);

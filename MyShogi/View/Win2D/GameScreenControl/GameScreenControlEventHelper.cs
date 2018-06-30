@@ -69,7 +69,9 @@ namespace MyShogi.View.Win2D
             gameServer.AddPropertyChangedHandler("EngineInitializing", EngineInitializingChanged, Parent);
             gameServer.AddPropertyChangedHandler("RestTimeChanged", RestTimeChanged);
             gameServer.AddPropertyChangedHandler("SetKifuListIndex", SetKifuListIndex, Parent);
-            gameServer.AddPropertyChangedHandler("InTheBoardEdit", UpdateKifuControlVisibility, Parent);
+            gameServer.AddPropertyChangedHandler("InTheBoardEdit", InTheBoardEditChanged, Parent);
+            gameServer.AddPropertyChangedHandler("GameServerStarted", UpdateMenuItems, Parent);
+            gameServer.AddPropertyChangedHandler("BoardReverse", UpdateMenuItems, Parent);
         }
 
         /// <summary>
@@ -84,7 +86,9 @@ namespace MyShogi.View.Win2D
             gameServer.RemovePropertyChangedHandler("EngineInitializing", EngineInitializingChanged);
             gameServer.RemovePropertyChangedHandler("RestTimeChanged", RestTimeChanged);
             gameServer.RemovePropertyChangedHandler("SetKifuListIndex", SetKifuListIndex);
-            gameServer.RemovePropertyChangedHandler("InTheBoardEdit", UpdateKifuControlVisibility);
+            gameServer.RemovePropertyChangedHandler("InTheBoardEdit", InTheBoardEditChanged);
+            gameServer.RemovePropertyChangedHandler("GameServerStarted", UpdateMenuItems);
+            gameServer.RemovePropertyChangedHandler("BoardReverse", UpdateMenuItems);
         }
 
         /// <summary>
@@ -92,8 +96,27 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void SetButton(ToolStripButtonEnum name, bool enable)
         {
-            if (Setting!=null && Setting.SetButton != null)
+            if (Setting != null && Setting.SetButton != null)
                 Setting.SetButton(name, enable);
+        }
+
+        /// <summary>
+        /// [UI Thread] : このGameScreenControlに紐づけられているメニューの更新を行う。
+        /// </summary>
+        public void UpdateMenuItems(PropertyChangedEventArgs args = null)
+        {
+            if (Setting != null && Setting.UpdateMenuItems != null)
+                Setting.UpdateMenuItems(null);
+        }
+
+        /// <summary>
+        /// [UI Thread] : GameServer.InTheBoardEditの変更ハンドラ
+        /// </summary>
+        /// <param name="args"></param>
+        public void InTheBoardEditChanged(PropertyChangedEventArgs args = null)
+        {
+            UpdateKifuControlVisibility();
+            UpdateMenuItems();
         }
 
         /// <summary>
@@ -105,9 +128,10 @@ namespace MyShogi.View.Win2D
                 kifuControl.Visible =
                     gameServer != null
                     && !gameServer.InTheBoardEdit /*盤面編集中は非表示*/
-                    &&  PieceTableVersion == 0 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */
+                    && PieceTableVersion == 0 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */
                 ;
         }
+
 
         /// <summary>
         /// 盤面情報が更新された時に呼び出されるハンドラ。
@@ -141,6 +165,9 @@ namespace MyShogi.View.Win2D
 
             // Tooltipの◁▷本譜ボタンの状態更新
             UpdateTooltipButtons2();
+
+            // メニュー項目の更新
+            UpdateMenuItems();
         }
 
         /// <summary>

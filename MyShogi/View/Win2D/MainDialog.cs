@@ -33,6 +33,7 @@ namespace MyShogi.View.Win2D
             {
                 SetButton = SetButton,
                 gameServer = gameServer_,
+                UpdateMenuItems = UpdateMenuItems,
             };
             gameScreenControl1.Setting = setting;
             gameScreenControl1.Init();
