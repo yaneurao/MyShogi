@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.Utility;
@@ -1259,7 +1258,7 @@ namespace MyShogi.View.Win2D
             }
 
             // 画面の描画が必要になるときがあるので..
-            Invalidate();
+            gameScreenControl1.ForceRedraw();
         }
 
         private MenuStrip old_menu { get; set; } = null;

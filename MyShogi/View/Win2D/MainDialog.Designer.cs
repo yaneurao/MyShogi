@@ -243,7 +243,7 @@
             this.ClientSize = new System.Drawing.Size(517, 261);
             this.Controls.Add(this.gameScreenControl1);
             this.Controls.Add(this.toolStrip1);
-            this.DoubleBuffered = false;
+            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(195, 84);
             this.Name = "MainDialog";

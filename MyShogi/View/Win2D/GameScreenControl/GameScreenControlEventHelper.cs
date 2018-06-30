@@ -292,7 +292,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 強制的に再描画する。
         /// </summary>
-        private void Redraw()
+        public void ForceRedraw()
         {
             Dirty = true;
             Invalidate();

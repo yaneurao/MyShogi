@@ -23,7 +23,7 @@ namespace MyShogi.View.Win2D
             ResizeKifuControl();
 
             // affine行列を変更したので今回dirtyになっていないrectに関しても強制的な再描画が必要。
-            Redraw();
+            ForceRedraw();
         }
 
         private void GameScreenControl_MouseDown(object sender, MouseEventArgs e)
