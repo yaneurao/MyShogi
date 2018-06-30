@@ -6,7 +6,7 @@ namespace MyShogi.View.Win2D
     /// <summary>
     /// MainDialogでaffine変換して描画する部分のコード
     /// </summary>
-    public partial class GameScreen
+    public partial class GameScreenControl
     {
         // -------------------------------------------------------------------------
         //  affine変換してのスクリーンへの描画
@@ -34,9 +34,9 @@ namespace MyShogi.View.Win2D
             return ViewModel.AffineMatrix.AffineScale(s);
         }
 
-        private Rectangle Affine(Point p,Size s)
+        private Rectangle Affine(Point p, Size s)
         {
-            return ViewModel.AffineMatrix.Affine(p,s);
+            return ViewModel.AffineMatrix.Affine(p, s);
         }
 
         /// <summary>
@@ -65,13 +65,13 @@ namespace MyShogi.View.Win2D
         /// <param name="img"></param>
         /// <param name="destRect"></param>
         /// <param name="sourceRect"></param>
-        private void DrawSprite(Point p, Sprite src , float ratio = 1.0f)
+        private void DrawSprite(Point p, Sprite src, float ratio = 1.0f)
         {
             // null sprite
             if (src == null)
                 return;
 
-            var dstRect = Affine(p, new Size((int)(src.rect.Width * ratio) , (int)(src.rect.Height * ratio)));
+            var dstRect = Affine(p, new Size((int)(src.rect.Width * ratio), (int)(src.rect.Height * ratio)));
             // dstRect.Width = 転送先width×scale_xなのだが、等倍なので転送先width == 転送元width
             // heightについても上記と同様。
 
@@ -80,11 +80,11 @@ namespace MyShogi.View.Win2D
             dstRect.X += dstOffset.Width;
             dstRect.Y += dstOffset.Height;
 
-            graphics.DrawImage(src.image, dstRect , src.rect, GraphicsUnit.Pixel);
+            graphics.DrawImage(src.image, dstRect, src.rect, GraphicsUnit.Pixel);
 
             // 連結スプライトならば続けてそれを描画する。
             if (src.next != null)
-                DrawSprite(p, src.next , ratio);
+                DrawSprite(p, src.next, ratio);
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace MyShogi.View.Win2D
         /// <param name="g"></param>
         /// <param name="dstPoint"></param>
         /// <param name="mes"></param>
-        private void DrawString(Point dstPoint, string mes, int font_size , DrawStringOption option = null)
+        private void DrawString(Point dstPoint, string mes, int font_size, DrawStringOption option = null)
         {
             // 文字フォントサイズは、scaleの影響を受ける。
             var scale = ViewModel.AffineMatrix.Scale.X;
@@ -129,7 +129,7 @@ namespace MyShogi.View.Win2D
                     // 右寄せ
                     case 2: sf.Alignment = StringAlignment.Far; break;
                 }
-                graphics.DrawString(mes, font, brush, Affine(dstPoint),sf);
+                graphics.DrawString(mes, font, brush, Affine(dstPoint), sf);
             }
         }
 
@@ -138,7 +138,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private class DrawStringOption
         {
-            public DrawStringOption(Brush brush_ , int align_ )
+            public DrawStringOption(Brush brush_, int align_)
             {
                 brush = brush_;
                 align = align_;

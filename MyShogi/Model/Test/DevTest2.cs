@@ -1,14 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Text;
-using System.Drawing;
 using System.Management;
-using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
-using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Kifu;
-using MyShogi.Model.Shogi.Converter;
 
 namespace MyShogi.Model.Test
 {

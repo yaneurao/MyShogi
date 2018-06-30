@@ -9,7 +9,6 @@ using MyShogi.Model.Shogi.LocalServer;
 // とりま、Windows用
 // あとで他環境用を用意する
 using MyShogi.View.Win2D;
-using MyShogi.ViewModel;
 
 namespace MyShogi.App
 {
@@ -64,27 +63,18 @@ namespace MyShogi.App
             var mainDialog = new MainDialog();
             mainForm = mainDialog;
 
-            mainDialogViewModel = new MainDialogViewModel();
-            mainDialog.ViewModel = mainDialogViewModel;
-
             // -- 対局controllerを1つ生成して、メインの対局ウィンドゥのViewModelに加える
 
             var gameServer = new LocalGameServer();
-            mainDialogViewModel.gameServer = gameServer;
+            mainDialog.Init(gameServer);
 
             // LocalGameServerの対局情報と棋譜ウィンドウが更新されたときにメインウインドウの盤面・棋譜ウィンドウに
             // 更新がかかるようにしておく。
 
-            gameServer.AddPropertyChangedHandler("KifuList", mainDialog.gameScreen.kifuControl.OnListChanged , mainDialog);
-            gameServer.AddPropertyChangedHandler("Position", mainDialog.gameScreen.PositionChanged);
-            gameServer.AddPropertyChangedHandler("TurnChanged", mainDialog.gameScreen.TurnChanged , mainDialog);
-            gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.gameScreen.InTheGameChanged , mainDialog);
-            gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.UpdateMenuItems , mainDialog);
-            gameServer.AddPropertyChangedHandler("EngineInitializing", mainDialog.gameScreen.EngineInitializingChanged , mainDialog);
-            gameServer.AddPropertyChangedHandler("RestTimeChanged", mainDialog.gameScreen.RestTimeChanged);
-            gameServer.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems , mainDialog);
-            gameServer.AddPropertyChangedHandler("GameServerStarted", mainDialog.UpdateMenuItems , mainDialog);
-            gameServer.AddPropertyChangedHandler("SetKifuListIndex", mainDialog.gameScreen.SetKifuListIndex , mainDialog);
+            gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.UpdateMenuItems, mainDialog);
+            gameServer.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems, mainDialog);
+            gameServer.AddPropertyChangedHandler("GameServerStarted", mainDialog.UpdateMenuItems, mainDialog);
+            gameServer.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.UpdateMenuItems, mainDialog);
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 
@@ -104,12 +94,6 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
-
-            // -- 盤面編集時
-
-            config.AddPropertyChangedHandler("InTheBoardEdit", imageManager.UpdateBoardImage); // 駒箱のBGに変更。
-            config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.gameScreen.UpdateKifuControlVisibility , mainDialog);
 
             // -- ロギング用のハンドラをセット
 
@@ -158,6 +142,10 @@ namespace MyShogi.App
             {
                 config.Save();
                 soundManager.Dispose();
+
+                // 起動しているGameServerすべてを終了させる必要がある。(エンジンを停止させるため)
+                if (gameServer != null)
+                    gameServer.Dispose();
             });
 
             Application.Run(mainDialog);
@@ -195,11 +183,6 @@ namespace MyShogi.App
         // 他のViewModelにアクションが必要な場合は、これを経由して通知などを行えば良い。
         // 他のViewに直接アクションを起こすことは出来ない。必ずViewModelに通知などを行い、
         // そのViewModelのpropertyをsubscribeしているViewに間接的に通知が行くという仕組みを取る。
-
-        /// <summary>
-        /// MainDialogのViewModel
-        /// </summary>
-        public MainDialogViewModel mainDialogViewModel { get; private set; }
 
         /// <summary>
         /// 画像の読み込み用。本GUIで用いる画像はすべてここから取得する。

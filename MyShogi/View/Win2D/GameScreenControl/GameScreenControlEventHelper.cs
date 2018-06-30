@@ -14,25 +14,86 @@ namespace MyShogi.View.Win2D
     /// GameScreenに関するイベントハンドラ
     /// マウスがクリックされた時の処理など
     /// </summary>
-    public partial class GameScreen
-    {   
+    public partial class GameScreenControl
+    {
         /// <summary>
-        /// このクラスのparentにKifuControlをぶら下げる。
+        /// KifuControlのハンドラを設定する。
         /// </summary>
-        private void AddKifuControl()
+        private void SetKifuControlHandler()
         {
-            var kif = new KifuControl();
-            ViewModel.kifuControl = kif;
-            Parent.Controls.Add(kif);
+            kifuControl1.SelectedIndexChangedHandler =
+                (selectedIndex) => { gameServer.KifuSelectedIndexChangedCommand(selectedIndex); };
+            kifuControl1.Button1ClickedHandler =
+                () => { gameServer.MainBranchButtonCommand(); };
+            kifuControl1.Button2ClickedHandler =
+                () => { gameServer.NextBranchButtonCommand(); };
+            kifuControl1.Button3ClickedHandler =
+                () => { gameServer.EraseBranchButtonCommand(); };
+        }
 
-            kif.SelectedIndexChangedHandler =
-                (selectedIndex) => { ViewModel.ViewModel.gameServer.KifuSelectedIndexChangedCommand(selectedIndex); };
-            kif.Button1ClickedHandler =
-                () => { ViewModel.ViewModel.gameServer.MainBranchButtonCommand(); };
-            kif.Button2ClickedHandler =
-                () => { ViewModel.ViewModel.gameServer.NextBranchButtonCommand(); };
-            kif.Button3ClickedHandler =
-                () => { ViewModel.ViewModel.gameServer.EraseBranchButtonCommand(); };
+        /// <summary>
+        /// 初期化する。
+        /// このとき、イベントハンドラを設定する。
+        /// </summary>
+        public void Init()
+        {
+            SetEventHandlers();
+            handler_set = true;
+        }
+
+        /// <summary>
+        /// InitでSetEventHandlersを呼び出したか。
+        /// (呼び出していればDispose()で解除する)
+        /// </summary>
+        private bool handler_set;
+
+        public new void Dispose()
+        {
+            if (handler_set)
+            {
+                RemoveEventHandlers();
+                handler_set = false;
+            }
+        }
+
+        /// <summary>
+        /// NotifyObjectのイベントハンドラを設定
+        /// </summary>
+        public void SetEventHandlers()
+        {
+            // イベントハンドラを設定する。
+            gameServer.AddPropertyChangedHandler("KifuList", kifuControl1.OnListChanged, Parent);
+            gameServer.AddPropertyChangedHandler("Position", PositionChanged);
+            gameServer.AddPropertyChangedHandler("TurnChanged", TurnChanged, Parent);
+            gameServer.AddPropertyChangedHandler("InTheGame", InTheGameChanged, Parent);
+            gameServer.AddPropertyChangedHandler("EngineInitializing", EngineInitializingChanged, Parent);
+            gameServer.AddPropertyChangedHandler("RestTimeChanged", RestTimeChanged);
+            gameServer.AddPropertyChangedHandler("SetKifuListIndex", SetKifuListIndex, Parent);
+            gameServer.AddPropertyChangedHandler("InTheBoardEdit", UpdateKifuControlVisibility, Parent);
+        }
+
+        /// <summary>
+        /// NotifyObjectのイベントハンドラを解除
+        /// </summary>
+        public void RemoveEventHandlers()
+        {
+            gameServer.RemovePropertyChangedHandler("KifuList", kifuControl1.OnListChanged);
+            gameServer.RemovePropertyChangedHandler("Position", PositionChanged);
+            gameServer.RemovePropertyChangedHandler("TurnChanged", TurnChanged);
+            gameServer.RemovePropertyChangedHandler("InTheGame", InTheGameChanged);
+            gameServer.RemovePropertyChangedHandler("EngineInitializing", EngineInitializingChanged);
+            gameServer.RemovePropertyChangedHandler("RestTimeChanged", RestTimeChanged);
+            gameServer.RemovePropertyChangedHandler("SetKifuListIndex", SetKifuListIndex);
+            gameServer.RemovePropertyChangedHandler("InTheBoardEdit", UpdateKifuControlVisibility);
+        }
+
+        /// <summary>
+        /// Settingで渡されたSetButtonのハンドラを呼び出す。
+        /// </summary>
+        public void SetButton(ToolStripButtonEnum name, bool enable)
+        {
+            if (Setting!=null && Setting.SetButton != null)
+                Setting.SetButton(name, enable);
         }
 
         /// <summary>
@@ -40,12 +101,12 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void UpdateKifuControlVisibility(PropertyChangedEventArgs args = null)
         {
-            var config = TheApp.app.config;
-            ViewModel.kifuControl.Visible =
-                !config.InTheBoardEdit /*盤面編集中は非表示*/
-                &&
-                PieceTableVersion == 0 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */;
-            ;
+            if (kifuControl!=null)
+                kifuControl.Visible =
+                    gameServer != null
+                    && !gameServer.InTheBoardEdit /*盤面編集中は非表示*/
+                    &&  PieceTableVersion == 0 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */
+                ;
         }
 
         /// <summary>
@@ -76,7 +137,7 @@ namespace MyShogi.View.Win2D
         public void InTheGameChanged(PropertyChangedEventArgs args)
         {
             TurnChanged(args);
-            ViewModel.kifuControl.UpdateButtonState((bool)args.value /* == inTheGame */); // 棋譜ボタンが変化するかもなので
+            kifuControl.UpdateButtonState((bool)args.value /* == inTheGame */); // 棋譜ボタンが変化するかもなので
 
             // Tooltipの◁▷本譜ボタンの状態更新
             UpdateTooltipButtons2();
@@ -103,7 +164,7 @@ namespace MyShogi.View.Win2D
         public void SetKifuListIndex(PropertyChangedEventArgs args)
         {
             var selectedIndex = (int)args.value;
-            kifuControl.SetKifuListIndex(selectedIndex);
+            kifuControl1.SetKifuListIndex(selectedIndex);
         }
 
         /// <summary>
@@ -112,19 +173,18 @@ namespace MyShogi.View.Win2D
         private void UpdateTooltipButtons()
         {
             // この時、エンジン側の手番であるなら、メインウインドウのメニューの「急」ボタンをenableにしなければならない。
-            var gameServer = ViewModel.ViewModel.gameServer;
             var engineTurn = gameServer.EngineTurn;
-            SetButton(MainDialogButtonEnum.MOVE_NOW, engineTurn);
+            SetButton(ToolStripButtonEnum.MOVE_NOW, engineTurn);
 
             // この時、対局中でかつ、人間側の手番で、エンジン初期化中でなければ、
             // メインウインドウのメニューの「投」「待」ボタンをenableにしなければならない。
             var humanTurn = gameServer.InTheGame && gameServer.CanUserMove && !gameServer.EngineInitializing;
-            SetButton(MainDialogButtonEnum.RESIGN   , humanTurn);
-            SetButton(MainDialogButtonEnum.UNDO_MOVE, humanTurn);
+            SetButton(ToolStripButtonEnum.RESIGN, humanTurn);
+            SetButton(ToolStripButtonEnum.UNDO_MOVE, humanTurn);
 
             // 「中」ボタンは、エンジン同士の対局時にも中断できるようにするため、対局中であればいつでも中断できる。
             var canInterrupt = !gameServer.EngineInitializing && gameServer.InTheGame;
-            SetButton(MainDialogButtonEnum.INTERRUPT, canInterrupt);
+            SetButton(ToolStripButtonEnum.INTERRUPT, canInterrupt);
         }
 
         /// <summary>
@@ -132,21 +192,11 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void UpdateTooltipButtons2()
         {
-            var consideration = ViewModel.ViewModel.gameServer.GameMode.IsConsideration();
-            SetButton(MainDialogButtonEnum.REWIND, consideration);
-            SetButton(MainDialogButtonEnum.FORWARD, consideration);
-            SetButton(MainDialogButtonEnum.MAIN_BRANCH, consideration);
+            var consideration = gameServer.GameMode.IsConsideration();
+            SetButton(ToolStripButtonEnum.REWIND, consideration);
+            SetButton(ToolStripButtonEnum.FORWARD, consideration);
+            SetButton(ToolStripButtonEnum.MAIN_BRANCH, consideration);
         }
-
-
-        /// <summary>
-        /// ボタンのEnable/Disableを切り替えたい時のcallback用のデリゲート
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="enable"></param>
-        public delegate void SetButtonHandler(MainDialogButtonEnum name, bool enable);
-
-        public SetButtonHandler SetButton { get; set; }
 
         /// <summary>
         /// [UI thread] : エンジン初期化中の状態が変更になった時に呼び出されるハンドラ。
@@ -166,6 +216,7 @@ namespace MyShogi.View.Win2D
         public bool Dirty
         {
             get { return ViewModel.dirty; }
+            private set { ViewModel.dirty = value; }
         }
 
         // 持ち時間が減っていくときに、持ち時間の部分だけの再描画をしたいのでそのためのフラグ
@@ -179,16 +230,15 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void ResizeKifuControl()
         {
-            var kifu = ViewModel.kifuControl;
-            var vm = ViewModel.ViewModel;
-            var inTheGame = vm != null ? vm.gameServer.InTheGame : false;
+            var kifu = kifuControl;
+            var inTheGame = gameServer!= null && gameServer.InTheGame;
 
             var point = new Point(229, 600);
             kifu.Location = Affine(point);
             var size = new Size(265, 423);
             kifu.Size = AffineScale(size);
 
-            kifu.OnResize(ViewModel.AffineMatrix.Scale.X , inTheGame);
+            kifu.OnResize(ViewModel.AffineMatrix.Scale.X, inTheGame);
 
             // kifuControl内の文字サイズも変更しないといけない。
             // あとで考える。
@@ -199,14 +249,13 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 描画できる領域が与えられるので、ここにうまく収まるようにaffine行列を設定する。
+        /// 現在のこのControlのWidth,Heightに対して、いい感じに描画できるようにaffine行列を設定する。
         /// </summary>
-        /// <param name="screenSize"></param>
-        public void FitToClientSize(Rectangle screenRect)
+        public void FitToClientSize()
         {
             // 縦(h)を基準に横方向のクリップ位置を決める
             // 1920 * 1080が望まれる比率
-            int w2 = screenRect.Height * 1920 / 1080;
+            int w2 = Height * 1920 / 1080;
 
             // ちらつかずにウインドウのaspect ratioを保つのは.NET Frameworkの範疇では不可能。
             // ClientSizeをResizeイベント中に変更するのは安全ではない。
@@ -229,21 +278,24 @@ namespace MyShogi.View.Win2D
             }
 #endif
 
-            var scale = (double)screenRect.Height / board_img_size.Height;
-            ViewModel.AffineMatrix.SetMatrix(scale, scale, (screenRect.Width - w2) / 2, screenRect.Top);
+            var scale = (double)Height / board_img_size.Height;
+            ViewModel.AffineMatrix.SetMatrix(scale, scale, (Width - w2) / 2, 0 /* Top (Formの場合)*/);
 
-            set_komadai(screenRect);
-        }
+            //  縦長の画面なら駒台を縦長にする。
 
-        /// <summary>
-        ///  縦長の画面なら駒台を縦長にする。
-        /// </summary>
-        private void set_komadai(Rectangle screenRect)
-        {
-            double ratio = (double)screenRect.Width / screenRect.Height;
+            double ratio = (double)Width / Height;
             //Console.WriteLine(ratio);
 
             PieceTableVersion = (ratio < 1.36) ? 1 : 0;
+        }
+
+        /// <summary>
+        /// 強制的に再描画する。
+        /// </summary>
+        private void Redraw()
+        {
+            Dirty = true;
+            Invalidate();
         }
 
         /// <summary>
@@ -254,7 +306,7 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Point PieceLocation(SquareHand sq)
         {
-            var reverse = ViewModel.ViewModel.gameServer.BoardReverse;
+            var reverse = gameServer.BoardReverse;
             Point dest;
 
             if (sq.IsBoardPiece())
@@ -276,7 +328,7 @@ namespace MyShogi.View.Win2D
                     color = color.Not();
 
                 var v = PieceTableVersion;
-                
+
                 var pc = sq.ToPiece();
 
                 if (color == ShogiCore.Color.BLACK)
@@ -289,7 +341,8 @@ namespace MyShogi.View.Win2D
                         hand_table_pos[v, (int)color].X + (hand_table_size[v].Width - hand_piece_pos[v, (int)pc - 1].X - piece_img_size.Width - 10),
                         hand_table_pos[v, (int)color].Y + (hand_table_size[v].Height - hand_piece_pos[v, (int)pc - 1].Y - piece_img_size.Height + 0)
                     );
-            } else
+            }
+            else
             {
                 // -- 駒箱の駒
 
@@ -322,7 +375,8 @@ namespace MyShogi.View.Win2D
                         hand_box_pos[0].X + x,
                         hand_box_pos[0].Y + y
                         );
-                } else
+                }
+                else
                 {
                     int file = pc % 2;
                     int rank = pc / 2;
@@ -347,15 +401,15 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Rectangle HandTableRectangle(ShogiCore.Color c)
         {
-            var reverse = ViewModel.ViewModel.gameServer.BoardReverse;
+            var reverse = gameServer.BoardReverse;
             if (reverse)
                 c = c.Not();
 
             var v = PieceTableVersion;
-            return new Rectangle(hand_table_pos[v,(int)c], hand_table_size[v]);
+            return new Rectangle(hand_table_pos[v, (int)c], hand_table_size[v]);
         }
 
-        
+
         /// <summary>
         /// 駒箱の領域を返す。
         /// </summary>
@@ -371,7 +425,7 @@ namespace MyShogi.View.Win2D
         /// 指し手生成用のバッファ
         /// UIスレッドからしか使わない。マウスクリックのときの合法手を表示するために使う。
         /// </summary>
-        private Move[] moves_buf { get; } = new Move[(int)Move.MAX_MOVES];
+        private Move[] moves_buf { get; } = new Move[(int)ShogiCore.Move.MAX_MOVES];
 
         /// <summary>
         /// sqの駒を掴む
@@ -381,16 +435,15 @@ namespace MyShogi.View.Win2D
         /// <param name="sq"></param>
         public void pick_up(SquareHand sq)
         {
-            var gameServer = ViewModel.ViewModel.gameServer;
-            if (!(gameServer.CanUserMove && !gameServer.EngineInitializing) )
+            if (!(gameServer.CanUserMove && !gameServer.EngineInitializing))
                 return;
 
-            var pos = ViewModel.ViewModel.gameServer.Position;
+            var pos = gameServer.Position;
 
             // この駒をユーザーが掴んで動かそうとしていることを示す
             ViewModel.viewState.picked_from = sq;
             ViewModel.viewState.picked_to = SquareHand.NB;
-            ViewModel.viewState.state = GameScreenViewStateEnum.PiecePickedUp;
+            ViewModel.viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
             // デバッグ用に出力する。
             //Console.WriteLine("pick up : " + sq.Pretty() );
@@ -424,7 +477,8 @@ namespace MyShogi.View.Win2D
                     // 合法手には自分の手番の駒しか含まれないのでこれでうまくいくはず
                     if (m.IsDrop() && m.DroppedPiece() == pt)
                         bb |= m.To();
-                } else
+                }
+                else
                 {
                     // 駒の移動できる先
                     if (!m.IsDrop() && m.From() == (Square)sq)
@@ -433,7 +487,7 @@ namespace MyShogi.View.Win2D
             }
 
             ViewModel.viewState.picked_piece_legalmovesto = bb;
-            ViewModel.viewState.state = GameScreenViewStateEnum.PiecePickedUp;
+            ViewModel.viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
             // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
             ViewModel.dirty = true;
@@ -446,17 +500,16 @@ namespace MyShogi.View.Win2D
         /// <param name="sq"></param>
         public void pick_up_for_edit(SquareHand sq)
         {
-            var gameServer = ViewModel.ViewModel.gameServer;
             var pos = gameServer.Position;
 
             // この駒をユーザーが掴んで動かそうとしていることを示す
             ViewModel.viewState.picked_from = sq;
             ViewModel.viewState.picked_to = SquareHand.NB;
-            ViewModel.viewState.state = GameScreenViewStateEnum.PiecePickedUp;
+            ViewModel.viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
             // 生成されたすべての合法手に対して移動元の升が合致する指し手の移動先の升を
             ViewModel.viewState.picked_piece_legalmovesto = Bitboard.ZeroBB();
-            ViewModel.viewState.state = GameScreenViewStateEnum.PiecePickedUp;
+            ViewModel.viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
             // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
             ViewModel.dirty = true;
@@ -469,7 +522,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         /// <param name="from"></param>
         /// <param name="to"></param>
-        public void move_piece(SquareHand from,SquareHand to)
+        public void move_piece(SquareHand from, SquareHand to)
         {
             var state = ViewModel.viewState;
 
@@ -480,8 +533,8 @@ namespace MyShogi.View.Win2D
             // また、1段目に進む「歩」などは、不成はまずいので選択がいらない。
 
             // Promoteの判定
-            var pos = ViewModel.ViewModel.gameServer.Position;
-            var pro_move = Util.MakeMove(from, to , true);
+            var pos = gameServer.Position;
+            var pro_move = Util.MakeMove(from, to, true);
             // 成りの指し手が合法であるかどうか
             var canPromote = pos.IsLegal(pro_move);
 
@@ -499,7 +552,7 @@ namespace MyShogi.View.Win2D
             if (!canPromote)
             {
                 // 成れないので成る選択肢は消して良い。
-                ViewModel.ViewModel.gameServer.DoMoveCommand(unpro_move);
+                gameServer.DoMoveCommand(unpro_move);
                 StateReset();
             }
             // 上記 2.
@@ -507,14 +560,14 @@ namespace MyShogi.View.Win2D
             {
                 // 成るしか出来ないので、不成は選択肢から消して良い。
                 // 成れないので成る選択肢は消して良い。
-                ViewModel.ViewModel.gameServer.DoMoveCommand(pro_move);
+                gameServer.DoMoveCommand(pro_move);
                 StateReset();
             }
             // 上記 4.
             // これで、上記の1.～4.のすべての状態を網羅したことになる。
             else // if (canPromote && canUnPro)
             {
-                state.state = GameScreenViewStateEnum.PromoteDialog;
+                state.state = GameScreenControlViewStateEnum.PromoteDialog;
                 state.moved_piece_type = pos.PieceOn(from).PieceType();
 
                 // この状態を初期状態にするのは少しおかしいが、どうせこのあとマウスを動かすであろうからいいや。
@@ -526,7 +579,7 @@ namespace MyShogi.View.Win2D
                 // 1,2段目であれば上に変位させる必要がある。
                 // あと、棋譜ウィンドウもこの手前に描画できないので
                 // ここも避ける必要がある。
-                
+
                 var dest = PieceLocation(to);
                 if (dest.Y >= board_img_size.Height * 0.8) // 画面の下らへんである..
                     dest += new Size(-130 + 95 / 2, -200);
@@ -553,7 +606,6 @@ namespace MyShogi.View.Win2D
         /// <param name="to"></param>
         public void move_piece_for_edit(SquareHand from, SquareHand to)
         {
-            var gameServer = ViewModel.ViewModel.gameServer;
             var pos = gameServer.Position;
 
             // 何にせよ、移動、もしくは交換をする。
@@ -576,7 +628,8 @@ namespace MyShogi.View.Win2D
                         raw.board[(int)from] = to_pc;
                         raw.board[(int)to] = from_pc;
                     });
-                } else if(from.IsHandPiece())
+                }
+                else if (from.IsHandPiece())
                 {
                     // -- 手駒を盤面に
 
@@ -587,11 +640,12 @@ namespace MyShogi.View.Win2D
                         // このtoの位置にもし駒があったとしたら、それは駒箱に移動する。
                         // (その駒が欠落するので..)
                     });
-                } else if (from.IsPieceBoxPiece())
+                }
+                else if (from.IsPieceBoxPiece())
                 {
                     // -- 駒箱の駒を盤面に
 
-                    BoardEditCommand(raw => raw.board[(int)to] = from_pc );
+                    BoardEditCommand(raw => raw.board[(int)to] = from_pc);
                 }
             }
             else if (to.IsHandPiece())
@@ -609,7 +663,8 @@ namespace MyShogi.View.Win2D
                         raw.board[(int)from] = Piece.NO_PIECE;
                         raw.hands[(int)to.PieceColor()].Add(from_pr);
                     });
-                } else if (from.IsHandPiece())
+                }
+                else if (from.IsHandPiece())
                 {
                     // -- 手駒を手駒に。手番が違うならこれは合法。
 
@@ -619,9 +674,10 @@ namespace MyShogi.View.Win2D
                         {
                             // 同種の駒が駒台から駒台に移動するので、to_prは関係ない。
                             raw.hands[(int)from.PieceColor()].Sub(from_pr);
-                            raw.hands[(int)  to.PieceColor()].Add(from_pr);
+                            raw.hands[(int)to.PieceColor()].Add(from_pr);
                         });
-                    }else
+                    }
+                    else
                     {
                         // 手駒を同じ駒台に移動させることは出来ないし、
                         // 選び直しているのでは？
@@ -633,13 +689,14 @@ namespace MyShogi.View.Win2D
                         }
 
                     }
-                } else if (from.IsPieceBoxPiece())
+                }
+                else if (from.IsPieceBoxPiece())
                 {
                     // -- 駒箱の駒を手駒に
 
                     // 玉は移動手駒に出来ない
                     if (from_pt != Piece.KING)
-                        BoardEditCommand(raw => raw.hands[(int)to.PieceColor()].Add(from_pr) );
+                        BoardEditCommand(raw => raw.hands[(int)to.PieceColor()].Add(from_pr));
                 }
             }
             else if (to.IsPieceBoxPiece())
@@ -647,15 +704,17 @@ namespace MyShogi.View.Win2D
                 if (from.IsBoardPiece())
                 {
                     // -- 盤上の駒を駒箱に
-                    BoardEditCommand(raw => raw.board[(int)from] = Piece.NO_PIECE );
+                    BoardEditCommand(raw => raw.board[(int)from] = Piece.NO_PIECE);
 
-                } else if (from.IsHandPiece())
+                }
+                else if (from.IsHandPiece())
                 {
                     // -- 駒台の駒を駒箱に
 
                     BoardEditCommand(raw => raw.hands[(int)from.PieceColor()].Sub(from_pr));
 
-                } else if (from.IsPieceBoxPiece())
+                }
+                else if (from.IsPieceBoxPiece())
                 {
                     // 駒箱の駒を移動させることは出来ないし、
                     // 選び直しているのでは？
@@ -691,8 +750,6 @@ namespace MyShogi.View.Win2D
         /// <param name="sq"></param>
         public void OnBoardClick(SquareHand sq)
         {
-            var gameServer = ViewModel.ViewModel.gameServer;
-
             var pos = gameServer.Position;
             var state = ViewModel.viewState;
             var pc = pos.PieceOn(sq);
@@ -705,14 +762,14 @@ namespace MyShogi.View.Win2D
 
                 switch (state.state)
                 {
-                    case GameScreenViewStateEnum.Normal:
+                    case GameScreenControlViewStateEnum.Normal:
                         {
                             // 盤面編集中はどの駒でも掴める
                             if (pc != Piece.NO_PIECE)
                                 pick_up_for_edit(sq);
                             break;
                         }
-                    case GameScreenViewStateEnum.PiecePickedUp:
+                    case GameScreenControlViewStateEnum.PiecePickedUp:
                         {
                             // 盤面編集中はどの駒でも掴める
                             state.picked_to = sq;
@@ -721,13 +778,14 @@ namespace MyShogi.View.Win2D
                         }
                 }
 
-            } else
+            }
+            else
             {
                 // -- 対局中、もしくは、対局終了後である。
 
                 switch (state.state)
                 {
-                    case GameScreenViewStateEnum.Normal:
+                    case GameScreenControlViewStateEnum.Normal:
                         {
                             // 掴んだのが自分の駒であるか
                             if (pc != Piece.NO_PIECE && pc.PieceColor() == pos.sideToMove && !sq.IsPieceBoxPiece())
@@ -735,7 +793,7 @@ namespace MyShogi.View.Win2D
 
                             break;
                         }
-                    case GameScreenViewStateEnum.PiecePickedUp:
+                    case GameScreenControlViewStateEnum.PiecePickedUp:
                         {
                             // 次の4つのケースが考えられる
                             // 1.駒を掴んでいる状態なので移動先のクリック
@@ -766,7 +824,7 @@ namespace MyShogi.View.Win2D
 
                             break;
                         }
-                    case GameScreenViewStateEnum.PromoteDialog:
+                    case GameScreenControlViewStateEnum.PromoteDialog:
                         {
                             // PromoteDialogを出していたのであれば、
                             switch (state.promote_dialog_selection)
@@ -782,7 +840,7 @@ namespace MyShogi.View.Win2D
                                 case PromoteDialogSelectionEnum.PROMOTE:
                                     var m = Util.MakeMove(state.picked_from, state.picked_to,
                                         state.promote_dialog_selection == PromoteDialogSelectionEnum.PROMOTE);
-                                    ViewModel.ViewModel.gameServer.DoMoveCommand(m);
+                                    gameServer.DoMoveCommand(m);
                                     StateReset();
                                     break;
                             }
@@ -799,8 +857,6 @@ namespace MyShogi.View.Win2D
         /// <param name="sq"></param>
         public void OnBoardRightClick(SquareHand sq)
         {
-            var gameServer = ViewModel.ViewModel.gameServer;
-
             if (gameServer.InTheBoardEdit)
             {
                 // -- 盤面編集中
@@ -821,7 +877,7 @@ namespace MyShogi.View.Win2D
                         if (pc.CanPromote())
                             nextPc = pc.ToPromotePiece();
                         else
-                            nextPc = Util.MakePiece(pc.PieceColor().Not() /*相手番の駒に*/,pc.RawPieceType());
+                            nextPc = Util.MakePiece(pc.PieceColor().Not() /*相手番の駒に*/, pc.RawPieceType());
 
                         BoardEditCommand((raw_pos) => { raw_pos.board[(int)sq] = nextPc; });
                     }
@@ -839,7 +895,6 @@ namespace MyShogi.View.Win2D
         /// <param name="func"></param>
         public void BoardEditCommand(Action<RawPosition> func)
         {
-            var gameServer = ViewModel.ViewModel.gameServer;
             var raw_pos = gameServer.Position.CreateRawPosition(); // Clone()
             func(raw_pos);
             var sfen = Position.SfenFromRawPosition(raw_pos);
@@ -897,7 +952,8 @@ namespace MyShogi.View.Win2D
                 // affine変換前のもの
                 OnClick(p1);
                 return;
-            } else
+            }
+            else
             {
                 // 通常の移動であるが、これが駒の移動の条件を満たすことを確認しなければならない。
 
@@ -924,13 +980,13 @@ namespace MyShogi.View.Win2D
             var state = ViewModel.viewState;
 
             // 成り・不成のダイアログを出している
-            if (state.state == GameScreenViewStateEnum.PromoteDialog)
+            if (state.state == GameScreenControlViewStateEnum.PromoteDialog)
             {
                 // 与えられたpointがどこに属するか判定する。
                 // まず逆affine変換して、viewの(DrawSpriteなどで使っている)座標系にする
                 var pt = InverseAffine(p);
                 var zero = state.promote_dialog_location; // ここを原点とする
-                pt = new Point(pt.X - zero.X,pt.Y - zero.Y);
+                pt = new Point(pt.X - zero.X, pt.Y - zero.Y);
                 var selection = SPRITE.IsHoverPromoteDialog(pt);
 
                 // 前回までと違う場所が選択されたのでselectionの値を更新して、画面の描画をしなおす。
@@ -949,7 +1005,6 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         SquareHand BoardAxisToSquare(Point p)
         {
-            var gameServer = ViewModel.ViewModel.gameServer;
             var reverse = gameServer.BoardReverse;
 
             // 盤上の升かどうかの判定

@@ -1,20 +1,60 @@
-﻿using System;
+﻿using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
-using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
+using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Test;
+using ObjectModel = MyShogi.Model.Common.ObjectModel;
+using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
 {
     /// <summary>
-    /// メニューの更新部分だけ切り出したもの
+    /// 対局盤面などがあるメインウィンドゥ
     /// </summary>
-    public partial class MainDialog
+    public partial class MainDialog : Form
     {
+        public MainDialog()
+        {
+            InitializeComponent();
+        }
+
+        #region public methods
+        /// <summary>
+        /// LocalGameServerを渡して、このウィンドウに貼り付けているGameScreenControlを初期化してやる。
+        /// </summary>
+        /// <param name="gameServer"></param>
+        public void Init(LocalGameServer gameServer_)
+        {
+            // GameScreenControlの初期化
+            var setting = new GameScreenControlSetting()
+            {
+                SetButton = SetButton,
+                gameServer = gameServer_,
+            };
+            gameScreenControl1.Setting = setting;
+            gameScreenControl1.Init();
+        }
+
+        #endregion
+
+        #region properties
+        /// <summary>
+        /// activeなGameScreenControlに関連付けられてるLocalGameServerのインスタンスを返す。
+        /// 現状、GameScreenControlは一つしかインスタンスを生成していないので、それがactiveである。
+        /// </summary>
+        public LocalGameServer gameServer { get { return gameScreenControl1.gameServer; } }
+
+
+        /// <summary>
+        /// activeなGameScreenControlに関連付けられているKifuControlのインスタンスを返す。
+        /// 現状、GameScreenControlは一つしかインスタンスを生成していないので、それがactiveである。
+        /// </summary>
+        public KifuControl kifuControl { get { return gameScreenControl1.kifuControl; } }
+
         // -- メニューが生成しうるダイアログ
 
         /// <summary>
@@ -42,6 +82,223 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public Form engineConsiderationDialog;
 
+        #endregion
+
+        #region event handlers
+
+        // -- 以下、Windows Messageのイベントハンドラ
+
+        /// <summary>
+        /// [UI thread] : 定期的に呼び出されるタイマー
+        /// 
+        /// このタイマーは15msごとに呼び出される。
+        /// dirtyフラグが立っていなければ即座に帰るのでさほど負荷ではないという考え。
+        /// 
+        /// 1000ms / 60fps ≒ 16.67 ms
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void timer1_Tick(object sender, System.EventArgs e)
+        {
+            if (first_tick)
+            {
+                // コンストラクタでの初期化が間に合わなかったコントロールの初期化はここで行う。
+                first_tick = false;
+
+                // 棋譜ウィンドウの更新通知のタイミングがなかったのでupdate
+                gameServer.RaisePropertyChanged("KifuList", gameServer.KifuList);
+
+                // メニューもGameServerが初期化されているタイミングで更新できていなかったのでupdate
+                UpdateMenuItems();
+            }
+
+            // 自分が保有しているScreenがdirtyになっていることを検知したら、Invalidateを呼び出す。
+            if (gameScreenControl1.Dirty)
+                gameScreenControl1.Invalidate();
+
+            // 持ち時間描画だけの部分更新
+            // あとでちゃんと書き直す
+            //if (gameScreen.DirtyRestTime)
+            //    Invalidate(new Rectangle(100, 100, 1, 1));
+
+            // TODO : マルチスクリーン対応のときにちゃんと書く
+            // GameScreenControlをきちんとコンポーネント化したので、書きやすいはず…。
+        }
+
+        private bool first_tick = true;
+
+        // -- 
+
+        /// <summary>
+        /// メニュー高さとToolStripの高さをあわせたもの。
+        /// これはClientSize.Heightに含まれてしまうので実際の描画エリアはこれを減算したもの。
+        /// </summary>
+        private int menu_height
+        {
+            get
+            {
+                return SystemInformation.MenuHeight + toolStrip1.Height;
+            }
+        }
+
+        /// <summary>
+        /// 現在のデスクトップのサイズに合わせて画面サイズにしてやる。(起動時用)
+        /// </summary>
+        public void FitToScreenSize()
+        {
+            // ディスプレイに収まるサイズのスクリーンにする必要がある。
+            // プライマリスクリーンを基準にして良いのかどうかはわからん…。
+            int w = Screen.PrimaryScreen.Bounds.Width;
+            int h = Screen.PrimaryScreen.Bounds.Height - menu_height;
+
+            // いっぱいいっぱいだと邪魔なので90%ぐらい使うか。
+            w = (int)(w * 0.9);
+            h = (int)(h * 0.9);
+
+            // 縦(h)を基準に横方向のクリップ位置を決める
+            // 1920 * 1080が望まれる比率
+            int w2 = h * 1920 / 1080;
+
+            if (w > w2)
+            {
+                w = w2;
+                // 横幅が余りつつも画面にぴったりなのでこのサイズで生成する。
+            }
+            else
+            {
+                int h2 = w * 1080 / 1920;
+                h = h2;
+            }
+            ClientSize = new Size(w, h + menu_height);
+
+            MinimumSize = new Size(192 * 2, 108 * 2 + menu_height);
+        }
+
+        /// <summary>
+        /// Formの描画前の初期化
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainDialog_Load(object sender, System.EventArgs e)
+        {
+            // 現在のデスクトップの画面サイズに合わせてリサイズ
+            UpdateMenuItems(); // これを先にやっておかないとメニュー高さの計算が狂う。
+            FitToScreenSize();
+        }
+
+        // -- 以下、ToolStripのハンドラ
+
+        /// <summary>
+        /// [UI thread] : ボタンの有効/無効を切り替えるためのハンドラ
+        /// ボタンの番号が変わった時に呼び出し側を書き直すのが大変なので、
+        /// 名前で解決するものとする。
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="enable"></param>
+        private void SetButton(ToolStripButtonEnum name, bool enable)
+        {
+            ToolStripButton btn;
+            switch (name)
+            {
+                case ToolStripButtonEnum.RESIGN: btn = this.toolStripButton1; break;
+                case ToolStripButtonEnum.UNDO_MOVE: btn = this.toolStripButton2; break;
+                case ToolStripButtonEnum.MOVE_NOW: btn = this.toolStripButton3; break;
+                case ToolStripButtonEnum.INTERRUPT: btn = this.toolStripButton4; break;
+                case ToolStripButtonEnum.REWIND: btn = this.toolStripButton9; break;
+                case ToolStripButtonEnum.FORWARD: btn = this.toolStripButton10; break;
+                case ToolStripButtonEnum.MAIN_BRANCH: btn = this.toolStripButton11; break;
+                default: btn = null; break;
+            }
+
+            // 希望する状態と現在の状態が異なるなら、この時だけ更新する。
+            if (btn.Enabled != enable)
+                btn.Enabled = enable;
+        }
+
+        /// <summary>
+        /// 「投」ボタン。投了の処理。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton1_Click(object sender, System.EventArgs e)
+        {
+            // 受理されるかどうかは知らん
+            gameServer.DoMoveCommand(SCore.Move.RESIGN);
+        }
+
+        /// <summary>
+        /// 「待」ボタン。待ったの処理。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton2_Click(object sender, System.EventArgs e)
+        {
+            gameServer.UndoCommand();
+        }
+
+        /// <summary>
+        /// 「急」ボタン。いますぐに指させる。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton3_Click(object sender, System.EventArgs e)
+        {
+            gameServer.MoveNowCommand();
+        }
+
+        /// <summary>
+        /// 「中」ボタン。対局の中断。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton4_Click(object sender, System.EventArgs e)
+        {
+            gameServer.GameInterruptCommand();
+        }
+
+        /// <summary>
+        /// 「転」ボタン。盤面反転の処理。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton8_Click(object sender, System.EventArgs e)
+        {
+            gameServer.BoardReverse ^= true;
+        }
+
+        /// <summary>
+        /// ◁　ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton9_Click(object sender, System.EventArgs e)
+        {
+            kifuControl.RewindKifuListIndex();
+        }
+
+        /// <summary>
+        /// ▷　ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton10_Click(object sender, System.EventArgs e)
+        {
+            kifuControl.ForwardKifuListIndex();
+        }
+
+        /// <summary>
+        /// 本譜ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton11_Click(object sender, System.EventArgs e)
+        {
+            kifuControl.Button1ClickedHandler();
+        }
+        #endregion
+
+        #region update menu
+
         /// <summary>
         /// 棋譜の上書き保存のために、前回保存したときの名前を保持しておく。
         /// </summary>
@@ -51,17 +308,10 @@ namespace MyShogi.View.Win2D
         /// [UI thread] : メニューのitemを動的に追加する。
         /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
         /// </summary>
-        public void UpdateMenuItems(PropertyChangedEventArgs args = null)
+        public void UpdateMenuItems(ObjectModel.PropertyChangedEventArgs args = null)
         {
             var app = TheApp.app;
             var config = app.config;
-
-            // コンストラクタから呼び出された時は、まだ初期化されていない。
-            // そのときはnullになる。そのあとタイマーが起動して、初回にこのUpdateMenuItems()が呼び出される。
-            // そのタイミングではgameServer!=nullなので
-            // xxx.Enable = gameServer != null && gameServer.YYY;
-            // のような書き方をすると良い。
-            var gameServer = ViewModel != null ? ViewModel.gameServer : null;
 
             // Commercial Version GUI
             bool CV_GUI = config.CommercialVersion != 0;
@@ -97,9 +347,9 @@ namespace MyShogi.View.Win2D
                         {
                             var fd = new OpenFileDialog();
 
-                            //[ファイルの種類]に表示される選択肢を指定する
-                            //指定しないとすべてのファイルが表示される
-                            fd.Filter = string.Join("|", new string[]
+                                //[ファイルの種類]に表示される選択肢を指定する
+                                //指定しないとすべてのファイルが表示される
+                                fd.Filter = string.Join("|", new string[]
                             {
                                 "棋譜ファイル|*.kif;*.kifu;*.ki2;*.kif2;*.ki2u;*.kif2u;*.csa;*.psn;*.psn2;*.sfen;*.json;*.jkf;*.txt",
                                 "KIF形式|*.kif;*.kifu",
@@ -112,8 +362,8 @@ namespace MyShogi.View.Win2D
                             });
                             fd.FilterIndex = 1;
                             fd.Title = "開く棋譜ファイルを選択してください";
-                            //ダイアログを表示する
-                            if (fd.ShowDialog() == DialogResult.OK)
+                                //ダイアログを表示する
+                                if (fd.ShowDialog() == DialogResult.OK)
                             {
                                 var filename = fd.FileName;
                                 try
@@ -121,7 +371,7 @@ namespace MyShogi.View.Win2D
                                     var kifu_text = FileIO.ReadText(filename);
                                     gameServer.KifuReadCommand(kifu_text);
                                     lastFileName = filename; // 最後に開いたファイルを記録しておく。
-                                }
+                                    }
                                 catch
                                 {
                                     TheApp.app.MessageShow("ファイル読み込みエラー");
@@ -138,10 +388,10 @@ namespace MyShogi.View.Win2D
                         {
                             try
                             {
-                                // 「開く」もしくは「名前をつけて保存無したファイルに上書きする。
-                                // 「局面の保存」は棋譜ではないのでこれは無視する。
-                                // ファイル形式は、拡張子から自動判別する。
-                                gameServer.KifuWriteCommand(lastFileName, 
+                                    // 「開く」もしくは「名前をつけて保存無したファイルに上書きする。
+                                    // 「局面の保存」は棋譜ではないのでこれは無視する。
+                                    // ファイル形式は、拡張子から自動判別する。
+                                    gameServer.KifuWriteCommand(lastFileName,
                                     KifuFileTypeExtensions.StringToKifuFileType(lastFileName));
                             }
                             catch
@@ -159,21 +409,21 @@ namespace MyShogi.View.Win2D
                         {
                             var fd = new SaveFileDialog();
 
-                            //[ファイルの種類]に表示される選択肢を指定する
-                            //指定しないとすべてのファイルが表示される
-                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
+                                //[ファイルの種類]に表示される選択肢を指定する
+                                //指定しないとすべてのファイルが表示される
+                                fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
                                 + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
                                 + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
                             fd.FilterIndex = 1;
                             fd.Title = "棋譜を保存するファイル形式を選択してください";
-                            //ダイアログを表示する
-                            if (fd.ShowDialog() == DialogResult.OK)
+                                //ダイアログを表示する
+                                if (fd.ShowDialog() == DialogResult.OK)
                             {
                                 var filename = fd.FileName;
                                 try
                                 {
                                     KifuFileType kifuType;
-                                    switch(fd.FilterIndex)
+                                    switch (fd.FilterIndex)
                                     {
                                         case 1: kifuType = KifuFileType.KIF; break;
                                         case 2: kifuType = KifuFileType.KI2; break;
@@ -183,16 +433,16 @@ namespace MyShogi.View.Win2D
                                         case 6: kifuType = KifuFileType.SFEN; break;
 
                                             // ファイル名から自動判別すべき
-                                        default:
+                                            default:
                                             kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
                                             if (kifuType == KifuFileType.UNKNOWN)
                                                 kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
-                                            break;
+                                                break;
                                     }
 
                                     gameServer.KifuWriteCommand(filename, kifuType);
                                     lastFileName = filename; // 最後に保存したファイルを記録しておく。
-                                }
+                                    }
                                 catch
                                 {
                                     TheApp.app.MessageShow("ファイル書き出しエラー");
@@ -209,15 +459,15 @@ namespace MyShogi.View.Win2D
                         {
                             var fd = new SaveFileDialog();
 
-                            //[ファイルの種類]に表示される選択肢を指定する
-                            //指定しないとすべてのファイルが表示される
-                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
+                                //[ファイルの種類]に表示される選択肢を指定する
+                                //指定しないとすべてのファイルが表示される
+                                fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
                                 + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
                                 + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
                             fd.FilterIndex = 1;
                             fd.Title = "局面を保存するファイル形式を選択してください";
-                            //ダイアログを表示する
-                            if (fd.ShowDialog() == DialogResult.OK)
+                                //ダイアログを表示する
+                                if (fd.ShowDialog() == DialogResult.OK)
                             {
                                 var filename = fd.FileName;
                                 try
@@ -232,12 +482,12 @@ namespace MyShogi.View.Win2D
                                         case 5: kifuType = KifuFileType.PSN2; break;
                                         case 6: kifuType = KifuFileType.SFEN; break;
 
-                                        // ファイル名から自動判別すべき
-                                        default:
+                                            // ファイル名から自動判別すべき
+                                            default:
                                             kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
                                             if (kifuType == KifuFileType.UNKNOWN)
                                                 kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
-                                            break;
+                                                break;
                                     }
 
                                     gameServer.PositionWriteCommand(filename, kifuType);
@@ -274,17 +524,17 @@ namespace MyShogi.View.Win2D
                         item.Click += (sender, e) =>
                         {
 
-                            // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
-                            if (gameSettingDialog != null)
+                                // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
+                                if (gameSettingDialog != null)
                                 gameSettingDialog.Dispose();
 
                             gameSettingDialog = new GameSettingDialog(this);
                             gameSettingDialog.Show();
 
-                               // 閉じるときにせめて前回設定が選ばれていて欲しいが..
-                               // あとで前回設定を復元するコードを書く。
-                               // 前回設定、GlobalSettingに持たせるべきのような気がする。
-                           };
+                                // 閉じるときにせめて前回設定が選ばれていて欲しいが..
+                                // あとで前回設定を復元するコードを書く。
+                                // 前回設定、GlobalSettingに持たせるべきのような気がする。
+                            };
 
                         item_playgame.DropDownItems.Add(item);
                     }
@@ -302,7 +552,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Text = "盤面反転"; // これは全体設定。個別設定もある。
                         item.Checked = gameServer != null && gameServer.BoardReverse;
-                        item.Click += (sender, e) => { ViewModel.gameServer.BoardReverse ^= true; };
+                        item.Click += (sender, e) => { gameServer.BoardReverse ^= true; };
 
                         item_display.DropDownItems.Add(item);
                     }
@@ -636,7 +886,7 @@ namespace MyShogi.View.Win2D
                         item_sounds.DropDownItems.Add(item1);
                     }
 #endif
-                    
+
                     {
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "棋譜読み上げ";
@@ -659,7 +909,7 @@ namespace MyShogi.View.Win2D
 
                 var item_boardedit = new ToolStripMenuItem();
                 item_boardedit.Text = "盤面編集";
-                item_boardedit.Enabled = gameServer!=null && !gameServer.InTheGame;
+                item_boardedit.Enabled = gameServer != null && !gameServer.InTheGame;
                 menu.Items.Add(item_boardedit);
 
                 // 盤面編集の追加
@@ -677,10 +927,10 @@ namespace MyShogi.View.Win2D
                         item.Text = "手番の変更";
                         item.Click += (sender, e) =>
                         {
-                            var raw_pos = ViewModel.gameServer.Position.CreateRawPosition();
+                            var raw_pos = gameServer.Position.CreateRawPosition();
                             raw_pos.sideToMove = raw_pos.sideToMove.Not();
                             var sfen = Position.SfenFromRawPosition(raw_pos);
-                            ViewModel.gameServer.SetSfenCommand(sfen);
+                            gameServer.SetSfenCommand(sfen);
                         };
                         item_boardedit.DropDownItems.Add(item);
                     }
@@ -689,7 +939,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Enabled = config.InTheBoardEdit;
                         item.Text = "平手の初期局面配置";
-                        item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.NoHandicap.ToSfen()); };
+                        item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.NoHandicap.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
@@ -703,98 +953,98 @@ namespace MyShogi.View.Win2D
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "香落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.HandicapKyo.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "右香落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.HandicapRightKyo.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapRightKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "角落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.HandicapKaku.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapKaku.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "飛車落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.HandicapHisya.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapHisya.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "飛香落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.HandicapHisyaKyo.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapHisyaKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "二枚落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.Handicap2.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap2.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "三枚落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.Handicap3.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap3.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "四枚落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.Handicap4.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap4.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "五枚落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.Handicap5.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap5.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "左五枚落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.HandicapLeft5.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapLeft5.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "六枚落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.Handicap6.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap6.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "八枚落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.Handicap8.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap8.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "十枚落ち";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.Handicap10.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap10.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = config.InTheBoardEdit;
                             item.Text = "歩三枚";
-                            item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.HANDICAP_PAWN3.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HANDICAP_PAWN3.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
 
@@ -804,7 +1054,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Enabled = config.InTheBoardEdit;
                         item.Text = "詰将棋用に配置";
-                        item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.Mate1.ToSfen()); };
+                        item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Mate1.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
@@ -812,7 +1062,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Enabled = config.InTheBoardEdit;
                         item.Text = "双玉詰将棋用に配置";
-                        item.Click += (sender, e) => { ViewModel.gameServer.SetSfenCommand(BoardType.Mate2.ToSfen()); };
+                        item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Mate2.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
@@ -831,7 +1081,8 @@ namespace MyShogi.View.Win2D
                         var item1 = new ToolStripMenuItem();
                         item1.Text = TheApp.app.config.MemoryLoggingEnable ? "デバッグ終了" : "デバッグ開始";
                         item1.Checked = TheApp.app.config.MemoryLoggingEnable;
-                        item1.Click += (sender, e) => {
+                        item1.Click += (sender, e) =>
+                        {
                             TheApp.app.config.MemoryLoggingEnable ^= true;
                             if (!TheApp.app.config.MemoryLoggingEnable && debugDialog != null)
                             {
@@ -848,7 +1099,8 @@ namespace MyShogi.View.Win2D
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "デバッグウィンドウ";
                         item1.Enabled = TheApp.app.config.MemoryLoggingEnable;
-                        item1.Click += (sender, e) => {
+                        item1.Click += (sender, e) =>
+                        {
                             if (debugDialog != null)
                             {
                                 debugDialog.Dispose();
@@ -878,7 +1130,7 @@ namespace MyShogi.View.Win2D
                         item_others.DropDownItems.Add(item1);
                     }
 
-                    
+
                     {
                         // システム情報ダイアログ
 
@@ -916,14 +1168,14 @@ namespace MyShogi.View.Win2D
                         item1.Text = "アップデートの確認";
                         item1.Click += (sender, e) =>
                         {
-                            // ・オープンソース版は、MyShogiのプロジェクトのサイト
-                            // ・商用版は、マイナビの公式サイトのアップデートの特設ページ
-                            // が開くようにしておく。
-                            var url = config.CommercialVersion == 0 ?
+                                // ・オープンソース版は、MyShogiのプロジェクトのサイト
+                                // ・商用版は、マイナビの公式サイトのアップデートの特設ページ
+                                // が開くようにしておく。
+                                var url = config.CommercialVersion == 0 ?
                             "https://github.com/yaneurao/MyShogi" :
                             "https://book.mynavi.jp/ec/products/detail/id=92007"; // 予定地
 
-                            System.Diagnostics.Process.Start(url);
+                                System.Diagnostics.Process.Start(url);
                         };
                         item_others.DropDownItems.Add(item1);
                     }
@@ -968,14 +1220,15 @@ namespace MyShogi.View.Win2D
                     {
                         var item = new ToolStripMenuItem();
                         item.Text = "DevTest1.Test5()";
-                        item.Click += (sender, e) => {
+                        item.Click += (sender, e) =>
+                        {
                             if (engineConsiderationDialog != null)
                                 engineConsiderationDialog.Dispose();
                             engineConsiderationDialog = new EngineConsiderationDialog();
 
                             // ウィンドウ幅を合わせておく。
-                            
-                            engineConsiderationDialog.Size = new Size(Width,Width / 8);
+
+                            engineConsiderationDialog.Size = new Size(Width, Width / 8);
                             engineConsiderationDialog.Show();
                             engineConsiderationDialog.Location = new Point(Location.X, Location.Y + Height);
                         };
@@ -1010,5 +1263,6 @@ namespace MyShogi.View.Win2D
         }
 
         private MenuStrip old_menu { get; set; } = null;
+        #endregion
     }
 }

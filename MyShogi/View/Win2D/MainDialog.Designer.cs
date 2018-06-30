@@ -41,11 +41,12 @@
             this.toolStripButton7 = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton8 = new System.Windows.Forms.ToolStripButton();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButton9 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton10 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton11 = new System.Windows.Forms.ToolStripButton();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.gameScreenControl1 = new MyShogi.View.Win2D.GameScreenControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -180,12 +181,6 @@
             this.toolStripButton8.ToolTipText = "盤面を反転します。";
             this.toolStripButton8.Click += new System.EventHandler(this.toolStripButton8_Click);
             // 
-            // timer1
-            // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 15;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
@@ -227,25 +222,33 @@
             this.toolStripButton11.ToolTipText = "本譜の手順に戻ります。(検討時)";
             this.toolStripButton11.Click += new System.EventHandler(this.toolStripButton11_Click);
             // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 15;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // gameScreenControl1
+            // 
+            this.gameScreenControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gameScreenControl1.Location = new System.Drawing.Point(0, 28);
+            this.gameScreenControl1.Name = "gameScreenControl1";
+            this.gameScreenControl1.Size = new System.Drawing.Size(517, 233);
+            this.gameScreenControl1.TabIndex = 1;
+            // 
             // MainDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(517, 264);
+            this.ClientSize = new System.Drawing.Size(517, 261);
+            this.Controls.Add(this.gameScreenControl1);
             this.Controls.Add(this.toolStrip1);
-            this.DoubleBuffered = true;
+            this.DoubleBuffered = false;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(200, 100);
+            this.MinimumSize = new System.Drawing.Size(195, 84);
             this.Name = "MainDialog";
             this.Text = "MyShogi";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainDialog_FormClosed);
-            this.SizeChanged += new System.EventHandler(this.MainDialog_SizeChanged);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainDialog_Paint);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MainDialog_MouseDown);
-            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainDialog_MouseMove);
-            this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainDialog_MouseUp);
-            this.Resize += new System.EventHandler(this.MainDialog_Resize);
-            this.Move += new System.EventHandler(this.MainDialog_Move);
+            this.Load += new System.EventHandler(this.MainDialog_Load);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -271,5 +274,6 @@
         private System.Windows.Forms.ToolStripButton toolStripButton9;
         private System.Windows.Forms.ToolStripButton toolStripButton10;
         private System.Windows.Forms.ToolStripButton toolStripButton11;
+        private GameScreenControl gameScreenControl1;
     }
 }

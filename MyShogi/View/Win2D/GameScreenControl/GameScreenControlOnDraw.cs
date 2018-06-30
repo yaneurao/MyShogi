@@ -1,63 +1,26 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
-using MyShogi.App;
-using MyShogi.Model.Shogi.Core;
+﻿using MyShogi.App;
 using MyShogi.Model.Resource.Images;
-using ShogiCore = MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Core;
+using System.Drawing;
+using System.Linq;
 using SColor = MyShogi.Model.Shogi.Core.Color; // 将棋のほうのColor
+using ShogiCore = MyShogi.Model.Shogi.Core;
 using SPRITE = MyShogi.Model.Resource.Images.SpriteManager;
-using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.View.Win2D
 {
-    /// <summary>
-    /// 対局画面を表現するクラス
-    /// 
-    /// 描画が完全に抽象化されているので、
-    /// 一つのMainDialogが複数のGameScreenを持つことが出来る。
-    /// </summary>
-    public partial class GameScreen
+    public partial class GameScreenControl
     {
-        /// <summary>
-        /// 初期化
-        /// 親フォームにこのインスタンスの持つControlを関連付けておく。
-        /// </summary>
-        /// <param name="parent"></param>
-        public void Init(Form parent)
-        {
-            Parent = parent;
-
-            // 棋譜コントロールを親ウィンドウにぶら下げる。
-            AddKifuControl();
-        }
-
-        public Form Parent;
-
-        /// <summary>
-        /// この対局盤面の描画のために必要となるViewModel
-        /// 別クラスになってはいるが、GameScreenと1:1で対応するので、GameScreenの生成と同時に生成している。
-        /// </summary>
-        public GameScreenViewModel ViewModel { get; private set; } = new GameScreenViewModel();
-
-        public KifuControl kifuControl { get { return ViewModel.kifuControl; } }
-
-        /// <summary>
-        /// 駒台のバージョン
-        /// 
-        /// このGameScreenのアスペクト比により、(横幅を狭めると)自動的に2が選ばれる。
-        /// 
-        /// 0 : 通常の駒台
-        /// 1 : 細長い駒台
-        /// 
-        /// </summary>
-        public int PieceTableVersion = 0;
-
         /// <summary>
         /// 描画時に呼び出される。
         /// 対局盤面を描画する。
         /// </summary>
         public void OnDraw(Graphics g_)
         {
+            // 初期化が終わっていない。この描画は出来ない。
+            if (gameServer == null)
+                return;
+
             graphics = g_;
             /// 以降、このクラスのDrawSprite(),DrawString()は正常にaffine変換されて描画されるものとする。
 
@@ -67,12 +30,9 @@ namespace MyShogi.View.Win2D
             var config = app.config;
             var vm = ViewModel;
 
-            // 対局を監視しているLocalGameServer
-            var gameServer = vm.ViewModel.gameServer;
-
             // 描画する局面
             var pos = gameServer.Position; // MainDialogViewModel
-            // 掴んでいる駒などのViewの状態
+                                           // 掴んでいる駒などのViewの状態
             var state = vm.viewState;
 
             var picked_from = state.picked_from;
@@ -87,7 +47,7 @@ namespace MyShogi.View.Win2D
             // -- 盤面の描画
             {
                 // 盤面編集中　→　駒箱を描画する必要がある。
-                var inTheBoardEdit = gameServer.GameMode == GameModeEnum.InTheBoardEdit;
+                var inTheBoardEdit = gameServer.InTheBoardEdit;
 
                 // 座標系はストレートに指定しておけばaffine変換されて適切に描画される。
                 DrawSprite(new Point(0, 0), SPRITE.Board(PieceTableVersion, inTheBoardEdit));
@@ -110,7 +70,7 @@ namespace MyShogi.View.Win2D
                     var dest = PieceLocation((SquareHand)sq);
 
                     // ダイアログが出ている時や、駒を掴んでいるときは最終手のエフェクトがあると紛らわしいので消す。
-                    if (state.state == GameScreenViewStateEnum.Normal)
+                    if (state.state == GameScreenControlViewStateEnum.Normal)
                     {
                         // これが最終手の移動元の升であるなら、エフェクトを描画する。
                         if (sq == lastMoveFrom)
@@ -136,9 +96,10 @@ namespace MyShogi.View.Win2D
                             // 移動元の升に適用されるエフェクトを描画する。
                             DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
 
-                            picked_sprite = new SpriteEx(sprite , dest + new Size(-5,-20));
+                            picked_sprite = new SpriteEx(sprite, dest + new Size(-5, -20));
                             continue;
-                        } else
+                        }
+                        else
                         {
                             // 駒を持ち上げてはいる時の移動先の候補の升のエフェクト
 
@@ -197,9 +158,9 @@ namespace MyShogi.View.Win2D
                                 // 移動元の升に適用されるエフェクトを描画する。
                                 DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
 
-                                picked_sprite = new SpriteEx(sprite , dest + new Size(-5, -20));
+                                picked_sprite = new SpriteEx(sprite, dest + new Size(-5, -20));
                             }
-                            else 
+                            else
                             {
                                 // 駒の描画
                                 DrawSprite(dest, sprite);
@@ -240,17 +201,17 @@ namespace MyShogi.View.Win2D
                                 // 移動元の升に適用されるエフェクトを描画する。
                                 DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom), ratio);
 
-                                picked_sprite = new SpriteEx( sprite , dest + new Size(-5, -20) , ratio);
+                                picked_sprite = new SpriteEx(sprite, dest + new Size(-5, -20), ratio);
                             }
                             else
                             {
                                 // 駒の描画
-                                DrawSprite(dest, sprite , ratio);
+                                DrawSprite(dest, sprite, ratio);
                             }
 
                             // 数字の描画(枚数が2枚以上のとき)
                             if (count >= 2)
-                                DrawSprite(dest + hand_number_offset2[v], SPRITE.HandBoxNumber(count) , ratio);
+                                DrawSprite(dest + hand_number_offset2[v], SPRITE.HandBoxNumber(count), ratio);
                         }
                     }
                 }
@@ -275,8 +236,8 @@ namespace MyShogi.View.Win2D
                     // 細長い状態の駒台表示
                     case 1:
                         DrawSprite(turn_slim_pos, SPRITE.NamePlateSlim(pos.sideToMove, reverse));
-                        DrawString(name_plate_slim_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK ), 28 , new DrawStringOption(Brushes.White, 2));
-                        DrawString(name_plate_slim_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE ), 28 , new DrawStringOption(Brushes.White, 0));
+                        DrawString(name_plate_slim_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.White, 2));
+                        DrawString(name_plate_slim_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.White, 0));
                         break;
                 }
             }
@@ -290,7 +251,7 @@ namespace MyShogi.View.Win2D
                         // 対局時間設定
                         DrawString(time_setting_pos[0], gameServer.TimeSettingString(reverse ? SColor.WHITE : SColor.BLACK), 18);
                         DrawString(time_setting_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18);
-                        
+
                         // 残り時間
                         DrawString(time_setting_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.Black, 1));
                         DrawString(time_setting_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.Black, 1));
@@ -303,8 +264,8 @@ namespace MyShogi.View.Win2D
                         //DrawString(time_setting_slim_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18 , new DrawStringOption(Brushes.Black, 0));
 
                         // 残り時間
-                        DrawString(time_setting_slim_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 24 , new DrawStringOption(Brushes.Black, 1));
-                        DrawString(time_setting_slim_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 24 , new DrawStringOption(Brushes.Black, 1));
+                        DrawString(time_setting_slim_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 24, new DrawStringOption(Brushes.Black, 1));
+                        DrawString(time_setting_slim_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 24, new DrawStringOption(Brushes.Black, 1));
                         break;
                 }
             }
@@ -318,7 +279,7 @@ namespace MyShogi.View.Win2D
                 switch (PieceTableVersion)
                 {
                     case 0: DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal()); break;
-                    case 1: DrawSprite(turn_slim_pos , SPRITE.TurnSlim(pos.sideToMove,reverse)); break;
+                    case 1: DrawSprite(turn_slim_pos, SPRITE.TurnSlim(pos.sideToMove, reverse)); break;
                 }
 
             }
@@ -330,21 +291,19 @@ namespace MyShogi.View.Win2D
             }
 
             // -- 成り、不成の選択ダイアログを出している最中であるなら
-            if (state.state == GameScreenViewStateEnum.PromoteDialog)
+            if (state.state == GameScreenControlViewStateEnum.PromoteDialog)
             {
-                DrawSprite(state.promote_dialog_location ,
-                    SPRITE.PromoteDialog(state.promote_dialog_selection , state.moved_piece_type));
+                DrawSprite(state.promote_dialog_location,
+                    SPRITE.PromoteDialog(state.promote_dialog_selection, state.moved_piece_type));
             }
 
             // -- エンジン初期化中のダイアログ
 
-            if (vm.ViewModel.gameServer.EngineInitializing)
+            if (gameServer.EngineInitializing)
                 DrawSprite(engine_init_pos, SPRITE.EngineInit());
 
             // 描画が完了したのでDirtyフラグを戻しておく。
-            vm.dirty = false;
+            Dirty = false;
         }
-
     }
-
 }

@@ -53,20 +53,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
     <Compile Include="Model\Common\Process\RemoteService.cs" />
@@ -138,7 +124,6 @@
     <Compile Include="Model\Shogi\Usi\UsiOptionType.cs" />
     <Compile Include="Model\Shogi\Usi\UsiTimeData.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="ViewModel\MainDialogViewModel.cs" />
     <Compile Include="Model\Shogi\Converter\Csa.cs" />
     <Compile Include="Model\Shogi\Converter\Exception.cs" />
     <Compile Include="Model\Shogi\Core\EnteringKingRule.cs" />
@@ -195,8 +180,33 @@
     <Compile Include="View\Win2D\EngineConsiderationControl.Designer.cs">
       <DependentUpon>EngineConsiderationControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\GameScreen\GameScreen.cs" />
-    <Compile Include="View\Win2D\GameScreen\GameScreenEventHandler.cs" />
+    <Compile Include="View\Win2D\GameScreenControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\GameScreenControl.Designer.cs">
+      <DependentUpon>GameScreenControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlConst.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlDrawSprite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlEventHandler.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlEventHelper.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlOnDraw.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlProperties.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlSetting.cs" />
+    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlViewModel.cs" />
+    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlViewState.cs" />
     <Compile Include="View\Win2D\GameSettingDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -215,32 +225,19 @@
     <Compile Include="View\Win2D\EngineConsiderationDialog.Designer.cs">
       <DependentUpon>EngineConsiderationDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\MainDialog\MainDialog.cs">
+    <Compile Include="View\Win2D\MainDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\MainDialog\MainDialog.Designer.cs">
+    <Compile Include="View\Win2D\MainDialog.Designer.cs">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\GameScreen\GameScreenConst.cs" />
-    <Compile Include="View\Win2D\GameScreen\GameScreenDraw.cs" />
-    <Compile Include="View\Win2D\MainDialog\MainDialogButtonEnum.cs" />
-    <Compile Include="View\Win2D\MainDialog\MainDialogEventHandler.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="View\Win2D\MainDialog\MainDialogFitToScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="View\Win2D\MainDialog\MainDialogMenu.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="View\Win2D\GameScreen\GameScreenViewModel.cs" />
-    <Compile Include="View\Win2D\GameScreen\GameScreenViewState.cs" />
     <Compile Include="View\Win2D\SystemInfo.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\Win2D\SystemInfo.Designer.cs">
       <DependentUpon>SystemInfo.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\ToolStripButtonEnum.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -260,6 +257,9 @@
     <EmbeddedResource Include="View\Win2D\EngineConsiderationControl.resx">
       <DependentUpon>EngineConsiderationControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\GameScreenControl.resx">
+      <DependentUpon>GameScreenControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\GameSettingDialog.resx">
       <DependentUpon>GameSettingDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -269,7 +269,7 @@
     <EmbeddedResource Include="View\Win2D\EngineConsiderationDialog.resx">
       <DependentUpon>EngineConsiderationDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\MainDialog\MainDialog.resx">
+    <EmbeddedResource Include="View\Win2D\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\SystemInfo.resx">
@@ -292,7 +292,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ViewModel\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="docs\TODO.md" />
     <Content Include="docs\更新履歴.txt" />
@@ -309,6 +311,17 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

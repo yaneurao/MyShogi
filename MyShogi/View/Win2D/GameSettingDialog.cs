@@ -76,7 +76,7 @@ namespace MyShogi.View.Win2D
         private void button3_Click(object sender, EventArgs e)
         {
             var gameSetting = TheApp.app.config.GameSetting;
-            var gameServer = mainDialog.ViewModel.gameServer;
+            var gameServer = mainDialog.gameServer;
 
             // 設定をClone()してから渡す。(immutableにしたいため)
             gameServer.GameStartCommand(gameSetting.Clone());

@@ -126,7 +126,7 @@ namespace MyShogi.Model.Common.ObjectModel
 
             // いますぐ呼び出す
             PropertyChangedEventHandler h = null;
-            Form form = null;
+            Control form = null;
 
             lock (lockObject)
             {
@@ -203,7 +203,7 @@ namespace MyShogi.Model.Common.ObjectModel
         /// </summary>
         /// <param name="name"></param>
         /// <param name="h"></param>
-        public void AddPropertyChangedHandler(string name , PropertyChangedEventHandler h , Form form = null)
+        public void AddPropertyChangedHandler(string name , PropertyChangedEventHandler h , Control form = null)
         {
             lock (lockObject)
             {
@@ -269,7 +269,7 @@ namespace MyShogi.Model.Common.ObjectModel
         /// イベントハンドラを呼び出す時にUIスレッドで実行しないといけないため、
         /// Formが指定されているとき、それを格納しておくためのもの。
         /// </summary>
-        private Dictionary<string, Form> forms_dic = new Dictionary<string, Form>();
+        private Dictionary<string, Control> forms_dic = new Dictionary<string, Control>();
 
         /// <summary>
         /// lockを抜けてからRaisePropertyChangedEventをまとめて呼び出す遅延lock
