@@ -11,12 +11,18 @@ namespace MyShogi.Model.Resource.Images
     {
         /// <summary>
         /// 盤面画像
+        /// 
+        /// piece_table_version == 0 : 普通の駒台
+        /// piece_table_version == 1 : 細長い駒台
+        /// 
+        /// piece_box : 駒箱の有無
+        /// 
         /// </summary>
         /// <returns></returns>
-        public static Sprite Board()
+        public static Sprite Board(int piece_table_version , bool piece_box)
         {
             var srcRect = new Rectangle(0, 0, board_img_width, board_img_height);
-            var image = TheApp.app.imageManager.BoardImage.image;
+            var image = TheApp.app.imageManager.BoardImage(piece_table_version,piece_box).image;
 
             return new Sprite(image, srcRect);
         }

@@ -21,7 +21,6 @@ namespace MyShogi.App
         {
             BoardImageVersion = 1;
             TatamiImageVersion = 1;
-            PieceTableImageVersion = 1;
             PieceImageVersion = 1;
             PieceAttackImageVersion = 0;
             BoardNumberImageVersion = 1;
@@ -158,19 +157,6 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("TatamiImageVersion"); }
             set { SetValue<int>("TatamiImageVersion", value); }
-        }
-
-        /// <summary>
-        /// 駒台のバージョン
-        /// メインウインドウの横幅を狭めると自動的に2が選ばれる。
-        /// 
-        /// 1 : 普通の
-        /// 2 : 低aspect ratio環境向けの縦に細長い駒台
-        /// </summary>
-        public int PieceTableImageVersion
-        {
-            get { return GetValue<int>("PieceTableImageVersion"); }
-            set { SetValue<int>("PieceTableImageVersion", value); }
         }
 
         /// <summary>

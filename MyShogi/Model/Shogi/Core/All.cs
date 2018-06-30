@@ -27,6 +27,38 @@ namespace MyShogi.Model.Shogi.Core
                 yield return f;
         }
 
+        // 将棋とは関係ないがあると便利そうなのも追加しとく。
+
+        public static IEnumerable<bool> Bools()
+        {
+            yield return false;
+            yield return true;
+        }
+
+        /// <summary>
+        /// foreach(var x in All.Int(5)) とすると x = 0,1,2,3,4でループを回る。
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static IEnumerable<int> Int(int n)
+        {
+            for (int i = 0; i < n; ++i)
+                yield return i;
+        }
+
+        /// <summary>
+        /// a <= i < b の範囲で回す
+        /// foreach(var x in All.Int(5,8)) とすると x = 5,6,7でループを回る。
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public static IEnumerable<int> Int(int a , int b)
+        {
+            for (int i = a; i < b; ++i)
+                yield return i;
+        }
+
 
         // 他、気が向いたら追加する。
     }

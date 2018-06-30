@@ -6,6 +6,7 @@ using MyShogi.Model.Resource.Images;
 using ShogiCore = MyShogi.Model.Shogi.Core;
 using SColor = MyShogi.Model.Shogi.Core.Color; // 将棋のほうのColor
 using SPRITE = MyShogi.Model.Resource.Images.SpriteManager;
+using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.View.Win2D
 {
@@ -41,6 +42,17 @@ namespace MyShogi.View.Win2D
         public KifuControl kifuControl { get { return ViewModel.kifuControl; } }
 
         /// <summary>
+        /// 駒台のバージョン
+        /// 
+        /// このGameScreenのアスペクト比により、(横幅を狭めると)自動的に2が選ばれる。
+        /// 
+        /// 0 : 通常の駒台
+        /// 1 : 細長い駒台
+        /// 
+        /// </summary>
+        public int PieceTableVersion = 0;
+
+        /// <summary>
         /// 描画時に呼び出される。
         /// 対局盤面を描画する。
         /// </summary>
@@ -72,12 +84,13 @@ namespace MyShogi.View.Win2D
             // 盤面を反転させて描画するかどうか
             var reverse = gameServer.BoardReverse;
 
-            var piece_table_ver = config;
-
             // -- 盤面の描画
             {
+                // 盤面編集中　→　駒箱を描画する必要がある。
+                var inTheBoardEdit = gameServer.GameMode == GameModeEnum.InTheBoardEdit;
+
                 // 座標系はストレートに指定しておけばaffine変換されて適切に描画される。
-                DrawSprite(new Point(0, 0), SPRITE.Board());
+                DrawSprite(new Point(0, 0), SPRITE.Board(PieceTableVersion, inTheBoardEdit));
             }
 
             // -- 駒の描画
@@ -204,7 +217,7 @@ namespace MyShogi.View.Win2D
                 {
 
                     // 通常の駒台 0 , 細長い駒台なら1
-                    var v = config.PieceTableImageVersion == 1 ? 0 : 1;
+                    var v = PieceTableVersion;
                     // 表示倍率
                     var ratio = v == 0 ? 1.0f : 0.6f;
 
@@ -252,15 +265,15 @@ namespace MyShogi.View.Win2D
 
             // -- 対局者氏名
             {
-                switch (config.PieceTableImageVersion)
+                switch (PieceTableVersion)
                 {
                     // 通常状態の駒台表示
-                    case 1:
+                    case 0:
                         DrawString(name_plate_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK), 28);
                         DrawString(name_plate_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE), 28);
                         break;
                     // 細長い状態の駒台表示
-                    case 2:
+                    case 1:
                         DrawSprite(turn_slim_pos, SPRITE.NamePlateSlim(pos.sideToMove, reverse));
                         DrawString(name_plate_slim_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK ), 28 , new DrawStringOption(Brushes.White, 2));
                         DrawString(name_plate_slim_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE ), 28 , new DrawStringOption(Brushes.White, 0));
@@ -270,10 +283,10 @@ namespace MyShogi.View.Win2D
 
             // -- 持ち時間等
             {
-                switch (config.PieceTableImageVersion)
+                switch (PieceTableVersion)
                 {
                     // 通常状態の駒台表示
-                    case 1:
+                    case 0:
                         // 対局時間設定
                         DrawString(time_setting_pos[0], gameServer.TimeSettingString(reverse ? SColor.WHITE : SColor.BLACK), 18);
                         DrawString(time_setting_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18);
@@ -282,8 +295,9 @@ namespace MyShogi.View.Win2D
                         DrawString(time_setting_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.Black, 1));
                         DrawString(time_setting_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.Black, 1));
                         break;
+
                     // 細長い状態の駒台表示
-                    case 2:
+                    case 1:
                         // 対局時間設定(表示する場所がなさげ)
                         //DrawString(time_setting_slim_pos[0], gameServer.TimeSettingString(reverse ? SColor.WHITE : SColor.BLACK), 18 , new DrawStringOption(Brushes.Black, 2));
                         //DrawString(time_setting_slim_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18 , new DrawStringOption(Brushes.Black, 0));
@@ -301,10 +315,10 @@ namespace MyShogi.View.Win2D
                 int side = pos.sideToMove == SColor.BLACK ? 0 : 1;
                 side = reverse ? (side ^ 1) : side;
 
-                switch (config.PieceTableImageVersion)
+                switch (PieceTableVersion)
                 {
-                    case 1: DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal()); break;
-                    case 2: DrawSprite(turn_slim_pos , SPRITE.TurnSlim(pos.sideToMove,reverse)); break;
+                    case 0: DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal()); break;
+                    case 1: DrawSprite(turn_slim_pos , SPRITE.TurnSlim(pos.sideToMove,reverse)); break;
                 }
 
             }

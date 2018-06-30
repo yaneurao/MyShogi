@@ -44,7 +44,7 @@ namespace MyShogi.View.Win2D
             ViewModel.kifuControl.Visible =
                 !config.InTheBoardEdit /*盤面編集中は非表示*/
                 &&
-                config.PieceTableImageVersion == 1 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */;
+                PieceTableVersion == 0 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */;
             ;
         }
 
@@ -243,7 +243,7 @@ namespace MyShogi.View.Win2D
             double ratio = (double)screenRect.Width / screenRect.Height;
             //Console.WriteLine(ratio);
 
-            TheApp.app.config.PieceTableImageVersion = (ratio < 1.36) ? 2 : 1;
+            PieceTableVersion = (ratio < 1.36) ? 1 : 0;
         }
 
         /// <summary>
@@ -275,8 +275,8 @@ namespace MyShogi.View.Win2D
                 if (reverse)
                     color = color.Not();
 
-                var v = (TheApp.app.config.PieceTableImageVersion == 1) ? 0 : 1;
-
+                var v = PieceTableVersion;
+                
                 var pc = sq.ToPiece();
 
                 if (color == ShogiCore.Color.BLACK)
@@ -301,7 +301,7 @@ namespace MyShogi.View.Win2D
                 else if (pc == 4 || pc == 5)
                     ++pc;
 
-                if (TheApp.app.config.PieceTableImageVersion == 1)
+                if (PieceTableVersion == 0)
                 {
                     // 駒箱の1段目に3枚、2段目に2枚、3段目に3枚表示する。
 
@@ -351,8 +351,7 @@ namespace MyShogi.View.Win2D
             if (reverse)
                 c = c.Not();
 
-            var v = (TheApp.app.config.PieceTableImageVersion == 1) ? 0 : 1;
-
+            var v = PieceTableVersion;
             return new Rectangle(hand_table_pos[v,(int)c], hand_table_size[v]);
         }
 
@@ -364,8 +363,7 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Rectangle PieceBoxRectangle()
         {
-            var v = (TheApp.app.config.PieceTableImageVersion == 1) ? 0 : 1;
-
+            var v = PieceTableVersion;
             return new Rectangle(piece_box_pos[v], piece_box_size[v]);
         }
 
@@ -998,7 +996,7 @@ namespace MyShogi.View.Win2D
                     var ratio = 0.6f;
 
                     var config = TheApp.app.config;
-                    var size = config.PieceTableImageVersion == 1 ?
+                    var size = PieceTableVersion == 0 ?
                         piece_img_size :
                         new Size((int)(piece_img_size.Width * ratio), (int)(piece_img_size.Height * ratio));
 

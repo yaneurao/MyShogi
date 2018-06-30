@@ -1,8 +1,11 @@
 ﻿using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Diagnostics;
+using DColor = System.Drawing.Color;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Resource.Images
 {
@@ -42,46 +45,73 @@ namespace MyShogi.Model.Resource.Images
         public void UpdateBoardImage(PropertyChangedEventArgs args = null)
         {
             var config = TheApp.app.config;
+
             var board = new ImageLoader();
             var tatami = new ImageLoader();
-            var komadai = new ImageLoader();
             var name_plate = new ImageLoader();
-            var koma_box = new ImageLoader();
+
             Load(ref board ,$"board_v{config.BoardImageVersion}_1920_1080.png");
             Load(ref tatami, $"tatami_v{config.TatamiImageVersion}_1920_1080.png");
-            Load(ref komadai, $"komadai_v{config.PieceTableImageVersion}_1920_1080.png");
             Load(ref name_plate, "name_plate_v1_1920_1080.png");
 
-            // 盤面編集に切り替えるごとにBGの再生成、無駄すぎない？
-	        // 同じファイルの読み込みだから、さほど時間かからないっぽいので(SSDなら)、まあいいか。
+            var piece_table = new ImageLoader[2];
+            var piece_box = new ImageLoader[2];
 
-            // 盤面編集モードであるなら駒箱を合成。
-            if (config.InTheBoardEdit)
-                Load(ref koma_box, $"koma_bako_v{config.PieceTableImageVersion}_1920_1080.png");
-
-            BoardImage.CreateBitmap(1920, 1080, PixelFormat.Format24bppRgb);
-
-            // 畳と盤を合成する。
-            using (var g = Graphics.FromImage(BoardImage.image))
+            // 駒台
+            // piece_table_version == 0 のとき普通の駒台
+            // piece_table_version == 1 のとき細長い駒台
+            foreach (var piece_table_version in All.Int(2))
             {
-                var rect = new Rectangle(0, 0, BoardImage.image.Width, BoardImage.image.Height);
-                // DrawImageで等倍の転送にするためにはrectの指定が必要
-                g.DrawImage(tatami.image , rect , rect , GraphicsUnit.Pixel);
-                g.DrawImage(board.image, rect , rect , GraphicsUnit.Pixel);
-                g.DrawImage(komadai.image, rect, rect, GraphicsUnit.Pixel);
+                var img = new ImageLoader();
+                Load(ref img, $"komadai_v{piece_table_version + 1}_1920_1080.png");
+                piece_table[piece_table_version] = img;
 
-                // 駒台が縦長のとき、ネームプレートは別の素材
-                if (config.PieceTableImageVersion == 1)
-                    g.DrawImage(name_plate.image, rect, rect, GraphicsUnit.Pixel);
-
-                // 駒箱を合成するのは盤面編集モードの時のみ
-                if (config.InTheBoardEdit)
-                    g.DrawImage(koma_box.image , rect, rect, GraphicsUnit.Pixel);
+                var img2 = new ImageLoader();
+                Load(ref img2, $"koma_bako_v{piece_table_version + 1}_1920_1080.png");
+                piece_box[piece_table_version] = img2;
             }
 
-            // しばらく使わないと思うので開放しておく
+            foreach (var piece_table_version in All.Int(2))
+            {
+                // 駒箱
+                // piece_box_exist == false 駒箱なし
+                // piece_box_exist ==  true 駒箱あり
+                foreach (var piece_box_exist in All.Bools())
+                {
+                    var img = new ImageLoader();
+                    img.CreateBitmap(1920, 1080, PixelFormat.Format24bppRgb);
+
+                    // 畳と盤を合成する。
+                    using (var g = Graphics.FromImage(img.image))
+                    {
+                        var rect = new Rectangle(0, 0, img.image.Width, img.image.Height);
+                        // DrawImageで等倍の転送にするためにはrectの指定が必要
+                        g.DrawImage(tatami.image, rect, rect, GraphicsUnit.Pixel);
+                        g.DrawImage(board.image, rect, rect, GraphicsUnit.Pixel);
+                        g.DrawImage(piece_table[piece_table_version].image, rect, rect, GraphicsUnit.Pixel);
+
+                        // 駒台が縦長のとき、ネームプレートは別の素材
+                        if (piece_table_version == 0)
+                            g.DrawImage(name_plate.image, rect, rect, GraphicsUnit.Pixel);
+
+                        // 駒箱を合成するのは盤面編集モードの時のみ
+                        if (piece_box_exist)
+                            g.DrawImage(piece_box[piece_table_version].image, rect, rect, GraphicsUnit.Pixel);
+                    }
+
+                    BoardImages[piece_table_version + (piece_box_exist ? 2 : 0)] = img;
+                }
+            }
+
+            // もう使わないと思うので開放しておく
+            foreach (var piece_table_version in All.Int(2))
+            {
+                piece_table[piece_table_version].Release();
+                piece_box[piece_table_version].Release();
+            }
             board.Release();
             tatami.Release();
+            name_plate.Release();
         }
 
         /// <summary>
@@ -124,7 +154,7 @@ namespace MyShogi.Model.Resource.Images
 
             // 左からn番目をcで塗りつぶす
             // Graphics.DrawImageだとαが合成されてしまい、思っている色で塗りつぶされない
-            void Fill(PieceMoveEffect n , Color c)
+            void Fill(PieceMoveEffect n , DColor c)
             {
                 for (int j = 0; j < y; ++j)
                     for (int i = 0; i < x; ++i)
@@ -133,49 +163,49 @@ namespace MyShogi.Model.Resource.Images
             }
 
             // 最終手の移動元、移動先で用いるエフェクトの番号に応じた色を返す
-            Color ColorOf(int type)
+            DColor ColorOf(int type)
             {
-                Color c;
+                DColor c;
                 switch (type)
                 {
-                    case 0: c = Color.FromArgb(0, 0, 0, 0); break;
-                    case 1: c = Color.FromArgb((int)(255 * 0.40), 0xff, 0x7f, 0x50); break;
-                    case 2: c = Color.FromArgb((int)(255 * 0.40), 0x41, 0x69, 0xe1); break;
-                    case 3: c = Color.FromArgb((int)(255 * 0.40), 0x6b, 0x8e, 0x23); break;
-                    default: c = Color.FromArgb(0, 0, 0, 0); break;
+                    case 0: c = DColor.FromArgb(0, 0, 0, 0); break;
+                    case 1: c = DColor.FromArgb((int)(255 * 0.40), 0xff, 0x7f, 0x50); break;
+                    case 2: c = DColor.FromArgb((int)(255 * 0.40), 0x41, 0x69, 0xe1); break;
+                    case 3: c = DColor.FromArgb((int)(255 * 0.40), 0x6b, 0x8e, 0x23); break;
+                    default: c = DColor.FromArgb(0, 0, 0, 0); break;
                 }
                 return c;
             }
 
             // 駒を掴んだ時の移動元で用いるエフェクトの番号に応じた色を返す
-            Color ColorOf2(int type)
+            DColor ColorOf2(int type)
             {
-                Color c;
+                DColor c;
                 switch (type)
                 {
-                    case 0: c = Color.FromArgb(0, 0, 0, 0); break;
-                    case 1: c = Color.FromArgb((int)(255 * 0.80), 0xff, 0xef, 0x80); break;
-                    case 2: c = Color.FromArgb((int)(255 * 0.80), 0x81, 0xa9, 0xf1); break;
-                    case 3: c = Color.FromArgb((int)(255 * 0.80), 0xab, 0xde, 0x73); break;
-                    default: c = Color.FromArgb(0, 0, 0, 0); break;
+                    case 0: c = DColor.FromArgb(0, 0, 0, 0); break;
+                    case 1: c = DColor.FromArgb((int)(255 * 0.80), 0xff, 0xef, 0x80); break;
+                    case 2: c = DColor.FromArgb((int)(255 * 0.80), 0x81, 0xa9, 0xf1); break;
+                    case 3: c = DColor.FromArgb((int)(255 * 0.80), 0xab, 0xde, 0x73); break;
+                    default: c = DColor.FromArgb(0, 0, 0, 0); break;
                 }
                 return c;
             }
 
             // 駒を掴んだ時の移動先(以外)で用いるエフェクトの番号に応じた色を返す
-            Color ColorOf3(int type)
+            DColor ColorOf3(int type)
             {
-                Color c;
+                DColor c;
                 switch (type)
                 {
-                    case 0: c = Color.FromArgb(0, 0, 0, 0); break;
-                    case 1: c = Color.FromArgb((int)(255 * 0.30), (int)(243 * 0.7), (int)(230 * 0.7), (int)(187 * 0.7)); break;
-                    case 2: c = Color.FromArgb((int)(255 * 0.30), (int)(243 * 0.5), (int)(230 * 0.5), (int)(187 * 0.5)); break;
-                    case 3: c = Color.FromArgb((int)(255 * 0.30), (int)(243 * 0.2), (int)(230 * 0.2), (int)(187 * 0.2)); break;
-                    case 4: c = Color.FromArgb((int)(255 * 0.3), 255, 255, 255); break;
-                    case 5: c = Color.FromArgb((int)(255 * 0.6), 255, 255, 255); break;
+                    case 0: c = DColor.FromArgb(0, 0, 0, 0); break;
+                    case 1: c = DColor.FromArgb((int)(255 * 0.30), (int)(243 * 0.7), (int)(230 * 0.7), (int)(187 * 0.7)); break;
+                    case 2: c = DColor.FromArgb((int)(255 * 0.30), (int)(243 * 0.5), (int)(230 * 0.5), (int)(187 * 0.5)); break;
+                    case 3: c = DColor.FromArgb((int)(255 * 0.30), (int)(243 * 0.2), (int)(230 * 0.2), (int)(187 * 0.2)); break;
+                    case 4: c = DColor.FromArgb((int)(255 * 0.3), 255, 255, 255); break;
+                    case 5: c = DColor.FromArgb((int)(255 * 0.6), 255, 255, 255); break;
 
-                    default: c = Color.FromArgb(0, 0, 0, 0); break;
+                    default: c = DColor.FromArgb(0, 0, 0, 0); break;
                 }
                 return c;
             }
@@ -276,12 +306,35 @@ namespace MyShogi.Model.Resource.Images
             img.Load(Path.Combine(ImageFolder,name));
         }
 
+        /// <summary>
+        /// 盤面 + 畳を合成したRGB(RGBAではない)画像
+        /// 
+        /// { 普通の駒台 , 小さな駒台 } × { 駒箱なし , 駒箱あり }の4通り生成して持っている。
+        /// </summary>
+        private ImageLoader[] BoardImages = new ImageLoader[4];
+
         // -- 以下、それぞれの画像
 
         /// <summary>
+        /// 
         /// 盤面 + 畳を合成したRGB画像
+        /// 
+        /// piece_table_version
+        ///   0 : 普通の駒台
+        ///   1 : 小さな駒台
+        ///   
+        /// piece_box
+        ///  false : 駒箱なし
+        ///   true : 駒箱あり
         /// </summary>
-        public ImageLoader BoardImage = new ImageLoader();
+        /// <param name="piece_table_version"></param>
+        /// <returns></returns>
+        public ImageLoader BoardImage(int piece_table_version , bool piece_box)
+        {
+            Debug.Assert(0 <= piece_table_version && piece_table_version < 2);
+
+            return BoardImages[piece_table_version + (piece_box ? 2 : 0)];
+        }
 
         /// <summary>
         /// 駒画像
