@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
@@ -36,6 +37,14 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public Form debugDialog;
 
+        /// <summary>
+        /// エンジンの思考出力用
+        /// </summary>
+        public Form engineConsiderationDialog;
+
+        /// <summary>
+        /// 棋譜の上書き保存のために、前回保存したときの名前を保持しておく。
+        /// </summary>
         private string lastFileName;
 
         /// <summary>
@@ -265,8 +274,8 @@ namespace MyShogi.View.Win2D
                         item.Click += (sender, e) =>
                         {
 
-                               // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
-                               if (gameSettingDialog != null)
+                            // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
+                            if (gameSettingDialog != null)
                                 gameSettingDialog.Dispose();
 
                             gameSettingDialog = new GameSettingDialog(this);
@@ -825,7 +834,10 @@ namespace MyShogi.View.Win2D
                         item1.Click += (sender, e) => {
                             TheApp.app.config.MemoryLoggingEnable ^= true;
                             if (!TheApp.app.config.MemoryLoggingEnable && debugDialog != null)
+                            {
                                 debugDialog.Dispose(); // 終了させておく。
+                                debugDialog = null;
+                            }
                         };
                         item_others.DropDownItems.Add(item1);
                     }
@@ -837,21 +849,19 @@ namespace MyShogi.View.Win2D
                         item1.Text = "デバッグウィンドウ";
                         item1.Enabled = TheApp.app.config.MemoryLoggingEnable;
                         item1.Click += (sender, e) => {
-                            if (debugDialog != null && debugDialog.IsDisposed)
+                            if (debugDialog != null)
                             {
                                 debugDialog.Dispose();
                                 debugDialog = null;
                             }
 
-                            if (debugDialog == null)
+                            var log = Log.log1;
+                            if (log != null)
                             {
-                                var log = Log.log1;
-                                if (log != null)
-                                {
-                                    // セットされているはずなんだけどなぁ…。おかしいなぁ…。
-                                    debugDialog = new DebugWindow((MemoryLog)log);
-                                }
+                                // セットされているはずなんだけどなぁ…。おかしいなぁ…。
+                                debugDialog = new DebugWindow((MemoryLog)log);
                             }
+
                             if (debugDialog != null)
                                 debugDialog.Show();
                         };
@@ -927,30 +937,57 @@ namespace MyShogi.View.Win2D
                     var item_debug = new ToolStripMenuItem();
                     item_debug.Text = "デバッグ";
 
-                    var item1 = new ToolStripMenuItem();
-                    item1.Text = "DevTest1.Test1()";
-                    item1.Click += (sender, e) => { DevTest1.Test1(); };
-                    item_debug.DropDownItems.Add(item1);
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "DevTest1.Test1()";
+                        item.Click += (sender, e) => { DevTest1.Test1(); };
+                        item_debug.DropDownItems.Add(item);
+                    }
 
-                    var item2 = new ToolStripMenuItem();
-                    item2.Text = "DevTest1.Test2()";
-                    item2.Click += (sender, e) => { DevTest1.Test2(); };
-                    item_debug.DropDownItems.Add(item2);
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "DevTest1.Test2()";
+                        item.Click += (sender, e) => { DevTest1.Test2(); };
+                        item_debug.DropDownItems.Add(item);
+                    }
 
-                    var item3 = new ToolStripMenuItem();
-                    item3.Text = "DevTest1.Test3()";
-                    item3.Click += (sender, e) => { DevTest1.Test3(); };
-                    item_debug.DropDownItems.Add(item3);
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "DevTest1.Test3()";
+                        item.Click += (sender, e) => { DevTest1.Test3(); };
+                        item_debug.DropDownItems.Add(item);
+                    }
 
-                    var item4 = new ToolStripMenuItem();
-                    item4.Text = "DevTest1.Test4()";
-                    item4.Click += (sender, e) => { DevTest1.Test4(); };
-                    item_debug.DropDownItems.Add(item4);
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "DevTest1.Test4()";
+                        item.Click += (sender, e) => { DevTest1.Test4(); };
+                        item_debug.DropDownItems.Add(item);
+                    }
 
-                    var item5 = new ToolStripMenuItem();
-                    item5.Text = "DevTest2.Test1()";
-                    item5.Click += (sender, e) => { DevTest2.Test1(); };
-                    item_debug.DropDownItems.Add(item5);
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "DevTest1.Test5()";
+                        item.Click += (sender, e) => {
+                            if (engineConsiderationDialog != null)
+                                engineConsiderationDialog.Dispose();
+                            engineConsiderationDialog = new EngineConsiderationDialog();
+
+                            // ウィンドウ幅を合わせておく。
+                            
+                            engineConsiderationDialog.Size = new Size(Width,Width / 8);
+                            engineConsiderationDialog.Show();
+                            engineConsiderationDialog.Location = new Point(Location.X, Location.Y + Height);
+                        };
+                        item_debug.DropDownItems.Add(item);
+                    }
+
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "DevTest2.Test1()";
+                        item.Click += (sender, e) => { DevTest2.Test1(); };
+                        item_debug.DropDownItems.Add(item);
+                    }
 
                     menu.Items.Add(item_debug);
                 }

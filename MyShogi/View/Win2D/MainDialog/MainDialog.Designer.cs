@@ -245,6 +245,7 @@
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MainDialog_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.MainDialog_MouseUp);
             this.Resize += new System.EventHandler(this.MainDialog_Resize);
+            this.Move += new System.EventHandler(this.MainDialog_Move);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);

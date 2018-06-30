@@ -198,6 +198,17 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// ウィンドウが動いた時に、思考エンジンの読み筋ウィンドウが表示中であるなら、
+        /// それも追随させて移動させる。(見失うといけないため)
+        /// </summary>
+        /// <param name="sender"></param>
+        private void MainDialog_Move(object sender , System.EventArgs e)
+        {
+            if (engineConsiderationDialog != null)
+                engineConsiderationDialog.Location = new Point(Location.X, Location.Y + Height);
+        }
+
+        /// <summary>
         /// MouseDownが最後に発生した場所
         /// </summary>
         private Point mouseLastDown = new Point(-1,-1); // 意味のない地点
