@@ -107,6 +107,10 @@ namespace MyShogi.Model.Shogi.Converter
         /// </summary>
         KI2,
         /// <summary>
+        /// KI2形式 + 駒打ちのみ"打"強制表示
+        /// </summary>
+        Drop,
+        /// <summary>
         /// 詳細 例: ２三銀右(14)
         /// </summary>
         Verbose,
@@ -372,26 +376,30 @@ namespace MyShogi.Model.Shogi.Converter
                         {
                             // KIF形式では持駒からの着手は必ず"打"と表記する
                             kif.Append("打");
-                        } else {
-                            if (move.IsPromote())
-                            {
-                                kif.Append("成");
-                                // KIF形式では"不成"表記しない
-                            }
-                            kif.AppendFormat("({0}{1})",
-                                HW_NUMBER[move.From().ToFile().ToInt()],
-                                HW_NUMBER[move.From().ToRank().ToInt()]
-                            );
+                            break;
                         }
+                        if (move.IsPromote())
+                        {
+                            kif.Append("成");
+                            // KIF形式では"不成"表記しない
+                        }
+                        kif.AppendFormat("({0}{1})",
+                            HW_NUMBER[move.From().ToFile().ToInt()],
+                            HW_NUMBER[move.From().ToRank().ToInt()]
+                        );
                         break;
                     }
                     case FromSqFormat.KI2:
+                    case FromSqFormat.Drop:
                     case FromSqFormat.Verbose:
                     {
-                        if (moveInfo.drop == KifMoveInfo.Drop.EXPLICIT || opt.fromsq == FromSqFormat.Verbose && move.IsDrop())
+                        if (move.IsDrop())
                         {
-                            // KI2では紛らわしくない場合、"打"と表記しない。
-                            kif.Append("打");
+                            if (opt.fromsq != FromSqFormat.KI2 || moveInfo.drop == KifMoveInfo.Drop.EXPLICIT)
+                            {
+                                // KI2では紛らわしくない場合、"打"と表記しない。
+                                kif.Append("打");
+                            }
                             break;
                         }
                         switch (moveInfo.relative)

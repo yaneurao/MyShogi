@@ -2,6 +2,18 @@
 using System.Management;
 using System.Text;
 using System.Windows.Forms;
+/*
+using System.IO;
+using System.Net;
+using System.Text;
+using System.Drawing;
+using System.Management;
+using System.Text;
+using System.Windows.Forms;
+using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Kifu;
+using MyShogi.Model.Shogi.Converter;
+*/
 
 namespace MyShogi.Model.Test
 {
@@ -13,6 +25,17 @@ namespace MyShogi.Model.Test
         public static void Test1()
         {
 #if true
+            try
+            {
+                var evaltest = new EvalControlTestForm();
+                evaltest.Show();
+            }
+            catch (Exception e)
+            {
+                Console.Error.WriteLine(e);
+            }
+#endif
+#if false
             try
             {
                 var sb = new StringBuilder();
@@ -34,6 +57,7 @@ namespace MyShogi.Model.Test
                     Console.WriteLine($"{(i | 0x80000000):X8}{(char)(j + 'a')}: {cpuid.getExtend(i, j):X8}");
                 }
 
+                sb.AppendLine($"processorArchitecture: {cpuid.processorArchitecture}");
                 sb.AppendLine($"cpuTarget: {cpuid.cpuTarget}");
                 sb.AppendLine($"vendorId: {cpuid.vendorId}");
                 sb.AppendLine($"brand: {cpuid.brand}");
@@ -67,6 +91,7 @@ namespace MyShogi.Model.Test
                     mo.Dispose();
                 }
 
+                Console.WriteLine(sb);
                 MessageBox.Show(sb.ToString(), "SystemInfo", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
             }
             catch (Exception e)

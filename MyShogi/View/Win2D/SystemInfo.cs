@@ -40,6 +40,7 @@ namespace MyShogi.View.Win2D
                 }
 #endif
 
+            sb.AppendLine($"processorArchitecture: {cpuid.processorArchitecture}");
             sb.AppendLine($"cpuTarget: {cpuid.cpuTarget}");
             sb.AppendLine($"vendorId: {cpuid.vendorId}");
             sb.AppendLine($"brand: {cpuid.brand}");

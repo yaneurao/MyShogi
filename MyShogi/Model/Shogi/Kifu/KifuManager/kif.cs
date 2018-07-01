@@ -55,7 +55,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     isBody = true;
                     if (bod.Count > 0)
                     {
-                        if (KifuHeader.header_dic.ContainsKey("手合割")) return "手合割と初期局面文字列が同時に指定されています";
+                        if (KifuHeader.header_dic.ContainsKey("手合割")) return "手合割と初期局面文字列が同時に指定されています。";
                         Tree.rootSfen = Converter.KifExtensions.BodToSfen(bod.ToArray());
                         Tree.position.SetSfen(Tree.rootSfen);
                         Tree.rootBoardType = BoardType.Others;
@@ -183,13 +183,13 @@ namespace MyShogi.Model.Shogi.Kifu
                             case "下手の持駒":
                             case "後手の持駒":
                             case "上手の持駒":
-                                if (isBody) throw new KifuException("対局開始後にヘッダが指定されました", line);
+                                if (isBody) throw new KifuException("対局開始後にヘッダが指定されました。", line);
                                 bod.Add(line);
                                 goto nextline;
                             case "変化":
-                                if (!isBody) throw new KifuException("初期局面からは変化できません");
+                                if (!isBody) throw new KifuException("初期局面からは変化できません。");
                                 var mHenka = rHenka.Match(headerValue);
-                                if (!mHenka.Success) throw new KifuException("変化する手数を検出できませんでした");
+                                if (!mHenka.Success) throw new KifuException("変化する手数を検出できませんでした。");
                                 var ply = int.Parse(mHenka.Groups[1].Value);
                                 while (ply < Tree.gamePly)
                                     Tree.UndoMove();
@@ -197,7 +197,7 @@ namespace MyShogi.Model.Shogi.Kifu
                                 times = Tree.GetKifuMoveTimes();
                                 goto nextline;
                             case "手合割":
-                                if (isBody) throw new KifuException("対局開始後にヘッダが指定されました", line);
+                                if (isBody) throw new KifuException("対局開始後にヘッダが指定されました。", line);
                                 KifuHeader.header_dic.Add(headerKey, headerValue);
 
                                 // 局面を指定されたBoardTypeで初期化する。
@@ -231,18 +231,18 @@ namespace MyShogi.Model.Shogi.Kifu
                                 goto nextline;
                             case "先手":
                             case "下手":
-                                if (isBody) throw new KifuException("対局開始後にヘッダが指定されました",line);
+                                if (isBody) throw new KifuException("対局開始後にヘッダが指定されました。", line);
                                 KifuHeader.header_dic.Add(headerKey, headerValue);
                                 KifuHeader.PlayerNameBlack = headerValue;
                                 goto nextline;
                             case "後手":
                             case "上手":
-                                if (isBody) throw new KifuException("対局開始後にヘッダが指定されました",line);
+                                if (isBody) throw new KifuException("対局開始後にヘッダが指定されました。", line);
                                 KifuHeader.header_dic.Add(headerKey, headerValue);
                                 KifuHeader.PlayerNameWhite = headerValue;
                                 goto nextline;
                             default:
-                                if (isBody) throw new KifuException("対局開始後にヘッダが指定されました",line);
+                                if (isBody) throw new KifuException("対局開始後にヘッダが指定されました。", line);
                                 KifuHeader.header_dic.Add(headerKey, headerValue);
                                 goto nextline;
                         }
@@ -258,7 +258,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     {
                         if (line.StartsWith(bodKey))
                         {
-                            if (isBody) throw new KifuException("対局開始後にヘッダが指定されました",line);
+                            if (isBody) throw new KifuException("対局開始後にヘッダが指定されました。", line);
                             bod.Add(line);
                             goto nextline;
                         }
@@ -276,14 +276,14 @@ namespace MyShogi.Model.Shogi.Kifu
                         }
                         var ply = int.Parse(mKif.Groups[1].Value);
                         if (Tree.gamePly != ply)
-                            throw new KifuException($"手数が一致しません: {Tree.gamePly}", line);
+                            throw new KifuException($"手数({Tree.gamePly})が一致しません。", line);
                         Move move;
                         if (mKif.Groups[2].Success)
                         {
                             move = Tree.position.FromKif(mKif.Groups[2].Value);
                             if (!Tree.position.IsLegal(move))
                                 // これだと不正着手後の棋譜コメントを取れないがとりあえず解析を中止する
-                                throw new KifuException("不正着手を検出しました", line);
+                                throw new KifuException("不正着手を検出しました。", line);
                         }
                         else switch (mKif.Groups[3].Value)
                         {
@@ -318,7 +318,7 @@ namespace MyShogi.Model.Shogi.Kifu
                                 break;
                         }
                         if (move == Move.NONE)
-                            throw new KifuException("指し手を解析できませんでした", line);
+                            throw new KifuException("指し手を解析できませんでした。", line);
                         TimeSpan thinking_time = TimeSpan.Zero;
                         TimeSpan total_time = TimeSpan.Zero;
                         if (mKif.Groups[4].Success)
@@ -359,11 +359,11 @@ namespace MyShogi.Model.Shogi.Kifu
                         {
                             var move = Tree.position.FromKif(m.Groups[0].Value);
                             if (move == Move.NONE)
-                                throw new KifuException("指し手を解析できませんでした", line);
+                                throw new KifuException("指し手を解析できませんでした。", line);
                             Tree.AddNode(move, KifuMoveTimes.Zero);
                             if (!Tree.position.IsLegal(move))
                                 // これだと不正着手後の棋譜コメントを取れないがとりあえず解析を中止する
-                                throw new KifuException($"不正着手を検出しました", line);
+                                throw new KifuException($"不正着手を検出しました。", line);
                             if (move.IsOk())
                                 Tree.DoMove(move);
                         }
@@ -442,7 +442,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 }
             } catch (Exception e)
             {
-                return $"棋譜読み込みエラー : {lineNo}行目\n{e.Message}";
+                return $"棋譜読み込みエラー : {lineNo}行目。\n{e.Message}";
             }
 
             return null;

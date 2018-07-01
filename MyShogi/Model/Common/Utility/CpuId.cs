@@ -168,6 +168,8 @@ namespace MyShogi.Model.Common.Utility
                     }
                 }
             }
+            public ProcessorArchitecture processorArchitecture { get => systeminfo.ProcessorArchitecture; }
+            public ProcessorType processorType { get => systeminfo.ProcessorType; }
             public int basicLength { get => basic.Length; }
             public int extendLength { get => extend.Length; }
             public bool hasMMX { get => getBasicBit(1, 3, 23); }
@@ -232,7 +234,7 @@ namespace MyShogi.Model.Common.Utility
         private static extern void GetSystemInfo(ref SystemInfo psi);
 
         [StructLayout(LayoutKind.Sequential, Pack = 2)]
-        internal struct SystemInfo
+        public struct SystemInfo
         {
             public ProcessorArchitecture ProcessorArchitecture;
             UInt16 Reserved;
@@ -247,7 +249,7 @@ namespace MyShogi.Model.Common.Utility
             public UInt16 ProcessorRevision;
         }
 
-        internal enum ProcessorArchitecture : UInt16
+        public enum ProcessorArchitecture : UInt16
         {
             AMD64 = 9, // x64
             ARM = 5,
@@ -257,7 +259,7 @@ namespace MyShogi.Model.Common.Utility
             UNKNOWN = 0xffff,
         }
 
-        internal enum ProcessorType : UInt32
+        public enum ProcessorType : UInt32
         {
             INTEL_386 = 386,
             INTEL_486 = 486,

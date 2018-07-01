@@ -262,7 +262,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 var jsonObj = LiveJsonUtil.FromString(content);
                 if (jsonObj == null || jsonObj.data == null || jsonObj.data.Count == 0)
                 {
-                    return "有効なデータが得られませんでした";
+                    return "有効なデータが得られませんでした。";
                 }
                 // 先頭のデータのみ読み込む
                 var data = jsonObj.data[0];
@@ -347,17 +347,17 @@ namespace MyShogi.Model.Shogi.Kifu
                                 move = Move.DRAW;
                                 break;
                             default:
-                                return "不明な終局理由です";
+                                return "不明な終局理由です。";
                         }
                     }
                     // varidation
                     else if (kif.frX < 1 || kif.frX > 9 || kif.toY < 0 || kif.toY > 10)
                     {
-                        return "無効な移動元座標を検出しました";
+                        return "無効な移動元座標を検出しました。";
                     }
                     else if (kif.toX < 1 || kif.toX > 9 || kif.toY < 1 || kif.toY > 9)
                     {
-                        return "無効な移動先座標を検出しました";
+                        return "無効な移動先座標を検出しました。";
                     }
                     // 先手駒台からの着手
                     else if (kif.frY == 10)
@@ -373,7 +373,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             case 6: pc = Piece.BISHOP; break;
                             case 7: pc = Piece.ROOK; break;
                             default:
-                                return "先手の無効な駒打ちを検出しました";
+                                return "先手の無効な駒打ちを検出しました。";
                         }
                         var toSq = Util.MakeSquare((File)(kif.toX - 1), (Rank)(kif.toY - 1));
                         move = Util.MakeMoveDrop(pc, toSq);
@@ -392,7 +392,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             case 4: pc = Piece.BISHOP; break;
                             case 3: pc = Piece.ROOK; break;
                             default:
-                                return "後手の無効な駒打ちを検出しました";
+                                return "後手の無効な駒打ちを検出しました。";
                         }
                         var toSq = Util.MakeSquare((File)(kif.toX - 1), (Rank)(kif.toY - 1));
                         move = Util.MakeMoveDrop(pc, toSq);
@@ -433,7 +433,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     }
                     if (!Tree.position.IsLegal(move))
                     {
-                        return $"{Tree.gamePly}手目で不正着手を検出しました";
+                        return $"{Tree.gamePly}手目で不正着手を検出しました。";
                     }
                     Tree.DoMove(move);
                     continue;
@@ -666,7 +666,7 @@ namespace MyShogi.Model.Shogi.Kifu
             // 平手以外の出力は現状対応しない
             if (Tree.rootBoardType != BoardType.NoHandicap)
             {
-                return "平手以外の初期局面には対応していません";
+                throw new KifuException("平手以外の初期局面には対応していません。");
             }
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0).ToLocalTime();
             var data = new LiveJson.Data();
