@@ -214,6 +214,10 @@ namespace MyShogi.View.Win2D
             // ところがスクロールバーの横幅不明。実測34だったが、環境によって異なる可能性が..
             font_size *= ((float)Width - 34 /* scroll bar */) / Width;
 
+            // 幅を縮めるとfont_sizeが負になるが、負のサイズのFontは生成できないので1にしておく。
+            if (font_size <= 0)
+                font_size = 1;
+
             // 前回のフォントサイズと異なるときだけ再設定する
             //if (last_font_size == font_size)
             //    return;

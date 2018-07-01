@@ -10,6 +10,12 @@ namespace MyShogi.View.Win2D
     /// </summary>
     public class GameScreenControlSetting
     {
+        public GameScreenControlSetting()
+        {
+            // デフォルト設定
+
+            NamePlateVisible = true;
+        }
         /// <summary>
         /// メインウィンドウに付随している上部のToolStripの
         /// ボタンのEnable/Disableを切り替えたい時のcallback用のデリゲート
@@ -34,5 +40,11 @@ namespace MyShogi.View.Win2D
         /// ゲームサーバー本体。外部で生成して渡す。
         /// </summary>
         public LocalGameServer gameServer { get; set; }
+
+        /// <summary>
+        /// ネームプレートの描画をします。(デフォルト true)
+        /// </summary>
+        public bool NamePlateVisible { get; set; }
+
     }
 }

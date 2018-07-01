@@ -63,7 +63,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             RaisePropertyChanged("GameServerStarted",null);
 
             // 対局監視スレッドを起動して回しておく。
-            new Thread(thread_worker).Start();
+            if (!NoThread)
+                new Thread(thread_worker).Start();
         }
 
         public void Dispose()

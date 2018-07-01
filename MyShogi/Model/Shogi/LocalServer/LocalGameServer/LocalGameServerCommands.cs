@@ -383,6 +383,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="command"></param>
         private void AddCommand(UICommand command)
         {
+            // workerを作っていないなら、自分のスレッドで実行すれば良い。
+            if (NoThread)
+            {
+                command();
+                return;
+            }
+
             lock (UICommandLock)
             {
                 UICommands.Add(command);

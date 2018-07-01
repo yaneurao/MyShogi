@@ -224,64 +224,67 @@ namespace MyShogi.View.Win2D
                 DrawSprite(board_number_pos[1], SPRITE.BoardNumberRank(reverse));
             }
 
-            // -- 対局者氏名
+            if (Setting.NamePlateVisible)
             {
-                switch (PieceTableVersion)
+
+                // -- 対局者氏名
                 {
-                    // 通常状態の駒台表示
-                    case 0:
-                        DrawString(name_plate_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK), 28);
-                        DrawString(name_plate_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE), 28);
-                        break;
-                    // 細長い状態の駒台表示
-                    case 1:
-                        DrawSprite(turn_slim_pos, SPRITE.NamePlateSlim(pos.sideToMove, reverse));
-                        DrawString(name_plate_slim_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.White, 2));
-                        DrawString(name_plate_slim_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.White, 0));
-                        break;
-                }
-            }
-
-            // -- 持ち時間等
-            {
-                switch (PieceTableVersion)
-                {
-                    // 通常状態の駒台表示
-                    case 0:
-                        // 対局時間設定
-                        DrawString(time_setting_pos[0], gameServer.TimeSettingString(reverse ? SColor.WHITE : SColor.BLACK), 18);
-                        DrawString(time_setting_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18);
-
-                        // 残り時間
-                        DrawString(time_setting_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.Black, 1));
-                        DrawString(time_setting_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.Black, 1));
-                        break;
-
-                    // 細長い状態の駒台表示
-                    case 1:
-                        // 対局時間設定(表示する場所がなさげ)
-                        //DrawString(time_setting_slim_pos[0], gameServer.TimeSettingString(reverse ? SColor.WHITE : SColor.BLACK), 18 , new DrawStringOption(Brushes.Black, 2));
-                        //DrawString(time_setting_slim_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18 , new DrawStringOption(Brushes.Black, 0));
-
-                        // 残り時間
-                        DrawString(time_setting_slim_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 24, new DrawStringOption(Brushes.Black, 1));
-                        DrawString(time_setting_slim_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 24, new DrawStringOption(Brushes.Black, 1));
-                        break;
-                }
-            }
-
-            // -- 手番の表示
-            {
-                // 手番側が先手なら0、後手なら1。ただし、盤面反転しているなら、その逆。
-                int side = pos.sideToMove == SColor.BLACK ? 0 : 1;
-                side = reverse ? (side ^ 1) : side;
-
-                switch (PieceTableVersion)
-                {
-                    case 0: DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal()); break;
-                    case 1: DrawSprite(turn_slim_pos, SPRITE.TurnSlim(pos.sideToMove, reverse)); break;
+                    switch (PieceTableVersion)
+                    {
+                        // 通常状態の駒台表示
+                        case 0:
+                            DrawString(name_plate_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK), 28);
+                            DrawString(name_plate_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE), 28);
+                            break;
+                        // 細長い状態の駒台表示
+                        case 1:
+                            DrawSprite(turn_slim_pos, SPRITE.NamePlateSlim(pos.sideToMove, reverse));
+                            DrawString(name_plate_slim_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.White, 2));
+                            DrawString(name_plate_slim_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.White, 0));
+                            break;
+                    }
                 }
 
+                // -- 持ち時間等
+                {
+                    switch (PieceTableVersion)
+                    {
+                        // 通常状態の駒台表示
+                        case 0:
+                            // 対局時間設定
+                            DrawString(time_setting_pos[0], gameServer.TimeSettingString(reverse ? SColor.WHITE : SColor.BLACK), 18);
+                            DrawString(time_setting_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18);
+
+                            // 残り時間
+                            DrawString(time_setting_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.Black, 1));
+                            DrawString(time_setting_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.Black, 1));
+                            break;
+
+                        // 細長い状態の駒台表示
+                        case 1:
+                            // 対局時間設定(表示する場所がなさげ)
+                            //DrawString(time_setting_slim_pos[0], gameServer.TimeSettingString(reverse ? SColor.WHITE : SColor.BLACK), 18 , new DrawStringOption(Brushes.Black, 2));
+                            //DrawString(time_setting_slim_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18 , new DrawStringOption(Brushes.Black, 0));
+
+                            // 残り時間
+                            DrawString(time_setting_slim_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 24, new DrawStringOption(Brushes.Black, 1));
+                            DrawString(time_setting_slim_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 24, new DrawStringOption(Brushes.Black, 1));
+                            break;
+                    }
+                }
+
+                // -- 手番の表示
+                {
+                    // 手番側が先手なら0、後手なら1。ただし、盤面反転しているなら、その逆。
+                    int side = pos.sideToMove == SColor.BLACK ? 0 : 1;
+                    side = reverse ? (side ^ 1) : side;
+
+                    switch (PieceTableVersion)
+                    {
+                        case 0: DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal()); break;
+                        case 1: DrawSprite(turn_slim_pos, SPRITE.TurnSlim(pos.sideToMove, reverse)); break;
+                    }
+                }
             }
 
             // -- 持ち上げている駒があるなら、一番最後に描画する。

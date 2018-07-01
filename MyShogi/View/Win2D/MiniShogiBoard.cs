@@ -19,26 +19,15 @@ namespace MyShogi.View.Win2D
         public void Init()
         {
             // GameScreenControlの初期化
-            var setting = new GameScreenControlSetting()
+            gameScreenControl1.Setting = new GameScreenControlSetting()
             {
                 SetButton = null,
-                gameServer = new LocalGameServer(),
+                gameServer = new LocalGameServer() { NoThread = true },
                 UpdateMenuItems = null,
+                NamePlateVisible = false,
             };
-            gameScreenControl1.Setting = setting;
             gameScreenControl1.Init();
         }
-
-#if false
-        public new void Dispose()
-        {
-            var gameServer = gameScreenControl1.gameServer;
-            if (gameServer != null)
-            {
-                gameServer.Dispose();
-            }
-        }
-#endif
 
         public GameScreenControlSetting Settings { get { return gameScreenControl1.Setting; } }
     }

@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D
 {
@@ -20,6 +21,85 @@ namespace MyShogi.View.Win2D
             var h = splitContainer1.Height;
             var sh = splitContainer1.SplitterWidth;
             splitContainer1.SplitterDistance = (h - sh) / 2; // ちょうど真ん中に
+
+            InitSpliter2Position();
+        }
+
+        /// <summary>
+        /// ミニ盤面の縦横比
+        /// </summary>
+        float aspect_ratio = 1.05f;
+
+        /// <summary>
+        /// splitContainer2のsplitterの位置を調整する。
+        /// </summary>
+        private void InitSpliter2Position()
+        {
+            var board_height = ClientSize.Height - toolStrip1.Height;
+
+            // 継ぎ盤があるなら、その領域は最大でも横幅の1/4まで。
+            var board_width = (int)(board_height * aspect_ratio);
+            var max_board_width = ClientSize.Width * 1 / 4;
+            if (board_width > max_board_width)
+            {
+                board_width = max_board_width;
+                // 制限した結果、画面に収まらなくなっている可能性がある。
+                board_height = (int)(board_width / aspect_ratio);
+            }
+
+            splitContainer2.SplitterDistance = ClientSize.Width - board_width - splitContainer2.SplitterWidth;
+
+            DockMiniBoard(board_width,board_height);
+        }
+
+        /// <summary>
+        /// ユーザーのSplitterの操作に対して、MiniBoardの高さを調整する。
+        /// </summary>
+        private void UpdateBoardHeight()
+        {
+            var board_width = ClientSize.Width -  splitContainer2.SplitterWidth
+                - splitContainer2.SplitterDistance;
+
+            var max_board_height = ClientSize.Height - toolStrip1.Height;
+
+            var board_height = (int)(board_width / aspect_ratio);
+
+            if (board_height > max_board_height)
+            {
+                board_height = max_board_height;
+                board_width = (int)(board_height * aspect_ratio);
+
+                // 横幅減ったはず。spliterの右側、無駄であるから、詰める。
+                splitContainer2.SplitterDistance = ClientSize.Width - splitContainer2.SplitterWidth - board_width;
+            }
+
+            DockMiniBoard(board_width, board_height);
+        }
+
+        /// <summary>
+        /// miniShogiBoardをToolStripのすぐ上に配置する。
+        /// </summary>
+        private void DockMiniBoard(int board_width , int board_height)
+        {
+            // miniShogiBoardをToolStripのすぐ上に配置する。
+            int y = ClientSize.Height - board_height - toolStrip1.Height;
+            miniShogiBoard1.Size = new Size(board_width, board_height);
+            miniShogiBoard1.Location = new Point(0, y);
+        }
+
+        /// <summary>
+        /// MiniBoardの表示、非表示を切り替えます。
+        /// </summary>
+        public bool MiniBoardVisiblity
+        {
+            set {
+                splitContainer2.Panel2.Visible = value;
+                splitContainer2.Panel2Collapsed = !value;
+                splitContainer2.IsSplitterFixed = !value;
+
+                // MiniBoard、スレッドが回っているわけでもないし、
+                // 画面が消えていれば更新通知等、来ないのでは？
+            }
         }
 
         /// <summary>
@@ -73,6 +153,66 @@ namespace MyShogi.View.Win2D
         {
             miniShogiBoard1.Init();
             miniShogiBoard1.Settings.gameServer.Start();
+        }
+
+        private void splitContainer2_Resize(object sender, System.EventArgs e)
+        {
+            UpdateBoardHeight();
+        }
+
+        private void splitContainer2_SplitterMoved(object sender, SplitterEventArgs e)
+        {
+            UpdateBoardHeight();
+        }
+
+        /// <summary>
+        /// 巻き戻しボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton1_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 1手戻しボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton2_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 1手進めボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton3_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 早送りボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton4_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 閉じるボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton5_Click(object sender, System.EventArgs e)
+        {
+            MiniBoardVisiblity = false;
         }
     }
 }

@@ -190,6 +190,12 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue<bool>("BoardReverse", value); }
         }
 
+        /// <summary>
+        /// Start()でworker threadを作らない。
+        /// CPU対戦をせずに単に盤面だけ描画したい場合はworkerは不要なのでこれをtrueにしてStart()を呼び出すと良い。
+        /// </summary>
+        public bool NoThread = false;
+
         #endregion
 
         #region 依存性のあるプロパティの処理
