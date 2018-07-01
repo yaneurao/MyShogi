@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using MyShogi.Model.Shogi.EvaluationGraph;
+using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.Model.Test

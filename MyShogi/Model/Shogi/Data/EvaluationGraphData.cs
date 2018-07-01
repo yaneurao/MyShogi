@@ -25,7 +25,7 @@
     を用いるものとする。
 */
 
-namespace MyShogi.Model.Shogi.EvaluationGraph
+namespace MyShogi.Model.Shogi.Data
 {
     /// <summary>
     /// 1局を通じた評価値

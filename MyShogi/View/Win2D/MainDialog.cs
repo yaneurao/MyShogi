@@ -21,21 +21,12 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
         }
 
-        public new void Dispose()
-        {
-            if (engineConsiderationDialog != null)
-            {
-                engineConsiderationDialog.Dispose();
-                engineConsiderationDialog = null;
-            }
-        }
-
-    #region public methods
-    /// <summary>
-    /// LocalGameServerを渡して、このウィンドウに貼り付けているGameScreenControlを初期化してやる。
-    /// </summary>
-    /// <param name="gameServer"></param>
-    public void Init(LocalGameServer gameServer_)
+        #region public methods
+        /// <summary>
+        /// LocalGameServerを渡して、このウィンドウに貼り付けているGameScreenControlを初期化してやる。
+        /// </summary>
+        /// <param name="gameServer"></param>
+        public void Init(LocalGameServer gameServer_)
         {
             // GameScreenControlの初期化
             var setting = new GameScreenControlSetting()
@@ -48,9 +39,9 @@ namespace MyShogi.View.Win2D
             gameScreenControl1.Init();
         }
 
-        #endregion
+#endregion
 
-        #region properties
+#region properties
         /// <summary>
         /// activeなGameScreenControlに関連付けられてるLocalGameServerのインスタンスを返す。
         /// 現状、GameScreenControlは一つしかインスタンスを生成していないので、それがactiveである。
@@ -91,9 +82,9 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public Form engineConsiderationDialog;
 
-        #endregion
+#endregion
 
-        #region event handlers
+#region event handlers
 
         // -- 以下、Windows Messageのイベントハンドラ
 
@@ -315,9 +306,9 @@ namespace MyShogi.View.Win2D
         {
             kifuControl.Button1ClickedHandler();
         }
-        #endregion
+#endregion
 
-        #region update menu
+#region update menu
 
         /// <summary>
         /// 棋譜の上書き保存のために、前回保存したときの名前を保持しておく。
@@ -1290,6 +1281,6 @@ namespace MyShogi.View.Win2D
         }
 
         private MenuStrip old_menu { get; set; } = null;
-        #endregion
+#endregion
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 namespace MyShogi.Model.Shogi.Core
 {
@@ -367,6 +369,25 @@ namespace MyShogi.Model.Shogi.Core
                     }
             }
             return move;
+        }
+
+        /// <summary>
+        /// 指し手のリストをUSIで使う指し手文字列に変換する。
+        /// </summary>
+        /// <param name="moves"></param>
+        /// <returns></returns>
+        public static string MovesToUsiString(List<Move> moves)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var m in moves)
+            {
+                if (sb.Length != 0)
+                    sb.Append(' ');
+                sb.Append(m.ToUsi());
+            }
+
+            return sb.ToString();
         }
     }
 

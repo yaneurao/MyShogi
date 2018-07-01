@@ -279,7 +279,7 @@ namespace MyShogi.Model.Common.ObjectModel
             public LazyModelLock(NotifyObject parent_)
             {
                 parent = parent_;
-                Monitor.Enter(parent.lockObject, ref taken);
+                Monitor.Enter(parent.lockObject, ref lockTaken);
 
                 // いまからLockを抜けたときに呼び出すべきイベントを積んでいく。
                 parent.events = new List<PropertyChangedEventArgs>();
@@ -292,7 +292,7 @@ namespace MyShogi.Model.Common.ObjectModel
                 var events = parent.events;
                 parent.events = null;
 
-                if (taken) Monitor.Exit(parent.lockObject);
+                if (lockTaken) Monitor.Exit(parent.lockObject);
 
                 // ここでそれぞれのイベントを呼び出す。
 
@@ -303,7 +303,7 @@ namespace MyShogi.Model.Common.ObjectModel
             private NotifyObject parent;
 
             // lockが取れたか
-            private bool taken;
+            private bool lockTaken;
         }
 
         /// <summary>

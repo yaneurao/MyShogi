@@ -12,7 +12,7 @@ namespace MyShogi.View.Win2D
     {
         public GameScreenControlSetting()
         {
-            // デフォルト設定
+            // -- デフォルト設定
 
             NamePlateVisible = true;
         }

@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
-using MyShogi.Model.Shogi.EvaluationGraph;
+using MyShogi.Model.Shogi.Data;
 
 namespace MyShogi.View.Win2D
 {

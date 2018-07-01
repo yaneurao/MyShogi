@@ -35,7 +35,7 @@ namespace MyShogi.View.Win2D
 
             listBox1.SelectedIndexChanged -= listBox1_SelectedIndexChanged;
 
-            List<string> list = args.value as List<string>;
+            var list = args.value as List<string>;
 
             int start;
             if (args.start == -1)
@@ -113,7 +113,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 棋譜ウィンドウ上、一手戻るボタン
+        /// [UI Thread] : 棋譜ウィンドウ上、一手戻るボタン
         /// 局面が一手戻るとは限らない。
         /// </summary>
         public void RewindKifuListIndex()
@@ -122,7 +122,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 棋譜ウィンドウ上、一手進むボタン
+        /// [UI Thread] : 棋譜ウィンドウ上、一手進むボタン
         /// 局面が一手進むとは限らない。
         /// </summary>
         public void ForwardKifuListIndex()

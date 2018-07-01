@@ -1,4 +1,7 @@
-﻿using System.Drawing;
+﻿using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Data;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D
@@ -152,7 +155,13 @@ namespace MyShogi.View.Win2D
         public void Init()
         {
             miniShogiBoard1.Init();
-            miniShogiBoard1.Settings.gameServer.Start();
+
+            miniShogiBoard1.BoardData = new MiniShogiBoardData()
+            {
+                BoardReverse = false,
+                rootSfen = BoardType.NoHandicap.ToSfen(),
+                moves = new List<Move>() { Util.MakeMove(Square.SQ_77, Square.SQ_76), Util.MakeMove(Square.SQ_33, Square.SQ_34) }
+            };
         }
 
         private void splitContainer2_Resize(object sender, System.EventArgs e)
@@ -172,7 +181,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton1_Click(object sender, System.EventArgs e)
         {
-
+            miniShogiBoard1.BoardGotoRoot();
         }
 
         /// <summary>
@@ -182,7 +191,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton2_Click(object sender, System.EventArgs e)
         {
-
+            miniShogiBoard1.BoardRewind();
         }
 
         /// <summary>
@@ -192,7 +201,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton3_Click(object sender, System.EventArgs e)
         {
-
+            miniShogiBoard1.BoardForward();
         }
 
         /// <summary>
@@ -202,7 +211,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton4_Click(object sender, System.EventArgs e)
         {
-
+            miniShogiBoard1.BoardGotoLeaf();
         }
 
         /// <summary>
@@ -213,6 +222,21 @@ namespace MyShogi.View.Win2D
         private void toolStripButton5_Click(object sender, System.EventArgs e)
         {
             MiniBoardVisiblity = false;
+        }
+
+        /// <summary>
+        /// 盤面反転
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton6_Click(object sender, System.EventArgs e)
+        {
+            var gameServer = miniShogiBoard1.gameServer;
+            if (gameServer != null)
+            {
+                gameServer.BoardReverse ^= true;
+                miniShogiBoard1.ForceRedraw();
+            }
         }
     }
 }

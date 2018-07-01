@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.Utility;
@@ -374,6 +375,31 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
             );
         }
+
+        /// <summary>
+        /// 開始局面をsfenで与えて、そのあとの指し手をmovesとして渡すとそれを棋譜として読み込む。
+        /// 継ぎ盤用
+        /// </summary>
+        public void SetSfenKifuCommand(string rootSfen , List<Move> moves)
+        {
+            AddCommand(
+            () =>
+            {
+                var sfen = moves.Count == 0 ? rootSfen : $"sfen {rootSfen} moves {Util.MovesToUsiString(moves)}";
+
+                // 対局中ではないので、EnableKifuList == falseになっているが、
+                // 一時的にこれをtrueにしないと、読み込んだ棋譜に対して、Tree.KifuListが同期しない。
+                // ゆえに、読み込みの瞬間だけtrueにして、そのあとfalseに戻す。
+                kifuManager.EnableKifuList = true;
+                var error = kifuManager.FromString(sfen);
+                kifuManager.EnableKifuList = false;
+                // sfenのparser経由で代入するのが楽ちん。
+                if (error != null)
+                    TheApp.app.MessageShow(error);
+            }
+            );
+        }
+
 
         /// <summary>
         /// UI側から、worker threadで実行して欲しいコマンドを渡す。
