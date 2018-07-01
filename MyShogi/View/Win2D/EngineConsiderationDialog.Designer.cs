@@ -28,14 +28,37 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.engineConsiderationControl1 = new MyShogi.View.Win2D.EngineConsiderationControl();
             this.engineConsiderationControl2 = new MyShogi.View.Win2D.EngineConsiderationControl();
+            this.miniShogiBoard1 = new MyShogi.View.Win2D.MiniShogiBoard();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.splitContainer1);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.miniShogiBoard1);
+            this.splitContainer2.Size = new System.Drawing.Size(1499, 466);
+            this.splitContainer2.SplitterDistance = 1125;
+            this.splitContainer2.TabIndex = 1;
             // 
             // splitContainer1
             // 
@@ -51,16 +74,16 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.engineConsiderationControl2);
-            this.splitContainer1.Size = new System.Drawing.Size(1499, 466);
+            this.splitContainer1.Size = new System.Drawing.Size(1125, 466);
             this.splitContainer1.SplitterDistance = 251;
-            this.splitContainer1.TabIndex = 0;
+            this.splitContainer1.TabIndex = 1;
             // 
             // engineConsiderationControl1
             // 
             this.engineConsiderationControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.engineConsiderationControl1.Location = new System.Drawing.Point(0, 0);
             this.engineConsiderationControl1.Name = "engineConsiderationControl1";
-            this.engineConsiderationControl1.Size = new System.Drawing.Size(1499, 251);
+            this.engineConsiderationControl1.Size = new System.Drawing.Size(1125, 251);
             this.engineConsiderationControl1.TabIndex = 0;
             // 
             // engineConsiderationControl2
@@ -68,18 +91,30 @@
             this.engineConsiderationControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.engineConsiderationControl2.Location = new System.Drawing.Point(0, 0);
             this.engineConsiderationControl2.Name = "engineConsiderationControl2";
-            this.engineConsiderationControl2.Size = new System.Drawing.Size(1499, 211);
+            this.engineConsiderationControl2.Size = new System.Drawing.Size(1125, 211);
             this.engineConsiderationControl2.TabIndex = 0;
+            // 
+            // miniShogiBoard1
+            // 
+            this.miniShogiBoard1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.miniShogiBoard1.Location = new System.Drawing.Point(0, 0);
+            this.miniShogiBoard1.Name = "miniShogiBoard1";
+            this.miniShogiBoard1.Size = new System.Drawing.Size(370, 466);
+            this.miniShogiBoard1.TabIndex = 1;
             // 
             // EngineConsiderationDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(1499, 466);
-            this.Controls.Add(this.splitContainer1);
+            this.Controls.Add(this.splitContainer2);
             this.Name = "EngineConsiderationDialog";
             this.Text = "思考エンジン読み筋";
             this.TopMost = true;
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -89,9 +124,10 @@
         }
 
         #endregion
-
+        private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private EngineConsiderationControl engineConsiderationControl1;
         private EngineConsiderationControl engineConsiderationControl2;
+        private MiniShogiBoard miniShogiBoard1;
     }
 }

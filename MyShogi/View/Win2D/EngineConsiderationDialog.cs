@@ -8,7 +8,18 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
-            SetEngineInstanceNumber(2);
+            InitSpliter();
+            SetEngineInstanceNumber(1);
+        }
+
+        /// <summary>
+        /// 基本的なレイアウト設定にする。
+        /// </summary>
+        private void InitSpliter()
+        {
+            var h = splitContainer1.Height;
+            var sh = splitContainer1.SplitterWidth;
+            splitContainer1.SplitterDistance = (h - sh) / 2; // ちょうど真ん中に
         }
 
         /// <summary>
@@ -53,6 +64,15 @@ namespace MyShogi.View.Win2D
                 splitContainer1.Panel2Collapsed = false;
                 splitContainer1.IsSplitterFixed = false;
             }
+        }
+
+        /// <summary>
+        /// ミニ盤面の初期化
+        /// </summary>
+        public void Init()
+        {
+            miniShogiBoard1.Init();
+            miniShogiBoard1.Settings.gameServer.Start();
         }
     }
 }

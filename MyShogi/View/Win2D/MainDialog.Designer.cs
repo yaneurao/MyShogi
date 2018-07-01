@@ -249,6 +249,7 @@
             this.Name = "MainDialog";
             this.Text = "MyShogi";
             this.Load += new System.EventHandler(this.MainDialog_Load);
+            this.Move += new System.EventHandler(this.MainDialog_Move);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);

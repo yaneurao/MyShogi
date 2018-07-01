@@ -21,12 +21,21 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
         }
 
-        #region public methods
-        /// <summary>
-        /// LocalGameServerを渡して、このウィンドウに貼り付けているGameScreenControlを初期化してやる。
-        /// </summary>
-        /// <param name="gameServer"></param>
-        public void Init(LocalGameServer gameServer_)
+        public new void Dispose()
+        {
+            if (engineConsiderationDialog != null)
+            {
+                engineConsiderationDialog.Dispose();
+                engineConsiderationDialog = null;
+            }
+        }
+
+    #region public methods
+    /// <summary>
+    /// LocalGameServerを渡して、このウィンドウに貼り付けているGameScreenControlを初期化してやる。
+    /// </summary>
+    /// <param name="gameServer"></param>
+    public void Init(LocalGameServer gameServer_)
         {
             // GameScreenControlの初期化
             var setting = new GameScreenControlSetting()
@@ -128,6 +137,17 @@ namespace MyShogi.View.Win2D
         private bool first_tick = true;
 
         // -- 
+
+        public void MainDialog_Move(object sender, System.EventArgs e)
+        {
+            // ウィンドウを移動させたとき、そこの左下に検討ウィンドウを追随させる。
+            if (engineConsiderationDialog!=null)
+            {
+                var loc = Location;
+                engineConsiderationDialog.Location =
+                    new Point(loc.X, loc.Y + Height);
+            }
+        }
 
         /// <summary>
         /// メニュー高さとToolStripの高さをあわせたもの。
@@ -310,8 +330,11 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void UpdateMenuItems(ObjectModel.PropertyChangedEventArgs args = null)
         {
-            var app = TheApp.app;
-            var config = app.config;
+            // 頑張れば高速化出来るが、対局中はこのメソッド呼び出されていないし、
+            // ToolStripも、CPU×CPUの対局中は更新は発生していないし、
+            // CPU×人間のときは多少遅くても誤差だし、まあいいか…。
+
+            var config = TheApp.app.config;
 
             // Commercial Version GUI
             bool CV_GUI = config.CommercialVersion != 0;
@@ -1224,13 +1247,17 @@ namespace MyShogi.View.Win2D
                         {
                             if (engineConsiderationDialog != null)
                                 engineConsiderationDialog.Dispose();
-                            engineConsiderationDialog = new EngineConsiderationDialog();
+
+                            var dialog = new EngineConsiderationDialog();
+
+                            dialog.Init();
 
                             // ウィンドウ幅を合わせておく。
 
-                            engineConsiderationDialog.Size = new Size(Width, Width / 8);
-                            engineConsiderationDialog.Show();
-                            engineConsiderationDialog.Location = new Point(Location.X, Location.Y + Height);
+                            dialog.Size = new Size(Width, Width / 8);
+                            dialog.Show();
+                            dialog.Location = new Point(Location.X, Location.Y + Height);
+                            engineConsiderationDialog = dialog;
                         };
                         item_debug.DropDownItems.Add(item);
                     }

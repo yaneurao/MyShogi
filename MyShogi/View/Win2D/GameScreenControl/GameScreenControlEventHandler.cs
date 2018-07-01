@@ -8,10 +8,12 @@ namespace MyShogi.View.Win2D
     /// </summary>
     public partial class GameScreenControl
     {
+        // 描画用のハンドラ
         private void GameScreenControl_Paint(object sender, PaintEventArgs e)
         {
-            // 描画用のハンドラ
-            OnDraw(e.Graphics);
+            // ここで弾いておかないとVisual Studioのデザイナで貼り付けた時にエラーになる。
+            if (Setting != null)
+                OnDraw(e.Graphics);
         }
 
         private void GameScreenControl_SizeChanged(object sender, System.EventArgs e)

@@ -225,11 +225,20 @@
     <Compile Include="View\Win2D\EngineConsiderationDialog.Designer.cs">
       <DependentUpon>EngineConsiderationDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\ListViewEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="View\Win2D\MainDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\Win2D\MainDialog.Designer.cs">
       <DependentUpon>MainDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Win2D\MiniShogiBoard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\MiniShogiBoard.Designer.cs">
+      <DependentUpon>MiniShogiBoard.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\SystemInfo.cs">
       <SubType>Form</SubType>
@@ -271,6 +280,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\MiniShogiBoard.resx">
+      <DependentUpon>MiniShogiBoard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\SystemInfo.resx">
       <DependentUpon>SystemInfo.cs</DependentUpon>
@@ -315,6 +327,7 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />

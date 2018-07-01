@@ -1,6 +1,6 @@
 ﻿namespace MyShogi.View.Win2D
 {
-    partial class EngineConsiderationControl
+    partial class MiniShogiBoard
     {
         /// <summary> 
         /// 必要なデザイナー変数です。
@@ -28,31 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listView1 = new ListViewEx();
+            this.gameScreenControl1 = new MyShogi.View.Win2D.GameScreenControl();
             this.SuspendLayout();
             // 
-            // listView1
+            // gameScreenControl1
             // 
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listView1.Location = new System.Drawing.Point(0, 0);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(827, 291);
-            this.listView1.TabIndex = 1;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.gameScreenControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gameScreenControl1.Location = new System.Drawing.Point(0, 0);
+            this.gameScreenControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.gameScreenControl1.Name = "gameScreenControl1";
+            this.gameScreenControl1.Setting = null;
+            this.gameScreenControl1.Size = new System.Drawing.Size(525, 402);
+            this.gameScreenControl1.TabIndex = 0;
             // 
-            // EngineConsiderationControl
+            // MiniShogiBoard
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.Controls.Add(this.listView1);
-            this.Name = "EngineConsiderationControl";
-            this.Size = new System.Drawing.Size(827, 291);
+            this.Controls.Add(this.gameScreenControl1);
+            this.Name = "MiniShogiBoard";
+            this.Size = new System.Drawing.Size(525, 402);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private ListViewEx listView1;
+        private GameScreenControl gameScreenControl1;
     }
 }
