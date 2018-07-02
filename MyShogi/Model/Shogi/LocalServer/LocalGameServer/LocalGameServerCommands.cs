@@ -393,8 +393,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 kifuManager.EnableKifuList = true;
                 var error = kifuManager.FromString(sfen);
                 kifuManager.EnableKifuList = false;
-                // sfenのparser経由で代入するのが楽ちん。
-                if (error != null)
+
+                if (error == null)
+                    // 読み込みに成功したのでrootの局面に移動しておく。
+                    KifuSelectedIndexChangedCommand(0);
+                else
                     TheApp.app.MessageShow(error);
             }
             );

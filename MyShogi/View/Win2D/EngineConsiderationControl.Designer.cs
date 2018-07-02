@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.listView1 = new ListViewEx();
+            this.listView1 = new MyShogi.View.Win2D.ListViewEx();
             this.SuspendLayout();
             // 
             // listView1
@@ -39,6 +39,7 @@
             this.listView1.Size = new System.Drawing.Size(827, 291);
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.Resize += new System.EventHandler(this.listView1_Resize);
             // 
             // EngineConsiderationControl
             // 

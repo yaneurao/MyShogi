@@ -99,7 +99,14 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// setterでその情報に基づき、盤面更新がなされる。
         /// </summary>
-        public MiniShogiBoardData BoardData { get { return boardData; } set { boardData = value; UpdateBoard(); } }
+        public MiniShogiBoardData BoardData {
+            get { return boardData; }
+            set { boardData = value;
+                // Controlのpropertyなので、VSのデザイナにより、InitializeComponentでnullがセットされるコードが生成されている。
+                // そこでnullの時にはUpdateBoard()を呼び出してはならない。
+                if (value != null) UpdateBoard();
+            }
+        }
 
 
         // -- privates

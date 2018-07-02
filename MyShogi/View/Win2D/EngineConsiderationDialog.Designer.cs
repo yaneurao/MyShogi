@@ -33,14 +33,14 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.engineConsiderationControl1 = new MyShogi.View.Win2D.EngineConsiderationControl();
             this.engineConsiderationControl2 = new MyShogi.View.Win2D.EngineConsiderationControl();
-            this.miniShogiBoard1 = new MyShogi.View.Win2D.MiniShogiBoard();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
+            this.miniShogiBoard1 = new MyShogi.View.Win2D.MiniShogiBoard();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -106,13 +106,6 @@
             this.engineConsiderationControl2.Size = new System.Drawing.Size(1125, 211);
             this.engineConsiderationControl2.TabIndex = 0;
             // 
-            // miniShogiBoard1
-            // 
-            this.miniShogiBoard1.Location = new System.Drawing.Point(3, 20);
-            this.miniShogiBoard1.Name = "miniShogiBoard1";
-            this.miniShogiBoard1.Size = new System.Drawing.Size(370, 404);
-            this.miniShogiBoard1.TabIndex = 1;
-            // 
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -129,6 +122,17 @@
             this.toolStrip1.Size = new System.Drawing.Size(370, 39);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripButton5
+            // 
+            this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButton5.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton5.Image")));
+            this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButton5.Name = "toolStripButton5";
+            this.toolStripButton5.Size = new System.Drawing.Size(43, 36);
+            this.toolStripButton5.Text = "閉";
+            this.toolStripButton5.ToolTipText = "このミニ盤面を閉じます。";
+            this.toolStripButton5.Click += new System.EventHandler(this.toolStripButton5_Click);
             // 
             // toolStripButton1
             // 
@@ -174,17 +178,6 @@
             this.toolStripButton4.ToolTipText = "最後の局面に進む";
             this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
             // 
-            // toolStripButton5
-            // 
-            this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton5.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton5.Image")));
-            this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton5.Name = "toolStripButton5";
-            this.toolStripButton5.Size = new System.Drawing.Size(43, 36);
-            this.toolStripButton5.Text = "閉";
-            this.toolStripButton5.ToolTipText = "このミニ盤面を閉じます。";
-            this.toolStripButton5.Click += new System.EventHandler(this.toolStripButton5_Click);
-            // 
             // toolStripButton6
             // 
             this.toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -196,6 +189,14 @@
             this.toolStripButton6.ToolTipText = "盤面を反転します。";
             this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
             // 
+            // miniShogiBoard1
+            // 
+            this.miniShogiBoard1.BoardData = null;
+            this.miniShogiBoard1.Location = new System.Drawing.Point(3, 20);
+            this.miniShogiBoard1.Name = "miniShogiBoard1";
+            this.miniShogiBoard1.Size = new System.Drawing.Size(370, 404);
+            this.miniShogiBoard1.TabIndex = 1;
+            // 
             // EngineConsiderationDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
@@ -205,6 +206,7 @@
             this.Name = "EngineConsiderationDialog";
             this.Text = "思考エンジン読み筋";
             this.TopMost = true;
+            this.Resize += new System.EventHandler(this.EngineConsiderationDialog_Resize);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
