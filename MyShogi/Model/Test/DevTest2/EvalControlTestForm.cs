@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Test
 {
@@ -22,19 +23,19 @@ namespace MyShogi.Model.Test
 
         static GameEvaluationData randomEval(Random rand, int player, int length)
         {
-            var list = new List<int>();
+            var list = new List<EvalValue>();
             int score = 70;
             for (var i = 0; i < length; ++i)
             {
                 if (1 - (i & 1) == player)
                 {
-                    list.Add(int.MinValue);
+                    list.Add(EvalValue.NoValue);
                 }
                 else
                 {
                     float nextScore = score * 1.02f + (player < 2 ? 0.00004f : 0.00002f) * rand.Next(-100, +100) * rand.Next(-100, +100) * rand.Next(-1000, +1000);
                     score = (int)Math.Max(Math.Min(nextScore, +10000000), -10000000);
-                    list.Add(score);
+                    list.Add((EvalValue)score);
                 }
             }
             return new GameEvaluationData() { values = list };

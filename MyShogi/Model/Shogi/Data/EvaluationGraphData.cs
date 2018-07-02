@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MyShogi.Model.Shogi.Core;
+using System.Collections.Generic;
 
 /*
     【形勢グラフControlの仕様】
@@ -37,7 +38,7 @@ namespace MyShogi.Model.Shogi.Data
         /// 各局面での評価値。
         /// 値が記録されていないところは、int.MinValueになっているのでそれは描画してはならない。
         /// </summary>
-        public List<int> values;
+        public List<EvalValue> values;
     }
 
     /// <summary>

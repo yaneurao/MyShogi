@@ -23,6 +23,10 @@ namespace MyShogi.Model.Shogi.Core
 
         // 現局面で(自玉が)詰んでいる時の評価値
         ValueMated = Int32.MinValue +1,
+
+        // この局面の評価値が存在しないことを意味する値
+        // 形勢グラフなどには、この値のところは描画してはならない。
+        NoValue = Int32.MaxValue,
     }
 
     public static class EvalValueExtensions

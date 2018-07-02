@@ -4,14 +4,16 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
+using DColor = System.Drawing.Color; // DColorはDrawing.Colorの意味。
 
 namespace MyShogi.View.Win2D
 {
     public partial class EvalGraphControl : UserControl
     {
         EvaluationGraphData evaldata;
-        Color[] playerColor;
+        DColor[] playerColor;
         string fontFamilyName;
         bool scrollCheck;
         public EvalGraphControl()
@@ -20,8 +22,8 @@ namespace MyShogi.View.Win2D
             {
                 data_array = new[]
                 {
-                    new GameEvaluationData() { values = new List<int>() },
-                    new GameEvaluationData() { values = new List<int>() },
+                    new GameEvaluationData() { values = new List<EvalValue>() },
+                    new GameEvaluationData() { values = new List<EvalValue>() },
                 },
                 selectedIndex = -1,
                 maxIndex = 0,
@@ -30,9 +32,9 @@ namespace MyShogi.View.Win2D
 
             playerColor = new[]
             {
-                Color.Red,
-                Color.Blue,
-                Color.Black,
+                DColor.Red,
+                DColor.Blue,
+                DColor.Black,
             };
 
             {
@@ -96,14 +98,14 @@ namespace MyShogi.View.Win2D
             }
         }
 
-        Color Vert2Color(float vert)
+        DColor Vert2Color(float vert)
         {
-            Color c0 = playerColor[2];
+            var c0 = playerColor[2];
             if (float.IsNaN(vert)) { return c0; }
-            Color c1 = vert < 0f ? playerColor[1] : playerColor[0];
+            var c1 = vert < 0f ? playerColor[1] : playerColor[0];
             float absvert = Math.Abs(vert);
             float absvertr = 1 - absvert;
-            return Color.FromArgb(
+            return DColor.FromArgb(
                 (int)Math.Round(absvertr * c0.A + absvert * c1.A),
                 (int)Math.Round(absvertr * c0.R + absvert * c1.R),
                 (int)Math.Round(absvertr * c0.G + absvert * c1.G),
@@ -159,7 +161,7 @@ namespace MyShogi.View.Win2D
             float ymul = (evalGraphPictureBox.Height - uPad - bPad) * 0.5f;
             float yadd = uPad + ymul;
 
-            using (var brush = new SolidBrush(Color.White))
+            using (var brush = new SolidBrush(DColor.White))
             {
                 g.FillRectangle(brush, new Rectangle(0, 0, evalGraphPictureBox.Width, evalGraphPictureBox.Height));
             }
@@ -179,10 +181,10 @@ namespace MyShogi.View.Win2D
 
             // 手数目盛りの描画
             using (var font = new Font(fontFamilyName, plyFontSize, FontStyle.Regular))
-            using (var bpen = new Pen(Color.Black, 2))
-            using (var bbrush = new SolidBrush(Color.Black))
+            using (var bpen = new Pen(DColor.Black, 2))
+            using (var bbrush = new SolidBrush(DColor.Black))
             for (var i = 0; ; i += 10)
-            using (var pen = new Pen(Color.Silver, (i % 50) == 0 ? 2 : 1))
+            using (var pen = new Pen(DColor.Silver, (i % 50) == 0 ? 2 : 1))
             {
                 float x = lPad + plyWidth * i;
                 if (x < lPad + hScrollValue) continue;
@@ -245,7 +247,7 @@ namespace MyShogi.View.Win2D
                     })
                     {
                         var vert = vertFunc(ent.score);
-                        var color = Color.Silver;
+                        var color = DColor.Silver;
                         var y0 = -vert * ymul + yadd;
                         var y1 = +vert * ymul + yadd;
                         using (var pen = new Pen(color, ent.width))
@@ -308,7 +310,7 @@ namespace MyShogi.View.Win2D
                     })
                     {
                         var vert = vertFunc(ent.score);
-                        var color = Color.Silver;
+                        var color = DColor.Silver;
                         var y0 = -vert * ymul + yadd;
                         var y1 = +vert * ymul + yadd;
                         using (var pen = new Pen(color, ent.width))
@@ -371,7 +373,7 @@ namespace MyShogi.View.Win2D
                     })
                     {
                         var vert = ent.vert;
-                        var color = Color.Silver;
+                        var color = DColor.Silver;
                         var y0 = -vert * ymul + yadd;
                         var y1 = +vert * ymul + yadd;
                         using (var pen = new Pen(color, ent.width))
@@ -408,7 +410,7 @@ namespace MyShogi.View.Win2D
             }
 
             // 外枠線の描画
-            using (var pen = new Pen(Color.Silver, 3f))
+            using (var pen = new Pen(DColor.Silver, 3f))
             {
                 g.DrawRectangle(pen, lPad + hScrollValue, yadd - ymul, xlen - hScrollValue, ymul + ymul);
             }
@@ -422,18 +424,18 @@ namespace MyShogi.View.Win2D
                 for (var i = 1; i < data.values.Count; ++i)
                 {
                     if (i * plyWidth < hScrollValue) continue;
-                    var y = vertFunc(data.values[i]);
+                    var y = vertFunc((int)data.values[i]);
                     if (float.IsNaN(y)) continue;
                     int ip = -1;
-                    if (i >= 1 && data.values[i - 1] != int.MinValue)
+                    if (i >= 1 && data.values[i - 1] != EvalValue.NoValue)
                         ip = i - 1;
                     else
-                    if (i >= 2 && data.values[i - 2] != int.MinValue)
+                    if (i >= 2 && data.values[i - 2] != EvalValue.NoValue)
                         ip = i - 2;
                     else
                         continue;
                     if (ip * plyWidth < hScrollValue) continue;
-                    var yp = vertFunc(data.values[ip]);
+                    var yp = vertFunc((int)data.values[ip]);
                     g.DrawLine(pen, ip * plyWidth + lPad, -yp * ymul + yadd, i * plyWidth + lPad, -y * ymul + yadd);
                 }
             }
@@ -441,7 +443,7 @@ namespace MyShogi.View.Win2D
             if (evaldata.selectedIndex * plyWidth >= hScrollValue)
             {
                 var x = evaldata.selectedIndex * plyWidth + lPad;
-                using (var pen = new Pen(Color.DarkTurquoise, 3f))
+                using (var pen = new Pen(DColor.DarkTurquoise, 3f))
                 {
                     g.DrawLine(pen, x, uPad, x, uPad + ymul * 2);
                 }
@@ -455,7 +457,7 @@ namespace MyShogi.View.Win2D
                 {
                     if (i >= evaldata.data_array[p].values.Count()) continue;
                     var color = p >= playerColor.Count() ? playerColor.Last() : playerColor[p];
-                    var y = vertFunc(evaldata.data_array[p].values[i]);
+                    var y = vertFunc((int)evaldata.data_array[p].values[i]);
                     if (float.IsNaN(y)) continue;
                     using (var brush = new SolidBrush(color))
                         g.FillEllipse(brush, i * plyWidth + lPad - scoreRound, -y * ymul + yadd - scoreRound, scoreRound * 2, scoreRound * 2);
