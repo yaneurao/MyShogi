@@ -1,12 +1,15 @@
-﻿using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Data;
 
 namespace MyShogi.View.Win2D
 {
+    /// <summary>
+    /// 思考エンジンの出力(最大 2CPU分) + ミニ盤面
+    /// </summary>
     public partial class EngineConsiderationDialog : Form
     {
         public EngineConsiderationDialog()
@@ -157,9 +160,10 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
-            //MiniBoardVisiblity = false;
+            MiniBoardVisiblity = false;
 
-            AddInfoTest();
+            //AddInfoTest();
+            //BoardSetTest();
         }
 
         /// <summary>
@@ -289,16 +293,23 @@ namespace MyShogi.View.Win2D
                 engineConsiderationControl1.RootSfen = BoardType.NoHandicap.ToSfen();
 
             List<Move> moves;
-            switch (add_info_test_number++ % 4)
+            switch (add_info_test_number++ % 6)
             {
                 case 0: moves = new List<Move>() { Util.MakeMove(Square.SQ_77, Square.SQ_76), Util.MakeMove(Square.SQ_33, Square.SQ_34) }; break;
                 case 1: moves = new List<Move>() { Util.MakeMove(Square.SQ_27, Square.SQ_26), Util.MakeMove(Square.SQ_33, Square.SQ_34), Util.MakeMove(Square.SQ_55, Square.SQ_34) }; break;
                 case 2: moves = new List<Move>() { Util.MakeMove(Square.SQ_57, Square.SQ_56), Util.MakeMove(Square.SQ_83, Square.SQ_84) }; break;
-                case 3: moves = new List<Move>() { Util.MakeMove(Square.SQ_37, Square.SQ_36), Util.MakeMove(Square.SQ_51, Square.SQ_52) }; break;
+                case 3: moves = new List<Move>() { Util.MakeMove(Square.SQ_37, Square.SQ_36), Util.MakeMove(Square.SQ_51, Square.SQ_52) ,
+                    Util.MakeMove(Square.SQ_57, Square.SQ_56), Util.MakeMove(Square.SQ_83, Square.SQ_84)}; break;
+                case 4:
+                    moves = new List<Move>() { Util.MakeMove(Square.SQ_37, Square.SQ_36), Util.MakeMove(Square.SQ_51, Square.SQ_52) ,
+                    Util.MakeMove(Square.SQ_57, Square.SQ_56), Util.MakeMove(Square.SQ_83, Square.SQ_84)}; break;
+                case 5:
+                    moves = new List<Move>() { Util.MakeMove(Square.SQ_47, Square.SQ_46), Util.MakeMove(Square.SQ_51, Square.SQ_52) ,
+                    Util.MakeMove(Square.SQ_57, Square.SQ_56), Util.MakeMove(Square.SQ_83, Square.SQ_84)}; break;
                 default: moves = null; break;
             }
 
-            engineConsiderationControl1.AddInfo(new EngineConsiderationData()
+            engineConsiderationControl1.AddInfo(new EngineConsiderationPvData()
             {
                 ThinkingTime = new TimeSpan(0, 0, 3),
                 Depth = 15,

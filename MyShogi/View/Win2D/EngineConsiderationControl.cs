@@ -1,12 +1,17 @@
-﻿using MyShogi.Model.Shogi.Converter;
+﻿using System.Text;
+using System.Windows.Forms;
+using System.Collections.Generic;
+using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+using System.Drawing;
 
 namespace MyShogi.View.Win2D
 {
+    /// <summary>
+    /// エンジンの思考内容。
+    /// 片側のエンジン分
+    /// </summary>
     public partial class EngineConsiderationControl : UserControl
     {
         public EngineConsiderationControl()
@@ -15,6 +20,8 @@ namespace MyShogi.View.Win2D
 
             InitListView();
             InitKifuFormatter();
+
+            InfoDrawTest();
         }
 
         // -- properties
@@ -42,7 +49,19 @@ namespace MyShogi.View.Win2D
             {
                 position.SetSfen(value);
                 root_sfen = value;
+                listView1.Items.Clear();
                 list_item_moves.Clear();
+            }
+        }
+
+        /// <summary>
+        /// [UI Thread] : npsなどの表示用のデータ。セットした瞬間、画面に反映される。
+        /// </summary>
+        public EngineConsiderationInfoData InfoData {
+            get { return infoData; }
+            set { infoData = value;
+                if (value != null)
+                    UpdateInfoData(value);
             }
         }
 
@@ -64,7 +83,7 @@ namespace MyShogi.View.Win2D
         /// [UI Thread] : 読み筋を1行追加する。
         /// </summary>
         /// <param name="info"></param>
-        public void AddInfo(EngineConsiderationData info)
+        public void AddInfo(EngineConsiderationPvData info)
         {
             // -- 指し手文字列の構築
 
@@ -145,6 +164,13 @@ namespace MyShogi.View.Win2D
                     rootSfen = root_sfen,
                     moves = list_item_moves[index]
                 });
+        }
+
+        private void EngineConsiderationControl_Resize(object sender, System.EventArgs e)
+        {
+            int h = textBox1.Height + 3;
+            listView1.Location = new Point(0, h);
+            listView1.Size = new Size(ClientSize.Width, ClientSize.Height - h);
         }
 
         // -- privates
@@ -234,6 +260,39 @@ namespace MyShogi.View.Win2D
             return m.IsOk() ? kifFormatter.format(p, m) : m.SpecialMoveToKif();
         }
 
+        /// <summary>
+        /// [UI Thread] : 引数でセットされたinfoを画面に描画する。
+        /// </summary>
+        /// <param name="info"></param>
+        private void UpdateInfoData(EngineConsiderationInfoData info)
+        {
+            textBox1.Text = info.PlayerName;
+            textBox2.Text = $"予想手：{info.PonderMove}";
+            textBox3.Text = $"探索手：{info.SearchingMove}";
+            textBox4.Text = $"深さ：{info.Depth}/{info.SelDepth}";
+            textBox5.Text = $"ノード数 {info.Nodes:-10}";
+            textBox6.Text = $"NPS {info.NPS:-10}";
+            textBox7.Text = $"HASH {info.HashPercentage:-3}";
+        }
+
+        /// <summary>
+        /// InfoDataにテストデータをセットして表示のテストを行う。
+        /// </summary>
+        private void InfoDrawTest()
+        {
+            InfoData = new EngineConsiderationInfoData()
+            {
+                PlayerName = "なんとかエンジン",
+                PonderMove = "７三飛引不成",
+                SearchingMove = "７三飛引不成",
+                Depth = 20,
+                SelDepth = 15,
+                Nodes = 100000000,
+                HashPercentage = 99.9f,
+                ThreadNum = 4,
+            };
+        }
+
 
         /// <summary>
         /// 開始局面のsfen。
@@ -252,6 +311,11 @@ namespace MyShogi.View.Win2D
         /// 表示している読み筋(ListView.Items)に対応する指し手
         /// </summary>
         private List<List<Move>> list_item_moves = new List<List<Move>>();
+
+        /// <summary>
+        /// npsなどの表示用のデータ
+        /// </summary>
+        private EngineConsiderationInfoData infoData;
 
     }
 }

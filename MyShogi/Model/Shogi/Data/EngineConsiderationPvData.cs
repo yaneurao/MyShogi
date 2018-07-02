@@ -7,7 +7,7 @@ namespace MyShogi.Model.Shogi.Data
     /// <summary>
     /// エンジンの1回のPVを表現する。
     /// </summary>
-    public class EngineConsiderationData
+    public class EngineConsiderationPvData
     {
         /// <summary>
         /// 思考時間(今回の思考開始からの消費時間)

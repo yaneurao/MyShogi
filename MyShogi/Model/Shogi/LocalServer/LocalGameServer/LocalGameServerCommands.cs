@@ -377,9 +377,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 開始局面をsfenで与えて、そのあとの指し手をmovesとして渡すとそれを棋譜として読み込む。
-        /// 継ぎ盤用。
-        /// ply = rootなら0、rootの次の局面なら1のように、rootからの手数を指定する。
-        /// rootが、思考対象局面になっている時に、継ぎ盤の初期状態はrootから1手進めた局面にしたい時にplyとして1を指定する。
+        /// 継ぎ盤用。ply手進めた局面にする。
         /// </summary>
         public void SetBoardDataCommand(MiniShogiBoardData data , int ply)
         {
@@ -397,11 +395,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var error = kifuManager.FromString(sfen);
                 kifuManager.EnableKifuList = false;
 
-                if (error == null)
-                    // 読み込みに成功したのでroot + plyの局面に移動しておく。
-                    KifuSelectedIndexChangedCommand(ply);
-                else
+                if (error != null)
                     TheApp.app.MessageShow(error);
+                else
+                    RaisePropertyChanged("SetKifuListIndex", ply); // rootの局面からply手進める
+
             }
             );
         }

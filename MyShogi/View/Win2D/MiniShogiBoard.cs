@@ -129,8 +129,8 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void UpdateBoard()
         {
+            /// rootが、思考対象局面になっているので、継ぎ盤の初期状態はrootから1手進めた局面にしたい。
             gameServer.SetBoardDataCommand(BoardData , 1);
-            ForceRedraw();
         }
 
         private MiniShogiBoardData boardData;

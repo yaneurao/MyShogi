@@ -99,7 +99,10 @@ namespace MyShogi.View.Win2D
         public int KifuListSelectedIndex
         {
             get { return listBox1.SelectedIndex; }
-            set { SetKifuListIndex(value); }
+            set {
+                SetKifuListIndex(value);
+                listBox1_SelectedIndexChanged(null, null); // 強制的に変更イベントを発生させて、選択行にPositionを同期させる。
+            }
         }
 
         /// <summary>
@@ -260,6 +263,7 @@ namespace MyShogi.View.Win2D
         {
             if (SelectedIndexChangedHandler != null)
             {
+                // 別の棋譜を読み込んでたまたま同じ箇所が選択された場合、イベントが発生しない。
                 SelectedIndexChangedHandler(listBox1.SelectedIndex);
                 UpdateButtonState();
             }
@@ -267,7 +271,10 @@ namespace MyShogi.View.Win2D
 
         public delegate void SelectedIndexChangedEvent(int selectedIndex);
 
-        // 棋譜ウィンドウの選択行が変更になった時に呼び出されるハンドラ
+        /// <summary>
+        /// 棋譜ウィンドウの選択行が変更になった時に呼び出されるハンドラ
+        /// 強制的にイベントを発生させる時には、RaiseSelectedIndexChangedEvent()を呼び出すこと。
+        /// </summary>
         public SelectedIndexChangedEvent SelectedIndexChangedHandler;
 
         /// <summary>

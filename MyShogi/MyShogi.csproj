@@ -72,7 +72,8 @@
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
-    <Compile Include="Model\Shogi\Data\EngineConsiderationData.cs" />
+    <Compile Include="Model\Shogi\Data\EngineConsiderationInfoData.cs" />
+    <Compile Include="Model\Shogi\Data\EngineConsiderationPvData.cs" />
     <Compile Include="Model\Shogi\Data\EvaluationGraphData.cs" />
     <Compile Include="Model\Shogi\Data\MiniShogiBoardData.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuHeader.cs" />
