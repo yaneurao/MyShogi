@@ -138,7 +138,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void PositionChanged(PropertyChangedEventArgs args)
         {
-            ViewModel.dirty = true;
+            Dirty = true;
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace MyShogi.View.Win2D
             //ViewModel.dirtyRestTime = true;
             // あとでちゃんと書き直す。
 
-            ViewModel.dirty = true;
+            Dirty = true;
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace MyShogi.View.Win2D
         public void SetKifuListIndex(PropertyChangedEventArgs args)
         {
             var selectedIndex = (int)args.value;
-            kifuControl1.SetKifuListIndex(selectedIndex);
+            kifuControl1.KifuListSelectedIndex = selectedIndex;
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace MyShogi.View.Win2D
         public void EngineInitializingChanged(PropertyChangedEventArgs args)
         {
             UpdateTooltipButtons();
-            ViewModel.dirty = true;
+            Dirty = true;
         }
 
         /// <summary>
@@ -242,9 +242,16 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public bool Dirty
         {
-            get { return ViewModel.dirty; }
-            private set { ViewModel.dirty = value; }
+            get { return dirty; }
+            private set {
+                // Thread生成なしにLocalGameServerを動作させているなら、即座に画面描画すべき。(これ用にタイマーも回ってないので)
+                if (gameServer!=null && gameServer.NoThread)
+                    Invalidate();
+                else
+                    dirty = value;
+            }
         }
+        private bool dirty;
 
         // 持ち時間が減っていくときに、持ち時間の部分だけの再描画をしたいのでそのためのフラグ
         //public bool DirtyRestTime
@@ -265,7 +272,7 @@ namespace MyShogi.View.Win2D
             var size = new Size(265, 423);
             kifu.Size = AffineScale(size);
 
-            kifu.OnResize(ViewModel.AffineMatrix.Scale.X, inTheGame);
+            kifu.OnResize(AffineMatrix.Scale.X, inTheGame);
 
             // kifuControl内の文字サイズも変更しないといけない。
             // あとで考える。
@@ -306,7 +313,7 @@ namespace MyShogi.View.Win2D
 #endif
 
             var scale = (double)Height / board_img_size.Height;
-            ViewModel.AffineMatrix.SetMatrix(scale, scale, (Width - w2) / 2, 0 /* Top (Formの場合)*/);
+            AffineMatrix.SetMatrix(scale, scale, (Width - w2) / 2, 0 /* Top (Formの場合)*/);
 
             //  縦長の画面なら駒台を縦長にする。
 
@@ -468,9 +475,9 @@ namespace MyShogi.View.Win2D
             var pos = gameServer.Position;
 
             // この駒をユーザーが掴んで動かそうとしていることを示す
-            ViewModel.viewState.picked_from = sq;
-            ViewModel.viewState.picked_to = SquareHand.NB;
-            ViewModel.viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
+            viewState.picked_from = sq;
+            viewState.picked_to = SquareHand.NB;
+            viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
             // デバッグ用に出力する。
             //Console.WriteLine("pick up : " + sq.Pretty() );
@@ -513,11 +520,11 @@ namespace MyShogi.View.Win2D
                 }
             }
 
-            ViewModel.viewState.picked_piece_legalmovesto = bb;
-            ViewModel.viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
+            viewState.picked_piece_legalmovesto = bb;
+            viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
             // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
-            ViewModel.dirty = true;
+            Dirty = true;
 
         }
 
@@ -530,16 +537,16 @@ namespace MyShogi.View.Win2D
             var pos = gameServer.Position;
 
             // この駒をユーザーが掴んで動かそうとしていることを示す
-            ViewModel.viewState.picked_from = sq;
-            ViewModel.viewState.picked_to = SquareHand.NB;
-            ViewModel.viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
+            viewState.picked_from = sq;
+            viewState.picked_to = SquareHand.NB;
+            viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
             // 生成されたすべての合法手に対して移動元の升が合致する指し手の移動先の升を
-            ViewModel.viewState.picked_piece_legalmovesto = Bitboard.ZeroBB();
-            ViewModel.viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
+            viewState.picked_piece_legalmovesto = Bitboard.ZeroBB();
+            viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
             // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
-            ViewModel.dirty = true;
+            Dirty = true;
         }
 
         /// <summary>
@@ -551,7 +558,7 @@ namespace MyShogi.View.Win2D
         /// <param name="to"></param>
         public void move_piece(SquareHand from, SquareHand to)
         {
-            var state = ViewModel.viewState;
+            var state = viewState;
 
             // デバッグ用に表示する。
             //Console.WriteLine(from.Pretty() + "→" + to.Pretty());
@@ -621,7 +628,7 @@ namespace MyShogi.View.Win2D
                 // toの升以外は暗くする。
                 state.picked_piece_legalmovesto = new Bitboard((Square)to);
 
-                ViewModel.dirty = true;
+                Dirty = true;
             }
         }
 
@@ -764,11 +771,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void StateReset()
         {
-            var state = ViewModel.viewState;
-            state.Reset();
+            viewState.Reset();
 
             // 画面上の状態が変わるのでリセットするために再描画が必要
-            ViewModel.dirty = true;
+            Dirty = true;
         }
 
         /// <summary>
@@ -778,7 +784,7 @@ namespace MyShogi.View.Win2D
         public void OnBoardClick(SquareHand sq)
         {
             var pos = gameServer.Position;
-            var state = ViewModel.viewState;
+            var state = viewState;
             var pc = pos.PieceOn(sq);
 
             //Console.WriteLine(sq.Pretty());
@@ -1004,7 +1010,7 @@ namespace MyShogi.View.Win2D
             // ダイアログを表示している場合、そこにマウスがhoverすると
             // 素材がhover状態の表示になるので、その変化を反映しなくてはならない。
 
-            var state = ViewModel.viewState;
+            var state = viewState;
 
             // 成り・不成のダイアログを出している
             if (state.state == GameScreenControlViewStateEnum.PromoteDialog)
@@ -1020,7 +1026,7 @@ namespace MyShogi.View.Win2D
                 if (state.promote_dialog_selection != selection)
                 {
                     state.promote_dialog_selection = selection;
-                    ViewModel.dirty = true;
+                    Dirty = true;
                 }
             }
         }

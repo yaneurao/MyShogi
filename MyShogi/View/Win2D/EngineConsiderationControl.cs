@@ -191,6 +191,9 @@ namespace MyShogi.View.Win2D
             listView1.Columns.AddRange(header);
         }
 
+        /// <summary>
+        /// 読み筋のところに表示する棋譜文字列の生成器の初期化
+        /// </summary>
         private void InitKifuFormatter()
         {
             kifFormatter = new KifFormatterOptions

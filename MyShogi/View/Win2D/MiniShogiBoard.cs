@@ -46,12 +46,16 @@ namespace MyShogi.View.Win2D
         // -- 以下、局面操作子
 
         /// <summary>
+        /// 棋譜ウィンドウ
+        /// </summary>
+        public KifuControl kifuControl { get { return gameScreenControl1.kifuControl; } }
+
+        /// <summary>
         /// [UI Thread] : 開始局面に移動
         /// </summary>
         public void BoardGotoRoot()
         {
-            gameScreenControl1.kifuControl.SetKifuListIndex(0);
-            ForceRedraw();
+            gameScreenControl1.kifuControl.KifuListSelectedIndex = 0;
         }
 
         /// <summary>
@@ -60,7 +64,6 @@ namespace MyShogi.View.Win2D
         public void BoardRewind()
         {
             gameScreenControl1.kifuControl.RewindKifuListIndex();
-            ForceRedraw();
         }
 
         /// <summary>
@@ -69,7 +72,6 @@ namespace MyShogi.View.Win2D
         public void BoardForward()
         {
             gameScreenControl1.kifuControl.ForwardKifuListIndex();
-            ForceRedraw();
         }
 
         /// <summary>
@@ -77,8 +79,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void BoardGotoLeaf()
         {
-            gameScreenControl1.kifuControl.SetKifuListIndex(int.MaxValue /* clipされて末尾に行く */);
-            ForceRedraw();
+            gameScreenControl1.kifuControl.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に行く */;
         }
 
 
@@ -99,10 +100,14 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public MiniShogiBoardData BoardData {
             get { return boardData; }
-            set { boardData = value;
+            set
+            {
+                boardData = value;
+
                 // Controlのpropertyなので、VSのデザイナにより、InitializeComponentでnullがセットされるコードが生成されている。
                 // そこでnullの時にはUpdateBoard()を呼び出してはならない。
-                if (value != null) UpdateBoard();
+                if (value != null)
+                    UpdateBoard();
             }
         }
 
@@ -110,7 +115,11 @@ namespace MyShogi.View.Win2D
         /// 盤面を反転させるかどうか。
         /// Init()を呼び出したあとにしか設定/取得できない。
         /// </summary>
-        public bool BoardReverse { get { return gameServer.BoardReverse; } set { gameServer.BoardReverse = value; } }
+        public bool BoardReverse
+        {
+            get { return gameServer.BoardReverse; }
+            set { gameServer.BoardReverse = value; }
+        }
 
         // -- privates
 

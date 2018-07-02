@@ -41,7 +41,7 @@ namespace MyShogi.View.Win2D
 
 #endregion
 
-#region properties
+        #region properties
         /// <summary>
         /// activeなGameScreenControlに関連付けられてるLocalGameServerのインスタンスを返す。
         /// 現状、GameScreenControlは一つしかインスタンスを生成していないので、それがactiveである。
@@ -84,7 +84,7 @@ namespace MyShogi.View.Win2D
 
 #endregion
 
-#region event handlers
+        #region event handlers
 
         // -- 以下、Windows Messageのイベントハンドラ
 
@@ -306,9 +306,30 @@ namespace MyShogi.View.Win2D
         {
             kifuControl.Button1ClickedHandler();
         }
-#endregion
 
-#region update menu
+        /// <summary>
+        /// ⏪ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton12_Click(object sender, System.EventArgs e)
+        {
+            kifuControl.KifuListSelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// ⏩ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton13_Click(object sender, System.EventArgs e)
+        {
+            kifuControl.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に移動するはず */;
+        }
+
+        #endregion
+
+        #region update menu
 
         /// <summary>
         /// 棋譜の上書き保存のために、前回保存したときの名前を保持しておく。
@@ -1280,6 +1301,7 @@ namespace MyShogi.View.Win2D
         }
 
         private MenuStrip old_menu { get; set; } = null;
-#endregion
+        #endregion
+
     }
 }

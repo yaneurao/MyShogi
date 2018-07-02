@@ -94,10 +94,27 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// [UI Thread] : 現在選択している行(0～listBox1.Count-1まで)
+        /// </summary>
+        public int KifuListSelectedIndex
+        {
+            get { return listBox1.SelectedIndex; }
+            set { SetKifuListIndex(value); }
+        }
+
+        /// <summary>
+        /// [UI Thread] : 表示している棋譜の行数
+        /// </summary>
+        public int KifuListCount
+        {
+            get { return listBox1.Items.Count; }
+        }
+
+        /// <summary>
         /// [UI thread] : 棋譜の読み込み時など、LocalServer側の要請により、棋譜ウィンドウを指定行に
         /// フォーカスを当てるためのハンドラ
         /// </summary>
-        public void SetKifuListIndex(int selectedIndex)
+        private void SetKifuListIndex(int selectedIndex)
         {
             // 選べる要素が存在しない。
             if (listBox1.Items.Count == 0)

@@ -28,12 +28,11 @@ namespace MyShogi.View.Win2D
 
             var app = TheApp.app;
             var config = app.config;
-            var vm = ViewModel;
 
             // 描画する局面
             var pos = gameServer.Position; // MainDialogViewModel
                                            // 掴んでいる駒などのViewの状態
-            var state = vm.viewState;
+            var state = viewState;
 
             var picked_from = state.picked_from;
 
@@ -104,7 +103,7 @@ namespace MyShogi.View.Win2D
                             // 駒を持ち上げてはいる時の移動先の候補の升のエフェクト
 
                             // 移動先の候補の升か？
-                            var movable = vm.viewState.picked_piece_legalmovesto.IsSet(sq);
+                            var movable = viewState.picked_piece_legalmovesto.IsSet(sq);
 
                             if (movable && config.PickedMoveToColorType >= 4)
                             // 移動先の候補の升を明るく

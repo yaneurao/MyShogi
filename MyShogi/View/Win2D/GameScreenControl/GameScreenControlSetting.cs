@@ -16,6 +16,7 @@ namespace MyShogi.View.Win2D
 
             NamePlateVisible = true;
         }
+
         /// <summary>
         /// メインウィンドウに付随している上部のToolStripの
         /// ボタンのEnable/Disableを切り替えたい時のcallback用のデリゲート

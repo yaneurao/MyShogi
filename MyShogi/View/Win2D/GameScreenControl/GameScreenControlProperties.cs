@@ -1,4 +1,5 @@
-﻿using MyShogi.Model.Shogi.LocalServer;
+﻿using MyShogi.Model.Common.Math;
+using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.View.Win2D
 {
@@ -28,10 +29,22 @@ namespace MyShogi.View.Win2D
         public int PieceTableVersion = 0;
 
         /// <summary>
-        /// この対局盤面の描画のために必要となるViewModel
-        /// 別クラスになってはいるが、GameScreenと1:1で対応するので、GameScreenの生成と同時に生成している。
+        /// 元画像から画面に描画するときに横・縦方向の縮小率とオフセット値(affine変換の係数)
+        /// Draw()で描画するときに用いる。
         /// </summary>
-        public GameScreenControlViewModel ViewModel { get; private set; } = new GameScreenControlViewModel();
+        public AffineMatrix AffineMatrix;
+
+        /// <summary>
+        /// ユーザー操作に対して、このViewがどういう状態にあるかを表現する変数
+        /// 駒を持ち上げている状態であるだとか、王手を回避していない警告ダイアログを出すだとか
+        /// </summary>
+        public GameScreenControlViewState viewState { get; private set; } = new GameScreenControlViewState();
+
+        /// <summary>
+        /// 残り持ち時間だけが更新されたので部分的に描画して欲しいフラグ
+        /// (未実装)　あとで考える。
+        /// </summary>
+        //public bool dirtyRestTime { get; set; }
 
         /// <summary>
         /// 関連付けられているLocalGameServerのインスタンスを返す。

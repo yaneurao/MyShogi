@@ -20,7 +20,7 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Point Affine(Point p)
         {
-            return ViewModel.AffineMatrix.Affine(p);
+            return AffineMatrix.Affine(p);
         }
 
         /// <summary>
@@ -31,12 +31,12 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Size AffineScale(Size s)
         {
-            return ViewModel.AffineMatrix.AffineScale(s);
+            return AffineMatrix.AffineScale(s);
         }
 
         private Rectangle Affine(Point p, Size s)
         {
-            return ViewModel.AffineMatrix.Affine(p, s);
+            return AffineMatrix.Affine(p, s);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace MyShogi.View.Win2D
         /// <returns></returns>
         private Point InverseAffine(Point p)
         {
-            return ViewModel.AffineMatrix.InverseAffine(p);
+            return AffineMatrix.InverseAffine(p);
         }
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace MyShogi.View.Win2D
         private void DrawString(Point dstPoint, string mes, int font_size, DrawStringOption option = null)
         {
             // 文字フォントサイズは、scaleの影響を受ける。
-            var scale = ViewModel.AffineMatrix.Scale.X;
+            var scale = AffineMatrix.Scale.X;
 
             var size = (float)(font_size * scale);
             // こんな小さいものは視認できないので描画しなくて良い。

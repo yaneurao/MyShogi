@@ -114,7 +114,8 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            miniShogiBoard1.BoardGotoRoot();
+            var kifu = miniShogiBoard1.kifuControl;
+            kifu.KifuListSelectedIndex = 1;
         }
 
         /// <summary>
@@ -124,7 +125,9 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            miniShogiBoard1.BoardRewind();
+            // 1手目より巻き戻さない。
+            var kifu = miniShogiBoard1.kifuControl;
+            kifu.KifuListSelectedIndex = Math.Max(kifu.KifuListSelectedIndex - 1, 1);
         }
 
         /// <summary>
@@ -207,6 +210,7 @@ namespace MyShogi.View.Win2D
         /// ミニ盤面の縦横比
         /// </summary>
         float aspect_ratio = 1.05f;
+        //float aspect_ratio = 1.5f; // debug用に幅広くしておくと、棋譜ウィンドウが表示されるのでデバッグが捗る。
 
         /// <summary>
         /// splitContainer2のsplitterの位置を調整する。
@@ -281,7 +285,8 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void AddInfoTest()
         {
-            engineConsiderationControl1.RootSfen = BoardType.NoHandicap.ToSfen();
+            if (add_info_test_number == 0)
+                engineConsiderationControl1.RootSfen = BoardType.NoHandicap.ToSfen();
 
             List<Move> moves;
             switch (add_info_test_number++ % 4)

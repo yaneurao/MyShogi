@@ -214,7 +214,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="View\Win2D\GameScreenControl\GameScreenControlSetting.cs" />
-    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlViewModel.cs" />
     <Compile Include="View\Win2D\GameScreenControl\GameScreenControlViewState.cs" />
     <Compile Include="View\Win2D\EvalGraphControl.cs">
       <SubType>UserControl</SubType>
