@@ -482,6 +482,10 @@ namespace MyShogi.Model.Shogi.Kifu
             if (n == selectedIndex)
                 return;
 
+            // 棋譜ウィンドウに表示されている行数を超えている場合も移動できないと思われ…。(移動に失敗するので何もしない)
+            if (selectedIndex >= kifuWindowMoves.Count)
+                return;
+
             var e = EnableKifuList;
             EnableKifuList = false; // いま棋譜リストが更新されると困る
 

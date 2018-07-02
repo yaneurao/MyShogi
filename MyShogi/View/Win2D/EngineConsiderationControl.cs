@@ -1,6 +1,7 @@
 ﻿using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
+using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 
@@ -41,8 +42,23 @@ namespace MyShogi.View.Win2D
             {
                 position.SetSfen(value);
                 root_sfen = value;
+                list_item_moves.Clear();
             }
         }
+
+        /// <summary>
+        /// アイテムがクリックされた時に、そこに表示されている読み筋と、rootSfenがもらえるイベントハンドラのdelegate
+        /// </summary>
+        /// <param name="rootSfen"></param>
+        /// <param name="moves"></param>
+        public delegate void ItemClickedEventHandler(MiniShogiBoardData data);
+
+        /// <summary>
+        /// アイテムがクリックされた時に、そこに表示されている読み筋と、rootSfenがもらえるイベントハンドラ
+        /// </summary>
+        /// <param name="rootSfen"></param>
+        /// <param name="moves"></param>
+        public ItemClickedEventHandler ItemClicked { get; set; }
 
         /// <summary>
         /// [UI Thread] : 読み筋を1行追加する。
@@ -69,6 +85,7 @@ namespace MyShogi.View.Win2D
                 kifuString.Append(s);
             }
 
+            var moves = new List<Move>();
             foreach(var move in info.Moves)
             {
                 if (!pos.IsLegal(move))
@@ -82,12 +99,16 @@ namespace MyShogi.View.Win2D
                     break;
                 }
                 append(move_to_kif_string(pos, move));
+                moves.Add(move);
+                // このあと盤面表示用にmovesを保存するが、
+                // 非合法局面の指し手を渡すことは出来ないので、合法だとわかっている指し手のみを保存しておく。
+                
                 pos.DoMove(move);
             }
 
             // -- listView.Itemsに追加
 
-            var list = new []{
+            var list = new[]{
                 info.ThinkingTime.ToString() ,    // 思考時間
                 $"{info.Depth}/{info.SelDepth}" , // 探索深さ
                 info.Nodes.ToString() ,           // ノード数
@@ -97,6 +118,9 @@ namespace MyShogi.View.Win2D
             var item = new ListViewItem(list);
             listView1.Items.Add(item);
             listView1.TopItem = item; // 自動スクロール
+
+            // 読み筋をここに保存しておく。(ミニ盤面で開く用)
+            list_item_moves.Add(moves);
         }
 
         // -- handlers
@@ -106,14 +130,21 @@ namespace MyShogi.View.Win2D
             UpdatePvWidth();
         }
 
-        private void listView1_MouseClick(object sender, MouseEventArgs e)
+        private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            var item = sender as ListViewItem;
-            // 思っているところがクリックされたのではなさげ…。
-            if (item == null)
-                return;
+            // この現在選択されているところにある読み筋の指し手を復元して、イベントハンドラに移譲する。
+            var selected = listView1.SelectedIndices;
+            if (selected.Count == 0)
+                return;// 選択されていない…
 
-            // TODO : あとでここのハンドラ書く
+            // multi selectではないので1つしか選択されていないはず…。
+            int index = selected[0]; // first
+            if (index < list_item_moves.Count)
+                ItemClicked?.Invoke(new MiniShogiBoardData()
+                {
+                    rootSfen = root_sfen,
+                    moves = list_item_moves[index]
+                });
         }
 
         // -- privates
@@ -213,6 +244,11 @@ namespace MyShogi.View.Win2D
         /// RootSfenのsetterでセットされる。
         /// </summary>
         private Position position = new Position();
+
+        /// <summary>
+        /// 表示している読み筋(ListView.Items)に対応する指し手
+        /// </summary>
+        private List<List<Move>> list_item_moves = new List<List<Move>>();
 
     }
 }

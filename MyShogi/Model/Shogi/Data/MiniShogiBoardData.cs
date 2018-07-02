@@ -10,11 +10,6 @@ namespace MyShogi.Model.Shogi.Data
     public class MiniShogiBoardData
     {
         /// <summary>
-        /// 盤面を反転させるかどうかのフラグ
-        /// </summary>
-        public bool BoardReverse;
-
-        /// <summary>
         /// 開始局面
         /// </summary>
         public string rootSfen;

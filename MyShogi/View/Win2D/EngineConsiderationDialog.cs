@@ -14,86 +14,19 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             InitSpliter();
-            SetEngineInstanceNumber(1);
+            InitEngineConsiderationControl();
         }
 
         /// <summary>
-        /// 基本的なレイアウト設定にする。
+        /// ミニ盤面の初期化
+        /// 必ず呼び出すべし。
         /// </summary>
-        private void InitSpliter()
+        public void Init()
         {
-            var h = splitContainer1.Height;
-            var sh = splitContainer1.SplitterWidth;
-            splitContainer1.SplitterDistance = (h - sh) / 2; // ちょうど真ん中に
-
-            InitSpliter2Position();
+            miniShogiBoard1.Init();
         }
 
-        /// <summary>
-        /// ミニ盤面の縦横比
-        /// </summary>
-        float aspect_ratio = 1.05f;
-
-        /// <summary>
-        /// splitContainer2のsplitterの位置を調整する。
-        /// </summary>
-        private void InitSpliter2Position()
-        {
-            var board_height = Math.Max(ClientSize.Height - toolStrip1.Height,1);
-
-            // 継ぎ盤があるなら、その領域は最大でも横幅の1/4まで。
-            var board_width = Math.Max((int)(board_height * aspect_ratio) , 1);
-            var max_board_width = Math.Max(ClientSize.Width * 1 / 4 , 1);
-
-            if (board_width > max_board_width)
-            {
-                board_width = max_board_width;
-                // 制限した結果、画面に収まらなくなっている可能性がある。
-                board_height = Math.Max((int)(board_width / aspect_ratio) , 1);
-            }
-
-            int dist = ClientSize.Width - splitContainer2.SplitterWidth - board_width;
-            splitContainer2.SplitterDistance = Math.Max(dist,1);
-
-            DockMiniBoard(board_width,board_height);
-        }
-
-        /// <summary>
-        /// ユーザーのSplitterの操作に対して、MiniBoardの高さを調整する。
-        /// splitterAdjest : splitterの位置の調整も行うのか？
-        /// </summary>
-        private void UpdateBoardHeight(bool splitterAdjest)
-        {
-            var board_width = Math.Max(ClientSize.Width -  splitContainer2.SplitterWidth - splitContainer2.SplitterDistance , 1);
-            var max_board_height = Math.Max(ClientSize.Height - toolStrip1.Height,1);
-            var board_height = Math.Max((int)(board_width / aspect_ratio),1);
-
-            if (board_height > max_board_height)
-            {
-                board_height = max_board_height;
-                board_width = Math.Max((int)(board_height * aspect_ratio) ,1);
-
-                if (splitterAdjest)
-                {
-                    // 横幅減ったはず。spliterの右側、無駄であるから、詰める。
-                    int dist = ClientSize.Width - splitContainer2.SplitterWidth - board_width;
-                    splitContainer2.SplitterDistance = Math.Max(dist, 1);
-                }
-            }
-
-            DockMiniBoard(board_width, board_height);
-        }
-
-        /// <summary>
-        /// miniShogiBoardをToolStripのすぐ上に配置する。
-        /// </summary>
-        private void DockMiniBoard(int board_width , int board_height)
-        {
-            // miniShogiBoardをToolStripのすぐ上に配置する。
-            int y = ClientSize.Height - board_height - toolStrip1.Height;
-            miniShogiBoard1.Size = new Size(board_width, board_height);
-            miniShogiBoard1.Location = new Point(0, y);
-        }
+        // -- properties
 
         /// <summary>
         /// MiniBoardの表示、非表示を切り替えます。
@@ -123,7 +56,7 @@ namespace MyShogi.View.Win2D
         /// 
         /// </param>
         /// <returns></returns>
-        public EngineConsiderationControl GetConsiderationInstance(int n)
+        public EngineConsiderationControl ConsiderationInstance(int n)
         {
             switch (n)
             {
@@ -154,27 +87,8 @@ namespace MyShogi.View.Win2D
             }
         }
 
-        /// <summary>
-        /// ミニ盤面の初期化
-        /// </summary>
-        public void Init()
-        {
-            miniShogiBoard1.Init();
-        }
 
-        /// <summary>
-        /// ミニ盤面に試しに局面をセットしてみるテスト用のコード
-        /// Init()のなかではまだminiShogiBoard1のhandleが初期化されてないのでInit()のなかから呼び出すのは不可。
-        /// </summary>
-        public void BoardSetTest()
-        {
-            miniShogiBoard1.BoardData = new MiniShogiBoardData()
-            {
-                BoardReverse = false,
-                rootSfen = BoardType.NoHandicap.ToSfen(),
-                moves = new List<Move>() { Util.MakeMove(Square.SQ_77, Square.SQ_76), Util.MakeMove(Square.SQ_33, Square.SQ_34) }
-            };
-        }
+        // -- handlers
 
         private void splitContainer2_Resize(object sender, EventArgs e)
         {
@@ -242,19 +156,7 @@ namespace MyShogi.View.Win2D
         {
             //MiniBoardVisiblity = false;
 
-            //BoardSetTest();
-
-            engineConsiderationControl1.RootSfen = BoardType.NoHandicap.ToSfen();
-            engineConsiderationControl1.AddInfo(new EngineConsiderationData()
-            {
-                ThinkingTime = new TimeSpan(0, 0, 3),
-                Depth = 15,
-                SelDepth = 20,
-                Nodes = 123456789,
-                Eval = EvalValue.Mate - 1 /*(EvalValue)1234*/,
-                Moves = new List<Move>() { Util.MakeMove(Square.SQ_77, Square.SQ_76), Util.MakeMove(Square.SQ_33, Square.SQ_34) , Util.MakeMove(Square.SQ_55, Square.SQ_34) }
-            });
-
+            AddInfoTest();
         }
 
         /// <summary>
@@ -271,5 +173,149 @@ namespace MyShogi.View.Win2D
                 miniShogiBoard1.ForceRedraw();
             }
         }
+
+        // -- design adjustment
+
+        /// <summary>
+        /// spliterに関して、基本的なレイアウト設定にする。
+        /// </summary>
+        private void InitSpliter()
+        {
+            var h = splitContainer1.Height;
+            var sh = splitContainer1.SplitterWidth;
+            splitContainer1.SplitterDistance = (h - sh) / 2; // ちょうど真ん中に
+
+            InitSpliter2Position();
+        }
+
+        /// <summary>
+        /// エンジンの思考表示controlの初期化
+        /// </summary>
+        private void InitEngineConsiderationControl()
+        {
+            SetEngineInstanceNumber(1);
+
+            foreach (var i in All.Int(2))
+                ConsiderationInstance(i).ItemClicked += (data) =>
+                {
+                    MiniBoardVisiblity = true;
+                    miniShogiBoard1.BoardData = data;
+                };
+        }
+
+        /// <summary>
+        /// ミニ盤面の縦横比
+        /// </summary>
+        float aspect_ratio = 1.05f;
+
+        /// <summary>
+        /// splitContainer2のsplitterの位置を調整する。
+        /// </summary>
+        private void InitSpliter2Position()
+        {
+            var board_height = Math.Max(ClientSize.Height - toolStrip1.Height, 1);
+
+            // 継ぎ盤があるなら、その領域は最大でも横幅の1/4まで。
+            var board_width = Math.Max((int)(board_height * aspect_ratio), 1);
+            var max_board_width = Math.Max(ClientSize.Width * 1 / 4, 1);
+
+            if (board_width > max_board_width)
+            {
+                board_width = max_board_width;
+                // 制限した結果、画面に収まらなくなっている可能性がある。
+                board_height = Math.Max((int)(board_width / aspect_ratio), 1);
+            }
+
+            int dist = ClientSize.Width - splitContainer2.SplitterWidth - board_width;
+            splitContainer2.SplitterDistance = Math.Max(dist, 1);
+
+            DockMiniBoard(board_width, board_height);
+        }
+
+        /// <summary>
+        /// ユーザーのSplitterの操作に対して、MiniBoardの高さを調整する。
+        /// splitterAdjest : splitterの位置の調整も行うのか？
+        /// </summary>
+        private void UpdateBoardHeight(bool splitterAdjest)
+        {
+            var board_width = Math.Max(ClientSize.Width - splitContainer2.SplitterWidth - splitContainer2.SplitterDistance, 1);
+            var max_board_height = Math.Max(ClientSize.Height - toolStrip1.Height, 1);
+            var board_height = Math.Max((int)(board_width / aspect_ratio), 1);
+
+            if (board_height > max_board_height)
+            {
+                board_height = max_board_height;
+                board_width = Math.Max((int)(board_height * aspect_ratio), 1);
+
+                if (splitterAdjest)
+                {
+                    // 横幅減ったはず。spliterの右側、無駄であるから、詰める。
+                    int dist = ClientSize.Width - splitContainer2.SplitterWidth - board_width;
+                    splitContainer2.SplitterDistance = Math.Max(dist, 1);
+                }
+            }
+
+            DockMiniBoard(board_width, board_height);
+        }
+
+        /// <summary>
+        /// miniShogiBoardをToolStripのすぐ上に配置する。
+        /// </summary>
+        private void DockMiniBoard(int board_width, int board_height)
+        {
+            // miniShogiBoardをToolStripのすぐ上に配置する。
+            int y = ClientSize.Height - board_height - toolStrip1.Height;
+            miniShogiBoard1.Size = new Size(board_width, board_height);
+            miniShogiBoard1.Location = new Point(0, y);
+        }
+
+        // -- test code
+
+        /// <summary>
+        /// AddInfoTest()で使う、カウンター
+        /// </summary>
+        private int add_info_test_number = 0;
+
+        /// <summary>
+        /// 適当に読み筋をAddInfoしてやるテスト。
+        /// </summary>
+        private void AddInfoTest()
+        {
+            engineConsiderationControl1.RootSfen = BoardType.NoHandicap.ToSfen();
+
+            List<Move> moves;
+            switch (add_info_test_number++ % 4)
+            {
+                case 0: moves = new List<Move>() { Util.MakeMove(Square.SQ_77, Square.SQ_76), Util.MakeMove(Square.SQ_33, Square.SQ_34) }; break;
+                case 1: moves = new List<Move>() { Util.MakeMove(Square.SQ_27, Square.SQ_26), Util.MakeMove(Square.SQ_33, Square.SQ_34), Util.MakeMove(Square.SQ_55, Square.SQ_34) }; break;
+                case 2: moves = new List<Move>() { Util.MakeMove(Square.SQ_57, Square.SQ_56), Util.MakeMove(Square.SQ_83, Square.SQ_84) }; break;
+                case 3: moves = new List<Move>() { Util.MakeMove(Square.SQ_37, Square.SQ_36), Util.MakeMove(Square.SQ_51, Square.SQ_52) }; break;
+                default: moves = null; break;
+            }
+
+            engineConsiderationControl1.AddInfo(new EngineConsiderationData()
+            {
+                ThinkingTime = new TimeSpan(0, 0, 3),
+                Depth = 15,
+                SelDepth = 20,
+                Nodes = 123456789,
+                Eval = EvalValue.Mate - 1 /*(EvalValue)1234*/,
+                Moves = moves
+            });
+        }
+
+        /// <summary>
+        /// ミニ盤面に試しに局面をセットしてみるテスト用のコード
+        /// Init()のなかではまだminiShogiBoard1のhandleが初期化されてないのでInit()のなかから呼び出すのは不可。
+        /// </summary>
+        public void BoardSetTest()
+        {
+            miniShogiBoard1.BoardData = new MiniShogiBoardData()
+            {
+                rootSfen = BoardType.NoHandicap.ToSfen(),
+                moves = new List<Move>() { Util.MakeMove(Square.SQ_77, Square.SQ_76), Util.MakeMove(Square.SQ_33, Square.SQ_34) }
+            };
+        }
+
     }
 }

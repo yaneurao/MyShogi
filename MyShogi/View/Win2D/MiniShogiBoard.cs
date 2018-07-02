@@ -106,6 +106,11 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        /// <summary>
+        /// 盤面を反転させるかどうか。
+        /// Init()を呼び出したあとにしか設定/取得できない。
+        /// </summary>
+        public bool BoardReverse { get { return gameServer.BoardReverse; } set { gameServer.BoardReverse = value; } }
 
         // -- privates
 
@@ -115,13 +120,9 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void UpdateBoard()
         {
-            var data = BoardData;
-            gameServer.BoardReverse = data.BoardReverse;
-            gameServer.SetSfenKifuCommand(data.rootSfen ,data.moves);
-
+            gameServer.SetBoardDataCommand(BoardData , 1);
             ForceRedraw();
         }
-
 
         private MiniShogiBoardData boardData;
     }

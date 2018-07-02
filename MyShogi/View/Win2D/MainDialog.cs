@@ -1240,7 +1240,6 @@ namespace MyShogi.View.Win2D
                                 engineConsiderationDialog.Dispose();
 
                             var dialog = new EngineConsiderationDialog();
-
                             dialog.Init();
 
                             // ウィンドウ幅を合わせておく。

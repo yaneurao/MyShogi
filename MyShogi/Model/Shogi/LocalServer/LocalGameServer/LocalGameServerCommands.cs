@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
+﻿using System.Diagnostics;
 using MyShogi.App;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Player;
 
@@ -378,14 +377,18 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 開始局面をsfenで与えて、そのあとの指し手をmovesとして渡すとそれを棋譜として読み込む。
-        /// 継ぎ盤用
+        /// 継ぎ盤用。
+        /// ply = rootなら0、rootの次の局面なら1のように、rootからの手数を指定する。
+        /// rootが、思考対象局面になっている時に、継ぎ盤の初期状態はrootから1手進めた局面にしたい時にplyとして1を指定する。
         /// </summary>
-        public void SetSfenKifuCommand(string rootSfen , List<Move> moves)
+        public void SetBoardDataCommand(MiniShogiBoardData data , int ply)
         {
             AddCommand(
             () =>
             {
-                var sfen = moves.Count == 0 ? rootSfen : $"sfen {rootSfen} moves {Util.MovesToUsiString(moves)}";
+                Debug.Assert(data != null);
+
+                var sfen = data.moves.Count == 0 ? data.rootSfen : $"sfen {data.rootSfen} moves {Util.MovesToUsiString(data.moves)}";
 
                 // 対局中ではないので、EnableKifuList == falseになっているが、
                 // 一時的にこれをtrueにしないと、読み込んだ棋譜に対して、Tree.KifuListが同期しない。
@@ -395,8 +398,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                 kifuManager.EnableKifuList = false;
 
                 if (error == null)
-                    // 読み込みに成功したのでrootの局面に移動しておく。
-                    KifuSelectedIndexChangedCommand(0);
+                    // 読み込みに成功したのでroot + plyの局面に移動しておく。
+                    KifuSelectedIndexChangedCommand(ply);
                 else
                     TheApp.app.MessageShow(error);
             }
