@@ -35,7 +35,7 @@ namespace MyShogi.Model.Shogi.Data
         public EvalValue Eval;
 
         /// <summary>
-        /// 最善応手列
+        /// 読み筋
         /// </summary>
         public List<Move> Moves;
     }

@@ -41,13 +41,34 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public static string Pretty(this EvalValue value)
         {
-            // 大きな数はmateを意味しているはず..
-            if ((int)value > 1000000)
-                return $"MATE({EvalValue.Mate - (int)value}手)";
-            if ((int)value < -1000000)
-                return $"MATED({value - EvalValue.Mated}手)";
+            if (value.IsSpecialValue())
+            {
+                switch(value)
+                {
+                    case EvalValue.Unknow    : return "不明";
+                    case EvalValue.MatePlus  : return "MATE(手数不明)";
+                    case EvalValue.MatedMinus: return "MATED(手数不明)";
+                    case EvalValue.NoValue   : return ""; // これ表示するとおかしくなるので表示なしにしとく。 
+                }
+
+                if (value > 0)
+                    return $"MATE({EvalValue.Mate - (int)value}手)";
+                if (value < 0)
+                    return $"MATED({value - EvalValue.Mated}手)";
+            }
 
             return value.ToString();
+        }
+
+        /// <summary>
+        /// EvalValueが通常の評価値の値ではなく、特殊な意味を持つ値であるかを判定する。
+        /// ※　通常の評価値の値は -1000000 ～ +1000000までであるものとする。
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool IsSpecialValue(this EvalValue value)
+        {
+            return !(-1000000 <= (int)value && (int)value <= +1000000);
         }
     }
 }

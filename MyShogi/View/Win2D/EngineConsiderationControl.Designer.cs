@@ -39,6 +39,7 @@
             this.listView1.Size = new System.Drawing.Size(827, 291);
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseClick);
             this.listView1.Resize += new System.EventHandler(this.listView1_Resize);
             // 
             // EngineConsiderationControl

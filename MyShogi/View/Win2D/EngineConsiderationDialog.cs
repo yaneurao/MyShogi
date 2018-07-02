@@ -244,7 +244,7 @@ namespace MyShogi.View.Win2D
 
             //BoardSetTest();
 
-            engineConsiderationControl1.SetRootSfen(BoardType.NoHandicap.ToSfen());
+            engineConsiderationControl1.RootSfen = BoardType.NoHandicap.ToSfen();
             engineConsiderationControl1.AddInfo(new EngineConsiderationData()
             {
                 ThinkingTime = new TimeSpan(0, 0, 3),
@@ -252,7 +252,7 @@ namespace MyShogi.View.Win2D
                 SelDepth = 20,
                 Nodes = 123456789,
                 Eval = EvalValue.Mate - 1 /*(EvalValue)1234*/,
-                Moves = new List<Move>() { Util.MakeMove(Square.SQ_77, Square.SQ_76), Util.MakeMove(Square.SQ_33, Square.SQ_34) }
+                Moves = new List<Move>() { Util.MakeMove(Square.SQ_77, Square.SQ_76), Util.MakeMove(Square.SQ_33, Square.SQ_34) , Util.MakeMove(Square.SQ_55, Square.SQ_34) }
             });
 
         }

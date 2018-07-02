@@ -1,6 +1,4 @@
 ﻿using System.Windows.Forms;
-using MyShogi.Model.Common.ObjectModel;
-using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.LocalServer;
 
