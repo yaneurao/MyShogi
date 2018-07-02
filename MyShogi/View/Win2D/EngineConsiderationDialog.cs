@@ -176,7 +176,7 @@ namespace MyShogi.View.Win2D
             };
         }
 
-        private void splitContainer2_Resize(object sender, System.EventArgs e)
+        private void splitContainer2_Resize(object sender, EventArgs e)
         {
             UpdateBoardHeight(true);
         }
@@ -198,7 +198,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripButton1_Click(object sender, System.EventArgs e)
+        private void toolStripButton1_Click(object sender, EventArgs e)
         {
             miniShogiBoard1.BoardGotoRoot();
         }
@@ -208,7 +208,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripButton2_Click(object sender, System.EventArgs e)
+        private void toolStripButton2_Click(object sender, EventArgs e)
         {
             miniShogiBoard1.BoardRewind();
         }
@@ -218,7 +218,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripButton3_Click(object sender, System.EventArgs e)
+        private void toolStripButton3_Click(object sender, EventArgs e)
         {
             miniShogiBoard1.BoardForward();
         }
@@ -228,7 +228,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripButton4_Click(object sender, System.EventArgs e)
+        private void toolStripButton4_Click(object sender, EventArgs e)
         {
             miniShogiBoard1.BoardGotoLeaf();
         }
@@ -238,7 +238,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripButton5_Click(object sender, System.EventArgs e)
+        private void toolStripButton5_Click(object sender, EventArgs e)
         {
             //MiniBoardVisiblity = false;
 
@@ -247,11 +247,11 @@ namespace MyShogi.View.Win2D
             engineConsiderationControl1.SetRootSfen(BoardType.NoHandicap.ToSfen());
             engineConsiderationControl1.AddInfo(new EngineConsiderationData()
             {
-                ThinkingTime = new System.TimeSpan(0, 0, 3),
+                ThinkingTime = new TimeSpan(0, 0, 3),
                 Depth = 15,
                 SelDepth = 20,
                 Nodes = 123456789,
-                Eval = EvalValue.ValueMate - 1 /*(EvalValue)1234*/,
+                Eval = EvalValue.Mate - 1 /*(EvalValue)1234*/,
                 Moves = new List<Move>() { Util.MakeMove(Square.SQ_77, Square.SQ_76), Util.MakeMove(Square.SQ_33, Square.SQ_34) }
             });
 
@@ -262,7 +262,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void toolStripButton6_Click(object sender, System.EventArgs e)
+        private void toolStripButton6_Click(object sender, EventArgs e)
         {
             var gameServer = miniShogiBoard1.gameServer;
             if (gameServer != null)
