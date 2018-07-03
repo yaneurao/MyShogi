@@ -14,7 +14,7 @@
         /// number = 0 or 1 or 2。0だと検討ウィンドウを非表示にする。
         /// これを設定した時に、検討ウィンドウの出力内容が初期化される。
         /// </summary>
-        InstanceNumber,
+        NumberOfInstance,
 
         /// <summary>
         /// rootのsfenを設定する。

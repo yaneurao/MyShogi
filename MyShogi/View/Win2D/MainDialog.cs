@@ -214,7 +214,7 @@ namespace MyShogi.View.Win2D
                 var dialog = new EngineConsiderationDialog();
                 dialog.Init();
                 // ウィンドウ幅を合わせておく。
-                dialog.Size = new Size(Width, Width / 8);
+                dialog.Size = new Size(Width, (int)(Width * 0.2) /* メインウィンドウの20%ぐらいの高さ */);
                 dialog.Location = new Point(Location.X, Location.Y + Height);
                 dialog.Visible = false;
                 dialog.Show();
@@ -224,7 +224,7 @@ namespace MyShogi.View.Win2D
 
             switch (message.type)
             {
-                case EngineInfoType.InstanceNumber:
+                case EngineInfoType.NumberOfInstance:
                     // 非表示なので検討ウィンドウが表示されているなら消しておく。
                     engineConsiderationDialog.Visible = message.number != 0;
                     engineConsiderationDialog.SetEngineInstanceNumber(message.number);

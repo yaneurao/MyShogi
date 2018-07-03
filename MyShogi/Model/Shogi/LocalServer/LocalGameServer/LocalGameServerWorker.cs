@@ -163,29 +163,62 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 人間 vs 人間の場合も最初の手番側を手前にしてやる。
             var stm = kifuManager.Position.sideToMove;
             if (gameSetting.Player(stm).IsHuman)
-                    BoardReverse = (stm == Color.WHITE);
+                BoardReverse = (stm == Color.WHITE);
 
             // 盤面編集中である可能性がある。リセットする。
             TheApp.app.config.InTheBoardEdit = false;
 
             // プレイヤー情報などを検討ダイアログに反映させる。
-            EngineInfo = new EngineInfo()
-            {
-                type = EngineInfoType.InstanceNumber,
-                number = 2,
-            };
-            EngineInfo = new EngineInfo()
-            {
-                type = EngineInfoType.EngineConsiderationInfoData,
-                number = 0,
-                data = new EngineConsiderationInfoData()
-                {
-                    PlayerName = "誰か",
-                }
-            };
-
+            InitEngineConsiderationInfo();
+            
             GameMode = GameModeEnum.InTheGame;
         }
+
+        /// <summary>
+        /// プレイヤー情報を検討ダイアログに反映させる。
+        /// </summary>
+        private void InitEngineConsiderationInfo()
+        {
+            // CPUの数をNumberOfEngineに反映。
+            int num = 0;
+            foreach (var c in All.Colors())
+                if (GameSetting.Player(c).IsCpu)
+                    ++num;
+            NumberOfEngine = num;
+
+            // エンジン数が確定したので、検討ウィンドウにNumberOfInstanceメッセージを送信してやる。
+            EngineInfo = new EngineInfo()
+            {
+                type = EngineInfoType.NumberOfInstance,
+                number = NumberOfEngine,
+            };
+
+            // 各エンジンの情報を検討ウィンドウにEngineConsiderationInfoDataとして送信。
+            num = 0;
+            foreach (var c in All.Colors())
+            {
+                if (GameSetting.Player(c).IsCpu)
+                {
+                    EngineInfo = new EngineInfo()
+                    {
+                        type = EngineInfoType.EngineConsiderationInfoData,
+                        number = num++,
+                        data = new EngineConsiderationInfoData()
+                        {
+                            PlayerName = DisplayName(c),
+                        }
+                    };
+                }
+            }
+        }
+
+        /// <summary>
+        /// このLocalGameServerのインスタンスの管理下で現在動作しているエンジンの数 (0～2)
+        /// これが0のときは人間同士の対局などなので、検討ウィンドウを表示しない。
+        /// これが1のときは、1つしかないので、EngineConsiderationDialogには、そいつの出力を0番のインスタンスとして読み筋を出力。
+        /// これが2のときは、EngineConsiderationDialogに、先手を0番、後手を1番として、読み筋を出力。
+        /// </summary>
+        private int NumberOfEngine;
 
         /// <summary>
         /// 指し手が指されたかのチェックを行う

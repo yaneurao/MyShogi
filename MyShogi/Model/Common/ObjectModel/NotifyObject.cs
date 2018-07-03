@@ -159,9 +159,11 @@ namespace MyShogi.Model.Common.ObjectModel
             }
 
             // lockの外側でコールバックしないとデッドロックになる。
+            // Invoke()をする場合であって、BegineInvoke()なら大丈夫か…。
             if (h != null)
             {
-                // UIスレッドからの実行が必要なのであればForm.Invoke()を用いてコールバックする。
+                // UIスレッドからの実行が必要なのであればForm.BeginInvoke()を用いてコールバックする。
+                // Invoke()と違ってこちらは非同期に実行される。
                 if (form == null)
                     h(e);
                 else
@@ -169,7 +171,7 @@ namespace MyShogi.Model.Common.ObjectModel
                     // form.Disposingとform.Disposedだけで判定できると言えないので、try～catchで書いておく。
                     try
                     {
-                        form.Invoke(new Action(() => h(e)));
+                        form.BeginInvoke(new Action(() => h(e)));
                     }
                     catch { }
             }
