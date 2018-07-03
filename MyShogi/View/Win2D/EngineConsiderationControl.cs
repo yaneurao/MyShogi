@@ -226,7 +226,7 @@ namespace MyShogi.View.Win2D
             // またヘッダーの1列目のTextAlignは無視される。これは.NET FrameworkのListViewの昔からあるバグ。(仕様？)
 
             var thinking_time = new ColumnHeader();
-            thinking_time.Text = "思考時間";
+            thinking_time.Text = "経過時間";
             thinking_time.Width = 150;
             thinking_time.TextAlign = HorizontalAlignment.Right;
 
@@ -236,7 +236,7 @@ namespace MyShogi.View.Win2D
             depth.TextAlign = HorizontalAlignment.Right;
 
             var node = new ColumnHeader();
-            node.Text = "ノード数  ";
+            node.Text = "探索局面数";
             node.Width = 180;
             node.TextAlign = HorizontalAlignment.Right;
 
@@ -322,13 +322,13 @@ namespace MyShogi.View.Win2D
             // 深さも各iterationごとにPVを出力しているわけで、こんなものは不要である。
 
             if (info.NodesString != null)
-                textBox3.Text = $" ノード数 : { info.NodesString.PadLeftUnicode(14) }";
+                textBox3.Text = $"探索局面数 : { info.NodesString.PadLeftUnicode(16) }";
 
             if (info.NpsString != null)
-                textBox4.Text = $" NPS : { info.NpsString.PadLeftUnicode(11) }";
+                textBox4.Text = $" NPS : { info.NpsString.PadLeftUnicode(16) }";
 
             if (info.HashPercentageString != null)
-                textBox5.Text = $" HASH : { info.HashPercentageString.PadLeftUnicode(6) }";
+                textBox5.Text = $"HASH使用率 : { info.HashPercentageString.PadLeftUnicode(6) }";
         }
 
         /// <summary>

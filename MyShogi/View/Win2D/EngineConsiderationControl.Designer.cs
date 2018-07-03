@@ -60,25 +60,25 @@
             this.textBox3.Location = new System.Drawing.Point(632, 3);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(281, 31);
+            this.textBox3.Size = new System.Drawing.Size(288, 31);
             this.textBox3.TabIndex = 2;
             // 
             // textBox4
             // 
             this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.Location = new System.Drawing.Point(919, 3);
+            this.textBox4.Location = new System.Drawing.Point(926, 3);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(217, 31);
+            this.textBox4.Size = new System.Drawing.Size(220, 31);
             this.textBox4.TabIndex = 2;
             // 
             // textBox5
             // 
             this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.Location = new System.Drawing.Point(1142, 3);
+            this.textBox5.Location = new System.Drawing.Point(1152, 3);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
-            this.textBox5.Size = new System.Drawing.Size(177, 31);
+            this.textBox5.Size = new System.Drawing.Size(230, 31);
             this.textBox5.TabIndex = 2;
             // 
             // listView1

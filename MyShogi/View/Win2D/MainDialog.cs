@@ -137,8 +137,20 @@ namespace MyShogi.View.Win2D
 
         public void MainDialog_Move(object sender, System.EventArgs e)
         {
-            // ウィンドウを移動させたとき、そこの左下に検討ウィンドウを追随させる。
-            if (engineConsiderationDialog!=null)
+            UpdateEngineConsiderationDialogLocation();
+        }
+
+        private void MainDialog_Resize(object sender, System.EventArgs e)
+        {
+            UpdateEngineConsiderationDialogLocation();
+        }
+
+        /// <summary>
+        /// ウィンドウを移動させたときなどに、そこの左下に検討ウィンドウを追随させる。
+        /// </summary>
+        private void UpdateEngineConsiderationDialogLocation()
+        {
+            if (engineConsiderationDialog != null)
             {
                 var loc = Location;
                 engineConsiderationDialog.Location =
@@ -1354,7 +1366,7 @@ namespace MyShogi.View.Win2D
         }
 
         private MenuStrip old_menu { get; set; } = null;
-#endregion
+        #endregion
 
     }
 }
