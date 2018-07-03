@@ -24,9 +24,22 @@ namespace MyShogi.Model.Test
     {
         public static void Test1()
         {
+
+#if true
+            {
+                // EvalValue の .Pretty() 出力テスト
+                for (Int32 i = -2; i <= 2; ++i)
+                    Console.WriteLine($"{i}: {MyShogi.Model.Shogi.Core.EvalValueExtensions.Pretty((MyShogi.Model.Shogi.Core.EvalValue)i)}");
+                for (Int32 i = Int32.MinValue; i <= Int32.MinValue + 3; ++i)
+                    Console.WriteLine($"{i}: {MyShogi.Model.Shogi.Core.EvalValueExtensions.Pretty((MyShogi.Model.Shogi.Core.EvalValue)i)}");
+                for (Int32 i = Int32.MaxValue; i >= Int32.MaxValue - 3; --i)
+                    Console.WriteLine($"{i}: {MyShogi.Model.Shogi.Core.EvalValueExtensions.Pretty((MyShogi.Model.Shogi.Core.EvalValue)i)}");
+            }
+#endif
 #if true
             try
             {
+                // 評価値グラフの表示テスト
                 var evaltest = new EvalControlTestForm();
                 evaltest.Show();
             }

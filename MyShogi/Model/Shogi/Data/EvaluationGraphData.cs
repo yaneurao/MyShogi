@@ -79,6 +79,47 @@ namespace MyShogi.Model.Shogi.Data
         /// 形勢グラフをどう描画するか
         /// </summary>
         public EvaluationGraphType type;
+
+        /// <summary>
+        /// 形勢グラフを上下反転するか
+        /// </summary>
+        public bool reverse;
+
+        /// <summary>
+        /// 評価値から[-1,+1]のy軸値に変換する関数の取得
+        /// EvalValue.NoValue の時は float.NaN を返す
+        /// </summary>
+        public static System.Func<EvalValue, float> MakeEval2VertFunc(EvaluationGraphType type, bool reverse)
+        {
+            switch (type)
+            {
+                case EvaluationGraphType.Normal:
+                    // 普通の
+                    // reverse == false, 返り値が { -1, -0.5, 0, +0.5, +1 } の場合、それぞれ評価値 { -3000以下, -1500, 0, +1500, +3000以上 } に相当
+                    return (EvalValue v) => v == EvalValue.NoValue ? float.NaN :
+                        (reverse ? -1 : +1) * System.Math.Min(System.Math.Max((float)v / 3000f, -1f), +1f);
+                case EvaluationGraphType.TrigonometricSigmoid:
+                    // ShogiGUIの非線形
+                    // 途中の定数は ±1000 の入力で ±0.5 を返す値
+                    // reverse == false, 返り値が { -1, -0.5, 0, +0.5, +1 } の場合、それぞれ評価値 { -∞, -1000, 0, +1000, +∞ } に相当
+                    return (EvalValue v) => v == EvalValue.NoValue ? float.NaN :
+                        (reverse ? -1 : +1) * (float)(System.Math.Asin(System.Math.Atan((double)v * 0.00201798867190979486291580478906) * 2 / System.Math.PI) * 2 / System.Math.PI);
+                case EvaluationGraphType.WinningRate:
+                    // 勝率
+                    // reverse == false, 返り値が { -1, -0.5, 0, +0.5, +1 } の場合、それぞれ勝率 { 0%, 25%, 50%, 75%, 100% } に相当
+                    return (EvalValue v) => v == EvalValue.NoValue ? float.NaN :
+                        (reverse ? -1 : +1) * (float)(System.Math.Tanh((double)v / 1200.0));
+                default:
+                    // 未定義
+                    // とりあえず 0 か NaN を返す
+                    return (EvalValue v) => v == EvalValue.NoValue ? float.NaN : 0f;
+            }
+        }
+
+        /// <summary>
+        /// 評価値から[-1,+1]のy軸値に変換する関数の取得
+        /// </summary>
+        public System.Func<EvalValue, float> eval2VertFunc { get => MakeEval2VertFunc(type, reverse); }
     }
 
     /// <summary>

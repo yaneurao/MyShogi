@@ -9,7 +9,7 @@ namespace MyShogi.Model.Shogi.Core
     public enum EvalValue : Int32
     {
         // この値は使わない。
-        Unknow = Int32.MaxValue,
+        Unknown = Int32.MaxValue,
 
         // "score mate+"を表現する手数不明の詰み。
         MatePlus = Int32.MaxValue - 1,
@@ -45,19 +45,21 @@ namespace MyShogi.Model.Shogi.Core
             {
                 switch(value)
                 {
-                    case EvalValue.Unknow    : return "不明";
+                    case EvalValue.Unknown   : return "不明";
                     case EvalValue.MatePlus  : return "MATE(手数不明)";
                     case EvalValue.MatedMinus: return "MATED(手数不明)";
-                    case EvalValue.NoValue   : return ""; // これ表示するとおかしくなるので表示なしにしとく。 
+                    case EvalValue.NoValue   : return ""; // これ表示するとおかしくなるので表示なしにしとく。
                 }
 
+                // int にキャストしないと 0手 が Zero手 と出力される
                 if (value > 0)
-                    return $"MATE({EvalValue.Mate - (int)value}手)";
+                    return $"MATE({(int)(EvalValue.Mate - value)}手)";
                 if (value < 0)
-                    return $"MATED({value - EvalValue.Mated}手)";
+                    return $"MATED({(int)(value - EvalValue.Mated)}手)";
             }
 
-            return value.ToString();
+            // 0以外は符号付きで出力
+            return ((int)value).ToString("+0;-0;0");
         }
 
         /// <summary>

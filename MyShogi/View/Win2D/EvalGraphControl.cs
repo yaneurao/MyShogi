@@ -28,6 +28,7 @@ namespace MyShogi.View.Win2D
                 selectedIndex = -1,
                 maxIndex = 0,
                 type = EvaluationGraphType.TrigonometricSigmoid,
+                reverse = false,
             };
 
             playerColor = new[]
@@ -66,6 +67,14 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// グラフのスクロール検出時に再描画する
+        /// </summary>
+        private void EvalGraphControl_Scroll(object sender, ScrollEventArgs e)
+        {
+            evalGraphPictureBox.Invalidate();
+        }
+
+        /// <summary>
         /// [UI thread] : リストが変更されたときに呼び出されるハンドラ
         /// </summary>
         public void OnEvalDataChanged(PropertyChangedEventArgs args)
@@ -75,34 +84,14 @@ namespace MyShogi.View.Win2D
             evalGraphPictureBox.Invalidate();
         }
 
-        public void ScrollUpdate(int newValue)
-        {
-            evalGraphPictureBox.Invalidate();
-        }
-
-        Func<int, float> Score2VertFunc(EvaluationGraphType evaltype)
-        {
-            switch (evaltype)
-            {
-                case EvaluationGraphType.Normal:
-                    return (int score) => score == int.MinValue ? float.NaN :
-                        Math.Min(Math.Max(score / 3000f, -1f), +1f);
-                case EvaluationGraphType.TrigonometricSigmoid:
-                    return (int score) => score == int.MinValue ? float.NaN :
-                        (float)(Math.Asin(Math.Atan(score * 0.00201798867190979486291580478906) * 2 / Math.PI) * 2 / Math.PI);
-                case EvaluationGraphType.WinningRate:
-                    return (int score) => score == int.MinValue ? float.NaN :
-                        (float)(Math.Tanh(score / 1200.0));
-                default:
-                    return (int score) => score == int.MinValue ? float.NaN : 0f;
-            }
-        }
-
-        DColor Vert2Color(float vert)
+        /// <summary>
+        /// [-1,+1]のy軸値から色の算出
+        /// </summary>
+        DColor Vert2Color(float vert, bool reverse)
         {
             var c0 = playerColor[2];
             if (float.IsNaN(vert)) { return c0; }
-            var c1 = vert < 0f ? playerColor[1] : playerColor[0];
+            var c1 = ((vert < 0f) ^ reverse) ? playerColor[1] : playerColor[0];
             float absvert = Math.Abs(vert);
             float absvertr = 1 - absvert;
             return DColor.FromArgb(
@@ -113,6 +102,9 @@ namespace MyShogi.View.Win2D
             );
         }
 
+        /// <summary>
+        /// グラフの描画
+        /// </summary>
         public void Render(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
@@ -166,7 +158,7 @@ namespace MyShogi.View.Win2D
                 g.FillRectangle(brush, new Rectangle(0, 0, evalGraphPictureBox.Width, evalGraphPictureBox.Height));
             }
 
-            var vertFunc = Score2VertFunc(evaldata.type);
+            var vertFunc = evaldata.eval2VertFunc;
 
             var strformatScore = new StringFormat()
             {
@@ -246,7 +238,7 @@ namespace MyShogi.View.Win2D
                         new { score = 3000, width = 3 },
                     })
                     {
-                        var vert = vertFunc(ent.score);
+                        var vert = vertFunc((EvalValue)ent.score);
                         var color = DColor.Silver;
                         var y0 = -vert * ymul + yadd;
                         var y1 = +vert * ymul + yadd;
@@ -274,8 +266,8 @@ namespace MyShogi.View.Win2D
                         new { text = "-3000", score = -3000 },
                     })
                     {
-                        var vert = vertFunc(ent.score);
-                        var color = Vert2Color(vert);
+                        var vert = vertFunc((EvalValue)ent.score);
+                        var color = Vert2Color(vert, evaldata.reverse);
                         var y = -vert * ymul + yadd;
                         using (var pen = new Pen(color, 2))
                             g.DrawLine(pen, lPad + hScrollValue - scaleLineLen, y, lPad + hScrollValue, y);
@@ -309,7 +301,7 @@ namespace MyShogi.View.Win2D
                         new { score = 99999, width = 1 },
                     })
                     {
-                        var vert = vertFunc(ent.score);
+                        var vert = vertFunc((EvalValue)ent.score);
                         var color = DColor.Silver;
                         var y0 = -vert * ymul + yadd;
                         var y1 = +vert * ymul + yadd;
@@ -337,8 +329,8 @@ namespace MyShogi.View.Win2D
                         new { text = "-∞", score = -int.MaxValue },
                     })
                     {
-                        var vert = vertFunc(ent.score);
-                        var color = Vert2Color(vert);
+                        var vert = vertFunc((EvalValue)ent.score);
+                        var color = Vert2Color(vert, evaldata.reverse);
                         var y = -vert * ymul + yadd;
                         using (var pen = new Pen(color, 2))
                             g.DrawLine(pen, lPad + hScrollValue - scaleLineLen, y, lPad + hScrollValue, y);
@@ -385,7 +377,7 @@ namespace MyShogi.View.Win2D
                     }
                     foreach (var ent in new[]
                     {
-                        new { text = "0%", vert = -1f },
+                        new { text = "0%", vert = -1.0f },
                         new { text = "10%", vert = -0.8f },
                         new { text = "20%", vert = -0.6f },
                         new { text = "30%", vert = -0.4f },
@@ -398,8 +390,8 @@ namespace MyShogi.View.Win2D
                         new { text = "100%", vert = +1.0f },
                     })
                     {
-                        var vert = ent.vert;
-                        var color = Vert2Color(vert);
+                        var vert = (evaldata.reverse ? -1 : +1) * ent.vert;
+                        var color = Vert2Color(vert, evaldata.reverse);
                         var y = -vert * ymul + yadd;
                         using (var pen = new Pen(color, 2))
                             g.DrawLine(pen, lPad + hScrollValue - scaleLineLen, y, lPad + hScrollValue, y);
@@ -424,7 +416,7 @@ namespace MyShogi.View.Win2D
                 for (var i = 1; i < data.values.Count; ++i)
                 {
                     if (i * plyWidth < hScrollValue) continue;
-                    var y = vertFunc((int)data.values[i]);
+                    var y = vertFunc(data.values[i]);
                     if (float.IsNaN(y)) continue;
                     int ip = -1;
                     if (i >= 1 && data.values[i - 1] != EvalValue.NoValue)
@@ -435,7 +427,7 @@ namespace MyShogi.View.Win2D
                     else
                         continue;
                     if (ip * plyWidth < hScrollValue) continue;
-                    var yp = vertFunc((int)data.values[ip]);
+                    var yp = vertFunc(data.values[ip]);
                     g.DrawLine(pen, ip * plyWidth + lPad, -yp * ymul + yadd, i * plyWidth + lPad, -y * ymul + yadd);
                 }
             }
@@ -457,7 +449,7 @@ namespace MyShogi.View.Win2D
                 {
                     if (i >= evaldata.data_array[p].values.Count()) continue;
                     var color = p >= playerColor.Count() ? playerColor.Last() : playerColor[p];
-                    var y = vertFunc((int)evaldata.data_array[p].values[i]);
+                    var y = vertFunc(evaldata.data_array[p].values[i]);
                     if (float.IsNaN(y)) continue;
                     using (var brush = new SolidBrush(color))
                         g.FillEllipse(brush, i * plyWidth + lPad - scoreRound, -y * ymul + yadd - scoreRound, scoreRound * 2, scoreRound * 2);
@@ -466,10 +458,5 @@ namespace MyShogi.View.Win2D
 
         }
 
-        private void EvalGraphControl_Scroll(object sender, ScrollEventArgs e)
-        {
-            if (e.ScrollOrientation == ScrollOrientation.HorizontalScroll)
-                ScrollUpdate(e.NewValue);
-        }
     }
 }
