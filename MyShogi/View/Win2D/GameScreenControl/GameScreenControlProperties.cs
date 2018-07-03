@@ -42,6 +42,28 @@ namespace MyShogi.View.Win2D
         public GameScreenControlViewState viewState { get; private set; } = new GameScreenControlViewState();
 
         /// <summary>
+        /// 画面が汚れているかどうかのフラグ。
+        /// これを定期的に監視して、trueになっていれば、親からOnDraw()を呼び出してもらうものとする。
+        /// </summary>
+        public bool Dirty
+        {
+            get { return dirty; }
+            private set
+            {
+                // Thread生成なしにLocalGameServerを動作させているなら、即座に画面描画すべき。(これ用にタイマーも回ってないので)
+                // dirtyがTrue
+                if (gameServer != null && gameServer.NoThread)
+                {
+                    if (value)
+                        Invalidate();
+                    dirty = false;
+                }
+                else
+                    dirty = value;
+            }
+        }
+
+        /// <summary>
         /// 残り持ち時間だけが更新されたので部分的に描画して欲しいフラグ
         /// (未実装)　あとで考える。
         /// </summary>

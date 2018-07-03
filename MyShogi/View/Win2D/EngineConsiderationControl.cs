@@ -48,10 +48,12 @@ namespace MyShogi.View.Win2D
             }
             set
             {
-                position.SetSfen(value);
                 root_sfen = value;
                 listView1.Items.Clear();
                 list_item_moves.Clear();
+
+                if (root_sfen != null)
+                    position.SetSfen(value);
             }
         }
 

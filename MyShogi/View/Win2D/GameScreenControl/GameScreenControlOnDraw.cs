@@ -24,6 +24,10 @@ namespace MyShogi.View.Win2D
             graphics = g_;
             /// 以降、このクラスのDrawSprite(),DrawString()は正常にaffine変換されて描画されるものとする。
 
+            // ここでdirtyをfalseにしておく。
+            // 描画中に他のスレッドからの依頼によりDirty=trueになったら、再度描画がなされなくてはならないため。
+            dirty = false;
+
             // ここではDrawSprite()とDrawString()だけで描画を完結させてあるので複数Viewへの対応は(描画だけなら)容易。
 
             var app = TheApp.app;
@@ -303,9 +307,6 @@ namespace MyShogi.View.Win2D
 
             if (gameServer.EngineInitializing)
                 DrawSprite(engine_init_pos, SPRITE.EngineInit());
-
-            // 描画が完了したのでDirtyフラグを戻しておく。
-            Dirty = false;
         }
     }
 }

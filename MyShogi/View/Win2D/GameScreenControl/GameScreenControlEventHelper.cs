@@ -248,21 +248,6 @@ namespace MyShogi.View.Win2D
             EngineInfoChanged?.Invoke(args);
         }
 
-        /// <summary>
-        /// 画面が汚れているかどうかのフラグ。
-        /// これを定期的に監視して、trueになっていれば、親からOnDraw()を呼び出してもらうものとする。
-        /// </summary>
-        public bool Dirty
-        {
-            get { return dirty; }
-            private set {
-                // Thread生成なしにLocalGameServerを動作させているなら、即座に画面描画すべき。(これ用にタイマーも回ってないので)
-                if (gameServer!=null && gameServer.NoThread)
-                    Invalidate();
-                else
-                    dirty = value;
-            }
-        }
         private bool dirty;
 
         // 持ち時間が減っていくときに、持ち時間の部分だけの再描画をしたいのでそのためのフラグ

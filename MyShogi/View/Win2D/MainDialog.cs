@@ -217,7 +217,7 @@ namespace MyShogi.View.Win2D
                 dialog.Size = new Size(Width, Width / 8);
                 dialog.Location = new Point(Location.X, Location.Y + Height);
                 dialog.Visible = false;
-                dialog.Show(this);
+                dialog.Show();
                 engineConsiderationDialog = dialog;
                 // 何にせよ、インスタンスがなくては話にならないので生成だけしておく。
             }
