@@ -41,19 +41,29 @@ namespace MyShogi.Model.Shogi.Usi
         public string SelDepth;
 
         /// <summary>
-        /// 思考時間(今回の思考開始からの消費時間)
+        /// 思考時間(今回の思考開始からの経過時間)
         /// </summary>
-        public TimeSpan ThinkingTime;
+        public TimeSpan ElapsedTime;
+
+        /// <summary>
+        /// info multipv x .. で渡されたMultiPVの値
+        /// </summary>
+        public int MultiPV;
 
         /// <summary>
         /// 評価値
         /// </summary>
-        public EvalValue Eval;
+        public EvalValueEx Eval;
 
         /// <summary>
         /// 読み筋
         /// </summary>
         public List<Move> Moves;
+
+        /// <summary>
+        /// "info string ..."で渡された文字列
+        /// </summary>
+        public string InfoString;
 
         /// <summary>
         /// 探索ノード数

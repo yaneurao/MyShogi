@@ -203,9 +203,28 @@ namespace MyShogi.Model.Shogi.LocalServer
                     ThinkReport = new UsiThinkReportMessage()
                     {
                         type = UsisEngineReportMessageType.SetEngineName,
-                        number = num++,
+                        number = num,
                         data = DisplayName(c),
                     };
+
+                    // UsiEngineのThinkReportプロパティを捕捉して、それを転送してやるためのハンドラをセットしておく。
+
+                    var engine_player = Player(c) as UsiEnginePlayer;
+                    var num_ = num; // copy for capturing
+                    engine_player.engine.AddPropertyChangedHandler("ThinkReport", (args) =>
+                     {
+                         var report = args.value as UsiThinkReport;
+
+                         // このクラスのpropertyのsetterを呼び出してメッセージを移譲してやる。
+                         ThinkReport = new UsiThinkReportMessage()
+                         {
+                             type = UsisEngineReportMessageType.UsiThinkReport,
+                             number = num_, // is captrued
+                             data = report,
+                         };
+                     });
+
+                    num++;
                 }
             }
         }

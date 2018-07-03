@@ -6,6 +6,7 @@ using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Usi;
+using MyShogi.Model.Common.Utility;
 
 namespace MyShogi.View.Win2D
 {
@@ -57,12 +58,14 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// [UI Thread] : エンジン名を設定/取得する。
+        /// 
         /// このコントロールの左上のテキストボックスに反映される。
+        /// setterでは、ヘッダー情報のクリアも行う。
         /// </summary>
         public string EngineName
         {
             get { return textBox1.Text; }
-            set { textBox1.Text = value; }
+            set { textBox1.Text = value; ClearHeader();  }
         }
 
         /// <summary>
@@ -79,94 +82,96 @@ namespace MyShogi.View.Win2D
         /// <param name="moves"></param>
         public ItemClickedEventHandler ItemClicked { get; set; }
 
-#if false
-        /// <summary>
-        /// [UI Thread] : 引数でセットされたinfoを画面に描画する。
-        /// </summary>
-        /// <param name="info"></param>
-        public void UpdateInfoData(EngineConsiderationInfoData info)
-        {
-            // .NET FrameworkのTextBox、右端にスペースをpaddingしていて、TextAlignをcenterに設定してもそのスペースを
-            // わざわざ除去してからセンタリングするので(余計なお世話)、TextAlignをLeftに設定して、自前でpaddingする。
-            
-            textBox1.Text = info.PlayerName;
-            textBox2.Text = $" 予想手 : { info.PonderMove.PadLeftUnicode(6)}";
-
-            //textBox3.Text = $"探索手：{info.SearchingMove}";
-            // 探索手、エンジン側、まともに出力してると出力だけで時間すごくロスするので
-            // 出力してくるエンジン少なめだから、これ不要だと思う。
-
-            //textBox4.Text = $"深さ：{info.Depth}/{info.SelDepth}";
-            // 深さも各iterationごとにPVを出力しているわけで、こんなものは不要である。
-
-            textBox3.Text = $" ノード数 : { info.NodesString.PadLeftUnicode(14) }";
-            textBox4.Text = $" NPS : { info.NpsString.PadLeftUnicode(11) }";
-            textBox5.Text = $" HASH : { info.HashPercentageString.PadLeftUnicode(6) }";
-        }
-#endif
-
         /// <summary>
         /// [UI Thread] : 読み筋を1行追加する。
         /// </summary>
         /// <param name="info"></param>
         public void AddThinkReport(UsiThinkReport info)
         {
-            // -- 指し手文字列の構築
-
-            // Positionクラスを用いて指し手文字列を構築しないといけない。
-            // UI Threadからしかこのメソッドを呼び出さないことは保証されているので、
-            // positionのimmutable性は保つ必要はなく、Position.DoMove()～UndoMove()して良いが、素直にCloneしたほうが速いと思われ..
-
-            var pos = position.Clone();
-
-            var kifuString = new StringBuilder();
-
-            // kifuStringに文字列を追加するlocal method。
-            // 文字列を追加するときに句切りのスペースを自動挿入する。
-            void append(string s)
+            if (info.Moves != null)
             {
-                if (kifuString.Length != 0)
-                    kifuString.Append(' ');
-                kifuString.Append(s);
-            }
 
-            var moves = new List<Move>();
-            foreach(var move in info.Moves)
-            {
-                if (!pos.IsLegal(move))
+                // -- 指し手文字列の構築
+
+                // Positionクラスを用いて指し手文字列を構築しないといけない。
+                // UI Threadからしかこのメソッドを呼び出さないことは保証されているので、
+                // positionのimmutable性は保つ必要はなく、Position.DoMove()～UndoMove()して良いが、素直にCloneしたほうが速いと思われ..
+
+                var pos = position.Clone();
+
+                var kifuString = new StringBuilder();
+
+                // kifuStringに文字列を追加するlocal method。
+                // 文字列を追加するときに句切りのスペースを自動挿入する。
+                void append(string s)
                 {
-                    if (move.IsSpecial())
-                        append(move_to_kif_string(pos, move));
-                    else
-                        // 非合法手に対してKIF2の文字列を生成しないようにする。(それが表示できるとは限らないので..)
-                        append($"非合法手({ move.Pretty()})");
-
-                    break;
+                    if (kifuString.Length != 0)
+                        kifuString.Append(' ');
+                    kifuString.Append(s);
                 }
-                append(move_to_kif_string(pos, move));
-                moves.Add(move);
-                // このあと盤面表示用にmovesを保存するが、
-                // 非合法局面の指し手を渡すことは出来ないので、合法だとわかっている指し手のみを保存しておく。
-                
-                pos.DoMove(move);
+
+                var moves = new List<Move>();
+                foreach (var move in info.Moves)
+                {
+                    if (!pos.IsLegal(move))
+                    {
+                        if (move.IsSpecial())
+                            append(move_to_kif_string(pos, move));
+                        else
+                            // 非合法手に対してKIF2の文字列を生成しないようにする。(それが表示できるとは限らないので..)
+                            append($"非合法手({ move.Pretty()})");
+
+                        break;
+                    }
+                    append(move_to_kif_string(pos, move));
+                    moves.Add(move);
+                    // このあと盤面表示用にmovesを保存するが、
+                    // 非合法局面の指し手を渡すことは出来ないので、合法だとわかっている指し手のみを保存しておく。
+
+                    pos.DoMove(move);
+                }
+
+                // -- listView.Itemsに追加
+
+
+                // それぞれの項目、nullである可能性を考慮しながら表示すべし。
+                var elpasedTimeString = info.ElapsedTime != null ? info.ElapsedTime.ToString() : null;
+
+                var list = new[]{
+                    elpasedTimeString,                // 思考時間
+                    $"{info.Depth}/{info.SelDepth}" , // 探索深さ
+                    info.NodesString ,                // ノード数
+                    info.Eval.Eval.Pretty(),          // 評価値
+                    kifuString.ToString()             // 読み筋
+                };
+
+                var item = new ListViewItem(list);
+                listView1.Items.Add(item);
+                listView1.TopItem = item; // 自動スクロール
+
+                // 読み筋をここに保存しておく。(ミニ盤面で開く用)
+                list_item_moves.Add(moves);
             }
 
-            // -- listView.Itemsに追加
+            // -- その他、nullでない項目に関して、ヘッダー情報のところに反映させておく。
 
-            var list = new[]{
-                info.ThinkingTime.ToString() ,    // 思考時間
-                $"{info.Depth}/{info.SelDepth}" , // 探索深さ
-                info.NodesString   ,              // ノード数
-                info.Eval.Pretty(),               // 評価値
-                kifuString.ToString()             // 読み筋
-            };
-            var item = new ListViewItem(list);
-            listView1.Items.Add(item);
-            listView1.TopItem = item; // 自動スクロール
-
-            // 読み筋をここに保存しておく。(ミニ盤面で開く用)
-            list_item_moves.Add(moves);
+            UpdateHeader(info);
         }
+
+        /// <summary>
+        /// [UI Thread] : ヘッダー情報をクリアする。
+        /// </summary>
+        public void ClearHeader()
+        {
+            UpdateHeader(new UsiThinkReport()
+            {
+                PonderMove = "",
+                NodesString = "",
+                NpsString = "",
+                HashPercentageString = "",
+            });
+        }
+
 
         // -- handlers
 
@@ -286,6 +291,37 @@ namespace MyShogi.View.Win2D
             return m.IsOk() ? kifFormatter.format(p, m) : m.SpecialMoveToKif();
         }
 
+        /// <summary>
+        /// [UI Thread] : ヘッダー情報のところに反映させる。
+        /// nullの項目は書き換えない。
+        /// </summary>
+        /// <param name="info"></param>
+        private void UpdateHeader(UsiThinkReport info)
+        {
+            // .NET FrameworkのTextBox、右端にスペースをpaddingしていて、TextAlignをcenterに設定してもそのスペースを
+            // わざわざ除去してからセンタリングするので(余計なお世話)、TextAlignをLeftに設定して、自前でpaddingする。
+
+            //textBox1.Text = info.PlayerName;
+
+            if (info.PonderMove != null)
+                textBox2.Text = $" 予想手 : { info.PonderMove.PadLeftUnicode(6)}";
+
+            //textBox3.Text = $"探索手：{info.SearchingMove}";
+            // 探索手、エンジン側、まともに出力してると出力だけで時間すごくロスするので
+            // 出力してくるエンジン少なめだから、これ不要だと思う。
+
+            //textBox4.Text = $"深さ：{info.Depth}/{info.SelDepth}";
+            // 深さも各iterationごとにPVを出力しているわけで、こんなものは不要である。
+
+            if (info.NodesString != null)
+                textBox3.Text = $" ノード数 : { info.NodesString.PadLeftUnicode(14) }";
+
+            if (info.NpsString != null)
+                textBox4.Text = $" NPS : { info.NpsString.PadLeftUnicode(11) }";
+
+            if (info.HashPercentageString != null)
+                textBox5.Text = $" HASH : { info.HashPercentageString.PadLeftUnicode(6) }";
+        }
 
         /// <summary>
         /// 開始局面のsfen。

@@ -16,20 +16,56 @@ namespace MyShogi.Model.Shogi.Core
 
         // 現局面で(敵玉が)詰んでいる時の評価値
         // N手詰めのときは、(ValueMate - N)
-        Mate = Int32.MaxValue -2,
+        Mate = Int32.MaxValue - 2,
 
         Zero = 0,
 
         // 現局面で(自玉が)詰んでいる時の評価値
         // N手で詰まされるときは、(ValueMate + N)
-        Mated = Int32.MinValue +2,
+        Mated = Int32.MinValue + 2,
 
         // "score mate-"を表現する手数不明の詰まされ。
-        MatedMinus = Int32.MinValue +1,
+        MatedMinus = Int32.MinValue + 1,
 
         // この局面の評価値が存在しないことを意味する値
         // 形勢グラフなどには、この値のところは描画してはならない。
         NoValue = Int32.MinValue,
+    }
+
+    /// <summary>
+    /// ある評価値が、探索のupperbound(上界) , lowerbound(下界)の値であるかなどを表現する。
+    /// </summary>
+    public enum ScoreBound
+    {
+        /// <summary>
+        /// 上界
+        /// </summary>
+        Upper ,
+
+        /// <summary>
+        /// 下界
+        /// </summary>
+        Lower ,
+
+        /// <summary>
+        /// ぴったり
+        /// </summary>
+        Exact ,
+    }
+
+    /// <summary>
+    /// EvalValueの値とScoreBoundの値を一纏めにした構造体
+    /// </summary>
+    public class EvalValueEx
+    {
+        public EvalValueEx(EvalValue eval , ScoreBound bound)
+        {
+            Eval = eval;
+            Bound = bound;
+        }
+
+        public EvalValue Eval;
+        public ScoreBound Bound;
     }
 
     public static class EvalValueExtensions

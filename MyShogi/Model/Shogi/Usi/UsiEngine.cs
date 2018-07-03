@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
 using MyShogi.Model.Common.Utility;
@@ -185,8 +186,8 @@ namespace MyShogi.Model.Shogi.Usi
         /// <summary>
         /// USIプロトコルによってengine側から送られてきた"bestmove .."を解釈した指し手
         /// </summary>
-        public Move BestMove { get; set;}
-    
+        public Move BestMove { get; set; }
+
         /// <summary>
         /// USIプロトコルによってengine側から送られてきた"bestmove .. ponder .."のponderで指定された指し手を解釈した指し手
         /// </summary>
@@ -201,6 +202,17 @@ namespace MyShogi.Model.Shogi.Usi
         /// Thinking == false && BestMove == Move.NONEなら思考結果取り出したあとの通常状態。
         /// </summary>
         public bool Thinking { get; set; }
+
+        /// <summary>
+        /// 読み筋。
+        /// USIプロトコルの"info ..."をparseした内容が入る。
+        /// 親では、このイベントを捕捉すれば良い。
+        /// </summary>
+        public UsiThinkReport ThinkReport
+        {
+            get { return GetValue<UsiThinkReport>("ThinkReport");}
+            set { SetValue<UsiThinkReport>("ThinkReport",value); }
+        }
 
         // -- private members
 
@@ -523,6 +535,9 @@ namespace MyShogi.Model.Shogi.Usi
             catch (UsiException ex)
             {
                 exception = ex;
+
+                // 例外を表示(デバッグ用) あとでちゃんと書く。
+                TheApp.app.MessageShow(ex.Message);
             }
         }
 
@@ -531,73 +546,68 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private void HandleInfo(Scanner scanner)
         {
-            var info = new UsiThinkReport();
-
-            while (!scanner.IsEof)
+            try
             {
-                switch (scanner.ParseText())
+                var info = new UsiThinkReport();
+                var parseEnd = false;
+                while (!scanner.IsEof && !parseEnd)
                 {
-                    // hash使用率 1000分率返ってくるので10で割って100分率に変換して代入する。
-                    case "hashfull":
-                        info.HashPercentage = (float)scanner.ParseInt() / 10.0f;
-                        break;
+                    switch (scanner.ParseText())
+                    {
+                        // hash使用率 1000分率返ってくるので10で割って100分率に変換して代入する。
+                        case "hashfull":
+                            info.HashPercentage = (float)scanner.ParseInt() / 10.0f;
+                            break;
 
-                    // nps
-                    case "nps":
-                        info.Nps = scanner.ParseInt();
-                        break;
+                        // nps
+                        case "nps":
+                            info.Nps = scanner.ParseInt();
+                            break;
 
-                    // 現在の探索手
-                    case "currmove":
-                        info.CurrentMove = scanner.ParseText();
-                        break;
+                        // 現在の探索手
+                        case "currmove":
+                            info.CurrentMove = scanner.ParseText();
+                            break;
 
-                    // 探索ノード数
-                    case "nodes":
-                        info.Nodes = scanner.ParseInt();
-                        break;
+                        // 探索ノード数
+                        case "nodes":
+                            info.Nodes = scanner.ParseInt();
+                            break;
 
-                    // 探索深さ,選択探索深さ
+                        // 探索深さ,選択探索深さ
 
-                    // ここに文字が入っている可能性があるので(upperbound/lowerboundを表現するための"↑"など)文字列として扱う。
-                    case "depth":
-                        info.Depth = scanner.ParseText();
-                        break;
+                        // ここに文字が入っている可能性があるので(upperbound/lowerboundを表現するための"↑"など)文字列として扱う。
+                        case "depth":
+                            info.Depth = scanner.ParseText();
+                            break;
 
-                    case "seldepth":
-                        info.SelDepth = scanner.ParseText();
-                        break;
+                        case "seldepth":
+                            info.SelDepth = scanner.ParseText();
+                            break;
+
+                        case "score":
+                            info.Eval = HandleInfoScore(scanner);
+                            break;
+
+                        case "pv":
+                            info.Moves = HandlePVSeq(scanner);
+                            parseEnd = true; // "pv"はそのあと末尾まで。
+                            break;
+
+                        // リポート情報のみ更新
+                        case "time":
+                            info.ElapsedTime = TimeSpan.FromMilliseconds(scanner.ParseInt());
+                            break;
+
+                        case "multipv":
+                            info.MultiPV = (int)scanner.ParseInt();
+                            break;
+
+                        case "string":
+                            info.InfoString = scanner.LastText; // 残り全部
+                            parseEnd = true;
+                            break;
 #if false
-                    case "score":
-                        Score = HandleInfoScore(board, scanner);
-                        if (update != null)
-                        {
-                            update.Score = Score;
-                        }
-                        break;
-
-                    // リポート情報のみ更新
-                    case "time":
-                        Time = TimeSpan.FromMilliseconds(scanner.ParseInt());
-                        break;
-                    case "multipv":
-                        MultiPV = scanner.ParseInt();
-                        break;
-                    case "pv":
-                        PVSeq = HandlePVSeq(board, scanner);
-                        if (PVSeq.Any())
-                        {
-                            CurrMove = PVSeq[0];
-                            if (update != null)
-                            {
-                                update.CurrMove = CurrMove;
-                            }
-                        }
-                        break;
-                    case "string":
-                        InfoString = scanner.LastText;
-                        parseEnd = true;
-                        break;
                     case "count":
                         GodwhaleCount = scanner.ParseInt();
                         break;
@@ -621,9 +631,121 @@ namespace MyShogi.Model.Shogi.Usi
                             scanner.Text);*/
                         break;
 #endif
+                        // エラー　あとで何とかする。
+                        default:
+                            scanner.ParseText();
+                            break;
+
+                    }
                 }
+
+                ThinkReport = info;
+            } catch
+            {
+                throw new UsiException("info 文字列の解析に失敗 : " + scanner.Text);
+            }
+        }
+
+        /// <summary>
+        /// USIのPVの文字列を構築する。
+        /// </summary>
+        /// <param name="scanner"></param>
+        /// <returns></returns>
+        private List<Move> HandlePVSeq(Scanner scanner)
+        {
+            var list = new List<Move>();
+
+            while (!scanner.IsEof)
+            {
+                var move = Core.Util.FromUsiMove(scanner.ParseText());
+                if (move == Move.NONE)
+                    break;
+                list.Add(move);
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// "info .. score xxx"の"score"の直後の文字列をparseする
+        /// </summary>
+        /// <param name="scanner"></param>
+        /// <returns></returns>
+        private EvalValueEx HandleInfoScore(Scanner scanner)
+        {
+            var bound = ScoreBound.Exact;
+            switch (scanner.ParseText())
+            {
+                case "cp":
+                    var valueText = scanner.ParseText();
+
+                    // lowerbound/upperboundを取得
+                    var peek = scanner.PeekText(); // peekします
+                    if (peek == "upperbound")
+                    {
+                        bound = ScoreBound.Upper;
+                        scanner.ParseText();
+                    }
+                    else if (peek == "lowerbound")
+                    {
+                        bound = ScoreBound.Lower;
+                        scanner.ParseText();
+                    }
+
+                    return new EvalValueEx((EvalValue)int.Parse(valueText) , bound);
+
+                case "mate":
+                    return new EvalValueEx( ParseMate(scanner.ParseText()) , bound);
+
+                default:
+                    break;
             }
 
+            return null;
         }
+
+        /// <summary>
+        /// 詰みになったときの手数をパースします。
+        /// </summary>
+        /// <example>
+        /// +
+        /// -10
+        /// +5↑
+        /// </example>
+        public static EvalValue ParseMate(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+            {
+                throw new ArgumentNullException("text");
+            }
+
+            var trimmedText = text.Trim();
+            var value = int.Parse(trimmedText);
+
+            if (value == 0)
+            {
+                if (trimmedText[0] == '+')
+                {
+                    return EvalValue.MatePlus;
+                }
+                else if (trimmedText[0] == '-')
+                {
+                    return EvalValue.MatedMinus;
+                }
+                else
+                {
+                    //throw new ShogiException(
+                    //    trimmedText + ": メイト手数が正しくありません。");
+
+                    // 本来は先頭に+/-が必要ですが、そうなっていないソフトも多いので
+                    // ここでは現状に合わせてエラーにはしないことにします。
+                    return EvalValue.Mate;
+                }
+            }
+            else if (value > 0)
+                return EvalValue.Mate - value;
+            else
+                return EvalValue.Mated - value;
+        }
+
     }
 }
