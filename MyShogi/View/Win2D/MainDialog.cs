@@ -1,8 +1,10 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Test;
@@ -37,6 +39,9 @@ namespace MyShogi.View.Win2D
             };
             gameScreenControl1.Setting = setting;
             gameScreenControl1.Init();
+
+            // エンジンの読み筋などを、検討ダイアログにリダイレクトする。
+            gameScreenControl1.EngineInfoChanged = EngineInfoChanged;
         }
 
 #endregion
@@ -80,7 +85,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// エンジンの思考出力用
         /// </summary>
-        public Form engineConsiderationDialog;
+        public EngineConsiderationDialog engineConsiderationDialog;
 
 #endregion
 
@@ -198,19 +203,48 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// LocalGameServerから送られてくるエンジンの読み筋などのハンドラ。
+        /// [UI Thread] : LocalGameServerから送られてくるエンジンの読み筋などのハンドラ。
         /// </summary>
-        private void engine_info_handler()
+        private void EngineInfoChanged(PropertyChangedEventArgs args)
         {
-            var dialog = new EngineConsiderationDialog();
-            dialog.Init();
+            var message = args.value as EngineInfo;
 
-            // ウィンドウ幅を合わせておく。
+            if (engineConsiderationDialog == null)
+            {
+                var dialog = new EngineConsiderationDialog();
+                dialog.Init();
+                // ウィンドウ幅を合わせておく。
+                dialog.Size = new Size(Width, Width / 8);
+                dialog.Location = new Point(Location.X, Location.Y + Height);
+                dialog.Visible = false;
+                dialog.Show(this);
+                engineConsiderationDialog = dialog;
+                // 何にせよ、インスタンスがなくては話にならないので生成だけしておく。
+            }
 
-            dialog.Size = new Size(Width, Width / 8);
-            dialog.Show();
-            dialog.Location = new Point(Location.X, Location.Y + Height);
-            engineConsiderationDialog = dialog;
+            switch (message.type)
+            {
+                case EngineInfoType.InstanceNumber:
+                    // 非表示なので検討ウィンドウが表示されているなら消しておく。
+                    engineConsiderationDialog.Visible = message.number != 0;
+                    engineConsiderationDialog.SetEngineInstanceNumber(message.number);
+                    break;
+
+                case EngineInfoType.SetRootSfen:
+                    var sfen = message.data as string;
+                    engineConsiderationDialog.ConsiderationInstance(message.number).RootSfen = sfen;
+                    break;
+
+                case EngineInfoType.EngineConsiderationInfoData:
+                    var infoData = message.data as EngineConsiderationInfoData;
+                    engineConsiderationDialog.ConsiderationInstance(message.number).UpdateInfoData(infoData);
+                    break;
+
+                case EngineInfoType.EngineConsiderationPvData:
+                    var pvData = message.data as EngineConsiderationPvData;
+                    engineConsiderationDialog.ConsiderationInstance(message.number).AddPvData(pvData);
+                    break;
+            }
         }
 
         // -- 以下、ToolStripのハンドラ
@@ -343,9 +377,9 @@ namespace MyShogi.View.Win2D
             kifuControl.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に移動するはず */;
         }
 
-        #endregion
+#endregion
 
-        #region update menu
+#region update menu
 
         /// <summary>
         /// 棋譜の上書き保存のために、前回保存したときの名前を保持しておく。
@@ -1319,7 +1353,7 @@ namespace MyShogi.View.Win2D
         }
 
         private MenuStrip old_menu { get; set; } = null;
-        #endregion
+#endregion
 
     }
 }

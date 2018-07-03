@@ -2,6 +2,9 @@
 {
     /// <summary>
     /// string型に対する、LeftやRightを提供するextensions
+    /// 
+    /// nullに対して呼び出してもnullを返す。
+    /// (System.Text.PadLeft()などはこの仕様になっていないので呼び出す前のnullチェックが必要になって使いづらい。)
     /// </summary>
     public static class StringExtensions
     {
@@ -13,7 +16,10 @@
         /// <returns></returns>
         public static string Left(this string s , int n)
         {
-            return s == null ? null : s.Substring(0, System.Math.Min(s.Length, 6));
+            if (s == null)
+                return null;
+
+            return s.Substring(0, System.Math.Min(s.Length, 6));
         }
 
         /// <summary>
@@ -29,6 +35,7 @@
         {
             if (s == null)
                 return null;
+
             int m = s.Length - n; // 切り出す文字数 
             if (m < 0)
                 m = 0;
@@ -46,6 +53,9 @@
         /// <returns></returns>
         public static string PadLeftUnicode(this string s , int n)
         {
+            if (s == null)
+                return null;
+
             // まず全角を1文字として文字数を数える
             int len = 0;
             foreach (var c in s)
@@ -64,6 +74,9 @@
         /// <returns></returns>
         public static string PadRightUnicode(this string s, int n)
         {
+            if (s == null)
+                return null;
+
             // まず全角を1文字として文字数を数える
             int len = 0;
             foreach (var c in s)
@@ -82,6 +95,9 @@
         /// <returns></returns>
         public static string PadMidUnicode(this string s, string t , int n)
         {
+            if (s == null)
+                return null;
+
             // まず全角を1文字として全体の文字数を数える
             int len = 0;
             foreach (var c in s)
@@ -92,6 +108,7 @@
             // n - lenの数だけスペースを放り込む
             return $"{s}{new string(' ',System.Math.Max(n - len, 0))}{t}";
         }
+
 
     }
 }

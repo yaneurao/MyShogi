@@ -5,6 +5,7 @@ using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Resource.Sounds;
+using MyShogi.Model.Shogi.Data;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -166,6 +167,22 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 盤面編集中である可能性がある。リセットする。
             TheApp.app.config.InTheBoardEdit = false;
+
+            // プレイヤー情報などを検討ダイアログに反映させる。
+            EngineInfo = new EngineInfo()
+            {
+                type = EngineInfoType.InstanceNumber,
+                number = 2,
+            };
+            EngineInfo = new EngineInfo()
+            {
+                type = EngineInfoType.EngineConsiderationInfoData,
+                number = 0,
+                data = new EngineConsiderationInfoData()
+                {
+                    PlayerName = "誰か",
+                }
+            };
 
             GameMode = GameModeEnum.InTheGame;
         }

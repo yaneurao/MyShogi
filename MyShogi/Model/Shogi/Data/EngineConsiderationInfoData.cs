@@ -5,6 +5,9 @@ namespace MyShogi.Model.Shogi.Data
     /// <summary>
     /// EngineConsiderationControlで用いる、エンジンから送られてきた固定情報(npsなど)
     /// 片方のエンジン分。
+    /// 
+    /// すべて文字列として保持している。
+    /// 例えばNpsなら使う時は、NpsStringのほうを用いて、セットする時はNpsのsetterを用いる。
     /// </summary>
     public class EngineConsiderationInfoData
     {
@@ -24,33 +27,41 @@ namespace MyShogi.Model.Shogi.Data
         public string SearchingMove;
 
         /// <summary>
-        /// 探索深さ
+        /// 深さ文字列。
+        /// 設定にはSetDepth()を用いると良い。
         /// </summary>
-        public int Depth;
+        public string DepthString;
 
         /// <summary>
-        /// 選択探索深さ(探索した時の一番深かったところの深さ)
+        /// 探索深さと選択深さを引数に渡してDepth文字列を構築する。
         /// </summary>
-        public int SelDepth;
+        public void SetDepth(int depth , int selDepth)
+        {
+            DepthString = $"{depth}/{selDepth}";
+        }
 
         /// <summary>
         /// 探索ノード数
         /// </summary>
-        public Int64 Nodes;
+        public string NodesString;
+        public UInt64 Nodes { set { NodesString = string.Format("{0:#,0}", value); } }
 
         /// <summary>
         /// 1秒間の探索ノード数
         /// </summary>
-        public Int64 NPS;
+        public string NpsString;
+        public UInt64 Nps { set { NpsString = string.Format("{0:#,0}", value); } }
 
         /// <summary>
         /// ハッシュ使用率
         /// </summary>
-        public float HashPercentage;
+        public string HashPercentageString;
+        public float HashPercentage { set { HashPercentageString = string.Format("{0:F1}", value) + '%'; } }
 
         /// <summary>
         /// スレッド数
         /// </summary>
-        public int ThreadNum;
+        public string ThreadNumString;
+        public int ThreadNum { set { ThreadNumString = value.ToString(); } }
     }
 }

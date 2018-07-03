@@ -53,7 +53,6 @@
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(270, 31);
             this.textBox2.TabIndex = 2;
-            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox3
             // 
@@ -63,7 +62,6 @@
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(281, 31);
             this.textBox3.TabIndex = 2;
-            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox4
             // 
@@ -73,7 +71,6 @@
             this.textBox4.ReadOnly = true;
             this.textBox4.Size = new System.Drawing.Size(217, 31);
             this.textBox4.TabIndex = 2;
-            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox5
             // 
@@ -83,7 +80,6 @@
             this.textBox5.ReadOnly = true;
             this.textBox5.Size = new System.Drawing.Size(177, 31);
             this.textBox5.TabIndex = 2;
-            this.textBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // listView1
             // 

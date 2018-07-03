@@ -1,10 +1,11 @@
 ﻿using System.Text;
 using System.Windows.Forms;
+using System.Drawing;
 using System.Collections.Generic;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
-using System.Drawing;
+using MyShogi.Model.Common.Utility;
 
 namespace MyShogi.View.Win2D
 {
@@ -80,10 +81,34 @@ namespace MyShogi.View.Win2D
         public ItemClickedEventHandler ItemClicked { get; set; }
 
         /// <summary>
+        /// [UI Thread] : 引数でセットされたinfoを画面に描画する。
+        /// </summary>
+        /// <param name="info"></param>
+        public void UpdateInfoData(EngineConsiderationInfoData info)
+        {
+            // .NET FrameworkのTextBox、右端にスペースをpaddingしていて、TextAlignをcenterに設定してもそのスペースを
+            // わざわざ除去してからセンタリングするので(余計なお世話)、TextAlignをLeftに設定して、自前でpaddingする。
+            
+            textBox1.Text = info.PlayerName;
+            textBox2.Text = $" 予想手 : { info.PonderMove.PadLeftUnicode(6)}";
+
+            //textBox3.Text = $"探索手：{info.SearchingMove}";
+            // 探索手、エンジン側、まともに出力してると出力だけで時間すごくロスするので
+            // 出力してくるエンジン少なめだから、これ不要だと思う。
+
+            //textBox4.Text = $"深さ：{info.Depth}/{info.SelDepth}";
+            // 深さも各iterationごとにPVを出力しているわけで、こんなものは不要である。
+
+            textBox3.Text = $" ノード数 : { info.NodesString.PadLeftUnicode(14) }";
+            textBox4.Text = $" NPS : { info.NpsString.PadLeftUnicode(11) }";
+            textBox5.Text = $" HASH : { info.HashPercentageString.PadLeftUnicode(6) }";
+        }
+
+        /// <summary>
         /// [UI Thread] : 読み筋を1行追加する。
         /// </summary>
         /// <param name="info"></param>
-        public void AddInfo(EngineConsiderationPvData info)
+        public void AddPvData(EngineConsiderationPvData info)
         {
             // -- 指し手文字列の構築
 
@@ -260,26 +285,6 @@ namespace MyShogi.View.Win2D
             return m.IsOk() ? kifFormatter.format(p, m) : m.SpecialMoveToKif();
         }
 
-        /// <summary>
-        /// [UI Thread] : 引数でセットされたinfoを画面に描画する。
-        /// </summary>
-        /// <param name="info"></param>
-        private void UpdateInfoData(EngineConsiderationInfoData info)
-        {
-            textBox1.Text = info.PlayerName;
-            textBox2.Text = $"予想手 : {info.PonderMove.PadLeft(6)}";
-
-            //textBox3.Text = $"探索手：{info.SearchingMove}";
-            // 探索手、エンジン側、まともに出力してると出力だけで時間すごくロスするので
-            // 出力してくるエンジン少なめだから、これ不要だと思う。
-
-            //textBox4.Text = $"深さ：{info.Depth}/{info.SelDepth}";
-            // 深さも各iterationごとにPVを出力しているわけで、こんなものは不要である。
-
-            textBox3.Text = "ノード数 : " + string.Format("{0:#,0}",info.Nodes).PadLeft(14);
-            textBox4.Text = "NPS : "+ string.Format("{0:#,0}", info.NPS).PadLeft(11);
-            textBox5.Text = "HASH : "+ string.Format("{0:F1}",info.HashPercentage).PadLeft(6) + "%";
-        }
 
         /// <summary>
         /// InfoDataにテストデータをセットして表示のテストを行う。
@@ -291,10 +296,9 @@ namespace MyShogi.View.Win2D
                 PlayerName = "なんとかエンジン",
                 PonderMove = "７三飛引不成",
                 SearchingMove = "７三飛引不成",
-                Depth = 20,
-                SelDepth = 15,
+                //SetDepth(20,30),
                 Nodes = 100000000,
-                NPS = 12345678,
+                Nps = 12345678,
                 HashPercentage = 99.9f,
                 ThreadNum = 4,
             };

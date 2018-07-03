@@ -72,6 +72,7 @@ namespace MyShogi.View.Win2D
             gameServer.AddPropertyChangedHandler("InTheBoardEdit", InTheBoardEditChanged, Parent);
             gameServer.AddPropertyChangedHandler("GameServerStarted", UpdateMenuItems, Parent);
             gameServer.AddPropertyChangedHandler("BoardReverse", UpdateMenuItems, Parent);
+            gameServer.AddPropertyChangedHandler("EngineInfo", engineInfoChanged , Parent);
         }
 
         /// <summary>
@@ -89,6 +90,7 @@ namespace MyShogi.View.Win2D
             gameServer.RemovePropertyChangedHandler("InTheBoardEdit", InTheBoardEditChanged);
             gameServer.RemovePropertyChangedHandler("GameServerStarted", UpdateMenuItems);
             gameServer.RemovePropertyChangedHandler("BoardReverse", UpdateMenuItems);
+            gameServer.RemovePropertyChangedHandler("EngineInfo", engineInfoChanged);
         }
 
         /// <summary>
@@ -234,6 +236,16 @@ namespace MyShogi.View.Win2D
         {
             UpdateTooltipButtons();
             Dirty = true;
+        }
+
+        /// <summary>
+        /// [UI Thread] : LocalGameServerのEngineInfoのプロパティが変更になった時に呼び出されるハンドラ。
+        /// </summary>
+        /// <param name="args"></param>
+        private void engineInfoChanged(PropertyChangedEventArgs args)
+        {
+            //　移譲しておく。
+            EngineInfoChanged?.Invoke(args);
         }
 
         /// <summary>

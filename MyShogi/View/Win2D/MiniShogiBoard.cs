@@ -2,14 +2,13 @@
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.LocalServer;
 
-
 namespace MyShogi.View.Win2D
 {
+    /// <summary>
+    /// 継ぎ盤用のControl
+    /// </summary>
     public partial class MiniShogiBoard : UserControl
     {
-        /// <summary>
-        /// 継ぎ盤用のControl
-        /// </summary>
         public MiniShogiBoard()
         {
             InitializeComponent();
@@ -30,17 +29,6 @@ namespace MyShogi.View.Win2D
             };
             gameScreenControl1.Init();
             gameServer.Start(); // スレッドを別で作らないのでこの時点で開始させて問題ない。
-        }
-
-        /// <summary>
-        /// 強制的にredrawする。
-        /// LocalGameServerをNoThreadで動かしているので、
-        /// LocalGameServer.BoardReverseを変更するなどしても画面の再描画が
-        /// 行われないので、再描画は自前で行う必要がある。
-        /// </summary>
-        public void ForceRedraw()
-        {
-            gameScreenControl1.ForceRedraw();
         }
 
         // -- 以下、局面操作子

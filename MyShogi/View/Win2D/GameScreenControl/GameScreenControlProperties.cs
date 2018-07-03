@@ -1,4 +1,5 @@
 ﻿using MyShogi.Model.Common.Math;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.View.Win2D
@@ -61,5 +62,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public KifuControl kifuControl {  get { return kifuControl1; } }
 
+        /// <summary>
+        /// [UI Thread] : LocalGameServerのEngineInfoが変更になった時に呼び出されるdelegate。
+        /// 思考エンジンの読み筋などを外部に出力したい時は、これを設定すること。
+        /// </summary>
+        public PropertyChangedEventHandler EngineInfoChanged;
     }
 }

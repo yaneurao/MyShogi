@@ -175,10 +175,7 @@ namespace MyShogi.View.Win2D
         {
             var gameServer = miniShogiBoard1.gameServer;
             if (gameServer != null)
-            {
                 gameServer.BoardReverse ^= true;
-                miniShogiBoard1.ForceRedraw();
-            }
         }
 
         // -- design adjustment
@@ -309,7 +306,7 @@ namespace MyShogi.View.Win2D
                 default: moves = null; break;
             }
 
-            engineConsiderationControl1.AddInfo(new EngineConsiderationPvData()
+            engineConsiderationControl1.AddPvData(new EngineConsiderationPvData()
             {
                 ThinkingTime = new TimeSpan(0, 0, 3),
                 Depth = 15,
