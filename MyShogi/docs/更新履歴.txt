@@ -1,11 +1,11 @@
 ﻿
 TODO:
-・検討機能(2日ぐらい?) 6/30まで
-・エンジン選択、エンジン設定(3日ぐらい？) 7/3まで
-・CPU自動判別、CPUのコア数、空きメモリ等の自動認識(1日ぐらい) 7/4まで
-・インストーラー作成(3日ぐらい？) 7/7まで
+・検討モードの実装 7/4
+・エンジン選択、エンジン設定(3日ぐらい？) 7/6
+・CPU自動判別、CPUのコア数、空きメモリ等の自動認識(1日ぐらい) 7/7
+・インストーラー作成(3日ぐらい？) 7/10
 	cf. https://www.osadasoft.com/visual-studio-2017%E3%81%A7%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%A9%E4%BD%9C%E6%88%90/
-・各思考エンジンの動作検証等(4,5日) 7/11まで
+・各思考エンジンの動作検証等(4,5日) 7/14
 
 -- 以下、できれば
 ・連続対局
@@ -13,7 +13,219 @@ TODO:
 ・棋譜解析(できれば)
 
 
+メニューに「ウィンドウ」追加。
+	- CPUだからか。CPUの時に名前を持ってくる処理、まだだった。あとで書く。
+メインウィンドウのサイズ、シリアライズしたほうが良いのでは…。
+
+
+■  2018/07/04
+
+
+- メインウィンドウのリサイズで検討ウィンドウの位置、追随するように。
+- 検討ダイアログ上の表示文字列、色々調整。
+
+
+- CPU対局時の読み筋の表示の実装その7
+	- LocalGameServerで、新しい局面に対してSetRootSfenイベントを投げるように。
+		- 読み筋、なんとなく表示されるようになった。
+	- ミニ盤面のボタン、いまひとつ反応が鈍い気がするのだが…。
+	- 時刻表示、ミリ秒以下は0.1までの表示。
+	- ミニ盤面、いつの間にか、反転ボタンが使えなくなっていたの修正。
+		- メニューのupdateハンドラは呼び出されるが、メニューに属するLocalGameServerではないので更新イベントが発生しないのか。
+		- UpdateMenuのハンドラで、メニュー更新していないときは、Dirtyフラグ立てるように修正。
+	- ミニ盤面、いつの間にか、ユーザーが駒を動かせるようになっていたの修正。
+		- これもとから動かせていたのに気づかなかっただけか…。
+	- とりま、読み筋の表示はひとまず終わり。次は検討モード。
+- UsiEngineの例外を捕捉して、Logに出力するようにした。
+
+
+- EvalValue、符号を反転させた時に、先後逆から見た評価値になることを保証されるように修正。
+
+
+■  2018/07/03
+
+
+- CPU対局時の読み筋の表示の実装その6
+	- USIプロトコルの"info .."のparser書き進める。
+		- これ、PVはともかく、scoreはmateとかの表記もあるし、全部やろうとするとparse結構、大変なのでは..
+		- scoreのところのparse、upperboundとかmateとかあって大変。これEvalValueに代入できなくて大変。
+			EvalValueでupperbound表現できないの、設計のミスなのでは…。
+			- ScoreBound追加。
+		- とりま、読み筋の出力まわり、うまく動いた。
+		- あとはSetRootSfen送るところとか書けば、読み筋の出力はひとまず完成か。
+			- info...のparserちゃんと書くのとinfo stringなどの取扱いも考慮しないと。
+
+
+- CPU対局時の読み筋の表示の実装その5
+	- UsiEngine.HandleInfo()の実装
+	- EngineConsiderationPvDataやめ。UsiThinkReportとrename。EngineConsiderationInfoDataと合体させる。
+	- UsiThinkReport , UsiThinkReportMessageを用意。
+- NotifyObject、BeginInvoke()でいいならLazyLock()する必要ないような？form以外を呼び出す時にdead lockになるのか…。
+
+
+- CPU対局時の読み筋の表示の実装その4
+	- 対局開始時にプレイヤーがCPUの場合、検討ウィンドウにそれを出力するように。
+- NotifyObjectでInvoke()を使っていたのをBeginInvoke()に変更する。操作時のレスポンスなどが少し良くなった気がする。
+- 対局盤面のネームプレートがいつの間にか、プレイヤー名が反映されなくなっている？
+	- CPUだからか。CPUの時に名前を持ってくる処理、まだだった。あとで書く。
+
+
+- CPU対局時の読み筋の表示の実装その3
+	- メニューに「ウィンドウ」という項目追加。ウィンドウ設定はここに従う。
+	- 検討ウィンドウを出した時にメインウィンドウの再描画のイベントが起きなくなってしまった…。原因調査する。
+		- 検討ウィンドウを出したあと、Timerのtickイベント来てない。
+		- ああ、MiniBoardの再描画イベントで無限に呼び出されていたのか…。修正した。
+- Model.Common.Win32追加
+
+
+- CPU対局時の読み筋の表示の実装その2
+	- EngineInfo.cs追加。
+	- private void engine_info_handler(EngineInfoKind kind,int n,object o)
+		書いたが、これがUI Threadで実行されるためには…。NotifyObjectで表現する必要があるのか？少し考える。
+		- そうみたい。LocalGameServerに仮想プロパティをもたせる方向で…。
+	- GameScreenControlにEngineInfoChangedのプロパティ生やす。
+	- MiniShogiBoardのForceRedraw削除。これ良くない設計だった。ちゃんとイベントとして処理するように変更。
+	- EngineConsiderationInfoData、すべて文字列で保持するように変更。
+- StringExtension絡み、渡された引数のnull check追加。
+
+
+- EvalGraph: 評価値グラフの上下反転 (#22) Mizarさんのプルリク
+
+
+- 検討機能の実装その9
+	- EngineConsiderationControlの表示調整。
+- CPU対局時の読み筋の表示の実装その1
+	- handlerが複数になるのダサいな…。何かいい方法を考えなくては…。
+
+
+■  2018/07/02
+
+
+- 検討機能の実装その8
+	- ミニ盤面の同期がなされないことがあったバグ修正。
+- EngineConsiderationDataをEngineConsiderationPvDataにrename
+- EngineConsiderationInfoData追加。
+- EngineConsiderationControlに追加する。
+	プレイヤー名
+	予想手
+	現在の探索手
+	探索深さ
+	探索局面数
+	NPS
+	ハッシュ使用率
+	スレッド数
+	- 一応、表示されるところまで書けた。あとで調整する。
+- 別の棋譜を読み込んで同じ手数であった場合にその局面に移動できないバグ修正。
+	
+
+- 検討機能の実装その7
+	- EngineConsiderationControlのクリックで読み筋を継ぎ盤で見せる機能
+		- ミニ盤面、ちゃんと動くようになった。
+	- GameScreenをGameScreenControlとしてコンポーネント化した現在、GameScreenControlViewModelは
+		- 設計がおかしいので削除して、メンバをGameScreenControlに移動させる。
+	- NoThreadモードの時にDirtyフラグが立ったら、即座に画面更新するようにした。
+		- これ絡みでミニ盤面また更新されなくなった。あとで原因調査する。
+	- MainGameDialogに初期局面に戻すボタンと末尾の局面に移動するボタン追加。
+		- 実装した。
+	
+
+- 検討機能の実装その6
+	- EngineConsiderationControlのクリックで読み筋を継ぎ盤で見せる機能
+		- ハンドラ書いた
+		- マウスクリックでミニ盤面に反映するようにはなった。マウスクリックというよりSelectedでミニ盤面に反映するように変更。
+		- EngineConsiderationDialogの初期化まわりおかしい。盤面進められない。あとで調査する。
+	- MiniShogiBoardDataからBoardReverse削除。ここに持たせるべきではなかった。
+
+
+- 検討機能の実装その5
+	- EngineConsiderationControlのクリックで読み筋を継ぎ盤で見せる機能
+		- ハンドラまだ
+	- EngineConsiderationControlのPVの読み筋の棋譜表示。(KIF2形式で)
+- EvalValue、IsSpecialValue()追加。
+	
+
+- EvalValue、"score mate+" "score mate-"のこと忘れていたので追加。
+
+
+- GameEvaluationDataに渡している評価値、List<EvalValue>に変更する。
+	- これに伴う修正を、Mizarさんに依頼。
+
+
+- 検討機能の実装その4
+	- MiniShogiBoardのKifuListが同期していない件、調査
+		- タイミングの問題だけのようだ。コード自体はうまく動いていた。
+	- 検討機能より先にCPU対局時の情報表示をやらねば。検討はMultiPVなので、CPU対局時の情報表示の機能の上位のレイヤーである。
+	- EngineConsiderationControlの表示列、追加。「読み筋」の幅自動調整のコード実装。
+	- Model.Shogi.DataにEngineConsiderationData.cs追加。
+	- EngineConsiderationControl.AddInfo()追加。
+	- Shogi.CoreにEvalValue追加。
+
+
+- 検討機能の実装その3
+	- BoardReverseもGlobalConfigが持つと各GameScreenControlが個別に反転させられないので
+		自前で持つべきなのか…。GlobalConfigからLocalGameServerに移動させる。
+		- あ、そうなってた。
+	- 検討機能より先にCPU対戦の時の読み筋の表示が先なのでは…。
+	- MiniBoardに渡す構造体を設計するのが先か…。
+		- この構造体、Model.Shogi.Dataに書くことに。
+		- EvaluationGraphData.csもここに移動。
+		- MiniShogiBoardData.cs追加。
+	- EngineConsiderationDialogのMiniShogiBoardに盤面反転ボタン追加。
+	- MiniShogiBoardのKifuListが同期していないようだ。なんで…。
+
+
+■  2018/07/01
+
+
+- 検討機能の実装その2
+	- LocalGameServerにNoThread追加。スレッドなしで実行するモード。
+	- MiniBoardのネームプレート、邪魔じゃね？
+		- GameScreenControlにネームプレートなしで表示するオプション追加。
+	- EngineConsiderationDialogのMiniBoardまわりに局面、進める/戻すのToolStripつけた。
+
+
+- 評価値グラフ描画 (#21) Mizarさんからプルリク。
+	* conv: message fix
+	* SystemInfo: processorArchitecture を public に
+	* KI2形式 + 駒打ちのみ"打"強制表示オプション(FromSqFormat.Drop)追加
+	* 評価値グラフ描画
+
+
+- 検討機能の実装その1
+	- 読み筋の描画部分にListViewを使う。
+	- ListView、ちらつく。DoubleBufferにしようにもそのフラグがprotectedだからListViewを派生させないと変更できない。なんぞこの作り…。
+		- 将棋所はよく見るとちらついているように見える。ShogiGUIはちらついていない。
+	- EngineConsiderationDialogに継ぎ盤つければいいのか？まあ、出来なくはなさそう。
+	- 継ぎ盤用のコントロールさらに作るべきなのか。
+		- MiniShogiBoard出来た。
+		- LocalGameServer、停止を保証しないといけない。
+			- あとで考える
+
+
 ■  2018/06/30
+
+
+- メニューの更新の高速化
+	- 対局中は呼び出されていないし、ToolStripも、CPU×CPUの対局中は更新は発生していないし、
+	CPU×人間のときは多少遅くても誤差だし、まあいいか…。
+
+
+- GameScreenのコンポーネント化その4
+	- GameServerのイベント通知、もうちょっと整理。
+	- TheAppでイベントのbindをするのをやめて、これらはGameScreenControlのほうでbind～unbindを行うように変更。
+		gameServer.AddPropertyChangedHandler("InTheGame", mainDialog.UpdateMenuItems, mainDialog);
+		gameServer.AddPropertyChangedHandler("BoardReverse", mainDialog.UpdateMenuItems, mainDialog);
+		gameServer.AddPropertyChangedHandler("GameServerStarted", mainDialog.UpdateMenuItems, mainDialog);
+		gameServer.AddPropertyChangedHandler("InTheBoardEdit", mainDialog.UpdateMenuItems, mainDialog);
+	- これでGameScreenをコンポーネントとして再利用しやすくなった。
+
+
+- GameScreenのコンポーネント化その3
+	- MainDialogのRedrawの処理修正。
+	- メニューの部分、ちらつくのでダブルバッファに戻す。
+	- これ、貼り付けてるControlもダブルバッファにならないのか？
+		- ならなさげなので良し。
+	- よし、これでcommitしとく。大改造終わり…。
 
 
 - GameScreenのコンポーネント化その2
