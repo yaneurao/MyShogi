@@ -197,6 +197,22 @@ namespace MyShogi.View.Win2D
             FitToScreenSize();
         }
 
+        /// <summary>
+        /// LocalGameServerから送られてくるエンジンの読み筋などのハンドラ。
+        /// </summary>
+        private void engine_info_handler()
+        {
+            var dialog = new EngineConsiderationDialog();
+            dialog.Init();
+
+            // ウィンドウ幅を合わせておく。
+
+            dialog.Size = new Size(Width, Width / 8);
+            dialog.Show();
+            dialog.Location = new Point(Location.X, Location.Y + Height);
+            engineConsiderationDialog = dialog;
+        }
+
         // -- 以下、ToolStripのハンドラ
 
         /// <summary>
@@ -1257,6 +1273,7 @@ namespace MyShogi.View.Win2D
                         item.Text = "DevTest1.Test5()";
                         item.Click += (sender, e) =>
                         {
+#if false
                             if (engineConsiderationDialog != null)
                                 engineConsiderationDialog.Dispose();
 
@@ -1269,6 +1286,7 @@ namespace MyShogi.View.Win2D
                             dialog.Show();
                             dialog.Location = new Point(Location.X, Location.Y + Height);
                             engineConsiderationDialog = dialog;
+#endif
                         };
                         item_debug.DropDownItems.Add(item);
                     }
@@ -1284,7 +1302,7 @@ namespace MyShogi.View.Win2D
                 }
 #endif
 
-                Controls.Add(menu);
+                            Controls.Add(menu);
                 //フォームのメインメニューとする
                 MainMenuStrip = menu;
                 old_menu = menu;

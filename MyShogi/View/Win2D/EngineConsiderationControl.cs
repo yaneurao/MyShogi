@@ -267,12 +267,18 @@ namespace MyShogi.View.Win2D
         private void UpdateInfoData(EngineConsiderationInfoData info)
         {
             textBox1.Text = info.PlayerName;
-            textBox2.Text = $"予想手：{info.PonderMove}";
-            textBox3.Text = $"探索手：{info.SearchingMove}";
-            textBox4.Text = $"深さ：{info.Depth}/{info.SelDepth}";
-            textBox5.Text = $"ノード数 {info.Nodes:-10}";
-            textBox6.Text = $"NPS {info.NPS:-10}";
-            textBox7.Text = $"HASH {info.HashPercentage:-3}";
+            textBox2.Text = $"予想手 : {info.PonderMove.PadLeft(6)}";
+
+            //textBox3.Text = $"探索手：{info.SearchingMove}";
+            // 探索手、エンジン側、まともに出力してると出力だけで時間すごくロスするので
+            // 出力してくるエンジン少なめだから、これ不要だと思う。
+
+            //textBox4.Text = $"深さ：{info.Depth}/{info.SelDepth}";
+            // 深さも各iterationごとにPVを出力しているわけで、こんなものは不要である。
+
+            textBox3.Text = "ノード数 : " + string.Format("{0:#,0}",info.Nodes).PadLeft(14);
+            textBox4.Text = "NPS : "+ string.Format("{0:#,0}", info.NPS).PadLeft(11);
+            textBox5.Text = "HASH : "+ string.Format("{0:F1}",info.HashPercentage).PadLeft(6) + "%";
         }
 
         /// <summary>
@@ -288,6 +294,7 @@ namespace MyShogi.View.Win2D
                 Depth = 20,
                 SelDepth = 15,
                 Nodes = 100000000,
+                NPS = 12345678,
                 HashPercentage = 99.9f,
                 ThreadNum = 4,
             };

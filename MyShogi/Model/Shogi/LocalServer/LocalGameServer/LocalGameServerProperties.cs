@@ -196,6 +196,20 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public bool NoThread = false;
 
+        /// <summary>
+        /// エンジンの読み筋などを検討用のダイアログに出力する。
+        /// 
+        /// デフォルトfalse。これをtrueにすると、要所要所でEngineInfoHandlerを呼び出す。
+        /// </summary>
+        public bool EngineInfoEnable { get; set; }
+
+        public delegate void EngineInfoHandlerDelegate();
+
+        /// <summary>
+        /// EngineInfoEnableがtrueの時に、エンジンの読み筋を出力するためのハンドラ。
+        /// </summary>
+        public EngineInfoHandlerDelegate EngineInfoHandler { get; set; }
+
         #endregion
 
         #region 依存性のあるプロパティの処理
