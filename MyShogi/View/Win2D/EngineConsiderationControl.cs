@@ -88,7 +88,7 @@ namespace MyShogi.View.Win2D
         /// <param name="info"></param>
         public void AddThinkReport(UsiThinkReport info)
         {
-            if (info.Moves != null)
+            if (info.Moves != null || info.InfoString != null)
             {
 
                 // -- 指し手文字列の構築
@@ -110,32 +110,39 @@ namespace MyShogi.View.Win2D
                     kifuString.Append(s);
                 }
 
-                var moves = new List<Move>();
-                foreach (var move in info.Moves)
+                if (info.Moves != null)
                 {
-                    if (!pos.IsLegal(move))
+                    var moves = new List<Move>();
+                    foreach (var move in info.Moves)
                     {
-                        if (move.IsSpecial())
-                            append(move_to_kif_string(pos, move));
-                        else
-                            // 非合法手に対してKIF2の文字列を生成しないようにする。(それが表示できるとは限らないので..)
-                            append($"非合法手({ move.Pretty()})");
+                        if (!pos.IsLegal(move))
+                        {
+                            if (move.IsSpecial())
+                                append(move_to_kif_string(pos, move));
+                            else
+                                // 非合法手に対してKIF2の文字列を生成しないようにする。(それが表示できるとは限らないので..)
+                                append($"非合法手({ move.Pretty()})");
 
-                        break;
+                            break;
+                        }
+                        append(move_to_kif_string(pos, move));
+                        moves.Add(move);
+                        // このあと盤面表示用にmovesを保存するが、
+                        // 非合法局面の指し手を渡すことは出来ないので、合法だとわかっている指し手のみを保存しておく。
+
+                        pos.DoMove(move);
                     }
-                    append(move_to_kif_string(pos, move));
-                    moves.Add(move);
-                    // このあと盤面表示用にmovesを保存するが、
-                    // 非合法局面の指し手を渡すことは出来ないので、合法だとわかっている指し手のみを保存しておく。
-
-                    pos.DoMove(move);
+                }
+                else
+                {
+                    kifuString.Append(info.InfoString); // この文字列を読み筋として突っ込む。
                 }
 
                 // -- listView.Itemsに追加
 
-
                 // それぞれの項目、nullである可能性を考慮しながら表示すべし。
-                var elpasedTimeString = info.ElapsedTime != null ? info.ElapsedTime.ToString() : null;
+                // 経過時間、1/10秒まで表示する。
+                var elpasedTimeString = info.ElapsedTime != null ? info.ElapsedTime.ToString("hh':'mm':'ss'.'f") : null;
 
                 var list = new[]{
                     elpasedTimeString,                // 思考時間
@@ -150,7 +157,8 @@ namespace MyShogi.View.Win2D
                 listView1.TopItem = item; // 自動スクロール
 
                 // 読み筋をここに保存しておく。(ミニ盤面で開く用)
-                list_item_moves.Add(moves);
+                // なければnullもありうる。
+                list_item_moves.Add(info.Moves);
             }
 
             // -- その他、nullでない項目に関して、ヘッダー情報のところに反映させておく。
@@ -189,7 +197,7 @@ namespace MyShogi.View.Win2D
 
             // multi selectではないので1つしか選択されていないはず…。
             int index = selected[0]; // first
-            if (index < list_item_moves.Count)
+            if (index < list_item_moves.Count && list_item_moves[index]!=null /* info stringなどだとnullがありうる。*/)
                 ItemClicked?.Invoke(new MiniShogiBoardData()
                 {
                     rootSfen = root_sfen,
@@ -219,7 +227,7 @@ namespace MyShogi.View.Win2D
 
             var thinking_time = new ColumnHeader();
             thinking_time.Text = "思考時間";
-            thinking_time.Width = 140;
+            thinking_time.Width = 150;
             thinking_time.TextAlign = HorizontalAlignment.Right;
 
             var depth = new ColumnHeader();

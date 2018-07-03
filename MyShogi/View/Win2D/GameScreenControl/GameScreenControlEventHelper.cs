@@ -109,6 +109,8 @@ namespace MyShogi.View.Win2D
         {
             if (Setting != null && Setting.UpdateMenuItems != null)
                 Setting.UpdateMenuItems(null);
+            else
+                Dirty = true; // 描画の更新イベントは呼び出しておかないといけない。
         }
 
         /// <summary>

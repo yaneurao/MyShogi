@@ -9,10 +9,11 @@ namespace MyShogi.Model.Common.Utility
     /// </summary>
     public enum LogInfoType
     {
-        SendCommandToEngine, // エンジンへのコマンドの送信
+        SendCommandToEngine,      // エンジンへのコマンドの送信
         ReceiveCommandFromEngine, // エンジンからのコマンドの受信
-        UsiServer, // USIのコマンドを受理している側のメッセージ
-        SystemError, // システムエラー
+        UsiServer,                // USIのコマンドを受理している側のメッセージ
+        UsiParseError,            // USIのコマンドの解析エラー
+        SystemError,              // システムエラー
     }
 
     /// <summary>
@@ -66,6 +67,10 @@ namespace MyShogi.Model.Common.Utility
 
                 case LogInfoType.SystemError:
                     log = $"{date} {time}'{ms} Error : {log}";
+                    break;
+
+                case LogInfoType.UsiParseError:
+                    log = $"{date} {time}'{ms} USI Parse Error : {log}";
                     break;
 
                 case LogInfoType.UsiServer:

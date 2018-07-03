@@ -74,8 +74,22 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// ユーザーがUI上で操作できるのか？
         /// ただし、EngineInitializingなら動かしてはならない。
+        /// 
+        /// また、EnableUserMoveがfalseにされているとこのCanUserMoveはtrueにならない。
         /// </summary>
-        public bool CanUserMove { get; private set; }
+        public bool CanUserMove
+        {
+            get { return canUserMove && EnableUserMove;}
+            private set { canUserMove = value; }
+        }
+        private bool canUserMove; // ↑からしかアクセスしない
+
+        /// <summary>
+        /// ユーザーの操作を受け付けるのか。
+        /// これをfalseにすると、盤面が閲覧専用になる。
+        /// (CanUserMoveがtrueを返さなくなる。)
+        /// </summary>
+        public bool EnableUserMove { get; set; } = true;
 
         /// <summary>
         /// 思考エンジンが考え中であるか。
@@ -200,10 +214,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// エンジンの読み筋などを検討用のダイアログに出力する。
         /// 
-        /// デフォルトfalse。これをtrueにすると、要所要所でこのクラスのpropertyであるThinkReportが
-        /// 設定されるので、必要ならば外部から変更イベントを捕捉すれば良い。
+        /// デフォルトtrue。
+        /// これをtrueにすると、要所要所でこのクラスのpropertyであるThinkReportのsetterが呼び出されるので、
+        /// 必要ならば外部から変更イベントを捕捉すれば良い。
         /// </summary>
-        public bool ThinkReportEnable { get; set; }
+        public bool ThinkReportEnable { get; set; } = true;
 
         /// <summary>
         /// ThinkReportEnableがtrueの時に、エンジンの読み筋などを出力するためのハンドラ。

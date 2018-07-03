@@ -208,21 +208,23 @@ namespace MyShogi.Model.Shogi.LocalServer
                     };
 
                     // UsiEngineのThinkReportプロパティを捕捉して、それを転送してやるためのハンドラをセットしておく。
-
                     var engine_player = Player(c) as UsiEnginePlayer;
                     var num_ = num; // copy for capturing
                     engine_player.engine.AddPropertyChangedHandler("ThinkReport", (args) =>
-                     {
-                         var report = args.value as UsiThinkReport;
+                    {
+                        if (ThinkReportEnable)
+                        {
+                            var report = args.value as UsiThinkReport;
 
-                         // このクラスのpropertyのsetterを呼び出してメッセージを移譲してやる。
-                         ThinkReport = new UsiThinkReportMessage()
-                         {
-                             type = UsisEngineReportMessageType.UsiThinkReport,
-                             number = num_, // is captrued
-                             data = report,
-                         };
-                     });
+                            // このクラスのpropertyのsetterを呼び出してメッセージを移譲してやる。
+                            ThinkReport = new UsiThinkReportMessage()
+                            {
+                                type = UsisEngineReportMessageType.UsiThinkReport,
+                                number = num_, // is captrued
+                                data = report,
+                            };
+                        }
+                    });
 
                     num++;
                 }
@@ -427,6 +429,17 @@ namespace MyShogi.Model.Shogi.LocalServer
             stmPlayer.BestMove = stmPlayer.PonderMove = Move.NONE;
             stmPlayer.CanMove = true;
             stmPlayer.Think(usiPosition);
+
+            // -- 読み筋ウィンドウに対して、ここをrootSfenとして設定
+            if (ThinkReportEnable && isUsiEngine)
+            {
+                ThinkReport = new UsiThinkReportMessage()
+                {
+                    type = UsisEngineReportMessageType.SetRootSfen,
+                    number = NumberOfEngine == 1  ? 0 : (int)stm, // CPU1つなら1番目の窓、CPU2つならColorに相当する窓に
+                    data = Position.ToSfen(),
+                };
+            }
 
             // 手番側のプレイヤーの時間消費を開始
             if (GameMode == GameModeEnum.InTheGame)

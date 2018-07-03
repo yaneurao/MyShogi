@@ -23,7 +23,7 @@ namespace MyShogi.View.Win2D
             gameScreenControl1.Setting = new GameScreenControlSetting()
             {
                 SetButton = null,
-                gameServer = new LocalGameServer() { NoThread = true },
+                gameServer = new LocalGameServer() { NoThread = true  , EnableUserMove = false },
                 UpdateMenuItems = null,
                 NamePlateVisible = false,
             };

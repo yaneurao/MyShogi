@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
 using MyShogi.Model.Common.Utility;
@@ -276,50 +275,58 @@ namespace MyShogi.Model.Shogi.Usi
         /// <param name="command"></param>
         private void UsiCommandHandler(string command)
         {
-            if (string.IsNullOrWhiteSpace(command))
+            try
             {
-                return;
-            }
 
-            // 前後の空白は削除しておきます。
-            var trimmedCommand = command.Trim();
-            //Log.Info("{0}> {1}", LogName, trimmedCommand);
+                if (string.IsNullOrWhiteSpace(command))
+                {
+                    return;
+                }
 
-            var scanner = new Scanner(trimmedCommand);
+                // 前後の空白は削除しておきます。
+                var trimmedCommand = command.Trim();
+                //Log.Info("{0}> {1}", LogName, trimmedCommand);
 
-            switch (scanner.ParseText())
+                var scanner = new Scanner(trimmedCommand);
+
+                switch (scanner.ParseText())
+                {
+                    case "usiok":
+                        HandleUsiOk();
+                        break;
+
+                    case "readyok":
+                        HandleReadyOk();
+                        break;
+
+                    case "id":
+                        HandleId(scanner);
+                        break;
+
+                    case "option":
+                        HandleOption(scanner);
+                        break;
+
+                    case "bestmove":
+                        HandleBestMove(scanner);
+                        break;
+
+                    case "info":
+                        HandleInfo(scanner);
+                        break;
+
+                    // u2bやBonadapterのためのスペシャルコマンド
+                    case "B<":
+                        break;
+
+                    default:
+                        //Log.Error("unknown usi command: {0}", trimmedCommand);
+                        break;
+                }
+            } catch (Exception ex)
             {
-                case "usiok":
-                    HandleUsiOk();
-                    break;
-
-                case "readyok":
-                    HandleReadyOk();
-                    break;
-
-                case "id":
-                    HandleId(scanner);
-                    break;
-
-                case "option":
-                    HandleOption(scanner);
-                    break;
-
-                case "bestmove":
-                    HandleBestMove(scanner);
-                    break;
-
-                case "info":
-                    HandleInfo(scanner);
-                    break;
-
-                // u2bやBonadapterのためのスペシャルコマンド
-                case "B<":
-                    break;
-
-                default:
-                    //Log.Error("unknown usi command: {0}", trimmedCommand);
-                    break;
+                // 例外をログに出力しておく。
+                Log.Write(LogInfoType.UsiParseError, $"例外が発生しました。: {ex.Message}");
             }
         }
 
@@ -534,10 +541,8 @@ namespace MyShogi.Model.Shogi.Usi
             }
             catch (UsiException ex)
             {
-                exception = ex;
-
-                // 例外を表示(デバッグ用) あとでちゃんと書く。
-                TheApp.app.MessageShow(ex.Message);
+                // 例外を出力しておく。
+                Log.Write(LogInfoType.UsiParseError, $"例外が発生しました。: {ex.Message}");
             }
         }
 
