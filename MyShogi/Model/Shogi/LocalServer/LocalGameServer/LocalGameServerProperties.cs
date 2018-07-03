@@ -4,6 +4,7 @@ using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -199,18 +200,18 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// エンジンの読み筋などを検討用のダイアログに出力する。
         /// 
-        /// デフォルトfalse。これをtrueにすると、要所要所でこのクラスのpropertyであるEngineInfoが
+        /// デフォルトfalse。これをtrueにすると、要所要所でこのクラスのpropertyであるThinkReportが
         /// 設定されるので、必要ならば外部から変更イベントを捕捉すれば良い。
         /// </summary>
-        public bool EngineInfoEnable { get; set; }
+        public bool ThinkReportEnable { get; set; }
 
         /// <summary>
-        /// EngineInfoEnableがtrueの時に、エンジンの読み筋などを出力するためのハンドラ。
+        /// ThinkReportEnableがtrueの時に、エンジンの読み筋などを出力するためのハンドラ。
         /// </summary>
-        public EngineInfo EngineInfo
+        public UsiThinkReportMessage ThinkReport
         {
-            get { return GetValue<EngineInfo>("EngineInfo"); }
-            private set { SetValue<EngineInfo>("EngineInfo", value); }
+            get { return GetValue<UsiThinkReportMessage>("ThinkReport"); }
+            private set { SetValue<UsiThinkReportMessage>("ThinkReport", value); }
         }
 
         #endregion

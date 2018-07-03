@@ -28,10 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            MyShogi.Model.Shogi.Data.EngineConsiderationInfoData engineConsiderationInfoData3 = new MyShogi.Model.Shogi.Data.EngineConsiderationInfoData();
-            MyShogi.Model.Shogi.Converter.KifFormatterOptions kifFormatterOptions3 = new MyShogi.Model.Shogi.Converter.KifFormatterOptions();
-            MyShogi.Model.Shogi.Data.EngineConsiderationInfoData engineConsiderationInfoData4 = new MyShogi.Model.Shogi.Data.EngineConsiderationInfoData();
-            MyShogi.Model.Shogi.Converter.KifFormatterOptions kifFormatterOptions4 = new MyShogi.Model.Shogi.Converter.KifFormatterOptions();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EngineConsiderationDialog));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -97,13 +93,7 @@
             // engineConsiderationControl1
             // 
             this.engineConsiderationControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.engineConsiderationControl1.InfoData = engineConsiderationInfoData3;
             this.engineConsiderationControl1.ItemClicked = null;
-            kifFormatterOptions3.color = MyShogi.Model.Shogi.Converter.ColorFormat.Piece;
-            kifFormatterOptions3.fromsq = MyShogi.Model.Shogi.Converter.FromSqFormat.KI2;
-            kifFormatterOptions3.samepos = MyShogi.Model.Shogi.Converter.SamePosFormat.KI2sp;
-            kifFormatterOptions3.square = MyShogi.Model.Shogi.Converter.SquareFormat.FullWidthMix;
-            this.engineConsiderationControl1.kifFormatter = kifFormatterOptions3;
             this.engineConsiderationControl1.Location = new System.Drawing.Point(0, 0);
             this.engineConsiderationControl1.Name = "engineConsiderationControl1";
             this.engineConsiderationControl1.RootSfen = null;
@@ -113,13 +103,7 @@
             // engineConsiderationControl2
             // 
             this.engineConsiderationControl2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.engineConsiderationControl2.InfoData = engineConsiderationInfoData4;
             this.engineConsiderationControl2.ItemClicked = null;
-            kifFormatterOptions4.color = MyShogi.Model.Shogi.Converter.ColorFormat.Piece;
-            kifFormatterOptions4.fromsq = MyShogi.Model.Shogi.Converter.FromSqFormat.KI2;
-            kifFormatterOptions4.samepos = MyShogi.Model.Shogi.Converter.SamePosFormat.KI2sp;
-            kifFormatterOptions4.square = MyShogi.Model.Shogi.Converter.SquareFormat.FullWidthMix;
-            this.engineConsiderationControl2.kifFormatter = kifFormatterOptions4;
             this.engineConsiderationControl2.Location = new System.Drawing.Point(0, 0);
             this.engineConsiderationControl2.Name = "engineConsiderationControl2";
             this.engineConsiderationControl2.RootSfen = null;

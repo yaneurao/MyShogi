@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
-using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.View.Win2D
 {
@@ -21,8 +21,6 @@ namespace MyShogi.View.Win2D
 
             InitListView();
             InitKifuFormatter();
-
-            InfoDrawTest();
         }
 
         // -- properties
@@ -58,14 +56,13 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// [UI Thread] : npsなどの表示用のデータ。セットした瞬間、画面に反映される。
+        /// [UI Thread] : エンジン名を設定/取得する。
+        /// このコントロールの左上のテキストボックスに反映される。
         /// </summary>
-        public EngineConsiderationInfoData InfoData {
-            get { return infoData; }
-            set { infoData = value;
-                if (value != null)
-                    UpdateInfoData(value);
-            }
+        public string EngineName
+        {
+            get { return textBox1.Text; }
+            set { textBox1.Text = value; }
         }
 
         /// <summary>
@@ -82,6 +79,7 @@ namespace MyShogi.View.Win2D
         /// <param name="moves"></param>
         public ItemClickedEventHandler ItemClicked { get; set; }
 
+#if false
         /// <summary>
         /// [UI Thread] : 引数でセットされたinfoを画面に描画する。
         /// </summary>
@@ -105,12 +103,13 @@ namespace MyShogi.View.Win2D
             textBox4.Text = $" NPS : { info.NpsString.PadLeftUnicode(11) }";
             textBox5.Text = $" HASH : { info.HashPercentageString.PadLeftUnicode(6) }";
         }
+#endif
 
         /// <summary>
         /// [UI Thread] : 読み筋を1行追加する。
         /// </summary>
         /// <param name="info"></param>
-        public void AddPvData(EngineConsiderationPvData info)
+        public void AddThinkReport(UsiThinkReport info)
         {
             // -- 指し手文字列の構築
 
@@ -157,7 +156,7 @@ namespace MyShogi.View.Win2D
             var list = new[]{
                 info.ThinkingTime.ToString() ,    // 思考時間
                 $"{info.Depth}/{info.SelDepth}" , // 探索深さ
-                info.Nodes.ToString() ,           // ノード数
+                info.NodesString   ,              // ノード数
                 info.Eval.Pretty(),               // 評価値
                 kifuString.ToString()             // 読み筋
             };
@@ -289,25 +288,6 @@ namespace MyShogi.View.Win2D
 
 
         /// <summary>
-        /// InfoDataにテストデータをセットして表示のテストを行う。
-        /// </summary>
-        private void InfoDrawTest()
-        {
-            InfoData = new EngineConsiderationInfoData()
-            {
-                PlayerName = "なんとかエンジン",
-                PonderMove = "７三飛引不成",
-                SearchingMove = "７三飛引不成",
-                //SetDepth(20,30),
-                Nodes = 100000000,
-                Nps = 12345678,
-                HashPercentage = 99.9f,
-                ThreadNum = 4,
-            };
-        }
-
-
-        /// <summary>
         /// 開始局面のsfen。
         /// この文字列とpositionの居面は合致している。
         /// RootSfenのsetterでセットされる。
@@ -324,11 +304,5 @@ namespace MyShogi.View.Win2D
         /// 表示している読み筋(ListView.Items)に対応する指し手
         /// </summary>
         private List<List<Move>> list_item_moves = new List<List<Move>>();
-
-        /// <summary>
-        /// npsなどの表示用のデータ
-        /// </summary>
-        private EngineConsiderationInfoData infoData;
-
     }
 }

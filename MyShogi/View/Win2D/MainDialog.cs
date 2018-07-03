@@ -7,6 +7,7 @@ using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
+using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Test;
 using ObjectModel = MyShogi.Model.Common.ObjectModel;
 using SCore = MyShogi.Model.Shogi.Core;
@@ -41,7 +42,7 @@ namespace MyShogi.View.Win2D
             gameScreenControl1.Init();
 
             // エンジンの読み筋などを、検討ダイアログにリダイレクトする。
-            gameScreenControl1.EngineInfoChanged = EngineInfoChanged;
+            gameScreenControl1.ThinkReportChanged = ThinkReportChanged;
         }
 
 #endregion
@@ -205,9 +206,9 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// [UI Thread] : LocalGameServerから送られてくるエンジンの読み筋などのハンドラ。
         /// </summary>
-        private void EngineInfoChanged(PropertyChangedEventArgs args)
+        private void ThinkReportChanged(PropertyChangedEventArgs args)
         {
-            var message = args.value as EngineInfo;
+            var message = args.value as UsiThinkReportMessage;
 
             if (engineConsiderationDialog == null)
             {
@@ -224,25 +225,25 @@ namespace MyShogi.View.Win2D
 
             switch (message.type)
             {
-                case EngineInfoType.NumberOfInstance:
+                case UsisEngineReportMessageType.NumberOfInstance:
                     // 非表示なので検討ウィンドウが表示されているなら消しておく。
                     engineConsiderationDialog.Visible = message.number != 0;
                     engineConsiderationDialog.SetEngineInstanceNumber(message.number);
                     break;
 
-                case EngineInfoType.SetRootSfen:
+                case UsisEngineReportMessageType.SetEngineName:
+                    var engine_name = message.data as string;
+                    engineConsiderationDialog.ConsiderationInstance(message.number).EngineName = engine_name;
+                    break;
+
+                case UsisEngineReportMessageType.SetRootSfen:
                     var sfen = message.data as string;
                     engineConsiderationDialog.ConsiderationInstance(message.number).RootSfen = sfen;
                     break;
 
-                case EngineInfoType.EngineConsiderationInfoData:
-                    var infoData = message.data as EngineConsiderationInfoData;
-                    engineConsiderationDialog.ConsiderationInstance(message.number).UpdateInfoData(infoData);
-                    break;
-
-                case EngineInfoType.EngineConsiderationPvData:
-                    var pvData = message.data as EngineConsiderationPvData;
-                    engineConsiderationDialog.ConsiderationInstance(message.number).AddPvData(pvData);
+                case UsisEngineReportMessageType.UsiThinkReport:
+                    var thinkReport = message.data as UsiThinkReport;
+                    engineConsiderationDialog.ConsiderationInstance(message.number).AddThinkReport(thinkReport);
                     break;
             }
         }

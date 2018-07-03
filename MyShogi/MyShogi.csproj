@@ -73,8 +73,7 @@
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
-    <Compile Include="Model\Shogi\Data\EngineConsiderationInfoData.cs" />
-    <Compile Include="Model\Shogi\Data\EngineConsiderationPvData.cs" />
+    <Compile Include="Model\Shogi\Usi\UsiThinkReport.cs" />
     <Compile Include="Model\Shogi\Data\EvaluationGraphData.cs" />
     <Compile Include="Model\Shogi\Data\MiniShogiBoardData.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuHeader.cs" />
@@ -85,7 +84,7 @@
     <Compile Include="Model\Shogi\Kifu\KifuManager\psn.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuManager\sfen.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuMoveTime.cs" />
-    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\EngineInfo.cs" />
+    <Compile Include="Model\Shogi\Usi\UsiThinkReportMessage.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\GameModeEnum.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerCommands.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerPrivates.cs" />

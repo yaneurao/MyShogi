@@ -88,6 +88,6 @@ namespace MyShogi.View.Win2D
         /// [UI Thread] : LocalGameServerのEngineInfoが変更になった時に呼び出されるdelegate。
         /// 思考エンジンの読み筋などを外部に出力したい時は、これを設定すること。
         /// </summary>
-        public PropertyChangedEventHandler EngineInfoChanged;
+        public PropertyChangedEventHandler ThinkReportChanged;
     }
 }

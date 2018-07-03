@@ -11,6 +11,13 @@ namespace MyShogi.Model.Shogi.Usi
 {
     /// <summary>
     /// USI engineとのやりとりを抽象化するクラス
+    /// 
+    /// 読み筋をNotifyObjectを使って通知した時、UIスレッドに渡されて描画される。
+	/// この時、次の局面に行っていないことを保証される。
+    /// なぜなら、BeginInvoke()で呼び出すとき、UIスレッドのメソッドが呼び出される順が入れ替わることはなく、
+    /// 最初に局面の初期化コマンド(EngineInfoのSetRootSfen)から、PV送信(EngineInfoのEngineConsiderationPvData)の
+    /// 送信順は保証されるため、異なる局面のPVを検討ウィンドウが表示してしまうということはない。
+
     /// </summary>
     public class UsiEngine : NotifyObject
     {
@@ -524,23 +531,99 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private void HandleInfo(Scanner scanner)
         {
-            // あとで書く。
+            var info = new UsiThinkReport();
+
+            while (!scanner.IsEof)
+            {
+                switch (scanner.ParseText())
+                {
+                    // hash使用率 1000分率返ってくるので10で割って100分率に変換して代入する。
+                    case "hashfull":
+                        info.HashPercentage = (float)scanner.ParseInt() / 10.0f;
+                        break;
+
+                    // nps
+                    case "nps":
+                        info.Nps = scanner.ParseInt();
+                        break;
+
+                    // 現在の探索手
+                    case "currmove":
+                        info.CurrentMove = scanner.ParseText();
+                        break;
+
+                    // 探索ノード数
+                    case "nodes":
+                        info.Nodes = scanner.ParseInt();
+                        break;
+
+                    // 探索深さ,選択探索深さ
+
+                    // ここに文字が入っている可能性があるので(upperbound/lowerboundを表現するための"↑"など)文字列として扱う。
+                    case "depth":
+                        info.Depth = scanner.ParseText();
+                        break;
+
+                    case "seldepth":
+                        info.SelDepth = scanner.ParseText();
+                        break;
 #if false
-            var report = new UsiThinkReport(this);
+                    case "score":
+                        Score = HandleInfoScore(board, scanner);
+                        if (update != null)
+                        {
+                            update.Score = Score;
+                        }
+                        break;
 
-            // reportの情報をエンジンにも設定する
-            if (!report.Parse(CurrBoard, scanner, this))
-            {
-                return;
-            }
+                    // リポート情報のみ更新
+                    case "time":
+                        Time = TimeSpan.FromMilliseconds(scanner.ParseInt());
+                        break;
+                    case "multipv":
+                        MultiPV = scanner.ParseInt();
+                        break;
+                    case "pv":
+                        PVSeq = HandlePVSeq(board, scanner);
+                        if (PVSeq.Any())
+                        {
+                            CurrMove = PVSeq[0];
+                            if (update != null)
+                            {
+                                update.CurrMove = CurrMove;
+                            }
+                        }
+                        break;
+                    case "string":
+                        InfoString = scanner.LastText;
+                        parseEnd = true;
+                        break;
+                    case "count":
+                        GodwhaleCount = scanner.ParseInt();
+                        break;
+                    case "ranking":
+                        GodwhaleRank = scanner.ParseInt();
+                        break;
 
-            if ((report.PVSeq != null && report.PVSeq.Any()) ||
-                report.InfoString != null)
-            {
-                AddThinkReport(report);
-            }
+                    // 無視
+                    case "currmovenumber":
+                    case "cpuload":
+                    case "refutation":
+                    case "currline":
+                    case "id": // クジラちゃん用
+                        scanner.ParseText();
+                        break;
+
+                    // エラー
+                    default:
+                        /*Log.Error(
+                            "{0}: infoコマンドが正しくありません。",
+                            scanner.Text);*/
+                        break;
 #endif
-        }
+                }
+            }
 
+        }
     }
 }

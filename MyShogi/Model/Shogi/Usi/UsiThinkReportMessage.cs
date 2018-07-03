@@ -1,4 +1,4 @@
-﻿namespace MyShogi.Model.Shogi.LocalServer
+﻿namespace MyShogi.Model.Shogi.Usi
 {
     // 検討ダイアログにLocalGameServerが思考エンジンの読み筋などを出力する時の
     // メッセージングに必要なenumなど。
@@ -6,7 +6,7 @@
     /// <summary>
     /// エンジンが返したい情報
     /// </summary>
-    public enum EngineInfoType
+    public enum UsisEngineReportMessageType
     {
         /// <summary>
         /// 思考エンジンのインスタンス数。
@@ -17,6 +17,15 @@
         NumberOfInstance,
 
         /// <summary>
+        /// 思考エンジンの名前を設定する。
+        /// これが検討ウィンドウの左上のエンジン名のところに反映される。
+        /// 
+        /// number = 出力するインスタンス番号
+        /// data = エンジンの名前(string)
+        /// </summary>
+        SetEngineName,
+
+        /// <summary>
         /// rootのsfenを設定する。
         /// number = 出力するインスタンス番号
         /// data = sfen文字列(string)
@@ -24,18 +33,12 @@
         SetRootSfen,
 
         /// <summary>
-        /// NPSなどを出力する。
+        /// PV,NPSなどを出力する。
         /// number = 出力するインスタンス番号
-        /// data = EngineConsiderationInfoData
+        /// data = UsiThinkReport
         /// </summary>
-        EngineConsiderationInfoData,
+        UsiThinkReport,
 
-        /// <summary>
-        /// PVを出力する。
-        /// number = 出力するインスタンス番号
-        /// data = EngineConsiderationPvData
-        /// </summary>
-        EngineConsiderationPvData,
     }
 
     /// <summary>
@@ -43,12 +46,12 @@
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
-    public class EngineInfo
+    public class UsiThinkReportMessage
     {
         /// <summary>
         /// メッセージの種類
         /// </summary>
-        public EngineInfoType type;
+        public UsisEngineReportMessageType type;
 
         /// <summary>
         /// instance numberなど用の変数

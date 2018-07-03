@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using MyShogi.Model.Common.Win32API;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.View.Win2D
 {
@@ -292,6 +293,8 @@ namespace MyShogi.View.Win2D
 
         // -- test code
 
+
+#if false
         /// <summary>
         /// AddInfoTest()で使う、カウンター
         /// </summary>
@@ -322,7 +325,7 @@ namespace MyShogi.View.Win2D
                 default: moves = null; break;
             }
 
-            engineConsiderationControl1.AddPvData(new EngineConsiderationPvData()
+            engineConsiderationControl1.AddThinkReport(new UsiThinkReport()
             {
                 ThinkingTime = new TimeSpan(0, 0, 3),
                 Depth = 15,
@@ -345,6 +348,7 @@ namespace MyShogi.View.Win2D
                 moves = new List<Move>() { Util.MakeMove(Square.SQ_77, Square.SQ_76), Util.MakeMove(Square.SQ_33, Square.SQ_34) }
             };
         }
+#endif
 
     }
 }

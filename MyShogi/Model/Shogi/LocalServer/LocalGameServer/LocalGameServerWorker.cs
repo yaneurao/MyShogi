@@ -6,6 +6,7 @@ using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.Data;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -187,9 +188,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             NumberOfEngine = num;
 
             // エンジン数が確定したので、検討ウィンドウにNumberOfInstanceメッセージを送信してやる。
-            EngineInfo = new EngineInfo()
+            ThinkReport = new UsiThinkReportMessage()
             {
-                type = EngineInfoType.NumberOfInstance,
+                type = UsisEngineReportMessageType.NumberOfInstance,
                 number = NumberOfEngine,
             };
 
@@ -199,14 +200,11 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 if (GameSetting.Player(c).IsCpu)
                 {
-                    EngineInfo = new EngineInfo()
+                    ThinkReport = new UsiThinkReportMessage()
                     {
-                        type = EngineInfoType.EngineConsiderationInfoData,
+                        type = UsisEngineReportMessageType.SetEngineName,
                         number = num++,
-                        data = new EngineConsiderationInfoData()
-                        {
-                            PlayerName = DisplayName(c),
-                        }
+                        data = DisplayName(c),
                     };
                 }
             }

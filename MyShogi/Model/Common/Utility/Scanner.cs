@@ -91,9 +91,9 @@ namespace MyShogi.Model.Common.Utility
         }
 
         /// <summary>
-        /// 整数をパースします。
+        /// 整数をパースする。
         /// 読み込んだ分だけindex(解析位置)を進める。
-        /// 整数がなければ例外をなげる　。
+        /// 整数がなければ例外を投げる。
         /// </summary>
         public long ParseInt()
         {
@@ -131,7 +131,7 @@ namespace MyShogi.Model.Common.Utility
         }
 
         /// <summary>
-        /// 次の単語を取得します。
+        /// 次の単語を取得する。
         /// 読み込んだ分だけindex(解析位置)を進める。
         /// 文字列がなければ例外を投げる。
         /// </summary>
