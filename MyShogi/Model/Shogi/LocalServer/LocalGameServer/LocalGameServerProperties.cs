@@ -37,7 +37,19 @@ namespace MyShogi.Model.Shogi.LocalServer
         public GameModeEnum GameMode
         {
             get { return GetValue<GameModeEnum>("GameMode"); }
+
+            // [Worker Thread] : このsetterはworker thread側からしかsetterは呼び出されない。
             private set {
+                var old = GetValue<GameModeEnum>("GameMode");
+                if (old == value)
+                    return; // 値が同じなので何もしない
+
+                // 検討モードを抜ける or 入るのであれば、そのコマンドを叩く。
+                if (old == GameModeEnum.ConsiderationWithEngine)
+                    EndConsideration();
+                if (value == GameModeEnum.ConsiderationWithEngine)
+                    StartConsideration();
+
                 SetValue<GameModeEnum>("GameMode", value);
 
                 // 依存プロパティの更新
@@ -125,6 +137,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// c側のプレイヤー
+        /// 
+        /// Player(2)は検討用のエンジン
+        /// Player(3)は詰将棋用のエンジン
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
@@ -228,7 +243,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         private void UpdateEngineInitializing()
         {
             EngineInitializing = Initializing &&
-            (EngineInitializing = Player(Color.BLACK).PlayerType == PlayerTypeEnum.UsiEngine || Player(Color.WHITE).PlayerType == PlayerTypeEnum.UsiEngine);
+            (Player(Color.BLACK).PlayerType == PlayerTypeEnum.UsiEngine || Player(Color.WHITE).PlayerType == PlayerTypeEnum.UsiEngine);
         }
 
         /// <summary>

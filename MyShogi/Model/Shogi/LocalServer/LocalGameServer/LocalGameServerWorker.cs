@@ -478,7 +478,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         private void CheckTime()
         {
             // エンジンの初期化中であるか。この時は、時間消費は行わない。
-            Initializing = Player(Color.BLACK).Initializing || Player(Color.WHITE).Initializing;
+            var init = false;
+            foreach (var i in All.Int(4))
+                init |= Player((Color)i).Initializing;
+
+            Initializing = init;
 
             // 双方の残り時間表示の更新
             UpdateTimeString();
@@ -529,6 +533,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 連続対局でないなら..
             Disconnect();
+
+            // 手番が変わったことを通知。
+            NotifyTurnChanged();
         }
 
         /// <summary>
@@ -536,21 +543,47 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private void Disconnect()
         {
-            GameMode = GameModeEnum.ConsiderationWithoutEngine;
-
             // Playerの終了処理をしてNullPlayerを突っ込んでおく。
-            foreach (var c in All.Colors())
+            // Player[2] : 検討用エンジン
+            // Player[3] : 詰将棋用エンジン
+            for(int i = 0; i< 4; ++i)
             {
-                var player = Player(c);
-                if (player != null)
-                    player.Dispose();
-
-                Players[(int)c] = new NullPlayer();
+                Players[i].Dispose();
+                Players[i] = new NullPlayer();
             }
-
-            NotifyTurnChanged();
         }
 
-#endregion
+        /// <summary>
+        /// [Worker Thread] : 検討モードに入る。
+        /// GameModeのsetterから呼び出される。
+        /// </summary>
+        private void StartConsideration()
+        {
+            CanUserMove = true;
+
+            // 初期化中である。
+            Initializing = true;
+
+            // 検討プレイヤーの生成
+            Players[2 /*検討用のプレイヤー*/ ] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
+
+            // 詰将棋プレイヤーの生成
+            //Players[3] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
+
+            // 局面の設定
+            kifuManager.EnableKifuList = false;
+        }
+
+        /// <summary>
+        /// [Worker Thread] : 検討モードを抜けるコマンド
+        /// GameModeのsetterから呼び出される。
+        /// </summary>
+        private void EndConsideration()
+        {
+            // disconnect the consideration engine
+            Disconnect();
+        }
+
+        #endregion
     }
 }

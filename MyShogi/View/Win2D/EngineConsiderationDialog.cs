@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.Model.Common.Win32API;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Data;
-using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.View.Win2D
 {
@@ -18,6 +15,7 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
+            // これ、どうするか考え中。
             Win32API.HideCloseButton(this.Handle);
 
             InitSpliter();
@@ -28,9 +26,9 @@ namespace MyShogi.View.Win2D
         /// ミニ盤面の初期化
         /// 必ず呼び出すべし。
         /// </summary>
-        public void Init()
+        public void Init(bool boardReverse)
         {
-            miniShogiBoard1.Init();
+            miniShogiBoard1.Init(boardReverse);
         }
 
         // -- properties
@@ -38,7 +36,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// MiniBoardの表示、非表示を切り替えます。
         /// </summary>
-        public bool MiniBoardVisiblity
+        public bool MiniBoardVisible
         {
             set {
                 splitContainer2.Panel2.Visible = value;
@@ -177,7 +175,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
-            MiniBoardVisiblity = false;
+            MiniBoardVisible = false;
 
             //AddInfoTest();
             //BoardSetTest();
@@ -219,7 +217,7 @@ namespace MyShogi.View.Win2D
             foreach (var i in All.Int(2))
                 ConsiderationInstance(i).ItemClicked += (data) =>
                 {
-                    MiniBoardVisiblity = true;
+                    MiniBoardVisible = true;
                     miniShogiBoard1.BoardData = data;
                 };
         }

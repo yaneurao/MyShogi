@@ -17,13 +17,13 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 盤面表示のために持っているGameScreenControlの初期化を行う。
         /// </summary>
-        public void Init()
+        public void Init(bool boardReverse)
         {
             // GameScreenControlの初期化
             gameScreenControl1.Setting = new GameScreenControlSetting()
             {
                 SetButton = null,
-                gameServer = new LocalGameServer() { NoThread = true  , EnableUserMove = false },
+                gameServer = new LocalGameServer() { NoThread = true  , EnableUserMove = false , BoardReverse = boardReverse },
                 UpdateMenuItems = null,
                 NamePlateVisible = false,
             };
@@ -96,18 +96,6 @@ namespace MyShogi.View.Win2D
                 if (value != null)
                     UpdateBoard();
             }
-        }
-
-        /// <summary>
-        /// 盤面を反転させるかどうか。
-        /// Init()を呼び出したあとにしか設定/取得できない。
-        /// </summary>
-        public bool BoardReverse
-        {
-            /// propertyになっているのでVSのデザイナ対策でnull checkは入れてある。
-
-            get { return gameServer!=null ? gameServer.BoardReverse : false; }
-            set { if (gameServer!=null) gameServer.BoardReverse = value; }
         }
 
         // -- privates

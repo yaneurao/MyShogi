@@ -217,7 +217,6 @@
             // miniShogiBoard1
             // 
             this.miniShogiBoard1.BoardData = null;
-            this.miniShogiBoard1.BoardReverse = false;
             this.miniShogiBoard1.Location = new System.Drawing.Point(2, 10);
             this.miniShogiBoard1.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
             this.miniShogiBoard1.Name = "miniShogiBoard1";

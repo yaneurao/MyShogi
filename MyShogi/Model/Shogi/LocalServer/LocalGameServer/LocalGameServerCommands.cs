@@ -355,7 +355,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// ゲームモードを変更する。
-        /// nextMode : 次のモード。盤面編集モード、検討モードなど。
+        /// nextMode : 次のモード。盤面編集モード、検討モードなど。対局中には遷移できない。
         /// </summary>
         public void ChangeGameModeCommand(GameModeEnum nextMode)
         {
@@ -370,7 +370,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // これにより、「!InTheGameならInTheBoardEditをtrueにする」という操作のatomic性が保証される。
 
                 // また、検討中であれば、エンジンを停止させる必要があるが、それはGameModeのsetterで行う。
-                
+
                 GameMode = nextMode;
             }
             );
@@ -427,7 +427,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
         }
 
-        #endregion
+#endregion
     }
 }
 

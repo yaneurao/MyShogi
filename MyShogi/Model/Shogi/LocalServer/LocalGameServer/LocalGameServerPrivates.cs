@@ -18,8 +18,12 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 対局しているプレイヤー
         /// 設定するときはSetPlayer()を用いるべし。
         /// 取得するときはPlayer()のほうを用いるべし。
+        /// 
+        /// Players[2]は検討用のエンジン
+        /// Players[3]は詰将棋用のエンジン
         /// </summary>
-        private Player.Player[] Players = new Player.Player[2] { new NullPlayer(), new NullPlayer() };
+        private Player.Player[] Players = new Player.Player[4]
+        { new NullPlayer(), new NullPlayer() , new NullPlayer() , new NullPlayer() };
 
         /// <summary>
         /// プレイヤーの消費時間管理クラス
