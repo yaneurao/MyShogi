@@ -12,19 +12,35 @@
         InTheGame ,                 // 対局中
         InTheBoardEdit ,            // 盤面編集中
         ConsiderationWithoutEngine, // 検討中(エンジンが動作していない)
-        ConsiderationWithEngine,    // 検討中(エンジンが動作している)
+        ConsiderationWithEngine,    // 検討中(検討用エンジンが動作している)
+        ConsiderationWithMateEngine,// 検討中(詰将棋エンジンが動作している)
     }
 
     public static class GameModeExtensions
     {
         /// <summary>
-        /// 検討中であるか
+        /// 検討中であるか(エンジンが動いていないケースも含めて)
         /// </summary>
         /// <param name="mode"></param>
         /// <returns></returns>
         public static bool IsConsideration(this GameModeEnum mode)
         {
-            return mode == GameModeEnum.ConsiderationWithoutEngine || mode == GameModeEnum.ConsiderationWithEngine;
+            return 
+                mode == GameModeEnum.ConsiderationWithoutEngine  ||
+                mode == GameModeEnum.ConsiderationWithEngine     ||
+                mode == GameModeEnum.ConsiderationWithMateEngine;
+        }
+
+        /// <summary>
+        /// 思考エンジンを用いた検討モードであるか
+        /// </summary>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        public static bool IsWithEngine(this GameModeEnum mode)
+        {
+            return
+                mode == GameModeEnum.ConsiderationWithEngine ||
+                mode == GameModeEnum.ConsiderationWithMateEngine;
         }
 
         /// <summary>

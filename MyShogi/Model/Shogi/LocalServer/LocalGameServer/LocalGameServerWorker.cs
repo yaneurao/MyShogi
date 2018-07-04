@@ -83,9 +83,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             TheApp.app.soundManager.Stop(); // 再生中の読み上げをすべて停止
             TheApp.app.soundManager.ReadOut(SoundEnum.Start);
 
-            // 初期化中である。
-            Initializing = true;
-
             // 初回の指し手で、「先手」「後手」と読み上げるためのフラグ
             sengo_read_out = new bool[2] { false, false };
 
@@ -113,7 +110,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 分岐棋譜かも知れないので、現在のものを本譜の手順にする。
                 kifuManager.Tree.MakeCurrentNodeMainBranch();
             }
-            else // if (gameSetting.Board.BordTypeEnable)
+            else // if (gameSetting.Board.BoardTypeEnable)
             {
                 kifuManager.Init();
                 kifuManager.InitBoard(gameSetting.Board.BoardType);
@@ -202,11 +199,17 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 if (GameSetting.Player(c).IsCpu)
                 {
+                    // 検討モードなら、名前は..
+                    var name =
+                        (GameMode == GameModeEnum.ConsiderationWithEngine    ) ? "検討用エンジン" :
+                        (GameMode == GameModeEnum.ConsiderationWithMateEngine) ? "詰将棋エンジン" :
+                            DisplayName(c);
+
                     ThinkReport = new UsiThinkReportMessage()
                     {
                         type = UsisEngineReportMessageType.SetEngineName,
                         number = num,
-                        data = DisplayName(c),
+                        data = name,
                     };
 
                     // UsiEngineのThinkReportプロパティを捕捉して、それを転送してやるためのハンドラをセットしておく。
@@ -478,11 +481,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         private void CheckTime()
         {
             // エンジンの初期化中であるか。この時は、時間消費は行わない。
-            var init = false;
-            foreach (var i in All.Int(4))
-                init |= Player((Color)i).Initializing;
-
-            Initializing = init;
+            UpdateInitializing();
 
             // 双方の残り時間表示の更新
             UpdateTimeString();
@@ -544,12 +543,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         private void Disconnect()
         {
             // Playerの終了処理をしてNullPlayerを突っ込んでおく。
-            // Player[2] : 検討用エンジン
-            // Player[3] : 詰将棋用エンジン
-            for(int i = 0; i< 4; ++i)
+
+            foreach (var c in All.Colors())
             {
-                Players[i].Dispose();
-                Players[i] = new NullPlayer();
+                Players[(int)c].Dispose();
+                Players[(int)c] = new NullPlayer();
             }
         }
 
@@ -561,17 +559,33 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             CanUserMove = true;
 
-            // 初期化中である。
-            Initializing = true;
+            // 検討モード用のプレイヤーセッティングを行う。
+            {
+                var setting = new GameSetting();
 
-            // 検討プレイヤーの生成
-            Players[2 /*検討用のプレイヤー*/ ] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
+                switch (GameMode)
+                {
+                    // 検討用エンジン
+                    case GameModeEnum.ConsiderationWithEngine:
+                        setting.Player(Color.BLACK).PlayerName = "検討エンジン";
+                        setting.Player(Color.BLACK).IsCpu = true;
+                        Players[0 /*検討用のプレイヤー*/ ] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
+                        break;
 
-            // 詰将棋プレイヤーの生成
-            //Players[3] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
+                    // 詰将棋エンジン
+                    case GameModeEnum.ConsiderationWithMateEngine:
+                        setting.Player(Color.BLACK).PlayerName = "詰将棋エンジン";
+                        setting.Player(Color.BLACK).IsCpu = true;
+                        Players[0 /* 詰将棋用のプレイヤー */] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
+                        break;
+                }
+                GameSetting = setting;
+            }
 
             // 局面の設定
             kifuManager.EnableKifuList = false;
+
+            InitEngineConsiderationInfo();
         }
 
         /// <summary>
@@ -583,6 +597,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // disconnect the consideration engine
             Disconnect();
         }
+
+
 
         #endregion
     }

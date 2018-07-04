@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
@@ -43,14 +42,14 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var old = GetValue<GameModeEnum>("GameMode");
                 if (old == value)
                     return; // 値が同じなので何もしない
-
-                // 検討モードを抜ける or 入るのであれば、そのコマンドを叩く。
-                if (old == GameModeEnum.ConsiderationWithEngine)
-                    EndConsideration();
-                if (value == GameModeEnum.ConsiderationWithEngine)
-                    StartConsideration();
-
                 SetValue<GameModeEnum>("GameMode", value);
+
+                // エンジンを用いた検討モードを抜ける or 入るのであれば、そのコマンドを叩く。
+                if (old.IsWithEngine())
+                    EndConsideration();
+
+                if (value.IsWithEngine())
+                    StartConsideration();
 
                 // 依存プロパティの更新
                 SetValue<bool>("InTheGame", value == GameModeEnum.InTheGame);
@@ -105,11 +104,12 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// エンジンの初期化中であるか。
+        /// 
+        /// これは、依存プロパティで、UpdateInitializing()から更新される。
         /// </summary>
         public bool EngineInitializing
         {
             get { return GetValue<bool>("EngineInitializing"); }
-            private set { SetValue<bool>("EngineInitializing", value); }
         }
 
         /// <summary>
@@ -138,8 +138,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// c側のプレイヤー
         /// 
-        /// Player(2)は検討用のエンジン
-        /// Player(3)は詰将棋用のエンジン
+        /// エンジンを用いた検討モードの時、
+        /// Player(0)は検討用のエンジン/詰将棋用のエンジン
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
@@ -236,37 +236,37 @@ namespace MyShogi.Model.Shogi.LocalServer
         #region 依存性のあるプロパティの処理
 
         /// <summary>
-        /// EngineInitializingはInitializingとPlayer()に依存するので、
-        /// どちらかに変更があったときにそれらのsetterで、このUpdateEngineInitializing()を呼び出してもらい、
-        /// このなかでEngineInitializingのsetterを呼び出して、その結果、"EngineInitializing"のイベントハンドラが起動する。
+        /// GameStart()のあと、各プレイヤーの初期化中であるかを更新する。
         /// </summary>
-        private void UpdateEngineInitializing()
+        private void UpdateInitializing()
         {
-            EngineInitializing = Initializing &&
-            (Player(Color.BLACK).PlayerType == PlayerTypeEnum.UsiEngine || Player(Color.WHITE).PlayerType == PlayerTypeEnum.UsiEngine);
-        }
-
-        /// <summary>
-        /// GameStart()のあと、各プレイヤーの初期化中であるか。
-        /// </summary>
-        private bool Initializing
-        {
-            get { return initializing; }
-            set
+            // すべてのプレイヤーが、Player.Initializing == falseになったら、準備が完了したということで、
+            // NotifyTurnChanged()を呼び出してやる。
             {
-                if (initializing && !value)
+                var init = false;
+                foreach (var c in All.Colors())
+                    init |= Player(c).Initializing;
+                if (lastInitializing && !init)
                 {
                     // 状態がtrueからfalseに変わった
                     // 両方の対局準備ができたということなので対局スタート
                     NotifyTurnChanged();
                 }
-                initializing = value;
+                lastInitializing = init;
+            }
 
-                // このプロパティに依存しているプロパティの更新
-                UpdateEngineInitializing();
+            // EngineInitializingプロパティの更新
+            {
+                var engineInit = false;
+                foreach (var c in All.Colors())
+                {
+                    var player = Player((Color)c);
+                    engineInit |= player.PlayerType == PlayerTypeEnum.UsiEngine && player.Initializing;
+                }
+                SetValue<bool>("EngineInitializing", engineInit);
             }
         }
-        private bool initializing;
+        private bool lastInitializing = false;
 
         /// <summary>
         /// Positionプロパティの更新。

@@ -337,7 +337,11 @@ namespace MyShogi.View.Win2D
         private void toolStripButton5_Click(object sender, System.EventArgs e)
         {
             var consideration = gameServer.GameMode == GameModeEnum.ConsiderationWithEngine;
-            gameServer.ChangeGameModeCommand(consideration ? GameModeEnum.ConsiderationWithoutEngine : GameModeEnum.ConsiderationWithEngine);
+            gameServer.ChangeGameModeCommand(
+                consideration ?
+                GameModeEnum.ConsiderationWithoutEngine :
+                GameModeEnum.ConsiderationWithEngine
+            );
         }
 
         /// <summary>
@@ -357,7 +361,12 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton7_Click(object sender, System.EventArgs e)
         {
-
+            var mate_consideration = gameServer.GameMode == GameModeEnum.ConsiderationWithMateEngine;
+            gameServer.ChangeGameModeCommand(
+                mate_consideration ?
+                GameModeEnum.ConsiderationWithoutEngine :
+                GameModeEnum.ConsiderationWithMateEngine
+            );
         }
 
         /// <summary>
@@ -463,8 +472,10 @@ namespace MyShogi.View.Win2D
                 // -- LocalGameServerの各フラグ。
                 // ただし、初期化時にgameServer == nullで呼び出されることがあるのでnull checkが必要。
 
-                // 検討モード
+                // 検討モード(通常エンジン)
                 var consideration = gameServer == null ? false : gameServer.GameMode == GameModeEnum.ConsiderationWithEngine;
+                // 検討モード(詰将棋用)
+                var mate_consideration = gameServer == null ? false : gameServer.GameMode == GameModeEnum.ConsiderationWithMateEngine;
                 // 対局中
                 var inTheGame = gameServer == null ? false : gameServer.InTheGame;
                 // 盤面編集中
@@ -691,22 +702,28 @@ namespace MyShogi.View.Win2D
                         toolStripButton5.Text = consideration ? "終" : "検";
                         toolStripButton5.ToolTipText = consideration ? "検討モードを終了します。" : "検討モードに入ります。";
                         toolStripButton5.Enabled = !inTheGame;
-                        // 「解」ボタン : 棋譜解析
-                        toolStripButton6.Enabled = !inTheGame;
-                        // 「詰」ボタン : 詰将棋ボタン
-                        toolStripButton7.Enabled = !inTheGame;
-
-                        item.Click += (sender, e) =>
-                        {
-                            gameServer.ChangeGameModeCommand(
-                                consideration ?
-                                  GameModeEnum.ConsiderationWithoutEngine :
-                                  GameModeEnum.ConsiderationWithEngine
-                                );
-                        };
+                        item.Click += (sender, e) => { toolStripButton5_Click(null, null); };
 
                         item_playgame.DropDownItems.Add(item);
+                    }
 
+
+                    // 「解」ボタン : 棋譜解析
+                    toolStripButton6.Enabled = !inTheGame;
+
+                    { // -- 検討モード
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = mate_consideration ? "詰検討モードを終了する" : "詰検討モード";
+
+                        // toolStripのボタンのテキストを検討モードであるかどうかにより変更する。
+                        toolStripButton7.Text = mate_consideration ? "終" : "詰";
+                        toolStripButton7.ToolTipText = mate_consideration ? "詰検討モードを終了します。" : "詰検討モードに入ります。";
+                        // 「詰」ボタン : 詰将棋ボタン
+                        toolStripButton7.Enabled = !inTheGame;
+                        item.Click += (sender, e) => { toolStripButton7_Click(null, null); };
+
+                        item_playgame.DropDownItems.Add(item);
                     }
                 }
 
