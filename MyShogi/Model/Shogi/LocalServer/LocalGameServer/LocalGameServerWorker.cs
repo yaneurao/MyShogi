@@ -163,8 +163,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             // コンピュータ vs 人間である場合、人間側を手前にしてやる。
             // 人間 vs 人間の場合も最初の手番側を手前にしてやる。
             var stm = kifuManager.Position.sideToMove;
+            // 1. 手番側が人間である場合(非手番側が人間 or CPU)
             if (gameSetting.Player(stm).IsHuman)
                 BoardReverse = (stm == Color.WHITE);
+            // 2. 手番側がCPUで、非手番側が人間である場合。
+            else if (gameSetting.Player(stm).IsCpu && gameSetting.Player(stm.Not()).IsHuman)
+                BoardReverse = (stm == Color.BLACK);
+
 
             // 盤面編集中である可能性がある。リセットする。
             TheApp.app.config.InTheBoardEdit = false;

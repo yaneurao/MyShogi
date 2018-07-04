@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EngineConsiderationDialog));
+            MyShogi.Model.Shogi.Converter.KifFormatterOptions kifFormatterOptions3 = new MyShogi.Model.Shogi.Converter.KifFormatterOptions();
+            MyShogi.Model.Shogi.Converter.KifFormatterOptions kifFormatterOptions4 = new MyShogi.Model.Shogi.Converter.KifFormatterOptions();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.engineConsiderationControl1 = new MyShogi.View.Win2D.EngineConsiderationControl();
-            this.engineConsiderationControl2 = new MyShogi.View.Win2D.EngineConsiderationControl();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
@@ -40,6 +40,8 @@
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
+            this.engineConsiderationControl1 = new MyShogi.View.Win2D.EngineConsiderationControl();
+            this.engineConsiderationControl2 = new MyShogi.View.Win2D.EngineConsiderationControl();
             this.miniShogiBoard1 = new MyShogi.View.Win2D.MiniShogiBoard();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -90,26 +92,6 @@
             this.splitContainer1.SplitterDistance = 251;
             this.splitContainer1.TabIndex = 1;
             // 
-            // engineConsiderationControl1
-            // 
-            this.engineConsiderationControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.engineConsiderationControl1.ItemClicked = null;
-            this.engineConsiderationControl1.Location = new System.Drawing.Point(0, 0);
-            this.engineConsiderationControl1.Name = "engineConsiderationControl1";
-            this.engineConsiderationControl1.RootSfen = null;
-            this.engineConsiderationControl1.Size = new System.Drawing.Size(1125, 251);
-            this.engineConsiderationControl1.TabIndex = 0;
-            // 
-            // engineConsiderationControl2
-            // 
-            this.engineConsiderationControl2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.engineConsiderationControl2.ItemClicked = null;
-            this.engineConsiderationControl2.Location = new System.Drawing.Point(0, 0);
-            this.engineConsiderationControl2.Name = "engineConsiderationControl2";
-            this.engineConsiderationControl2.RootSfen = null;
-            this.engineConsiderationControl2.Size = new System.Drawing.Size(1125, 211);
-            this.engineConsiderationControl2.TabIndex = 0;
-            // 
             // toolStrip1
             // 
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -144,8 +126,8 @@
             this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
             this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(37, 36);
-            this.toolStripButton1.Text = "⏪";
+            this.toolStripButton1.Size = new System.Drawing.Size(43, 36);
+            this.toolStripButton1.Text = "◀";
             this.toolStripButton1.ToolTipText = "最初の局面に戻る";
             this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
             // 
@@ -177,8 +159,8 @@
             this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
             this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Size = new System.Drawing.Size(37, 36);
-            this.toolStripButton4.Text = "⏩";
+            this.toolStripButton4.Size = new System.Drawing.Size(43, 36);
+            this.toolStripButton4.Text = "▶";
             this.toolStripButton4.ToolTipText = "最後の局面に進む";
             this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
             // 
@@ -192,6 +174,38 @@
             this.toolStripButton6.Text = "転";
             this.toolStripButton6.ToolTipText = "盤面を反転します。";
             this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
+            // 
+            // engineConsiderationControl1
+            // 
+            this.engineConsiderationControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.engineConsiderationControl1.EngineName = "";
+            this.engineConsiderationControl1.ItemClicked = null;
+            kifFormatterOptions3.color = MyShogi.Model.Shogi.Converter.ColorFormat.Piece;
+            kifFormatterOptions3.fromsq = MyShogi.Model.Shogi.Converter.FromSqFormat.KI2;
+            kifFormatterOptions3.samepos = MyShogi.Model.Shogi.Converter.SamePosFormat.KI2sp;
+            kifFormatterOptions3.square = MyShogi.Model.Shogi.Converter.SquareFormat.FullWidthMix;
+            this.engineConsiderationControl1.kifFormatter = kifFormatterOptions3;
+            this.engineConsiderationControl1.Location = new System.Drawing.Point(0, 0);
+            this.engineConsiderationControl1.Name = "engineConsiderationControl1";
+            this.engineConsiderationControl1.RootSfen = null;
+            this.engineConsiderationControl1.Size = new System.Drawing.Size(1125, 251);
+            this.engineConsiderationControl1.TabIndex = 0;
+            // 
+            // engineConsiderationControl2
+            // 
+            this.engineConsiderationControl2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.engineConsiderationControl2.EngineName = "";
+            this.engineConsiderationControl2.ItemClicked = null;
+            kifFormatterOptions4.color = MyShogi.Model.Shogi.Converter.ColorFormat.Piece;
+            kifFormatterOptions4.fromsq = MyShogi.Model.Shogi.Converter.FromSqFormat.KI2;
+            kifFormatterOptions4.samepos = MyShogi.Model.Shogi.Converter.SamePosFormat.KI2sp;
+            kifFormatterOptions4.square = MyShogi.Model.Shogi.Converter.SquareFormat.FullWidthMix;
+            this.engineConsiderationControl2.kifFormatter = kifFormatterOptions4;
+            this.engineConsiderationControl2.Location = new System.Drawing.Point(0, 0);
+            this.engineConsiderationControl2.Name = "engineConsiderationControl2";
+            this.engineConsiderationControl2.RootSfen = null;
+            this.engineConsiderationControl2.Size = new System.Drawing.Size(1125, 211);
+            this.engineConsiderationControl2.TabIndex = 0;
             // 
             // miniShogiBoard1
             // 

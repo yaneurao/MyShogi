@@ -209,8 +209,8 @@
             this.toolStripButton12.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton12.Image")));
             this.toolStripButton12.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton12.Name = "toolStripButton12";
-            this.toolStripButton12.Size = new System.Drawing.Size(37, 49);
-            this.toolStripButton12.Text = "⏪";
+            this.toolStripButton12.Size = new System.Drawing.Size(43, 49);
+            this.toolStripButton12.Text = "◀";
             this.toolStripButton12.ToolTipText = "開始局面に戻ります。(検討時)";
             this.toolStripButton12.Click += new System.EventHandler(this.toolStripButton12_Click);
             // 
@@ -244,8 +244,8 @@
             this.toolStripButton13.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton13.Image")));
             this.toolStripButton13.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButton13.Name = "toolStripButton13";
-            this.toolStripButton13.Size = new System.Drawing.Size(37, 49);
-            this.toolStripButton13.Text = "⏩";
+            this.toolStripButton13.Size = new System.Drawing.Size(43, 49);
+            this.toolStripButton13.Text = "▶";
             this.toolStripButton13.ToolTipText = "末尾の局面に進めます。(検討時)";
             this.toolStripButton13.Click += new System.EventHandler(this.toolStripButton13_Click);
             // 

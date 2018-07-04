@@ -105,7 +105,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public bool BoardReverse
         {
-            get { return gameServer.BoardReverse; }
+            get { return gameServer!=null ? gameServer.BoardReverse : false; }
             set { gameServer.BoardReverse = value; }
         }
 
