@@ -320,13 +320,13 @@ namespace MyShogi.View.Win2D
                         new { text = "+1000", score = +1000 },
                         new { text = "+2000", score = +2000 },
                         new { text = "+9999", score = +9999 },
-                        new { text = "+∞", score = +int.MaxValue },
+                        new { text = "+∞", score = (int)EvalValue.MatePlus },
                         new { text = "-200", score = -200 },
                         new { text = "-500", score = -500 },
                         new { text = "-1000", score = -1000 },
                         new { text = "-2000", score = -2000 },
                         new { text = "-9999", score = -9999 },
-                        new { text = "-∞", score = -int.MaxValue },
+                        new { text = "-∞", score = (int)EvalValue.MatedMinus },
                     })
                     {
                         var vert = vertFunc((EvalValue)ent.score);
