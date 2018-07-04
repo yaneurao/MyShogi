@@ -70,7 +70,6 @@ namespace MyShogi.View.Win2D
             gameScreenControl1.kifuControl.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に行く */;
         }
 
-
         // -- properties
 
         /// <summary>
@@ -105,8 +104,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public bool BoardReverse
         {
+            /// propertyになっているのでVSのデザイナ対策でnull checkは入れてある。
+
             get { return gameServer!=null ? gameServer.BoardReverse : false; }
-            set { gameServer.BoardReverse = value; }
+            set { if (gameServer!=null) gameServer.BoardReverse = value; }
         }
 
         // -- privates

@@ -613,34 +613,26 @@ namespace MyShogi.Model.Shogi.Usi
                             parseEnd = true;
                             break;
 #if false
-                    case "count":
-                        GodwhaleCount = scanner.ParseInt();
-                        break;
-                    case "ranking":
-                        GodwhaleRank = scanner.ParseInt();
-                        break;
-
-                    // 無視
-                    case "currmovenumber":
-                    case "cpuload":
-                    case "refutation":
-                    case "currline":
-                    case "id": // クジラちゃん用
-                        scanner.ParseText();
-                        break;
-
-                    // エラー
-                    default:
-                        /*Log.Error(
-                            "{0}: infoコマンドが正しくありません。",
-                            scanner.Text);*/
-                        break;
-#endif
-                        // エラー　あとで何とかする。
-                        default:
-                            scanner.ParseText();
+                        case "count":
+                            GodwhaleCount = scanner.ParseInt();
+                            break;
+                        case "ranking":
+                            GodwhaleRank = scanner.ParseInt();
                             break;
 
+                        // 無視
+                        case "currmovenumber":
+                        case "cpuload":
+                        case "refutation":
+                        case "currline":
+                        case "id": // クジラちゃん用
+                            scanner.ParseText();
+                            break;
+#endif
+
+                        // エラー
+                        default:
+                            throw new Exception();
                     }
                 }
 
@@ -695,6 +687,10 @@ namespace MyShogi.Model.Shogi.Usi
                         bound = ScoreBound.Lower;
                         scanner.ParseText();
                     }
+
+                    // ここでエンジンによっては、"120↑"のような表現がありうる。
+                    // "upperbound","lowerbound"がサポートされていなかったころの名残。
+                    // ここではそれを許容しない。
 
                     return new EvalValueEx((EvalValue)int.Parse(valueText) , bound);
 
