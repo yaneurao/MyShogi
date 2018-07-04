@@ -144,6 +144,14 @@ namespace MyShogi.App
             // 終了するときに設定ファイルに書き出すコード
             Application.ApplicationExit += new EventHandler((sender,e) =>
             {
+                // メインウィンドウと検討ウィンドウに関して、
+                // 終了時のウィンドウサイズを記憶しておき、次回起動時にこのサイズでウィンドウを生成する。
+                if (mainDialog.ClientSize.Width >= 100 && mainDialog.ClientSize.Height >= 100)
+                    config.MainDialogClientSize = mainDialog.ClientSize;
+                if (mainDialog.engineConsiderationDialog != null &&
+                    mainDialog.engineConsiderationDialog.Width >= 100 && mainDialog.engineConsiderationDialog.Height >= 100)
+                    config.ConsiderationDialogClientSize = mainDialog.engineConsiderationDialog.ClientSize;
+
                 config.Save();
                 soundManager.Dispose();
 

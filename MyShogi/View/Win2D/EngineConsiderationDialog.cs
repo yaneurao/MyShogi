@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.Win32API;
 using MyShogi.Model.Shogi.Core;
 
@@ -114,6 +115,7 @@ namespace MyShogi.View.Win2D
 
         private void EngineConsiderationDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
+
             //TheApp.app.MessageShow("この検討ウィンドウの表示/非表示は、メニューの「ウィンドウ」の設定に依存します。×ボタンで閉じることは出来ません。");
             // MessageShow()は、モーダルなので、ここに制御が戻ってこれずhang upしてしまう。
 

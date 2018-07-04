@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 using MyShogi.Model.Common.ObjectModel;
@@ -354,6 +355,19 @@ namespace MyShogi.App
             set { SetValue<bool>("EngineConsiderationWindowEnableWhenVsHuman", value); }
         }
 #endif
+
+        /// <summary>
+        /// メインウィンドウのサイズ。
+        /// 記憶しておいて、次回同じサイズで生成する。
+        /// </summary>
+        public Size MainDialogClientSize { get; set; }
+
+        /// <summary>
+        /// 検討ウィンドウのサイズ。
+        /// 記憶しておいて、次回同じサイズで生成する。
+        /// </summary>
+        public Size ConsiderationDialogClientSize { get; set; }
+
 
         /// <summary>
         /// 対局ダイアログの設定

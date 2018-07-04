@@ -58,7 +58,7 @@
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer2.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer2.Name = "splitContainer2";
             // 
             // splitContainer2.Panel1
@@ -69,8 +69,8 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.toolStrip1);
             this.splitContainer2.Panel2.Controls.Add(this.miniShogiBoard1);
-            this.splitContainer2.Size = new System.Drawing.Size(751, 233);
-            this.splitContainer2.SplitterDistance = 563;
+            this.splitContainer2.Size = new System.Drawing.Size(757, 235);
+            this.splitContainer2.SplitterDistance = 567;
             this.splitContainer2.SplitterWidth = 2;
             this.splitContainer2.TabIndex = 1;
             this.splitContainer2.SplitterMoved += new System.Windows.Forms.SplitterEventHandler(this.splitContainer2_SplitterMoved);
@@ -80,7 +80,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -91,8 +91,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.engineConsiderationControl2);
-            this.splitContainer1.Size = new System.Drawing.Size(563, 233);
-            this.splitContainer1.SplitterDistance = 125;
+            this.splitContainer1.Size = new System.Drawing.Size(567, 235);
+            this.splitContainer1.SplitterDistance = 126;
             this.splitContainer1.SplitterWidth = 2;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -107,10 +107,10 @@
             kifFormatterOptions1.square = MyShogi.Model.Shogi.Converter.SquareFormat.FullWidthMix;
             this.engineConsiderationControl1.kifFormatter = kifFormatterOptions1;
             this.engineConsiderationControl1.Location = new System.Drawing.Point(0, 0);
-            this.engineConsiderationControl1.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+            this.engineConsiderationControl1.Margin = new System.Windows.Forms.Padding(1);
             this.engineConsiderationControl1.Name = "engineConsiderationControl1";
             this.engineConsiderationControl1.RootSfen = null;
-            this.engineConsiderationControl1.Size = new System.Drawing.Size(563, 125);
+            this.engineConsiderationControl1.Size = new System.Drawing.Size(567, 126);
             this.engineConsiderationControl1.TabIndex = 0;
             // 
             // engineConsiderationControl2
@@ -124,10 +124,10 @@
             kifFormatterOptions2.square = MyShogi.Model.Shogi.Converter.SquareFormat.FullWidthMix;
             this.engineConsiderationControl2.kifFormatter = kifFormatterOptions2;
             this.engineConsiderationControl2.Location = new System.Drawing.Point(0, 0);
-            this.engineConsiderationControl2.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+            this.engineConsiderationControl2.Margin = new System.Windows.Forms.Padding(1);
             this.engineConsiderationControl2.Name = "engineConsiderationControl2";
             this.engineConsiderationControl2.RootSfen = null;
-            this.engineConsiderationControl2.Size = new System.Drawing.Size(563, 106);
+            this.engineConsiderationControl2.Size = new System.Drawing.Size(567, 107);
             this.engineConsiderationControl2.TabIndex = 0;
             // 
             // toolStrip1
@@ -141,10 +141,10 @@
             this.toolStripButton3,
             this.toolStripButton4,
             this.toolStripButton6});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 208);
+            this.toolStrip1.Location = new System.Drawing.Point(0, 210);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 0);
-            this.toolStrip1.Size = new System.Drawing.Size(186, 25);
+            this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
+            this.toolStrip1.Size = new System.Drawing.Size(188, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -218,7 +218,7 @@
             // 
             this.miniShogiBoard1.BoardData = null;
             this.miniShogiBoard1.Location = new System.Drawing.Point(2, 10);
-            this.miniShogiBoard1.Margin = new System.Windows.Forms.Padding(1, 1, 1, 1);
+            this.miniShogiBoard1.Margin = new System.Windows.Forms.Padding(1);
             this.miniShogiBoard1.Name = "miniShogiBoard1";
             this.miniShogiBoard1.Size = new System.Drawing.Size(185, 202);
             this.miniShogiBoard1.TabIndex = 1;
@@ -227,9 +227,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(751, 233);
+            this.ClientSize = new System.Drawing.Size(757, 235);
             this.Controls.Add(this.splitContainer2);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "EngineConsiderationDialog";

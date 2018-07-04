@@ -174,30 +174,41 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void FitToScreenSize()
         {
-            // ディスプレイに収まるサイズのスクリーンにする必要がある。
-            // プライマリスクリーンを基準にして良いのかどうかはわからん…。
-            int w = Screen.PrimaryScreen.Bounds.Width;
-            int h = Screen.PrimaryScreen.Bounds.Height - menu_height;
+            // 前回起動時のサイズが記録されているならそれを復元してやる。
+            var size = TheApp.app.config.MainDialogClientSize;
+            if (size.Width < 192 || size.Height < 108)
+                size = Size.Empty;
 
-            // いっぱいいっぱいだと邪魔なので90%ぐらい使うか。
-            w = (int)(w * 0.9);
-            h = (int)(h * 0.9);
-
-            // 縦(h)を基準に横方向のクリップ位置を決める
-            // 1920 * 1080が望まれる比率
-            int w2 = h * 1920 / 1080;
-
-            if (w > w2)
+            if (size.IsEmpty)
             {
-                w = w2;
-                // 横幅が余りつつも画面にぴったりなのでこのサイズで生成する。
-            }
-            else
+                // ディスプレイに収まるサイズのスクリーンにする必要がある。
+                // プライマリスクリーンを基準にして良いのかどうかはわからん…。
+                int w = Screen.PrimaryScreen.Bounds.Width;
+                int h = Screen.PrimaryScreen.Bounds.Height - menu_height;
+
+                // いっぱいいっぱいだと邪魔なので90%ぐらい使うか。
+                w = (int)(w * 0.9);
+                h = (int)(h * 0.9);
+
+                // 縦(h)を基準に横方向のクリップ位置を決める
+                // 1920 * 1080が望まれる比率
+                int w2 = h * 1920 / 1080;
+
+                if (w > w2)
+                {
+                    w = w2;
+                    // 横幅が余りつつも画面にぴったりなのでこのサイズで生成する。
+                }
+                else
+                {
+                    int h2 = w * 1080 / 1920;
+                    h = h2;
+                }
+                ClientSize = new Size(w, h + menu_height);
+            } else
             {
-                int h2 = w * 1080 / 1920;
-                h = h2;
+                ClientSize = size;
             }
-            ClientSize = new Size(w, h + menu_height);
 
             MinimumSize = new Size(192 * 2, 108 * 2 + menu_height);
         }
@@ -226,7 +237,15 @@ namespace MyShogi.View.Win2D
                 var dialog = new EngineConsiderationDialog();
                 dialog.Init(gameServer.BoardReverse /* これ引き継ぐ。以降は知らん。*/);
                 // ウィンドウ幅を合わせておく。
-                dialog.Size = new Size(Width, (int)(Width * 0.2) /* メインウィンドウの20%ぐらいの高さ */);
+
+                // 前回起動時のサイズが記録されているならそれを復元してやる。
+                var size = TheApp.app.config.ConsiderationDialogClientSize;
+                if (size.Width < 192 || size.Height < 108)
+                    size = Size.Empty;
+                if (size.IsEmpty)
+                    size = new Size(Width, (int)(Width * 0.2)); /* メインウィンドウの20%ぐらいの高さ */
+
+                dialog.Size = size;
                 dialog.Location = new Point(Location.X, Location.Y + Height);
                 dialog.Visible = false;
                 dialog.Show();
