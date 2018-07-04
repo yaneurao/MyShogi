@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Text;
+using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Kifu;
+using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.Model.Shogi.Usi
 {
@@ -36,11 +39,37 @@ namespace MyShogi.Model.Shogi.Usi
     public sealed class UsiThinkLimit 
     {
         /// <summary>
-        /// コンストラクタ
+        /// KifuTimeSettingから、このクラスのインスタンスを構築して返す。
         /// </summary>
-        public UsiThinkLimit()
+        /// <param name="kifuTimeSettings"></param>
+        public static UsiThinkLimit FromTimeSetting(PlayTimers timer, Color us)
         {
-            LimitType = UsiThinkLimitEnum.Infinite;
+            var limit = new UsiThinkLimit();
+
+            var ourPlayer = timer.Player(us).KifuTimeSetting;
+            if (ourPlayer.IgnoreTime)
+                limit.LimitType = UsiThinkLimitEnum.Infinite;
+            else
+            {
+                limit.LimitType = UsiThinkLimitEnum.Time;
+
+                // USIプロトコルでは先後の秒読みの違いを表現できない…。
+                limit.ByoyomiTime = new TimeSpan(0,0,ourPlayer.Byoyomi);
+
+                var blackPlayer = timer.Player(Color.BLACK).KifuTimeSetting;
+                var whitePlayer = timer.Player(Color.WHITE).KifuTimeSetting;
+
+                if (blackPlayer.IncTimeEnable)
+                    limit.IncTimeBlack = new TimeSpan(0, 0, blackPlayer.IncTime);
+                if (whitePlayer.IncTimeEnable)
+                    limit.IncTimeBlack = new TimeSpan(0, 0, whitePlayer.IncTime);
+
+                // 先後の残り時間を保存
+                limit.RestTimeBlack = timer.GetKifuMoveTimes().Player(Color.BLACK).RestTime;
+                limit.RestTimeWhite = timer.GetKifuMoveTimes().Player(Color.WHITE).RestTime;
+            }
+
+            return limit;
         }
 
         /// <summary>
@@ -70,17 +99,23 @@ namespace MyShogi.Model.Shogi.Usi
                     sb.Append(" wtime ");
                     sb.Append(RestTimeWhite == null ? "0" : RestTimeWhite.TotalMilliseconds.ToString());
 
+                    // ByoyomiTimeが0相当である。
+                    var b1 = ByoyomiTime == null || ByoyomiTime == TimeSpan.Zero;
+                    // IncTimeがどちらも0相当である。
+                    var b2 = (IncTimeBlack == null || IncTimeBlack == TimeSpan.Zero) &&
+                             (IncTimeWhite == null || IncTimeWhite == TimeSpan.Zero);
+
                     // inctimeとbyoyomiは併用できない。
                     // どちらもない場合は"byoyomi 0"を指定しなければならない。
-
-                    if (ByoyomiTime == null && IncTimeBlack == null)
+                    if (b1 && b2)
                         sb.Append(" byoyomi 0");
                     else
                     {
-                        if (ByoyomiTime != null)
+                        if (b2)
                         {
+                            // inc timeが指定されていないのでbyoyomiを出力しておくしかない。
                             sb.Append($" byoyomi {ByoyomiTime.TotalMilliseconds.ToString()}");
-                        } else
+                        } else // if (!b2)
                         {
                             sb.Append(" binc ");
                             sb.Append(IncTimeBlack == null ? "0" : IncTimeBlack.TotalMilliseconds.ToString());

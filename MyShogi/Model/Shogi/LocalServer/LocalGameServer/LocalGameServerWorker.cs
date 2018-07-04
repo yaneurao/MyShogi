@@ -469,13 +469,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
             else
             {
-                // 通常対局モードのはず..
-                limit = new UsiThinkLimit()
-                {
-                    LimitType = UsiThinkLimitEnum.Time,
-                    ByoyomiTime = new System.TimeSpan(0, 0, 1),
-                };
+                // 通常対局モードのはずなので現在の持ち時間設定を渡してやる。
+                limit = UsiThinkLimit.FromTimeSetting(PlayTimers, stm);
             }
+
             stmPlayer.Think(usiPosition , limit);
 
             // -- 読み筋ウィンドウに対して、ここをrootSfenとして設定
