@@ -9,6 +9,9 @@ namespace MyShogi.Model.Common.Win32API
     /// </summary>
     public static class Win32API
     {
+
+        // 使わないことにした。
+#if false
 #if !MONO
         // Win32 APIのインポート
         [DllImport("USER32.DLL")]
@@ -31,6 +34,8 @@ namespace MyShogi.Model.Common.Win32API
         }
 #else
         public static void HideCloseButton(IntPtr WindowHandle){}
+#endif
+
 #endif
 
     }

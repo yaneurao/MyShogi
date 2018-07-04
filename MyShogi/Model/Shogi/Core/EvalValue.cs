@@ -113,5 +113,24 @@ namespace MyShogi.Model.Shogi.Core
         {
             return !(-1000000 <= (int)value && (int)value <= +1000000);
         }
+
+        /// <summary>
+        /// ScoreBoundの値を文字列で表現する。
+        /// 
+        /// Chessの記法に倣う。
+        /// </summary>
+        /// <param name="bound"></param>
+        /// <returns></returns>
+        public static string Pretty(this ScoreBound bound)
+        {
+            switch(bound)
+            {
+                case ScoreBound.Exact: return "";
+                case ScoreBound.Upper: return "++";
+                case ScoreBound.Lower: return "--";
+            }
+            return "??";
+        }
+
     }
 }

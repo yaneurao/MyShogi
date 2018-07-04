@@ -47,8 +47,10 @@ namespace MyShogi.Model.Shogi.Usi
 
         /// <summary>
         /// info multipv x .. で渡されたMultiPVの値
+        /// これがなければ"1"扱い。
         /// </summary>
-        public int MultiPV;
+        public string MultiPvString;
+        public int MultiPV { set { MultiPvString = value.ToString(); } }
 
         /// <summary>
         /// 評価値

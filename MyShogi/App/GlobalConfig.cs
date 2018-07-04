@@ -368,6 +368,12 @@ namespace MyShogi.App
         /// </summary>
         public Size ConsiderationDialogClientSize { get; set; }
 
+        /// <summary>
+        /// 検討ウィンドウの位置。(メインのウィンドウ相対)
+        /// 記憶しておいて、次回同じサイズで生成する。
+        /// </summary>
+        public Point ConsiderationDialogClientLocation { get; set; }
+
 
         /// <summary>
         /// 対局ダイアログの設定

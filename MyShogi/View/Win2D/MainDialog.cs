@@ -244,13 +244,24 @@ namespace MyShogi.View.Win2D
                     size = Size.Empty;
                 if (size.IsEmpty)
                     size = new Size(Width, (int)(Width * 0.2)); /* メインウィンドウの20%ぐらいの高さ */
-
                 dialog.Size = size;
-                dialog.Location = new Point(Location.X, Location.Y + Height);
-                dialog.Visible = false;
                 dialog.Show();
+
+                var offset = TheApp.app.config.ConsiderationDialogClientLocation;
+                if (offset.IsEmpty)
+                    dialog.Location = new Point(Location.X, Location.Y + Height);
+                else
+                    dialog.Location = new Point(Location.X + offset.X, Location.Y + offset.Y);
+
+                dialog.Visible = false;
                 engineConsiderationDialog = dialog;
                 // 何にせよ、インスタンスがなくては話にならないので生成だけしておく。
+            } else
+            {
+                // 検討ウィンドウが非表示になっていたら、PVのメッセージ無視していいや…。
+                // (処理に時間かかるし…)
+                if (!engineConsiderationDialog.Visible && message.type == UsisEngineReportMessageType.UsiThinkReport)
+                        return;
             }
 
             switch (message.type)
@@ -1279,23 +1290,27 @@ namespace MyShogi.View.Win2D
 
                 }
 
-#if false
                 var item_window = new ToolStripMenuItem();
                 item_window.Text = "ウインドウ";
                 menu.Items.Add(item_window);
 
                 // -- 「ウインドウ」配下のメニュー
                 {
-                    { // -- COM対局時の検討ウィンドウ
-                        var item = new ToolStripMenuItem();
-                        item.Text = "人間vsCOMの対局でCOMの読み筋を表示しない。";
-                        item.Checked = gameServer != null && !config.EngineConsiderationWindowEnableWhenVsHuman;
-                        item.Click += (sender, e) => { config.EngineConsiderationWindowEnableWhenVsHuman ^= true; };
+                    { // ×ボタンで消していた検討ウィンドウの復活
 
+                        var item = new ToolStripMenuItem();
+                        item.Text = "検討ウィンドウの表示";
+                        item.Click += (sender, e) =>
+                        {
+                            if (engineConsiderationDialog != null)
+                            {
+                                if (!engineConsiderationDialog.Visible)
+                                    engineConsiderationDialog.Visible = true;
+                            }
+                        };
                         item_window.DropDownItems.Add(item);
                     }
                 }
-#endif
 
                 // 「情報」
                 {

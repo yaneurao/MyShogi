@@ -214,7 +214,7 @@ namespace MyShogi.View.Win2D
             UpdateButtonState(inTheGame);
 
             // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
-            var font_size = (float)(20 * scale);
+            var font_size = (float)(19.5 * scale);
 
             /*
                 // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ

@@ -37,6 +37,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// [UI Thread] : 開始局面のsfen。
         /// これをセットしてからでないとAddInfo()してはならない。
+        /// このsetterでは、PVのクリアも行う。
         /// </summary>
         /// <param name=""></param>
         public string RootSfen
@@ -48,11 +49,9 @@ namespace MyShogi.View.Win2D
             set
             {
                 root_sfen = value;
-                listView1.Items.Clear();
-                list_item_moves.Clear();
-
                 if (root_sfen != null)
                     position.SetSfen(value);
+                ClearItems();
             }
         }
 
@@ -60,12 +59,21 @@ namespace MyShogi.View.Win2D
         /// [UI Thread] : エンジン名を設定/取得する。
         /// 
         /// このコントロールの左上のテキストボックスに反映される。
-        /// setterでは、ヘッダー情報のクリアも行う。
+        /// setterでは、ヘッダー情報、PVのクリアも行う。
         /// </summary>
         public string EngineName
         {
             get { return textBox1.Text; }
-            set { textBox1.Text = value; ClearHeader();  }
+            set { textBox1.Text = value; ClearHeader(); ClearItems(); }
+        }
+
+        /// <summary>
+        /// [UI Thread] : PVのクリア
+        /// </summary>
+        public void ClearItems()
+        {
+            listView1.Items.Clear();
+            list_item_moves.Clear();
         }
 
         /// <summary>
@@ -142,13 +150,16 @@ namespace MyShogi.View.Win2D
 
                 // それぞれの項目、nullである可能性を考慮しながら表示すべし。
                 // 経過時間、1/10秒まで表示する。
-                var elpasedTimeString = info.ElapsedTime != null ? info.ElapsedTime.ToString("hh':'mm':'ss'.'f") : null;
+                var elpasedTimeString = info.ElapsedTime == null ? null : info.ElapsedTime.ToString("hh':'mm':'ss'.'f");
+                var ranking = info.MultiPvString == null ? "1" : info.MultiPvString;
 
                 var list = new[]{
+                    ranking,                          // MultiPVの順
                     elpasedTimeString,                // 思考時間
                     $"{info.Depth}/{info.SelDepth}" , // 探索深さ
                     info.NodesString ,                // ノード数
                     info.Eval.Eval.Pretty(),          // 評価値
+                    info.Eval.Bound.Pretty(),         // "+-"
                     kifuString.ToString()             // 読み筋
                 };
 
@@ -225,10 +236,16 @@ namespace MyShogi.View.Win2D
             // オーナードローにする必要がある。面倒くさいので、ヘッダーのテキストにpaddingしておく。
             // またヘッダーの1列目のTextAlignは無視される。これは.NET FrameworkのListViewの昔からあるバグ。(仕様？)
 
+            // MultiPVの値(1,…)
+            var ranking = new ColumnHeader();
+            ranking.Text = "R";
+            ranking.Width = 40;
+            ranking.TextAlign = HorizontalAlignment.Center;
+
             var thinking_time = new ColumnHeader();
             thinking_time.Text = "経過時間";
-            thinking_time.Width = 150;
-            thinking_time.TextAlign = HorizontalAlignment.Right;
+            thinking_time.Width = 140;
+            thinking_time.TextAlign = HorizontalAlignment.Center;
 
             var depth = new ColumnHeader();
             depth.Text = "深さ ";
@@ -245,13 +262,19 @@ namespace MyShogi.View.Win2D
             eval.Width = 150;
             eval.TextAlign = HorizontalAlignment.Right;
 
+            // 評価値のScoreBound
+            var score_bound = new ColumnHeader();
+            score_bound.Text = "+-";
+            score_bound.Width = 50;
+            score_bound.TextAlign = HorizontalAlignment.Center;
+
             var pv = new ColumnHeader();
             pv.Text = "読み筋";
             pv.Width = 0;
             pv.TextAlign = HorizontalAlignment.Left;
             // 読み筋の幅は残り全部。UpdatePvWidth()で調整される。
 
-            var header = new[] { thinking_time, depth, node, eval, pv };
+            var header = new[] { ranking , thinking_time, depth, node, eval, score_bound, pv };
 
             listView1.Columns.AddRange(header);
         }

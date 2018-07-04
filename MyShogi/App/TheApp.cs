@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
@@ -150,7 +151,14 @@ namespace MyShogi.App
                     config.MainDialogClientSize = mainDialog.ClientSize;
                 if (mainDialog.engineConsiderationDialog != null &&
                     mainDialog.engineConsiderationDialog.Width >= 100 && mainDialog.engineConsiderationDialog.Height >= 100)
+                {
                     config.ConsiderationDialogClientSize = mainDialog.engineConsiderationDialog.ClientSize;
+                    config.ConsiderationDialogClientLocation =
+                        new Point(
+                            mainDialog.engineConsiderationDialog.Location.X - mainDialog.Location.X,
+                            mainDialog.engineConsiderationDialog.Location.Y - mainDialog.Location.Y
+                        );
+                }
 
                 config.Save();
                 soundManager.Dispose();

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using MyShogi.App;
-using MyShogi.Model.Common.Win32API;
+//using MyShogi.App;
+//using MyShogi.Model.Common.Win32API;
 using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
@@ -17,7 +17,7 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             // これ、どうするか考え中。
-            Win32API.HideCloseButton(this.Handle);
+            //Win32API.HideCloseButton(this.Handle);
 
             InitSpliter();
             InitEngineConsiderationControl();
@@ -119,10 +119,16 @@ namespace MyShogi.View.Win2D
             //TheApp.app.MessageShow("この検討ウィンドウの表示/非表示は、メニューの「ウィンドウ」の設定に依存します。×ボタンで閉じることは出来ません。");
             // MessageShow()は、モーダルなので、ここに制御が戻ってこれずhang upしてしまう。
 
-            //e.Cancel = true;
-            // ここでcancelするとメインウィンドウが閉じられなくなってしまう…。
+            // cancelして非表示にして隠しておく。
+            e.Cancel = true;
+            Visible = false;
 
-            // うまく解決できない。×ボタンを無効化することで対処する。
+            // この瞬間に内容をクリアしておかないと再表示した時に前のものが残っていて紛らわしい。
+            foreach (var i in All.Int(2))
+            {
+                ConsiderationInstance(i).ClearHeader();
+                ConsiderationInstance(i).ClearItems();
+            }
         }
 
         // 以下 ミニ盤面用のボタン
