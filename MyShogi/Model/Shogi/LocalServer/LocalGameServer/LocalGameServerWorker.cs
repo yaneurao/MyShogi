@@ -199,7 +199,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 number = NumberOfEngine,
             };
 
-            // 各エンジンの情報を検討ウィンドウにEngineConsiderationInfoDataとして送信。
+            // 各エンジンの情報を検討ウィンドウにリダイレクトするようにハンドラを設定
             num = 0;
             foreach (var c in All.Colors())
             {
@@ -217,7 +217,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var num_ = num; // copy for capturing
                     engine_player.engine.AddPropertyChangedHandler("ThinkReport", (args) =>
                     {
-                        if (ThinkReportEnable)
+                        //// 1) 読み筋の抑制条件その1
+                        //// 人間対CPUで、メニューの「ウィンドウ」のところで表示するになっていない場合。
+                        //var surpress1 = NumberOfEngine == 1 && !TheApp.app.config.EngineConsiderationWindowEnableWhenVsHuman;
+
+                        if (ThinkReportEnable
+                            /* && !(surpress1) */ )
                         {
                             var report = args.value as UsiThinkReport;
 

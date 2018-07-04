@@ -276,6 +276,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void UpdatePvWidth()
         {
+            // Column 生成前
+            if (listView1.Columns.Count == 0)
+                return;
+
             int sum_width = 0;
             int i = 0;
             for (; i < listView1.Columns.Count - 1; ++i)

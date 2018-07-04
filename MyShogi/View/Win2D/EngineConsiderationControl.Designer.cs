@@ -39,55 +39,61 @@
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.Location = new System.Drawing.Point(3, 3);
+            this.textBox1.Location = new System.Drawing.Point(2, 2);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(347, 31);
+            this.textBox1.Size = new System.Drawing.Size(176, 19);
             this.textBox1.TabIndex = 2;
             // 
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
-            this.textBox2.Location = new System.Drawing.Point(356, 3);
+            this.textBox2.Location = new System.Drawing.Point(178, 2);
+            this.textBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(270, 31);
+            this.textBox2.Size = new System.Drawing.Size(137, 19);
             this.textBox2.TabIndex = 2;
             // 
             // textBox3
             // 
             this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.Location = new System.Drawing.Point(632, 3);
+            this.textBox3.Location = new System.Drawing.Point(316, 2);
+            this.textBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(288, 31);
+            this.textBox3.Size = new System.Drawing.Size(146, 19);
             this.textBox3.TabIndex = 2;
             // 
             // textBox4
             // 
             this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.Location = new System.Drawing.Point(926, 3);
+            this.textBox4.Location = new System.Drawing.Point(463, 2);
+            this.textBox4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(220, 31);
+            this.textBox4.Size = new System.Drawing.Size(112, 19);
             this.textBox4.TabIndex = 2;
             // 
             // textBox5
             // 
             this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.Location = new System.Drawing.Point(1152, 3);
+            this.textBox5.Location = new System.Drawing.Point(576, 2);
+            this.textBox5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
-            this.textBox5.Size = new System.Drawing.Size(230, 31);
+            this.textBox5.Size = new System.Drawing.Size(117, 19);
             this.textBox5.TabIndex = 2;
             // 
             // listView1
             // 
             this.listView1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.listView1.Location = new System.Drawing.Point(0, 187);
+            this.listView1.Location = new System.Drawing.Point(0, 92);
+            this.listView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(1516, 228);
+            this.listView1.Size = new System.Drawing.Size(762, 116);
             this.listView1.TabIndex = 1;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listView1_ItemSelectionChanged);
@@ -95,7 +101,7 @@
             // 
             // EngineConsiderationControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.Controls.Add(this.textBox5);
             this.Controls.Add(this.textBox4);
@@ -103,8 +109,9 @@
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.listView1);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "EngineConsiderationControl";
-            this.Size = new System.Drawing.Size(1516, 415);
+            this.Size = new System.Drawing.Size(762, 208);
             this.Resize += new System.EventHandler(this.EngineConsiderationControl_Resize);
             this.ResumeLayout(false);
             this.PerformLayout();

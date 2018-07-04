@@ -648,7 +648,7 @@ namespace MyShogi.View.Win2D
                 {
                     { // -- 盤面反転
                         var item = new ToolStripMenuItem();
-                        item.Text = "盤面反転"; // これは全体設定。個別設定もある。
+                        item.Text = "盤面反転";
                         item.Checked = gameServer != null && gameServer.BoardReverse;
                         item.Click += (sender, e) => { gameServer.BoardReverse ^= true; };
 
@@ -1166,12 +1166,29 @@ namespace MyShogi.View.Win2D
 
                 }
 
+#if false
+                var item_window = new ToolStripMenuItem();
+                item_window.Text = "ウインドウ";
+                menu.Items.Add(item_window);
+
+                // -- 「ウインドウ」配下のメニュー
+                {
+                    { // -- COM対局時の検討ウィンドウ
+                        var item = new ToolStripMenuItem();
+                        item.Text = "人間vsCOMの対局でCOMの読み筋を表示しない。";
+                        item.Checked = gameServer != null && !config.EngineConsiderationWindowEnableWhenVsHuman;
+                        item.Click += (sender, e) => { config.EngineConsiderationWindowEnableWhenVsHuman ^= true; };
+
+                        item_window.DropDownItems.Add(item);
+                    }
+                }
+#endif
 
                 // 「情報」
                 {
                     var item_others = new ToolStripMenuItem();
-                    item_others.Text = "情報";
-                    menu.Items.Add(item_others);
+                item_others.Text = "情報";
+                menu.Items.Add(item_others);
 
                     {
                         // メモリへのロギング
@@ -1366,7 +1383,7 @@ namespace MyShogi.View.Win2D
         }
 
         private MenuStrip old_menu { get; set; } = null;
-        #endregion
+#endregion
 
     }
 }

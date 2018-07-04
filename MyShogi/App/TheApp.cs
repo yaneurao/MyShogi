@@ -23,6 +23,18 @@ namespace MyShogi.App
         /// </summary>
         public void Run()
         {
+            try
+            {
+                Main();
+            } catch (Exception ex)
+            {
+                // これを表示するようにしておくと、開発環境以外で実行した時のデバッグが楽ちん。
+                MessageBox.Show("例外が発生しましたので終了します。\r\n例外内容 : " + ex.Message + "\r\nスタックトレース : \r\n" + ex.StackTrace);
+            }
+        }
+
+        private void Main()
+        {
             // -- 開発時のテストコード
 
             // 駒素材画像の変換
@@ -86,6 +98,7 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("EngineConsiderationWindowEnableWhenVsHuman", mainDialog.UpdateMenuItems, mainDialog);
 
             // -- ロギング用のハンドラをセット
 

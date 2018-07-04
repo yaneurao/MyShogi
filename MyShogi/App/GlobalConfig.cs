@@ -34,7 +34,7 @@ namespace MyShogi.App
             //CrashPieceSoundInTheGame = 1;
             KifuReadOut = 1;
             ReadOutSenteGoteEverytime = 1;
-            EngineConsiderationWindowEnableWhenVsHuman = true;
+            //EngineConsiderationWindowEnableWhenVsHuman = true;
         }
 
         /// <summary>
@@ -353,6 +353,7 @@ namespace MyShogi.App
             set { SetValue<bool>("InTheBoardEdit", value); }
         }
 
+#if false
         /// <summary>
         /// 人間と対局中にコンピュータの読み筋ウィンドウを表示するか。
         /// デフォルト = true
@@ -368,6 +369,7 @@ namespace MyShogi.App
             get { return GetValue<bool>("EngineConsiderationWindowEnableWhenVsHuman"); }
             set { SetValue<bool>("EngineConsiderationWindowEnableWhenVsHuman", value); }
         }
+#endif
 
         /// <summary>
         /// 対局ダイアログの設定
