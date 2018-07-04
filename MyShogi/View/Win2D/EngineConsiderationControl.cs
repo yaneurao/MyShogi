@@ -312,6 +312,9 @@ namespace MyShogi.View.Win2D
         {
             // .NET FrameworkのTextBox、右端にスペースをpaddingしていて、TextAlignをcenterに設定してもそのスペースを
             // わざわざ除去してからセンタリングするので(余計なお世話)、TextAlignをLeftに設定して、自前でpaddingする。
+            
+            // MS UI Gothicは等幅ではないのでスペースでpaddingするとずれる。
+            // TextBoxのフォントは、MS ゴシックに設定する。
 
             //textBox1.Text = info.PlayerName;
 
@@ -326,10 +329,10 @@ namespace MyShogi.View.Win2D
             // 深さも各iterationごとにPVを出力しているわけで、こんなものは不要である。
 
             if (info.NodesString != null)
-                textBox3.Text = $"探索局面数 : { info.NodesString.PadLeftUnicode(16) }";
+                textBox3.Text = $"探索局面数 : { info.NodesString.PadLeftUnicode(12) }";
 
             if (info.NpsString != null)
-                textBox4.Text = $" NPS : { info.NpsString.PadLeftUnicode(16) }";
+                textBox4.Text = $" NPS : { info.NpsString.PadLeftUnicode(12) }";
 
             if (info.HashPercentageString != null)
                 textBox5.Text = $"HASH使用率 : { info.HashPercentageString.PadLeftUnicode(6) }";

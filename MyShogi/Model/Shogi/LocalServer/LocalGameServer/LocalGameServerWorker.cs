@@ -262,9 +262,18 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // -- 指し手
 
-            // TIME_UPなどのSpecialMoveが積まれているなら、そちらを優先して解釈する。
-            var bestMove = stmPlayer.SpecialMove != Move.NONE ? stmPlayer.SpecialMove : stmPlayer.BestMove;
-            
+            Move bestMove;
+            if (GameMode.IsWithEngine())
+            {
+                // 検討モードなのでエンジンから送られてきたbestMoveの指し手は無視。
+                bestMove = stmPlayer.SpecialMove;
+            }
+            else
+            {
+                // TIME_UPなどのSpecialMoveが積まれているなら、そちらを優先して解釈する。
+                bestMove = stmPlayer.SpecialMove != Move.NONE ? stmPlayer.SpecialMove : stmPlayer.BestMove;
+            }
+
             if (bestMove != Move.NONE)
             {
                 PlayTimer(stm).ChageToThemTurn(bestMove == Move.TIME_UP);

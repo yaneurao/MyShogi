@@ -586,6 +586,8 @@ namespace MyShogi.Model.Shogi.Usi
                             parseEnd = true;
                             break;
 #if false
+                        // なんかよくわからん。あとで考える。
+
                         case "count":
                             GodwhaleCount = scanner.ParseInt();
                             break;
@@ -609,7 +611,9 @@ namespace MyShogi.Model.Shogi.Usi
                     }
                 }
 
-                ThinkReport = info;
+                // 次のThink()が呼び出されているなら、この読み筋は、無効化されなくてはならない。
+                if (!ThinkingState.IsStopping)
+                    ThinkReport = info;
             } catch
             {
                 throw new UsiException("info 文字列の解析に失敗 : " + scanner.Text);

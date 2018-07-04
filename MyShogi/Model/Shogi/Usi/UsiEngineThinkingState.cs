@@ -23,7 +23,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public Move BestMove
         {
-            get { return nextPosition != null ? Move.NONE : bestMove; }
+            get { return IsStopping ? Move.NONE : bestMove; }
         }
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public Move PonderMove
         {
-            get { return nextPosition != null ? Move.NONE : ponderMove; }
+            get { return IsStopping ? Move.NONE : ponderMove; }
         }
 
         /// <summary>
@@ -41,7 +41,13 @@ namespace MyShogi.Model.Shogi.Usi
         /// "go"コマンドで思考を開始した場合、trueになる。
         /// "bestmove"が返ってくるとfalseになる。
         /// </summary>
-        public bool Thinking;
+        public bool Thinking { get; private set; }
+
+        /// <summary>
+        /// 次のThink()が予約されていて、前回のThink()は停止途中にある。
+        /// (このとき、BestMove,PonderMove,ThinkReportなどが無効化されるべき。)
+        /// </summary>
+        public bool IsStopping { get { return nextPosition != null; } }
 
         /// <summary>
         /// 思考を開始する。思考中であるなら、queueに積んで、いまの思考が停止してから思考を開始する。
@@ -89,8 +95,6 @@ namespace MyShogi.Model.Shogi.Usi
         public void BestMoveReceived(Move bestMove_,Move ponderMove_)
         {
             Thinking = false;
-            bestMove = bestMove_;
-            ponderMove = ponderMove_;
 
             // queueに積まれているのでそのThinkコマンドを叩いてやる。
             if (nextPosition != null)
@@ -98,6 +102,11 @@ namespace MyShogi.Model.Shogi.Usi
                 Think(nextPosition, nextGoCommand);
                 nextPosition = null;
                 nextGoCommand = null;
+            } else
+            {
+                bestMove = bestMove_;
+                ponderMove = ponderMove_;
+                StopSent = false;
             }
         }
 
