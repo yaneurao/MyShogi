@@ -260,14 +260,16 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             var config = TheApp.app.config;
 
-            // 指し手
-            var bestMove = stmPlayer.BestMove;
+            // -- 指し手
 
+            // TIME_UPなどのSpecialMoveが積まれているなら、そちらを優先して解釈する。
+            var bestMove = stmPlayer.SpecialMove != Move.NONE ? stmPlayer.SpecialMove : stmPlayer.BestMove;
+            
             if (bestMove != Move.NONE)
             {
                 PlayTimer(stm).ChageToThemTurn(bestMove == Move.TIME_UP);
 
-                stmPlayer.BestMove = Move.NONE; // クリア
+                stmPlayer.SpecialMove = Move.NONE; // クリア
 
                 // 駒が動かせる状況でかつ合法手であるなら、受理する。
 
@@ -406,6 +408,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         private void NotifyTurnChanged()
         {
             var stm = Position.sideToMove;
+
+            // 検討モードでは、先手側のプレイヤーがエンジンに紐づけられている。
+            if (GameMode.IsWithEngine())
+                stm = Color.BLACK;
+
             var stmPlayer = Player(stm);
             var isHuman = stmPlayer.PlayerType == PlayerTypeEnum.Human;
 
@@ -436,9 +443,31 @@ namespace MyShogi.Model.Shogi.LocalServer
             var isUsiEngine = stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine;
             string usiPosition = isUsiEngine ? kifuManager.UsiPositionString : null;
 
-            stmPlayer.BestMove = stmPlayer.PonderMove = Move.NONE;
             stmPlayer.CanMove = true;
-            stmPlayer.Think(usiPosition);
+            stmPlayer.SpecialMove = Move.NONE;
+
+            // BestMove,PonderMoveは、Think()以降、正常に更新されることは、Playerクラス側で保証されているので、
+            // ここではそれらの初期化は行わない。
+            UsiThinkLimit limit;
+
+            if (GameMode.IsWithEngine())
+            {
+                // エンジン検討モードなら時間無制限
+                limit = new UsiThinkLimit()
+                {
+                    LimitType = UsiThinkLimitEnum.Infinite
+                };
+            }
+            else
+            {
+                // 通常対局モードのはず..
+                limit = new UsiThinkLimit()
+                {
+                    LimitType = UsiThinkLimitEnum.Time,
+                    ByoyomiTime = new System.TimeSpan(0, 0, 1),
+                };
+            }
+            stmPlayer.Think(usiPosition , limit);
 
             // -- 読み筋ウィンドウに対して、ここをrootSfenとして設定
             if (ThinkReportEnable && isUsiEngine)
@@ -489,7 +518,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 時間切れ判定(対局中かつ手番側のみ)
             var stm = Position.sideToMove;
             if (GameMode == GameModeEnum.InTheGame && PlayTimer(stm).IsTimeUp())
-                Player(stm).BestMove = Move.TIME_UP;
+                Player(stm).SpecialMove = Move.TIME_UP;
         }
 
         /// <summary>

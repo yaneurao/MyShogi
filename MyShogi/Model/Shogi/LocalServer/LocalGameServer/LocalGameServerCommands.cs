@@ -78,7 +78,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                         // これを積んでおけばworker_threadのほうでいずれ処理される。(かも)
                         // 仮に、すでに次の局面になっていたとしても、次にこのユーザーの手番になったときに
                         // BestMove = Move.NONEとされるのでその時に破棄される。
-                        stmPlayer.BestMove = m;
+                        stmPlayer.SpecialMove = m;
                     }
                 } else if (GameMode.IsConsideration()){
 
@@ -90,6 +90,10 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // 動かした結果、棋譜の選択行と異なる可能性があるので、棋譜ウィンドウの当該行をSelectしなおす。
                     UpdateKifuSelectedIndex();
+
+                    // 再度、Thinkコマンドを叩く。
+                    if (GameMode.IsWithEngine())
+                       NotifyTurnChanged();
                 }
             }
             );
@@ -165,7 +169,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var stmPlayer = Player(stm);
 
                     // 中断の指し手
-                    stmPlayer.BestMove = Move.INTERRUPT;
+                    stmPlayer.SpecialMove = Move.INTERRUPT;
                 }
             });
         }

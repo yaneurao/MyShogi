@@ -199,8 +199,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void UpdateTooltipButtons()
         {
+            var inTheGame = gameServer == null ? false : gameServer.InTheGame;
+
             // この時、エンジン側の手番であるなら、メインウインドウのメニューの「急」ボタンをenableにしなければならない。
-            var engineTurn = gameServer.EngineTurn;
+            var engineTurn = gameServer.EngineTurn && inTheGame;
             SetButton(ToolStripButtonEnum.MOVE_NOW, engineTurn);
 
             // この時、対局中でかつ、人間側の手番で、エンジン初期化中でなければ、

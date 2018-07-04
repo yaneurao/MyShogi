@@ -1,4 +1,5 @@
 ﻿using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Shogi.Player
 {
@@ -25,12 +26,17 @@ namespace MyShogi.Model.Shogi.Player
         /// <summary>
         /// このプレイヤーが指した指し手
         /// </summary>
-        public Move BestMove { get; set; }
+        public Move BestMove { get { return Move.NONE; } }
+
+        /// <summary>
+        /// TIME_UPなどが積まれる。BestMoveより優先して解釈される。
+        /// </summary>
+        public Move SpecialMove { get; set; }
 
         /// <summary>
         /// このプレイヤーのponderの指し手
         /// </summary>
-        public Move PonderMove { get; set; }
+        public Move PonderMove { get { return Move.NONE; } }
 
         /// <summary>
         /// プレイヤーの手番であるか。
@@ -42,7 +48,7 @@ namespace MyShogi.Model.Shogi.Player
 
         public void OnIdle(){}
 
-        public void Think(string usiPosition){}
+        public void Think(string usiPosition , UsiThinkLimit limit) {}
 
         public void Dispose() { }
 

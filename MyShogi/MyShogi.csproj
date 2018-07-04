@@ -73,6 +73,7 @@
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
+    <Compile Include="Model\Shogi\Usi\UsiEngineThinkingState.cs" />
     <Compile Include="Model\Shogi\Usi\UsiThinkReport.cs" />
     <Compile Include="Model\Shogi\Data\EvaluationGraphData.cs" />
     <Compile Include="Model\Shogi\Data\MiniShogiBoardData.cs" />
@@ -127,7 +128,6 @@
     <Compile Include="Model\Shogi\Usi\UsiOption.cs" />
     <Compile Include="Model\Shogi\Usi\UsiOptionMin.cs" />
     <Compile Include="Model\Shogi\Usi\UsiOptionType.cs" />
-    <Compile Include="Model\Shogi\Usi\UsiTimeData.cs" />
     <Compile Include="Model\Test\DevTest2\EvalControlTestForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -170,7 +170,7 @@
     <Compile Include="Model\Shogi\Core\UInt128.cs" />
     <Compile Include="Model\Shogi\Core\Zobrist.cs" />
     <Compile Include="Model\Test\DevTest2.cs" />
-    <Compile Include="Model\Shogi\Player\TimeLimit.cs" />
+    <Compile Include="Model\Shogi\Usi\UsiThinkLimit.cs" />
     <Compile Include="App\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\Win2D\AboutYaneuraOu.cs">

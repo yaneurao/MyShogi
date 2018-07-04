@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
@@ -24,6 +23,11 @@ namespace MyShogi.Model.Shogi.Usi
         public UsiEngine()
         {
             State = UsiEngineState.Init;
+
+            ThinkingState = new UsiEngineThinkingState()
+            {
+                SendCommand = SendCommand
+            };
         }
 
         /// <summary>
@@ -72,28 +76,14 @@ namespace MyShogi.Model.Shogi.Usi
 
         /// <summary>
         /// エンジンに思考させる。
-        /// Thinkingのときにこのmethodの呼び出しは不正であるものとする。
-        /// 呼び出し側できちんと管理すべし。
+        /// Thinkingの時に呼び出された場合、現在のThinkに対してstopを呼び出して、
+        /// bestmoveが返ってきてから次のthinkを行う。
+        /// 現在の
         /// </summary>
         /// <param name="usiPositionString"></param>
-        public void Think(string usiPositionString)
+        public void Think(string usiPositionString , UsiThinkLimit limit)
         {
-#if false
-            if (thinking)
-            {
-                // これ呼び出し側がまずい気がする。
-
-                // ponderなどで思考させている途中で次の思考開始命令が来たので、stopを送信する。
-                SendCommand("stop");
-
-                // ここで"bestmove"が返ってくるのを待つ必要があるがこの仕組みではそれができない。あとで考える。
-            }
-#endif
-            Debug.Assert(Thinking == false);
-
-            Thinking = true;
-            SendCommand($"position {usiPositionString}");
-            SendCommand("go btime 10000 wtime 10000 byoyomi 1000"); // 1手1秒でとりあえず指させる。
+            ThinkingState.Think($"position {usiPositionString}" , $"go {limit.ToUsiString()}");
         }
 
         /// <summary>
@@ -103,8 +93,7 @@ namespace MyShogi.Model.Shogi.Usi
         public void MoveNow()
         {
             // 思考中であれば、stopコマンドを送信することで思考を中断できる(はず)
-            if (Thinking)
-                SendCommand("stop");
+            ThinkingState.Stop();
         }
 
         /// <summary>
@@ -177,30 +166,19 @@ namespace MyShogi.Model.Shogi.Usi
         public string Author { get; set; }
 
         /// <summary>
-        /// エンジンから送られてきた文字列の解釈などでエラーがあった場合に、
-        /// ここに格納される。
-        /// </summary>
-        public Exception exception { get; private set; }
-
-        /// <summary>
         /// USIプロトコルによってengine側から送られてきた"bestmove .."を解釈した指し手
         /// </summary>
-        public Move BestMove { get; set; }
+        public Move BestMove { get { return ThinkingState.BestMove; } }
 
         /// <summary>
         /// USIプロトコルによってengine側から送られてきた"bestmove .. ponder .."のponderで指定された指し手を解釈した指し手
         /// </summary>
-        public Move PonderMove { get; set; }
+        public Move PonderMove { get { return ThinkingState.PonderMove; } }
 
         /// <summary>
-        /// 現在思考中であるかどうかのフラグ
-        /// Thinking == true && BestMove == Move.NONE なら、思考中である。
-        /// Thinking == true && BestMove != Move.NONE は、ありえない(無視すべき)
-        /// Thinking == true && exception != null なら、例外が発生した。
-        /// Thinking == false && BestMove != Move.NONEなら思考が終了して思考結果が返ってきている。
-        /// Thinking == false && BestMove == Move.NONEなら思考結果取り出したあとの通常状態。
+        /// 現在思考中であるかどうかの状態管理フラグ
         /// </summary>
-        public bool Thinking { get; set; }
+        private UsiEngineThinkingState ThinkingState { get; set; }
 
         /// <summary>
         /// 読み筋。
@@ -489,9 +467,6 @@ namespace MyShogi.Model.Shogi.Usi
         {
             try
             {
-                // 指し手が返ってきた以上、思考中ではない。
-                Thinking = false;
-
                 Move move = Move.NONE , ponder = Move.NONE;
                 var moveSfen = scanner.ParseText();
 
@@ -535,9 +510,7 @@ namespace MyShogi.Model.Shogi.Usi
                 }
 
                 // 確定したので格納しておく。
-                BestMove = move;
-                PonderMove = ponder;
-
+                ThinkingState.BestMoveReceived(move,ponder);
             }
             catch (UsiException ex)
             {

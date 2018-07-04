@@ -1,4 +1,5 @@
 ﻿using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Shogi.Player
 {
@@ -27,13 +28,22 @@ namespace MyShogi.Model.Shogi.Player
 
         /// <summary>
         /// このプレイヤーが指した指し手
+        /// Think()を呼び出した瞬間以降、このプロパティに返ってきたMove.NONE以外のものがBestMoveである。
+        /// Think()を二重に呼び出した場合、後者のThink()から戻ってきたあとは、後者のThink()に対応する思考が終わるまでは
+        /// Move.NONEが返ることが保証されている。
         /// </summary>
-        Move BestMove { get; set; }
+        Move BestMove { get; }
+
+        /// <summary>
+        /// TIME_UPなどが積まれる。BestMoveより優先して解釈される。
+        /// </summary>
+        Move SpecialMove { get; set; }
 
         /// <summary>
         /// このプレイヤーのponderの指し手
+        /// Think()を呼び出した瞬間以降、このプロパティに返ってきたMove.NONE以外のものがPonderMoveである。
         /// </summary>
-        Move PonderMove { get; set; }
+        Move PonderMove { get; }
 
         /// <summary>
         /// 駒を動かして良いフェーズであるか？
@@ -63,7 +73,7 @@ namespace MyShogi.Model.Shogi.Player
         /// HumanPlayerのときは、usiPositionを生成するコストがもったいないのでnullが渡ってくることになっている。
         /// </summary>
         /// <param name="usiPosition"></param>
-        void Think(string usiPosition);
+        void Think(string usiPosition , UsiThinkLimit limit);
 
         void Dispose();
     }

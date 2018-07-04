@@ -42,12 +42,17 @@ namespace MyShogi.Model.Shogi.Player
         /// <summary>
         /// このプレイヤーが指した指し手
         /// </summary>
-        public Move BestMove { get; set; }
+        public Move BestMove { get { return engine.BestMove; } }
+
+        /// <summary>
+        /// TIME_UPなどが積まれる。BestMoveより優先して解釈される。
+        /// </summary>
+        public Move SpecialMove { get; set; }
 
         /// <summary>
         /// このプレイヤーのponderの指し手
         /// </summary>
-        public Move PonderMove { get; set; }
+        public Move PonderMove { get { return engine.PonderMove; } }
 
         /// <summary>
         /// 駒を動かして良いフェーズであるか？
@@ -67,18 +72,11 @@ namespace MyShogi.Model.Shogi.Player
 
             // 受信処理を行う。
             engine.OnIdle();
-
-            var bestMove = engine.BestMove;
-            if (bestMove != Move.NONE)
-            { // エンジンから結果が返ってきているので伝播する。
-                BestMove = bestMove;
-                engine.BestMove = Move.NONE;
-            }
         }
 
-        public void Think(string usiPosition)
+        public void Think(string usiPosition, UsiThinkLimit limit)
         {
-            engine.Think(usiPosition);
+            engine.Think(usiPosition,limit);
         }
 
         public void Dispose()
