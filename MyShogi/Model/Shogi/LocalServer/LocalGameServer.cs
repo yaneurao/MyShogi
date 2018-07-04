@@ -57,10 +57,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 開始時は、対局中でないことは保証されているのでユーザーが駒を動かせるはず。
             CanUserMove = true;
-            GameMode = GameModeEnum.ConsiderationWithoutEngine;
 
-            // このクラスが開始したことを示す仮想プロパティ
-            RaisePropertyChanged("GameServerStarted",null);
+            // GameModeの初期値は、GameMode.NotInitなのでここで変更通知イベントが発生する。
+            GameMode = GameModeEnum.ConsiderationWithoutEngine;
 
             // 対局監視スレッドを起動して回しておく。
             if (!NoThread)

@@ -170,13 +170,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             else if (gameSetting.Player(stm).IsCpu && gameSetting.Player(stm.Not()).IsHuman)
                 BoardReverse = (stm == Color.BLACK);
 
-
-            // 盤面編集中である可能性がある。リセットする。
-            TheApp.app.config.InTheBoardEdit = false;
-
             // プレイヤー情報などを検討ダイアログに反映させる。
             InitEngineConsiderationInfo();
             
+            // 検討モードならそれを停止させる必要があるが、それはGameModeのsetterがやってくれる。
             GameMode = GameModeEnum.InTheGame;
         }
 

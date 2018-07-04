@@ -354,23 +354,24 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 盤面編集が出来る状態にする/しない。
+        /// ゲームモードを変更する。
+        /// nextMode : 次のモード。盤面編集モード、検討モードなど。
         /// </summary>
-        public void ChangeBoardEditingCommand(bool edit_enable)
+        public void ChangeGameModeCommand(GameModeEnum nextMode)
         {
             AddCommand(
             () =>
             {
                 // いずれにせよ、対局中は受理しない。
+                if (InTheGame)
+                    return;
 
                 // InTheGameの値を変更するのは、このworker threadのみなので、
                 // これにより、「!InTheGameならInTheBoardEditをtrueにする」という操作のatomic性が保証される。
 
-                if (!InTheGame)
-                {
-                    GameMode =  GameModeEnum.InTheBoardEdit;
-                }
-                // TODO : エンジンでの検討中ならばエンジンを停止させる処理
+                // また、検討中であれば、エンジンを停止させる必要があるが、それはGameModeのsetterで行う。
+                
+                GameMode = nextMode;
             }
             );
         }

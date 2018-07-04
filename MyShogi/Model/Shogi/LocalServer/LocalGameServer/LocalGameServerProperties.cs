@@ -41,34 +41,25 @@ namespace MyShogi.Model.Shogi.LocalServer
                 SetValue<GameModeEnum>("GameMode", value);
 
                 // 依存プロパティの更新
-                InTheGame = value == GameModeEnum.InTheGame;
-                InTheBoardEdit = value == GameModeEnum.InTheBoardEdit;
+                SetValue<bool>("InTheGame", value == GameModeEnum.InTheGame);
+                SetValue<bool>("InTheBoardEdit" , value == GameModeEnum.InTheBoardEdit);
             }
         }
 
         /// <summary>
         /// 対局中であるかを返す。これは、GameModeに依存している依存プロパティ。
-        /// このsetterを呼び出してはならない。
         /// </summary>
         public bool InTheGame
         {
             get { return GetValue<bool>("InTheGame"); }
-            private set { SetValue<bool>("InTheGame",value); }
         }
 
         /// <summary>
         /// 盤面編集中であるかを返す。これは、GameModeに依存している依存プロパティ。
-        /// このsetterを呼び出してはならない。
         /// </summary>
         public bool InTheBoardEdit
         {
             get { return GetValue<bool>("InTheBoardEdit"); }
-            private set {
-                SetValue<bool>("InTheBoardEdit", value);
-
-                // 依存プロパティの更新
-                TheApp.app.config.InTheBoardEdit = value;
-            }
         }
 
         /// <summary>
@@ -186,10 +177,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         // 仮想プロパティ
         // 残り消費時間が変更になった時に呼び出される。
         //public bool RestTimeChanged { get; }
-
-        // 仮想プロパティ
-        // このクラスのStart()が呼び出された時に呼び出される。
-        //public bool GameServerStarted { get; }
 
         // 仮想プロパティ
         // 棋譜読み込み時など、こちら側の要請により、棋譜ウィンドウを指定行に移動させるイベント

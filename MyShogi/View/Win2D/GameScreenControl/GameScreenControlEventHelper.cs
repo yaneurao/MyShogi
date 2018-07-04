@@ -66,11 +66,11 @@ namespace MyShogi.View.Win2D
             gameServer.AddPropertyChangedHandler("Position", PositionChanged);
             gameServer.AddPropertyChangedHandler("TurnChanged", TurnChanged, Parent);
             gameServer.AddPropertyChangedHandler("InTheGame", InTheGameChanged, Parent);
+            gameServer.AddPropertyChangedHandler("GameMode", UpdateMenuItems , Parent);
             gameServer.AddPropertyChangedHandler("EngineInitializing", EngineInitializingChanged, Parent);
             gameServer.AddPropertyChangedHandler("RestTimeChanged", RestTimeChanged);
             gameServer.AddPropertyChangedHandler("SetKifuListIndex", SetKifuListIndex, Parent);
             gameServer.AddPropertyChangedHandler("InTheBoardEdit", InTheBoardEditChanged, Parent);
-            gameServer.AddPropertyChangedHandler("GameServerStarted", UpdateMenuItems, Parent);
             gameServer.AddPropertyChangedHandler("BoardReverse", UpdateMenuItems, Parent);
             gameServer.AddPropertyChangedHandler("ThinkReport", thinkReportChanged , Parent);
         }
@@ -84,11 +84,11 @@ namespace MyShogi.View.Win2D
             gameServer.RemovePropertyChangedHandler("Position", PositionChanged);
             gameServer.RemovePropertyChangedHandler("TurnChanged", TurnChanged);
             gameServer.RemovePropertyChangedHandler("InTheGame", InTheGameChanged);
+            gameServer.RemovePropertyChangedHandler("GameMode", UpdateMenuItems);
             gameServer.RemovePropertyChangedHandler("EngineInitializing", EngineInitializingChanged);
             gameServer.RemovePropertyChangedHandler("RestTimeChanged", RestTimeChanged);
             gameServer.RemovePropertyChangedHandler("SetKifuListIndex", SetKifuListIndex);
             gameServer.RemovePropertyChangedHandler("InTheBoardEdit", InTheBoardEditChanged);
-            gameServer.RemovePropertyChangedHandler("GameServerStarted", UpdateMenuItems);
             gameServer.RemovePropertyChangedHandler("BoardReverse", UpdateMenuItems);
             gameServer.RemovePropertyChangedHandler("ThinkReport", thinkReportChanged);
         }
@@ -120,7 +120,6 @@ namespace MyShogi.View.Win2D
         public void InTheBoardEditChanged(PropertyChangedEventArgs args = null)
         {
             UpdateKifuControlVisibility();
-            UpdateMenuItems();
         }
 
         /// <summary>
@@ -169,9 +168,6 @@ namespace MyShogi.View.Win2D
 
             // Tooltipの◁▷本譜ボタンの状態更新
             UpdateTooltipButtons2();
-
-            // メニュー項目の更新
-            UpdateMenuItems();
         }
 
         /// <summary>

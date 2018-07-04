@@ -8,6 +8,7 @@
     /// </summary>
     public enum GameModeEnum
     {
+        NotInit,                    // 初期状態。LocalGameServer.Start()で値を代入した時にGameModeの変更通知が飛ぶように。
         InTheGame ,                 // 対局中
         InTheBoardEdit ,            // 盤面編集中
         ConsiderationWithoutEngine, // 検討中(エンジンが動作していない)

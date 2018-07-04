@@ -4,7 +4,6 @@ using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Usi;
@@ -331,6 +330,37 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 「検」ボタン。検討モードに入る。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton5_Click(object sender, System.EventArgs e)
+        {
+            var consideration = gameServer.GameMode == GameModeEnum.ConsiderationWithEngine;
+            gameServer.ChangeGameModeCommand(consideration ? GameModeEnum.ConsiderationWithoutEngine : GameModeEnum.ConsiderationWithEngine);
+        }
+
+        /// <summary>
+        /// 「解」ボタン。棋譜解析。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton6_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 「詰」ボタン。詰みがあるかどうかを調べる。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton7_Click(object sender, System.EventArgs e)
+        {
+
+        }
+
+        /// <summary>
         /// 「転」ボタン。盤面反転の処理。
         /// </summary>
         /// <param name="sender"></param>
@@ -390,9 +420,9 @@ namespace MyShogi.View.Win2D
             kifuControl.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に移動するはず */;
         }
 
-#endregion
+        #endregion
 
-#region update menu
+        #region update menu
 
         /// <summary>
         /// 棋譜の上書き保存のために、前回保存したときの名前を保持しておく。
@@ -599,6 +629,8 @@ namespace MyShogi.View.Win2D
                         item_file.DropDownItems.Add(item);
                     }
 
+                    item_file.DropDownItems.Add(new ToolStripSeparator());
+
                     {
                         var item = new ToolStripMenuItem();
                         item.Text = "終了";
@@ -607,8 +639,6 @@ namespace MyShogi.View.Win2D
                     }
 
                 }
-
-
 
                 var item_playgame = new ToolStripMenuItem();
                 item_playgame.Text = "対局";
@@ -621,10 +651,9 @@ namespace MyShogi.View.Win2D
                         item.Text = "通常対局";
                         item.Click += (sender, e) =>
                         {
-
-                                // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
-                                if (gameSettingDialog != null)
-                                gameSettingDialog.Dispose();
+                            // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
+                            if (gameSettingDialog != null)
+                            gameSettingDialog.Dispose();
 
                             gameSettingDialog = new GameSettingDialog(this);
                             gameSettingDialog.Show();
@@ -633,6 +662,26 @@ namespace MyShogi.View.Win2D
                                 // あとで前回設定を復元するコードを書く。
                                 // 前回設定、GlobalSettingに持たせるべきのような気がする。
                             };
+
+                        item_playgame.DropDownItems.Add(item);
+                    }
+
+                    item_playgame.DropDownItems.Add(new ToolStripSeparator());
+
+                    { // -- 検討モード
+                        var consideration = gameServer == null ? false : gameServer.GameMode == GameModeEnum.ConsiderationWithEngine;
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = consideration ? "検討モードを終了する" : "検討モード";
+
+                        // toolStripのボタンのテキストを検討モードであるかどうかにより変更する。
+                        toolStripButton5.Text = consideration ? "終" : "検";
+                        toolStripButton5.ToolTipText = consideration ? "検討モードを終了します。" : "検討モードに入ります。";
+
+                        item.Click += (sender, e) =>
+                        {
+                            gameServer.ChangeGameModeCommand(consideration ? GameModeEnum.ConsiderationWithoutEngine : GameModeEnum.ConsiderationWithEngine);
+                        };
 
                         item_playgame.DropDownItems.Add(item);
                     }
@@ -1012,16 +1061,20 @@ namespace MyShogi.View.Win2D
 
                 // 盤面編集の追加
                 {
+                    var InTheBoardEdit = gameServer == null ? false : gameServer.GameMode == GameModeEnum.InTheBoardEdit;
+
                     {   // -- 盤面編集の開始
                         var item = new ToolStripMenuItem();
-                        item.Text = config.InTheBoardEdit ? "盤面編集の終了" : "盤面編集の開始";
-                        item.Click += (sender, e) => { gameServer.ChangeBoardEditingCommand(!config.InTheBoardEdit); };
+                        item.Text = InTheBoardEdit ? "盤面編集の終了" : "盤面編集の開始";
+                        item.Click += (sender, e) => {
+                            gameServer.ChangeGameModeCommand(InTheBoardEdit ? GameModeEnum.ConsiderationWithoutEngine : GameModeEnum.InTheBoardEdit);
+                        };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
                     {   // -- 手番の変更
                         var item = new ToolStripMenuItem();
-                        item.Enabled = config.InTheBoardEdit;
+                        item.Enabled = InTheBoardEdit;
                         item.Text = "手番の変更";
                         item.Click += (sender, e) =>
                         {
@@ -1035,7 +1088,7 @@ namespace MyShogi.View.Win2D
 
                     {   // -- 平手の初期局面
                         var item = new ToolStripMenuItem();
-                        item.Enabled = config.InTheBoardEdit;
+                        item.Enabled = InTheBoardEdit;
                         item.Text = "平手の初期局面配置";
                         item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.NoHandicap.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
@@ -1043,104 +1096,104 @@ namespace MyShogi.View.Win2D
 
                     {   // -- 駒落ちの局面
                         var item_handicap = new ToolStripMenuItem();
-                        item_handicap.Enabled = config.InTheBoardEdit;
+                        item_handicap.Enabled = InTheBoardEdit;
                         item_handicap.Text = "駒落ち初期局面配置";
                         item_boardedit.DropDownItems.Add(item_handicap);
 
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "香落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "右香落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapRightKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "角落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapKaku.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "飛車落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapHisya.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "飛香落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapHisyaKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "二枚落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap2.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "三枚落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap3.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "四枚落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap4.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "五枚落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap5.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "左五枚落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapLeft5.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "六枚落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap6.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "八枚落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap8.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "十枚落ち";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap10.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
-                            item.Enabled = config.InTheBoardEdit;
+                            item.Enabled = InTheBoardEdit;
                             item.Text = "歩三枚";
                             item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HANDICAP_PAWN3.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
@@ -1150,7 +1203,7 @@ namespace MyShogi.View.Win2D
 
                     {   // -- 詰将棋用の配置(駒箱に)
                         var item = new ToolStripMenuItem();
-                        item.Enabled = config.InTheBoardEdit;
+                        item.Enabled = InTheBoardEdit;
                         item.Text = "詰将棋用に配置";
                         item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Mate1.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
@@ -1158,7 +1211,7 @@ namespace MyShogi.View.Win2D
 
                     {   // -- 双玉詰将棋用の局面
                         var item = new ToolStripMenuItem();
-                        item.Enabled = config.InTheBoardEdit;
+                        item.Enabled = InTheBoardEdit;
                         item.Text = "双玉詰将棋用に配置";
                         item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Mate2.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
@@ -1245,6 +1298,7 @@ namespace MyShogi.View.Win2D
                         item_others.DropDownItems.Add(item1);
                     }
 
+                    item_others.DropDownItems.Add(new ToolStripSeparator());
 
                     {
                         // システム情報ダイアログ
@@ -1261,6 +1315,8 @@ namespace MyShogi.View.Win2D
                         };
                         item_others.DropDownItems.Add(item1);
                     }
+
+                    item_others.DropDownItems.Add(new ToolStripSeparator());
 
                     {
                         // aboutダイアログ
@@ -1383,7 +1439,7 @@ namespace MyShogi.View.Win2D
         }
 
         private MenuStrip old_menu { get; set; } = null;
-#endregion
+        #endregion
 
     }
 }

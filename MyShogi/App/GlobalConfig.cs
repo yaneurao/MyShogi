@@ -99,12 +99,6 @@ namespace MyShogi.App
             // -- その他
             // GloablConfigに持たせてはいるが、実際は、デシリアライズされたものを使用しないフラグ群。
 
-            // 駒箱の編集のフラグがglobalかどうかという問題だが、ここでBGを合成してしまう以上、
-            // すべてのGameScreenに駒箱が表示されてしまうので、特定のscreenだけ盤面編集を行うということが出来ない。
-            // そこで、これはglobalなフラグであるとして扱い、GloablConfigに持たせることにする。
-
-            InTheBoardEdit = false;
-
         }
 
         /// <summary>
@@ -341,16 +335,6 @@ namespace MyShogi.App
         {
             get { return GetValue<bool>("FileLoggingEnable"); }
             set { SetValue<bool>("FileLoggingEnable", value); }
-        }
-
-        /// <summary>
-        /// 盤面編集中であるかのフラグ
-        /// これは、デシリアライズされない。
-        /// </summary>
-        public bool InTheBoardEdit
-        {
-            get { return GetValue<bool>("InTheBoardEdit"); }
-            set { SetValue<bool>("InTheBoardEdit", value); }
         }
 
 #if false

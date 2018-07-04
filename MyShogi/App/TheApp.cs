@@ -98,7 +98,6 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("EngineConsiderationWindowEnableWhenVsHuman", mainDialog.UpdateMenuItems, mainDialog);
 
             // -- ロギング用のハンドラをセット
 
