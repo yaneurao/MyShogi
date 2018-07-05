@@ -98,7 +98,6 @@
             // 
             this.engineConsiderationControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.engineConsiderationControl1.EngineName = "";
-            this.engineConsiderationControl1.ItemClicked = null;
             kifFormatterOptions1.color = MyShogi.Model.Shogi.Converter.ColorFormat.Piece;
             kifFormatterOptions1.fromsq = MyShogi.Model.Shogi.Converter.FromSqFormat.KI2;
             kifFormatterOptions1.samepos = MyShogi.Model.Shogi.Converter.SamePosFormat.KI2sp;
@@ -115,7 +114,6 @@
             // 
             this.engineConsiderationControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.engineConsiderationControl2.EngineName = "";
-            this.engineConsiderationControl2.ItemClicked = null;
             kifFormatterOptions2.color = MyShogi.Model.Shogi.Converter.ColorFormat.Piece;
             kifFormatterOptions2.fromsq = MyShogi.Model.Shogi.Converter.FromSqFormat.KI2;
             kifFormatterOptions2.samepos = MyShogi.Model.Shogi.Converter.SamePosFormat.KI2sp;

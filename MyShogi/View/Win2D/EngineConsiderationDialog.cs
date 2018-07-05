@@ -4,6 +4,7 @@ using System.Windows.Forms;
 //using MyShogi.App;
 //using MyShogi.Model.Common.Win32API;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Data;
 
 namespace MyShogi.View.Win2D
 {
@@ -223,11 +224,13 @@ namespace MyShogi.View.Win2D
             SetEngineInstanceNumber(1);
 
             foreach (var i in All.Int(2))
-                ConsiderationInstance(i).ItemClicked += (data) =>
+                ConsiderationInstance(i).Notify.AddPropertyChangedHandler( "PvClicked" , (h) =>
                 {
+                    var data = h.value as MiniShogiBoardData;
+
                     MiniBoardVisible = true;
                     miniShogiBoard1.BoardData = data;
-                };
+                });
         }
 
         /// <summary>

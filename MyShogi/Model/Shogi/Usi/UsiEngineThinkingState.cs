@@ -5,9 +5,10 @@ namespace MyShogi.Model.Shogi.Usi
     /// <summary>
     /// エンジンの思考状態を管理する。
     /// 
-    /// 二重に"stop"を送信したりしないように、"go"コマンドに対して"bestmove"が返ってきたかを管理する必要がある。
+    /// 二重に"stop"を送信したりしないように、"go"コマンドに対して"bestmove"が返ってきたかを
+    /// 管理する必要があるので("bestmove"が返ってきてからしか次のposition～goが送れないので、そのためのクラス。
     /// </summary>
-    public class UsiEngineThinkingState
+    public class UsiEngineThinkingBridge
     {
         /// <summary>
         /// コマンドはこのメソッドを通じて送るので、このクラスを使う時は設定しておくこと。

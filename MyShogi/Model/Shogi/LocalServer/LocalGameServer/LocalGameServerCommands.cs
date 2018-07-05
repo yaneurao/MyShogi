@@ -13,7 +13,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         #region UI側からのコマンド
 
         /*
-         * UI側からのコマンドは、 delegateで渡され、対局監視スレッド側で実行される。
+         * UI側からのコマンドは、 ～Command()というメソッドが呼び出される。
+         * これはdelegateでWorker Thread(対局監視スレッド)に渡され、実行される。
          * delegateのなかのkifuManager.PositionやkifuManager.KifuListは、無名関数の束縛の性質から、
          * 現在のものであって過去のPositionやKifuListのへ参照ではない。
          * 
@@ -33,7 +34,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 if (!InTheGame)
                 {
-                    // 局面が非合法局面であれば受理しない。
+                    // 現局面から開始するとき、局面が非合法局面であれば受理しない。
                     if (gameSetting.Board.BoardTypeCurrent)
                     {
                         var error = Position.IsValid();
@@ -113,7 +114,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var stm = kifuManager.Position.sideToMove;
                     var stmPlayer = Player(stm);
 
-                    // エンジン以外であれば受理しない。
+                    // 手番側がエンジン以外であれば受理しない。
                     if (stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine)
                     {
                         var enginePlayer = stmPlayer as UsiEnginePlayer;

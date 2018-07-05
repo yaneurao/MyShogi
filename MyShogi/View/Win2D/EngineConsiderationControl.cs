@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.View.Win2D
 {
@@ -22,9 +24,49 @@ namespace MyShogi.View.Win2D
 
             InitListView();
             InitKifuFormatter();
+            InitNotifyObject();
         }
 
         // -- properties
+
+        /// <summary>
+        /// 通知の発生するproperties
+        /// </summary>
+        public class EngineConsiderationNotifyObject : NotifyObject
+        {
+            /// <summary>
+            /// [UI Thread] : UIのコンボボックスで選択されている候補手の数を返す。
+            /// 検討モードではこれに基づいてMultiPVで思考する。
+            /// </summary>
+            public int MultiPV
+            {
+                get { return GetValue<int>("MultiPV"); }
+                set { SetValue<int>("MultiPV", value); }
+            }
+
+            /// <summary>
+            /// [UI Thread] : UI上で候補手のコンボボックスを表示するのか。
+            /// </summary>
+            public bool EnableMultiPVComboBox
+            {
+                get { return GetValue<bool>("EnableMultiPVComboBox"); }
+                set { SetValue<bool>("EnableMultiPVComboBox", value); }
+            }
+
+            /// <summary>
+            /// [UI Thread] マウスで読み筋がクリックされた時にrootSfenと読み筋がセットされる。
+            /// </summary>
+            public MiniShogiBoardData PvClicked
+            {
+                get { return GetValue<MiniShogiBoardData>("PvClicked"); }
+                set { SetValue<MiniShogiBoardData>("PvClicked", value); }
+            }
+        }
+
+        /// <summary>
+        /// このControlから発生するpropertyの変更イベント。
+        /// </summary>
+        public EngineConsiderationNotifyObject Notify = new EngineConsiderationNotifyObject();
 
         /// <summary>
         /// 生成する棋譜文字列のフォーマット
@@ -67,6 +109,7 @@ namespace MyShogi.View.Win2D
             set { textBox1.Text = value; ClearHeader(); ClearItems(); }
         }
 
+
         /// <summary>
         /// [UI Thread] : PVのクリア
         /// </summary>
@@ -75,20 +118,6 @@ namespace MyShogi.View.Win2D
             listView1.Items.Clear();
             list_item_moves.Clear();
         }
-
-        /// <summary>
-        /// アイテムがクリックされた時に、そこに表示されている読み筋と、rootSfenがもらえるイベントハンドラのdelegate
-        /// </summary>
-        /// <param name="rootSfen"></param>
-        /// <param name="moves"></param>
-        public delegate void ItemClickedEventHandler(MiniShogiBoardData data);
-
-        /// <summary>
-        /// アイテムがクリックされた時に、そこに表示されている読み筋と、rootSfenがもらえるイベントハンドラ
-        /// </summary>
-        /// <param name="rootSfen"></param>
-        /// <param name="moves"></param>
-        public ItemClickedEventHandler ItemClicked { get; set; }
 
         /// <summary>
         /// [UI Thread] : 読み筋を1行追加する。
@@ -209,7 +238,7 @@ namespace MyShogi.View.Win2D
             // multi selectではないので1つしか選択されていないはず…。
             int index = selected[0]; // first
             if (index < list_item_moves.Count && list_item_moves[index]!=null /* info stringなどだとnullがありうる。*/)
-                ItemClicked?.Invoke(new MiniShogiBoardData()
+                Notify.RaisePropertyChanged("PvClicked", new MiniShogiBoardData()
                 {
                     rootSfen = root_sfen,
                     moves = list_item_moves[index]
@@ -221,6 +250,12 @@ namespace MyShogi.View.Win2D
             int h = textBox1.Height + 3;
             listView1.Location = new Point(0, h);
             listView1.Size = new Size(ClientSize.Width, ClientSize.Height - h);
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // 選択項目がないと-1になるので、その時にMultiPV == 1になることを保証する。
+            Notify.MultiPV = Math.Max(comboBox1.SelectedIndex + 1 , 1);
         }
 
         // -- privates
@@ -294,6 +329,14 @@ namespace MyShogi.View.Win2D
             };
         }
 
+        private void InitNotifyObject()
+        {
+            // 候補手のコンボボックス
+            Notify.AddPropertyChangedHandler("EnableMultiPVComboBox", (e) =>
+            { UpdateMultiPVComboBox(Notify.EnableMultiPVComboBox); });
+            Notify.RaisePropertyChanged("EnableMultiPVComboBox", false);
+        }
+
         /// <summary>
         /// 「読み筋」の列の幅を調整する。
         /// </summary>
@@ -360,6 +403,36 @@ namespace MyShogi.View.Win2D
             if (info.HashPercentageString != null)
                 textBox5.Text = $"HASH使用率 : { info.HashPercentageString.PadLeftUnicode(6) }";
         }
+
+        /// <summary>
+        /// [UI Thread] : 候補手のコンボボックスを表示するときにテキストボックスのレイアウトを変更する。
+        /// EnableMultiPVComboBoxのsetterから呼び出される。
+        /// </summary>
+        /// <param name="enable"></param>
+        private void UpdateMultiPVComboBox(bool enable)
+        {
+            // この順番で左上から右方向に並べる
+            var list =
+                enable ?
+                 new Control[] { comboBox1, textBox1, textBox2, textBox3, textBox4, textBox5 } :
+                 new Control[] { textBox1, textBox2, textBox3, textBox4, textBox5 };
+
+            comboBox1.Visible = enable;
+
+            int x = Math.Min(textBox1.Location.X, comboBox1.Location.X); // 左上にはどちらかがあるはず..
+            int y = textBox1.Location.Y; // y座標は共通
+
+            foreach(var e in list)
+            {
+                e.Location = new Point(x, y);
+                x += e.Size.Width + 4;
+            }
+
+            if (enable)
+                comboBox1.SelectedIndex = 0; // 1つ目を選択しておく。
+        }
+
+        // -- private members
 
         /// <summary>
         /// 開始局面のsfen。

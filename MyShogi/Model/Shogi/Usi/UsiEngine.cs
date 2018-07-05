@@ -24,7 +24,7 @@ namespace MyShogi.Model.Shogi.Usi
         {
             State = UsiEngineState.Init;
 
-            ThinkingState = new UsiEngineThinkingState()
+            ThinkingBridge = new UsiEngineThinkingBridge()
             {
                 SendCommand = SendCommand
             };
@@ -83,7 +83,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// <param name="usiPositionString"></param>
         public void Think(string usiPositionString , UsiThinkLimit limit)
         {
-            ThinkingState.Think($"position {usiPositionString}" , $"go {limit.ToUsiString()}");
+            ThinkingBridge.Think($"position {usiPositionString}" , $"go {limit.ToUsiString()}");
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace MyShogi.Model.Shogi.Usi
         public void MoveNow()
         {
             // 思考中であれば、stopコマンドを送信することで思考を中断できる(はず)
-            ThinkingState.Stop();
+            ThinkingBridge.Stop();
         }
 
         /// <summary>
@@ -168,17 +168,17 @@ namespace MyShogi.Model.Shogi.Usi
         /// <summary>
         /// USIプロトコルによってengine側から送られてきた"bestmove .."を解釈した指し手
         /// </summary>
-        public Move BestMove { get { return ThinkingState.BestMove; } }
+        public Move BestMove { get { return ThinkingBridge.BestMove; } }
 
         /// <summary>
         /// USIプロトコルによってengine側から送られてきた"bestmove .. ponder .."のponderで指定された指し手を解釈した指し手
         /// </summary>
-        public Move PonderMove { get { return ThinkingState.PonderMove; } }
+        public Move PonderMove { get { return ThinkingBridge.PonderMove; } }
 
         /// <summary>
         /// 現在思考中であるかどうかの状態管理フラグ
         /// </summary>
-        private UsiEngineThinkingState ThinkingState { get; set; }
+        private UsiEngineThinkingBridge ThinkingBridge { get; set; }
 
         /// <summary>
         /// 読み筋。
@@ -510,7 +510,7 @@ namespace MyShogi.Model.Shogi.Usi
                 }
 
                 // 確定したので格納しておく。
-                ThinkingState.BestMoveReceived(move,ponder);
+                ThinkingBridge.BestMoveReceived(move,ponder);
             }
             catch (UsiException ex)
             {
@@ -612,7 +612,7 @@ namespace MyShogi.Model.Shogi.Usi
                 }
 
                 // 次のThink()が呼び出されているなら、この読み筋は、無効化されなくてはならない。
-                if (!ThinkingState.IsStopping)
+                if (!ThinkingBridge.IsStopping)
                     ThinkReport = info;
             } catch
             {
