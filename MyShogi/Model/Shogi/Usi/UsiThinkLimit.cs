@@ -36,8 +36,13 @@ namespace MyShogi.Model.Shogi.Usi
     /// <summary>
     /// 将棋エンジンの思考制限を行うためのデータです。
     /// </summary>
-    public sealed class UsiThinkLimit 
+    public sealed class UsiThinkLimit
     {
+        /// <summary>
+        /// 時間制限なしのUsiThinkLimitの定数オブジェクト
+        /// </summary>
+        public static readonly UsiThinkLimit TimeLimitLess = new UsiThinkLimit() { LimitType = UsiThinkLimitEnum.Infinite };
+
         /// <summary>
         /// KifuTimeSettingから、このクラスのインスタンスを構築して返す。
         /// </summary>

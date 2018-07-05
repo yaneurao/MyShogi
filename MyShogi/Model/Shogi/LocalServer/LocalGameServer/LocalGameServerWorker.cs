@@ -5,7 +5,6 @@ using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Resource.Sounds;
-using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Shogi.LocalServer
@@ -24,18 +23,19 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             while (!workerStop)
             {
+                // 各プレイヤーのプロセスの標準入出力に対する送受信の処理
                 foreach (var player in Players)
                 {
                     player.OnIdle();
                 }
 
-                // UI側からのコマンドがあるかどうか
+                // UI側からのコマンドがあるかどうか。あればdispatchする。
                 CheckUICommand();
 
-                // 指し手が指されたかのチェック
-                CheckMove();
+                // 各プレイヤーから指し手が指されたかのチェック
+                CheckPlayerMove();
 
-                // 時間消費のチェック
+                // 時間消費のチェック。時間切れのチェック。
                 CheckTime();
 
                 // 10msごとに各種処理を行う。
@@ -252,7 +252,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 指し手が指されたかのチェックを行う
         /// </summary>
-        private void CheckMove()
+        private void CheckPlayerMove()
         {
             // 現状の局面の手番側
             var stm = Position.sideToMove;
@@ -411,8 +411,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 手番側のプレイヤーに自分の手番であることを通知するためにThink()を呼び出す。また、CanMove = trueにする。
-        /// 非手番側のプレイヤーに対してCanMove = falseにする。
+        /// 手番側のプレイヤーに自分の手番であることを通知するためにThink()を呼び出す。
+        /// また、手番側のCanMove = trueにする。非手番側のプレイヤーに対してCanMove = falseにする。
         /// </summary>
         private void NotifyTurnChanged()
         {
@@ -457,25 +457,17 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // BestMove,PonderMoveは、Think()以降、正常に更新されることは、Playerクラス側で保証されているので、
             // ここではそれらの初期化は行わない。
-            UsiThinkLimit limit;
 
-            if (GameMode.IsWithEngine())
-            {
-                // エンジン検討モードなら時間無制限
-                limit = new UsiThinkLimit()
-                {
-                    LimitType = UsiThinkLimitEnum.Infinite
-                };
-            }
-            else
-            {
-                // 通常対局モードのはずなので現在の持ち時間設定を渡してやる。
-                limit = UsiThinkLimit.FromTimeSetting(PlayTimers, stm);
-            }
+            // エンジン検討モードなら時間無制限
+            // 通常対局モードのはずなので現在の持ち時間設定を渡してやる。
+
+            var limit = GameMode.IsWithEngine() ?
+                UsiThinkLimit.TimeLimitLess : 
+                UsiThinkLimit.FromTimeSetting(PlayTimers, stm);
 
             stmPlayer.Think(usiPosition , limit);
 
-            // -- 読み筋ウィンドウに対して、ここをrootSfenとして設定
+            // -- 検討ウィンドウに対して、ここをrootSfenとして設定
             if (ThinkReportEnable && isUsiEngine)
             {
                 ThinkReport = new UsiThinkReportMessage()

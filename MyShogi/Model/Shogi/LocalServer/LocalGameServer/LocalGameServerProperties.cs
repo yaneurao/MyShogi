@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
@@ -42,12 +44,28 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var old = GetValue<GameModeEnum>("GameMode");
                 if (old == value)
                     return; // 値が同じなので何もしない
+
+                // 次のモードがエンジンを使った検討モードであるなら局面の合法性のチェックが必要。
+
+                if (value.IsWithEngine())
+                {
+                    // 現在の局面が不正でないかをチェック。
+                    var error = Position.IsValid(GameMode == GameModeEnum.ConsiderationWithMateEngine);
+                    if (error != null)
+                    {
+                        TheApp.app.MessageShow(error);
+                        return;
+                    }
+                }
+
+                // 次のモードに以降できることが確定したので値を変更する。
+
                 SetValue<GameModeEnum>("GameMode", value);
 
                 // エンジンを用いた検討モードを抜ける or 入るのであれば、そのコマンドを叩く。
+
                 if (old.IsWithEngine())
                     EndConsideration();
-
                 if (value.IsWithEngine())
                     StartConsideration();
 
@@ -211,7 +229,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// Start()でworker threadを作らない。
         /// CPU対戦をせずに単に盤面だけ描画したい場合はworkerは不要なのでこれをtrueにしてStart()を呼び出すと良い。
         /// </summary>
-        public bool NoThread = false;
+        public bool NoThread { get; set; } = false;
 
         /// <summary>
         /// エンジンの読み筋などを検討用のダイアログに出力する。
@@ -236,7 +254,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         #region 依存性のあるプロパティの処理
 
         /// <summary>
-        /// GameStart()のあと、各プレイヤーの初期化中であるかを更新する。
+        /// GameStart()のあと、各プレイヤーの初期化中であるか(Initializing,EngineInitializing)を更新する。
+        /// このメソッドは、worker threadから定期的に呼び出される。
         /// </summary>
         private void UpdateInitializing()
         {
@@ -288,20 +307,27 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// immutableにするためにCloneしてセットする。
         /// 全行が丸ごと更新通知が送られるので部分のみの更新通知を送りたいなら自前で更新すべし。
         /// 
-        /// ※　KifuTreeのほうでPositionが更新された時に通知が来る。
+        /// ※　KifuTreeのほうでPositionが更新された時に通知が来るので、このメソッドでトラップして、
+        /// このクラスのNotifyObjectによって、このことを棋譜ウィンドウに通知する。
         /// </summary>
         private void KifuListUpdate(PropertyChangedEventArgs args)
         {
+            // このイベントをトラップしている。
+            Debug.Assert(args.name == "KifuList");
+
             // Cloneしたものをセットする。
             args.value = new List<string>(kifuManager.KifuList);
 
             // このクラスのNotifyObjectによる通知がなされる。
+            // "KifuList"プロパティの変更通知が飛ぶ。
             SetValue<List<string>>(args);
         }
 
         /// <summary>
         /// 棋譜ウィンドウの選択行を変更する。
         /// ply を指定しなければ(-1のとき)、現在のkifuManager.Treeに同期させる。
+        /// 
+        /// "SetKifuListIndex"という仮想プロパティの変更通知が飛ぶ。
         /// </summary>
         private void UpdateKifuSelectedIndex(int ply = -1)
         {
