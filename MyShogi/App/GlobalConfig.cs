@@ -36,6 +36,7 @@ namespace MyShogi.App
             KifuReadOut = 1;
             ReadOutSenteGoteEverytime = 1;
             //EngineConsiderationWindowEnableWhenVsHuman = true;
+            ConsiderationMultiPV = 5;
         }
 
         /// <summary>
@@ -374,6 +375,11 @@ namespace MyShogi.App
         /// </summary>
         public Point ConsiderationDialogClientLocation { get; set; }
 
+        /// <summary>
+        /// 検討時の候補手(MultiPV)の数。
+        /// デフォルト : 5
+        /// </summary>
+        public int ConsiderationMultiPV { get; set; }
 
         /// <summary>
         /// 対局ダイアログの設定

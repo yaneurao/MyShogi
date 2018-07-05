@@ -205,6 +205,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 if (GameSetting.Player(c).IsCpu)
                 {
+                    var num_ = num; // copy for capturing
+
                     // 検討モードなら、名前は..
                     var name =
                         (nextGameMode == GameModeEnum.ConsiderationWithEngine    ) ? "検討用エンジン" :
@@ -214,13 +216,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                     ThinkReport = new UsiThinkReportMessage()
                     {
                         type = UsiEngineReportMessageType.SetEngineName,
-                        number = num,
+                        number = num_, // is captured
                         data = name,
                     };
 
                     // UsiEngineのThinkReportプロパティを捕捉して、それを転送してやるためのハンドラをセットしておく。
                     var engine_player = Player(c) as UsiEnginePlayer;
-                    var num_ = num; // copy for capturing
                     engine_player.engine.AddPropertyChangedHandler("ThinkReport", (args) =>
                     {
                         //// 1) 読み筋の抑制条件その1
@@ -467,8 +468,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // -- MultiPVの設定
 
             if (GameMode == GameModeEnum.ConsiderationWithEngine)
-                // MultiPVは、前回設定を引き継ぐ
-                (stmPlayer as UsiEnginePlayer).engine.MultiPV = lastMultiPv;
+                // MultiPVは、GlobalConfigの設定を引き継ぐ
+                (stmPlayer as UsiEnginePlayer).engine.MultiPV = TheApp.app.config.ConsiderationMultiPV;
                 // それ以外のGameModeなら、USIのoption設定を引き継ぐので変更しない。
 
 

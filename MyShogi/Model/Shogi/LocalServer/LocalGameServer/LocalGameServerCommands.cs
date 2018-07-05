@@ -423,7 +423,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             () =>
             {
                 // 保存しておく。(次回検討時用に)
-                lastMultiPv = multiPv;
+                var config = TheApp.app.config;
+                config.ConsiderationMultiPV = multiPv;
 
                 // エンジンによる検討モードでないなら受理しない。
                 if (GameMode != GameModeEnum.ConsiderationWithEngine)
@@ -433,8 +434,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 NotifyTurnChanged();
             });
         }
-        private int lastMultiPv = 1;
-
+        
         /// <summary>
         /// UI側から、worker threadで実行して欲しいコマンドを渡す。
         /// View-ViewModelアーキテクチャにおいてViewからViewModelにcommandを渡す感じ。

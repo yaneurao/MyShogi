@@ -50,8 +50,11 @@ namespace MyShogi.View.Win2D
 
                 case UsiEngineReportMessageType.SetGameMode:
                     var gameMode = (GameModeEnum)message.data;
-                    ConsiderationInstance(0).Notify.EnableMultiPVComboBox
-                        = gameMode == GameModeEnum.ConsiderationWithEngine;
+                    var b = (gameMode == GameModeEnum.ConsiderationWithEngine);
+
+                    // MultiPV用の表示に
+                    ConsiderationInstance(0).Notify.EnableMultiPVComboBox = b;
+                    ConsiderationInstance(0).SortRanking = b;
                     break;
 
                 case UsiEngineReportMessageType.SetEngineName:

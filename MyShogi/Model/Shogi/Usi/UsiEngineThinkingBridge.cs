@@ -90,6 +90,13 @@ namespace MyShogi.Model.Shogi.Usi
                 nextGoCommand = goCommand;
             } else
             {
+                if (nextMultiPv != 0)
+                {
+                    // このタイミングでMultiPVを設定してしまう。
+                    SendCommand($"setoption name MultiPV value {nextMultiPv}");
+                    nextMultiPv = 0;
+                }
+
                 SendCommand(position);
                 SendCommand(goCommand);
                 Thinking = true;
@@ -121,12 +128,6 @@ namespace MyShogi.Model.Shogi.Usi
         public void BestMoveReceived(Move bestMove_,Move ponderMove_)
         {
             Thinking = false;
-            if (nextMultiPv != 0)
-            {
-                // このタイミングでMultiPVを設定してしまう。
-                SendCommand($"setoption name MultiPV value {nextMultiPv}");
-                nextMultiPv = 0;
-            }
 
             // queueに積まれているのでそのThinkコマンドを叩いてやる。
             if (nextPosition != null)

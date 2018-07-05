@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.Model.Shogi.LocalServer
@@ -38,6 +39,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void Start()
         {
+            var config = TheApp.app.config;
+
             // Position,KifuListは、kifuManagerから半自動でデータバインドする。
             // (それぞれがimmutable objectではないため、Clone()が必要になるので)
 

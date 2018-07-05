@@ -9,6 +9,7 @@ using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.App;
 
 namespace MyShogi.View.Win2D
 {
@@ -109,6 +110,24 @@ namespace MyShogi.View.Win2D
             set { textBox1.Text = value; ClearHeader(); ClearItems(); }
         }
 
+        /// <summary>
+        /// Rankingで並び替えるかどうかのフラグ
+        /// RankingとはUSIの"info multipv X pv ..."のXのところの値。何番目の候補手であるか。
+        /// 
+        /// 検討モードの時はtrue。「着順」/「R順」ボタンを押すとtrue/false切り替わる。
+        /// 
+        /// [UI Thread] : setter
+        /// </summary>
+        public bool SortRanking {
+            get { return sortRanking; }
+            set {
+                if (sortRanking != value)
+                    UpdateSortRanking(value);
+                sortRanking = value;
+            }
+        }
+        private bool sortRanking;
+
 
         /// <summary>
         /// [UI Thread] : PVのクリア
@@ -193,12 +212,32 @@ namespace MyShogi.View.Win2D
                 };
 
                 var item = new ListViewItem(list);
-                listView1.Items.Add(item);
-                listView1.TopItem = item; // 自動スクロール
 
-                // 読み筋をここに保存しておく。(ミニ盤面で開く用)
-                // なければnullもありうる。
-                list_item_moves.Add(info.Moves);
+                if (sortRanking)
+                {
+                    int r;
+                    if (!int.TryParse(ranking, out r))
+                        r = 1;
+
+                    while (listView1.Items.Count < r)
+                    {
+                        listView1.Items.Add(string.Empty);
+                        list_item_moves.Add(null);
+                    }
+
+                    // r行目のところに代入
+                    listView1.Items[r-1] = item;
+                    list_item_moves[r-1] = info.Moves;
+                }
+                else
+                {
+                    listView1.Items.Add(item);
+                    listView1.TopItem = item; // 自動スクロール
+
+                    // 読み筋をここに保存しておく。(ミニ盤面で開く用)
+                    // なければnullもありうる。
+                    list_item_moves.Add(info.Moves);
+                }
             }
 
             // -- その他、nullでない項目に関して、ヘッダー情報のところに反映させておく。
@@ -219,7 +258,6 @@ namespace MyShogi.View.Win2D
                 HashPercentageString = "",
             });
         }
-
 
         // -- handlers
 
@@ -256,6 +294,16 @@ namespace MyShogi.View.Win2D
         {
             // 選択項目がないと-1になるので、その時にMultiPV == 1になることを保証する。
             Notify.MultiPV = Math.Max(comboBox1.SelectedIndex + 1 , 1);
+        }
+
+        /// <summary>
+        /// 「R順」ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SortRanking ^= true;
         }
 
         // -- privates
@@ -331,6 +379,12 @@ namespace MyShogi.View.Win2D
 
         private void InitNotifyObject()
         {
+            // MultiPVの初期値
+            var multiPV = TheApp.app.config.ConsiderationMultiPV;
+            multiPV = Math.Max(multiPV , 1); // 1以上を保証する
+            multiPV = Math.Min(multiPV, comboBox1.Items.Count); // comboBox1の項目数と同じまで。
+            Notify.MultiPV = multiPV;
+
             // 候補手のコンボボックス
             Notify.AddPropertyChangedHandler("EnableMultiPVComboBox", (e) =>
             { UpdateMultiPVComboBox(Notify.EnableMultiPVComboBox); });
@@ -414,13 +468,18 @@ namespace MyShogi.View.Win2D
             // この順番で左上から右方向に並べる
             var list =
                 enable ?
-                 new Control[] { comboBox1, textBox1, textBox2, textBox3, textBox4, textBox5 } :
-                 new Control[] { textBox1, textBox2, textBox3, textBox4, textBox5 };
+                 new Control[] { button1 , comboBox1, textBox1, textBox2, textBox3, textBox4, textBox5 } :
+                 new Control[] { button1 , textBox1, textBox2, textBox3, textBox4, textBox5 };
 
             comboBox1.Visible = enable;
 
-            int x = Math.Min(textBox1.Location.X, comboBox1.Location.X); // 左上にはどちらかがあるはず..
-            int y = textBox1.Location.Y; // y座標は共通
+            // x座標は、一番左端にあるやつを基準とする。
+            int x = int.MaxValue;
+            foreach(var e in list)
+                x = Math.Min(x, e.Location.X);
+
+            // y座標は共通なのでtextBox1のあった位置で良い。
+            int y = textBox1.Location.Y;
 
             foreach(var e in list)
             {
@@ -429,7 +488,19 @@ namespace MyShogi.View.Win2D
             }
 
             if (enable)
-                comboBox1.SelectedIndex = 0; // 1つ目を選択しておく。
+            {
+                comboBox1.SelectedIndex = Notify.MultiPV -1;
+            }
+        }
+
+        /// <summary>
+        /// [UI Thread] : SortRankingの値が変わった時に呼び出される。
+        /// </summary>
+        /// <param name="sortRanking"></param>
+        private void UpdateSortRanking(bool sortRanking)
+        {
+            button1.Text = sortRanking ? "R順" : "着順";
+            ClearItems(); // 切り替えたので読み筋クリア
         }
 
         // -- private members
@@ -451,5 +522,6 @@ namespace MyShogi.View.Win2D
         /// 表示している読み筋(ListView.Items)に対応する指し手
         /// </summary>
         private List<List<Move>> list_item_moves = new List<List<Move>>();
+
     }
 }
