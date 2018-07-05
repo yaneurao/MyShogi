@@ -180,6 +180,8 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private UsiEngineThinkingBridge ThinkingBridge { get; set; }
 
+        public int MultiPV { set { ThinkingBridge.MultiPV = value; } }
+
         /// <summary>
         /// 読み筋。
         /// USIプロトコルの"info ..."をparseした内容が入る。

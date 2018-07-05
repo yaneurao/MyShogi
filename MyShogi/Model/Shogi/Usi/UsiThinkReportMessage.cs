@@ -6,7 +6,7 @@
     /// <summary>
     /// エンジンが返したい情報
     /// </summary>
-    public enum UsisEngineReportMessageType
+    public enum UsiEngineReportMessageType
     {
         /// <summary>
         /// 思考エンジンのインスタンス数。
@@ -24,6 +24,14 @@
         /// data = エンジンの名前(string)
         /// </summary>
         SetEngineName,
+
+        /// <summary>
+        /// 現在の思考モードを設定する。
+        /// 
+        /// data = ゲームモード(GameModeEnum)
+        /// (検討モードなら、「候補手」のComboBoxを出すなどする)
+        /// </summary>
+        SetGameMode,
 
         /// <summary>
         /// rootのsfenを設定する。
@@ -51,7 +59,7 @@
         /// <summary>
         /// メッセージの種類
         /// </summary>
-        public UsisEngineReportMessageType type;
+        public UsiEngineReportMessageType type;
 
         /// <summary>
         /// instance numberなど用の変数

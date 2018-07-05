@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-//using MyShogi.App;
-//using MyShogi.Model.Common.Win32API;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
+using MyShogi.Model.Shogi.LocalServer;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.View.Win2D
 {
@@ -32,6 +32,45 @@ namespace MyShogi.View.Win2D
         {
             miniShogiBoard1.Init(boardReverse);
         }
+
+        /// <summary>
+        /// [UI Thread] : 読み筋などのメッセージを受け取り、
+        /// UsiEngineReportMessageTypeの内容に応じた処理に振り分ける。
+        /// </summary>
+        /// <param name="message"></param>
+        public void DispatchThinkReportMessage(UsiThinkReportMessage message)
+        {
+            switch (message.type)
+            {
+                case UsiEngineReportMessageType.NumberOfInstance:
+                    // 非表示なので検討ウィンドウが表示されているなら消しておく。
+                    Visible = message.number != 0;
+                    SetEngineInstanceNumber(message.number);
+                    break;
+
+                case UsiEngineReportMessageType.SetGameMode:
+                    var gameMode = (GameModeEnum)message.data;
+                    ConsiderationInstance(0).Notify.EnableMultiPVComboBox
+                        = gameMode == GameModeEnum.ConsiderationWithEngine;
+                    break;
+
+                case UsiEngineReportMessageType.SetEngineName:
+                    var engine_name = message.data as string;
+                    ConsiderationInstance(message.number).EngineName = engine_name;
+                    break;
+
+                case UsiEngineReportMessageType.SetRootSfen:
+                    var sfen = message.data as string;
+                    ConsiderationInstance(message.number).RootSfen = sfen;
+                    break;
+
+                case UsiEngineReportMessageType.UsiThinkReport:
+                    var thinkReport = message.data as UsiThinkReport;
+                    ConsiderationInstance(message.number).AddThinkReport(thinkReport);
+                    break;
+            }
+        }
+
 
         // -- properties
 

@@ -5,6 +5,7 @@ using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Player;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -392,7 +393,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 Debug.Assert(data != null);
 
-                var sfen = data.moves.Count == 0 ? data.rootSfen : $"sfen {data.rootSfen} moves {Util.MovesToUsiString(data.moves)}";
+                var sfen = data.moves.Count == 0 ?
+                    data.rootSfen :
+                    $"sfen {data.rootSfen} moves { Core.Util.MovesToUsiString(data.moves) }";
 
                 // 対局中ではないので、EnableKifuList == falseになっているが、
                 // 一時的にこれをtrueにしないと、読み込んだ棋譜に対して、Tree.KifuListが同期しない。
@@ -410,6 +413,27 @@ namespace MyShogi.Model.Shogi.LocalServer
             );
         }
 
+        /// <summary>
+        /// 検討中に検討ウィンドウの「候補手」のところが変更になった時に呼び出される。
+        /// </summary>
+        /// <param name="multiPv"></param>
+        public void ChangeMultiPvCommand(/*int instance_number , */ int multiPv)
+        {
+            AddCommand(
+            () =>
+            {
+                // 保存しておく。(次回検討時用に)
+                lastMultiPv = multiPv;
+
+                // エンジンによる検討モードでないなら受理しない。
+                if (GameMode != GameModeEnum.ConsiderationWithEngine)
+                    return;
+
+                // これで検討ウィンドウがクリアされて再度思考を開始するはず…。
+                NotifyTurnChanged();
+            });
+        }
+        private int lastMultiPv = 1;
 
         /// <summary>
         /// UI側から、worker threadで実行して欲しいコマンドを渡す。
@@ -417,7 +441,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// ここで渡されたコマンドは、CheckUICommand()で吸い出されて実行される。
         /// </summary>
         /// <param name="command"></param>
-        private void AddCommand(UICommand command)
+            private void AddCommand(UICommand command)
         {
             // workerを作っていないなら、自分のスレッドで実行すれば良い。
             if (NoThread)

@@ -73,7 +73,7 @@
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
-    <Compile Include="Model\Shogi\Usi\UsiEngineThinkingState.cs" />
+    <Compile Include="Model\Shogi\Usi\UsiEngineThinkingBridge.cs" />
     <Compile Include="Model\Shogi\Usi\UsiThinkReport.cs" />
     <Compile Include="Model\Shogi\Data\EvaluationGraphData.cs" />
     <Compile Include="Model\Shogi\Data\MiniShogiBoardData.cs" />

@@ -51,6 +51,31 @@ namespace MyShogi.Model.Shogi.Usi
         public bool IsStopping { get { return nextPosition != null; } }
 
         /// <summary>
+        /// "MultiPV"の値。検討モードで用いる。
+        /// </summary>
+        public int MultiPV
+        {
+            get { return multiPv; }
+            set {
+                if (multiPv != value)
+                    UpdateMultiPv(value);
+                multiPv = value;
+            }
+        }
+        private int multiPv = 1;
+        private int nextMultiPv = 0;
+
+        /// <summary>
+        /// "MultiPV"が変更になった時に呼び出される。
+        /// 思考中なら、stopさせて、再度探索する。
+        /// </summary>
+        /// <param name="multiPv_"></param>
+        private void UpdateMultiPv(int multiPv_)
+        {
+            nextMultiPv = multiPv_;
+        }
+
+        /// <summary>
         /// 思考を開始する。思考中であるなら、queueに積んで、いまの思考が停止してから思考を開始する。
         /// </summary>
         /// <param name="position"></param>
@@ -96,6 +121,12 @@ namespace MyShogi.Model.Shogi.Usi
         public void BestMoveReceived(Move bestMove_,Move ponderMove_)
         {
             Thinking = false;
+            if (nextMultiPv != 0)
+            {
+                // このタイミングでMultiPVを設定してしまう。
+                SendCommand($"setoption name MultiPV value {nextMultiPv}");
+                nextMultiPv = 0;
+            }
 
             // queueに積まれているのでそのThinkコマンドを叩いてやる。
             if (nextPosition != null)

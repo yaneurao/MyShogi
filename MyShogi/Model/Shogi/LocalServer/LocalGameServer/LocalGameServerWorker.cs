@@ -168,16 +168,17 @@ namespace MyShogi.Model.Shogi.LocalServer
                 BoardReverse = (stm == Color.BLACK);
 
             // プレイヤー情報などを検討ダイアログに反映させる。
-            InitEngineConsiderationInfo();
-            
+            var nextGameMode = GameModeEnum.InTheGame;
+            InitEngineConsiderationInfo(nextGameMode);
+
             // 検討モードならそれを停止させる必要があるが、それはGameModeのsetterがやってくれる。
-            GameMode = GameModeEnum.InTheGame;
+            GameMode = nextGameMode;
         }
 
         /// <summary>
         /// プレイヤー情報を検討ダイアログに反映させる。
         /// </summary>
-        private void InitEngineConsiderationInfo()
+        private void InitEngineConsiderationInfo(GameModeEnum nextGameMode)
         {
             // CPUの数をNumberOfEngineに反映。
             int num = 0;
@@ -189,8 +190,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             // エンジン数が確定したので、検討ウィンドウにNumberOfInstanceメッセージを送信してやる。
             ThinkReport = new UsiThinkReportMessage()
             {
-                type = UsisEngineReportMessageType.NumberOfInstance,
+                type = UsiEngineReportMessageType.NumberOfInstance,
                 number = NumberOfEngine,
+            };
+            ThinkReport = new UsiThinkReportMessage()
+            {
+                type = UsiEngineReportMessageType.SetGameMode,
+                data = nextGameMode
             };
 
             // 各エンジンの情報を検討ウィンドウにリダイレクトするようにハンドラを設定
@@ -201,13 +207,13 @@ namespace MyShogi.Model.Shogi.LocalServer
                 {
                     // 検討モードなら、名前は..
                     var name =
-                        (GameMode == GameModeEnum.ConsiderationWithEngine    ) ? "検討用エンジン" :
-                        (GameMode == GameModeEnum.ConsiderationWithMateEngine) ? "詰将棋エンジン" :
+                        (nextGameMode == GameModeEnum.ConsiderationWithEngine    ) ? "検討用エンジン" :
+                        (nextGameMode == GameModeEnum.ConsiderationWithMateEngine) ? "詰将棋エンジン" :
                             DisplayName(c);
 
                     ThinkReport = new UsiThinkReportMessage()
                     {
-                        type = UsisEngineReportMessageType.SetEngineName,
+                        type = UsiEngineReportMessageType.SetEngineName,
                         number = num,
                         data = name,
                     };
@@ -229,7 +235,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                             // このクラスのpropertyのsetterを呼び出してメッセージを移譲してやる。
                             ThinkReport = new UsiThinkReportMessage()
                             {
-                                type = UsisEngineReportMessageType.UsiThinkReport,
+                                type = UsiEngineReportMessageType.UsiThinkReport,
                                 number = num_, // is captrued
                                 data = report,
                             };
@@ -458,6 +464,16 @@ namespace MyShogi.Model.Shogi.LocalServer
             // BestMove,PonderMoveは、Think()以降、正常に更新されることは、Playerクラス側で保証されているので、
             // ここではそれらの初期化は行わない。
 
+            // -- MultiPVの設定
+
+            if (GameMode == GameModeEnum.ConsiderationWithEngine)
+                // MultiPVは、前回設定を引き継ぐ
+                (stmPlayer as UsiEnginePlayer).engine.MultiPV = lastMultiPv;
+                // それ以外のGameModeなら、USIのoption設定を引き継ぐので変更しない。
+
+
+            // -- Think()
+
             // エンジン検討モードなら時間無制限
             // 通常対局モードのはずなので現在の持ち時間設定を渡してやる。
 
@@ -472,7 +488,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 ThinkReport = new UsiThinkReportMessage()
                 {
-                    type = UsisEngineReportMessageType.SetRootSfen,
+                    type = UsiEngineReportMessageType.SetRootSfen,
                     number = NumberOfEngine == 1  ? 0 : (int)stm, // CPU1つなら1番目の窓、CPU2つならColorに相当する窓に
                     data = Position.ToSfen(),
                 };
@@ -612,7 +628,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 局面の設定
             kifuManager.EnableKifuList = false;
 
-            InitEngineConsiderationInfo();
+            // 検討ウィンドウへの読み筋などのリダイレクトを設定
+            InitEngineConsiderationInfo(GameMode);
         }
 
         /// <summary>

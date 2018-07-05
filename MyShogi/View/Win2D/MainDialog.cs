@@ -254,39 +254,21 @@ namespace MyShogi.View.Win2D
                     dialog.Location = new Point(Location.X + offset.X, Location.Y + offset.Y);
 
                 dialog.Visible = false;
+
+                dialog.ConsiderationInstance(0).Notify.AddPropertyChangedHandler("MultiPV", (h) =>
+                 { gameServer.ChangeMultiPvCommand((int)h.value); });
+
                 engineConsiderationDialog = dialog;
                 // 何にせよ、インスタンスがなくては話にならないので生成だけしておく。
             } else
             {
                 // 検討ウィンドウが非表示になっていたら、PVのメッセージ無視していいや…。
                 // (処理に時間かかるし…)
-                if (!engineConsiderationDialog.Visible && message.type == UsisEngineReportMessageType.UsiThinkReport)
+                if (!engineConsiderationDialog.Visible && message.type == UsiEngineReportMessageType.UsiThinkReport)
                         return;
             }
 
-            switch (message.type)
-            {
-                case UsisEngineReportMessageType.NumberOfInstance:
-                    // 非表示なので検討ウィンドウが表示されているなら消しておく。
-                    engineConsiderationDialog.Visible = message.number != 0;
-                    engineConsiderationDialog.SetEngineInstanceNumber(message.number);
-                    break;
-
-                case UsisEngineReportMessageType.SetEngineName:
-                    var engine_name = message.data as string;
-                    engineConsiderationDialog.ConsiderationInstance(message.number).EngineName = engine_name;
-                    break;
-
-                case UsisEngineReportMessageType.SetRootSfen:
-                    var sfen = message.data as string;
-                    engineConsiderationDialog.ConsiderationInstance(message.number).RootSfen = sfen;
-                    break;
-
-                case UsisEngineReportMessageType.UsiThinkReport:
-                    var thinkReport = message.data as UsiThinkReport;
-                    engineConsiderationDialog.ConsiderationInstance(message.number).AddThinkReport(thinkReport);
-                    break;
-            }
+            engineConsiderationDialog.DispatchThinkReportMessage(message);
         }
 
         // -- 以下、ToolStripのハンドラ
