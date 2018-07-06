@@ -5,6 +5,7 @@ using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Resource.Sounds;
+using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.LocalServer;
 
 // とりま、Windows用
@@ -26,6 +27,7 @@ namespace MyShogi.App
         {
             try
             {
+                DevTest();
                 Main();
             } catch (Exception ex)
             {
@@ -34,7 +36,7 @@ namespace MyShogi.App
             }
         }
 
-        private void Main()
+        private void DevTest()
         {
             // -- 開発時のテストコード
 
@@ -42,6 +44,11 @@ namespace MyShogi.App
             //ImageConverter.ConvertPieceImage();
             //ImageConverter.ConvertBoardNumberImage();
 
+            EngineDefine2018.WriteFiles();
+        }
+
+        private void Main()
+        {
             // -- global configの読み込み
 
             config = GlobalConfig.CreateInstance();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Management;
 using System.Text;
 using System.Windows.Forms;
@@ -19,6 +20,9 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void CpuInfo()
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             var sb = new StringBuilder();
 
             sb.AppendLine($"Environment.Is64BitOperatingSystem: {Environment.Is64BitOperatingSystem}");
@@ -73,6 +77,10 @@ namespace MyShogi.View.Win2D
                     }
                     mo.Dispose();
                 }
+
+            stopwatch.Stop();
+            sb.AppendLine($"計測に要した時間 { stopwatch.ElapsedMilliseconds } [ms]");
+            // 計測に要した時間 245 [ms]
 
             textBox1.Text = sb.ToString();
             textBox1.SelectionStart = 0;
