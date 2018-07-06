@@ -1,4 +1,5 @@
 ﻿using MyShogi.Model.Common.Utility;
+using System;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {

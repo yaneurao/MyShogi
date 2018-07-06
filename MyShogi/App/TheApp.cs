@@ -49,6 +49,7 @@ namespace MyShogi.App
             // -- 各エンジン用の設定ファィルを書き出す。
 
             //EngineDefineSample.WriteEngineDefineFiles2018();
+            //Console.WriteLine(Enviroment.GetFreePhysicalMemory() + "kB");
         }
 
         /// <summary>

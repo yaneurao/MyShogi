@@ -60,6 +60,7 @@
     <Compile Include="Model\Common\Utility\CpuId.cs" />
     <Compile Include="Model\Common\Utility\Encode.cs" />
     <Compile Include="Model\Common\Utility\FileIO.cs" />
+    <Compile Include="Model\Common\Utility\Enviroment.cs" />
     <Compile Include="Model\Common\Utility\Log.cs" />
     <Compile Include="Model\Common\Utility\Scanner.cs" />
     <Compile Include="Model\Common\Utility\Serializer.cs" />
