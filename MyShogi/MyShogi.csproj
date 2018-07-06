@@ -62,6 +62,7 @@
     <Compile Include="Model\Common\Utility\FileIO.cs" />
     <Compile Include="Model\Common\Utility\Log.cs" />
     <Compile Include="Model\Common\Utility\Scanner.cs" />
+    <Compile Include="Model\Common\Utility\Serializer.cs" />
     <Compile Include="Model\Common\Utility\StringExtensions.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="Model\Common\Win32\Win32API.cs" />
@@ -73,10 +74,12 @@
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
+    <Compile Include="Model\Shogi\EngineDefine\EngineAutoSetting.cs" />
     <Compile Include="Model\Shogi\EngineDefine\Cpu.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineDefine.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineDefineUtility.cs" />
-    <Compile Include="Model\Shogi\EngineDefine\Sample\EngineDefine2018.cs" />
+    <Compile Include="Model\Shogi\EngineDefine\Sample\EngineDefineSample.cs" />
+    <Compile Include="Model\Shogi\EngineDefine\EngineOption.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngineThinkingBridge.cs" />
     <Compile Include="Model\Shogi\Usi\UsiThinkReport.cs" />
     <Compile Include="Model\Shogi\Data\EvaluationGraphData.cs" />

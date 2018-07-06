@@ -36,17 +36,26 @@ namespace MyShogi.App
             }
         }
 
+        /// <summary>
+        /// 開発時のテストコード
+        /// </summary>
         private void DevTest()
         {
-            // -- 開発時のテストコード
+            // -- 駒素材画像の変換
 
-            // 駒素材画像の変換
             //ImageConverter.ConvertPieceImage();
             //ImageConverter.ConvertBoardNumberImage();
 
-            EngineDefine2018.WriteFiles();
+            // -- 各エンジン用の設定ファィルを書き出す。
+
+            //EngineDefineSample.WriteEngineDefineFiles2018();
         }
 
+        /// <summary>
+        /// メインの処理。
+        /// 
+        /// 各インスタンスを生成して、イベントのbindを行い、メインダイアログの実行を開始する。
+        /// </summary>
         private void Main()
         {
             // -- global configの読み込み

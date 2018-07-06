@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Text;
-using System.Xml.Serialization;
+﻿using MyShogi.Model.Common.Utility;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -16,26 +14,11 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <returns></returns>
         public static EngineDefine ReadFile(string filepath)
         {
-            EngineDefine def;
-            var xmlSerializer = new XmlSerializer(typeof(EngineDefine));
-            var xmlSettings = new System.Xml.XmlReaderSettings()
-            {
-                CheckCharacters = false,
-            };
-            try
-            {
-                using (var streamReader = new StreamReader(filepath, Encoding.UTF8))
-                using (var xmlReader
-                        = System.Xml.XmlReader.Create(streamReader, xmlSettings))
-                {
-                    def = (EngineDefine)xmlSerializer.Deserialize(xmlReader);
-                }
-            }
-            catch
-            {
-                // 読み込めなかったので新規に作成する。
+            var def = Serializer.Deserialize<EngineDefine>(filepath);
+
+            // 読み込めなかったので新規に作成する。
+            if (def == null)
                 def = new EngineDefine();
-            }
 
             return def;
         }
@@ -47,14 +30,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <param name="engine_define"></param>
         public static void WriteFile(string filepath, EngineDefine engine_define)
         {
-            // シリアライズする
-            var xmlSerializer = new XmlSerializer(typeof(EngineDefine));
-
-            using (var streamWriter = new StreamWriter(filepath, false, Encoding.UTF8))
-            {
-                xmlSerializer.Serialize(streamWriter, engine_define);
-                streamWriter.Flush();
-            }
+            Serializer.Serialize(filepath, engine_define);
         }
 
         /// <summary>

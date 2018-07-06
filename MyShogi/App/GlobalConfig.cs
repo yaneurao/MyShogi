@@ -1,8 +1,11 @@
 ﻿using System.Drawing;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.App
@@ -44,25 +47,11 @@ namespace MyShogi.App
         /// </summary>
         public static GlobalConfig CreateInstance()
         {
-            GlobalConfig config;
-            var xmlSerializer = new XmlSerializer(typeof(GlobalConfig));
-            var xmlSettings = new System.Xml.XmlReaderSettings()
-            {
-                CheckCharacters = false,
-            };
-            try
-            {
-                using (var streamReader = new StreamReader(xmlFile, Encoding.UTF8))
-                using (var xmlReader
-                        = System.Xml.XmlReader.Create(streamReader, xmlSettings))
-                {
-                    config = (GlobalConfig)xmlSerializer.Deserialize(xmlReader);
-                }
-            } catch
-            {
-                // 読み込めなかったので新規に作成する。
+            var config = Serializer.Deserialize<GlobalConfig>(xmlFile);
+
+            // ファイルがなかったら新規に作成する。
+            if (config == null)
                 config = new GlobalConfig();
-            }
 
             config.Init();
 
@@ -108,14 +97,7 @@ namespace MyShogi.App
         /// </summary>
         public void Save()
         {
-            // シリアライズする
-            var xmlSerializer = new XmlSerializer(typeof(GlobalConfig));
-
-            using (var streamWriter = new StreamWriter(xmlFile, false, Encoding.UTF8))
-            {
-                xmlSerializer.Serialize(streamWriter, this);
-                streamWriter.Flush();
-            }
+            Serializer.Serialize(xmlFile, this);
         }
 
         /// <summary>
