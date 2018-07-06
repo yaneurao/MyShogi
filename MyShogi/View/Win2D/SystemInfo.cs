@@ -79,6 +79,7 @@ namespace MyShogi.View.Win2D
                 }
 
             stopwatch.Stop();
+            sb.AppendLine();
             sb.AppendLine($"計測に要した時間 { stopwatch.ElapsedMilliseconds } [ms]");
             // 計測に要した時間 245 [ms]
 

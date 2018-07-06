@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -31,61 +27,26 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         public Int64 RequiredMemory { get; set; } = 500;
 
-    }
-
-    /// <summary>
-    /// EngineDefineのユーティリティ
-    /// </summary>
-    public static class EngineDefineUtility
-    {
         /// <summary>
-        /// "engine_define.xml"というファイルを読み込んで、デシリアライズする。
+        /// エンジンの実行ファイル名。
+        /// 
+        /// 例えば"engine"としておくと、AVX2用ならば"engine_avx2.exe"のようになる。
+        /// 例)
+        ///     "engine_nosse.exe"  : 32bit版
+        ///     "engine_sse2.exe"   : 64bit版sse2対応
+        ///     "engine_sse41.exe"  : 64bit版sse4.1対応
+        ///     "engine_sse42.exe"  : 64bit版sse4.2対応
+        ///     "engine_avx2.exe"   : 64bit版avx2対応
+        ///     "engine_avx512.exe" : 64bit版avx512対応
         /// </summary>
-        /// <param name="filepath"></param>
-        /// <returns></returns>
-        public static EngineDefine ReadFile(string filepath)
-        {
-            EngineDefine def;
-            var xmlSerializer = new XmlSerializer(typeof(EngineDefine));
-            var xmlSettings = new System.Xml.XmlReaderSettings()
-            {
-                CheckCharacters = false,
-            };
-            try
-            {
-                using (var streamReader = new StreamReader(filepath, Encoding.UTF8))
-                using (var xmlReader
-                        = System.Xml.XmlReader.Create(streamReader, xmlSettings))
-                {
-                    def = (EngineDefine)xmlSerializer.Deserialize(xmlReader);
-                }
-            }
-            catch
-            {
-                // 読み込めなかったので新規に作成する。
-                def = new EngineDefine();
-            }
-
-            return def;
-        }
+        public string EngineExeName { get; set; } = "engine";
 
         /// <summary>
-        /// ファイルにEngineDefineをシリアライズして書き出す。
+        /// エンジンがサポートしているCPUを列挙する。
+        /// 例えば、SSE2をサポートしていて、SSE4.1をサポートしていなくて、動作環境がSSE4.1なら、SSE2の実行ファイルを
+        /// 呼び出せば良いとわかる。
         /// </summary>
-        /// <param name="filepath"></param>
-        /// <param name="engine_define"></param>
-        public static void WriteFile(string filepath, EngineDefine engine_define)
-        {
-            // シリアライズする
-            var xmlSerializer = new XmlSerializer(typeof(EngineDefine));
-
-            using (var streamWriter = new StreamWriter(filepath, false, Encoding.UTF8))
-            {
-                xmlSerializer.Serialize(streamWriter, engine_define);
-                streamWriter.Flush();
-            }
-        }
-
+        public Cpu[] SupportedCpus { get; set; } = { Cpu.NO_SSE, Cpu.SSE2 , Cpu.SSE41 , Cpu.SSE42 , Cpu.AVX2 };
     }
 
 }
