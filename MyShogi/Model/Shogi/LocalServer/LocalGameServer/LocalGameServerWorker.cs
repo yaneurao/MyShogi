@@ -78,7 +78,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             // 以下の初期化中に駒が動かされるの気持ち悪いのでユーザー操作を禁止しておく。
             CanUserMove = false;
-            lastInitializing = true;
+            Initializing = true;
 
             // 音声:「よろしくお願いします。」
             TheApp.app.soundManager.Stop(); // 再生中の読み上げをすべて停止
@@ -535,6 +535,22 @@ namespace MyShogi.Model.Shogi.LocalServer
             var stm = Position.sideToMove;
             if (GameMode == GameModeEnum.InTheGame && PlayTimer(stm).IsTimeUp())
                 Player(stm).SpecialMove = Move.TIME_UP;
+
+            // エンジンで発生した例外の捕捉
+            foreach(var c in All.Colors())
+            {
+                if (Player(c).PlayerType == PlayerTypeEnum.UsiEngine)
+                {
+                    var engine = (Player(c) as UsiEnginePlayer).engine;
+                    var ex = engine.Exception;
+                    if (ex != null)
+                    {
+                        TheApp.app.MessageShow($"エンジン側で例外が発生しました。\n例外 : { ex.Message }\nスタックトレース : { ex.StackTrace}");
+                        engine.Exception = null;
+                        Player(stm).SpecialMove = Move.INTERRUPT;
+                    }
+                }
+            }
         }
 
         /// <summary>

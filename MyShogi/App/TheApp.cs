@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
@@ -49,9 +50,6 @@ namespace MyShogi.App
             // -- 各エンジン用の設定ファィルを書き出す。
 
             //EngineDefineSample.WriteEngineDefineFiles2018();
-            //Console.WriteLine(Enviroment.GetFreePhysicalMemory() + "kB");
-
-            EngineDefineUtility.GetEngineDefineFiles();
         }
 
         /// <summary>
@@ -187,6 +185,12 @@ namespace MyShogi.App
                     gameServer.Dispose();
             });
 
+            // -- エンジン設定を読み込む
+
+            engine_defines = EngineDefineUtility.GetEngineDefines();
+
+            // -- メインダイアログを生成して、アプリの開始
+
             Application.Run(mainDialog);
         }
 
@@ -232,6 +236,11 @@ namespace MyShogi.App
         /// GUIの全体設定
         /// </summary>
         public GlobalConfig config { get; private set; }
+
+        /// <summary>
+        /// エンジン設定(起動時に読み込む)
+        /// </summary>
+        public List<EngineDefine> engine_defines { get; private set; }
 
         /// <summary>
         /// サウンドマネージャー

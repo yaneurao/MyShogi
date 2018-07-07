@@ -1450,20 +1450,8 @@ namespace MyShogi.View.Win2D
                         item.Text = "DevTest1.Test5()";
                         item.Click += (sender, e) =>
                         {
-#if false
-                            if (engineConsiderationDialog != null)
-                                engineConsiderationDialog.Dispose();
-
-                            var dialog = new EngineConsiderationDialog();
-                            dialog.Init();
-
-                            // ウィンドウ幅を合わせておく。
-
-                            dialog.Size = new Size(Width, Width / 8);
+                            var dialog = new EngineSelectionDialog();
                             dialog.Show();
-                            dialog.Location = new Point(Location.X, Location.Y + Height);
-                            engineConsiderationDialog = dialog;
-#endif
                         };
                         item_debug.DropDownItems.Add(item);
                     }

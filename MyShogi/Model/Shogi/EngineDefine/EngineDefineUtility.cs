@@ -1,4 +1,5 @@
-﻿using MyShogi.Model.Common.Utility;
+﻿using MyShogi.App;
+using MyShogi.Model.Common.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,6 +24,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
             // 読み込めなかったので新規に作成する。
             if (def == null)
                 def = new EngineDefine();
+
+            // バナーファイル名、実行ファイルのファイル名などをfull pathに変換しておく。
+
+            var current = Path.GetDirectoryName(filepath);
+            def.BannerFileName = Path.Combine(current, def.BannerFileName);
+            def.EngineExeName = Path.Combine(current, def.EngineExeName);
 
             return def;
         }
@@ -77,5 +84,33 @@ namespace MyShogi.Model.Shogi.EngineDefine
             return result;
         }
 
+        /// <summary>
+        /// 実行ファイル配下のengineフォルダを調べて、それぞれの"engine_define.xml"を読み込んで
+        /// EngineDefineのListを返す。
+        /// </summary>
+        /// <returns></returns>
+        public static List<EngineDefine> GetEngineDefines()
+        {
+            // 実行ファイル配下のengine/フォルダ配下にある"engine_define.xml"を列挙する。
+            var def_files = GetEngineDefineFiles();
+
+            var list = new List<EngineDefine>();
+            foreach (var filename in def_files)
+            {
+                try
+                {
+                    var engine_define = ReadFile(filename);
+                    list.Add(engine_define);
+                } catch (Exception ex)
+                {
+                    TheApp.app.MessageShow($"{filename}の解析に失敗しました。\n例外名" + ex.Message);
+                }
+            }
+
+            // EngineDefine.EngineOrderの順で並び替える。
+            list.Sort((x ,y) => y.DisplayOrder - x.DisplayOrder);
+
+            return list;
+        }
     }
 }

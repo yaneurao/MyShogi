@@ -49,13 +49,12 @@ namespace MyShogi.Model.Shogi.Usi
 
                 ChangeState(UsiEngineState.Connected);
             }
-            catch
+            catch (Exception ex)
             {
                 // 思考エンジンに接続できないとき、Win32Exceptionが飛んでくる
                 ChangeState(UsiEngineState.ConnectionFailed);
 
-                TheApp.app.MessageShow("思考エンジンとの接続が切断されました。");
-                // TODO : エラーリカバリーあとで処理書く。
+                Exception = ex;
             }
         }
 
@@ -195,6 +194,15 @@ namespace MyShogi.Model.Shogi.Usi
         {
             get { return GetValue<UsiThinkReport>("ThinkReport");}
             set { SetValue<UsiThinkReport>("ThinkReport",value); }
+        }
+
+        /// <summary>
+        /// 例外が発生したときにここに代入される。
+        /// エンジンの接続エラーなど。
+        /// </summary>
+        public Exception Exception
+        {
+            get;set;
         }
 
         // -- private members

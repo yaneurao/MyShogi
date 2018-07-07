@@ -81,6 +81,16 @@ namespace MyShogi.Model.Shogi.EngineDefine
         public Int64 MinimumHashMemory { get; set; } = 100;
 
         /// <summary>
+        /// エンジン選択画面での表示順。これが大きい順に表示することになっている。
+        /// デフォルト0。(一番最後に表示される)
+        /// 
+        /// 商用版のために10000～19999を予約。
+        /// 商用版(2018)は10000～10099を使用。
+        /// </summary>
+        [DataMember]
+        public int DisplayOrder { get; set; } = 0;
+
+        /// <summary>
         /// おまかせ設定集
         /// </summary>
         [DataMember]

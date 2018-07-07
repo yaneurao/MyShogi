@@ -265,13 +265,13 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var init = false;
                 foreach (var c in All.Colors())
                     init |= Player(c).Initializing;
-                if (lastInitializing && !init)
+                if (Initializing && !init)
                 {
                     // 状態がtrueからfalseに変わった
                     // 両方の対局準備ができたということなので対局スタート
                     NotifyTurnChanged();
                 }
-                lastInitializing = init;
+                Initializing = init; // 前回の値を代入しておく。
             }
 
             // EngineInitializingプロパティの更新
@@ -285,7 +285,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 SetValue<bool>("EngineInitializing", engineInit);
             }
         }
-        private bool lastInitializing = false;
+        private bool Initializing = false;
 
         /// <summary>
         /// Positionプロパティの更新。

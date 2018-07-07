@@ -237,6 +237,12 @@
     <Compile Include="View\Win2D\Info\EvalGraphControl.Designer.cs">
       <DependentUpon>EvalGraphControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\Setting\EngineSelectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\EngineSelectionDialog.Designer.cs">
+      <DependentUpon>EngineSelectionDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\Setting\GameSettingDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -304,6 +310,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Info\EvalGraphControl.resx">
       <DependentUpon>EvalGraphControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\EngineSelectionControl.resx">
+      <DependentUpon>EngineSelectionControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\EngineSelectionDialog.resx">
+      <DependentUpon>EngineSelectionDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\GameSettingDialog.resx">
       <DependentUpon>GameSettingDialog.cs</DependentUpon>

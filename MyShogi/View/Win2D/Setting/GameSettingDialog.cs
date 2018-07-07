@@ -8,6 +8,18 @@ using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
 {
+    /// <summary>
+    /// 対局設定ダイアログ
+    /// 
+    /// 注意)
+    /// Visual StudioのデザイナでこのDialogを編集するときは
+    ///   AutoScale = Size(96F,96F)
+    /// で編集しなければならない。
+    /// 
+    /// high dpi環境で編集して(192F,192F)とかになっていると、
+    /// 解像度の低い実行環境でダイアログの大きさが小さくなってしまう。
+    /// (.NET Frameworkのhigh dpiのバグ)
+    /// </summary>
     public partial class GameSettingDialog : Form
     {
         public GameSettingDialog(MainDialog mainDialog_)
