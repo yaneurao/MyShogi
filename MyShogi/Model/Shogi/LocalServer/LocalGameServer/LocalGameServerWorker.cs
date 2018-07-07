@@ -78,6 +78,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             // 以下の初期化中に駒が動かされるの気持ち悪いのでユーザー操作を禁止しておく。
             CanUserMove = false;
+            lastInitializing = true;
 
             // 音声:「よろしくお願いします。」
             TheApp.app.soundManager.Stop(); // 再生中の読み上げをすべて停止

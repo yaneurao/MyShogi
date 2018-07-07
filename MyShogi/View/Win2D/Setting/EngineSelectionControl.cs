@@ -31,6 +31,10 @@ namespace MyShogi.View.Win2D
 
         public EngineSelectionViewModel ViewModel = new EngineSelectionViewModel();
 
+        /// <summary>
+        /// [UI Thread] : EngineDefineが変更になった時のハンドラ。これが画面に反映される。
+        /// </summary>
+        /// <param name="args"></param>
         private void EngineDefineChanged(PropertyChangedEventArgs args)
         {
             var engineDefine = args.value;

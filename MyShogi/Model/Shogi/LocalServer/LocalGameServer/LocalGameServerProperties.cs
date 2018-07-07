@@ -72,10 +72,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 依存プロパティの更新
                 SetValue<bool>("InTheGame", value == GameModeEnum.InTheGame);
                 SetValue<bool>("InTheBoardEdit" , value == GameModeEnum.InTheBoardEdit);
-
-                // 初期化等が終わったのでゲームの対局開始
-                if (value == GameModeEnum.InTheGame)
-                    NotifyTurnChanged();
             }
         }
 

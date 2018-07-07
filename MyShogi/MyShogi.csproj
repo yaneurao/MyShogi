@@ -255,7 +255,7 @@
     <Compile Include="View\Win2D\Info\EngineConsiderationDialog.Designer.cs">
       <DependentUpon>EngineConsiderationDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\common\ListViewEx.cs">
+    <Compile Include="View\Win2D\Common\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="View\Win2D\Game\MainDialog.cs">
@@ -276,7 +276,7 @@
     <Compile Include="View\Win2D\Info\SystemInfo.Designer.cs">
       <DependentUpon>SystemInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\common\ToolStripButtonEnum.cs" />
+    <Compile Include="View\Win2D\Common\ToolStripButtonEnum.cs" />
     <EmbeddedResource Include="Model\Test\DevTest2\EvalControlTestForm.resx">
       <DependentUpon>EvalControlTestForm.cs</DependentUpon>
     </EmbeddedResource>

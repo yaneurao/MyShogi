@@ -232,11 +232,14 @@ namespace MyShogi.View.Win2D
                 else
                 {
                     listView1.Items.Add(item);
-                    listView1.TopItem = item; // 自動スクロール
-
-                    // 読み筋をここに保存しておく。(ミニ盤面で開く用)
-                    // なければnullもありうる。
+                    // 読み筋をここに保存しておく。(ミニ盤面で開く用) なければnullもありうる。
                     list_item_moves.Add(info.Moves);
+
+                    try
+                    {
+                        // 検討ウィンドウの縦幅を縮めているとTopItemへの代入がぬるぽになる。
+                        listView1.TopItem = item; // 自動スクロール
+                    } catch { }
                 }
             }
 
