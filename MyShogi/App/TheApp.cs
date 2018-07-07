@@ -50,6 +50,8 @@ namespace MyShogi.App
 
             //EngineDefineSample.WriteEngineDefineFiles2018();
             //Console.WriteLine(Enviroment.GetFreePhysicalMemory() + "kB");
+
+            EngineDefineUtility.GetEngineDefineFiles();
         }
 
         /// <summary>

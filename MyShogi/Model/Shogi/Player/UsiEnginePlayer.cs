@@ -18,7 +18,7 @@ namespace MyShogi.Model.Shogi.Player
             engine = new UsiEngine();
             engine.AddPropertyChangedHandler("State", StateChanged);
             
-            var data = new ProcessNegotiatorData("engine/gpsfish/gpsfish.exe");
+            var data = new ProcessNegotiatorData("engine/gpsfish/gpsfish_sse2.exe");
             engine.Connect(data);
             // 接続できているものとする。
         }

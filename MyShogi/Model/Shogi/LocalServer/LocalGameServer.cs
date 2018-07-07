@@ -44,8 +44,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             // Position,KifuListは、kifuManagerから半自動でデータバインドする。
             // (それぞれがimmutable objectではないため、Clone()が必要になるので)
 
-            kifuManager.Tree.AddPropertyChangedHandler("Position", PositionUpdate);
-            kifuManager.Tree.AddPropertyChangedHandler("KifuList", KifuListUpdate);
+            kifuManager.Tree.AddPropertyChangedHandler("Position", PositionChanged);
+            kifuManager.Tree.AddPropertyChangedHandler("KifuList", KifuListChanged);
+            kifuManager.Tree.AddPropertyChangedHandler("KifuListAdded", KifuListAdded);
+            kifuManager.Tree.AddPropertyChangedHandler("KifuListRemoved", KifuListRemoved);
 
             // 起動時に平手の初期局面が表示されるようにしておく。
             kifuManager.EnableKifuList = true;

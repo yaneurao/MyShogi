@@ -1,5 +1,8 @@
 ﻿using MyShogi.Model.Common.Utility;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -51,6 +54,27 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     cpu = c;
 
             return $"{ engine_define.EngineExeName }_{ cpu.ToSuffix()}.exe";
+        }
+
+        /// <summary>
+        /// 実行ファイル配下のengineフォルダを調べて、"engine_define.xml"へのpathをすべて返す。
+        /// </summary>
+        /// <returns></returns>
+        public static List<string> GetEngineDefineFiles()
+        {
+            var result = new List<string>();
+
+            var current = Path.GetDirectoryName(Application.ExecutablePath);
+            var engine_folder = Path.Combine(current, "engine");
+            var folders = Directory.GetDirectories(engine_folder);
+            foreach(var f in folders)
+            {
+                // このフォルダに"engine_define.xml"があれば、それを追加していく。
+                var path = Path.Combine(f, "engine_define.xml");
+                if (File.Exists(path))
+                    result.Add(path);
+            }
+            return result;
         }
 
     }

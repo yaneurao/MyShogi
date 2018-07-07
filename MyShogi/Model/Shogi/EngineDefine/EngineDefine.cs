@@ -11,6 +11,19 @@ namespace MyShogi.Model.Shogi.EngineDefine
     public class EngineDefine
     {
         /// <summary>
+        /// エンジン説明1行で
+        /// </summary>
+        [DataMember]
+        public string DescriptionSimple { get; set; } = "エンジン説明";
+
+        /// <summary>
+        /// エンジン説明5行ぐらいで。
+        /// エンジン選択のときに表示される。
+        /// </summary>
+        [DataMember]
+        public string Description { get; set; } = "エンジン説明";
+
+        /// <summary>
         /// エンジンのバナー : 横512px×縦160pxのpng形式 推奨。
         /// このファイルがあるフォルダ相対
         /// </summary>
@@ -59,10 +72,19 @@ namespace MyShogi.Model.Shogi.EngineDefine
         public Int64 RequiredMemory { get; set; } = 500;
 
         /// <summary>
+        /// 置換表(HASH)用の最小メモリ。これくらいはないとまともに動かないというライン。
+        /// 単位は[MB]
+        /// 
+        /// ※　GUI側では、RequiredMemory + MinimumHashMemoryの分だけ空き物理メモリがないとエンジン選択時に警告を出す。
+        /// </summary>
+        [DataMember]
+        public Int64 MinimumHashMemory { get; set; } = 100;
+
+        /// <summary>
         /// おまかせ設定集
         /// </summary>
         [DataMember]
-        public EngineAutoSetting[] AutoSettings;
+        public EngineAutoSetting[] Presets;
     }
 
 }

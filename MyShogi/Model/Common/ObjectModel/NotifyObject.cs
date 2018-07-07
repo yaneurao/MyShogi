@@ -11,18 +11,14 @@ namespace MyShogi.Model.Common.ObjectModel
     /// </summary>
     public class PropertyChangedEventArgs
     {
-        public PropertyChangedEventArgs(string name_ , object value_ , int start_ = -1, int end_ = -1)
+        public PropertyChangedEventArgs(string name_ , object value_)
         {
             name = name_;
             value = value_;
-            start = start_;
-            end = end_;
         }
 
         public string name;
         public object value;  // プロパティに代入された値
-        public int start;     // 配列の場合など、部分更新が起こった場合、ここにその数値が入る。(さもなくば-1)
-        public int end;       // 配列の場合など、部分更新が起こった場合、ここにその数値が入る。(さもなくば-1)
     }
 
     /// <summary>
@@ -43,7 +39,7 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        protected void SetValue<T>(string name, T value , int start = -1 , int end = -1)
+        protected void SetValue<T>(string name, T value)
         {
             using (LazyLock())
             {
@@ -60,7 +56,7 @@ namespace MyShogi.Model.Common.ObjectModel
 
                     // LazyLockは、lockが解除されたときにまとめて変更通知を行う。
                     if (PropertyChangedEventEnable)
-                        LazyRaisePropertyChanged(name, value, start, end);
+                        LazyRaisePropertyChanged(name, value);
                 }
             }
         }
@@ -184,9 +180,9 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <param name="value"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public void RaisePropertyChanged(string name, object value, int start = -1, int end = -1)
+        public void RaisePropertyChanged(string name, object value)
         {
-            RaisePropertyChanged(new PropertyChangedEventArgs(name, value, start, end));
+            RaisePropertyChanged(new PropertyChangedEventArgs(name, value));
         }
 
         /// <summary>
@@ -332,10 +328,10 @@ namespace MyShogi.Model.Common.ObjectModel
         /// SetValue()を使わずに自力で名前に対応するイベントハンドラを呼びたい時にも用いる。
         /// </summary>
         /// <param name="name"></param>
-        private void LazyRaisePropertyChanged(string name, object value, int start = -1, int end = -1)
+        private void LazyRaisePropertyChanged(string name, object value)
         {
             // ここに積んでおいて、lockを抜けるときにまとめて呼び出す
-            LazyRaisePropertyChanged(new PropertyChangedEventArgs(name, value, start, end));
+            LazyRaisePropertyChanged(new PropertyChangedEventArgs(name, value));
         }
 
         /// <summary>

@@ -181,96 +181,102 @@
     <Compile Include="Model\Shogi\Usi\UsiThinkLimit.cs" />
     <Compile Include="App\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="View\Win2D\AboutYaneuraOu.cs">
+    <Compile Include="View\Win2D\Info\AboutYaneuraOu.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\AboutYaneuraOu.Designer.cs">
+    <Compile Include="View\Win2D\Info\AboutYaneuraOu.Designer.cs">
       <DependentUpon>AboutYaneuraOu.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\DebugWindow.cs">
+    <Compile Include="View\Win2D\Info\DebugWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\DebugWindow.Designer.cs">
+    <Compile Include="View\Win2D\Info\DebugWindow.Designer.cs">
       <DependentUpon>DebugWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\EngineConsiderationControl.cs">
+    <Compile Include="View\Win2D\Info\EngineConsiderationControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\EngineConsiderationControl.Designer.cs">
+    <Compile Include="View\Win2D\Info\EngineConsiderationControl.Designer.cs">
       <DependentUpon>EngineConsiderationControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\GameScreenControl.cs">
+    <Compile Include="View\Win2D\Setting\EngineSelectionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\GameScreenControl.Designer.cs">
+    <Compile Include="View\Win2D\Setting\EngineSelectionControl.Designer.cs">
+      <DependentUpon>EngineSelectionControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Win2D\Game\GameScreenControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Game\GameScreenControl.Designer.cs">
       <DependentUpon>GameScreenControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlConst.cs">
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlConst.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlDrawSprite.cs">
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlDrawSprite.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlEventHandler.cs">
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlEventHandler.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlEventHelper.cs">
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlEventHelper.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlOnDraw.cs">
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlOnDraw.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlProperties.cs">
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlProperties.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlSetting.cs" />
-    <Compile Include="View\Win2D\GameScreenControl\GameScreenControlViewState.cs" />
-    <Compile Include="View\Win2D\EvalGraphControl.cs">
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlSetting.cs" />
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlViewState.cs" />
+    <Compile Include="View\Win2D\Info\EvalGraphControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\EvalGraphControl.Designer.cs">
+    <Compile Include="View\Win2D\Info\EvalGraphControl.Designer.cs">
       <DependentUpon>EvalGraphControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\GameSettingDialog.cs">
+    <Compile Include="View\Win2D\Setting\GameSettingDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\GameSettingDialog.Designer.cs">
+    <Compile Include="View\Win2D\Setting\GameSettingDialog.Designer.cs">
       <DependentUpon>GameSettingDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\KifuControl.cs">
+    <Compile Include="View\Win2D\Info\KifuControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\KifuControl.Designer.cs">
+    <Compile Include="View\Win2D\Info\KifuControl.Designer.cs">
       <DependentUpon>KifuControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\EngineConsiderationDialog.cs">
+    <Compile Include="View\Win2D\Info\EngineConsiderationDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\EngineConsiderationDialog.Designer.cs">
+    <Compile Include="View\Win2D\Info\EngineConsiderationDialog.Designer.cs">
       <DependentUpon>EngineConsiderationDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\ListViewEx.cs">
+    <Compile Include="View\Win2D\common\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="View\Win2D\MainDialog.cs">
+    <Compile Include="View\Win2D\Game\MainDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\MainDialog.Designer.cs">
+    <Compile Include="View\Win2D\Game\MainDialog.Designer.cs">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\MiniShogiBoard.cs">
+    <Compile Include="View\Win2D\Game\MiniShogiBoard.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\MiniShogiBoard.Designer.cs">
+    <Compile Include="View\Win2D\Game\MiniShogiBoard.Designer.cs">
       <DependentUpon>MiniShogiBoard.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\SystemInfo.cs">
+    <Compile Include="View\Win2D\Info\SystemInfo.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\SystemInfo.Designer.cs">
+    <Compile Include="View\Win2D\Info\SystemInfo.Designer.cs">
       <DependentUpon>SystemInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\ToolStripButtonEnum.cs" />
+    <Compile Include="View\Win2D\common\ToolStripButtonEnum.cs" />
     <EmbeddedResource Include="Model\Test\DevTest2\EvalControlTestForm.resx">
       <DependentUpon>EvalControlTestForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -284,37 +290,37 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="View\Win2D\AboutYaneuraOu.resx">
+    <EmbeddedResource Include="View\Win2D\Info\AboutYaneuraOu.resx">
       <DependentUpon>AboutYaneuraOu.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\DebugWindow.resx">
+    <EmbeddedResource Include="View\Win2D\Info\DebugWindow.resx">
       <DependentUpon>DebugWindow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\EngineConsiderationControl.resx">
+    <EmbeddedResource Include="View\Win2D\Info\EngineConsiderationControl.resx">
       <DependentUpon>EngineConsiderationControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\GameScreenControl.resx">
+    <EmbeddedResource Include="View\Win2D\Game\GameScreenControl.resx">
       <DependentUpon>GameScreenControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\EvalGraphControl.resx">
+    <EmbeddedResource Include="View\Win2D\Info\EvalGraphControl.resx">
       <DependentUpon>EvalGraphControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\GameSettingDialog.resx">
+    <EmbeddedResource Include="View\Win2D\Setting\GameSettingDialog.resx">
       <DependentUpon>GameSettingDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\KifuControl.resx">
+    <EmbeddedResource Include="View\Win2D\Info\KifuControl.resx">
       <DependentUpon>KifuControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\EngineConsiderationDialog.resx">
+    <EmbeddedResource Include="View\Win2D\Info\EngineConsiderationDialog.resx">
       <DependentUpon>EngineConsiderationDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\MainDialog.resx">
+    <EmbeddedResource Include="View\Win2D\Game\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\MiniShogiBoard.resx">
+    <EmbeddedResource Include="View\Win2D\Game\MiniShogiBoard.resx">
       <DependentUpon>MiniShogiBoard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\SystemInfo.resx">
+    <EmbeddedResource Include="View\Win2D\Info\SystemInfo.resx">
       <DependentUpon>SystemInfo.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />

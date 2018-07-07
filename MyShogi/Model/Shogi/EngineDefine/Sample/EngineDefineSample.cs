@@ -13,7 +13,7 @@
         {
             // 各棋力ごとのエンジンオプション
             // (これでエンジンのdefault optionsがこれで上書きされる)
-            var auto_setting_default = new [] {
+            var preset_default = new [] {
 
                 // -- 棋力制限なし
                 new EngineAutoSetting("将棋神" , null ) ,
@@ -85,7 +85,10 @@
                     EngineExeName = "yaneuraou2018_kpp_kkpt",
                     SupportedCpus = new [] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 },
                     RequiredMemory = 512, // KPP_KKPTは、これくらい？
-                    AutoSettings = auto_setting_default,
+                    Presets = preset_default,
+                    DescriptionSimple = "やねうら王 2018年度版",
+                    Description = "プロの棋譜を一切利用せずに自己学習で身につけた異次元の大局観。"+
+                        "従来の将棋の常識を覆す指し手が飛び出すかも？",
                 };
                 EngineDefineUtility.WriteFile("engine/yaneuraou2018/engine_define.xml", engine_define);
 
@@ -101,7 +104,10 @@
                     EngineExeName = "yaneuraou2018_kppt",
                     SupportedCpus = new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 },
                     RequiredMemory = 1024, // KPPTは、これくらい？
-                    AutoSettings = auto_setting_default,
+                    Presets = preset_default,
+                    DescriptionSimple = "tanuki- SDT5版",
+                    Description = "SDT5(第5回 将棋電王トーナメント)で絶対王者Ponanzaを下し堂々の優勝を果たした実力派。" +
+                        "SDT5 出場名『平成将棋合戦ぽんぽこ』",
                 };
                 EngineDefineUtility.WriteFile("engine/tanuki_sdt5/engine_define.xml", engine_define);
             }
@@ -114,7 +120,10 @@
                     EngineExeName = "yaneuraou2018_nuee",
                     SupportedCpus = new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 },
                     RequiredMemory = 512, // NNUEは、これくらい？
-                    AutoSettings = auto_setting_default,
+                    Presets = preset_default,
+                    DescriptionSimple = "tanuki- 2018年版",
+                    Description = "WCSC28(第28回 世界コンピュータ将棋選手権)に出場した時からさらに強化されたtanuki-シリーズ最新作。" +
+                        "ニューラルネットワークを用いた評価関数で、他のソフトとは毛並みの違う新時代のコンピュータ将棋。",
                 };
                 EngineDefineUtility.WriteFile("engine/tanuki2018/engine_define.xml", engine_define);
             }
@@ -127,7 +136,10 @@
                     EngineExeName = "yaneuraou2018_kppt",
                     SupportedCpus = new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 },
                     RequiredMemory = 1024, // KPPTはこれくらい？
-                    AutoSettings = auto_setting_default,
+                    Presets = preset_default,
+                    DescriptionSimple = "Qhapaq 2018年版",
+                    Description = "河童の愛称で知られるQhapaqの最新版。"+
+                        "非公式なレーティング計測ながら2018年6月時点で堂々の一位の超強豪。",
                 };
                 EngineDefineUtility.WriteFile("engine/qhapaq2018/engine_define.xml", engine_define);
             }
@@ -140,7 +152,10 @@
                     EngineExeName = "yaneuraou2018_kppt",
                     SupportedCpus = new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 },
                     RequiredMemory = 1024, // KPPTはこれくらい？
-                    AutoSettings = auto_setting_default,
+                    Presets = preset_default,
+                    DescriptionSimple = "読み太 2018年版",
+                    Description = "直感精読の個性派、読みの確かさに定評あり。" +
+                        "毎回、大会で上位成績を残している常連組。",
                 };
                 EngineDefineUtility.WriteFile("engine/yomita2018/engine_define.xml", engine_define);
             }
@@ -153,7 +168,10 @@
                     EngineExeName = "gpsfish",
                     SupportedCpus = new[] { Cpu.SSE2 },
                     RequiredMemory = 10, // gpsfishこれくらいで動くような？
-                    AutoSettings = auto_setting_default,
+                    Presets = preset_default,
+                    DescriptionSimple = "GPS将棋(テスト用)",
+                    Description = "いまとなっては他のソフトと比べると棋力的には見劣りがするものの、" +
+                        "ファイルサイズが小さいので動作検証用に最適。",
                 };
                 EngineDefineUtility.WriteFile("engine/gpsfish/engine_define.xml", engine_define);
 

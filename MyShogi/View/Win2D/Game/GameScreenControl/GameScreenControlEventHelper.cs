@@ -62,7 +62,9 @@ namespace MyShogi.View.Win2D
         public void SetEventHandlers()
         {
             // イベントハンドラを設定する。
-            gameServer.AddPropertyChangedHandler("KifuList", kifuControl1.OnListChanged, Parent);
+            gameServer.AddPropertyChangedHandler("KifuList", kifuControl1.KifuListChanged, Parent);
+            gameServer.AddPropertyChangedHandler("KifuListAdded", kifuControl1.KifuListAdded, Parent);
+            gameServer.AddPropertyChangedHandler("KifuListRemoved", kifuControl1.KifuListRemoved, Parent);
             gameServer.AddPropertyChangedHandler("Position", PositionChanged);
             gameServer.AddPropertyChangedHandler("TurnChanged", TurnChanged, Parent);
             gameServer.AddPropertyChangedHandler("InTheGame", InTheGameChanged, Parent);
@@ -80,7 +82,9 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void RemoveEventHandlers()
         {
-            gameServer.RemovePropertyChangedHandler("KifuList", kifuControl1.OnListChanged);
+            gameServer.RemovePropertyChangedHandler("KifuList", kifuControl1.KifuListChanged);
+            gameServer.RemovePropertyChangedHandler("KifuListAdded", kifuControl1.KifuListAdded);
+            gameServer.RemovePropertyChangedHandler("KifuListRemoved", kifuControl1.KifuListRemoved);
             gameServer.RemovePropertyChangedHandler("Position", PositionChanged);
             gameServer.RemovePropertyChangedHandler("TurnChanged", TurnChanged);
             gameServer.RemovePropertyChangedHandler("InTheGame", InTheGameChanged);

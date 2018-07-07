@@ -996,7 +996,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 var text = $"{indent}{plus}{move_text_game_ply, 3}.{move_time}";
 
                 KifuList.Add(text);
-                RaisePropertyChanged("KifuList", KifuList, KifuList.Count-1 /*末尾が変更になった*/);
+                RaisePropertyChanged("KifuListAdded", text /*末尾が変更になった。変更になった行を送る。*/);
             }
 
             if (EnableUsiMoveList)
@@ -1020,7 +1020,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 // 棋譜ウィンドウに表示する用の文字列
                 KifuList.RemoveAt(KifuList.Count - 1);
-                RaisePropertyChanged("KifuList", KifuList, KifuList.Count /*末尾が削除になった*/);
+                RaisePropertyChanged("KifuListRemoved", null /*末尾が削除になった*/);
             }
 
             if (EnableUsiMoveList)

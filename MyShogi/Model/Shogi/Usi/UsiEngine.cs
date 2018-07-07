@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
 using MyShogi.Model.Common.Utility;
@@ -52,6 +53,9 @@ namespace MyShogi.Model.Shogi.Usi
             {
                 // 思考エンジンに接続できないとき、Win32Exceptionが飛んでくる
                 ChangeState(UsiEngineState.ConnectionFailed);
+
+                TheApp.app.MessageShow("思考エンジンとの接続が切断されました。");
+                // TODO : エラーリカバリーあとで処理書く。
             }
         }
 

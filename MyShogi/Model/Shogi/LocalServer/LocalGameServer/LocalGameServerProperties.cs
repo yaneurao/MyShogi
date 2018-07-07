@@ -58,7 +58,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     }
                 }
 
-                // 次のモードに以降できることが確定したので値を変更する。
+                // 次のモードに移行できることが確定したので値を変更する。
 
                 SetValue<GameModeEnum>("GameMode", value);
 
@@ -72,6 +72,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 依存プロパティの更新
                 SetValue<bool>("InTheGame", value == GameModeEnum.InTheGame);
                 SetValue<bool>("InTheBoardEdit" , value == GameModeEnum.InTheBoardEdit);
+
+                // 初期化等が終わったのでゲームの対局開始
+                if (value == GameModeEnum.InTheGame)
+                    NotifyTurnChanged();
             }
         }
 
@@ -294,7 +298,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 
         /// ※　KifuTreeのほうでPositionが更新された時に通知が来る。
         /// </summary>
-        private void PositionUpdate(PropertyChangedEventArgs args)
+        private void PositionChanged(PropertyChangedEventArgs args)
         {
             // immutableでなければならないので、Clone()してセットしておく。
             // セットした時に、このクラスのNotifyObjectによる通知がなされる。
@@ -310,7 +314,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// ※　KifuTreeのほうでPositionが更新された時に通知が来るので、このメソッドでトラップして、
         /// このクラスのNotifyObjectによって、このことを棋譜ウィンドウに通知する。
         /// </summary>
-        private void KifuListUpdate(PropertyChangedEventArgs args)
+        private void KifuListChanged(PropertyChangedEventArgs args)
         {
             // このイベントをトラップしている。
             Debug.Assert(args.name == "KifuList");
@@ -321,6 +325,33 @@ namespace MyShogi.Model.Shogi.LocalServer
             // このクラスのNotifyObjectによる通知がなされる。
             // "KifuList"プロパティの変更通知が飛ぶ。
             SetValue<List<string>>(args);
+        }
+
+        /// <summary>
+        /// KifuListが1行増えた時に飛んでくるイベントをtrapする。
+        /// args.value == string : 増えた1行
+        /// </summary>
+        /// <param name="args"></param>
+        private void KifuListAdded(PropertyChangedEventArgs args)
+        {
+            Debug.Assert(args.name == "KifuListAdded");
+
+            // このクラスのNotifyObjectによる通知がなされる。
+            // "KifuListAdded"プロパティの変更通知が飛ぶ。
+            SetValue<string>(args);
+        }
+
+        /// <summary>
+        /// KifuListが1行減った時に飛んでくるイベントをtrapする。
+        /// </summary>
+        /// <param name="args"></param>
+        private void KifuListRemoved(PropertyChangedEventArgs args)
+        {
+            Debug.Assert(args.name == "KifuListRemoved");
+
+            // このクラスのNotifyObjectによる通知がなされる。
+            // "KifuListAdded"プロパティの変更通知が飛ぶ。
+            SetValue<object>(args);
         }
 
         /// <summary>

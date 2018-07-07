@@ -27,9 +27,41 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// [UI thread] : リストが1行追加されたときに呼び出されるハンドラ
+        /// </summary>
+        public void KifuListAdded(PropertyChangedEventArgs args)
+        {
+            // 増えた1行がargs.valueに入っているはず。
+            var line = args.value as string;
+
+            listBox1.SelectedIndexChanged -= listBox1_SelectedIndexChanged;
+
+            listBox1.Items.Add(line);
+            listBox1.SelectedIndex = listBox1.Items.Count-1; // last
+
+            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+        }
+
+        /// <summary>
+        /// [UI thread] : リストが1行削除されたときに呼び出されるハンドラ
+        /// </summary>
+        public void KifuListRemoved(PropertyChangedEventArgs args)
+        {
+            if (listBox1.Items.Count == 0)
+                return; // なんで？
+
+            listBox1.SelectedIndexChanged -= listBox1_SelectedIndexChanged;
+
+            listBox1.Items.Remove(listBox1.Items.Count - 1);
+            listBox1.SelectedIndex = listBox1.Items.Count - 1; // last
+
+            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+        }
+
+        /// <summary>
         /// [UI thread] : リストが変更されたときに呼び出されるハンドラ
         /// </summary>
-        public void OnListChanged(PropertyChangedEventArgs args)
+        public void KifuListChanged(PropertyChangedEventArgs args)
         {
             // ここでListBoxをいじって、listBox1_SelectedIndexChanged()が呼び出されるのは嫌だから抑制する。
 
@@ -37,11 +69,14 @@ namespace MyShogi.View.Win2D
 
             var list = args.value as List<string>;
 
+            int start = 0;
+            /*
             int start;
             if (args.start == -1)
                 start = 0; // 丸ごと更新された
             else
                 start = args.start; // 部分更新された
+            */
 
             // endの指定は無視される。
 
