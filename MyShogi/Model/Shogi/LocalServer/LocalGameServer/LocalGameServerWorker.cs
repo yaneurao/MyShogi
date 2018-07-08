@@ -152,6 +152,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var pc = PlayTimer(c);
                 pc.KifuTimeSetting = GameSetting.KifuTimeSettings.Player(c);
                 pc.GameStart();
+                timeSettingStrings[(int)c] = pc.KifuTimeSetting.ToShortString();
             }
 
             // rootの持ち時間設定をここに反映させておかないと待ったでrootまで持ち時間が戻せない。

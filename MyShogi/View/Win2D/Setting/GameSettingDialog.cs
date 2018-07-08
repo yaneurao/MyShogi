@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
@@ -117,21 +118,21 @@ namespace MyShogi.View.Win2D
             foreach (var c in All.Colors())
             {
                 // 対局者氏名
-                binder.Bind(setting.Player(c).PlayerName, playerNames[(int)c], t => setting.Player(c).PlayerName = t);
+                binder.Bind(setting.Player(c),"PlayerName", playerNames[(int)c]);
 
                 // 対局者の種別
-                binder.Bind(setting.Player(c).IsHuman, human_radio_buttons[(int)c], v => setting.Player(c).IsHuman = v);
-                binder.Bind(setting.Player(c).IsCpu, cpu_radio_buttons[(int)c], v => setting.Player(c).IsCpu = v);
+                binder.Bind(setting.Player(c) , "IsHuman" , human_radio_buttons[(int)c]);
+                binder.Bind(setting.Player(c) , "IsCpu"  , cpu_radio_buttons[(int)c]);
             }
 
             // -- 開始局面
 
             // 手合割有効か
-            binder.Bind(setting.Board.BoardTypeEnable, radioButton5, v => setting.Board.BoardTypeEnable = v);
-            binder.Bind((int)setting.Board.BoardType, comboBox3, v => setting.Board.BoardType = (BoardType)v);
+            binder.Bind(setting.Board , "BoardTypeEnable" , radioButton5 );
+            binder.Bind(setting.Board , "BoardType" , comboBox3 );
 
             // 現在の局面から
-            binder.Bind(setting.Board.BoardTypeCurrent, radioButton6, v => setting.Board.BoardTypeCurrent = v);
+            binder.Bind(setting.Board , "BoardTypeCurrent" , radioButton6);
 
             // -- 対局時間設定をbindする
 
@@ -152,41 +153,37 @@ namespace MyShogi.View.Win2D
 
                 foreach (var c_ in All.Colors())
                 {
-                    int c = (int)c_;
+                    int c = (int)c_; // copy for capture
                     var n = num[c];
                     var timeSetting = setting.KifuTimeSettings.RawPlayer(c_);
-                    binder.Bind(timeSetting.Hour, n[0], v => timeSetting.Hour = v);
-                    binder.Bind(timeSetting.Minute, n[1], v => timeSetting.Minute = v);
-                    binder.Bind(timeSetting.Second, n[2], v => timeSetting.Second = v);
-                    binder.Bind(timeSetting.Byoyomi, n[3], v => timeSetting.Byoyomi = v);
-                    binder.Bind(timeSetting.IncTime, n[4], v => timeSetting.IncTime = v);
+                    binder.Bind(timeSetting , "Hour"   , n[0] );
+                    binder.Bind(timeSetting , "Minute" , n[1] );
+                    binder.Bind(timeSetting , "Second" , n[2] );
+                    binder.Bind(timeSetting , "Byoyomi", n[3] );
+                    binder.Bind(timeSetting , "IncTime", n[4] );
 
                     var r = radio[c];
                     // 秒読みのラジオボタンが選択されていれば、IncTimeのほうの設定はグレーアウト。
-                    binder.Bind(timeSetting.ByoyomiEnable, r[0], v =>
+                    binder.Bind(timeSetting, "ByoyomiEnable", r[0] , (v)=>
                     {
-                        timeSetting.ByoyomiEnable = v;
                         if (v)
                         {
                             n[3].Enabled = true;
                             n[4].Enabled = false;
                         }
                     });
-                    binder.Bind(timeSetting.IncTimeEnable, r[1], v =>
+                    binder.Bind(timeSetting, "IncTimeEnable", r[1] , (v)=>
                     {
-                        timeSetting.IncTimeEnable = v;
                         if (v)
                         {
                             n[3].Enabled = false;
                             n[4].Enabled = true;
                         }
                     });
-                    binder.Bind(timeSetting.IgnoreTime, check[c], v => timeSetting.IgnoreTime = v);
-                    binder.Bind(timeSetting.TimeLimitless, check_unlimit_time[c], v =>
+                    binder.Bind(timeSetting , "IgnoreTime" , check[c] );
+                    binder.Bind(timeSetting , "TimeLimitless", check_unlimit_time[c] , (v)=>
                     {
-                        timeSetting.TimeLimitless = v;
-
-                        // 時間無制限の時、GroupBox丸ごとDisableに。]
+                        // 時間無制限の時、GroupBox丸ごとDisableに。
                         // ただし、自分のチェックボックスは除外。この除外は、コンストラクタでGroupから除外している。
                         group[c].Enabled = !v;
                     });
@@ -203,30 +200,29 @@ namespace MyShogi.View.Win2D
                 ChangeToNarrowDialog();
 
             // 「詳細設定」ボタンのテキスト
-            binder.Bind(misc.DetailEnable, button6, v => misc.DetailEnable = v , v => v ? "簡易設定" : "詳細設定");
+            binder.Bind(misc , "DetailEnable" , button6, v => v ? "簡易設定" : "詳細設定");
 
             // -- 後手の対局時間設定を個別にするのか
 
             // このチェックボックスが無効だと、それに応じてgroupBox5が無効化されなくてはならない。
-            binder.Bind(setting.KifuTimeSettings.WhiteEnable, checkBox1,
-                v => {
-                    setting.KifuTimeSettings.WhiteEnable = v;
-                    groupBox5.Enabled = v && /*時間無制限*/!checkBox6.Checked;
-                    checkBox6.Enabled = v; // 時間無制限
-                    if (v)
-                        groupBox4.Text = "時間設定[先手/上手]";
-                    else
-                        groupBox4.Text = "時間設定";
-                });
+            binder.Bind(setting.KifuTimeSettings, "WhiteEnable", checkBox1 , (v)=>
+            {
+                groupBox5.Enabled = v && /*時間無制限*/!checkBox6.Checked;
+                checkBox6.Enabled = v; // 時間無制限
+                if (v)
+                    groupBox4.Text = "時間設定[先手/上手]";
+                else
+                    groupBox4.Text = "時間設定";
+            });
 
             // 指定手数で引き分けにする
-            binder.Bind(misc.MaxMovesToDrawEnable, checkBox4, v =>
+            binder.Bind(misc, "MaxMovesToDrawEnable", checkBox4 , (v)=>
             {
                 misc.MaxMovesToDrawEnable = v;
                 numericUpDown11.Enabled = v;
-
             });
-            binder.Bind(misc.MaxMovesToDraw, numericUpDown11, v => misc.MaxMovesToDraw = v);
+
+            binder.Bind(misc , "MaxMovesToDraw" , numericUpDown11);
 
             ResumeLayout();
         }

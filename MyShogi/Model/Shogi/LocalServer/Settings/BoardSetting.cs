@@ -1,11 +1,12 @@
-﻿using MyShogi.Model.Shogi.Core;
+﻿using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
     /// <summary>
     /// 対局の開始盤面の設定
     /// </summary>
-    public class BoardSetting
+    public class BoardSetting : NotifyObject
     {
         public BoardSetting()
         {
@@ -24,17 +25,29 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// BoardCurrentがtrueなら、この値は無視される。
         /// この値がCurrent,Othersは許容しない。
         /// </summary>
-        public BoardType BoardType;
+        public BoardType BoardType
+        {
+            get { return GetValue<BoardType>("BoardType"); }
+            set { SetValue("BoardType", value); }
+        }
 
         /// <summary>
         /// BoardTypeの局面から開始するのかのフラグ
         /// BoardTypeEnableかBoardCurrentのどちらかがtrueのはず。
         /// </summary>
-        public bool BoardTypeEnable;
+        public bool BoardTypeEnable
+        {
+            get { return GetValue<bool>("BoardTypeEnable"); }
+            set { SetValue("BoardTypeEnable", value); }
+        }
 
         /// <summary>
         /// 現在の局面から開始するのかのフラグ
         /// </summary>
-        public bool BoardTypeCurrent;
+        public bool BoardTypeCurrent
+        {
+            get { return GetValue<bool>("BoardTypeCurrent"); }
+            set { SetValue("BoardTypeCurrent", value); }
+        }
     }
 }

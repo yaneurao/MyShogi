@@ -69,11 +69,14 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <summary>
         /// propertyのsetterを実装するときに使う。
         /// 値が変わった時に変更通知が来るようになる。
+        /// 
+        /// 普通の使用用途で直接呼び出すことはない。
+        /// ControlBinderで必要になるのでpublicにしてある。
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        protected void SetValue<T>(string name, T value)
+        public void SetValue<T>(string name, T value)
         {
             var raise = false;
             lock (lockObject)
@@ -126,11 +129,14 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <summary>
         /// propretyのgetterを実装するときに使う。
         /// SetValueと対にして用いる。
+        /// 
+        /// 普通の使用用途で直接呼び出すことはない。
+        /// ControlBinderで必要になるのでpublicにしてある。
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <returns></returns>
-        protected T GetValue<T>(string name)
+        public T GetValue<T>(string name)
         {
             lock (lockObject)
             {
@@ -294,12 +300,7 @@ namespace MyShogi.Model.Common.ObjectModel
             lock (lockObject)
             {
                 var current = GetProperty(name);
-
                 current.handler -= h;
-
-                // このproperty nameに対応するすべてのhandlerがremoveされたならこのPropertyObjectを消す必要がある。
-                if (current.handler == null)
-                    propery_objects.Remove(name);
             }
         }
 

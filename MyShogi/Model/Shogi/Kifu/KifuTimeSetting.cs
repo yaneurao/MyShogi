@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 
@@ -10,7 +11,7 @@ namespace MyShogi.Model.Shogi.Kifu
     /// 対局時間設定
     /// 片側のプレイヤー分
     /// </summary>
-    public class KifuTimeSetting
+    public class KifuTimeSetting : NotifyObject
     {
         public KifuTimeSetting()
         {
@@ -50,52 +51,88 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// 持ち時間の[時]
         /// </summary>
-        public int Hour;
+        public int Hour
+        {
+            get { return GetValue<int>("Hour"); }
+            set { SetValue("Hour", value); }
+        }
 
         /// <summary>
         /// 持ち時間の[分]
         /// </summary>
-        public int Minute;
+        public int Minute
+        {
+            get { return GetValue<int>("Minute"); }
+            set { SetValue("Minute", value); }
+        }
 
         /// <summary>
         /// 持ち時間の[秒]
         /// </summary>
-        public int Second;
+        public int Second
+        {
+            get { return GetValue<int>("Second"); }
+            set { SetValue("Second", value); }
+        }
 
         /// <summary>
         /// 持ち時間を使い切ったときの
         /// 秒読みの[秒]
         /// </summary>
-        public int Byoyomi;
+        public int Byoyomi
+        {
+            get { return GetValue<int>("Byoyomi"); }
+            set { SetValue("Byoyomi", value); }
+        }
 
         /// <summary>
         /// Byoyomiは有効か？
         /// これがfalseならByoyomiの値は無効。
         /// </summary>
-        public bool ByoyomiEnable;
+        public bool ByoyomiEnable
+        {
+            get { return GetValue<bool>("ByoyomiEnable"); }
+            set { SetValue("ByoyomiEnable", value); }
+        }
 
         /// <summary>
         /// 1手ごとの加算(秒)
         /// </summary>
-        public int IncTime;
+        public int IncTime
+        {
+            get { return GetValue<int>("IncTime"); }
+            set { SetValue("IncTime", value); }
+        }
 
         /// <summary>
         /// IncTimeは有効か？
         /// これがfalseならIncTimeの値は無効。
         /// </summary>
-        public bool IncTimeEnable;
+        public bool IncTimeEnable
+        {
+            get { return GetValue<bool>("IncTimeEnable"); }
+            set { SetValue("IncTimeEnable", value); }
+        }
 
         /// <summary>
         /// 時間切れを負けにしない
         /// </summary>
-        public bool IgnoreTime;
+        public bool IgnoreTime
+        {
+            get { return GetValue<bool>("IgnoreTime"); }
+            set { SetValue("IgnoreTime", value); }
+        }
 
         /// <summary>
         /// 時間制限なし
         /// (残り時間のところが"無制限"になる。
         /// 消費時間が減っていくのが気になる人向け)
         /// </summary>
-        public bool TimeLimitless;
+        public bool TimeLimitless
+        {
+            get { return GetValue<bool>("TimeLimitless"); }
+            set { SetValue("TimeLimitless", value); }
+        }
 
         /// <summary>
         /// この持ち時間設定を文字列化する。
@@ -202,7 +239,7 @@ namespace MyShogi.Model.Shogi.Kifu
     /// <summary>
     /// 対局時間設定 先後の両方の分
     /// </summary>
-    public class KifuTimeSettings
+    public class KifuTimeSettings : NotifyObject
     {
         public KifuTimeSettings()
         {
@@ -260,7 +297,11 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// 後手の対局時間設定を先手とは別に設定する。
         /// </summary>
-        public bool WhiteEnable;
+        public bool WhiteEnable
+        {
+            get { return GetValue<bool>("WhiteEnable"); }
+            set { SetValue("WhiteEnable", value); }
+        }
 
         // -- properties
 

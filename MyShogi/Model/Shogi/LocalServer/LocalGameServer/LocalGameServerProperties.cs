@@ -184,8 +184,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public string TimeSettingString(Color c)
         {
-            return PlayTimer(c).KifuTimeSetting.ToShortString();
+            // 対局中に毎回文字列を生成するの馬鹿らしいのでGameStart()で初期化をする。
+            // return PlayTimer(c).KifuTimeSetting.ToShortString();
+            return timeSettingStrings[(int)c];
         }
+        private string[] timeSettingStrings = new string[2];
 
         /// <summary>
         /// プレイヤーの消費時間を計測する用

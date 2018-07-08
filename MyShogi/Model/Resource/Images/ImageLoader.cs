@@ -142,8 +142,10 @@ namespace MyShogi.Model.Resource.Images
            get {
                 if (lazy_filename != null)
                 {
-                    // 遅延読み込みが指定されているので、このタイミングで読み込みに行く。
+                    // 遅延読み込みが指定されているので、このタイミングで画像ファイルを読み込みに行く。
                     Load(lazy_filename);
+
+                    // 試行するのは1回限りにしたいので、lazy_filename == nullに変更しておく。
                     lazy_filename = null;
                 }
                 return image_;

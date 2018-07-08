@@ -26,6 +26,7 @@ namespace MyShogi.App
         /// </summary>
         public void Run()
         {
+#if false
             try
             {
                 DevTest();
@@ -35,6 +36,11 @@ namespace MyShogi.App
                 // これを表示するようにしておくと、開発環境以外で実行した時のデバッグが楽ちん。
                 MessageBox.Show("例外が発生しましたので終了します。\r\n例外内容 : " + ex.Message + "\r\nスタックトレース : \r\n" + ex.StackTrace);
             }
+#else
+            // 開発時に例外がここでcatchされてしまうとデバッグがしにくいので
+            // 開発時にはこちらを使う。(といいかも)
+            Main();
+#endif
         }
 
         /// <summary>
