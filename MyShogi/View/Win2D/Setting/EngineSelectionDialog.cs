@@ -1,7 +1,8 @@
 ﻿using MyShogi.App;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.EngineDefine;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -18,6 +19,22 @@ namespace MyShogi.View.Win2D
 
             InitSelectionControls();
         }
+
+        public class EngineSelectionDialogViewModel : NotifyObject
+        {
+            /// <summary>
+            /// エンジンの選択ボタンが押された時に
+            /// 0から(TheApp.app.engine_defines.Length - 1 )までの値が返ってくるので、
+            /// 変更通知イベントを捕捉して使うと良い。
+            /// </summary>
+            public int ButtonClicked
+            {
+                get { return GetValue<int>("ButtonClicked"); }
+                set { SetValue("ButtonClicked", value); }
+            }
+        }
+
+        public EngineSelectionDialogViewModel ViewModel = new EngineSelectionDialogViewModel();
 
         /// <summary>
         /// このFormにぶら下がっているエンジン選択(1個)のControl×5個
@@ -46,6 +63,23 @@ namespace MyShogi.View.Win2D
 
                 // このFormの子として追加する。
                 this.Controls.Add(control);
+
+                // 子コントロールの「決定」ボタンが押された時のハンドラ
+                control.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
+                 {
+                     foreach(int j in All.Int(5))
+                     {
+                         if (SelectionControls[j].ViewModel == args.sender)
+                         {
+                             // このイベントを生起してやる。
+                             var selectedEngineIndex = SelectionControlTopIndex + j;
+                             // 範囲内であることを確認する。
+                             if (selectedEngineIndex < TheApp.app.engine_defines.Count)
+                                 ViewModel.RaisePropertyChanged("ButtonClicked", selectedEngineIndex);
+                             break;
+                         }
+                     }
+                 });
             }
 
             // ボタンも移動させる。

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
@@ -1451,6 +1452,10 @@ namespace MyShogi.View.Win2D
                         item.Click += (sender, e) =>
                         {
                             var dialog = new EngineSelectionDialog();
+                            //dialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args_) =>
+                            //{
+                            //    Console.WriteLine("エンジン選択された" + (int)args_.value);
+                            //});
                             dialog.Show();
                         };
                         item_debug.DropDownItems.Add(item);

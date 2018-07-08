@@ -10,14 +10,44 @@ namespace MyShogi.Model.Common.ObjectModel
     /// </summary>
     public class PropertyChangedEventArgs
     {
-        public PropertyChangedEventArgs(string name_ , object value_)
+        public PropertyChangedEventArgs() { }
+
+        public PropertyChangedEventArgs( string name_ , object value_)
         {
             name = name_;
             value = value_;
         }
 
+        /// <summary>
+        /// このClone()実装では、valueはobjectなのでCloneしない。注意。
+        /// valueはimmutableだからこれで問題ないはずだが…。
+        /// </summary>
+        /// <returns></returns>
+        public PropertyChangedEventArgs Clone()
+        {
+            var args = new PropertyChangedEventArgs();
+
+            args.sender = sender;
+            args.name = name;
+            args.value = value;
+
+            return args;
+        }
+
+        /// <summary>
+        /// 送信元のNotifyObject
+        /// </summary>
+        public object sender;
+
+        /// <summary>
+        /// プロパティ名
+        /// </summary>
         public string name;
-        public object value;  // プロパティに代入された値
+
+        /// <summary>
+        /// プロパティに代入された値
+        /// </summary>
+        public object value;
     }
 
     public enum DataBindWay
@@ -58,7 +88,6 @@ namespace MyShogi.Model.Common.ObjectModel
         /// </summary>
         public List<NotifyObject> notifies;
     }
-
 
     /// <summary>
     /// MVVMのViewModelで用いる、プロパティが変更されたときに、それをsubscribe(購読)しているobserverに
@@ -169,28 +198,16 @@ namespace MyShogi.Model.Common.ObjectModel
         /// 遅延呼び出しではなく、即座にハンドラが呼び出される。
         /// 
         /// notify_otherがtrueなら、DataBindしている他のNotifyObjectにも通知がいく。
-        /// </summary>
-        /// <param name="name"></param>
-        public void RaisePropertyChanged(PropertyChangedEventArgs e)
-        {
-            RaisePropertyChanged(e, this);
-        }
-
-        /// <summary>
-        /// public RaisePropertyChanged()の下請け。
-        /// sender : 送信元のNotifyObject
         /// 
         /// DataBindで双方向bindingしているときに無限再帰になるのを防ぐためにsenderをつけている。
-        /// 
         /// A <-> B <-> C <-> A
         /// のような循環Bindingしている場合は、無限再帰になってしまうが、MVVMアーキテクチャでそういうようなBindingは
         /// しないと考えられるので問題ない。(MVVMでは送信元のデータソースは一箇所にあると考えられるので)
         /// </summary>
         /// <param name="e"></param>
         /// <param name="sender"></param>
-        protected void RaisePropertyChanged(PropertyChangedEventArgs e , object sender)
+        protected void RaisePropertyChanged(PropertyChangedEventArgs e)
         {
-
             if (!PropertyChangedEventEnable)
                 return;
 
@@ -224,6 +241,10 @@ namespace MyShogi.Model.Common.ObjectModel
 
             // このpropertyをsubscribeしているobserverに更新通知を送る重複名はないことは保証されている。
 
+            // cloneしてsenderを書き換えて送る。
+            var e2 = e.Clone();
+            e2.sender = this;
+
             // lockの外側でコールバックしないとデッドロックになる。
             // Invoke()をする場合であって、BegineInvoke()なら大丈夫か…。
             var h = current.handler;
@@ -232,13 +253,13 @@ namespace MyShogi.Model.Common.ObjectModel
                 // UIスレッドからの実行が必要なのであればForm.BeginInvoke()を用いてコールバックする。
                 // Invoke()と違ってこちらは非同期に実行される。
                 if (form == null)
-                    h(e);
+                    h(e2);
                 else
                     // 対局中だとFormがDisposeされているのにcallbackが起きることがある。
                     // form.Disposingとform.Disposedだけで判定できると言えないので、try～catchで書いておく。
                     try
                     {
-                        form.BeginInvoke(new Action(() => h(e)));
+                        form.BeginInvoke(new Action(() => h(e2)));
                     }
                     catch { }
             }
@@ -246,10 +267,12 @@ namespace MyShogi.Model.Common.ObjectModel
             // data bindされているならそれらのオブジェクトにも通知
             // これは同じスレッドで通知して良い。
             if (current.notifies != null)
+            {
                 foreach (var notify in current.notifies)
                     // 無限再帰になるのを防ぐため、送信元を付与して呼び出す。
-                    if (notify != sender)
-                        notify.RaisePropertyChanged(e,this);
+                    if (notify != e.sender /* is original sender */)
+                        notify.RaisePropertyChanged(e2);
+            }
         }
 
         /// <summary>

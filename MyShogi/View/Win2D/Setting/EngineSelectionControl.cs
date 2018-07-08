@@ -38,6 +38,15 @@ namespace MyShogi.View.Win2D
             /// </summary>
             public int FreePhysicalMemory
             {   get; set; }
+
+            /// <summary>
+            /// 「選択」ボタンが押された時にsetterが呼び出される仮想プロパティ
+            /// </summary>
+            public bool ButtonClicked
+            {
+                get { return GetValue<bool>("ButtonClicked"); }
+                set { SetValue<bool>("ButtonClicked", value); }
+            }
         }
 
         public EngineSelectionViewModel ViewModel = new EngineSelectionViewModel();
@@ -53,15 +62,19 @@ namespace MyShogi.View.Win2D
             if (engineDefine == null)
             {
                 // 全部クリア
-                var label_list = new[] { label1 , label2, label3,label4,label5 };
-                foreach(var label in label_list)
+                var label_list = new[] { label1, label2, label3, label4, label5 };
+                foreach (var label in label_list)
                     label.Text = null;
 
                 textBox1.Text = null;
                 banner_mini.Dispose();
                 pictureBox1.Image = null;
+                button1.Enabled = false;
                 return;
             }
+
+            // 「選択」ボタン有効化
+            button1.Enabled = true;
 
             // ソフト名
             label1.Text = engineDefine.DescriptionSimple;
@@ -111,14 +124,16 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        // -- handlers
+
+        private void button1_Click(object sender, System.EventArgs e)
+        {
+            ViewModel.RaisePropertyChanged("ButtonClicked");
+        }
+
         /// <summary>
         /// banner用のImageLoader
         /// </summary>
         private ImageLoader banner_mini = new ImageLoader();
-
-        private void button1_Click(object sender, System.EventArgs e)
-        {
-
-        }
     }
 }
