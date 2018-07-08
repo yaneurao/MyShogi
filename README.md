@@ -8,12 +8,11 @@ MyShogiは、オープンソースの将棋ソフト用GUIです。
 
 # スクリーンショット
 
-<img src="https://pbs.twimg.com/media/DhP9uLkUEAAue8I.jpg" width="400" height="200" alt="対局画面">
-<img src="https://pbs.twimg.com/media/DhP9uLkUEAAue8I.jpg" width="400" height="200" alt="対局設定">
-<img src="https://pbs.twimg.com/media/Dez3gZxVAAASWWY.jpg" width="400" height="200" alt="成り不成">
-<img src="https://pbs.twimg.com/media/Dg6DMjYUcAAol41.jpg" width="400" height="200" alt="対局設定">
-<img src="https://pbs.twimg.com/media/DhmEiQ-UYAATJQF.jpg" width="400" height="200" alt="エンジン選択">
-
+|||
+|---|---|
+|<img src="https://pbs.twimg.com/media/DhP9uLkUEAAue8I.jpg" width="400" height="254" alt="対局画面">|<img src="https://pbs.twimg.com/media/DhP9uLkUEAAue8I.jpg" width="400" height="254" alt="対局設定">|
+|<img src="https://pbs.twimg.com/media/Dez3gZxVAAASWWY.jpg" width="400" height="254" alt="成り不成">|<img src="https://pbs.twimg.com/media/Dg6DMjYUcAAol41.jpg" width="400" height="254" alt="対局設定">|
+|<img src="https://pbs.twimg.com/media/DhmEiQ-UYAATJQF.jpg" width="400" height="254" alt="エンジン選択">|Coming Soon..|
 
 # 特徴
 
