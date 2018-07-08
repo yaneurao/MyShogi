@@ -6,6 +6,15 @@ MyShogi is an open source GUI for computer Shogi engine.
 MyShogiは、オープンソースの将棋ソフト用GUIです。
 2018年にマイナビ出版さんから発売する商用版のやねうら王用のGUIとして開発が始まりました。
 
+# スクリーンショット
+
+<img src="https://pbs.twimg.com/media/DhP9uLkUEAAue8I.jpg" style="width:400px;height:200px" alt="対局画面">
+<img src="https://pbs.twimg.com/media/DhP9uLkUEAAue8I.jpg" style="width:400px;height:200px" alt="対局設定">
+<img src="https://pbs.twimg.com/media/Dez3gZxVAAASWWY.jpg" style="width:400px;height:200px" alt="成り不成">
+<img src="https://pbs.twimg.com/media/Dg6DMjYUcAAol41.jpg" style="width:400px;height:200px" alt="対局設定">
+<img src="https://pbs.twimg.com/media/DhmEiQ-UYAATJQF.jpg" style="width:400px;height:200px" alt="エンジン選択">
+
+
 # 特徴
 
 - オープンソース
