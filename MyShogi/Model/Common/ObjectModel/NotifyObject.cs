@@ -283,6 +283,58 @@ namespace MyShogi.Model.Common.ObjectModel
         }
 
         /// <summary>
+        /// DataBindする。別のNotifyObjectの同名のプロパティと紐づけられる。
+        /// way : OneWay  片方向のbinding(thisのnameが変更されたときにnotify.nameに値がコピーされる。)
+        /// way : TwoWay  双方向のbinding
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="notify"></param>
+        /// <param name="way"></param>
+        public void Bind(string name , NotifyObject notify , DataBindWay way)
+        {
+            lock(lockObject)
+            {
+                bind_helper(name, notify);
+
+                // 双方向なので逆からもbindしてやる。
+                if (way == DataBindWay.TwoWay)
+                    notify.bind_helper(name, this);
+            }
+        }
+
+        public void Unbind(string name , NotifyObject notify)
+        {
+            lock(lockObject)
+            {
+                bind_helper(name, notify);
+
+                // 双方向かどうかは知らんがあるなら削除しとく。
+                notify.bind_helper(name, this);
+            }
+        }
+
+        protected void bind_helper(string name, NotifyObject notify)
+        {
+            var current = GetProperty(name);
+
+            // notifiesをimmutableにするため、コピーして編集して代入する。
+            var notifies = (current.notifies == null) ? new List<NotifyObject>() : new List<NotifyObject>(current.notifies);
+            notifies.Add(notify);
+            current.notifies = notifies;
+        }
+
+        protected void unbind_helper(string name, NotifyObject notify)
+        {
+            var current = GetProperty(name);
+            if (current.notifies == null)
+                return;
+
+            var notifies = new List<NotifyObject>(current.notifies);
+            notifies.Remove(notify);
+            current.notifies = notifies;
+        }
+
+        /// <summary>
         /// このフラグがfalseの時、SetValue()でプロパティ変更イベントが発生しなくなる。
         /// default = true
         /// 一時的にイベントを抑制したい時に用いると良いと思う。
