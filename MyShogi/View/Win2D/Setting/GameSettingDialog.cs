@@ -3,9 +3,10 @@ using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
-using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.EngineDefine;
+using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
 {
@@ -29,57 +30,58 @@ namespace MyShogi.View.Win2D
 
             mainDialog = mainDialog_;
 
-            // 現在の画面のdpiの影響を受けて、このウィンドウのWidth,Heightが大きくなっているはずなので
-            // それをベースに以降の計算を行うため、いくつかの値を保存しておく。
+            // 画面初期化
+            InitScreen();
 
-            originalWidth = Width;
-            originalGroupBox2 = groupBox2.Location;
+            // ViewModelのハンドラの設定
+            SetHandlers();
 
-            // デモ用にバナーを描画しておく
-
-            // (w,h)=(320,100)のつもりだが、dpi scalingのせいで
-            // 環境によって異なるのでここで再取得してそれに合わせる。
-            int w = pictureBox1.Width;
-            int h = pictureBox1.Height;
-
-            banner1.Load(@"engine/tanuki2018/banner.png");
-            banner1mini = banner1.CreateAndCopy(w, h);
-            pictureBox1.Image = banner1mini.image;
-
-            banner2.Load(@"engine/yaneuraou2018/banner.png");
-            banner2mini = banner2.CreateAndCopy(w, h);
-            pictureBox2.Image = banner2mini.image;
-
-            // checkbox5,6がgroupbox4,5に属すると嫌だったのでgroupboxの外に配置しておいてあったので
-            // それを移動させる。
-            {
-                // checkBox3と同じyにしたいが、これはgroupBox5に属するのでgroupBox5相対の座標になっている。
-                int y = groupBox5.Location.Y + checkBox3.Location.Y;
-                checkBox5.Location = new Point(checkBox5.Location.X, y);
-                checkBox6.Location = new Point(checkBox6.Location.X, y);
-            }
-
-            // データバインドしておく。
+            // TheApp.app.config.GameSettingを、このFormのControlたちとデータバインドしておく。
             BindSetting();
         }
 
-        /// <summary>
-        /// 親ウィンドウの何かを操作しないといけないことがあるので、
-        /// コンストラクタでmainDialogの参照を受け取って、ここに保持しておく。
-        /// </summary>
-        private MainDialog mainDialog;
-        private ControlBinder binder = new ControlBinder();
+        // -- properties
+
+        public class GameSettingViewModel : NotifyObject
+        {
+            /// <summary>
+            /// エンジン設定。二人分。
+            /// </summary>
+            public EngineDefine[] EngineDefines = new EngineDefine[(int)SCore.Color.NB];
+
+            /// <summary>
+            /// ↑のEngineDefinesの要素が変更された時に発生するイベント
+            /// </summary>
+            public int EngineDefineChanged
+            {
+                get { return GetValue<int>("EngineDefineChanged"); }
+                set { SetValue<int>("EngineDefineChanged",value); }
+            }
+        }
+
+        public GameSettingViewModel ViewModel = new GameSettingViewModel();
+
+        // -- handlers
 
         /// <summary>
-        /// ダイアログ生成時の値、各種。
+        /// エンジン詳細設定(先手)
         /// </summary>
-        private int originalWidth;
-        private Point originalGroupBox2;
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
 
-        private ImageLoader banner1 = new ImageLoader();
-        private ImageLoader banner2 = new ImageLoader();
-        private ImageLoader banner1mini;
-        private ImageLoader banner2mini;
+        }
+
+        /// <summary>
+        /// エンジン詳細設定(後手)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e)
+        {
+
+        }
 
         /// <summary>
         /// 対局開始
@@ -97,6 +99,117 @@ namespace MyShogi.View.Win2D
             // 対局が開始するのでこのダイアログを閉じる
             this.Close();
         }
+
+        /// <summary>
+        /// 先手側エンジン選択
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button4_Click(object sender, EventArgs e)
+        {
+            CreateEngineSelectionDialog(SCore.Color.BLACK);
+        }
+
+        /// <summary>
+        /// 後手側エンジン選択
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button5_Click(object sender, EventArgs e)
+        {
+            CreateEngineSelectionDialog(SCore.Color.WHITE);
+        }
+
+        /// <summary>
+        /// 「詳細設定」ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button6_Click(object sender, EventArgs e)
+        {
+            SuspendLayout();
+            if (button6.Text == "詳細設定")
+            {
+                button6.Text = "簡易設定";
+                ChangeToWideDialog();
+            }
+            else
+            {
+                button6.Text = "詳細設定";
+                ChangeToNarrowDialog();
+            }
+            ResumeLayout();
+        }
+
+        /// <summary>
+        /// 「先後入替」ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button7_Click(object sender, EventArgs e)
+        {
+            // 対局者氏名、エンジン、持ち時間設定を入れ替える。
+            // データバインドされているはずなので、DataSourceのほうで入替えて、
+            // rebindすればいいような..
+
+            binder.UnbindAll();
+            TheApp.app.config.GameSetting.SwapPlayer();
+            BindSetting();
+        }
+
+        // -- screen settings
+
+        private void InitScreen()
+        {
+            // 現在の画面のdpiの影響を受けて、このウィンドウのWidth,Heightが大きくなっているはずなので
+            // それをベースに以降の計算を行うため、いくつかの値を保存しておく。
+
+            originalWidth = Width;
+            originalGroupBox2 = groupBox2.Location;
+
+            // checkbox5,6がgroupbox4,5に属すると嫌だったのでgroupboxの外に配置しておいてあったので
+            // それを移動させる。
+            {
+                // checkBox3と同じyにしたいが、これはgroupBox5に属するのでgroupBox5相対の座標になっている。
+                int y = groupBox5.Location.Y + checkBox3.Location.Y;
+                checkBox5.Location = new Point(checkBox5.Location.X, y);
+                checkBox6.Location = new Point(checkBox6.Location.X, y);
+            }
+        }
+
+        /// <summary>
+        /// ViewModelのハンドラの設定
+        /// </summary>
+        private void SetHandlers()
+        {
+            ViewModel.AddPropertyChangedHandler("EngineDefineChanged", (args) =>
+            {
+                int c = (int)args.value;
+                var engine_define = ViewModel.EngineDefines[c];
+
+                var pictureBox = c == 0 ? pictureBox1 : pictureBox2;
+
+                // (w,h)=(320,100)のつもりだが、dpi scalingのせいで
+                // 環境によって異なるのでここで再取得してそれに合わせる。
+                int w = pictureBox.Width;
+                int h = pictureBox.Height;
+
+                // バナーファイルの設定
+                // ファイルがないならNO BANNERの画像。
+                var banner_file_name = engine_define.BannerFileName;
+                ImageLoader banner;
+                if (!System.IO.File.Exists(banner_file_name))
+                    banner = TheApp.app.imageManager.NoBannerImage;
+                else
+                {
+                    banner = new ImageLoader();
+                    banner.Load(engine_define.BannerFileName);
+                }
+                banner_mini[c] = banner.CreateAndCopy(w, h);
+                pictureBox.Image = banner_mini[c].image;
+            });
+        }
+
 
         /// <summary>
         /// このダイアログのControlとGlobalConfig.Settingの一部をbindしておく。
@@ -229,27 +342,6 @@ namespace MyShogi.View.Win2D
 
 
         /// <summary>
-        /// 「詳細設定」ボタン
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button6_Click(object sender, EventArgs e)
-        {
-            SuspendLayout();
-            if (button6.Text == "詳細設定")
-            {
-                button6.Text = "簡易設定";
-                ChangeToWideDialog();
-            }
-            else
-            {
-                button6.Text = "詳細設定";
-                ChangeToNarrowDialog();
-            }
-            ResumeLayout();
-        }
-
-        /// <summary>
         /// 幅広いダイアログに変更
         /// </summary>
         private void ChangeToWideDialog()
@@ -272,20 +364,65 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 「先後入替」ボタン
+        /// 選択ダイアログの生成
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button7_Click(object sender, EventArgs e)
+        private void CreateEngineSelectionDialog(SCore.Color c)
         {
-            // 対局者氏名、エンジン、持ち時間設定を入れ替える。
-            // データバインドされているはずなので、DataSourceのほうで入替えて、
-            // rebindすればいいような..
+            ReleaseEngineSelectionDialog();
+            engineSelectionDialog = new EngineSelectionDialog();
 
-            binder.UnbindAll();
-            TheApp.app.config.GameSetting.SwapPlayer();
-            BindSetting();
+            engineSelectionDialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
+            {
+                // これが選択された。
+                var selectedEngine = (int)args.value;
+                var defines = TheApp.app.engine_defines;
+                if (selectedEngine < defines.Count)
+                {
+                    var engineDefine = TheApp.app.engine_defines[selectedEngine];
+                    // 先手か後手かは知らんが、そこにこのEngineDefineを設定
+
+                    ViewModel.EngineDefines[(int)c] = engineDefine;
+                    ViewModel.RaisePropertyChanged("EngineDefineChanged",(int)c);
+                }
+                ReleaseEngineSelectionDialog();
+            });
+            engineSelectionDialog.Show();
         }
+
+        /// <summary>
+        /// エンジン選択ダイアログの解体
+        /// </summary>
+        private void ReleaseEngineSelectionDialog()
+        {
+            if (engineSelectionDialog != null)
+            {
+                engineSelectionDialog.Dispose();
+                engineSelectionDialog = null;
+            }
+        }
+
+        // -- privates
+
+        /// <summary>
+        /// 親ウィンドウの何かを操作しないといけないことがあるので、
+        /// コンストラクタでmainDialogの参照を受け取って、ここに保持しておく。
+        /// </summary>
+        private MainDialog mainDialog;
+
+        /// <summary>
+        /// エンジン選択ボタンが押された時にエンジンを選ぶダイアログ。
+        /// </summary>
+        public EngineSelectionDialog engineSelectionDialog;
+
+        private ControlBinder binder = new ControlBinder();
+
+        /// <summary>
+        /// ダイアログ生成時の値、各種。
+        /// </summary>
+        private int originalWidth;
+        private Point originalGroupBox2;
+
+        private ImageLoader[] banner_mini = new ImageLoader[2];
 
     }
 }

@@ -20,7 +20,7 @@ namespace MyShogi.View.Win2D
             InitSelectionControls();
         }
 
-        public class EngineSelectionDialogViewModel : NotifyObject
+        public class EngineSelectionViewModel : NotifyObject
         {
             /// <summary>
             /// エンジンの選択ボタンが押された時に
@@ -34,7 +34,7 @@ namespace MyShogi.View.Win2D
             }
         }
 
-        public EngineSelectionDialogViewModel ViewModel = new EngineSelectionDialogViewModel();
+        public EngineSelectionViewModel ViewModel = new EngineSelectionViewModel();
 
         /// <summary>
         /// このFormにぶら下がっているエンジン選択(1個)のControl×5個
