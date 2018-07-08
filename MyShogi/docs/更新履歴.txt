@@ -1,7 +1,6 @@
 ﻿
 TODO:
 ・エンジン選択、エンジン設定(3日ぐらい？) 7/5..7
-・CPU自動判別、CPUのコア数、空きメモリ等の自動認識(1日ぐらい) 7/8..9
 ・ここでβ版。βテスターに配布。7/10付近。
 ・インストーラー作成(3日ぐらい？) 7/10..12
 	cf. https://www.osadasoft.com/visual-studio-2017%E3%81%A7%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%A9%E4%BD%9C%E6%88%90/
@@ -12,6 +11,82 @@ TODO:
 ・形勢表示(できれば)
 ・棋譜解析(できれば)
 - CPUだからか。CPUの時に名前を持ってくる処理、まだだった。あとで書く。
+
+- 空きメモリの足りるかの判定
+
+
+■  2018/07/09
+
+- エンジン設定の作業その8
+	- エンジン選択ダイアログのpager実装。
+	// 作業中
+
+
+
+■  2018/07/08
+
+
+- NotifyObjectの双方向データバインディング、無限再帰になるわｗ
+	- senderつけるようにした。
+- KifuControl、データバインディングを使って少しリファクタリングした。
+
+
+- NotifyObject同士のdata bindが出来るように改造した。
+	- あとでこれを使ってリファクタリングする。
+
+
+- NotifyObject、リファクタリングする。
+	- LazyLock、いけてないので削除する。
+	- NotifyObject 新しくなった。コード、すっきりした。
+
+
+- エンジン設定の作業その7
+	- エンジン側で発生した例外、LocalGameServerでハンドルするようにした。
+		- ゲーム自体は中断扱い。
+	- EngineSelectionDialogの実装作業
+		- 8割ぐらい終わった。ページャーあとで作る。
+	- EngineDefineUtility.GetEngineDefines()追加。
+		- これ、Appで行う。
+	- エンジン選択ダイアログで表示順のコントロールをしたい。
+		- DisplayIndexという項目追加する。
+
+
+■  2018/07/07
+
+
+- エンジン設定の作業その6
+	- エンジン同士の対局開始、エンジン初期化中の画像が出ているときに片側のエンジンが指すの修正。
+	- 検討ウィンドウの縦幅を縮めるとnull参照で落ちるの修正。
+
+
+- エンジン設定の作業その5
+	- AutoSetting　→　Presetsとrename
+	- 起動時にengine/を調べるコードEngineDefineUtilityに追加。GetEngineDefineFiles()
+	- EngineDefineにDescription追加。
+	- EngineDefineに従って設定を描画するEngineSelectionControlを追加。コード書きかけ。
+	- NotifyObject派生クラス、～ViewModelとrename
+	- NotifyObjectの部分更新機能、不要な気がしてきたので削除。
+	- View.Win2D、フォルダ作って整理。
+
+
+- エンジン設定の作業その4
+	- SerializerにDataContractSerializerを使っているが、JSONのほうが良くないかな…。DataContractSerializerだと手で書けない。
+		- まあいいか…。他の環境についてはまた考えよう。DataContractSerializer相当のものを自作するのはそんなに難しくないので…。
+	- CPUのコア数取得、Model.Utility.Enviromentに追加。
+	- 空きメモリの取得、Model.Utility.Enviroment.GetFreePhysicalMemory() 実装
+	- CPU自動判別、CPUのコア数、空きメモリ等の自動認識(1日ぐらい) 7/8..9
+		- これ、終わった。エンジン選択とエンジン設定を進める。
+
+
+- エンジン設定の作業その3
+	- EngineAutoSetting追加。
+	- GlobalConfigの読み書きにDataContractSerializerを用いるように変更。
+	- Model.Utility.Serializer追加。
+
+
+- エンジン設定の作業その2
+	- EngineDefine/Cpu.cs追加
+	- 実行環境のCPUを判別して実行ファイル名を決定するところまで書けた。
 
 
 ■  2018/07/06

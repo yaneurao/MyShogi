@@ -95,6 +95,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         [DataMember]
         public EngineAutoSetting[] Presets;
+
+        /// <summary>
+        /// USI拡張プロトコルのうちサポートしているものを列挙する。
+        /// 
+        /// なければないで良い。
+        /// </summary>
+        [DataMember]
+        public ExtendedProtocol[] SupportedExtendedProtocol;
     }
 
 }
