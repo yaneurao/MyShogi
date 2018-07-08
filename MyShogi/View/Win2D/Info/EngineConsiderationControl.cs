@@ -216,7 +216,7 @@ namespace MyShogi.View.Win2D
                 if (sortRanking)
                 {
                     int r;
-                    if (!int.TryParse(ranking, out r))
+                    if (!int.TryParse(ranking, out r) || r < 1)
                         r = 1;
 
                     while (listView1.Items.Count < r)
@@ -226,8 +226,29 @@ namespace MyShogi.View.Win2D
                     }
 
                     // r行目のところに代入
-                    listView1.Items[r-1] = item;
                     list_item_moves[r-1] = info.Moves;
+
+                    // listView1.Items[r - 1] = item;
+
+                    // r行目しか代入していないのに再描画でちらつく。
+                    // ListView、ダブルバッファにしているにも関わらず。
+                    // .NET FrameworkのListView、出来悪すぎない？
+
+                    var old = listView1.Items[r - 1];
+                    if (old.SubItems.Count == list.Length)
+                    {
+                        // 要素一つひとつ入替えてやる。
+                        // これならちらつかない。なんなんだ、このバッドノウハウ…。
+
+                        for (int i = 0; i < list.Length; ++i)
+                            old.SubItems[i].Text = list[i];
+
+                    } else
+                    {
+                        // 要素数が異なるので丸ごと入れ替える。
+                        listView1.Items[r - 1] = item;
+                    }
+
                 }
                 else
                 {
