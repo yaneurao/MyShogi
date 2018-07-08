@@ -36,7 +36,8 @@ namespace MyShogi.Model.Resource.Images
             UpdateHandNumberImage();
             UpdatePromoteDialogImage();
             UpdateTurnImage();
-            UpdateEngineInitImage();
+
+            UpdateLazyLoadImage();
         }
 
         /// <summary>
@@ -286,24 +287,33 @@ namespace MyShogi.Model.Resource.Images
         }
 
         /// <summary>
-        /// エンジンの初期化時の描画
+        /// 画像の遅延読み込み。
         /// </summary>
-        private void UpdateEngineInitImage()
+        private void UpdateLazyLoadImage()
         {
-            Load(ref EngineInitImage, "engine_init.png");
-        }
+            // 起動時にすぐに要らない画像は遅延読み込みにしておくことで起動時の高速化を図る。
+            // いまは素材が少ないのでさほど問題とはなっていないが、素材が増えてきて、
+            // 起動が遅くなるのは嫌なので…。
 
+            // エンジンの初期化時の描画
+            Load(ref EngineInitImage, "engine_init.png" , true);
+
+            // エンジン選択時のNO BANNER
+            Load(ref NoBannerImage, "no_banner.png", true);
+        }
 
         /// <summary>
         /// ファイル名を与えて、ImgFolderから画像を読み込む
+        /// lazy == trueになっていると遅延読み込みが有効になり、
+        /// imageプロパティに初めてアクセスされた時に読み込みに行く。
         /// </summary>
         /// <param name="name"></param>
-        private void Load(ref ImageLoader img, string name)
+        private void Load(ref ImageLoader img, string name , bool lazy = false)
         {
             // プロパティをrefで渡せないので、プロパティにするのやめる。(´ω｀)
 
             img.Release();
-            img.Load(Path.Combine(ImageFolder,name));
+            img.Load(Path.Combine(ImageFolder,name) , lazy);
         }
 
         /// <summary>
@@ -388,5 +398,10 @@ namespace MyShogi.Model.Resource.Images
         /// エンジン初期化中の画像
         /// </summary>
         public ImageLoader EngineInitImage = new ImageLoader();
+
+        /// <summary>
+        /// エンジンのバナーなし
+        /// </summary>
+        public ImageLoader NoBannerImage = new ImageLoader();
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.EngineDefine;
@@ -48,6 +50,19 @@ namespace MyShogi.View.Win2D
         {
             var engineDefine = args.value as EngineDefine;
 
+            if (engineDefine == null)
+            {
+                // 全部クリア
+                var label_list = new[] { label1 , label2, label3,label4,label5 };
+                foreach(var label in label_list)
+                    label.Text = null;
+
+                textBox1.Text = null;
+                banner_mini.Dispose();
+                pictureBox1.Image = null;
+                return;
+            }
+
             // ソフト名
             label1.Text = engineDefine.DescriptionSimple;
 
@@ -59,9 +74,21 @@ namespace MyShogi.View.Win2D
             // ImageLoader経由での読み込みなのでなければ「×」画像になるだけ。
             int w = pictureBox1.Width;
             int h = pictureBox1.Height;
-            var banner = new ImageLoader();
-            banner.Load(engineDefine.BannerFileName);
-            banner_mini = banner.CreateAndCopy(w, h);
+
+            if (!File.Exists(engineDefine.BannerFileName))
+            {
+                // ファイルがないのでNO BANNERのbannerにする。
+                var banner = TheApp.app.imageManager.NoBannerImage;
+                banner_mini.Dispose();
+                banner_mini = banner.CreateAndCopy(w, h);
+            }
+            else
+            {
+                var banner = new ImageLoader();
+                banner.Load(engineDefine.BannerFileName);
+                banner_mini.Dispose();
+                banner_mini = banner.CreateAndCopy(w, h);
+            }
             pictureBox1.Image = banner_mini.image;
 
             // ソフトの使用メモリ
@@ -70,6 +97,7 @@ namespace MyShogi.View.Win2D
             var required_memory = engineDefine.RequiredMemory + engineDefine.MinimumHashMemory;
             var is_enough = required_memory <= free_memory;
 
+            label2.Text = "必要メモリ : ";
             label3.Text = $"本体 {engineDefine.RequiredMemory}[MB] + HASH {engineDefine.MinimumHashMemory}[MB]以上 ＝ ";
             label4.Text = required_memory.ToString();
             label4.ForeColor = is_enough ? Color.Black : Color.Red;
@@ -86,7 +114,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// banner用のImageLoader
         /// </summary>
-        private ImageLoader banner_mini;
+        private ImageLoader banner_mini = new ImageLoader();
 
         private void button1_Click(object sender, System.EventArgs e)
         {

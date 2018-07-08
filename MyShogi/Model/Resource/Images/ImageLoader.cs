@@ -13,10 +13,19 @@ namespace MyShogi.Model.Resource.Images
         /// ファイル名のファイル(画像)を読み込む。
         /// 読み込みに失敗した場合、例外は投げずにimageに「×」画像を設定する。
         /// 
+        /// lazy == trueだと、imageプロパティにアクセスされた時に初めて読み込みに行く。(遅延読み込み)
         /// </summary>
         /// <param name="filename"></param>
-        public void Load(string filename)
+        public void Load(string filename , bool lazyLoad = false)
         {
+            // 遅延読み込みが指定されているか？
+            if (lazyLoad)
+            {
+                // ファイル名だけ保存して返る。
+                lazy_filename = filename;
+                return;
+            }
+
             try {
 
                 image = System.Drawing.Image.FromFile(filename);
@@ -128,9 +137,24 @@ namespace MyShogi.Model.Resource.Images
         /// <summary>
         /// 読み込んでいる画像。
         /// </summary>
-        public System.Drawing.Image image
+        public Image image
         {
-           get; private set;
+           get {
+                if (lazy_filename != null)
+                {
+                    // 遅延読み込みが指定されているので、このタイミングで読み込みに行く。
+                    Load(lazy_filename);
+                    lazy_filename = null;
+                }
+                return image_;
+            }
+           private set { image_ = value; }
         }
+        private Image image_;
+
+        /// <summary>
+        /// 遅延読み込みのためのファイル名
+        /// </summary>
+        private string lazy_filename;
     }
 }
