@@ -386,7 +386,7 @@ namespace MyShogi.View.Win2D
                 }
                 ReleaseEngineSelectionDialog();
             });
-            engineSelectionDialog.Show();
+            engineSelectionDialog.Show(this);
         }
 
         /// <summary>

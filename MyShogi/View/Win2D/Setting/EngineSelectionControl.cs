@@ -51,6 +51,7 @@ namespace MyShogi.View.Win2D
 
         public EngineSelectionViewModel ViewModel = new EngineSelectionViewModel();
 
+
         /// <summary>
         /// [UI Thread] : EngineDefineが変更になった時のハンドラ。これが画面に反映される。
         /// </summary>
@@ -105,9 +106,8 @@ namespace MyShogi.View.Win2D
             pictureBox1.Image = banner_mini.image;
 
             // ソフトの使用メモリ
-
             var free_memory = ViewModel.FreePhysicalMemory;
-            var required_memory = engineDefine.RequiredMemory + engineDefine.MinimumHashMemory;
+            var required_memory = ViewModel.EngineDefine.RequiredMemory + ViewModel.EngineDefine.MinimumHashMemory;
             var is_enough = required_memory <= free_memory;
 
             label2.Text = "必要メモリ : ";
@@ -128,6 +128,15 @@ namespace MyShogi.View.Win2D
 
         private void button1_Click(object sender, System.EventArgs e)
         {
+            // メモリ足りないならこの時点で警告ダイアログを出す。
+
+            var free_memory = ViewModel.FreePhysicalMemory;
+            var required_memory = ViewModel.EngineDefine.RequiredMemory + ViewModel.EngineDefine.MinimumHashMemory;
+            var is_enough = required_memory <= free_memory;
+
+            if (!is_enough)
+                TheApp.app.MessageShow("空き物理メモリが足りないので思考エンジンの動作が不安定になる可能性があります。");
+
             ViewModel.RaisePropertyChanged("ButtonClicked");
         }
 

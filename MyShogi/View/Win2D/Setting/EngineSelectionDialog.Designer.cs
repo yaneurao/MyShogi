@@ -67,7 +67,6 @@
             this.MinimizeBox = false;
             this.Name = "EngineSelectionDialog";
             this.Text = "エンジン選択ダイアログ";
-            this.TopMost = true;
             this.ResumeLayout(false);
 
         }

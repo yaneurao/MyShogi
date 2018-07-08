@@ -693,12 +693,8 @@ namespace MyShogi.View.Win2D
                             gameSettingDialog.Dispose();
 
                             gameSettingDialog = new GameSettingDialog(this);
-                            gameSettingDialog.Show();
-
-                                // 閉じるときにせめて前回設定が選ばれていて欲しいが..
-                                // あとで前回設定を復元するコードを書く。
-                                // 前回設定、GlobalSettingに持たせるべきのような気がする。
-                            };
+                            gameSettingDialog.Show(this);
+                        };
 
                         item_playgame.DropDownItems.Add(item);
                     }
