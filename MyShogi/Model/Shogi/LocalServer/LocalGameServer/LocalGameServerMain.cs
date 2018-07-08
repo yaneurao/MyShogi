@@ -49,6 +49,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             kifuManager.Tree.AddPropertyChangedHandler("KifuListAdded", KifuListAdded);
             kifuManager.Tree.AddPropertyChangedHandler("KifuListRemoved", KifuListRemoved);
 
+            AddPropertyChangedHandler("KifuListSelectedIndex", KifuListSelectedIndexChangedCommand);
+
             // 起動時に平手の初期局面が表示されるようにしておく。
             kifuManager.EnableKifuList = true;
             kifuManager.Init();

@@ -184,7 +184,7 @@ namespace MyShogi.View.Win2D
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             var kifu = miniShogiBoard1.kifuControl;
-            kifu.KifuListSelectedIndex = 1;
+            kifu.ViewModel.KifuListSelectedIndex = 1;
         }
 
         /// <summary>
@@ -196,7 +196,7 @@ namespace MyShogi.View.Win2D
         {
             // 1手目より巻き戻さない。
             var kifu = miniShogiBoard1.kifuControl;
-            kifu.KifuListSelectedIndex = Math.Max(kifu.KifuListSelectedIndex - 1, 1);
+            kifu.ViewModel.KifuListSelectedIndex = Math.Max(kifu.ViewModel.KifuListSelectedIndex - 1, 1);
         }
 
         /// <summary>

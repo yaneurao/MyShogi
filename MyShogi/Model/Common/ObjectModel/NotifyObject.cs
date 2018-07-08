@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows.Forms;
 
 // WPFで使うNotifyObjectっぽい何か。
@@ -162,10 +161,30 @@ namespace MyShogi.Model.Common.ObjectModel
         /// name の propertyが変更されたときに、これを購読しているobserverに更新通知を送る。
         /// SetValue()を使わずに自力で名前に対応するイベントハンドラを呼びたい時にも用いる。
         /// 遅延呼び出しではなく、即座にハンドラが呼び出される。
+        /// 
+        /// notify_otherがtrueなら、DataBindしている他のNotifyObjectにも通知がいく。
         /// </summary>
         /// <param name="name"></param>
         public void RaisePropertyChanged(PropertyChangedEventArgs e)
         {
+            RaisePropertyChanged(e, this);
+        }
+
+        /// <summary>
+        /// public RaisePropertyChanged()の下請け。
+        /// sender : 送信元のNotifyObject
+        /// 
+        /// DataBindで双方向bindingしているときに無限再帰になるのを防ぐためにsenderをつけている。
+        /// 
+        /// A <-> B <-> C <-> A
+        /// のような循環Bindingしている場合は、無限再帰になってしまうが、MVVMアーキテクチャでそういうようなBindingは
+        /// しないと考えられるので問題ない。(MVVMでは送信元のデータソースは一箇所にあると考えられるので)
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="sender"></param>
+        protected void RaisePropertyChanged(PropertyChangedEventArgs e , object sender)
+        {
+
             if (!PropertyChangedEventEnable)
                 return;
 
@@ -222,7 +241,9 @@ namespace MyShogi.Model.Common.ObjectModel
             // これは同じスレッドで通知して良い。
             if (current.notifies != null)
                 foreach (var notify in current.notifies)
-                    notify.RaisePropertyChanged(e);
+                    // 無限再帰になるのを防ぐため、送信元を付与して呼び出す。
+                    if (notify != sender)
+                        notify.RaisePropertyChanged(e,this);
         }
 
         /// <summary>
@@ -232,7 +253,7 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <param name="value"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public void RaisePropertyChanged(string name, object value)
+        public void RaisePropertyChanged(string name, object value = null)
         {
             RaisePropertyChanged(new PropertyChangedEventArgs(name, value));
         }
@@ -302,6 +323,11 @@ namespace MyShogi.Model.Common.ObjectModel
             }
         }
 
+        /// <summary>
+        /// Bind()したものを解除する。
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="notify"></param>
         public void Unbind(string name , NotifyObject notify)
         {
             lock(lockObject)

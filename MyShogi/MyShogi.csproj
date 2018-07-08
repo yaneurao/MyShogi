@@ -108,7 +108,7 @@
     <Compile Include="Model\Shogi\Player\NullPlayer.cs" />
     <Compile Include="Model\Shogi\Player\PlayerBuilder.cs" />
     <Compile Include="Model\Common\Process\ProcessNegotiator.cs" />
-    <Compile Include="Model\Shogi\LocalServer\LocalGameServer.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerMain.cs" />
     <Compile Include="Model\Common\Math\AffineMatrix.cs" />
     <Compile Include="Model\Common\Math\Vector2D.cs" />
     <Compile Include="Model\Common\ObjectModel\NotifyObject.cs" />
@@ -205,11 +205,11 @@
     <Compile Include="View\Win2D\Setting\EngineSelectionControl.Designer.cs">
       <DependentUpon>EngineSelectionControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\Game\GameScreenControl.cs">
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlMain.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\Game\GameScreenControl.Designer.cs">
-      <DependentUpon>GameScreenControl.cs</DependentUpon>
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlMain.Designer.cs">
+      <DependentUpon>GameScreenControlMain.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlConst.cs">
       <SubType>UserControl</SubType>
@@ -305,8 +305,8 @@
     <EmbeddedResource Include="View\Win2D\Info\EngineConsiderationControl.resx">
       <DependentUpon>EngineConsiderationControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\Game\GameScreenControl.resx">
-      <DependentUpon>GameScreenControl.cs</DependentUpon>
+    <EmbeddedResource Include="View\Win2D\Game\GameScreenControl\GameScreenControlMain.resx">
+      <DependentUpon>GameScreenControlMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Info\EvalGraphControl.resx">
       <DependentUpon>EvalGraphControl.cs</DependentUpon>

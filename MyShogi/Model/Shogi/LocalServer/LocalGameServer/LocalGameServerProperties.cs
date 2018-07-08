@@ -211,9 +211,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         // 残り消費時間が変更になった時に呼び出される。
         //public bool RestTimeChanged { get; }
 
-        // 仮想プロパティ
-        // 棋譜読み込み時など、こちら側の要請により、棋譜ウィンドウを指定行に移動させるイベント
-        //public int SetKifuListIndex { get; }
+        /// <summary>
+        /// 棋譜読み込み時など、こちら側の要請により、棋譜ウィンドウを指定行に移動させる
+        /// この値をdatabindによって棋譜ControlのViewModel.KifuListSelectedIndexに紐づけておくこと。
+        /// </summary>
+        public int KifuListSelectedIndex
+        {
+            set { SetValue<int>("KifuListSelectedIndex", value); }
+        }
 
         /// <summary>
         /// 盤面反転
@@ -334,7 +339,8 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // このクラスのNotifyObjectによる通知がなされる。
             // "KifuListAdded"プロパティの変更通知が飛ぶ。
-            SetValue<string>(args);
+            // SetValue()ではなくRaise..()のほうにしておかないと変化がないときに変更通知こない。
+            RaisePropertyChanged(args);
         }
 
         /// <summary>
@@ -347,21 +353,19 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // このクラスのNotifyObjectによる通知がなされる。
             // "KifuListAdded"プロパティの変更通知が飛ぶ。
-            SetValue<object>(args);
+            RaisePropertyChanged(args);
         }
 
         /// <summary>
         /// 棋譜ウィンドウの選択行を変更する。
         /// ply を指定しなければ(-1のとき)、現在のkifuManager.Treeに同期させる。
-        /// 
-        /// "SetKifuListIndex"という仮想プロパティの変更通知が飛ぶ。
         /// </summary>
         private void UpdateKifuSelectedIndex(int ply = -1)
         {
             if (ply == -1)
                 ply = kifuManager.Tree.pliesFromRoot;
-            RaisePropertyChanged("SetKifuListIndex", ply);
-            KifuSelectedIndexChangedCommand(ply);
+
+            KifuListSelectedIndex = ply;
         }
 
         #endregion

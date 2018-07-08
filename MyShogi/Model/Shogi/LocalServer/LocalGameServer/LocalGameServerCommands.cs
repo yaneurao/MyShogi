@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using MyShogi.App;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
@@ -179,8 +180,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 棋譜の選択行が変更になった。
         /// 対局中でなければ、現在局面をその棋譜の局面に変更する。
+        /// 
+        /// このメソッドを直接呼び出さずに、this.KifuListSelectedIndexのsetterを使うこと。
         /// </summary>
-        public void KifuSelectedIndexChangedCommand(int selectedIndex)
+        private void KifuListSelectedIndexChangedCommand(PropertyChangedEventArgs args)
         {
             AddCommand(
             () =>
@@ -191,6 +194,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // このイベントを処理してはならない。
 
                     // 無理やりではあるが棋譜のN行目に移動出来るのであった…。
+                    int selectedIndex = (int)args.value;
                     kifuManager.Tree.GotoSelectedIndex(selectedIndex);
                     PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTimes());
                 }
@@ -286,7 +290,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 本譜の手順に戻るボタン
         /// </summary>
-        public void MainBranchButtonCommand()
+        public void MainBranchButtonCommand(PropertyChangedEventArgs args)
         {
             AddCommand(
             () =>
@@ -312,7 +316,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 棋譜の次分岐に移動するボタン
         /// </summary>
-        public void NextBranchButtonCommand()
+        public void NextBranchButtonCommand(PropertyChangedEventArgs args)
         {
             AddCommand(
             () =>
@@ -326,7 +330,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 棋譜の分岐削除ボタン
         /// </summary>
-        public void EraseBranchButtonCommand()
+        public void EraseBranchButtonCommand(PropertyChangedEventArgs args)
         {
             AddCommand(
             () =>

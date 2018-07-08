@@ -418,27 +418,27 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton11_Click(object sender, System.EventArgs e)
         {
-            kifuControl.Button1ClickedHandler();
+            kifuControl.ViewModel.RaisePropertyChanged("MainBranchButtonClicked");
         }
 
         /// <summary>
-        /// ⏪ボタン
+        /// ◀ボタン
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void toolStripButton12_Click(object sender, System.EventArgs e)
         {
-            kifuControl.KifuListSelectedIndex = 0;
+            kifuControl.ViewModel.KifuListSelectedIndex = 0;
         }
 
         /// <summary>
-        /// ⏩ボタン
+        /// ▶ボタン
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void toolStripButton13_Click(object sender, System.EventArgs e)
         {
-            kifuControl.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に移動するはず */;
+            kifuControl.ViewModel.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に移動するはず */;
         }
 
         #endregion

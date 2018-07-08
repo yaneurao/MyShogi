@@ -87,6 +87,7 @@
             this.Controls.Add(this.listBox1);
             this.Name = "KifuControl";
             this.Size = new System.Drawing.Size(389, 288);
+            this.Load += new System.EventHandler(this.KifuControl_Load);
             this.ResumeLayout(false);
 
         }

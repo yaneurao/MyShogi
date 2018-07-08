@@ -14,9 +14,6 @@ namespace MyShogi.View.Win2D
         public GameScreenControl()
         {
             InitializeComponent();
-
-            // 棋譜コントロールのハンドラを設定する。
-            SetKifuControlHandler();
         }
     }
 }
