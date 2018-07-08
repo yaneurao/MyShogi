@@ -21,10 +21,45 @@ namespace MyShogi.Model.Common.ObjectModel
         public object value;  // プロパティに代入された値
     }
 
+    public enum DataBindWay
+    {
+        OneWay , // 片方向データバインド
+        TwoWay , // 両方向データバインド
+    }
+
     /// <summary>
     /// プロパティが変更されたときに呼び出されるハンドラの型
     /// </summary>
     public delegate void PropertyChangedEventHandler(PropertyChangedEventArgs args);
+
+    /// <summary>
+    /// NotifyObjectで使う、あるプロパティ名に対応するデータ
+    /// </summary>
+    public class PropertyObject
+    {
+        /// <summary>
+        /// 呼び出されるハンドラ
+        /// </summary>
+        public PropertyChangedEventHandler handler;
+
+        /// <summary>
+        /// 格納されているオブジェクト
+        /// </summary>
+        public object obj;
+
+        /// <summary>
+        /// イベントハンドラを呼び出す時にUIスレッドで実行しないといけないため、
+        /// Formが指定されているとき、それを格納しておくためのもの。
+        /// </summary>
+        public Control form;
+
+        /// <summary>
+        /// このプロパティがdata-bindされているNotifyObject
+        /// lockしてないのでimmutable objectにすること。
+        /// </summary>
+        public List<NotifyObject> notifies;
+    }
+
 
     /// <summary>
     /// MVVMのViewModelで用いる、プロパティが変更されたときに、それをsubscribe(購読)しているobserverに
@@ -41,24 +76,26 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <param name="value"></param>
         protected void SetValue<T>(string name, T value)
         {
-            using (LazyLock())
+            var raise = false;
+            lock (lockObject)
             {
-                object current;
-                if (!this.properties.TryGetValue(name, out current)
-                    || !GenericEquals(current , value))
+                var current = GetProperty(name);
+
+                if (!GenericEquals(current.obj , value))
                 {
                     // 値が異なるときだけ代入して、そのときにイベントが発火する。
-                    // 一度目はイベントは発火しない。
-                    properties[name] = value;
+                    // 一度目はTryGetValue()に失敗するのでイベントが必ず発火する。
+                    current.obj = value;
 
                     // UI以外のスレッドがInvoke()するときにUIスレッドがこのlockObject待ちになっていると
-                    // dead lockしてしまうので、このlockが解除されてからRaisePropertyChanged()が呼び出されて欲しい。
-
-                    // LazyLockは、lockが解除されたときにまとめて変更通知を行う。
+                    // dead lockしてしまうので、このlockが解除されてからRaisePropertyChanged()が呼び出す。
+                    
                     if (PropertyChangedEventEnable)
-                        LazyRaisePropertyChanged(name, value);
+                        raise = true;
                 }
             }
+            if (raise)
+                RaisePropertyChanged(name, value);
         }
 
         /// <summary>
@@ -70,24 +107,21 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <param name="value"></param>
         protected void SetValue<T>(PropertyChangedEventArgs args)
         {
-            using (LazyLock())
+            var raise = false;
+            lock (lockObject)
             {
-                object current;
-                if (!this.properties.TryGetValue(args.name, out current)
-                    || !GenericEquals(current, args.value))
+                var current = GetProperty(args.name);
+                
+                if (!GenericEquals(current.obj, args.value))
                 {
-                    // 値が異なるときだけ代入して、そのときにイベントが発火する。
-                    // 一度目はイベントは発火しない。
-                    properties[args.name] = args.value;
+                    current.obj = args.value;
 
-                    // UI以外のスレッドがInvoke()するときにUIスレッドがこのlockObject待ちになっていると
-                    // dead lockしてしまうので、このlockが解除されてからRaisePropertyChanged()が呼び出されて欲しい。
-
-                    // LazyLockは、lockが解除されたときにまとめて変更通知を行う。
                     if (PropertyChangedEventEnable)
-                        LazyRaisePropertyChanged(args);
+                        raise = true;
                 }
             }
+            if (raise)
+                RaisePropertyChanged(args);
         }
 
         /// <summary>
@@ -101,12 +135,27 @@ namespace MyShogi.Model.Common.ObjectModel
         {
             lock (lockObject)
             {
-                object current;
-                if (!this.properties.TryGetValue(name, out current))
-                    return default(T);
-
-                return (T)current;
+                var current = GetProperty(name);
+                return current.obj == null ? default(T) : (T)current.obj;
             }
+        }
+
+        /// <summary>
+        /// nameに紐づけられているPropertyObjectを取得する。
+        /// なければ新たに生成して返す。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        protected PropertyObject GetProperty(string name)
+        {
+            PropertyObject current;
+            if (!propery_objects.TryGetValue(name, out current))
+            {
+                current = propery_objects[name] = new PropertyObject();
+                // current.obj == null
+            }
+            return current;
         }
 
         /// <summary>
@@ -120,42 +169,39 @@ namespace MyShogi.Model.Common.ObjectModel
             if (!PropertyChangedEventEnable)
                 return;
 
-            // いますぐ呼び出す
-            PropertyChangedEventHandler h = null;
+            PropertyObject current = null;
             Control form = null;
 
             lock (lockObject)
             {
-                // UIスレッドで実行すべきなのか？
-                if (forms_dic.ContainsKey(e.name))
-                {
-                    var form2 = forms_dic[e.name];
+                // このpropertyが見つからないということはないはず。(事前にハンドラが登録されているはずで…)
+                current = GetProperty(e.name);
 
-                    if (!form2.IsHandleCreated)
+                // このformのBegineInvoke()で呼び出すことが要求されている。
+                if (current.form != null)
+                {
+                    // Form生成前。無理ぽ
+                    if (!current.form.IsHandleCreated)
                         return;
 
-                    if (form2.InvokeRequired)
+                    // UIスレッド以外からの実行か？
+                    if (current.form.InvokeRequired)
                     {
                         // このlockのなかでInvoke()するとdead lockになるから駄目。
                         //form.Invoke(new Action(() => RaisePropertyChanged(e)));
                         //return;
 
-                        form = form2;
+                        form = current.form;
                         // このlockを抜けてからcallbackする。
                     }
                 }
-
-                // このpropertyをsubscribeしているobserverに更新通知を送る重複名はないことは保証されている。
-                foreach (var prop in propery_changed_handlers)
-                    if (prop.Key == e.name)
-                    {
-                        h = prop.Value;
-                        break;
-                    }
             }
+
+            // このpropertyをsubscribeしているobserverに更新通知を送る重複名はないことは保証されている。
 
             // lockの外側でコールバックしないとデッドロックになる。
             // Invoke()をする場合であって、BegineInvoke()なら大丈夫か…。
+            var h = current.handler;
             if (h != null)
             {
                 // UIスレッドからの実行が必要なのであればForm.BeginInvoke()を用いてコールバックする。
@@ -171,6 +217,12 @@ namespace MyShogi.Model.Common.ObjectModel
                     }
                     catch { }
             }
+
+            // data bindされているならそれらのオブジェクトにも通知
+            // これは同じスレッドで通知して良い。
+            if (current.notifies != null)
+                foreach (var notify in current.notifies)
+                    notify.RaisePropertyChanged(e);
         }
 
         /// <summary>
@@ -205,16 +257,9 @@ namespace MyShogi.Model.Common.ObjectModel
         {
             lock (lockObject)
             {
-                if (form != null)
-                    if (!forms_dic.ContainsKey(name))
-                        forms_dic.Add(name, form);
-                    else
-                        forms_dic[name] = form; // 念の為、上書きしておく。
-
-                if (!propery_changed_handlers.ContainsKey(name))
-                    propery_changed_handlers.Add(name,h);
-                else
-                    propery_changed_handlers[name] += h;
+                var current = GetProperty(name);
+                current.handler += h;
+                current.form = form; // 上書きする
             }
         }
 
@@ -227,18 +272,13 @@ namespace MyShogi.Model.Common.ObjectModel
         {
             lock (lockObject)
             {
-                if (propery_changed_handlers.ContainsKey(name))
-                {
-                    propery_changed_handlers[name] -= h;
-                    // delegateを削除した結果、nullになったなら、このentryを削除しておく。
-                    if (propery_changed_handlers[name] == null)
-                    {
-                        propery_changed_handlers.Remove(name);
+                var current = GetProperty(name);
 
-                        if (!forms_dic.ContainsKey(name))
-                            forms_dic.Remove(name);
-                    }
-                }
+                current.handler -= h;
+
+                // このproperty nameに対応するすべてのhandlerがremoveされたならこのPropertyObjectを消す必要がある。
+                if (current.handler == null)
+                    propery_objects.Remove(name);
             }
         }
 
@@ -252,98 +292,14 @@ namespace MyShogi.Model.Common.ObjectModel
         // --- 以下 private 
 
         /// <summary>
-        /// 移植性を考慮し、reflection/DynamicObjectを使いたくないので
-        /// プロパティ名と、それに対応するプロパティを自前でもっておく。
-        /// </summary>
-        private Dictionary<string, object> properties = new Dictionary<string, object>();
-
-        /// <summary>
         /// プロパティが変更されたときに呼び出されるイベントハンドラ
         /// </summary>
-        private Dictionary<string, PropertyChangedEventHandler> propery_changed_handlers 
-            = new Dictionary<string, PropertyChangedEventHandler>();
-
-        /// <summary>
-        /// イベントハンドラを呼び出す時にUIスレッドで実行しないといけないため、
-        /// Formが指定されているとき、それを格納しておくためのもの。
-        /// </summary>
-        private Dictionary<string, Control> forms_dic = new Dictionary<string, Control>();
-
-        /// <summary>
-        /// lockを抜けてからRaisePropertyChangedEventをまとめて呼び出す遅延lock
-        /// </summary>
-        public class LazyModelLock : IDisposable
-        {
-            public LazyModelLock(NotifyObject parent_)
-            {
-                parent = parent_;
-                Monitor.Enter(parent.lockObject, ref lockTaken);
-
-                // いまからLockを抜けたときに呼び出すべきイベントを積んでいく。
-                parent.events = new List<PropertyChangedEventArgs>();
-            }
-
-            // このタイミングで溜めていたイベントがまとめて呼び出される。
-            public void Dispose()
-            {
-                // このタイミングでイベントをコピー
-                var events = parent.events;
-                parent.events = null;
-
-                if (lockTaken) Monitor.Exit(parent.lockObject);
-
-                // ここでそれぞれのイベントを呼び出す。
-
-                foreach(var e in events)
-                    parent.RaisePropertyChanged(e);
-            }
-
-            private NotifyObject parent;
-
-            // lockが取れたか
-            private bool lockTaken;
-        }
-
-        /// <summary>
-        /// LazyModelLockのbuilder。using(LazyLock()) { ... }のようにして使う。
-        /// </summary>
-        /// <returns></returns>
-        public LazyModelLock LazyLock()
-        {
-            return new LazyModelLock(this);
-        }
+        private Dictionary<string, PropertyObject> propery_objects = new Dictionary<string, PropertyObject>();
 
         /// <summary>
         /// lockに用いるobject
         /// </summary>
         private object lockObject = new object();
-
-        /// <summary>
-        /// LazyModelLockのDispose()のときにまとめて呼び出されるハンドラ
-        /// </summary>
-        private List<PropertyChangedEventArgs> events;
-
-        /// <summary>
-        /// name の propertyが変更されたときに、これを購読しているobserverに更新通知を送る。
-        /// SetValue()を使わずに自力で名前に対応するイベントハンドラを呼びたい時にも用いる。
-        /// </summary>
-        /// <param name="name"></param>
-        private void LazyRaisePropertyChanged(string name, object value)
-        {
-            // ここに積んでおいて、lockを抜けるときにまとめて呼び出す
-            LazyRaisePropertyChanged(new PropertyChangedEventArgs(name, value));
-        }
-
-        /// <summary>
-        /// name の propertyが変更されたときに、これを購読しているobserverに更新通知を送る。
-        /// SetValue()を使わずに自力で名前に対応するイベントハンドラを呼びたい時にも用いる。
-        /// </summary>
-        /// <param name="name"></param>
-        private void LazyRaisePropertyChanged(PropertyChangedEventArgs args)
-        {
-            // ここに積んでおいて、lockを抜けるときにまとめて呼び出す
-            events.Add(args);
-        }
 
         /// <summary>
         /// オブジェクトをnull値などを考慮しながら比較する。
