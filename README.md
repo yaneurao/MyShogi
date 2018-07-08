@@ -8,11 +8,15 @@ MyShogiは、オープンソースの将棋ソフト用GUIです。
 
 # スクリーンショット
 
+- やねうら王の公式Twitterの画像をそのまま貼り付けたため、縦横の比率がおかしいです。
+
 |||
 |---|---|
-|<img src="https://pbs.twimg.com/media/DhP9uLkUEAAue8I.jpg" width="400" height="254" alt="対局画面">|<img src="https://pbs.twimg.com/media/DhP9uLkUEAAue8I.jpg" width="400" height="254" alt="対局設定">|
-|<img src="https://pbs.twimg.com/media/Dez3gZxVAAASWWY.jpg" width="400" height="254" alt="成り不成">|<img src="https://pbs.twimg.com/media/Dg6DMjYUcAAol41.jpg" width="400" height="254" alt="対局設定">|
-|<img src="https://pbs.twimg.com/media/DhmEiQ-UYAATJQF.jpg" width="400" height="254" alt="エンジン選択">|Coming Soon..|
+|<img src="https://pbs.twimg.com/media/Dez3gZxVAAASWWY.jpg" width="400" height="254" alt="対局設定">|<img src="https://pbs.twimg.com/media/Dg6DMjYUcAAol41.jpg" width="400" height="254" alt="盤面編集">|
+|<img src="https://pbs.twimg.com/media/DhP9uLkUEAAue8I.jpg" width="400" height="254" alt="対局画面">|<img src="https://pbs.twimg.com/media/Dez3hKnUcAANNd9.jpg" width="400" height="254" alt="成り不成">|
+|<img src="https://pbs.twimg.com/media/DhmEiQ-UYAATJQF.jpg" width="400" height="254" alt="エンジン選択">|<img src="https://pbs.twimg.com/media/Dem5sS2U0AEjgC7.jpg" width="400" height="254" alt="利きマーカー">|
+<img src="https://pbs.twimg.com/media/Deb12RyV0AA7ZCw.jpg" width="400" height="254" alt="英字駒">|<img src="https://pbs.twimg.com/media/Deb13B4VMAAYAfZ.jpg" width="400" height="254" alt="1文字駒">|
+
 
 # 特徴
 
