@@ -245,7 +245,10 @@ namespace MyShogi.View.Win2D
                 if (size.IsEmpty)
                     size = new Size(Width, (int)(Width * 0.2)); /* メインウィンドウの20%ぐらいの高さ */
                 dialog.Size = size;
-                dialog.Show();
+                dialog.Show(/*this*/);
+                // 検討ウィンドウはClosingイベントをキャンセルして非表示にしているのでメインウインドウにぶら下げると
+                // アプリを終了できなくなってしまう。また、メインウインドウを動かした時に検討ウィンドウは自動追随するので
+                // 現状、普通に使用していてメインウインドウで検討ウィンドウが隠れることはないため、これで良しとする。
 
                 var offset = TheApp.app.config.ConsiderationDialogClientLocation;
                 if (offset.IsEmpty)
@@ -1364,7 +1367,7 @@ namespace MyShogi.View.Win2D
                                 cpuInfoDialog.Dispose();
 
                             cpuInfoDialog = new SystemInfo();
-                            cpuInfoDialog.Show();
+                            cpuInfoDialog.Show(this);
                         };
                         item_others.DropDownItems.Add(item1);
                     }
@@ -1382,7 +1385,7 @@ namespace MyShogi.View.Win2D
                                 aboutDialog.Dispose();
 
                             aboutDialog = new AboutYaneuraOu();
-                            aboutDialog.Show();
+                            aboutDialog.Show(this);
                         };
                         item_others.DropDownItems.Add(item1);
                     }
