@@ -78,6 +78,7 @@
     <Compile Include="Model\Shogi\EngineDefine\EngineAutoSetting.cs" />
     <Compile Include="Model\Shogi\EngineDefine\Cpu.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineDefine.cs" />
+    <Compile Include="Model\Shogi\EngineDefine\EngineDefineEx.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineDefineUtility.cs" />
     <Compile Include="Model\Shogi\EngineDefine\ExtendedProtocol.cs" />
     <Compile Include="Model\Shogi\EngineDefine\Sample\EngineDefineSample.cs" />

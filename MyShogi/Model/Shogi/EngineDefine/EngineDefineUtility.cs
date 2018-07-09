@@ -1,9 +1,9 @@
-﻿using MyShogi.App;
-using MyShogi.Model.Common.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using MyShogi.App;
+using MyShogi.Model.Common.Utility;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -89,18 +89,28 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// EngineDefineのListを返す。
         /// </summary>
         /// <returns></returns>
-        public static List<EngineDefine> GetEngineDefines()
+        public static List<EngineDefineEx> GetEngineDefines()
         {
             // 実行ファイル配下のengine/フォルダ配下にある"engine_define.xml"を列挙する。
             var def_files = GetEngineDefineFiles();
 
-            var list = new List<EngineDefine>();
+            // MyShogiの実行フォルダ。これをfilenameから削って、相対pathを得る。
+            var current_path = Path.GetDirectoryName(Application.ExecutablePath);
+
+            var list = new List<EngineDefineEx>();
             foreach (var filename in def_files)
             {
                 try
                 {
                     var engine_define = ReadFile(filename);
-                    list.Add(engine_define);
+                    var relative_path = Path.GetDirectoryName(filename).Substring(current_path.Length);
+
+                    var engine_define_ex = new EngineDefineEx()
+                    {
+                        EngineDefine = engine_define,
+                        FolderPath = relative_path,
+                    };
+                    list.Add(engine_define_ex);
                 } catch (Exception ex)
                 {
                     TheApp.app.MessageShow($"{filename}の解析に失敗しました。\n例外名" + ex.Message);
@@ -108,7 +118,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
             }
 
             // EngineDefine.EngineOrderの順で並び替える。
-            list.Sort((x ,y) => y.DisplayOrder - x.DisplayOrder);
+            list.Sort((x ,y) => y.EngineDefine.DisplayOrder - x.EngineDefine.DisplayOrder);
 
             return list;
         }

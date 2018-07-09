@@ -71,6 +71,29 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 対局条件の正当性をチェックする。
+        /// 
+        /// おかしい場合は、メッセージ文字列を返す。
+        /// 問題ないければnullを返す。
+        /// </summary>
+        public string IsValid()
+        {
+            foreach (var c in All.Colors())
+            {
+                var player = Player(c);
+                if (player.IsCpu)
+                {
+                    if (player.EngineDefineFolderPath == null)
+                        return $"{c.Pretty()}側のソフトが選ばれていません。";
+                }
+
+                // 他、持ち時間設定など何か矛盾があるかチェックする(といいかも)
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// 開始盤面
         /// </summary>
         public BoardSetting Board;

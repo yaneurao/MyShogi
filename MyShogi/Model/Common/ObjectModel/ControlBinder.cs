@@ -65,12 +65,16 @@ namespace MyShogi.Model.Common.ObjectModel
             var h1 = new PropertyChangedEventHandler((args) =>
             {
                 // 値が範囲外なら補整してからセットする。
+                // ComboBoxのitemがないこともあるので注意。
                 var v = (int)args.value;
-                if (control.Items.Count <= v)
-                    v = 0;
-                if (v < 0)
-                    v = 0;
-                control.SelectedIndex = v;
+                if (control.Items.Count != 0)
+                {
+                    if (control.Items.Count <= v)
+                        v = 0;
+                    if (v < 0)
+                        v = 0;
+                    control.SelectedIndex = v;
+                }
 
                 // おまけハンドラがあるなら呼び出す。
                 if (f!=null)

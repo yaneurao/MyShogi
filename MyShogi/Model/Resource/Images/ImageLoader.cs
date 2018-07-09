@@ -143,6 +143,7 @@ namespace MyShogi.Model.Resource.Images
                 if (lazy_filename != null)
                 {
                     // 遅延読み込みが指定されているので、このタイミングで画像ファイルを読み込みに行く。
+                    // 画像を要求するのは常にUIスレッドなので、lockは不要。
                     Load(lazy_filename);
 
                     // 試行するのは1回限りにしたいので、lazy_filename == nullに変更しておく。

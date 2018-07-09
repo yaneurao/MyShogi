@@ -50,5 +50,26 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue("IsCpu", value); }
         }
 
+        /// <summary>
+        /// (CPUだとして)
+        /// エンジンの設定ファイルのfolder path(相対)
+        ///     EngineDefineEx.FolderPath
+        /// 先後分。
+        /// </summary>
+        public string EngineDefineFolderPath
+        {
+            get { return GetValue<string>("EngineDefineFolderPath"); }
+            set { SetValue("EngineDefineFolderPath", value); }
+        }
+
+        /// <summary>
+        /// プリセットの選択している番号。
+        /// </summary>
+        public int SelectedEnginePreset
+        {
+            get { return GetValue<int>("SelectedEnginePreset"); }
+            set { SetValue("SelectedEnginePreset", value); }
+        }
+
     }
 }

@@ -155,17 +155,6 @@
             // 
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "将棋神",
-            "九段",
-            "八段",
-            "七段",
-            "六段",
-            "五段",
-            "四段",
-            "三段",
-            "二段",
-            "初段"});
             this.comboBox1.Location = new System.Drawing.Point(576, 94);
             this.comboBox1.Margin = new System.Windows.Forms.Padding(6);
             this.comboBox1.Name = "comboBox1";
@@ -270,17 +259,6 @@
             // 
             this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "将棋神",
-            "九段",
-            "八段",
-            "七段",
-            "六段",
-            "五段",
-            "四段",
-            "三段",
-            "二段",
-            "初段"});
             this.comboBox2.Location = new System.Drawing.Point(576, 94);
             this.comboBox2.Margin = new System.Windows.Forms.Padding(6);
             this.comboBox2.Name = "comboBox2";

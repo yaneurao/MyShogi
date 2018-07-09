@@ -191,10 +191,6 @@ namespace MyShogi.App
                     gameServer.Dispose();
             });
 
-            // -- エンジン設定を読み込む
-
-            engine_defines = EngineDefineUtility.GetEngineDefines();
-
             // -- メインダイアログを生成して、アプリの開始
 
             Application.Run(mainDialog);
@@ -244,9 +240,20 @@ namespace MyShogi.App
         public GlobalConfig config { get; private set; }
 
         /// <summary>
-        /// エンジン設定(起動時に読み込む)
+        /// エンジン設定(最初のアクセスの時に読み込む。遅延読み込み。)
         /// </summary>
-        public List<EngineDefine> engine_defines { get; private set; }
+        public List<EngineDefineEx> EngineDefines
+        {
+            get {
+                lock (this)
+                {
+                    if (engine_defines == null)
+                        engine_defines = EngineDefineUtility.GetEngineDefines();
+                    return engine_defines;
+                }
+            }
+        }
+        private List<EngineDefineEx> engine_defines;
 
         /// <summary>
         /// サウンドマネージャー

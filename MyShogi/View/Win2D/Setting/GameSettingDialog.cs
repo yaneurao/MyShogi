@@ -47,16 +47,13 @@ namespace MyShogi.View.Win2D
             /// <summary>
             /// エンジン設定。二人分。
             /// </summary>
-            public EngineDefine[] EngineDefines = new EngineDefine[(int)SCore.Color.NB];
+            public EngineDefineEx[] EngineDefines = new EngineDefineEx[(int)SCore.Color.NB];
 
             /// <summary>
             /// ↑のEngineDefinesの要素が変更された時に発生するイベント
+            /// 変更されたほうのColorがargs.Valueに入ってくる。
             /// </summary>
-            public int EngineDefineChanged
-            {
-                get { return GetValue<int>("EngineDefineChanged"); }
-                set { SetValue<int>("EngineDefineChanged",value); }
-            }
+            //public int EngineDefineChanged;
         }
 
         public GameSettingViewModel ViewModel = new GameSettingViewModel();
@@ -84,13 +81,22 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 対局開始
+        /// 「対局開始」ボタン
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button3_Click(object sender, EventArgs e)
         {
             var gameSetting = TheApp.app.config.GameSetting;
+
+            //　対局条件の正当性をチェックする。
+            var error = gameSetting.IsValid();
+            if (error != null)
+            {
+                TheApp.app.MessageShow(error);
+                return;
+            }
+
             var gameServer = mainDialog.gameServer;
 
             // 設定をClone()してから渡す。(immutableにしたいため)
@@ -185,7 +191,10 @@ namespace MyShogi.View.Win2D
             ViewModel.AddPropertyChangedHandler("EngineDefineChanged", (args) =>
             {
                 int c = (int)args.value;
-                var engine_define = ViewModel.EngineDefines[c];
+                var player = TheApp.app.config.GameSetting.Player((SCore.Color)c);
+
+                var engine_define_ex = ViewModel.EngineDefines[c];
+                var engine_define = engine_define_ex.EngineDefine;
 
                 var pictureBox = c == 0 ? pictureBox1 : pictureBox2;
 
@@ -207,7 +216,47 @@ namespace MyShogi.View.Win2D
                 }
                 banner_mini[c] = banner.CreateAndCopy(w, h);
                 pictureBox.Image = banner_mini[c].image;
+
+                var PlayerSetting = TheApp.app.config.GameSetting.Player((SCore.Color)c);
+                int preset = PlayerSetting.SelectedEnginePreset;
+
+                // プリセットをコンボボックスに反映
+                var comboBox = c == 0 ? comboBox1 : comboBox2;
+                comboBox.Items.Clear();
+                foreach (var e in engine_define.Presets)
+                    comboBox.Items.Add(e.Name);
+
+                // ComboBoxとデータバインドされているのでこれで変更されるはず。
+                player.EngineDefineFolderPath = engine_define_ex.FolderPath;
+
+                // 前回と同じものを選んでおいたほうが使いやすいかも。
+                // →　「やねうら王」初段　のあと「tanuki」を選んだ時も初段であって欲しい気がするので。
+
+                // 復元する。データバインドされているのであとは何とかなるはず。
+                PlayerSetting.SelectedEnginePreset = preset;
+                PlayerSetting.RaisePropertyChanged("SelectedEnginePreset", preset);
             });
+
+            // GlobalConfigの値を反映させる。
+            var engine_defines = TheApp.app.EngineDefines;
+            foreach(var c in All.Colors())
+            {
+                var player = TheApp.app.config.GameSetting.Player(c);
+                var path = player.EngineDefineFolderPath;
+
+                foreach(var e in engine_defines)
+                {
+                    if (e.FolderPath == path)
+                    {
+                        ViewModel.EngineDefines[(int)c] = e;
+                        ViewModel.RaisePropertyChanged("EngineDefineChanged", (int)c);
+                        break;
+                    }
+                }
+
+                // 選択presetはcomboboxとデータバインドしてあるので設定不要。
+            }
+
         }
 
 
@@ -227,6 +276,9 @@ namespace MyShogi.View.Win2D
             var human_radio_buttons = new[] { radioButton1, radioButton3 };
             var cpu_radio_buttons = new[] { radioButton2, radioButton4 };
 
+            // 選択しているプリセットのコンボボックス
+            var preset_comboboxs = new[] { comboBox1, comboBox2 };
+
             // -- プレイヤーごとの設定
             foreach (var c in All.Colors())
             {
@@ -236,6 +288,8 @@ namespace MyShogi.View.Win2D
                 // 対局者の種別
                 binder.Bind(setting.Player(c) , "IsHuman" , human_radio_buttons[(int)c]);
                 binder.Bind(setting.Player(c) , "IsCpu"  , cpu_radio_buttons[(int)c]);
+
+                binder.Bind(setting.Player(c), "SelectedEnginePreset", preset_comboboxs[(int)c]);
             }
 
             // -- 開始局面
@@ -375,10 +429,10 @@ namespace MyShogi.View.Win2D
             {
                 // これが選択された。
                 var selectedEngine = (int)args.value;
-                var defines = TheApp.app.engine_defines;
+                var defines = TheApp.app.EngineDefines;
                 if (selectedEngine < defines.Count)
                 {
-                    var engineDefine = TheApp.app.engine_defines[selectedEngine];
+                    var engineDefine = defines[selectedEngine];
                     // 先手か後手かは知らんが、そこにこのEngineDefineを設定
 
                     ViewModel.EngineDefines[(int)c] = engineDefine;

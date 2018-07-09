@@ -67,14 +67,15 @@ namespace MyShogi.View.Win2D
                 // 子コントロールの「決定」ボタンが押された時のハンドラ
                 control.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
                  {
-                     foreach(int j in All.Int(5))
+                     var engine_defines = TheApp.app.EngineDefines;
+                     foreach (int j in All.Int(5))
                      {
                          if (SelectionControls[j].ViewModel == args.sender)
                          {
                              // このイベントを生起してやる。
                              var selectedEngineIndex = SelectionControlTopIndex + j;
                              // 範囲内であることを確認する。
-                             if (selectedEngineIndex < TheApp.app.engine_defines.Count)
+                             if (selectedEngineIndex < engine_defines.Count)
                                  ViewModel.RaisePropertyChanged("ButtonClicked", selectedEngineIndex);
                              break;
                          }
@@ -103,7 +104,7 @@ namespace MyShogi.View.Win2D
         {
             // 空き物理メモリ[MB]
             var free_memory = Enviroment.GetFreePhysicalMemory() / 1024;
-            var defines = TheApp.app.engine_defines;
+            var defines = TheApp.app.EngineDefines;
 
             foreach (var i in All.Int(5))
             {
@@ -111,7 +112,7 @@ namespace MyShogi.View.Win2D
                 if (j < defines.Count)
                 {
                     SelectionControls[i].ViewModel.FreePhysicalMemory = (int)free_memory;
-                    SelectionControls[i].ViewModel.EngineDefine = defines[j];
+                    SelectionControls[i].ViewModel.EngineDefine = defines[j].EngineDefine;
                 } else
                 {
                     SelectionControls[i].ViewModel.FreePhysicalMemory = (int)free_memory;
