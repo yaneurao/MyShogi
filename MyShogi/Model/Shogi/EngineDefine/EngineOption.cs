@@ -23,6 +23,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
         /// <summary>
         /// そこに設定する値
+        /// 
+        /// 数字なども文字列化してセットする。
+        /// type : check のときは、"true"/"false"
+        /// UsiOptionクラスに従う。
         /// </summary>
         [DataMember]
         public string Value;

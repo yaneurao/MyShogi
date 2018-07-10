@@ -202,6 +202,18 @@
     <Compile Include="View\Win2D\Info\EngineConsiderationControl.Designer.cs">
       <DependentUpon>EngineConsiderationControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\Setting\EngineOptionSettingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\EngineOptionSettingControl.Designer.cs">
+      <DependentUpon>EngineOptionSettingControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\EngineOptionSettingDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\EngineOptionSettingDialog.Designer.cs">
+      <DependentUpon>EngineOptionSettingDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\Setting\EngineSelectionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -325,6 +337,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Info\EvalGraphControl.resx">
       <DependentUpon>EvalGraphControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\EngineOptionSettingControl.resx">
+      <DependentUpon>EngineOptionSettingControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\EngineOptionSettingDialog.resx">
+      <DependentUpon>EngineOptionSettingDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\EngineSelectionControl.resx">
       <DependentUpon>EngineSelectionControl.cs</DependentUpon>
