@@ -190,8 +190,6 @@ namespace MyShogi.Model.Shogi.Usi
 
         /// <summary>
         /// USIのsetoptionの行のparseをする。
-        /// 
-        /// translationDic : option名に対応する翻訳名があるなら、それをTranslateNameとして設定する。
         /// </summary>
         public static UsiOption Parse(string command)
         {

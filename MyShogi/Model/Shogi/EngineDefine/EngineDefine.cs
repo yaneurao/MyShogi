@@ -100,12 +100,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
         public List<EnginePreset> Presets;
 
         /// <summary>
-        /// setoptionで設定出来るオプション一覧。
+        /// setoptionで設定出来るオプションに対する説明。
         /// nullであってもエンジンに対して"usi"を送信して、その時に返ってきたものを
         /// 表示するので問題はない。
         /// </summary>
         [DataMember]
-        public EngineOptions Options;
+        public List<EngineOptionDescription> OptionDescriptions;
 
         /// <summary>
         /// USI拡張プロトコルのうちサポートしているものを列挙する。

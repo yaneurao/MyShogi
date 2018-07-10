@@ -5,11 +5,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
 {
     /// <summary>
     /// エンジンのoptionとその値のペア
+    /// ユーザーの設定した値を保存するのに用いる。
     /// </summary>
     [DataContract]
-    public class EngineOption
+    public class EngineOption 
     {
-        public EngineOption(string name_ , string value_)
+        public EngineOption(string name_, string value_)
         {
             Name = name_;
             Value = value_;
@@ -30,41 +31,21 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         [DataMember]
         public string Value;
-
-        // -- 以下、Presetで使う時は設定不要。詳細設定ダイアログで使う。
-
-        /// <summary>
-        /// 詳細設定ダイアログでこのデータメンバーを表示するのかどうか。
-        /// </summary>
-        [DataMember]
-        public bool Visible;
-
-        /// <summary>
-        /// このoption項目に対する説明文。詳細設定ダイアログにはこれが表示される。
-        /// </summary>
-        [DataMember]
-        public string Description;
-
-        /// <summary>
-        /// この項目のダイアログ上での表示順。
-        /// 数字が小さい順で詳細設定ダイアログには表示される。
-        /// </summary>
-        [DataMember]
-        public int DisplayOrder;
-
-        /// <summary>
-        /// エンジン共通設定のValueに従う。このインスタンスのValueの値は使われない。
-        /// </summary>
-        [DataMember]
-        public bool FollowCommonSetting;
     }
 
     /// <summary>
     /// EngineOptionの配列
+    /// 
+    /// これは、思考エンジンのプリセットで用いる。
     /// </summary>
     [DataContract]
     public class EngineOptions
     {
+        public EngineOptions()
+        {
+            Options = new List<EngineOption>();
+        }
+
         public EngineOptions(List<EngineOption> options)
         {
             Options = options;
@@ -77,4 +58,117 @@ namespace MyShogi.Model.Shogi.EngineDefine
         [DataMember]
         public List<EngineOption> Options;
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    [DataContract]
+    public class EngineOptionDescription
+    {
+        public EngineOptionDescription(string name,string displayName , string description)
+        {
+            Name = name;
+            DisplayName = displayName;
+            Description = description;
+        }
+
+        /// <summary>
+        /// (元の)オプション名
+        /// </summary>
+        [DataMember]
+        public string Name;
+
+        /// <summary>
+        /// オプションの表示名(日本語にしておくとわかりやすい)
+        /// </summary>
+        [DataMember]
+        public string DisplayName;
+
+        /// <summary>
+        /// 説明文。ダイアログ上に表示される。
+        /// </summary>
+        [DataMember]
+        public string Description;
+    }
+
+
+    /// <summary>
+    /// エンジンオプションの共通設定で用いる用。
+    /// こちらは、UI上から設定するため、説明文や、type、min-maxなどが必要。
+    /// ゆえに、
+    /// ・EngineOptionと同じinterfaceを持ち
+    /// さらに、
+    /// ・UsiOptionをbuild出来る文字列
+    /// ・説明文
+    /// を持っている。
+    /// 
+    /// 説明文はEngineOptionDescriptionsで与えられるから不要か…。
+    /// </summary>
+    [DataContract]
+    public class EngineOptionForSetting
+    {
+        public EngineOptionForSetting(string name , string value , string buildString)
+        {
+            Name = name;
+            Value = value;
+            BuildString = buildString;
+        }
+
+        /// <summary>
+        /// オプション名
+        /// </summary>
+        [DataMember]
+        public string Name;
+
+        /// <summary>
+        /// そこに設定する値
+        /// 
+        /// 数字なども文字列化してセットする。
+        /// type : check のときは、"true"/"false"
+        /// UsiOptionクラスに従う。
+        /// </summary>
+        [DataMember]
+        public string Value;
+
+        /// <summary>
+        /// UsiOptionオブジェクトを構築するための文字列。
+        /// エンジン共通設定の時のみ有効。
+        /// (エンジン個別設定の時は、エンジンから"option"をもらってこの文字列を構築する。)
+        /// 
+        /// "option name USI_Hash type spin default 256"の
+        /// "type spin default 256"
+        /// の部分。
+        /// 
+        /// エンジン共通設定としては、
+        /// default値は無視されてValueのほうが採用される。
+        /// default値にリセットする時に、default値が採用される。
+        /// </summary>
+        [DataMember]
+        public string BuildString;
+
+        /// <summary>
+        /// エンジン共通設定に従うのか
+        /// (エンジン個別設定の時のみ有効)
+        /// </summary>
+        [DataMember]
+        public bool FollowCommonSetting;
+    }
+
+    /// <summary>
+    /// エンジンの共通設定/個別設定に使う用。
+    /// </summary>
+    [DataContract]
+    public class EngineOptionsForSetting
+    {
+        [DataMember]
+        public List<EngineOptionForSetting> Options;
+
+        [DataMember]
+        /// <summary>
+        /// エンジンのオプションの説明文
+        /// これが与えられている場合、この順番で表示され、ここにないoptionは表示されない。
+        /// </summary>
+        public List<EngineOptionDescription> Descriptions;
+    }
+
 }

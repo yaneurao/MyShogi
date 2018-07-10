@@ -204,7 +204,10 @@ namespace MyShogi.View.Win2D.Setting
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
-
+            var dialog = new EngineOptionSettingDialog();
+            dialog.SettingControls(0).ViewModel.Setting 
+                = EngineCommonOptionsSample.CreateEngineCommonOptions();
+            dialog.Show();
         }
 
         /// <summary>

@@ -82,6 +82,7 @@
     <Compile Include="Model\Shogi\EngineDefine\EngineDefineEx.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineDefineUtility.cs" />
     <Compile Include="Model\Shogi\EngineDefine\ExtendedProtocol.cs" />
+    <Compile Include="Model\Shogi\EngineDefine\Sample\EngineCommonOptionsSample.cs" />
     <Compile Include="Model\Shogi\EngineDefine\Sample\EngineDefineSample.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineOption.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngineThinkingBridge.cs" />

@@ -36,7 +36,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.DoubleBuffered = true;
             this.Name = "EngineOptionSettingControl";
-            this.Size = new System.Drawing.Size(676, 331);
+            this.Size = new System.Drawing.Size(733, 362);
             this.ResumeLayout(false);
 
         }
