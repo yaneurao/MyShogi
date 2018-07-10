@@ -6,7 +6,6 @@ namespace MyShogi.Model.Shogi.LocalServer
     {
         public MiscSettings()
         {
-            DetailEnable = false;
             MaxMovesToDrawEnable = false;
             MaxMovesToDraw = 256;
         }
@@ -16,15 +15,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             var clone = (MiscSettings)this.MemberwiseClone();
 
             return clone;
-        }
-
-        /// <summary>
-        /// 詳細設定ダイアログが有効であるか
-        /// </summary>
-        public bool DetailEnable
-        {
-            get { return GetValue<bool>("DetailEnable"); }
-            set { SetValue("DetailEnable", value); }
         }
 
         /// <summary>

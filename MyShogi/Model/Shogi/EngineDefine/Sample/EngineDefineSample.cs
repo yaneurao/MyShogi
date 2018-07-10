@@ -137,7 +137,8 @@
                     Presets = preset_default,
                     DescriptionSimple = "tanuki- 2018年版",
                     Description = "WCSC28(第28回 世界コンピュータ将棋選手権)に出場した時からさらに強化されたtanuki-シリーズ最新作。" +
-                        "ニューラルネットワークを用いた評価関数で、他のソフトとは毛並みの違う新時代のコンピュータ将棋。",
+                        "ニューラルネットワークを用いた評価関数で、他のソフトとは毛並みの違う新時代のコンピュータ将棋。"+
+                        "PC性能を極限まで使うため、CPUの温度が他のソフトの場合より上がりやすいので注意してください。",
                     DisplayOrder = 10003,
                 };
                 EngineDefineUtility.WriteFile("engine/tanuki2018/engine_define.xml", engine_define);

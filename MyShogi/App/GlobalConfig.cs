@@ -1,12 +1,7 @@
-﻿using System.Drawing;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Xml;
-using System.Xml.Serialization;
-using MyShogi.Model.Common.ObjectModel;
+﻿using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.LocalServer;
+using System.Drawing;
 
 namespace MyShogi.App
 {

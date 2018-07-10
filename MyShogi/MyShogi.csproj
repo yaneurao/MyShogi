@@ -285,6 +285,18 @@
       <DependentUpon>SystemInfo.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\Common\ToolStripButtonEnum.cs" />
+    <Compile Include="View\Win2D\Setting\PlayerSettingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\PlayerSettingControl.Designer.cs">
+      <DependentUpon>PlayerSettingControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\TimeSettingControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\TimeSettingControl.Designer.cs">
+      <DependentUpon>TimeSettingControl.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Model\Test\DevTest2\EvalControlTestForm.resx">
       <DependentUpon>EvalControlTestForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -336,6 +348,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Info\SystemInfo.resx">
       <DependentUpon>SystemInfo.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\PlayerSettingControl.resx">
+      <DependentUpon>PlayerSettingControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\TimeSettingControl.resx">
+      <DependentUpon>TimeSettingControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
     <None Include="docs\PSN2format.md" />
