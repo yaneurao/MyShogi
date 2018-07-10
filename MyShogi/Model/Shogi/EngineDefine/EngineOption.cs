@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -10,20 +11,62 @@ namespace MyShogi.Model.Shogi.EngineDefine
     {
         public EngineOption(string name_ , string value_)
         {
-            name = name_;
-            value = value_;
+            Name = name_;
+            Value = value_;
         }
 
         /// <summary>
         /// オプション名
         /// </summary>
         [DataMember]
-        public string name;
+        public string Name;
 
         /// <summary>
         /// そこに設定する値
         /// </summary>
         [DataMember]
-        public string value;
+        public string Value;
+
+        // -- 以下、Presetで使う時は設定不要。詳細設定ダイアログで使う。
+
+        /// <summary>
+        /// 詳細設定ダイアログでこのデータメンバーを表示するのかどうか。
+        /// </summary>
+        [DataMember]
+        public bool Visible;
+
+        /// <summary>
+        /// このoption項目に対する説明文。詳細設定ダイアログにはこれが表示される。
+        /// </summary>
+        [DataMember]
+        public string Description;
+
+        /// <summary>
+        /// この項目のダイアログ上での表示順。
+        /// 数字が小さい順で詳細設定ダイアログには表示される。
+        /// </summary>
+        [DataMember]
+        public int DisplayOrder;
+
+        /// <summary>
+        /// エンジン共通設定のValueに従う。このインスタンスのValueの値は使われない。
+        /// </summary>
+        [DataMember]
+        public bool FollowCommonSetting;
+    }
+
+    /// <summary>
+    /// EngineOptionの配列
+    /// </summary>
+    [DataContract]
+    public class EngineOptions
+    {
+        public EngineOptions(List<EngineOption> options)
+        {
+            Options = options;
+        }
+
+        [DataMember]
+        public List<EngineOption> Options;
     }
 }

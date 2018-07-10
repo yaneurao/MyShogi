@@ -175,7 +175,7 @@ namespace MyShogi.View.Win2D.Setting
             if (selectedIndex < 0)
                 return;
 
-            if (presets.Length <= selectedIndex)
+            if (presets.Count <= selectedIndex)
                 selectedIndex = comboBox1.SelectedIndex = 0;
 
             textBox2.Text = presets[selectedIndex].Description;

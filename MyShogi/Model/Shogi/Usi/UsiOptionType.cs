@@ -1,7 +1,4 @@
-﻿using System;
-using MyShogi.Model.Shogi.Core;
-
-namespace MyShogi.Model.Shogi.Usi
+﻿namespace MyShogi.Model.Shogi.Usi
 {
     /// <summary>
     /// USIエンジンのoption項目の種別

@@ -56,7 +56,7 @@ namespace MyShogi.App
 
             // -- 各エンジン用の設定ファィルを書き出す。
 
-            //EngineDefineSample.WriteEngineDefineFiles2018();
+            EngineDefineSample.WriteEngineDefineFiles2018();
         }
 
         /// <summary>

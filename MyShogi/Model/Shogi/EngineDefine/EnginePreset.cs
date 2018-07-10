@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -13,17 +14,41 @@ namespace MyShogi.Model.Shogi.EngineDefine
     {
         public EnginePreset() { }
 
-        public EnginePreset(string name, EngineOption[] options)
+        public EnginePreset(string name)
+        {
+            Name = name;
+        }
+
+        public EnginePreset(string name , string description)
+        {
+            Name = name;
+            Description = description;
+        }
+
+        public EnginePreset(string name, EngineOptions options)
         {
             Name = name;
             Options = options;
         }
 
-        public EnginePreset(string name , string description , EngineOption[] options)
+        public EnginePreset(string name, EngineOption[] options)
+        {
+            Name = name;
+            Options = new EngineOptions(new List<EngineOption>(options));
+        }
+
+        public EnginePreset(string name , string description , EngineOptions options)
         {
             Name = name;
             Description = description;
             Options = options;
+        }
+
+        public EnginePreset(string name, string description, EngineOption[] options)
+        {
+            Name = name;
+            Description = description;
+            Options = new EngineOptions(new List<EngineOption>(options));
         }
 
         /// <summary>
@@ -40,7 +65,11 @@ namespace MyShogi.Model.Shogi.EngineDefine
         [DataMember]
         public string Description { get; set; }
 
+        /// <summary>
+        /// このプリセットの時のオプション。
+        /// ここで設定したもの以外は、エンジンの共通設定に従う。
+        /// </summary>
         [DataMember]
-        public EngineOption[] Options { get; set; }
+        public EngineOptions Options { get; set; }
     }
 }

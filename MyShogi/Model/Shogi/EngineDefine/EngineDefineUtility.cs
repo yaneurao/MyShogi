@@ -33,12 +33,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             // presetの1つ目に「カスタム」を挿入。
 
-            var custom_preset = new EnginePreset("カスタム", "カスタム・チューニングです。詳細設定の設定に従います。", null);
-            { // いったんListに変換しないとinsertできない(´ω｀)
-                var list = new List<EnginePreset>(def.Presets);
-                list.Insert(0, custom_preset);
-                def.Presets = list.ToArray();
-            }
+            var custom_preset = new EnginePreset("カスタム", "カスタム・チューニングです。「詳細設定」の設定に従います。");
+            def.Presets.Insert(0, custom_preset);
 
             return def;
         }

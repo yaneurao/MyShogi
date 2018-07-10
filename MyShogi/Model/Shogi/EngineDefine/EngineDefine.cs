@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace MyShogi.Model.Shogi.EngineDefine
@@ -6,6 +7,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
     /// <summary>
     /// USI2.0で規定されているエンジン設定ファイル。
     /// これをxml形式にシリアライズしたものを思考エンジンの実行ファイルのフォルダに配置する。
+    /// 
+    /// GUI側では起動時にこのファイルを読み込み、これを活用する。
     /// </summary>
     [DataContract]
     public class EngineDefine
@@ -62,7 +65,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// ※　EngineUtility.EngineExeFileName()がそういう処理を行っている。
         /// </summary>
         [DataMember]
-        public Cpu[] SupportedCpus { get; set; } = { Cpu.NO_SSE, Cpu.SSE2 , Cpu.SSE41 , Cpu.SSE42 , Cpu.AVX2 };
+        public List<Cpu> SupportedCpus { get; set; } = new List<Cpu>(new []{ Cpu.NO_SSE, Cpu.SSE2 , Cpu.SSE41 , Cpu.SSE42 , Cpu.AVX2 });
 
         /// <summary>
         /// 使用するメモリ 評価関数が使用するメモリ＋探索で使用するメモリ(HASHは除く)
@@ -94,7 +97,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// おまかせ設定集
         /// </summary>
         [DataMember]
-        public EnginePreset[] Presets;
+        public List<EnginePreset> Presets;
+
+        /// <summary>
+        /// setoptionで設定出来るオプション一覧。
+        /// nullであってもエンジンに対して"usi"を送信して、その時に返ってきたものを
+        /// 表示するので問題はない。
+        /// </summary>
+        [DataMember]
+        public EngineOptions Options;
 
         /// <summary>
         /// USI拡張プロトコルのうちサポートしているものを列挙する。
@@ -102,7 +113,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// なければないで良い。
         /// </summary>
         [DataMember]
-        public ExtendedProtocol[] SupportedExtendedProtocol;
+        public List<ExtendedProtocol> SupportedExtendedProtocol;
     }
 
 }

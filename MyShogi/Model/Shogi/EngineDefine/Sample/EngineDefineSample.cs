@@ -1,4 +1,6 @@
-﻿namespace MyShogi.Model.Shogi.EngineDefine
+﻿using System.Collections.Generic;
+
+namespace MyShogi.Model.Shogi.EngineDefine
 {
     /// <summary>
     /// 『将棋神　やねうら王』の各エンジンの"engine_define.xml"を書き出すサンプル
@@ -13,10 +15,10 @@
         {
             // 各棋力ごとのエンジンオプション
             // (これでエンジンのdefault optionsがこれで上書きされる)
-            var preset_default = new [] {
+            var preset_default_array = new [] {
 
                 // -- 棋力制限なし
-                new EnginePreset("将棋神" , "棋力制限一切なしで強さは持ち時間、PCスペックに依存します。" , null ) ,
+                new EnginePreset("将棋神" , "棋力制限一切なしで強さは持ち時間、PCスペックに依存します。" ) ,
 
                 // -- 段位が指定されている場合は、NodesLimitで調整する。
 
@@ -78,14 +80,18 @@
             // presetのDescription
             {
                 // 2個目以降を設定。
-                for (var i = 1; i< preset_default.Length; ++i)
+                for (var i = 1; i< preset_default_array.Length; ++i)
                 {
-                    var preset = preset_default[i];
+                    var preset = preset_default_array[i];
 
-                    preset.Description = preset.Name + "ぐらいの強さになるように棋力を調整したものです。持ち時間、PCのスペックに依存しません。" +
+                    preset.Description = preset.Name + "ぐらいの強さになるように棋力を調整したものです。持ち時間、PCのスペックにほとんど依存しません。" +
                         "短い持ち時間だと切れ負けになるので持ち時間無制限での対局をお願いします。";
                 }
             }
+
+            var preset_default = new List<EnginePreset>(preset_default_array);
+
+            var default_cpus = new List<Cpu>(new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 });
 
             // -- 各エンジン用の設定ファイルを生成して書き出す。
 
@@ -95,7 +101,7 @@
                 {
                     DisplayName = "やねうら王",
                     EngineExeName = "yaneuraou2018_kpp_kkpt",
-                    SupportedCpus = new [] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 },
+                    SupportedCpus = default_cpus ,
                     RequiredMemory = 512, // KPP_KKPTは、これくらい？
                     Presets = preset_default,
                     DescriptionSimple = "やねうら王 2018年度版",
@@ -115,7 +121,7 @@
                 {
                     DisplayName = "tanuki- SDT5",
                     EngineExeName = "yaneuraou2018_kppt",
-                    SupportedCpus = new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 },
+                    SupportedCpus = default_cpus,
                     RequiredMemory = 1024, // KPPTは、これくらい？
                     Presets = preset_default,
                     DescriptionSimple = "tanuki- SDT5版",
@@ -132,7 +138,7 @@
                 {
                     DisplayName = "tanuki- 2018",
                     EngineExeName = "yaneuraou2018_nuee",
-                    SupportedCpus = new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 },
+                    SupportedCpus = default_cpus,
                     RequiredMemory = 512, // NNUEは、これくらい？
                     Presets = preset_default,
                     DescriptionSimple = "tanuki- 2018年版",
@@ -150,7 +156,7 @@
                 {
                     DisplayName = "Qhapaq 2018",
                     EngineExeName = "yaneuraou2018_kppt",
-                    SupportedCpus = new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 },
+                    SupportedCpus = default_cpus,
                     RequiredMemory = 1024, // KPPTはこれくらい？
                     Presets = preset_default,
                     DescriptionSimple = "Qhapaq 2018年版",
@@ -167,7 +173,7 @@
                 {
                     DisplayName = "読み太 2018",
                     EngineExeName = "yaneuraou2018_kppt",
-                    SupportedCpus = new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 },
+                    SupportedCpus = default_cpus,
                     RequiredMemory = 1024, // KPPTはこれくらい？
                     Presets = preset_default,
                     DescriptionSimple = "読み太 2018年版",
@@ -184,7 +190,7 @@
                 {
                     DisplayName = "gpsfish",
                     EngineExeName = "gpsfish",
-                    SupportedCpus = new[] { Cpu.SSE2 },
+                    SupportedCpus = new List<Cpu>(new[] { Cpu.SSE2 }),
                     RequiredMemory = 10, // gpsfishこれくらいで動くような？
                     Presets = preset_default,
                     DescriptionSimple = "GPS将棋(テスト用)",

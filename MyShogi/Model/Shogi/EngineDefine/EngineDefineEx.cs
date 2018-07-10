@@ -18,6 +18,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
         ///     "engine/qhapaq/engine_define.xml"
         ///     ならば、
         ///     "engine/qhapaq/"
+        ///     
+        /// シリアライズ時には、これをエンジンのID代わりに使っている。
         /// </summary>
         public string FolderPath;
     }
