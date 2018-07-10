@@ -62,20 +62,18 @@ namespace MyShogi.View.Win2D.Setting
         public void Bind(PlayerSetting player)
         {
             // -- プレイヤーごとの設定
-            foreach (var c in All.Colors())
-            {
-                // 対局者氏名
-                binder.Bind(player ,"PlayerName", textBox1);
 
-                // 対局者の種別
-                binder.Bind(player , "IsHuman" , radioButton1);
-                binder.Bind(player , "IsCpu"  , radioButton2);
+            // 対局者氏名
+            binder.Bind(player ,"PlayerName", textBox1);
 
-                // プレセット
-                binder.Bind(player, "SelectedEnginePreset", comboBox1);
-            }
+            // 対局者の種別
+            binder.Bind(player , "IsHuman" , radioButton1);
+            binder.Bind(player , "IsCpu"  , radioButton2);
+
+            // プレセット
+            binder.Bind(player, "SelectedEnginePreset", comboBox1);
         }
-        
+
         /// <summary>
         /// Bind()したものをすべて解除する。
         /// </summary>
@@ -151,10 +149,36 @@ namespace MyShogi.View.Win2D.Setting
                 PlayerSetting.SelectedEnginePreset = preset;
                 PlayerSetting.RaisePropertyChanged("SelectedEnginePreset", preset);
 
+                UpdatePresetText();
+
                 // エンジンを選択したのだから、対局相手はコンピュータになっていて欲しいはず。
                 radioButton2.Checked = true;
             });
 
+        }
+
+        // -- screen update
+
+        /// <summary>
+        /// 選択しているプリセットが変更されたか、もしくはViewModelにセットされているEngineDefineが
+        /// 変更になったかした時に、プリセットの説明文を更新するためのハンドラ
+        /// </summary>
+        private void UpdatePresetText()
+        {
+            var engineDefine = ViewModel.EngineDefine;
+            if (engineDefine == null)
+                return;
+
+            var presets = engineDefine.EngineDefine.Presets;
+            var selectedIndex = comboBox1.SelectedIndex;
+            // 未選択か？
+            if (selectedIndex < 0)
+                return;
+
+            if (presets.Length <= selectedIndex)
+                selectedIndex = comboBox1.SelectedIndex = 0;
+
+            textBox2.Text = presets[selectedIndex].Description;
         }
 
         // -- handlers
@@ -227,6 +251,16 @@ namespace MyShogi.View.Win2D.Setting
 
                 textBox1.Text = engineDefine.EngineDefine.DisplayName;
             }
+        }
+
+        /// <summary>
+        /// 選択しているプリセットが変わった時に..
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdatePresetText();
         }
 
         // -- privates

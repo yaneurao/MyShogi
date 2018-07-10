@@ -57,7 +57,7 @@
             this.groupBox1.Margin = new System.Windows.Forms.Padding(8);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(8);
-            this.groupBox1.Size = new System.Drawing.Size(748, 286);
+            this.groupBox1.Size = new System.Drawing.Size(748, 296);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "先手/下手";
@@ -65,13 +65,14 @@
             // textBox2
             // 
             this.textBox2.BackColor = System.Drawing.Color.White;
+            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBox2.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.textBox2.Location = new System.Drawing.Point(14, 200);
             this.textBox2.Margin = new System.Windows.Forms.Padding(6);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(716, 68);
+            this.textBox2.Size = new System.Drawing.Size(716, 88);
             this.textBox2.TabIndex = 7;
             // 
             // button1
@@ -105,6 +106,7 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(144, 32);
             this.comboBox1.TabIndex = 5;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // pictureBox1
             // 
@@ -168,7 +170,7 @@
             this.Controls.Add(this.groupBox1);
             this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "PlayerSettingControl";
-            this.Size = new System.Drawing.Size(760, 296);
+            this.Size = new System.Drawing.Size(760, 310);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
