@@ -6,7 +6,6 @@ using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Player;
-using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -237,6 +236,13 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                         // 末尾の局面に移動するコマンドを叩いておく。
                         RaisePropertyChanged("SetKifuListIndex",kifuManager.KifuList.Count - 1);
+
+                        // -- 棋譜上の名前をプレイヤー名に反映させる。
+
+                        // GameSetting、原則immutableだが、まあいいや…。
+                        foreach(var c in All.Colors())
+                            GameSetting.Player(c).PlayerName = kifuManager.KifuHeader.GetPlayerName(c);
+                        
                     }
                 }
             });

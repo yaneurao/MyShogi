@@ -504,7 +504,7 @@ namespace MyShogi.View.Win2D
                 menu.Items.Add(item_file);
 
                 // 対局中は、ファイルメニュー項目は丸ごと無効化
-                item_file.Enabled = inTheGame;
+                item_file.Enabled = !inTheGame;
 
                 // -- 「ファイル」配下のメニュー
                 {

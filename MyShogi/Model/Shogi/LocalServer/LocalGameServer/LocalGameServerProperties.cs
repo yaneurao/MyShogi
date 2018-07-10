@@ -118,7 +118,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         public bool EngineTurn { get; private set; }
 
         // 仮想プロパティ。Turnが変化した時に"TurnChanged"ハンドラが呼び出される。
-        //public bool TurnChanged { }
+        public bool TurnChanged;
 
         /// <summary>
         /// エンジンの初期化中であるか。
@@ -138,7 +138,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public string DisplayName(Color c)
         {
-            return kifuManager.KifuHeader.GetPlayerName(c);
+            // 棋譜上の名前
+            //return kifuManager.KifuHeader.GetPlayerName(c);
+
+            // 対局ダイアログの設定を活かす
+            return GameSetting.Player(c).PlayerName;
         }
 
         /// <summary>

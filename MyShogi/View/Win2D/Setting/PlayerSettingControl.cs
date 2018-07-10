@@ -103,6 +103,8 @@ namespace MyShogi.View.Win2D.Setting
                 var engine_define_ex = ViewModel.EngineDefine;
                 var engine_define = engine_define_ex.EngineDefine;
 
+                // -- バナーの設定
+
                 // (w,h)=(320,100)のつもりだが、dpi scalingのせいで
                 // 環境によって異なるのでここで再取得してそれに合わせる。
                 int w = pictureBox1.Width;
@@ -125,6 +127,12 @@ namespace MyShogi.View.Win2D.Setting
 
                 pictureBox1.Image = banner_mini.image;
 
+                // -- 対局者名の設定
+
+                textBox1.Text = engine_define.DisplayName;
+
+                // -- プリセットのコンボボックス
+
                 var PlayerSetting = TheApp.app.config.GameSetting.Player(vm.Color);
                 int preset = PlayerSetting.SelectedEnginePreset;
 
@@ -142,6 +150,9 @@ namespace MyShogi.View.Win2D.Setting
                 // 復元する。データバインドされているのであとは何とかなるはず。
                 PlayerSetting.SelectedEnginePreset = preset;
                 PlayerSetting.RaisePropertyChanged("SelectedEnginePreset", preset);
+
+                // エンジンを選択したのだから、対局相手はコンピュータになっていて欲しいはず。
+                radioButton2.Checked = true;
             });
 
         }
@@ -168,10 +179,61 @@ namespace MyShogi.View.Win2D.Setting
 
         }
 
+        /// <summary>
+        /// 「人間」に切り替えた時に..
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked)
+            {
+                textBox1.Text = ViewModel.Color.Pretty();
+            }
+        }
+
+        /// <summary>
+        /// 「コンピュータ」に切り替えた時に..
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton2.Checked)
+            {
+                // コンピュータの名前を持ってくる。
+                var engineDefine = ViewModel.EngineDefine;
+                if (engineDefine == null)
+                {
+#if false
+                    if (TheApp.app.EngineDefines.Count == 0)
+                        return;
+
+                    // 一つ目のエンジンを選択しておく。
+                    // これはEngineOrder順に並んでいるはずなので0番目がいいエンジンなはず…。
+                    engineDefine = ViewModel.EngineDefine = TheApp.app.EngineDefines[0];
+                    ViewModel.RaisePropertyChanged("EngineDefineChanged", engineDefine);
+#endif
+                    // 自分でエンジンの説明を見てから選ばないと空き物理メモリが足りない時に
+                    // そのエンジンを選択してしまっていることがある。
+
+                    //textBox2.Text = "エンジン未選択です。「エンジン選択」ボタンを押してエンジンを選択してください。";
+
+                    // エンジン選択ダイアログを出したほうが親切か？
+
+                    ViewModel.RaisePropertyChanged("EngineSelectionButtonClicked");
+                    return;
+                } 
+
+                textBox1.Text = engineDefine.EngineDefine.DisplayName;
+            }
+        }
+
         // -- privates
 
         private ImageLoader banner_mini;
 
         private ControlBinder binder = new ControlBinder();
+
     }
 }
