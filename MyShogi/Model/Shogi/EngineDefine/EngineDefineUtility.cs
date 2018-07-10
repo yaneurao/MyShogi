@@ -31,6 +31,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
             def.BannerFileName = Path.Combine(current, def.BannerFileName);
             def.EngineExeName = Path.Combine(current, def.EngineExeName);
 
+            // presetの1つ目に「カスタム」を挿入。
+
+            var custom_preset = new EnginePreset("カスタム", "カスタム・チューニングです。詳細設定の設定に従います。", null);
+            { // いったんListに変換しないとinsertできない(´ω｀)
+                var list = new List<EnginePreset>(def.Presets);
+                list.Insert(0, custom_preset);
+                def.Presets = list.ToArray();
+            }
+
             return def;
         }
 

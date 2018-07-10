@@ -75,7 +75,7 @@
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
-    <Compile Include="Model\Shogi\EngineDefine\EngineAutoSetting.cs" />
+    <Compile Include="Model\Shogi\EngineDefine\EnginePreset.cs" />
     <Compile Include="Model\Shogi\EngineDefine\Cpu.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineDefine.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineDefineEx.cs" />

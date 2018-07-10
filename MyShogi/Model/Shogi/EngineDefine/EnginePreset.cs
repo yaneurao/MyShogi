@@ -9,13 +9,20 @@ namespace MyShogi.Model.Shogi.EngineDefine
     /// 
     /// </summary>
     [DataContract]
-    public class EngineAutoSetting
+    public class EnginePreset
     {
-        public EngineAutoSetting() { }
+        public EnginePreset() { }
 
-        public EngineAutoSetting(string name , EngineOption[] options)
+        public EnginePreset(string name, EngineOption[] options)
         {
             Name = name;
+            Options = options;
+        }
+
+        public EnginePreset(string name , string description , EngineOption[] options)
+        {
+            Name = name;
+            Description = description;
             Options = options;
         }
 
@@ -25,6 +32,13 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         [DataMember]
         public string Name { get; set; }
+
+        /// <summary>
+        /// このプリセットの説明。
+        /// 例「初段用に合わせた調整です。」
+        /// </summary>
+        [DataMember]
+        public string Description { get; set; }
 
         [DataMember]
         public EngineOption[] Options { get; set; }

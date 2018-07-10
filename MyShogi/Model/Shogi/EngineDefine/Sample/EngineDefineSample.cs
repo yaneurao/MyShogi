@@ -16,7 +16,7 @@
             var preset_default = new [] {
 
                 // -- 棋力制限なし
-                new EngineAutoSetting("将棋神" , null ) ,
+                new EnginePreset("将棋神" , "棋力制限一切なしで強さは持ち時間、PCスペックに依存します。" , null ) ,
 
                 // -- 段位が指定されている場合は、NodesLimitで調整する。
 
@@ -25,55 +25,67 @@
 
                 // ここの段位は、持ち時間15分切れ負けぐらいの時の棋力。
 
-                new EngineAutoSetting("九段" , new EngineOption[] {
+                new EnginePreset( "九段" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","200000"),
                 }),
-                new EngineAutoSetting("八段" , new EngineOption[] {
+                new EnginePreset("八段" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","100000"),
                 }),
-                new EngineAutoSetting("七段" , new EngineOption[] {
+                new EnginePreset("七段" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","80000"),
                 }),
-                new EngineAutoSetting("六段" , new EngineOption[] {
+                new EnginePreset("六段" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","40000"),
                 }),
-                new EngineAutoSetting("五段" , new EngineOption[] {
+                new EnginePreset("五段" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","20000"),
                 }),
-                new EngineAutoSetting("四段" , new EngineOption[] {
+                new EnginePreset("四段" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","10000"),
                 }),
-                new EngineAutoSetting("三段" , new EngineOption[] {
+                new EnginePreset("三段" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","5000"),
                 }),
-                new EngineAutoSetting("二段" , new EngineOption[] {
+                new EnginePreset("二段" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","3000"),
                 }),
-                new EngineAutoSetting("初段" , new EngineOption[] {
+                new EnginePreset("初段" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","500"),
                 }),
-                new EngineAutoSetting("一級" , new EngineOption[] {
+                new EnginePreset("一級" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","400"),
                 }),
-                new EngineAutoSetting("二級" , new EngineOption[] {
+                new EnginePreset("二級" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","300"),
                 }),
-                new EngineAutoSetting("三級" , new EngineOption[] {
+                new EnginePreset("三級" , new EngineOption[] {
                         new EngineOption("Thread","4"),
                         new EngineOption("NodesLimit","200"),
                 }),
             };
+
+            // presetのDescription
+            {
+                // 2個目以降を設定。
+                for (var i = 1; i< preset_default.Length; ++i)
+                {
+                    var preset = preset_default[i];
+
+                    preset.Description = preset.Name + "ぐらいの強さになるように棋力を調整したものです。持ち時間、PCのスペックに依存しません。" +
+                        "短い持ち時間だと切れ負けになるので持ち時間無制限での対局をお願いします。";
+                }
+            }
 
             // -- 各エンジン用の設定ファイルを生成して書き出す。
 

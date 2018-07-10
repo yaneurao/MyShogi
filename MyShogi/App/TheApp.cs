@@ -39,6 +39,7 @@ namespace MyShogi.App
 #else
             // 開発時に例外がここでcatchされてしまうとデバッグがしにくいので
             // 開発時にはこちらを使う。(といいかも)
+            DevTest();
             Main();
 #endif
         }
