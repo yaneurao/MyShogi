@@ -132,7 +132,11 @@ namespace MyShogi.View.Win2D.Setting
                 // -- プリセットのコンボボックス
 
                 var PlayerSetting = TheApp.app.config.GameSetting.Player(vm.Color);
-                int preset = PlayerSetting.SelectedEnginePreset;
+                //int preset = PlayerSetting.SelectedEnginePreset;
+
+                // プリセットは前回のエンジンの選択時のSelectedPresetIndexを持って来て選ぶ。
+                var indivisualEngine = TheApp.app.EngineConfig.Find(engine_define_ex.FolderPath);
+                var preset = indivisualEngine.SelectedPresetIndex;
 
                 // プリセットをコンボボックスに反映
                 comboBox1.Items.Clear();
@@ -261,6 +265,10 @@ namespace MyShogi.View.Win2D.Setting
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdatePresetText();
+
+            // プリセットは前回のエンジンの選択時のSelectedPresetIndexを持って来て選ぶ。
+            var indivisualEngine = TheApp.app.EngineConfig.Find(ViewModel.EngineDefine.FolderPath);
+            indivisualEngine.SelectedPresetIndex = comboBox1.SelectedIndex;
         }
 
         // -- privates

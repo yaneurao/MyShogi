@@ -66,6 +66,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
             Options = options;
         }
 
+        /// <summary>
+        /// nullであれば、丸ごとエンジンの個別設定＋共通設定に従う。
+        /// nullでなければ、こちらが優先され、設定していない項目は、エンジンの個別設定＋共通設定に従う。
+        /// </summary>
         [DataMember]
         public List<EngineOption> Options;
     }

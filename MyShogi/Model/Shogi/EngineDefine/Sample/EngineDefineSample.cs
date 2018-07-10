@@ -15,10 +15,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
         {
             // 各棋力ごとのエンジンオプション
             // (これでエンジンのdefault optionsがこれで上書きされる)
-            var preset_default_array = new [] {
+            var preset_default_array = new[] {
 
                 // -- 棋力制限なし
-                new EnginePreset("将棋神" , "棋力制限一切なしで強さは持ち時間、PCスペックに依存します。" ) ,
+                new EnginePreset("将棋神" , "棋力制限一切なしで強さは持ち時間、PCスペックに依存します。",new EngineOption[] {
+                        new EngineOption("NodesLimit","0"),
+
+                        // 他、棋力に関わる部分は設定すべき…。
+                }) ,
 
                 // -- 段位が指定されている場合は、NodesLimitで調整する。
 

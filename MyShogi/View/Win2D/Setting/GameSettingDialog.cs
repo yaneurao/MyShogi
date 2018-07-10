@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
-using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.EngineDefine;
 using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D

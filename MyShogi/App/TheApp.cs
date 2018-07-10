@@ -56,7 +56,7 @@ namespace MyShogi.App
 
             // -- 各エンジン用の設定ファィルを書き出す。
 
-            EngineDefineSample.WriteEngineDefineFiles2018();
+            //EngineDefineSample.WriteEngineDefineFiles2018();
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace MyShogi.App
 
                 config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
                 config.AddPropertyChangedHandler("PieceAttackImageVersion", imageManager.UpdatePieceAttackImage);
-                
+
                 config.AddPropertyChangedHandler("LastMoveFromColorType", imageManager.UpdatePieceMoveImage);
                 config.AddPropertyChangedHandler("LastMoveToColorType", imageManager.UpdatePieceMoveImage);
                 config.AddPropertyChangedHandler("PickedMoveFromColorType", imageManager.UpdatePieceMoveImage);
@@ -107,7 +107,7 @@ namespace MyShogi.App
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 
-            config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems , mainDialog);
+            config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("PromotePieceColorType", mainDialog.UpdateMenuItems, mainDialog);
@@ -167,7 +167,7 @@ namespace MyShogi.App
             soundManager.Start();
 
             // 終了するときに設定ファイルに書き出すコード
-            Application.ApplicationExit += new EventHandler((sender,e) =>
+            Application.ApplicationExit += new EventHandler((sender, e) =>
             {
                 // メインウィンドウと検討ウィンドウに関して、
                 // 終了時のウィンドウサイズを記憶しておき、次回起動時にこのサイズでウィンドウを生成する。
@@ -185,6 +185,10 @@ namespace MyShogi.App
                 }
 
                 config.Save();
+
+                if (engine_config != null)
+                    engine_config.Save();
+
                 soundManager.Dispose();
 
                 // 起動しているGameServerすべてを終了させる必要がある。(エンジンを停止させるため)
@@ -217,12 +221,12 @@ namespace MyShogi.App
         /// <summary>
         /// 最前面に来るようにしてMessageBox.Show(text,caption)を呼び出す。
         /// </summary>
-        public void MessageShow(string text , string caption)
+        public void MessageShow(string text, string caption)
         {
             if (mainForm != null)
-                MessageBox.Show(mainForm, text , caption);
+                MessageBox.Show(mainForm, text, caption);
             else
-                MessageBox.Show(text , caption);
+                MessageBox.Show(text, caption);
         }
 
         // -- それぞれのViewModel
@@ -257,9 +261,28 @@ namespace MyShogi.App
         private List<EngineDefineEx> engine_defines;
 
         /// <summary>
-        /// サウンドマネージャー
+        /// [UI Thread] : EngineConfigを返す。
+        /// (エンジンのオプションの共通設定、個別設定が格納されている。)
         /// </summary>
-        public SoundManager soundManager { get; private set; }
+        public EngineConfig EngineConfig
+        {
+            get
+            {
+                lock (this)
+                {
+                    /// 遅延読み込み。
+                    if (engine_config == null)
+                        engine_config = EngineConfigUtility.GetEngineConfig();
+                    return engine_config;
+                }
+            }
+        }
+        private EngineConfig engine_config;
+
+    /// <summary>
+    /// サウンドマネージャー
+    /// </summary>
+    public SoundManager soundManager { get; private set; }
 
         /// <summary>
         /// メインのForm
