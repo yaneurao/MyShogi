@@ -32,6 +32,16 @@ namespace MyShogi.View.Win2D.Setting
             }
 
             /// <summary>
+            /// データバインドしている値が変わった時のイベントハンドラ。
+            /// これをtrapして都度保存すると良いような。
+            /// </summary>
+            public object ValueChanged
+            {
+                get { return GetValue<object>("ValueChanged"); }
+                set { SetValue<object>("ValueChanged", value); }
+            }
+
+            /// <summary>
             /// Settingのsetterでこのオブジェクトを生成して、Controlを動的に生成して
             /// データバインドする。
             /// </summary>
@@ -72,6 +82,9 @@ namespace MyShogi.View.Win2D.Setting
 
             int y = 3; // 最初の行のY座標。
 
+            // bindしている値が変化した時にイベントを生起する
+            var valueChanged = new Action(() => ViewModel.RaisePropertyChanged("ValueChanged", null));
+
             foreach (var desc in setting.Descriptions)
             {
                 var name = desc.Name;
@@ -104,7 +117,11 @@ namespace MyShogi.View.Win2D.Setting
                 {
                     // parse出来なければ無視しておく。
                     usiOption = UsiOption.Parse(e.BuildString);
-                    usiOption.SetDefault(e.Value);
+
+                    // bindする予定の値がないなら、UsiOptionの生成文字列中の"default"の値を
+                    // 持ってくる。初回起動時などはこの動作になる。
+                    if (e.Value == null)
+                        e.Value = usiOption.GetDefault();
                 }
                 catch
                 {
@@ -112,11 +129,13 @@ namespace MyShogi.View.Win2D.Setting
                 }
 
                 Control control = null;
+
                 switch (usiOption.OptionType)
                 {
                     case UsiOptionType.CheckBox:
                         var checkbox = new CheckBox();
-                        checkbox.Checked = usiOption.DefaultBool;
+
+                        binder.BindString(e, "Value", checkbox, valueChanged );
 
                         control = checkbox;
                         break;
@@ -127,6 +146,8 @@ namespace MyShogi.View.Win2D.Setting
                         num.Maximum = usiOption.MaxValue;
                         num.Value = usiOption.DefaultValue;
                         num.TextAlign = HorizontalAlignment.Center;
+
+                        binder.BindString(e , "Value", num , valueChanged);
 
                         control = num;
                         break;
@@ -164,5 +185,6 @@ namespace MyShogi.View.Win2D.Setting
 
         }
 
+        private ControlBinder binder = new ControlBinder();
     }
 }

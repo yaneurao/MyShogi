@@ -22,15 +22,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             setting.Options = new List<EngineOptionForSetting>()
             {
-                new EngineOptionForSetting("AutoHash_","true",
+                new EngineOptionForSetting("AutoHash_",
                     "option name AutoHash_ type check default true"),
-                new EngineOptionForSetting("AutoHashPercentage_","80",
+                new EngineOptionForSetting("AutoHashPercentage_",
                     "option name AutoHashPercentage_ type spin default 80 min 0 max 100"),
-                new EngineOptionForSetting("USI_Hash", "4096",
+                new EngineOptionForSetting("USI_Hash",
                     "option name USI_Hash type spin default 4096 min 0 max 999999999"),
-                new EngineOptionForSetting("AutoThread_", "true",
+                new EngineOptionForSetting("AutoThread_",
                     "option name AutoThread_ type check default true"),
-                new EngineOptionForSetting("Thread", "4",
+                new EngineOptionForSetting("Thread",
                     "option name Thread type spin default 4 min 1 max 4096"),
             };
 

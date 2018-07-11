@@ -253,6 +253,75 @@ namespace MyShogi.Model.Common.ObjectModel
         }
 
         /// <summary>
+        /// nofityのnameがstring型の時にbindする。
+        /// </summary>
+        /// <param name="notify"></param>
+        /// <param name="name"></param>
+        /// <param name="c"></param>
+        /// <param name="way"></param>
+        public void BindString(NotifyObject notify, string name, NumericUpDown c, Action f = null, DataBindWay way = DataBindWay.TwoWay)
+        {
+            // 値が変更になった時にデータバインドしているほうに値を戻す。
+            var control = c; // copy for capture
+
+            var h1 = new PropertyChangedEventHandler((args) =>
+            {
+                var vs = (string)args.value;
+                int v;
+                if (!int.TryParse(vs, out v))
+                    return;
+
+                // 値が範囲外なら補整してからセットする。
+                if (c.Maximum < v)
+                    v = (int)c.Maximum;
+                if (c.Minimum > v)
+                    v = (int)c.Minimum;
+                control.Value = v;
+
+                f();
+            });
+            notify.AddPropertyChangedHandler(name, h1);
+
+            EventHandler h2 = null;
+
+            if (way == DataBindWay.TwoWay)
+            {
+                h2 = new EventHandler((sender, args) => { notify.SetValue<string>(name, control.Value.ToString()); });
+                c.ValueChanged += h2;
+            }
+
+            AddHandler<string>(notify, name, h1, control, h2);
+        }
+
+        public void BindString(NotifyObject notify, string name, CheckBox c, Action f = null, DataBindWay way = DataBindWay.TwoWay)
+        {
+            // 値が変更になった時にデータバインドしているほうに値を戻す。
+            var control = c; // copy for capture
+
+            var h1 = new PropertyChangedEventHandler((args) =>
+            {
+                var vs = (string)args.value;
+                var v = vs == "true" ? true : false; // USI上、小文字しか許容していない。
+
+                // 値が範囲外なら補整してからセットする。
+                control.Checked = v;
+                if (f != null)
+                    f();
+            });
+            notify.AddPropertyChangedHandler(name, h1);
+
+            EventHandler h2 = null;
+
+            if (way == DataBindWay.TwoWay)
+            {
+                h2 = new EventHandler((sender, args) => { notify.SetValue<string>(name, control.Checked ? "true" : "false"); });
+                c.CheckedChanged += h2;
+            }
+
+            AddHandler<string>(notify, name, h1, control, h2);
+        }
+
+        /// <summary>
         /// あとでUnbindAll()出来るように、このクラスのlistに追加しておく。
         /// </summary>
         /// <param name="c"></param>

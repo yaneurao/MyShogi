@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -8,12 +9,19 @@ namespace MyShogi.Model.Shogi.EngineDefine
     /// ユーザーの設定した値を保存するのに用いる。
     /// </summary>
     [DataContract]
-    public class EngineOption 
+    public class EngineOption
     {
-        public EngineOption(string name_, string value_)
+        public EngineOption(string name, string value)
         {
-            Name = name_;
-            Value = value_;
+            Name = name;
+            Value = value;
+        }
+
+        public EngineOption(string name, string value , bool followCommonSetting)
+        {
+            Name = name;
+            Value = value;
+            FollowCommonSetting = followCommonSetting;
         }
 
         /// <summary>
@@ -31,6 +39,13 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         [DataMember]
         public string Value;
+
+        /// <summary>
+        /// エンジン共通設定に従うのか
+        /// (エンジン個別設定の時のみ有効)
+        /// </summary>
+        [DataMember]
+        public bool FollowCommonSetting;
     }
 
     /// <summary>
@@ -113,31 +128,27 @@ namespace MyShogi.Model.Shogi.EngineDefine
     /// 
     /// 説明文はEngineOptionDescriptionsで与えられるから不要か…。
     /// </summary>
-    [DataContract]
-    public class EngineOptionForSetting
+    public class EngineOptionForSetting : NotifyObject
     {
-        public EngineOptionForSetting(string name , string value , string buildString)
+        public EngineOptionForSetting(string name , string buildString)
         {
             Name = name;
-            Value = value;
             BuildString = buildString;
         }
 
         /// <summary>
         /// オプション名
         /// </summary>
-        [DataMember]
         public string Name;
 
         /// <summary>
-        /// そこに設定する値
-        /// 
-        /// 数字なども文字列化してセットする。
-        /// type : check のときは、"true"/"false"
-        /// UsiOptionクラスに従う。
+        /// データバインドしている値
         /// </summary>
-        [DataMember]
-        public string Value;
+        public string Value
+        {
+            get { return GetValue<string>("Value"); }
+            set { SetValue<string>("Value", value); }
+        }
 
         /// <summary>
         /// UsiOptionオブジェクトを構築するための文字列。
@@ -160,7 +171,11 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// (エンジン個別設定の時のみ有効)
         /// </summary>
         [DataMember]
-        public bool FollowCommonSetting;
+        public bool FollowCommonSetting
+        {
+            get { return GetValue<bool>("FollowCommonSetting"); }
+            set { SetValue<bool>("FollowCommonSetting", value); }
+        }
     }
 
     /// <summary>
@@ -178,6 +193,37 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// これが与えられている場合、この順番で表示され、ここにないoptionは表示されない。
         /// </summary>
         public List<EngineOptionDescription> Descriptions;
-    }
 
+        /// <summary>
+        /// OptionsのValueを上書きする(そのNameのentryがあれば)
+        /// </summary>
+        /// <param name="options"></param>
+        public void OverwriteEngineOptions(EngineOptions options)
+        {
+            foreach (var option in options.Options)
+            {
+                var opt = Options.Find(x => x.Name == option.Name);
+                if (opt == null)
+                    continue;
+                opt.Value = option.Value;
+                opt.FollowCommonSetting = option.FollowCommonSetting;
+            }
+        }
+
+        /// <summary>
+        /// このメンバの持つOptionsの
+        /// NameとValueのペアをEngineOptionsとして書き出す
+        /// </summary>
+        /// <returns></returns>
+        public EngineOptions ToEngineOptions()
+        {
+            var options = new EngineOptions();
+            options.Options = new List<EngineOption>();
+
+            foreach (var opt in Options)
+                options.Options.Add(new EngineOption(opt.Name, opt.Value , opt.FollowCommonSetting));
+
+            return options;
+        }
+    }
 }

@@ -205,8 +205,19 @@ namespace MyShogi.View.Win2D.Setting
         private void button2_Click(object sender, EventArgs e)
         {
             var dialog = new EngineOptionSettingDialog();
-            dialog.SettingControls(0).ViewModel.Setting 
-                = EngineCommonOptionsSample.CreateEngineCommonOptions();
+
+            var setting = EngineCommonOptionsSample.CreateEngineCommonOptions();
+            var options = TheApp.app.EngineConfig.CommonOptions;
+            if (options != null)
+                setting.OverwriteEngineOptions(options);
+
+            dialog.SettingControls(0).ViewModel.Setting = setting;
+            dialog.SettingControls(0).ViewModel.AddPropertyChangedHandler("ValueChanged", (args) =>
+             {
+                 TheApp.app.EngineConfig.CommonOptions = setting.ToEngineOptions();
+                 // 値が変わるごとに保存しておく。
+             });
+            
             dialog.Show();
         }
 
