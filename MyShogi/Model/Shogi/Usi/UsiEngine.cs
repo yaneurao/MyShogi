@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
 using MyShogi.Model.Common.Utility;
@@ -53,8 +52,9 @@ namespace MyShogi.Model.Shogi.Usi
             {
                 // 思考エンジンに接続できないとき、Win32Exceptionが飛んでくる
                 ChangeState(UsiEngineState.ConnectionFailed);
-
-                Exception = ex;
+                
+                Exception = new Exception("思考エンジンへの接続に失敗しました。\nファイル名 : " + data.ExeFilePath +
+                    "\n詳細情報 : " +ex.Message);
             }
         }
 
@@ -398,7 +398,7 @@ namespace MyShogi.Model.Shogi.Usi
         {
             var list = OptionList
                 .Where(_ => _.OptionType != UsiOptionType.Button)
-                .Select(_ => _.MakeSetOptionCommand())
+                .Select(_ => _.CreateSetOptionCommandString())
                 .Where(_ => !string.IsNullOrEmpty(_))
                 //.Select(_ => _ + '\n')
                 .ToArray();

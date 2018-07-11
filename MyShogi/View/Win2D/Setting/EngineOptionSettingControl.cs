@@ -85,6 +85,17 @@ namespace MyShogi.View.Win2D.Setting
             // bindしている値が変化した時にイベントを生起する
             var valueChanged = new Action(() => ViewModel.RaisePropertyChanged("ValueChanged", null));
 
+            if (setting.Descriptions == null)
+            {
+                // この時は仕方ないので、Optionsの内容そのまま出しておかないと仕方ないのでは…。
+                var descriptions = new List<EngineOptionDescription>();
+
+                foreach (var option in setting.Options)
+                    descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null));
+
+                setting.Descriptions = descriptions;
+            }
+
             foreach (var desc in setting.Descriptions)
             {
                 var name = desc.Name;

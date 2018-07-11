@@ -92,6 +92,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 var playerType = gameSetting.Player(c).IsHuman ? PlayerTypeEnum.Human : PlayerTypeEnum.UsiEngine;
                 Players[(int)c] = PlayerBuilder.Create(playerType);
+
+                // UsiEngineなら実行ファイルを起動しておく。
+                if (playerType == PlayerTypeEnum.UsiEngine)
+                    (Players[(int)c] as UsiEnginePlayer).Start("engine/gpsfish/gpsfish_sse2.exe");
             }
 
             // 局面の設定
@@ -224,7 +228,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // UsiEngineのThinkReportプロパティを捕捉して、それを転送してやるためのハンドラをセットしておく。
                     var engine_player = Player(c) as UsiEnginePlayer;
-                    engine_player.engine.AddPropertyChangedHandler("ThinkReport", (args) =>
+                    engine_player.Engine.AddPropertyChangedHandler("ThinkReport", (args) =>
                     {
                         //// 1) 読み筋の抑制条件その1
                         //// 人間対CPUで、メニューの「ウィンドウ」のところで表示するになっていない場合。
@@ -471,7 +475,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             if (GameMode == GameModeEnum.ConsiderationWithEngine)
                 // MultiPVは、GlobalConfigの設定を引き継ぐ
-                (stmPlayer as UsiEnginePlayer).engine.MultiPV = TheApp.app.config.ConsiderationMultiPV;
+                (stmPlayer as UsiEnginePlayer).Engine.MultiPV = TheApp.app.config.ConsiderationMultiPV;
                 // それ以外のGameModeなら、USIのoption設定を引き継ぐので変更しない。
 
 
@@ -542,7 +546,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 if (Player(c).PlayerType == PlayerTypeEnum.UsiEngine)
                 {
-                    var engine = (Player(c) as UsiEnginePlayer).engine;
+                    var engine = (Player(c) as UsiEnginePlayer).Engine;
                     var ex = engine.Exception;
                     if (ex != null)
                     {

@@ -252,7 +252,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// <summary>
         /// 現在のこのクラスの状態に基づいて、USIのsetoption用の文字列を作成する。
         /// </summary>
-        public string MakeSetOptionCommand()
+        public string CreateSetOptionCommandString()
         {
             var result = new List<string>();
 
@@ -264,6 +264,50 @@ namespace MyShogi.Model.Shogi.Usi
             {
                 result.Add("value");
                 result.Add(GetDefault());
+            }
+
+            return string.Join(" ", result);
+        }
+
+        /// <summary>
+        /// 現在のこのクラスの状態を表現するUSIのoptionコマンド文字列を作成する。
+        /// (エンジンのオプション設定のダイアログで用いる。USI思考エンジンに対して実際にこれを
+        /// 送信するわけではない。)
+        /// </summary>
+        /// <returns></returns>
+        public string CreateOptionCommandString()
+        {
+            var result = new List<string>();
+
+            result.Add("option");
+            result.Add("name");
+            result.Add(Name);
+
+            result.Add("type");
+            result.Add(Util.ToUsiString(OptionType));
+
+            if (OptionType != UsiOptionType.Button)
+            {
+                // "option"の時は"value"ではなく"default"値。
+                result.Add("default");
+                result.Add(GetDefault());
+            }
+
+            if (OptionType == UsiOptionType.SpinBox)
+            {
+                result.Add("min");
+                result.Add(MinValue.ToString());
+                result.Add("max");
+                result.Add(MaxValue.ToString());
+            }
+
+            if (OptionType == UsiOptionType.ComboBox)
+            {
+                if (ComboList != null)
+                {
+                    result.Add("var");
+                    result.AddRange(ComboList);
+                }
             }
 
             return string.Join(" ", result);

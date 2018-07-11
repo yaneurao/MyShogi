@@ -4,7 +4,11 @@ using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.LocalServer;
+using MyShogi.Model.Shogi.Player;
+using MyShogi.Model.Shogi.Usi;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D.Setting
@@ -185,6 +189,89 @@ namespace MyShogi.View.Win2D.Setting
             textBox2.Text = presets[selectedIndex].Description;
         }
 
+        /// <summary>
+        /// エンジンオプション設定ダイアログを出す。
+        /// 
+        /// この構築のために思考エンジンに接続してoption文字列を取得しないといけなかったりしてわりと大変。
+        /// </summary>
+        private void ShowEngineOptionSettingDialog()
+        {
+            var dialog = new EngineOptionSettingDialog();
+
+            // -- エンジン共通設定
+
+            var setting = EngineCommonOptionsSample.CreateEngineCommonOptions();
+            var options = TheApp.app.EngineConfig.CommonOptions;
+            if (options != null)
+                setting.OverwriteEngineOptions(options);
+
+            dialog.SettingControls(0).ViewModel.Setting = setting;
+            dialog.SettingControls(0).ViewModel.AddPropertyChangedHandler("ValueChanged", (args) =>
+            {
+                TheApp.app.EngineConfig.CommonOptions = setting.ToEngineOptions();
+                // 値が変わるごとに保存しておく。
+            });
+
+            // -- エンジン個別設定
+
+            // 思考エンジンの個別ダイアログのための項目を、実際に思考エンジンを起動して取得。
+            // 一瞬で起動～終了するはずなので、UIスレッドでやっちゃっていいや…。
+            var exefilename = ViewModel.EngineDefine.EngineDefine.EngineExeFileName();
+
+            var engine = new UsiEnginePlayer();
+            try
+            {
+                engine.Engine.EngineSetting = true;
+                engine.Start(exefilename);
+
+                while (engine.Initializing)
+                {
+                    engine.OnIdle();
+                    Thread.Sleep(100);
+                    var ex = engine.Engine.Exception;
+                    if (ex != null)
+                    {
+                        // time outも例外が飛んでくる…ようにすべき…。
+                        // 現状の思考エンジンでここでタイムアウトにならないから、まあいいや…。
+                        TheApp.app.MessageShow(ex.ToString());
+                        return;
+                    }
+                }
+            }
+            finally
+            {
+                engine.Dispose();
+            }
+
+            // エンジンからUsiOption文字列を取得
+
+            var ind_options = new List<EngineOptionForSetting>();
+            foreach (var option in engine.Engine.OptionList)
+            {
+                //Console.WriteLine(opt.MakeSetOptionCommand());
+
+                var opt = new EngineOptionForSetting(option.Name, option.CreateOptionCommandString());
+                opt.Value = option.GetDefault();
+                ind_options.Add(opt);
+            }
+
+            var ind_setting = new EngineOptionsForSetting()
+            {
+                Options = ind_options,
+                Descriptions = null, // あとで書く
+            };
+
+            dialog.SettingControls(1).ViewModel.Setting = ind_setting;
+            dialog.SettingControls(1).ViewModel.AddPropertyChangedHandler("ValueChanged", (args) =>
+            {
+                //TheApp.app.EngineConfig.CommonOptions = setting.ToEngineOptions();
+                // 値が変わるごとに保存しておく。
+            });
+
+
+            dialog.Show();
+        }
+
         // -- handlers
 
         /// <summary>
@@ -204,21 +291,8 @@ namespace MyShogi.View.Win2D.Setting
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
-            var dialog = new EngineOptionSettingDialog();
-
-            var setting = EngineCommonOptionsSample.CreateEngineCommonOptions();
-            var options = TheApp.app.EngineConfig.CommonOptions;
-            if (options != null)
-                setting.OverwriteEngineOptions(options);
-
-            dialog.SettingControls(0).ViewModel.Setting = setting;
-            dialog.SettingControls(0).ViewModel.AddPropertyChangedHandler("ValueChanged", (args) =>
-             {
-                 TheApp.app.EngineConfig.CommonOptions = setting.ToEngineOptions();
-                 // 値が変わるごとに保存しておく。
-             });
-            
-            dialog.Show();
+            // 詳細設定ダイアログ
+            ShowEngineOptionSettingDialog();
         }
 
         /// <summary>

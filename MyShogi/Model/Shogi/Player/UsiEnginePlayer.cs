@@ -11,15 +11,19 @@ namespace MyShogi.Model.Shogi.Player
     /// </summary>
     public class UsiEnginePlayer : Player
     {
+        // このあとStart()を呼び出すと開始する。
         public UsiEnginePlayer()
         {
             Initializing = true;
+            Engine = new UsiEngine(); // 生成だけしておく。まだ開始はしていない。
+        }
 
-            engine = new UsiEngine();
-            engine.AddPropertyChangedHandler("State", StateChanged);
+        public void Start(string exePath)
+        {
+            Engine.AddPropertyChangedHandler("State", StateChanged);
             
-            var data = new ProcessNegotiatorData("engine/gpsfish/gpsfish_sse2.exe");
-            engine.Connect(data);
+            var data = new ProcessNegotiatorData(exePath);
+            Engine.Connect(data);
             // 接続できているものとする。
         }
 
@@ -42,7 +46,7 @@ namespace MyShogi.Model.Shogi.Player
         /// <summary>
         /// このプレイヤーが指した指し手
         /// </summary>
-        public Move BestMove { get { return engine.BestMove; } }
+        public Move BestMove { get { return Engine.BestMove; } }
 
         /// <summary>
         /// TIME_UPなどが積まれる。BestMoveより優先して解釈される。
@@ -52,7 +56,7 @@ namespace MyShogi.Model.Shogi.Player
         /// <summary>
         /// このプレイヤーのponderの指し手
         /// </summary>
-        public Move PonderMove { get { return engine.PonderMove; } }
+        public Move PonderMove { get { return Engine.PonderMove; } }
 
         /// <summary>
         /// 駒を動かして良いフェーズであるか？
@@ -64,25 +68,25 @@ namespace MyShogi.Model.Shogi.Player
         /// </summary>
         public bool Initializing { get; set; }
 
-        public UsiEngine engine;
+        public UsiEngine Engine;
         
         public void OnIdle()
         {
             // 思考するように命令が来ていれば、エンジンに対して思考を指示する。
 
             // 受信処理を行う。
-            engine.OnIdle();
+            Engine.OnIdle();
         }
 
         public void Think(string usiPosition, UsiThinkLimit limit)
         {
-            engine.Think(usiPosition,limit);
+            Engine.Think(usiPosition,limit);
         }
 
         public void Dispose()
         {
             // エンジンを解体する
-            engine.Dispose();
+            Engine.Dispose();
         }
 
 
@@ -92,7 +96,7 @@ namespace MyShogi.Model.Shogi.Player
         /// </summary>
         public void MoveNow()
         {
-            engine.MoveNow();
+            Engine.MoveNow();
         }
 
         // -- private member
@@ -107,6 +111,12 @@ namespace MyShogi.Model.Shogi.Player
             var state = (UsiEngineState)args.value;
             switch(state)
             {
+                case UsiEngineState.UsiOk:
+                    // エンジンの設定を取得したいだけの時はこのタイミングで初期化は終わっていると判定すべき。
+                    if (Engine.EngineSetting)
+                        Initializing = false;
+                    break;
+
                 case UsiEngineState.ReadyOk:
                 case UsiEngineState.InTheGame:
                     Initializing = false; // 少なくとも初期化は終わっている。
