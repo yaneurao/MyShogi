@@ -40,6 +40,7 @@
             this.textBox1.Location = new System.Drawing.Point(0, 226);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox1.Size = new System.Drawing.Size(733, 136);
             this.textBox1.TabIndex = 0;
             // 
@@ -55,7 +56,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(166, 4);
+            this.label2.Location = new System.Drawing.Point(250, 4);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(67, 24);
             this.label2.TabIndex = 2;
@@ -64,7 +65,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(296, 4);
+            this.label3.Location = new System.Drawing.Point(491, 4);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(67, 24);
             this.label3.TabIndex = 3;

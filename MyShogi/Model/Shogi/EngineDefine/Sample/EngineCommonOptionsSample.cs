@@ -32,6 +32,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     "option name AutoThread_ type check default true"),
                 new EngineOptionForSetting("Thread",
                     "option name Thread type spin default 4 min 1 max 4096"),
+                new EngineOptionForSetting("BookFile",
+                    "option name BookFile type combo default standard_book.db "+
+                    "var no_book var standard_book.db var yaneura_book1.db var yaneura_book2.db var yaneura_book3.db var yaneura_book4.db "+
+                    "var user_book1.db var user_book2.db var user_book3.db var book.bin"),
             };
 
             setting.Descriptions = new List<EngineOptionDescription>()
@@ -69,7 +73,6 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     "思考エンジンの最低必要ハッシュメモリに足りない場合、後者の値が優先されます。"
                     ),
 
-
                 new EngineOptionDescription(null           , "スレッド設定" ,
                     null,
                     "コンピューターが思考する時にCPUのコア数分までは並列的に探索したほうが強くなります。"+
@@ -91,6 +94,19 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     "なお、PCの論理コア数より増やしても棋力は普通、強くなりません。"
                     ),
 
+                new EngineOptionDescription(null           , "定跡設定" ,
+                    null,
+                    "コンピューターが用いる定跡はここで設定します。"
+                    ),
+
+                new EngineOptionDescription("BookFile"      , "定跡ファイル" ,
+                    "コンピューターが用いる定跡ファイル。\r\n",
+                    "standard_book.db : やねうら大定跡\r\n"+
+                    "yaneura_book1.db : 裏やねうら定跡\r\n"+
+                    "yaneura_book2.db : 真やねうら定跡\r\n"+
+                    "yaneura_book3.db : 極やねうら定跡\r\n"+
+                    "yaneura_book4.db : やねうら定跡2017"
+                    ),
 
                 //new EngineOptionDescription("入玉設定")
             };

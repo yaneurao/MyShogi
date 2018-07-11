@@ -305,8 +305,12 @@ namespace MyShogi.Model.Shogi.Usi
             {
                 if (ComboList != null)
                 {
-                    result.Add("var");
-                    result.AddRange(ComboList);
+                    foreach (var c in ComboList)
+                    {
+                        // 値ひとつずつ"var"をくっつけて出力しなければならない。
+                        result.Add("var");
+                        result.Add(c);
+                    }
                 }
             }
 

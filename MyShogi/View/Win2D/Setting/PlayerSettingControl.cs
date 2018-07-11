@@ -248,7 +248,7 @@ namespace MyShogi.View.Win2D.Setting
             var ind_options = new List<EngineOptionForSetting>();
             foreach (var option in engine.Engine.OptionList)
             {
-                //Console.WriteLine(opt.MakeSetOptionCommand());
+                Console.WriteLine(option.CreateOptionCommandString());
 
                 var opt = new EngineOptionForSetting(option.Name, option.CreateOptionCommandString());
                 opt.Value = option.GetDefault();

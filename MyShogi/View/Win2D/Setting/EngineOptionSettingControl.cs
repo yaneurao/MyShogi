@@ -162,6 +162,35 @@ namespace MyShogi.View.Win2D.Setting
 
                         control = num;
                         break;
+
+                    case UsiOptionType.ComboBox:
+                        var combobox = new ComboBox();
+                        combobox.DropDownStyle = ComboBoxStyle.DropDownList;
+
+                        // comboboxは、readonlyにすると勝手に背景色が変わってしまう..
+                        // combobox.BackColor = System.Drawing.Color.White;
+                        // →　これでは変更できない…。
+
+                        //combobox.FlatStyle = FlatStyle.Flat;
+                        // →　これ、ComboBoxを配置しているところが白いと同化して見にくい。
+
+                        // まあいいや…。
+
+                        foreach (var s in usiOption.ComboList)
+                            combobox.Items.Add(s);
+
+                        binder.BindString(e, "Value", combobox, valueChanged);
+
+                        control = combobox;
+                        break;
+
+                    case UsiOptionType.TextBox:
+                        var textbox = new TextBox();
+
+                        binder.BindString(e, "Value", textbox, valueChanged);
+
+                        control = textbox;
+                        break;
                 }
                 if (control != null)
                 {
@@ -188,6 +217,7 @@ namespace MyShogi.View.Win2D.Setting
                     control.Location = new Point(label_x[1], y);
                     control.MouseHover += h;
 
+                    control.Size = new Size(label_x[2] - label_x[1], control.Height);
                     Controls.Add(control);
 
                     y += control.Height + 4;

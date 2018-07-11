@@ -121,7 +121,7 @@ namespace MyShogi.Model.Common.ObjectModel
             AddHandler<int>(notify, name, h1, control, h2);
         }
 
-        public void Bind(NotifyObject notify, string name, TextBox c, DataBindWay way = DataBindWay.TwoWay)
+        public void Bind(NotifyObject notify, string name, TextBox c, Action<string> f = null, DataBindWay way = DataBindWay.TwoWay)
         {
             // 値が変更になった時にデータバインドしているほうに値を戻す。
             var control = c; // copy for capture
@@ -131,6 +131,9 @@ namespace MyShogi.Model.Common.ObjectModel
                 // 値が範囲外なら補整してからセットする。
                 var v = (string)args.value;
                 control.Text = v;
+
+                if (f!=null)
+                    f(v);
             });
             notify.AddPropertyChangedHandler(name, h1);
 
@@ -293,6 +296,12 @@ namespace MyShogi.Model.Common.ObjectModel
             AddHandler<string>(notify, name, h1, control, h2);
         }
 
+        public void BindString(NotifyObject notify, string name, TextBox c, Action f = null, DataBindWay way = DataBindWay.TwoWay)
+        {
+            // これはそのまま移譲しとけば良い。
+            Bind(notify, name, c, (string s)=> { f(); }, way);
+        }
+
         public void BindString(NotifyObject notify, string name, CheckBox c, Action f = null, DataBindWay way = DataBindWay.TwoWay)
         {
             // 値が変更になった時にデータバインドしているほうに値を戻す。
@@ -320,6 +329,45 @@ namespace MyShogi.Model.Common.ObjectModel
 
             AddHandler<string>(notify, name, h1, control, h2);
         }
+
+        public void BindString(NotifyObject notify, string name, ComboBox c, Action f = null, DataBindWay way = DataBindWay.TwoWay)
+        {
+            // 値が変更になった時にデータバインドしているほうに値を戻す。
+            var control = c; // copy for capture
+
+            var h1 = new PropertyChangedEventHandler((args) =>
+            {
+                var vs = (string)args.value; // この項目を探して、それを選択する。
+
+                if (control.Items.Count != 0)
+                {
+                    for(int i= 0; i< control.Items.Count;++i)
+                    {
+                        if (vs == control.Items[i].ToString())
+                        {
+                            control.SelectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+
+                // おまけハンドラがあるなら呼び出す。
+                if (f != null)
+                    f();
+            });
+            notify.AddPropertyChangedHandler(name, h1);
+
+            EventHandler h2 = null;
+
+            if (way == DataBindWay.TwoWay)
+            {
+                h2 = new EventHandler((sender, args) => { notify.SetValue<string>(name, (string)control.SelectedItem); });
+                c.SelectedIndexChanged += h2;
+            }
+
+            AddHandler<string>(notify, name, h1, control, h2);
+        }
+
 
         /// <summary>
         /// あとでUnbindAll()出来るように、このクラスのlistに追加しておく。
