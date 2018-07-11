@@ -65,15 +65,18 @@ namespace MyShogi.Model.Shogi.EngineDefine
     [DataContract]
     public class EngineOptionDescription
     {
-        public EngineOptionDescription(string name,string displayName , string description)
+        public EngineOptionDescription(string name,string displayName , 
+            string descriptionSimple , string description)
         {
             Name = name;
             DisplayName = displayName;
+            DescriptionSimple = descriptionSimple;
             Description = description;
         }
 
         /// <summary>
         /// (元の)オプション名
+        /// ここがnullなら、単なる項目名としてDisplayNameを表示する。
         /// </summary>
         [DataMember]
         public string Name;
@@ -83,6 +86,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         [DataMember]
         public string DisplayName;
+
+        /// <summary>
+        /// 説明文。ダイアログ上に表示される。1文ぐらい。
+        /// </summary>
+        [DataMember]
+        public string DescriptionSimple;
 
         /// <summary>
         /// 説明文。ダイアログ上に表示される。
