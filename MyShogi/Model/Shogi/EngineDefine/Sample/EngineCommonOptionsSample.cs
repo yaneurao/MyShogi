@@ -36,6 +36,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     "option name BookFile type combo default standard_book.db "+
                     "var no_book var standard_book.db var yaneura_book1.db var yaneura_book2.db var yaneura_book3.db var yaneura_book4.db "+
                     "var user_book1.db var user_book2.db var user_book3.db var book.bin"),
+                new EngineOptionForSetting("EnteringKingRule",
+                    "option name EnteringKingRule type combo default CSARule27 var NoEnteringKing var CSARule24 var CSARule27 var TryRule"),
             };
 
             setting.Descriptions = new List<EngineOptionDescription>()
@@ -54,7 +56,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 new EngineOptionDescription("AutoHash_"           , "自動ハッシュ" ,
                     "ハッシュメモリを自動的に割り当てます。",
                     "コンピューターが思考する時にハッシュメモリというものを使います。"+
-                    "これは、一度調べた局面の情報を保存しておくために必要です。" + 
+                    "これは、一度調べた局面の情報を保存しておくために必要です。" +
                     "このオプションを有効にすると、空き物理メモリから「Hash割合」の分だけ自動的にハッシュメモリを割当てます。"+
                     "このオプションを無効にすると、「Hash[MB]」の分だけ強制的にハッシュメモリを割り当てます。"
                     ),
@@ -101,11 +103,30 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                 new EngineOptionDescription("BookFile"      , "定跡ファイル" ,
                     "コンピューターが用いる定跡ファイル。\r\n",
+                    "no_book          : 定跡なし。\r\n"+
                     "standard_book.db : やねうら大定跡\r\n"+
                     "yaneura_book1.db : 裏やねうら定跡\r\n"+
                     "yaneura_book2.db : 真やねうら定跡\r\n"+
                     "yaneura_book3.db : 極やねうら定跡\r\n"+
-                    "yaneura_book4.db : やねうら定跡2017"
+                    "yaneura_book4.db : やねうら定跡2017\r\n"+
+                    "user_book1.db    : ユーザー定跡1\r\n"+
+                    "user_book2.db    : ユーザー定跡2\r\n"+
+                    "user_book3.db    : ユーザー定跡3\r\n"+
+                    "book.db          : Aperyの定跡ファイル"
+                    ),
+
+                new EngineOptionDescription(null           , "入玉設定" ,
+                    null,
+                    "コンピューターの入玉条件を変更します。"
+                    ),
+
+                new EngineOptionDescription("EnteringKingRule"   , "入玉条件" ,
+                    "コンピューターの入玉条件を変更します。",
+                    "NoEnteringKing : 入玉なし。\r\n"+
+                    "CSARule27      : 27点法(CSAルール) これがデフォルトです。\r\n"+
+                    "CSARule24      : 24点法(CSAルール)\r\n"+
+                    "TryRule        : トライルール\r\n"+
+                    "この項目を変更する時は、対局設定のほうの入玉設定もこの設定に合わせて変更してください。"
                     ),
 
                 //new EngineOptionDescription("入玉設定")

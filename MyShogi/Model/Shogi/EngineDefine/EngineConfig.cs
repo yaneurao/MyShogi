@@ -34,9 +34,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <summary>
         /// このエンジンに対する個別設定。
         /// 共通設定をこれで上書きする。
+        /// (共通設定に倣わない項目のみ)
         /// </summary>
         [DataMember]
-        public EngineOptions Options;
+        public EngineOptionsForIndivisual Options;
     }
 
     /// <summary>

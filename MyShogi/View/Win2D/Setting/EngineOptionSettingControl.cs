@@ -103,8 +103,10 @@ namespace MyShogi.View.Win2D.Setting
                 {
                     // 見出し項目のようであるな…。
                     var description = desc.Description;
+                    var displayName = desc.DisplayName.TrimStart();
                     var h = new EventHandler((sender, args) =>
                     {
+                        label4.Text = displayName + "とは？";
                         textBox1.Text = description;
                     });
 
@@ -115,6 +117,7 @@ namespace MyShogi.View.Win2D.Setting
                     label1.Font = new Font(label1.Font.FontFamily, label1.Font.Size * 1.5f);
                     label1.MouseHover += h;
                     Controls.Add(label1);
+
                     y += label1.Height + 6;
                     continue;
                 }
@@ -173,7 +176,6 @@ namespace MyShogi.View.Win2D.Setting
 
                         //combobox.FlatStyle = FlatStyle.Flat;
                         // →　これ、ComboBoxを配置しているところが白いと同化して見にくい。
-
                         // まあいいや…。
 
                         foreach (var s in usiOption.ComboList)
@@ -195,8 +197,10 @@ namespace MyShogi.View.Win2D.Setting
                 if (control != null)
                 {
                     var description = desc.Description;
+                    var displayName = desc.DisplayName.TrimStart();
                     var h = new EventHandler( (sender, args) =>
                     {
+                        label4.Text = displayName + "の説明";
                         textBox1.Text = description;
                     });
 
@@ -223,9 +227,47 @@ namespace MyShogi.View.Win2D.Setting
                     y += control.Height + 4;
                 }
             }
+        }
+
+        private void EngineOptionSettingControl_Resize(object sender, EventArgs e)
+        {
+            // button1,2は下にdockしているべきである。
+            button1.Location = new Point(button1.Location.X, ClientSize.Height - button1.Height - 3);
+            button2.Location = new Point(ClientSize.Width - button1.Location.X - button2.Width,
+                ClientSize.Height - button1.Height - 3);
+
+            // textBox1は、「前ページ」「次ページ」ボタンの上に位置しているべきである。
+            textBox1.Location = new Point(textBox1.Location.X, button1.Location.Y - textBox1.Height - 3);
+            textBox1.Size = new Size(ClientSize.Width, textBox1.Height);
+
+            // label4はtextBox1に表示されているテキストの説明文である。
+            // これをtextBox1の上にdockさせる。
+
+            label4.Location = new Point(label4.Location.X, textBox1.Location.Y - label4.Height - 3);
+
+        }
+
+        /// <summary>
+        /// 前ページボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// 次ページボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e)
+        {
 
         }
 
         private ControlBinder binder = new ControlBinder();
+
     }
 }

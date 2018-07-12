@@ -93,9 +93,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 }
             }
 
-            var preset_default = new List<EnginePreset>(preset_default_array);
+            var default_preset = new List<EnginePreset>(preset_default_array);
 
             var default_cpus = new List<Cpu>(new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 });
+
+            var default_extend = new List<ExtendedProtocol>();
+            default_extend.Add(ExtendedProtocol.UseHashCommandExtension);
 
             // -- 各エンジン用の設定ファイルを生成して書き出す。
 
@@ -107,11 +110,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     EngineExeName = "yaneuraou2018_kpp_kkpt",
                     SupportedCpus = default_cpus ,
                     RequiredMemory = 512, // KPP_KKPTは、これくらい？
-                    Presets = preset_default,
+                    Presets = default_preset,
                     DescriptionSimple = "やねうら王 2018年度版",
                     Description = "プロの棋譜を一切利用せずに自己学習で身につけた異次元の大局観。"+
                         "従来の将棋の常識を覆す指し手が飛び出すかも？",
                     DisplayOrder = 10005,
+                    SupportedExtendedProtocol = default_extend,
                 };
                 EngineDefineUtility.WriteFile("engine/yaneuraou2018/engine_define.xml", engine_define);
 
@@ -127,11 +131,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     EngineExeName = "yaneuraou2018_kppt",
                     SupportedCpus = default_cpus,
                     RequiredMemory = 1024, // KPPTは、これくらい？
-                    Presets = preset_default,
+                    Presets = default_preset,
                     DescriptionSimple = "tanuki- SDT5版",
                     Description = "SDT5(第5回 将棋電王トーナメント)で絶対王者Ponanzaを下し堂々の優勝を果たした実力派。" +
                         "SDT5 出場名『平成将棋合戦ぽんぽこ』",
                     DisplayOrder = 10004,
+                    SupportedExtendedProtocol = default_extend,
                 };
                 EngineDefineUtility.WriteFile("engine/tanuki_sdt5/engine_define.xml", engine_define);
             }
@@ -144,12 +149,13 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     EngineExeName = "yaneuraou2018_nuee",
                     SupportedCpus = default_cpus,
                     RequiredMemory = 512, // NNUEは、これくらい？
-                    Presets = preset_default,
+                    Presets = default_preset,
                     DescriptionSimple = "tanuki- 2018年版",
                     Description = "WCSC28(第28回 世界コンピュータ将棋選手権)に出場した時からさらに強化されたtanuki-シリーズ最新作。" +
                         "ニューラルネットワークを用いた評価関数で、他のソフトとは毛並みの違う新時代のコンピュータ将棋。"+
                         "PC性能を極限まで使うため、CPUの温度が他のソフトの場合より上がりやすいので注意してください。",
                     DisplayOrder = 10003,
+                    SupportedExtendedProtocol = default_extend,
                 };
                 EngineDefineUtility.WriteFile("engine/tanuki2018/engine_define.xml", engine_define);
             }
@@ -162,11 +168,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     EngineExeName = "yaneuraou2018_kppt",
                     SupportedCpus = default_cpus,
                     RequiredMemory = 1024, // KPPTはこれくらい？
-                    Presets = preset_default,
+                    Presets = default_preset,
                     DescriptionSimple = "Qhapaq 2018年版",
                     Description = "河童の愛称で知られるQhapaqの最新版。"+
                         "非公式なレーティング計測ながら2018年6月時点で堂々の一位の超強豪。",
                     DisplayOrder = 10002,
+                    SupportedExtendedProtocol = default_extend,
                 };
                 EngineDefineUtility.WriteFile("engine/qhapaq2018/engine_define.xml", engine_define);
             }
@@ -179,11 +186,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     EngineExeName = "yaneuraou2018_kppt",
                     SupportedCpus = default_cpus,
                     RequiredMemory = 1024, // KPPTはこれくらい？
-                    Presets = preset_default,
+                    Presets = default_preset,
                     DescriptionSimple = "読み太 2018年版",
                     Description = "直感精読の個性派、読みの確かさに定評あり。" +
                         "毎回、大会で上位成績を残している常連組。",
                     DisplayOrder = 10001,
+                    SupportedExtendedProtocol = default_extend,
                 };
                 EngineDefineUtility.WriteFile("engine/yomita2018/engine_define.xml", engine_define);
             }
@@ -196,11 +204,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     EngineExeName = "gpsfish",
                     SupportedCpus = new List<Cpu>(new[] { Cpu.SSE2 }),
                     RequiredMemory = 10, // gpsfishこれくらいで動くような？
-                    Presets = preset_default,
+                    Presets = default_preset,
                     DescriptionSimple = "GPS将棋(テスト用)",
                     Description = "いまとなっては他のソフトと比べると棋力的には見劣りがするものの、" +
                         "ファイルサイズが小さいので動作検証用に最適。",
                     DisplayOrder = 10000,
+                    SupportedExtendedProtocol = null,
                 };
                 EngineDefineUtility.WriteFile("engine/gpsfish/engine_define.xml", engine_define);
 
