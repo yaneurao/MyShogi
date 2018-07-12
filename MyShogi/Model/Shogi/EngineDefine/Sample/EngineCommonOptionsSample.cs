@@ -26,8 +26,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     "option name AutoHash_ type check default true"),
                 new EngineOptionForSetting("AutoHashPercentage_",
                     "option name AutoHashPercentage_ type spin default 80 min 0 max 100"),
-                new EngineOptionForSetting("USI_Hash",
-                    "option name USI_Hash type spin default 4096 min 0 max 999999999"),
+
+                // ※　"Hash_"という項目に設定しているが、これは、のちに"USI_Hash"か"Hash"に置換される。
+                new EngineOptionForSetting("Hash_",
+                    "option name Hash_ type spin default 4096 min 0 max 1048576"),
                 new EngineOptionForSetting("AutoThread_",
                     "option name AutoThread_ type check default true"),
                 new EngineOptionForSetting("Thread",
@@ -69,7 +71,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     "0%～100%までの数値で指定できます。小さな値を指定した場合、思考エンジンの最低必要ハッシュメモリに足りなくなるので" +
                     "その場合、後者の数値が優先されます。"
                     ),
-                new EngineOptionDescription("USI_Hash"            , "　Hash[MB]",
+
+                // ※　"Hash_"という項目に設定しているが、これは、のちに"USI_Hash"か"Hash"に置換される。
+
+                new EngineOptionDescription("Hash_"          , "　Hash[MB]",
                     "何[MB]をハッシュメモリに用いるかを設定します。",
                     "上記の『自動ハッシュ割当』をオフにしている時に、何[MB]をハッシュメモリに用いるかを手動で設定します。ここで指定した値が"+
                     "思考エンジンの最低必要ハッシュメモリに足りない場合、後者の値が優先されます。"

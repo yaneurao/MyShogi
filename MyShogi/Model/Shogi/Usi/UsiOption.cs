@@ -317,6 +317,17 @@ namespace MyShogi.Model.Shogi.Usi
             return string.Join(" ", result);
         }
 
+        /// <summary>
+        /// Nameを無理やり書き換える時に用いる。特殊な用途で。
+        /// "Hash_"を"USI_Hash"に置換する時などに用いている。
+        /// </summary>
+        /// <param name="name"></param>
+        public void SetName(string name)
+        {
+            Name = name;
+        }
+
+
         // --- 以下、private method
 
         /// <summary>

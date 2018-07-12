@@ -80,6 +80,10 @@ namespace MyShogi.View.Win2D.Setting
         {
             // -- 順番にControlを生成して表示する。
 
+            var page = new List<Control>();
+            pages.Clear();
+            pages.Add(page);
+
             int y = 3; // 最初の行のY座標。
 
             // bindしている値が変化した時にイベントを生起する
@@ -117,6 +121,7 @@ namespace MyShogi.View.Win2D.Setting
                     label1.Font = new Font(label1.Font.FontFamily, label1.Font.Size * 1.5f);
                     label1.MouseHover += h;
                     Controls.Add(label1);
+                    page.Add(label1);
 
                     y += label1.Height + 6;
                     continue;
@@ -210,6 +215,7 @@ namespace MyShogi.View.Win2D.Setting
                     label1.Text = desc.DisplayName;
                     label1.MouseHover += h;
                     Controls.Add(label1);
+                    page.Add(label1);
 
                     var label2 = new Label();
                     label2.Location = new Point(label_x[2], y);
@@ -217,16 +223,29 @@ namespace MyShogi.View.Win2D.Setting
                     label2.Text = desc.DescriptionSimple;
                     label2.MouseHover += h;
                     Controls.Add(label2);
+                    page.Add(label2);
 
                     control.Location = new Point(label_x[1], y);
                     control.MouseHover += h;
 
                     control.Size = new Size(label_x[2] - label_x[1], control.Height);
                     Controls.Add(control);
+                    page.Add(control);
 
                     y += control.Height + 4;
                 }
+
+                if (y >= label4.Location.Y - label4.Height)
+                {
+                    // 次ページに
+
+                    page = new List<Control>();
+                    pages.Add(page);
+                    y = 3;
+                }
             }
+
+            UpdatePage(0);
         }
 
         private void EngineOptionSettingControl_Resize(object sender, EventArgs e)
@@ -248,13 +267,44 @@ namespace MyShogi.View.Win2D.Setting
         }
 
         /// <summary>
+        /// ページめくり
+        /// 
+        /// page_noのページ以外に属するControlはすべて非表示にする。
+        /// </summary>
+        /// <param name="page_no"></param>
+        private void UpdatePage(int page_no)
+        {
+            // 範囲外。この条件で呼び出されることはないはずなのだが…。
+            if (page_no < 0 || page_no >= pages.Count)
+                return;
+
+            foreach(var page in All.Int(pages.Count))
+            {
+                var visible = page == page_no;
+                foreach (var c in pages[page])
+                    c.Visible = visible;
+            }
+
+            // 前ページ、次ページに行けるかどうか。
+
+            // 行けないときはボタン自体を非表示にしておく。
+            // 途中で使っているComboBoxがReadOnlyなので背景色がグレーであり、
+            // ボタンがグレーであっても押せるように見えてしまうため。
+
+            button1.Visible = page_no - 1 >= 0;
+            button2.Visible = page_no + 1 < pages.Count;
+
+            currentPage = page_no;
+        }
+
+        /// <summary>
         /// 前ページボタン
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-
+            UpdatePage(currentPage - 1);
         }
 
         /// <summary>
@@ -264,10 +314,19 @@ namespace MyShogi.View.Win2D.Setting
         /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
-
+            UpdatePage(currentPage + 1);
         }
 
         private ControlBinder binder = new ControlBinder();
 
+        /// <summary>
+        /// 各ページに表示すべきControl
+        /// </summary>
+        private List<List<Control>> pages = new List<List<Control>>();
+
+        /// <summary>
+        /// 現在表示しているページ番号
+        /// </summary>
+        private int currentPage = 0;
     }
 }

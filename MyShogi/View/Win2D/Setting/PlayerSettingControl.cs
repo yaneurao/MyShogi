@@ -1,15 +1,14 @@
-﻿using MyShogi.App;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Player;
-using MyShogi.Model.Shogi.Usi;
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D.Setting
 {
@@ -216,7 +215,8 @@ namespace MyShogi.View.Win2D.Setting
 
             // 思考エンジンの個別ダイアログのための項目を、実際に思考エンジンを起動して取得。
             // 一瞬で起動～終了するはずなので、UIスレッドでやっちゃっていいや…。
-            var exefilename = ViewModel.EngineDefine.EngineDefine.EngineExeFileName();
+            var engineDefine = ViewModel.EngineDefine.EngineDefine;
+            var exefilename = engineDefine.EngineExeFileName();
 
             var engine = new UsiEnginePlayer();
             try
@@ -245,10 +245,32 @@ namespace MyShogi.View.Win2D.Setting
 
             // エンジンからUsiOption文字列を取得
 
+            var useHashCommand = engineDefine.SupportedExtendedProtocol.Contains(ExtendedProtocol.UseHashCommandExtension);
+
             var ind_options = new List<EngineOptionForSetting>();
             foreach (var option in engine.Engine.OptionList)
             {
-                Console.WriteLine(option.CreateOptionCommandString());
+                //Console.WriteLine(option.CreateOptionCommandString());
+
+                // "USI_Ponder"は無視する。
+                if (option.Name == "USI_Ponder")
+                    continue;
+
+                // "USI_Hash","Hash"は統合する。
+                else if (option.Name == "USI_Hash")
+                {
+                    // USI_Hash使わないエンジンなので無視する。
+                    if (useHashCommand)
+                        continue;
+
+                    option.SetName("Hash_"); // これにしておけばあとで置換される。
+                }
+                else if (option.Name == "Hash")
+                {
+                    //Debug.Assert(useHashCommand);
+
+                    option.SetName("Hash_"); // これにしておけばあとで置換される。
+                }
 
                 var opt = new EngineOptionForSetting(option.Name, option.CreateOptionCommandString());
                 opt.Value = option.GetDefault();

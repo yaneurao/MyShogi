@@ -283,6 +283,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
             }
         }
 
+        // エンジン共通設定に従う設定であっても、
+        // エンジン個別設定のほうの値域を守らないといけないという話はあるか…。まあいいか…。あとで考える。
+
         /// <summary>
         /// このメンバの持つOptionsの
         /// NameとValueのペアをEngineOptionsとして書き出す
