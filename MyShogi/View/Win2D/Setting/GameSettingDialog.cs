@@ -32,6 +32,8 @@ namespace MyShogi.View.Win2D
 
             // TheApp.app.config.GameSettingを、このFormのControlたちとデータバインドしておく。
             BindSetting();
+
+            Disposed += OnDisposed;
         }
 
         // -- screen settings
@@ -237,6 +239,12 @@ namespace MyShogi.View.Win2D
             UnbindSetting();
             TheApp.app.config.GameSetting.SwapPlayer();
             BindSetting();
+        }
+
+        private void OnDisposed(object sender, EventArgs e)
+        {
+            // data-bindしていたものすべてを解除する。
+            binder.UnbindAll();
         }
 
         // -- privates

@@ -108,16 +108,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                 new EngineOptionDescription("BookFile"      , "定跡ファイル" ,
                     "コンピューターが用いる定跡ファイル。\r\n",
-                    "no_book          : 定跡なし。\r\n"+
-                    "standard_book.db : やねうら大定跡\r\n"+
-                    "yaneura_book1.db : 裏やねうら定跡\r\n"+
-                    "yaneura_book2.db : 真やねうら定跡\r\n"+
-                    "yaneura_book3.db : 極やねうら定跡\r\n"+
-                    "yaneura_book4.db : やねうら定跡2017\r\n"+
-                    "user_book1.db    : ユーザー定跡1\r\n"+
-                    "user_book2.db    : ユーザー定跡2\r\n"+
-                    "user_book3.db    : ユーザー定跡3\r\n"+
-                    "book.db          : Aperyの定跡ファイル"
+                    "各エンジンのフォルダ配下のbookフォルダ内にある定跡ファイルが読み込まれます。\r\n",
+                    "no_book,定跡なし,standard_book.db,やねうら大定跡,yaneura_book1.db,裏やねうら定跡,"+
+                    "yaneura_book2.db,真やねうら定跡,yaneura_book3.db,極やねうら定跡,yaneura_book4.db,やねうら定跡2017,"+
+                    "user_book1.db,ユーザー定跡1,user_book2.db,ユーザー定跡2,user_book3.db,ユーザー定跡3,book.bin,Aperyの定跡ファイル"
                     ),
 
                 new EngineOptionDescription(null           , "入玉設定" ,
@@ -127,11 +121,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                 new EngineOptionDescription("EnteringKingRule"   , "入玉条件" ,
                     "コンピューターの入玉条件を変更します。",
-                    "NoEnteringKing : 入玉なし。\r\n"+
-                    "CSARule27      : 27点法(CSAルール) これがデフォルトです。\r\n"+
-                    "CSARule24      : 24点法(CSAルール)\r\n"+
-                    "TryRule        : トライルール\r\n"+
-                    "この項目を変更する時は、対局設定のほうの入玉設定もこの設定に合わせて変更してください。"
+                    "この項目を変更する時は、対局設定のほうの入玉設定もこの設定に合わせて変更してください。\r\n"+
+                    "デフォルトは、27点法です。",
+                    "NoEnteringKing,入玉ルールなし,CSARule27,27点法(CSAルール),CSARule24,24点法(CSAルール),TryRule,トライルール"
                     ),
 
                 //new EngineOptionDescription("入玉設定")

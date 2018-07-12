@@ -26,6 +26,8 @@ namespace MyShogi.View.Win2D.Setting
             InitializeComponent();
 
             InitViewModel();
+
+            Disposed += OnDisposed;
         }
 
         public class PlayerSettingViewModel : NotifyObject
@@ -379,6 +381,12 @@ namespace MyShogi.View.Win2D.Setting
             // プリセットは前回のエンジンの選択時のSelectedPresetIndexを持って来て選ぶ。
             var indivisualEngine = TheApp.app.EngineConfig.Find(ViewModel.EngineDefine.FolderPath);
             indivisualEngine.SelectedPresetIndex = comboBox1.SelectedIndex;
+        }
+
+        private void OnDisposed(object sender, EventArgs e)
+        {
+            // data-bindしていたものすべてを解除する。
+            binder.UnbindAll();
         }
 
         // -- privates

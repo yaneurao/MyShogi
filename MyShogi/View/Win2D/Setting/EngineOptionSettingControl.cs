@@ -16,6 +16,8 @@ namespace MyShogi.View.Win2D.Setting
             InitializeComponent();
 
             InitViewModel();
+
+            Disposed += OnDisposed;
         }
 
         public class EngineOptionSettingViewModel : NotifyObject
@@ -183,10 +185,26 @@ namespace MyShogi.View.Win2D.Setting
                         // →　これ、ComboBoxを配置しているところが白いと同化して見にくい。
                         // まあいいや…。
 
-                        foreach (var s in usiOption.ComboList)
-                            combobox.Items.Add(s);
+                        if (desc.ComboboxDisplayName == null)
+                        {
+                            foreach (var s in usiOption.ComboList)
+                                combobox.Items.Add(s);
 
-                        binder.BindString(e, "Value", combobox, valueChanged);
+                            binder.BindString(e, "Value", combobox, valueChanged);
+                        } else
+                        {
+                            // ComboBoxの日本語化
+                            var split = desc.ComboboxDisplayName.Split(',');
+                            var dic = new Dictionary<string, string>();
+                            for (int i = 0; i < split.Length / 2; ++i)
+                                dic.Add(split[i * 2 + 0], split[i * 2 + 1]);
+
+                            foreach (var s in usiOption.ComboList)
+                                if (dic.ContainsKey(s))
+                                    combobox.Items.Add(dic[s]);
+ 
+                            binder.BindStringWithDic(e, "Value", combobox, valueChanged , dic);
+                        }
 
                         control = combobox;
                         break;
@@ -317,6 +335,12 @@ namespace MyShogi.View.Win2D.Setting
             UpdatePage(currentPage + 1);
         }
 
+        private void OnDisposed(object sender, EventArgs e)
+        {
+            // data-bindしていたものすべてを解除する。
+            binder.UnbindAll();
+        }
+
         private ControlBinder binder = new ControlBinder();
 
         /// <summary>
@@ -328,5 +352,6 @@ namespace MyShogi.View.Win2D.Setting
         /// 現在表示しているページ番号
         /// </summary>
         private int currentPage = 0;
+
     }
 }

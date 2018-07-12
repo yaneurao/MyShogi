@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Kifu;
@@ -14,6 +15,8 @@ namespace MyShogi.View.Win2D.Setting
 
             InitScreen();
             InitViewModel();
+
+            Disposed += OnDisposed;
         }
 
         public class PlayerSettingViewModel : NotifyObject
@@ -123,6 +126,12 @@ namespace MyShogi.View.Win2D.Setting
                  }
 
              });
+        }
+
+        private void OnDisposed(object sender, EventArgs e)
+        {
+            // data-bindしていたものすべてを解除する。
+            binder.UnbindAll();
         }
 
         // -- privates

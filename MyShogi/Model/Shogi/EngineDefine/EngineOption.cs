@@ -148,6 +148,16 @@ namespace MyShogi.Model.Shogi.EngineDefine
             Description = description;
         }
 
+        public EngineOptionDescription(string name, string displayName,
+            string descriptionSimple, string description , string comboboxDisplayName)
+        {
+            Name = name;
+            DisplayName = displayName;
+            DescriptionSimple = descriptionSimple;
+            Description = description;
+            ComboboxDisplayName = comboboxDisplayName;
+        }
+
         /// <summary>
         /// (元の)オプション名
         /// ここがnullなら、単なる項目名としてDisplayNameを表示する。
@@ -172,6 +182,22 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         [DataMember]
         public string Description;
+
+        /// <summary>
+        /// ComboBoxに表示する値に対応する日本語名
+        /// 
+        /// "var1,日本語1,var2,日本語2"
+        /// のようにカンマ区切りで書くとvar1,var2が「日本語1」「日本語2」と日本語化される。
+        /// </summary>
+        [DataMember]
+        public string ComboboxDisplayName;
+
+        /// <summary>
+        /// このオプション項目をエンジン設定ダイアログの表示から隠す
+        /// 表示から隠したい項目に対しては、これをtrueにしたEngineOptionDescriptionを用意する。
+        /// </summary>
+        [DataMember]
+        public bool Hide;
     }
 
 
