@@ -1,8 +1,7 @@
 ﻿
 TODO:
-・エンジン選択、エンジン設定(3日ぐらい？) 7/5..7
-・ここでβ版。βテスターに配布。7/10付近。
-・インストーラー作成(3日ぐらい？) 7/10..12
+・ここでβ版。βテスターに配布。7/13付近。
+・インストーラー作成(3日ぐらい？)
 	cf. https://www.osadasoft.com/visual-studio-2017%E3%81%A7%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%A9%E4%BD%9C%E6%88%90/
 ・各思考エンジンの動作検証等(4,5日) 7/14..19
 
@@ -10,17 +9,273 @@ TODO:
 ・連続対局
 ・形勢表示(できれば)
 ・棋譜解析(できれば)
-- CPUだからか。CPUの時に名前を持ってくる処理、まだだった。あとで書く。
 
-- 空きメモリの足りるかの判定
+・完了
+	・エンジンごとの選択されたpresetの保存/(次回起動時の)復元
+	・思考エンジンの共通設定のダイアログ作成
+	・思考エンジンの共通設定の保存～復元
+	・思考エンジンの個別設定ダイアログの作成
+	・思考エンジンの個別設定を思考エンジンから取得するコード
+	・思考エンジンのCPU判別
+
+・思考エンジンの個別設定の内容の思考エンジンへの反映
+・思考エンジンの共通設定の、各思考エンジンへの反映
+・思考エンジンの個別設定の保存/復元
+・思考エンジンの個別設定の説明文
+
+・preset (段位ごとの強さ)の調整
+・presetの思考エンジンへの反映
+
+・各思考エンジンの各CPU向け実行ファイルの用意
+・各思考エンジンの各CPUでの動作検証
+・各思考エンジン用の定跡ファイルの用意
+・思考エンジンのHASHメモリの自動マネージメント
+・ponder(相手番のときに思考する)の処理
+・インストーラー作成
+
+- 評価関数
+	- 読み太 KPPT
+	- Qhapaq KPPT
+	- ぽんぽこ KPPT
+	- tanuki-2018 NNUE
+	- やねうら王 KPP_KKPT
+
+	- エンジン個別設定画面作成
+		- EngineOptionSettingControlに追加。
+		- エンジンに対して"usi"コマンドを送信して、option項目をもらって、parseする部分を書く。
+
+
+■  2018/07/12
+
+
+- エンジン設定の作業その23
+	//
+
+
+- 更新履歴.txt 更新
+
+
+- エンジン設定の作業その22
+	- エンジン共通設定のところに定跡の選択項目追加。
+		- あー、これ選択された定跡によって他のオプション設定変わるのか…。
+		- これわりと大変なのでは…。
+	- エンジン設定のところ、comboboxサポート。
+	- エンジン設定のところ、textboxサポート
+	- エンジン設定の説明のテキストボックス、垂直スクロールバー追加。
+
+	- 作業対象 option項目
+
+	option name USI_Ponder type check default false
+	option name USI_Hash type spin default 256 min -9223372036854775808 max 9223372036854775807
+	option name Threads type spin default 4 min 1 max 512
+	option name Hash type spin default 16 min 1 max 1048576
+	option name MultiPV type spin default 1 min 1 max 800
+	option name WriteDebugLog type check default false
+	option name NetworkDelay type spin default 120 min 0 max 10000
+	option name NetworkDelay2 type spin default 1120 min 0 max 10000
+	option name MinimumThinkingTime type spin default 2000 min 1000 max 100000
+	option name SlowMover type spin default 100 min 1 max 1000
+	option name MaxMovesToDraw type spin default 0 min 0 max 100000
+	option name DepthLimit type spin default 0 min 0 max 2147483647
+	option name NodesLimit type spin default 0 min 0 max 9223372036854775807
+	option name Contempt type spin default 2 min -30000 max 30000
+	option name ContemptFromBlack type check default false
+	option name EnteringKingRule type combo default CSARule27 var NoEnteringKing CSARule24 CSARule27 TryRule
+	option name EvalDir type string default eval
+	option name EvalShare type check default false
+	option name SkipLoadingEval type check default false
+	option name NarrowBook type check default false
+	option name BookMoves type spin default 16 min 0 max 10000
+	option name BookIgnoreRate type spin default 0 min 0 max 100
+	option name BookFile type combo default standard_book.db var no_book standard_book.db yaneura_book1.db yaneura_book2.db yaneura_book3.db yaneura_book4.db user_book1.db user_book2.db user_book3.db book.bin
+	option name BookEvalDiff type spin default 30 min 0 max 99999
+	option name BookEvalBlackLimit type spin default 0 min -99999 max 99999
+	option name BookEvalWhiteLimit type spin default -140 min -99999 max 99999
+	option name BookDepthLimit type spin default 16 min 0 max 99999
+	option name BookOnTheFly type check default false
+	option name ConsiderBookMoveCount type check default false
+	option name PvInterval type spin default 300 min 0 max 100000
+	option name ResignValue type spin default 99999 min 0 max 99999
+	option name nodestime type spin default 0 min 0 max 99999
+	option name Param1 type spin default 0 min 0 max 100000
+	option name Param2 type spin default 0 min 0 max 100000
+	option name EvalSaveDir type string default evalsave
+	option name ConsiderationMode type check default false
+	option name OutputFailLHPV type check default true
+
+
+
+- エンジン設定の作業その21
+	- エンジン個別設定をエンジンの実行ファイルを起動して取得するコード追加。
+	- エンジン接続時のエラーメッセージをわかりやすく変更。
+	- UsiOption.CreateOptionCommandString追加。
+	- エンジン個別設定がエンジンから取得したものが表示できるようになったが、項目多すぎて入りきらん…。
+		- Pager必須なのか。禿げそう。
+		- ちょっと考える。
+
+
+- エンジン設定の作業その20
+	- エンジン共通設定の内容を保存するコード/復元するコードを書く。
+		- できた。
+	- EngineOptionForSetting : NotifyObjectにする。
+	- ControlBinderにComboBox,NumericUpDownをstringのpropertyとbindするコード追加。
+	
+
+- エンジン設定の作業その19
+	- エンジンオプションに短い説明と長い説明が必要なような…。
+		- DescriptionとDescriptonSimpleとわける。
+	- エンジンオプションの共通設定画面実装
+		- NumericUpDownの上限、下限値をUsiOptionから取得して設定するコード追加
+		- CheckBox生成
+		- 詳細説明文のテキストボックス追加
+			- マウスのhoverに対して表示されるように。
+		- 「ハッシュメモリ設定」「スレッド設定」追加。
+
+
+■  2018/07/11
+
+
+- エンジン設定の作業その18
+	- Option、結局共通設定用と個別設定用とプリセット用と3つ必要だという結論になった。
+	- 共通設定と個別設定は1つにまとめた。EngineOption.csに用意した。
+	- 共通設定をEngineOptionSettingControlで少し表示出来るようになった。
+		文字列がはみ出たりするので改行の処理とか何とか必要ではなかろうか…。
+		- 少し考える。
+
+
+- エンジン設定の作業その17
+	- エンジン共通設定ダイアログ、個別設定ダイアログ
+		- EngineCommonOptionSettingControl
+		- EngineIndivisualOptionSettingControl
+		に分けておいて、
+		- EngineOptionSettingDialogにtabとして貼り付けるか…。
+		- いやー、よく考えたら、共通のControlでいいのか。
+			エンジン個別のほうに「共通設定に従う」のチェックボックスがあればそれで良しと…。
+		- EngineOptionSettingControl作成。
+		- EngineOptionDialog作成。Tab作って貼り付ける。
+	- UsiOptionとEngineOptionクラスとの兼ね合いが難しいな。少し考える。
+
+
+- エンジン設定の作業その16
+	- EngineConfigUtilityの実装追加。保存～復元。
+	- EngineConfig、TheAppに追加。終了時の保存追加。遅延読み込み実装。
+	- 完了) エンジンごとの選択されたpresetの保存/(次回起動時の)復元
+
+
+- エンジン設定の作業その15
+	- エンジンごとに個別に選択しているpresetを保存するように。
+	- エンジンごとの個別設定を保存するように。
+	- "MyShogi.engine.xml"追加。
+		- ファイル名あまり長くなるの気持ち悪いのでこれくらいで。
+		- "MyShogi.setting.xml"は使っているので、ファイル名に"setting"を入れると紛らわしい。
+	- UsiEngineConfig.cs追加。
+	- EngineOption.name , valueをName , Valueにrename。
+	- EngineConfig追加。EngineConfigUtility追加。
+	- EngineDefine、DataContract、arrayとListで同じなので、arrayやめてListに変更しとく。
+	- EngineConfigUtilityの実装まだ。あとで書く。
+
+
+- エンジン設定の作業その14
+	- 対局設定ダイアログでpresetを選択した時に、その説明文を表示するようにした。
+
+
+- エンジン設定の作業その13
+	- エンジン選択時に、プレイヤー名をエンジンのDisplayNameから取得して対局ダイアログに設定するように。
+	- 対局設定の氏名を対局盤面のネームプレートの表示名に
+	- 棋譜保存のときに対局者名を保存
+		- されてた。
+	- 対局設定で人間←→コンピュータの切り替えでプレイヤー名を
+		コンピュータ名、「先手」/「後手」に変更されるように。
+	- 対局設定でエンジンを選択した時に対局相手を「コンピュータ」に自動的に変更する処理追加。
+	- 対局設定でエンジンを選択していない時に「コンピュータ」を選んだ時にエンジン選択ダイアログを出すように変更。
+- メニューの「ファイル」が無効になっていたの修正。
+
 - エンジン設定ダイアログ、最後96dpiで編集。
+	- しなくてよさげ
+	- .NET Frameworkのバグだったのだろうか…。
+
+
+■  2018/07/10
+
+
+- エンジン設定の作業その12
+	- GameSettingDialogの先手用、後手用の分、別コントロールにしたほうが良いのでは…。
+		- 分離を試みる。
+			- GameTimerSettingControl
+			- GamePlayerSettingControl
+		こうしよう。
+	- 対局設定ダイアログ改造
+		- 詳細設定ボタン削除
+		- プリセットに対する説明追加。
+- tanuki-2018年版の説明にCPU温度の説明文追加。
+
+
+- presetに各段位ごとのDescription追加
+- presetにカスタム追加。
+
+
+- No Banner素材、差し替え。
+
+
+- エンジン設定の作業その11
+	- 対局設定ダイアログで、選択したエンジンと選択したプリセットが次回起動時に再現されるようにした。
+	- 対局設定ダイアログで、コンピュータが選ばれていないときにコンピュータと対局しようとするときエラーダイアログを出すようにした。
+- EngineDefineにpathくっつけた構造体が必要だな
+	- EngineDefineEx追加
+- EngineDefinの読み込み、遅延読み込みに変更。
+
 
 
 ■  2018/07/09
 
 
+- aboutダイアログとシステム情報ダイアログをメインウィンドウの前面に来るようにした。
+
+
+- エンジン設定の作業その11
+	- メモリ足りない時に警告出す処理追加
+	- 対局設定ダイアログ、エンジン選択ダイアログにTopMost指定するのやめる。
+		- メッセージダイアログが最前面になって欲しいのにならない。
+		- Showのときに親指定するか…。
+		- 対局設定ダイアログ、親指定した。
+	- 対局設定ダイアログの最大化と最小化のボタン、なくす。
+
+
+- エンジン設定の作業その10
+	- 対局設定のエンジン選択ボタンをこのエンジン選択ダイアログと紐づける。
+		- エンジン選択のボタンを押した時に反映するところまでは出来た。
+	- 対局設定ダイアログのViewModelにEngineDefineを持たせてそれを反映するようにした。
+	- 対局設定ダイアログへのエンジンのPresetsの反映、まだ。GlobalConfigに保存するのもまだ。
+
+
+- エンジン設定の作業その9
+	- エンジン選択ボタンのハンドラの実装
+	- うまく動いているようだ。これでエンジン選択ダイアログは完成。
+	- あとは対局設定のエンジン選択ボタンをこのエンジン選択ダイアログと紐づけて…。
+- PropertyChangedEventArgsにsenderが必要だと思った。NotifyObject改造した。
+
+
+- 検討ダイアログでranking順に並び替えた時にちらつく件、調査。
+	- ListView.Items[n] = itemとする限りはちらつくので部分更新するように変更。
+	- ちらつかなくなった。なんなんだ、このバッドノウハウ。
+
+
+- NotifyObjectによるControlとのbinder、開発する。
+	- 旧ControlBinder削除
+	- 新ControlBinder、Model.Common.ObjectModelに追加。
+	- 新しいControlBinderで対局設定ダイアログのコード、リファクタリングする。
+		- 大改造になった。ソースコードはだいぶ見通し良くなった。
+- NotifyObjectでhandlerすべてRemoveしたときにpropertyのremoveまでやってたの修正。
+
+
 - エンジン設定の作業その8
 	- エンジン選択ダイアログのpager実装。
+	- バナーがない時のNoBannerの表示実装
+		- NoBannerの素材がないので発注。
+	- NoBanner、ImageMangerに追加。
+- ImageManager、素材が増えてくると起動遅くなるので、遅延読み込みちゃんとサポートしたほうがいいのでは。
+	- ImageLoader、ImageManagerを遅延読み込みに対応。
+	- 起動わずかに早くなった。(気がする)
 
 
 - readme.mdにスクリーンショット掲載(やねうら王の公式ツイッターから)
