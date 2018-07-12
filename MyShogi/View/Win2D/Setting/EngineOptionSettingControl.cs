@@ -100,6 +100,14 @@ namespace MyShogi.View.Win2D.Setting
                     descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null));
 
                 setting.Descriptions = descriptions;
+            } else {
+
+                // setting.Descriptionsに、Optionsにだけある項目を追加する。
+                foreach(var option in setting.Options)
+                {
+                    if (setting.Descriptions.Find(x => x.Name == option.Name) == null)
+                        setting.Descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null));
+                }
             }
 
             foreach (var desc in setting.Descriptions)

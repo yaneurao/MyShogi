@@ -105,7 +105,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// 表示するので問題はない。
         /// </summary>
         [DataMember]
-        public List<EngineOptionDescription> OptionDescriptions;
+        public List<EngineOptionDescription> EngineOptionDescriptions;
 
         /// <summary>
         /// USI拡張プロトコルのうちサポートしているものを列挙する。

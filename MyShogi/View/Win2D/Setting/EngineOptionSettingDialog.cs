@@ -23,9 +23,5 @@ namespace MyShogi.View.Win2D.Setting
             return index == 0 ? engineOptionSettingControl1 : engineOptionSettingControl2;
         }
 
-        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            //var index = tabControl1.SelectedIndex;
-        }
     }
 }

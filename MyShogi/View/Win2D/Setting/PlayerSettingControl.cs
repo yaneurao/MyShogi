@@ -247,7 +247,7 @@ namespace MyShogi.View.Win2D.Setting
 
             // エンジンからUsiOption文字列を取得
 
-            var useHashCommand = engineDefine.SupportedExtendedProtocol.Contains(ExtendedProtocol.UseHashCommandExtension);
+            var useHashCommand = engineDefine.IsSupported(ExtendedProtocol.UseHashCommandExtension);
 
             var ind_options = new List<EngineOptionForSetting>();
             foreach (var option in engine.Engine.OptionList)
@@ -282,7 +282,7 @@ namespace MyShogi.View.Win2D.Setting
             var ind_setting = new EngineOptionsForSetting()
             {
                 Options = ind_options,
-                Descriptions = null, // あとで書く
+                Descriptions = engineDefine.EngineOptionDescriptions, // nullあり得る。問題ない。
             };
 
             dialog.SettingControls(1).ViewModel.Setting = ind_setting;

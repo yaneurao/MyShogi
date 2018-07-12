@@ -100,6 +100,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
             var default_extend = new List<ExtendedProtocol>();
             default_extend.Add(ExtendedProtocol.UseHashCommandExtension);
 
+            // EngineOptionDescriptionsは、エンジンオプション共通設定に使っているDescriptionsと共用。
+            var common_setting = EngineCommonOptionsSample.CreateEngineCommonOptions();
+            var default_descriptions = common_setting.Descriptions;
+
             // -- 各エンジン用の設定ファイルを生成して書き出す。
 
             {
@@ -116,6 +120,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "従来の将棋の常識を覆す指し手が飛び出すかも？",
                     DisplayOrder = 10005,
                     SupportedExtendedProtocol = default_extend,
+                    EngineOptionDescriptions = default_descriptions,
                 };
                 EngineDefineUtility.WriteFile("engine/yaneuraou2018/engine_define.xml", engine_define);
 
@@ -137,6 +142,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "SDT5 出場名『平成将棋合戦ぽんぽこ』",
                     DisplayOrder = 10004,
                     SupportedExtendedProtocol = default_extend,
+                    EngineOptionDescriptions = default_descriptions,
                 };
                 EngineDefineUtility.WriteFile("engine/tanuki_sdt5/engine_define.xml", engine_define);
             }
@@ -156,6 +162,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "PC性能を極限まで使うため、CPUの温度が他のソフトの場合より上がりやすいので注意してください。",
                     DisplayOrder = 10003,
                     SupportedExtendedProtocol = default_extend,
+                    EngineOptionDescriptions = default_descriptions,
                 };
                 EngineDefineUtility.WriteFile("engine/tanuki2018/engine_define.xml", engine_define);
             }
@@ -174,6 +181,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "非公式なレーティング計測ながら2018年6月時点で堂々の一位の超強豪。",
                     DisplayOrder = 10002,
                     SupportedExtendedProtocol = default_extend,
+                    EngineOptionDescriptions = default_descriptions,
                 };
                 EngineDefineUtility.WriteFile("engine/qhapaq2018/engine_define.xml", engine_define);
             }
@@ -192,6 +200,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "毎回、大会で上位成績を残している常連組。",
                     DisplayOrder = 10001,
                     SupportedExtendedProtocol = default_extend,
+                    EngineOptionDescriptions = default_descriptions,
                 };
                 EngineDefineUtility.WriteFile("engine/yomita2018/engine_define.xml", engine_define);
             }
@@ -210,6 +219,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "ファイルサイズが小さいので動作検証用に最適。",
                     DisplayOrder = 10000,
                     SupportedExtendedProtocol = null,
+                    EngineOptionDescriptions = null,
                 };
                 EngineDefineUtility.WriteFile("engine/gpsfish/engine_define.xml", engine_define);
 

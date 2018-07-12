@@ -32,8 +32,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     "option name Hash_ type spin default 4096 min 0 max 1048576"),
                 new EngineOptionForSetting("AutoThread_",
                     "option name AutoThread_ type check default true"),
-                new EngineOptionForSetting("Thread",
-                    "option name Thread type spin default 4 min 1 max 4096"),
+                new EngineOptionForSetting("Threads",
+                    "option name Threads type spin default 4 min 1 max 4096"),
                 new EngineOptionForSetting("BookFile",
                     "option name BookFile type combo default standard_book.db "+
                     "var no_book var standard_book.db var yaneura_book1.db var yaneura_book2.db var yaneura_book3.db var yaneura_book4.db "+

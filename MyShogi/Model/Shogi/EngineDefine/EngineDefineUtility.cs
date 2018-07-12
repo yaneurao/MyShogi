@@ -127,5 +127,17 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             return list;
         }
+
+        /// <summary>
+        /// このエンジンが、あるExtenedProtocolをサポートしているかを判定する。
+        /// </summary>
+        /// <param name="engineDefine"></param>
+        /// <param name="protocol"></param>
+        /// <returns></returns>
+        public static bool IsSupported(this EngineDefine engineDefine , ExtendedProtocol protocol)
+        {
+            return engineDefine.SupportedExtendedProtocol == null ? false :
+                engineDefine.SupportedExtendedProtocol.Contains(protocol);
+        }
     }
 }
