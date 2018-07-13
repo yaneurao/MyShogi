@@ -113,7 +113,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         },
 
                     new EngineOptionDescription("BookOnTheFly"      , null ,
-                        "定跡ファイルを対局開始時にメモリに丸読みするのではなく、指し手を思考するときに定跡ファイルを見に行くための設定です。",
+                        "定跡ファイルを対局開始時にメモリに丸読みしない。",
+                        "この設定をオンにすると、定跡ファイルを対局開始時にメモリに丸読みしません。" +
                         "大きな定跡ファイルに対しては、対局開始時に丸読みしなくて済むので起動時間が短くなる効果がありますが、"+
                         "そんな巨大な定跡ファイルを使うことはあまりないため、デフォルトではオフになっています。",
 
@@ -158,30 +159,73 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         null
                         ),
 
-                    new EngineOptionDescription("MinimumThinkingTime"   , "最小思考時間[ms]" ,
-                        "コンピュータが1手に使う最小時間を設定します。",
-                        "コンピュータが1手に使う最小時間を設定します。\r\n"+
+                    new EngineOptionDescription("MinimumThinkingTime"   , "最小思考時間" ,
+                        "コンピュータが1手に使う最小時間を設定します。単位は[ms]です。",
+                        "コンピュータが1手に使う最小時間を設定します。単位は[ms]です。\r\n"+
                         "例えば、この値を2000に設定すると、コンピューターは少なくとも2秒は考えます。(実際には『NetworkDelay』の分だけ早く指し手を返します。)"+
                         "2秒の考慮時間でも秒未満が切り捨てられて計測上1秒になるルール下では2000に設定するのがベストです。",
 
                         "option name MinimumThinkingTime type spin default 2000 min 1000 max 100000"),
 
-                    new EngineOptionDescription("NetworkDelay"   , "NetworkDelay[ms]" ,
-                        "コンピュータの着手時の遅延時間の設定その1。",
-                        "コンピュータの着手時の遅延時間の設定その1。\r\n"+
+                    new EngineOptionDescription("NetworkDelay"   , null ,
+                        "コンピュータの着手時の遅延時間の設定その1。単位は[ms]です。",
+                        "コンピュータの着手時の遅延時間の設定その1。単位は[ms]です。\r\n"+
                         "コンピュータは、ここで指定した時間だけ早めに指し手を返します。例えば、1手3秒で指す予定の時にこの値を300[ms]に設定した場合、2.7秒で指し手を返します。",
 
                         "option name NetworkDelay type spin default 120 min 0 max 10000"),
 
-                    new EngineOptionDescription("NetworkDelay2"   , "NetworkDelay2[ms]" ,
-                        "コンピュータの着手時の遅延時間の設定その2。",
-                        "コンピュータの着手時の遅延時間の設定その2。\r\n"+
+                    new EngineOptionDescription("NetworkDelay2"   , null ,
+                        "コンピュータの着手時の遅延時間の設定その2。単位は[ms]です。",
+                        "コンピュータの着手時の遅延時間の設定その2。単位は[ms]です。\r\n"+
                         "コンピュータは、ここで指定した時間だけ早めに指し手を返します。(切れ負け時用)\r\n"+
                         "例えば、秒読み10秒(1手ごとに10秒で、それを過ぎると切れ負け)になる指し手の時に、この値を300[ms]に設定した場合、9.7秒で指し手を返します。\r\n"+
                         "ネットワーク対局で、サーバー側が重い場合やネットワーク遅延がある場合には大きめの値(1000～1500)にすることを推奨します。",
 
                         "option name NetworkDelay2 type spin default 1120 min 0 max 10000"),
 
+
+                    // -- 思考設定
+
+                    new EngineOptionDescription(null           , "思考設定" ,
+                        null,
+                        "エンジンの思考の設定です。棋力に直接的な影響のある部分です。",
+                        null
+                        ),
+
+                    new EngineOptionDescription("SlowMover"   , null ,
+                        "序盤重視度。大きくすると持ち時間の序盤への配分が増えます。",
+                        "デフォルトは、100[%]。例えば、この値を70にすると序盤の1手に用いる時間が本来の時間の70%になり、序盤にかける時間が短くなります。",
+
+                        "option name SlowMover type spin default 100 min 1 max 1000"),
+
+                    new EngineOptionDescription("ResignValue"   , null ,
+                        "投了スコアです。(相手から見た)評価値がこの値を超えると投了します。",
+                        "例えば、相手からの詰みが見えた時に投了するのであれば、30000(詰みはこれより大きな値)と設定します。\r\n"+
+                        "また、序盤で形勢に差がついた時に思考エンジンに投了させたいのであれば、1000～3000ぐらいの数値を設定すると良いでしょう。",
+
+                        "option name ResignValue type spin default 99999 min 0 max 99999"),
+
+
+                    new EngineOptionDescription("DepthLimit"   , null ,
+                        "探索深さ制限。",
+                        "この値を0以外に設定すると、その値の探索深さまでしか探索しません。(弱くなります)　強さを調整したい時に使います。",
+
+                        "option name DepthLimit type spin default 0 min 0 max 2147483647"),
+
+                    new EngineOptionDescription("NodesLimit"   , null ,
+                        "探索ノード制限。",
+                        "この値を0以外に設定すると、その値の探索ノード数(局面数)までしか探索しません。(弱くなります)　強さを調整したい時に使います。",
+
+                        "option name NodesLimit type spin default 0 min 0 max 9223372036854775807"),
+
+                    new EngineOptionDescription("nodestime"   , null ,
+                        "node as timeモード。0以外に設定すると有効。",
+                        "《上級者向けの設定項目です。普通使いません。》\r\n"+
+                        "時間の代わりにノード時間を用いる。この値を0以外に設定すると、有効。\r\n" +
+                        "時間の代わりに探索ノード数を決めて探索するときのミリ秒当たりのnode数。\r\n"+
+                        "この値を600と指定した場合、持ち時間1秒に対して600000ノード(の時間が与えられたものとして)探索する。",
+
+                        "option name nodestime type spin default 0 min 0 max 99999"),
 
                     // -- 評価関数
 

@@ -76,20 +76,37 @@ namespace MyShogi.View.Win2D.Setting
         }
 
         /// <summary>
+        /// 動的に配置したコントロールをすべて削除
+        /// </summary>
+        private void ClearPages()
+        {
+            binder.UnbindAll();
+
+            foreach (var page in pages)
+                foreach (var c in page)
+                    Controls.Remove(c);
+            pages.Clear();
+        }
+
+        /// <summary>
         /// ViewModel.Settingが更新された時に、ViewModelのOptionsを更新する。
         /// </summary>
         /// <param name="setting"></param>
         private void UpdateUsiOptions(EngineOptionsForSetting setting)
         {
-            Debug.Assert(setting.Options != null && setting.Descriptions != null);
+            Debug.Assert(setting != null && setting.Options != null && setting.Descriptions != null);
 
             // -- 順番にControlを生成して表示する。
 
+            ClearPages();
+
             var page = new List<Control>();
-            pages.Clear();
             pages.Add(page);
 
-            int y = 3; // 最初の行のY座標。
+            // これを基準に高さを調整していく。
+            var hh = label1.Height;
+
+            int y = hh/4; // 最初の行のY座標。
 
             // bindしている値が変化した時にイベントを生起する
             var valueChanged = new Action(() => ViewModel.RaisePropertyChanged("ValueChanged", null));
@@ -103,6 +120,19 @@ namespace MyShogi.View.Win2D.Setting
                 if (name == null)
                 {
                     // 見出し項目のようであるな…。
+
+                    // 先頭要素でなければ、水平線必要だわ。
+                    if (pages[pages.Count-1].Count != 0)
+                    {
+                        var label = new Label();
+                        label.Location = new Point(label_x[0], y);
+                        label.Size = new Size(ClientSize.Width, 1);
+                        label.BorderStyle = BorderStyle.FixedSingle;
+                        y += hh/2;
+                        Controls.Add(label);
+                        page.Add(label);
+                    }
+
                     var description = desc.Description;
                     var displayName = desc.DisplayName.TrimStart();
                     var h = new EventHandler((sender, args) =>
@@ -120,7 +150,7 @@ namespace MyShogi.View.Win2D.Setting
                     Controls.Add(label1);
                     page.Add(label1);
 
-                    y += label1.Height + 6;
+                    y += label1.Height + hh/2;
                     continue;
                 }
 
@@ -245,7 +275,7 @@ namespace MyShogi.View.Win2D.Setting
                     Controls.Add(control);
                     page.Add(control);
 
-                    y += control.Height + 4;
+                    y += control.Height + hh/3;
                 }
 
                 if (y >= label4.Location.Y - label4.Height * 2)
@@ -254,7 +284,7 @@ namespace MyShogi.View.Win2D.Setting
 
                     page = new List<Control>();
                     pages.Add(page);
-                    y = 3;
+                    y = hh/4;
                 }
             }
 
@@ -281,6 +311,11 @@ namespace MyShogi.View.Win2D.Setting
 
             label4.Location = new Point(label4.Location.X, textBox1.Location.Y - label4.Height - 3);
 
+            // -- タブ内に隠れているほうは、Resizeイベントが発生していなくて、label4が移動していない。
+            // Resize()に対して、このメソッドが呼び出されるべき。
+
+            if (ViewModel.Setting != null)
+                UpdateUsiOptions(ViewModel.Setting);
         }
 
         /// <summary>
