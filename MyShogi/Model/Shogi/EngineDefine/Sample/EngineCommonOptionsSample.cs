@@ -121,6 +121,69 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "option name BookOnTheFly type check default false"
                         ),
 
+                    new EngineOptionDescription("BookMoves"      , null ,
+                        "定跡を用いる手数(0=未使用)。",
+                        "例えば、定跡を16手目まで使用したい(17手目からは定跡を使わない)なら16を指定します。",
+
+                        "option name BookMoves type spin default 16 min 0 max 10000"
+                        ),
+
+                    new EngineOptionDescription("BookIgnoreRate"      , null ,
+                        "一定の確率で定跡を無視して自力で思考させる確率[%]",
+                        "定跡を用いると毎回同じような対局内容になるのを回避するために、" +
+                        "ここで指定した確率で定跡を採択せずに自力で思考させることが出来ます。" +
+                        "例えば、30を指定すると30%の確率で定跡にhitしてもそれを無視して自力で思考します。",
+
+                        "option name BookIgnoreRate type spin default 0 min 0 max 100"
+                        ),
+
+                    new EngineOptionDescription("BookEvalDiff"      , null ,
+                        "定跡の第一候補手との評価値の差",
+                        "定跡の指し手で1番目の候補の指し手と、2番目以降の候補の指し手との評価値の差が、" +
+                        "この範囲内であれば採用する。(1番目の候補の指し手しか選ばれて欲しくないときは0を指定する)\r\n" +
+                        "指し手に評価値がついている定跡ファイルに対してのみ有効。",
+
+                        "option name BookEvalDiff type spin default 30 min 0 max 99999"
+                        ),
+
+                    new EngineOptionDescription("BookEvalBlackLimit"      , null ,
+                        "定跡の先手の評価値下限",
+                        "定跡の指し手のうち、先手のときの評価値の下限。これより評価値が低くなる指し手は選択しない。\r\n" +
+                        "指し手に評価値がついている定跡ファイルに対してのみ有効。",
+
+                        "option name BookEvalBlackLimit type spin default 0 min -99999 max 99999"
+                        ),
+
+                    new EngineOptionDescription("BookEvalWhiteLimit"      , null ,
+                        "定跡の後手の評価値下限",
+                        "定跡の指し手のうち、後手のときの評価値の下限。これより評価値が低くなる指し手は選択しない。\r\n" +
+                        "指し手に評価値がついている定跡ファイルに対してのみ有効。",
+
+                        "option name BookEvalWhiteLimit type spin default -140 min -99999 max 99999"
+                        ),
+
+                    new EngineOptionDescription("BookDepthLimit"      , null ,
+                        "定跡の指し手のdepth下限",
+                        "定跡に登録されている指し手の(定跡生成時の)depthがこれを下回るなら採用しない。0を指定するとdepth無視。\r\n" +
+                        "指し手にdepth情報がついている定跡ファイルに対してのみ有効。",
+
+                        "option name BookDepthLimit type spin default 16 min 0 max 99999"
+                        ),
+
+                    new EngineOptionDescription("NarrowBook"      , null ,
+                        "実現確率の低い定跡を採用しない",
+                        "定跡ファイルの指し手に、出現頻度の情報がついている時に、出現頻度が低い指し手は採用しないためのオプション。",
+
+                        "option name NarrowBook type check default false"
+                        ),
+
+                    new EngineOptionDescription("ConsiderBookMoveCount"      , null ,
+                        "定跡の指し手の選択を出現頻度に比例させる",
+                        "定跡ファイルの指し手に、出現頻度の情報がついている時に、その出現頻度に比例する形でランダムに指し手を選択する。\r\n" +
+                        "このオプションをオフにしている時は、定跡の指し手が等確率で選択されます。",
+
+                        "option name ConsiderBookMoveCount type check default false"
+                        ),
 
 
                     // -- 持将棋の設定
@@ -192,6 +255,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         null
                         ),
 
+                    new EngineOptionDescription("MultiPV"   , null ,
+                        "候補手の数を設定します",
+                        "例えば、この項目(MultiPV)を5に設定すると、思考するときに候補手として5手挙げます。\r\n"+
+                        "このとき、5手分調べないといけなくなるので、MultiPVを1に設定している時の約5倍の時間がかかるようになります。" +
+                        "通常対局の時は1に設定しておくのが一番強くなります。\r\n" +
+                        "また、検討モードの時は、この設定値は無視され、検討ウィンドウの『候補手』の数が反映されます。",
+
+                        "option name MultiPV type spin default 1 min 1 max 800"),
+
                     new EngineOptionDescription("SlowMover"   , null ,
                         "序盤重視度。大きくすると持ち時間の序盤への配分が増えます。",
                         "デフォルトは、100[%]。例えば、この値を70にすると序盤の1手に用いる時間が本来の時間の70%になり、序盤にかける時間が短くなります。",
@@ -205,6 +277,23 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                         "option name ResignValue type spin default 99999 min 0 max 99999"),
 
+                    new EngineOptionDescription("Contempt"   , null ,
+                        "千日手を受け入れるスコアを設定します。",
+                        "大きな値にすると千日手を(無理にでも)打開しやすくなります。\r\n" +
+                        "千日手の局面のスコア(評価値)は、ここで設定した値に -1 を掛けた値になります。" +
+                        "例えば、この値を100に設定すれば、千日手の局面のスコアは-100とみなされます。" +
+                        "このとき、-50(歩の半分ぐらいの価値だけ互角より損している局面)になる指し手があるなら、千日手の局面を選ばずにそちらを選びます。" +
+                        "デフォルトは2(互角に近いなら千日手の局面を回避して欲しいが、無理な打開はして欲しくないので。)",
+
+                        "option name Contempt type spin default 2 min -30000 max 30000"),
+
+                    new EngineOptionDescription("ContemptFromBlack"   , null ,
+                        "Contemptの設定値を先手番から見た値とするオプション。",
+                        "先手のときは千日手を狙いたくなくて、後手のときは千日手を狙いたいような場合、"+
+                        "このオプションをオンにすれば、Contemptをそういう解釈にしてくれる。"+
+                        "(Contemptを常に先手から見たスコアだとみなしてくれる。) デフォルトではオフ。",
+
+                        "option name ContemptFromBlack type check default false"),
 
                     new EngineOptionDescription("DepthLimit"   , null ,
                         "探索深さ制限。",
@@ -223,7 +312,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "《上級者向けの設定項目です。普通使いません。》\r\n"+
                         "時間の代わりにノード時間を用いる。この値を0以外に設定すると、有効。\r\n" +
                         "時間の代わりに探索ノード数を決めて探索するときのミリ秒当たりのnode数。\r\n"+
-                        "この値を600と指定した場合、持ち時間1秒に対して600000ノード(の時間が与えられたものとして)探索する。",
+                        "この値を600と指定した場合、持ち時間1秒に対して600000ノード(の時間が与えられたものとして)探索します。",
 
                         "option name nodestime type spin default 0 min 0 max 99999"),
 
@@ -246,6 +335,38 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "これをオンにして、同じ思考エンジンを2つ動作させた場合、消費する物理メモリが節約できます。",
                         "option name EvalShare type check default true"),
 
+                    // -- 読み筋の表示
+
+                    new EngineOptionDescription(null           , "読み筋の表示" ,
+                        null,
+                        "読み筋の表示に関する設定です。",
+                        null
+                        ),
+
+                    new EngineOptionDescription("PvInterval"   , null ,
+                        "読み筋を出力する最小間隔を設定します。単位は[ms]",
+                        "思考エンジンが読み筋を出力する最小間隔を設定します。" +
+                        "これをあまり小さい値にすると読み筋が出力される回数が増えて、見づらくなります。" +
+                        "また出力にも時間がかかるため、あまりたくさん出力すると棋力に影響します。",
+
+                        "option name PvInterval type spin default 300 min 0 max 100000"),
+
+                    new EngineOptionDescription("ConsiderationMode"   , null ,
+                        "なるべく綺麗な読み筋を出力します。",
+                        "この設定をオンにすると、読み筋が途中で途切れにくくなります。(読み筋の出力頻度は少し減ります。)",
+
+                        "option name ConsiderationMode type check default false"),
+
+                    new EngineOptionDescription("OutputFailLHPV"   , null ,
+                        "fail low/highのときにPVを出力する。",
+                        "fail highというのは、いまの読み筋より良い指し手が存在するらしきことがわかったので、" +
+                        "それを調べ直している状態のことです。(fail lowはその逆) そのため、fail low/highのとき読み筋の表示は短くなります。" +
+                        "このオプションをオフにすると、fail low/highの時には読み筋を出力しなくなるので、短い読み筋が表示されにくくなります。\r\n" +
+                        "このオプションは、ConsiderationModeオンのときも有効。",
+
+                        "option name OutputFailLHPV type check default true"),
+
+
                     // -- デバッグ用
 
                     new EngineOptionDescription(null           , "デバッグ用" ,
@@ -264,8 +385,6 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     new EngineOptionDescription("Param2") { Hide = true },
                     new EngineOptionDescription("SkipLoadingEval") { Hide = true },
                     new EngineOptionDescription("EvalSaveDir") { Hide = true },
-
-
                     
                 }
             };

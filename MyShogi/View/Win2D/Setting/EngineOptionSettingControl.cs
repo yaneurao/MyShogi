@@ -265,7 +265,7 @@ namespace MyShogi.View.Win2D.Setting
 
                     var label2 = new Label();
                     label2.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
-                    label2.Location = new Point(label_x[2], y);
+                    label2.Location = new Point(label_x[2] + hh /* 配置したcontrolから少し右に配置 */, y);
                     label2.AutoSize = true;
                     label2.Text = desc.DescriptionSimple;
                     label2.MouseHover += h;
@@ -274,6 +274,7 @@ namespace MyShogi.View.Win2D.Setting
 
                     control.Location = new Point(label_x[1], y);
                     control.MouseHover += h;
+                    control.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
 
                     control.Size = new Size(label_x[2] - label_x[1], control.Height);
                     Controls.Add(control);
