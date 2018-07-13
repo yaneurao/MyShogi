@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.Usi;
@@ -252,7 +253,7 @@ namespace MyShogi.View.Win2D.Setting
                 if (control != null)
                 {
                     var description = desc.Description;
-                    var displayName = desc.DisplayName == null ? desc.Name : desc.DisplayName.TrimStart();
+                    var displayName = desc.DisplayName == null ? desc.Name : desc.DisplayName;
                     var h = new EventHandler( (sender, args) =>
                     {
                         label4.Text = displayName + "の説明";
@@ -263,7 +264,7 @@ namespace MyShogi.View.Win2D.Setting
                     label1.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
                     label1.Location = new Point(label_x[0] + x_offset, y);
                     label1.AutoSize = true;
-                    label1.Text = displayName;
+                    label1.Text = displayName.Left(16); // GPS将棋とか長すぎるオプション名がある。
                     label1.MouseHover += h;
                     Controls.Add(label1);
                     page.Add(label1);
@@ -285,9 +286,9 @@ namespace MyShogi.View.Win2D.Setting
                     Controls.Add(control);
                     page.Add(control);
 
-                    if (indivisual)
+                    if (indivisual && e.EnableFollowCommonSetting)
                     {
-                        // エンジン個別設定なので左端に「共通設定に従う」のチェックボックスがある。
+                        // エンジン個別設定なので左端に「共通設定に従う」のチェックボックスを配置する。
 
                         var followCheckboxHover = new EventHandler((sender, args) =>
                         {

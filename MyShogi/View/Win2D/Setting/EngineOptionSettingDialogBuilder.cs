@@ -77,6 +77,10 @@ namespace MyShogi.View.Win2D.Setting
             var useHashCommand = engineDefine.IsSupported(ExtendedProtocol.UseHashCommandExtension);
 
             var ind_options = new List<EngineOptionForSetting>();
+
+            // "Hash"は一つでいいので、２つ目を追加しないようにするために1度目のカウントであるかをフラグを持っておく。
+            bool first_hash = true;
+
             foreach (var option in engine.Engine.OptionList)
             {
                 //Console.WriteLine(option.CreateOptionCommandString());
@@ -92,13 +96,21 @@ namespace MyShogi.View.Win2D.Setting
                     if (useHashCommand)
                         continue;
 
+                    if (!first_hash)
+                        continue;
+
                     option.SetName("Hash_"); // これにしておけばあとで置換される。
+                    first_hash = false;
                 }
                 else if (option.Name == "Hash")
                 {
                     //Debug.Assert(useHashCommand);
 
+                    if (!first_hash)
+                        continue;
+
                     option.SetName("Hash_"); // これにしておけばあとで置換される。
+                    first_hash = false;
                 }
 
                 var opt = new EngineOptionForSetting(option.Name, option.CreateOptionCommandString());
@@ -110,10 +122,27 @@ namespace MyShogi.View.Win2D.Setting
             if (ind_descriptions == null)
             {
                 // この時は仕方ないので、Optionsの内容そのまま出しておかないと仕方ないのでは…。
-                ind_descriptions = new List<EngineOptionDescription>();
 
+                // headerとして、ハッシュ設定、スレッド設定が必要。
+                ind_descriptions = EngineCommonOptionsSample.CreateEngineMinimumOptions().Descriptions;
+
+                //ind_descriptions = new List<EngineOptionDescription>();
+
+                // headerに存在しないoptionを追加。
                 foreach (var option in ind_options)
-                    ind_descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null, option.UsiBuildString));
+                    if (!ind_descriptions.Exists( x => x.Name == option.Name  ))
+                        ind_descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null, option.UsiBuildString));
+
+                // headerを追加したことにより、発生した、ind_optionsにない要素を追加。
+                foreach (var desc in ind_descriptions)
+                    if (!desc.Hide)
+                    {
+                        var option = new EngineOptionForSetting(desc.Name, desc.Name)
+                        {
+                            UsiBuildString = desc.UsiBuildString
+                        };
+                        ind_options.Add(option);
+                    }
             }
             else
             {

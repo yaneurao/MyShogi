@@ -19,7 +19,7 @@
             if (s == null)
                 return null;
 
-            return s.Substring(0, System.Math.Min(s.Length, 6));
+            return s.Substring(0, System.Math.Min(s.Length, n));
         }
 
         /// <summary>

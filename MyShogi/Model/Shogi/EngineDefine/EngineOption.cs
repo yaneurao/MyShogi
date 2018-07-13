@@ -261,6 +261,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
             get { return GetValue<bool>("FollowCommonSetting"); }
             set { SetValue<bool>("FollowCommonSetting", value); }
         }
+
+        /// <summary>
+        /// 「共通設定に従う」のチェックボックスを表示するのか。
+        /// (共通設定のほうに同じ名前の項目がなければチェックボックスを出せない。)
+        /// </summary>
+        public bool EnableFollowCommonSetting;
     }
 
     /// <summary>
@@ -331,8 +337,11 @@ namespace MyShogi.Model.Shogi.EngineDefine
             // 前回なかった(ユーザーの選択が保存されていない)新規要素で、
             // かつ、これが共通設定にあるのなら、デフォルトでは共通設定に従うべきだから、全部いったん、そう設定する。
             foreach (var option in Options)
-                if (commonSetting.Options.Exists(x => x.Name == option.Name))
-                    option.FollowCommonSetting = true;
+            {
+                var exist = commonSetting.Options.Exists(x => x.Name == option.Name);
+                option.EnableFollowCommonSetting = exist;
+                option.FollowCommonSetting = exist;
+            }
 
             foreach (var option in options.Options)
             {
