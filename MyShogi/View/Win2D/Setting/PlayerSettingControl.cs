@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using MyShogi.App;
@@ -202,6 +203,10 @@ namespace MyShogi.View.Win2D.Setting
             // -- エンジン共通設定
 
             var setting = EngineCommonOptionsSample.CreateEngineCommonOptions();
+            setting.IndivisualSetting = false; // エンジン共通設定
+            setting.BuildOptionsFromDescriptions(); // OptionsをDescriptionsから構築する。
+
+            // エンジン共通設定の、ユーザーの選択をシリアライズしたものがあるなら、そのValueを上書きする。
             var options = TheApp.app.EngineConfig.CommonOptions;
             if (options != null)
                 setting.OverwriteEngineOptions(options);
@@ -245,6 +250,9 @@ namespace MyShogi.View.Win2D.Setting
                 engine.Dispose();
             }
 
+            // エンジンからこれが取得出来ているはずなのだが。
+            Debug.Assert(engine.Engine.OptionList != null);
+
             // エンジンからUsiOption文字列を取得
 
             var useHashCommand = engineDefine.IsSupported(ExtendedProtocol.UseHashCommandExtension);
@@ -279,15 +287,45 @@ namespace MyShogi.View.Win2D.Setting
                 ind_options.Add(opt);
             }
 
+            var ind_descriptions = engineDefine.EngineOptionDescriptions; // nullありうる
+            if (ind_descriptions == null)
+            {
+                // この時は仕方ないので、Optionsの内容そのまま出しておかないと仕方ないのでは…。
+                ind_descriptions = new List<EngineOptionDescription>();
+
+                foreach (var option in ind_options)
+                    ind_descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null, option.UsiBuildString));
+            } else
+            {
+                // Descriptionsに欠落している項目を追加する。(Optionsにだけある項目を追加する。)
+                foreach (var option in ind_options)
+                {
+                    if (ind_descriptions.Find(x => x.Name == option.Name) == null)
+                        ind_descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null, option.UsiBuildString));
+                }
+
+                // DescriptionにあってOptionsにない項目をOptionsに追加する。
+                foreach(var desc in ind_descriptions)
+                {
+                    if (ind_options.Find(x => x.Name == desc.Name) == null)
+                        ind_options.Add(new EngineOptionForSetting(desc.Name, desc.UsiBuildString));
+                }
+            }
+
+            // エンジン個別設定でシリアライズしていた値で上書きしてやる。
+            // TODO:
+
             var ind_setting = new EngineOptionsForSetting()
             {
                 Options = ind_options,
-                Descriptions = engineDefine.EngineOptionDescriptions, // nullあり得る。問題ない。
+                Descriptions = ind_descriptions,
+                IndivisualSetting = true, // エンジン個別設定
             };
 
             dialog.SettingControls(1).ViewModel.Setting = ind_setting;
             dialog.SettingControls(1).ViewModel.AddPropertyChangedHandler("ValueChanged", (args) =>
             {
+                // TODO:
                 //TheApp.app.EngineConfig.CommonOptions = setting.ToEngineOptions();
                 // 値が変わるごとに保存しておく。
             });

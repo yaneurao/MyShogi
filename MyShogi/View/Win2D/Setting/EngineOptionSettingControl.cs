@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
@@ -80,6 +81,8 @@ namespace MyShogi.View.Win2D.Setting
         /// <param name="setting"></param>
         private void UpdateUsiOptions(EngineOptionsForSetting setting)
         {
+            Debug.Assert(setting.Options != null && setting.Descriptions != null);
+
             // -- 順番にControlを生成して表示する。
 
             var page = new List<Control>();
@@ -91,27 +94,11 @@ namespace MyShogi.View.Win2D.Setting
             // bindしている値が変化した時にイベントを生起する
             var valueChanged = new Action(() => ViewModel.RaisePropertyChanged("ValueChanged", null));
 
-            if (setting.Descriptions == null)
-            {
-                // この時は仕方ないので、Optionsの内容そのまま出しておかないと仕方ないのでは…。
-                var descriptions = new List<EngineOptionDescription>();
-
-                foreach (var option in setting.Options)
-                    descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null));
-
-                setting.Descriptions = descriptions;
-            } else {
-
-                // setting.Descriptionsに、Optionsにだけある項目を追加する。
-                foreach(var option in setting.Options)
-                {
-                    if (setting.Descriptions.Find(x => x.Name == option.Name) == null)
-                        setting.Descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null));
-                }
-            }
-
             foreach (var desc in setting.Descriptions)
             {
+                if (desc.Hide)
+                    continue;
+
                 var name = desc.Name;
                 if (name == null)
                 {
@@ -145,7 +132,7 @@ namespace MyShogi.View.Win2D.Setting
                 try
                 {
                     // parse出来なければ無視しておく。
-                    usiOption = UsiOption.Parse(e.BuildString);
+                    usiOption = UsiOption.Parse(e.UsiBuildString);
 
                     // bindする予定の値がないなら、UsiOptionの生成文字列中の"default"の値を
                     // 持ってくる。初回起動時などはこの動作になる。
@@ -228,7 +215,7 @@ namespace MyShogi.View.Win2D.Setting
                 if (control != null)
                 {
                     var description = desc.Description;
-                    var displayName = desc.DisplayName.TrimStart();
+                    var displayName = desc.DisplayName == null ? desc.Name : desc.DisplayName.TrimStart();
                     var h = new EventHandler( (sender, args) =>
                     {
                         label4.Text = displayName + "の説明";
@@ -238,7 +225,7 @@ namespace MyShogi.View.Win2D.Setting
                     var label1 = new Label();
                     label1.Location = new Point(label_x[0], y);
                     label1.AutoSize = true;
-                    label1.Text = desc.DisplayName;
+                    label1.Text = displayName;
                     label1.MouseHover += h;
                     Controls.Add(label1);
                     page.Add(label1);
@@ -261,7 +248,7 @@ namespace MyShogi.View.Win2D.Setting
                     y += control.Height + 4;
                 }
 
-                if (y >= label4.Location.Y - label4.Height)
+                if (y >= label4.Location.Y - label4.Height * 2)
                 {
                     // 次ページに
 
@@ -270,6 +257,10 @@ namespace MyShogi.View.Win2D.Setting
                     y = 3;
                 }
             }
+
+            // 最後のページから空のページでありうるので、その場合、最後のページを削除する。
+            if (pages.Count != 0 && pages[pages.Count - 1].Count == 0)
+                pages.RemoveAt(pages.Count - 1);
 
             UpdatePage(0);
         }

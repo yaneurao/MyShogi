@@ -139,23 +139,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
     [DataContract]
     public class EngineOptionDescription
     {
-        public EngineOptionDescription(string name,string displayName , 
-            string descriptionSimple , string description)
+        public EngineOptionDescription(string name,string displayName = null, 
+            string descriptionSimple = null , string description = null , string usiBuildString = null)
         {
             Name = name;
             DisplayName = displayName;
             DescriptionSimple = descriptionSimple;
             Description = description;
-        }
-
-        public EngineOptionDescription(string name, string displayName,
-            string descriptionSimple, string description , string comboboxDisplayName)
-        {
-            Name = name;
-            DisplayName = displayName;
-            DescriptionSimple = descriptionSimple;
-            Description = description;
-            ComboboxDisplayName = comboboxDisplayName;
+            UsiBuildString = usiBuildString;
         }
 
         /// <summary>
@@ -193,13 +184,19 @@ namespace MyShogi.Model.Shogi.EngineDefine
         public string ComboboxDisplayName;
 
         /// <summary>
+        /// この項目が、エンジン側にない時に、Controlを構築するためにUsiOptionのインスタンスが必要なので、
+        /// それを構築するためのUSI文字列。
+        /// </summary>
+        [DataMember]
+        public string UsiBuildString;
+
+        /// <summary>
         /// このオプション項目をエンジン設定ダイアログの表示から隠す
         /// 表示から隠したい項目に対しては、これをtrueにしたEngineOptionDescriptionを用意する。
         /// </summary>
         [DataMember]
         public bool Hide;
     }
-
 
     /// <summary>
     /// エンジンオプションの共通設定/個別設定でGUI側から用いる用。
@@ -217,10 +214,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
     /// </summary>
     public class EngineOptionForSetting : NotifyObject
     {
-        public EngineOptionForSetting(string name , string buildString)
+        public EngineOptionForSetting(string name , string usiBuildString)
         {
             Name = name;
-            BuildString = buildString;
+            UsiBuildString = usiBuildString;
         }
 
         /// <summary>
@@ -251,7 +248,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// default値にリセットする時に、default値が採用される。
         /// </summary>
         [DataMember]
-        public string BuildString;
+        public string UsiBuildString;
 
         /// <summary>
         /// エンジン共通設定に従うのか
@@ -267,19 +264,50 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
     /// <summary>
     /// エンジンの共通設定/個別設定に使う用。
+    /// EngineOptionSettingDialogに対して設定するのに用いる。
+    /// これをこのままシリアライズすることはない。
     /// </summary>
-    [DataContract]
     public class EngineOptionsForSetting
     {
-        [DataMember]
         public List<EngineOptionForSetting> Options;
 
-        [DataMember]
         /// <summary>
         /// エンジンのオプションの説明文
         /// これが与えられている場合、この順番で表示され、ここにないoptionは表示されない。
         /// </summary>
         public List<EngineOptionDescription> Descriptions;
+
+        /// <summary>
+        /// エンジン個別設定であるか。
+        /// これをtrueにすると各option項目に対して
+        /// 「共通設定に従う」のオプションがダイアログ表示される。
+        /// </summary>
+        public bool IndivisualSetting;
+
+        /// <summary>
+        /// Options == nullのときに
+        /// DescriptionsからOptionsを設定する。
+        /// 
+        /// エンジン共通設定で使う時がこれ。
+        /// </summary>
+        public void BuildOptionsFromDescriptions()
+        {
+            // DescriptionsからOptionsを構築する。
+
+            var options = new List<EngineOptionForSetting>();
+
+            foreach (var desc in Descriptions)
+                if (!desc.Hide)
+                {
+                    var option = new EngineOptionForSetting(desc.Name, desc.Name)
+                    {
+                        UsiBuildString = desc.UsiBuildString
+                    };
+                    options.Add(option);
+                }
+
+            Options = options;
+        }
 
         /// <summary>
         /// OptionsのValueを上書きする(そのNameのentryがあれば)
