@@ -215,6 +215,7 @@
     <Compile Include="View\Win2D\Setting\EngineOptionSettingDialog.Designer.cs">
       <DependentUpon>EngineOptionSettingDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\Setting\EngineOptionSettingDialogBuilder.cs" />
     <Compile Include="View\Win2D\Setting\EngineSelectionControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

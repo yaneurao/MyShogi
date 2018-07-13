@@ -41,8 +41,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
     }
 
     /// <summary>
-    /// エンジンの共通設定＋個別設定
-    /// "MyShogi.engine.xml"としてMyShogi.exeの存在するフォルダにシリアライズして書き出す。
+    /// エンジンの共通設定＋個別設定 
     /// </summary>
     [DataContract]
     public class EngineConfig
@@ -57,7 +56,43 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// 各エンジンの個別設定
         /// </summary>
         [DataMember]
-        public List<IndivisualEngineOptions> IndivisualEngineOption;
+        public List<IndivisualEngineOptions> IndivisualEnginesOptions;
+
+        /// <summary>
+        /// [UI Thread] : engine_pathに一致するエンジン設定を引っ張ってくる。
+        /// なければ新規に要素を作って返す。
+        /// </summary>
+        public IndivisualEngineOptions Find(string engine_folder_path)
+        {
+            return EngineConfigUtility.Find(this, engine_folder_path);
+        }
+    }
+
+
+    /// <summary>
+    /// エンジンの共通設定＋個別設定 、通常対局用と検討用と詰将棋用と…。
+    /// "MyShogi.engine.xml"としてMyShogi.exeの存在するフォルダにシリアライズして書き出す。
+    /// </summary>
+    [DataContract]
+    public class EngineConfigs
+    {
+        /// <summary>
+        /// 通常対局用のEngineConfig
+        /// </summary>
+        [DataMember]
+        public EngineConfig NormalConfig;
+
+        /// <summary>
+        /// 検討モード用のEngineConfig
+        /// </summary>
+        [DataMember]
+        public EngineConfig ConsiderationConfig;
+
+        /// <summary>
+        /// 詰将棋モード用のEngineConfig
+        /// </summary>
+        [DataMember]
+        public EngineConfig MateConfig;
 
         /// <summary>
         /// [UI Thread] : 保存する。例外投げるかも。
@@ -68,14 +103,6 @@ namespace MyShogi.Model.Shogi.EngineDefine
             EngineConfigUtility.SaveEngineConfig(this);
         }
 
-        /// <summary>
-        /// [UI Thread] : engine_pathに一致するエンジン設定を引っ張ってくる。
-        /// なければ新規に要素を作って返す。
-        /// </summary>
-        public IndivisualEngineOptions Find(string engine_folder_path)
-        {
-            return EngineConfigUtility.Find(this, engine_folder_path);
-        }
     }
 
     /// <summary>
@@ -89,13 +116,39 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         /// <param name="filepath"></param>
         /// <returns></returns>
-        public static EngineConfig ReadFile(string filepath)
+        public static EngineConfigs ReadFile(string filepath)
         {
-            var config = Serializer.Deserialize<EngineConfig>(filepath);
+            var config = Serializer.Deserialize<EngineConfigs>(filepath);
 
             // 読み込めなかったので新規に作成する。
             if (config == null)
-                config = new EngineConfig();
+                config = new EngineConfigs();
+
+            // ぶら下がっているメンバがnullだといたるところでnull checkが必要になって
+            // コードが書きにくいのでここでオブジェクトを生成して突っ込んでおく。
+            // 空の要素をシリアライズしてデシリアライズするとnullになるので、ここで
+            // 改めてnull checkが必要。
+
+            if (config.NormalConfig == null)
+                config.NormalConfig = new EngineConfig();
+
+            if (config.ConsiderationConfig == null)
+                config.ConsiderationConfig = new EngineConfig();
+
+            if (config.MateConfig == null)
+                config.MateConfig = new EngineConfig();
+
+            void NullCheck(EngineConfig c)
+            {
+                if (c.CommonOptions == null)
+                    c.CommonOptions = new EngineOptions();
+                if (c.IndivisualEnginesOptions == null)
+                    c.IndivisualEnginesOptions = new List<IndivisualEngineOptions>();
+            }
+
+            NullCheck(config.NormalConfig);
+            NullCheck(config.ConsiderationConfig);
+            NullCheck(config.MateConfig);
 
             return config;
         }
@@ -106,7 +159,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         /// <param name="filepath"></param>
         /// <param name="config"></param>
-        public static void WriteFile(string filepath , EngineConfig config)
+        public static void WriteFile(string filepath , EngineConfigs config)
         {
             lock (config)
                 Serializer.Serialize(filepath, config);
@@ -123,7 +176,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// このファイルがなければ新規に生成して返す。例外は投げない。
         /// </summary>
         /// <returns></returns>
-        public static EngineConfig GetEngineConfig()
+        public static EngineConfigs GetEngineConfig()
         {
             return ReadFile(config_filepath);
         }
@@ -133,7 +186,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// 例外を投げるかも。
         /// </summary>
         /// <param name="config"></param>
-        public static void SaveEngineConfig(EngineConfig config)
+        public static void SaveEngineConfig(EngineConfigs config)
         {
             WriteFile(config_filepath, config);
         }
@@ -150,16 +203,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
             // 呼び出すのはUI Threadのはずではあるが..
             lock(config)
             {
-                // 初回、要素がなくてnullありうる。
-                if (config.IndivisualEngineOption == null)
-                    config.IndivisualEngineOption = new List<IndivisualEngineOptions>();
-
-                var options = config.IndivisualEngineOption.Find(x => x.FolderPath == engine_folder_path);
+                var options = config.IndivisualEnginesOptions.Find(x => x.FolderPath == engine_folder_path);
                 if (options == null)
                 {
                     // ないので生成して返す。
                     options = new IndivisualEngineOptions(engine_folder_path);
-                    config.IndivisualEngineOption.Add(options);
+                    config.IndivisualEnginesOptions.Add(options);
                 }
 
                 return options;

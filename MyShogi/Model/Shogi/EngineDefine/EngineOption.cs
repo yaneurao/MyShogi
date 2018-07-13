@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using MyShogi.Model.Common.ObjectModel;
 
@@ -313,7 +314,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// OptionsのValueを上書きする(そのNameのentryがあれば)
         /// </summary>
         /// <param name="options"></param>
-        public void OverwriteEngineOptions(EngineOptions options)
+        public void OverwriteEngineOptions(EngineOptions options )
         {
             foreach (var option in options.Options)
             {
@@ -325,13 +326,21 @@ namespace MyShogi.Model.Shogi.EngineDefine
             }
         }
 
-        public void OverwriteEngineOptions(EngineOptionsForIndivisual options)
+        public void OverwriteEngineOptions(EngineOptionsForIndivisual options , EngineOptionsForSetting commonSetting)
         {
+            // 前回なかった(ユーザーの選択が保存されていない)新規要素で、
+            // かつ、これが共通設定にあるのなら、デフォルトでは共通設定に従うべきだから、全部いったん、そう設定する。
+            foreach (var option in Options)
+                if (commonSetting.Options.Exists(x => x.Name == option.Name))
+                    option.FollowCommonSetting = true;
+
             foreach (var option in options.Options)
             {
                 var opt = Options.Find(x => x.Name == option.Name);
+
                 if (opt == null)
                     continue;
+
                 opt.Value = option.Value;
                 opt.FollowCommonSetting = option.FollowCommonSetting;
             }

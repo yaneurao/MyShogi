@@ -97,6 +97,7 @@ namespace MyShogi.View.Win2D.Setting
             Debug.Assert(setting != null && setting.Options != null && setting.Descriptions != null);
 
             // -- 順番にControlを生成して表示する。
+            SuspendLayout();
 
             ClearPages();
 
@@ -107,6 +108,10 @@ namespace MyShogi.View.Win2D.Setting
             var hh = label1.Height;
 
             int y = hh/4; // 最初の行のY座標。
+
+            // エンジン個別設定なら「共通設定に従う」チェックボックスを左端に追加するので全体的に少し右にずらして表示する。
+            var indivisual = setting.IndivisualSetting;
+            var x_offset = indivisual ? hh*2 : 0;
 
             // bindしている値が変化した時にイベントを生起する
             var valueChanged = new Action(() => ViewModel.RaisePropertyChanged("ValueChanged", null));
@@ -127,7 +132,7 @@ namespace MyShogi.View.Win2D.Setting
                         var label = new Label();
                         // 水平線なのでフォントは問題ではない
                         label.Font = new Font("ＭＳ ゴシック", 9, GraphicsUnit.Pixel);
-                        label.Location = new Point(label_x[0], y);
+                        label.Location = new Point(label_x[0] + x_offset, y);
                         label.Size = new Size(ClientSize.Width, 1);
                         label.BorderStyle = BorderStyle.FixedSingle;
                         y += hh/2;
@@ -144,7 +149,7 @@ namespace MyShogi.View.Win2D.Setting
                     });
 
                     var label1 = new Label();
-                    label1.Location = new Point(label_x[0], y);
+                    label1.Location = new Point(label_x[0] + x_offset, y);
                     label1.AutoSize = true;
                     label1.Text = desc.DisplayName;
                     label1.Font = new Font("ＭＳ ゴシック", 30, GraphicsUnit.Pixel);
@@ -256,7 +261,7 @@ namespace MyShogi.View.Win2D.Setting
 
                     var label1 = new Label();
                     label1.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
-                    label1.Location = new Point(label_x[0], y);
+                    label1.Location = new Point(label_x[0] + x_offset, y);
                     label1.AutoSize = true;
                     label1.Text = displayName;
                     label1.MouseHover += h;
@@ -265,7 +270,7 @@ namespace MyShogi.View.Win2D.Setting
 
                     var label2 = new Label();
                     label2.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
-                    label2.Location = new Point(label_x[2] + hh /* 配置したcontrolから少し右に配置 */, y);
+                    label2.Location = new Point(label_x[2] + hh /* 配置したcontrolから少し右に配置 */ + x_offset, y);
                     label2.AutoSize = true;
                     label2.Text = desc.DescriptionSimple;
                     label2.MouseHover += h;
@@ -276,9 +281,40 @@ namespace MyShogi.View.Win2D.Setting
                     control.MouseHover += h;
                     control.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
 
-                    control.Size = new Size(label_x[2] - label_x[1], control.Height);
+                    control.Size = new Size(label_x[2] - label_x[1] + x_offset, control.Height);
                     Controls.Add(control);
                     page.Add(control);
+
+                    if (indivisual)
+                    {
+                        // エンジン個別設定なので左端に「共通設定に従う」のチェックボックスがある。
+
+                        var followCheckboxHover = new EventHandler((sender, args) =>
+                        {
+                            label4.Text = "左端のチェックボックス";
+                            textBox1.Text = "このチェックボックスをオンにすると、この項目は共通設定に従います。"; ;
+                        });
+
+                        var checkbox = new CheckBox();
+                        checkbox.Location = new Point(label_x[0], y);
+                        checkbox.Size = new Size(x_offset, control.Height);
+                        checkbox.MouseHover += followCheckboxHover;
+                        Controls.Add(checkbox);
+                        page.Add(checkbox);
+
+                        binder.Bind(e, "FollowCommonSetting", checkbox, v => {
+                            valueChanged();
+                            // 連動してlabel1,2,controlを無効化 
+                            label1.Enabled = !v;
+                            label2.Enabled = !v;
+                            control.Enabled = !v;
+                        });
+
+                        // ラベルをクリックしても左端のチェックボックスのオンオフが出来る。
+                        //label1.Click += (sender,args)=> { checkbox.Checked ^= true; };
+                        // …ようにしようと思ったら、label1がEnable == falseになってしまうので
+                        // このクリックイベントが発生しなくなるのか…。うーむ、、そうか…。
+                    }
 
                     y += control.Height + hh/3;
                 }
@@ -296,6 +332,8 @@ namespace MyShogi.View.Win2D.Setting
             // 最後のページから空のページでありうるので、その場合、最後のページを削除する。
             if (pages.Count != 0 && pages[pages.Count - 1].Count == 0)
                 pages.RemoveAt(pages.Count - 1);
+
+            ResumeLayout();
 
             UpdatePage(0);
         }
@@ -335,12 +373,16 @@ namespace MyShogi.View.Win2D.Setting
             if (page_no < 0 || page_no >= pages.Count)
                 return;
 
+            SuspendLayout();
+
             foreach(var page in All.Int(pages.Count))
             {
                 var visible = page == page_no;
                 foreach (var c in pages[page])
                     c.Visible = visible;
             }
+
+            ResumeLayout();
 
             // 前ページ、次ページに行けるかどうか。
 

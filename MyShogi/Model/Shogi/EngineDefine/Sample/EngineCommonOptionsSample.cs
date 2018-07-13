@@ -194,7 +194,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         null
                         ),
 
-                    new EngineOptionDescription("MaxMovesToDraw"   , "手数による持将棋" ,
+                    new EngineOptionDescription("MaxMovesToDraw"   , null ,
                         "この手数になると持将棋で引き分けとして扱います。",
                         "この項目を変更する時は、対局設定のほうの『指定手数で引き分けとする』もこの設定に合わせて変更してください。\r\n"+
                         "またこの項目に0を指定した場合、この設定は無効(手数による持将棋を適用せず)になります。",

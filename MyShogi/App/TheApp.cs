@@ -186,8 +186,8 @@ namespace MyShogi.App
 
                 config.Save();
 
-                if (engine_config != null)
-                    engine_config.Save();
+                if (engine_configs != null)
+                    engine_configs.Save();
 
                 soundManager.Dispose();
 
@@ -264,20 +264,20 @@ namespace MyShogi.App
         /// [UI Thread] : EngineConfigを返す。
         /// (エンジンのオプションの共通設定、個別設定が格納されている。)
         /// </summary>
-        public EngineConfig EngineConfig
+        public EngineConfigs EngineConfigs
         {
             get
             {
                 lock (this)
                 {
                     /// 遅延読み込み。
-                    if (engine_config == null)
-                        engine_config = EngineConfigUtility.GetEngineConfig();
-                    return engine_config;
+                    if (engine_configs == null)
+                        engine_configs = EngineConfigUtility.GetEngineConfig();
+                    return engine_configs;
                 }
             }
         }
-        private EngineConfig engine_config;
+        private EngineConfigs engine_configs;
 
     /// <summary>
     /// サウンドマネージャー

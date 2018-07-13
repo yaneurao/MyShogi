@@ -146,7 +146,7 @@ namespace MyShogi.View.Win2D.Setting
                 //int preset = PlayerSetting.SelectedEnginePreset;
 
                 // プリセットは前回のエンジンの選択時のSelectedPresetIndexを持って来て選ぶ。
-                var indivisualEngine = TheApp.app.EngineConfig.Find(engine_define_ex.FolderPath);
+                var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(engine_define_ex.FolderPath);
                 var preset = indivisualEngine.SelectedPresetIndex;
 
                 // プリセットをコンボボックスに反映
@@ -203,138 +203,15 @@ namespace MyShogi.View.Win2D.Setting
         /// </summary>
         private void ShowEngineOptionSettingDialog()
         {
-            var dialog = new EngineOptionSettingDialog();
+            var dialog = EngineOptionSettingDialogBuilder.Build(
+                EngineCommonOptionsSample.CreateEngineCommonOptions(), // 共通設定のベース
+                TheApp.app.EngineConfigs.NormalConfig,                 // 共通設定の値はこの値で上書き
+                ViewModel.EngineDefine                                 // 個別設定の情報はここにある。
+                );
 
-            // -- エンジン共通設定
-
-            var setting = EngineCommonOptionsSample.CreateEngineCommonOptions();
-            setting.IndivisualSetting = false; // エンジン共通設定
-            setting.BuildOptionsFromDescriptions(); // OptionsをDescriptionsから構築する。
-
-            // エンジン共通設定の、ユーザーの選択をシリアライズしたものがあるなら、そのValueを上書きする。
-            var options = TheApp.app.EngineConfig.CommonOptions;
-            if (options != null)
-                setting.OverwriteEngineOptions(options);
-
-            dialog.SettingControls(0).ViewModel.Setting = setting;
-            dialog.SettingControls(0).ViewModel.AddPropertyChangedHandler("ValueChanged", (args) =>
-            {
-                TheApp.app.EngineConfig.CommonOptions = setting.ToEngineOptions();
-                // 値が変わるごとに保存しておく。
-            });
-
-            // -- エンジン個別設定
-
-            // 思考エンジンの個別ダイアログのための項目を、実際に思考エンジンを起動して取得。
-            // 一瞬で起動～終了するはずなので、UIスレッドでやっちゃっていいや…。
-            var engineDefine = ViewModel.EngineDefine.EngineDefine;
-            var exefilename = engineDefine.EngineExeFileName();
-
-            var engine = new UsiEnginePlayer();
-            try
-            {
-                engine.Engine.EngineSetting = true;
-                engine.Start(exefilename);
-
-                while (engine.Initializing)
-                {
-                    engine.OnIdle();
-                    Thread.Sleep(100);
-                    var ex = engine.Engine.Exception;
-                    if (ex != null)
-                    {
-                        // time outも例外が飛んでくる…ようにすべき…。
-                        // 現状の思考エンジンでここでタイムアウトにならないから、まあいいや…。
-                        TheApp.app.MessageShow(ex.ToString());
-                        return;
-                    }
-                }
-            }
-            finally
-            {
-                engine.Dispose();
-            }
-
-            // エンジンからこれが取得出来ているはずなのだが。
-            Debug.Assert(engine.Engine.OptionList != null);
-
-            // エンジンからUsiOption文字列を取得
-
-            var useHashCommand = engineDefine.IsSupported(ExtendedProtocol.UseHashCommandExtension);
-
-            var ind_options = new List<EngineOptionForSetting>();
-            foreach (var option in engine.Engine.OptionList)
-            {
-                //Console.WriteLine(option.CreateOptionCommandString());
-
-                // "USI_Ponder"は無視する。
-                if (option.Name == "USI_Ponder")
-                    continue;
-
-                // "USI_Hash","Hash"は統合する。
-                else if (option.Name == "USI_Hash")
-                {
-                    // USI_Hash使わないエンジンなので無視する。
-                    if (useHashCommand)
-                        continue;
-
-                    option.SetName("Hash_"); // これにしておけばあとで置換される。
-                }
-                else if (option.Name == "Hash")
-                {
-                    //Debug.Assert(useHashCommand);
-
-                    option.SetName("Hash_"); // これにしておけばあとで置換される。
-                }
-
-                var opt = new EngineOptionForSetting(option.Name, option.CreateOptionCommandString());
-                opt.Value = option.GetDefault();
-                ind_options.Add(opt);
-            }
-
-            var ind_descriptions = engineDefine.EngineOptionDescriptions; // nullありうる
-            if (ind_descriptions == null)
-            {
-                // この時は仕方ないので、Optionsの内容そのまま出しておかないと仕方ないのでは…。
-                ind_descriptions = new List<EngineOptionDescription>();
-
-                foreach (var option in ind_options)
-                    ind_descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null, option.UsiBuildString));
-            } else
-            {
-                // Descriptionsに欠落している項目を追加する。(Optionsにだけある項目を追加する。)
-                foreach (var option in ind_options)
-                {
-                    if (ind_descriptions.Find(x => x.Name == option.Name) == null)
-                        ind_descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null, option.UsiBuildString));
-                }
-
-                // DescriptionにあってOptionsにない項目をOptionsに追加する。
-                foreach(var desc in ind_descriptions)
-                {
-                    if (ind_options.Find(x => x.Name == desc.Name) == null)
-                        ind_options.Add(new EngineOptionForSetting(desc.Name, desc.UsiBuildString));
-                }
-            }
-
-            // エンジン個別設定でシリアライズしていた値で上書きしてやる。
-            // TODO:
-
-            var ind_setting = new EngineOptionsForSetting()
-            {
-                Options = ind_options,
-                Descriptions = ind_descriptions,
-                IndivisualSetting = true, // エンジン個別設定
-            };
-
-            dialog.SettingControls(1).ViewModel.Setting = ind_setting;
-            dialog.SettingControls(1).ViewModel.AddPropertyChangedHandler("ValueChanged", (args) =>
-            {
-                // TODO:
-                //TheApp.app.EngineConfig.CommonOptions = setting.ToEngineOptions();
-                // 値が変わるごとに保存しておく。
-            });
-
+            // 構築に失敗。
+            if (dialog == null)
+                return;
 
             dialog.Show();
         }
@@ -422,7 +299,7 @@ namespace MyShogi.View.Win2D.Setting
             UpdatePresetText();
 
             // プリセットは前回のエンジンの選択時のSelectedPresetIndexを持って来て選ぶ。
-            var indivisualEngine = TheApp.app.EngineConfig.Find(ViewModel.EngineDefine.FolderPath);
+            var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(ViewModel.EngineDefine.FolderPath);
             indivisualEngine.SelectedPresetIndex = comboBox1.SelectedIndex;
         }
 
