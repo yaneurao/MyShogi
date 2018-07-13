@@ -105,6 +105,11 @@ namespace MyShogi.View.Win2D.Setting
                 var player = TheApp.app.config.GameSetting.Player(vm.Color);
 
                 var engine_define_ex = ViewModel.EngineDefine;
+
+                button2.Enabled = engine_define_ex != null;
+                if (engine_define_ex == null)
+                    return;
+
                 var engine_define = engine_define_ex.EngineDefine;
 
                 // -- バナーの設定

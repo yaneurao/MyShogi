@@ -125,6 +125,8 @@ namespace MyShogi.View.Win2D.Setting
                     if (pages[pages.Count-1].Count != 0)
                     {
                         var label = new Label();
+                        // 水平線なのでフォントは問題ではない
+                        label.Font = new Font("ＭＳ ゴシック", 9, GraphicsUnit.Pixel);
                         label.Location = new Point(label_x[0], y);
                         label.Size = new Size(ClientSize.Width, 1);
                         label.BorderStyle = BorderStyle.FixedSingle;
@@ -145,7 +147,7 @@ namespace MyShogi.View.Win2D.Setting
                     label1.Location = new Point(label_x[0], y);
                     label1.AutoSize = true;
                     label1.Text = desc.DisplayName;
-                    label1.Font = new Font(label1.Font.FontFamily, label1.Font.Size * 1.5f);
+                    label1.Font = new Font("ＭＳ ゴシック", 30, GraphicsUnit.Pixel);
                     label1.MouseHover += h;
                     Controls.Add(label1);
                     page.Add(label1);
@@ -253,6 +255,7 @@ namespace MyShogi.View.Win2D.Setting
                     });
 
                     var label1 = new Label();
+                    label1.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
                     label1.Location = new Point(label_x[0], y);
                     label1.AutoSize = true;
                     label1.Text = displayName;
@@ -261,6 +264,7 @@ namespace MyShogi.View.Win2D.Setting
                     page.Add(label1);
 
                     var label2 = new Label();
+                    label2.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
                     label2.Location = new Point(label_x[2], y);
                     label2.AutoSize = true;
                     label2.Text = desc.DescriptionSimple;

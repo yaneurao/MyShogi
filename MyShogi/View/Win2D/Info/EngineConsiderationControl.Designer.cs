@@ -96,6 +96,7 @@
             // listView1
             // 
             this.listView1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.listView1.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.listView1.Location = new System.Drawing.Point(0, 188);
             this.listView1.Margin = new System.Windows.Forms.Padding(4);
             this.listView1.MultiSelect = false;
@@ -136,6 +137,7 @@
             // 
             // button1
             // 
+            this.button1.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.button1.Location = new System.Drawing.Point(206, 43);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(77, 32);
