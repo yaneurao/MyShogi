@@ -674,7 +674,7 @@ namespace MyShogi.View.Win2D
                     {
                         var item = new ToolStripMenuItem();
                         item.Text = "終了";
-                        item.Click += (sender, e) => { Close(); };
+                        item.Click += (sender, e) => { TheApp.app.ApplicationExit(); };
                         item_file.DropDownItems.Add(item);
                     }
 

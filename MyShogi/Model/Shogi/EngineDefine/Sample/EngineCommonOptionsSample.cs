@@ -1,5 +1,6 @@
 ﻿using MyShogi.Model.Shogi.Usi;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -433,25 +434,31 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// 通常対局、検討モードの共通設定のデフォルト値を返す。
         /// </summary>
         /// <returns></returns>
-        public static EngineOptions CommonOptionDefault()
+        public static List<EngineOption> CommonOptionDefault()
         {
             if (commonOptionDefault == null)
             {
                 var options = new List<EngineOption>();
 
+                // エンジンオプションの共通設定のDescriptionからEngineOptionsをひねり出す。
+
                 var opt = CreateEngineCommonOptions();
                 foreach (var desc in opt.Descriptions)
                 {
+                    // 見出し行、非表示の奴はskipする。
+                    if (desc.Name == null || desc.Hide || desc.UsiBuildString == null /* これ存在がおかしい気はする*/)
+                        continue;
+
                     // この文字列でUsiOptionオブジェクトを構築して、nameとdefault値を得る
                     var usiOption = UsiOption.Parse(desc.UsiBuildString);
                     options.Add(new EngineOption(usiOption.Name, usiOption.GetDefault()));
                 }
 
-                commonOptionDefault = new EngineOptions() { Options = options };
+                commonOptionDefault = options;
             }
             return commonOptionDefault;
         }
 
-        private static EngineOptions commonOptionDefault;
+        private static List<EngineOption> commonOptionDefault;
     }
 }

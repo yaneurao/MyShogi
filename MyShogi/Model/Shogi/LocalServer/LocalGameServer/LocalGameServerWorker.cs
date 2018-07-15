@@ -7,6 +7,7 @@ using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Shogi.EngineDefine;
+using System;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -203,27 +204,33 @@ namespace MyShogi.Model.Shogi.LocalServer
             // "usiok"に対してオプションを設定するので、Stateの変更イベントをハンドルする。
             engine.AddPropertyChangedHandler("State", (args) =>
             {
-                var state = (UsiEngineState)args.value;
-                if (state == UsiEngineState.UsiOk)
+                try
                 {
-                    var engine_config = TheApp.app.EngineConfigs;
-                    EngineConfig config = null;
-
-                    switch (nextGameMode)
+                    var state = (UsiEngineState)args.value;
+                    if (state == UsiEngineState.UsiOk)
                     {
-                        case GameModeEnum.InTheGame:
-                            config = engine_config.NormalConfig;
-                            break;
-                        case GameModeEnum.ConsiderationWithEngine:
-                            config = engine_config.ConsiderationConfig;
-                            break;
-                        case GameModeEnum.ConsiderationWithMateEngine:
-                            config = engine_config.MateConfig;
-                            break;
-                    }
+                        var engine_config = TheApp.app.EngineConfigs;
+                        EngineConfig config = null;
 
-                    // オプションの値を設定しなおす。
-                    EngineDefineUtility.SetDefaultOption(engine.OptionList, engineDefineEx, selectedPresetIndex , config);
+                        switch (nextGameMode)
+                        {
+                            case GameModeEnum.InTheGame:
+                                config = engine_config.NormalConfig;
+                                break;
+                            case GameModeEnum.ConsiderationWithEngine:
+                                config = engine_config.ConsiderationConfig;
+                                break;
+                            case GameModeEnum.ConsiderationWithMateEngine:
+                                config = engine_config.MateConfig;
+                                break;
+                        }
+
+                        // オプションの値を設定しなおす。
+                        EngineDefineUtility.SetDefaultOption(engine.OptionList, engineDefineEx, selectedPresetIndex, config);
+                    }
+                } catch (Exception ex)
+                {
+                    TheApp.app.MessageShow(ex);
                 }
             });
 

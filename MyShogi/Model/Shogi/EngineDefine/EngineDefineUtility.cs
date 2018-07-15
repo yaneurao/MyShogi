@@ -171,8 +171,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
             List<EngineOption> preset = null;
             if (0 <= index && index < engineDefine.Presets.Count)
             {
-                preset = engineDefine.Presets[index].Options.Options;
+                preset = engineDefine.Presets[index].Options;
             }
+
+            // HASHメモリの自動マネージメントについて..
+
+            // "USI_Hash" → "HASH_"
+            // "HASH" → "HASH_"
+            // に置換して、HASH_"の値を適用
 
             // 共通設定
             var commonSetting = config.CommonOptions;
@@ -184,7 +190,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 // 共通設定の反映
                 if (commonSetting != null)
                 {
-                    var opt = commonSetting.Options.Find(x => x.Name == option.Name);
+                    var opt = commonSetting.Find(x => x.Name == option.Name);
                     if (opt != null)
                         option.SetDefault(opt.Value);
                 }
@@ -192,7 +198,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 // 個別設定の反映
                 if (indSetting != null)
                 {
-                    var opt = indSetting.Options.Options.Find(x => x.Name == option.Name);
+                    var opt = indSetting.Options.Find(x => x.Name == option.Name);
                     if (opt != null && !opt.FollowCommonSetting /* 共通設定に従わない */)
                         option.SetDefault(opt.Value);
                 }
@@ -205,6 +211,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         option.SetDefault(opt.Value);
                 }
             }
+
+
+            // スレッド数の自動マネージメントについて..
+            // ponderの自動マネージメントについて..
 
         }
 

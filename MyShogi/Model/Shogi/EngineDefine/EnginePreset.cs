@@ -25,30 +25,30 @@ namespace MyShogi.Model.Shogi.EngineDefine
             Description = description;
         }
 
-        public EnginePreset(string name, EngineOptions options)
+        public EnginePreset(string name, List<EngineOption> options)
         {
             Name = name;
-            Options = options;
+            Options = new List<EngineOption>(options); // Clone
         }
 
         public EnginePreset(string name, EngineOption[] options)
         {
             Name = name;
-            Options = new EngineOptions(new List<EngineOption>(options));
+            Options = new List<EngineOption>(options); // Copy
         }
 
-        public EnginePreset(string name , string description , EngineOptions options)
+        public EnginePreset(string name , string description , List<EngineOption> options)
         {
             Name = name;
             Description = description;
-            Options = options;
+            Options = new List<EngineOption>(options); // Clone
         }
 
         public EnginePreset(string name, string description, EngineOption[] options)
         {
             Name = name;
             Description = description;
-            Options = new EngineOptions(new List<EngineOption>(options));
+            Options = new List<EngineOption>(options); // Copy
         }
 
         /// <summary>
@@ -70,6 +70,6 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// ここで設定したもの以外は、エンジンの共通設定に従う。
         /// </summary>
         [DataMember]
-        public EngineOptions Options { get; set; }
+        public List<EngineOption> Options { get; set; }
     }
 }

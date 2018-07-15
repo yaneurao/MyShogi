@@ -80,59 +80,6 @@ namespace MyShogi.Model.Shogi.EngineDefine
         public bool FollowCommonSetting;
     }
 
-
-    /// <summary>
-    /// EngineOptionの配列
-    /// 
-    /// これは、思考エンジンのプリセットで用いる。
-    /// </summary>
-    [DataContract]
-    public class EngineOptions
-    {
-        public EngineOptions()
-        {
-            Options = new List<EngineOption>();
-        }
-
-        public EngineOptions(List<EngineOption> options)
-        {
-            Options = options;
-        }
-
-        /// <summary>
-        /// nullであれば、丸ごとエンジンの個別設定＋共通設定に従う。
-        /// nullでなければ、こちらが優先され、設定していない項目は、エンジンの個別設定＋共通設定に従う。
-        /// </summary>
-        [DataMember]
-        public List<EngineOption> Options;
-    }
-
-    /// <summary>
-    /// EngineOptionForIndivisualの配列
-    /// 
-    /// これは、思考エンジンのプリセットで用いる。
-    /// </summary>
-    [DataContract]
-    public class EngineOptionsForIndivisual
-    {
-        public EngineOptionsForIndivisual()
-        {
-            Options = new List<EngineOptionForIndivisual>();
-        }
-
-        public EngineOptionsForIndivisual(List<EngineOptionForIndivisual> options)
-        {
-            Options = options;
-        }
-
-        /// <summary>
-        /// nullであれば、丸ごとエンジンの個別設定＋共通設定に従う。
-        /// nullでなければ、こちらが優先され、設定していない項目は、エンジンの個別設定＋共通設定に従う。
-        /// </summary>
-        [DataMember]
-        public List<EngineOptionForIndivisual> Options;
-    }
-
     /// <summary>
     /// 
     /// </summary>
@@ -316,12 +263,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
         }
 
         /// <summary>
-        /// OptionsのValueを上書きする(そのNameのentryがあれば)
+        /// OptionsのValueを上書きする(そのNameのentryがOptionsにあれば)
         /// </summary>
         /// <param name="options"></param>
-        public void OverwriteEngineOptions(EngineOptions options )
+        public void OverwriteEngineOptions(List<EngineOption> options )
         {
-            foreach (var option in options.Options)
+            foreach (var option in options)
             {
                 var opt = Options.Find(x => x.Name == option.Name);
                 if (opt == null)
@@ -331,7 +278,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
             }
         }
 
-        public void OverwriteEngineOptions(EngineOptionsForIndivisual options , EngineOptionsForSetting commonSetting)
+        public void OverwriteEngineOptions(List<EngineOptionForIndivisual> options , EngineOptionsForSetting commonSetting)
         {
             // 前回なかった(ユーザーの選択が保存されていない)新規要素で、
             // かつ、これが共通設定にあるのなら、デフォルトでは共通設定に従うべきだから、全部いったん、そう設定する。
@@ -342,7 +289,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 option.FollowCommonSetting = exist;
             }
 
-            foreach (var option in options.Options)
+            foreach (var option in options)
             {
                 var opt = Options.Find(x => x.Name == option.Name);
 
@@ -362,24 +309,22 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// NameとValueのペアをEngineOptionsとして書き出す
         /// </summary>
         /// <returns></returns>
-        public EngineOptions ToEngineOptions()
+        public List<EngineOption> ToEngineOptions()
         {
-            var options = new EngineOptions();
-            options.Options = new List<EngineOption>();
+            var options = new List<EngineOption>();
 
             foreach (var opt in Options)
-                options.Options.Add(new EngineOption(opt.Name, opt.Value));
+                options.Add(new EngineOption(opt.Name, opt.Value));
 
             return options;
         }
 
-        public EngineOptionsForIndivisual ToEngineOptionsForIndivisual()
+        public List<EngineOptionForIndivisual> ToEngineOptionsForIndivisual()
         {
-            var options = new EngineOptionsForIndivisual();
-            options.Options = new List<EngineOptionForIndivisual>();
+            var options = new List<EngineOptionForIndivisual>();
 
             foreach (var opt in Options)
-                options.Options.Add(new EngineOptionForIndivisual(
+                options.Add(new EngineOptionForIndivisual(
                     opt.Name, opt.Value, opt.FollowCommonSetting));
 
             return options;

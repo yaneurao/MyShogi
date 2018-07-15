@@ -169,7 +169,7 @@ namespace MyShogi.View.Win2D.Setting
                 config.IndivisualEnginesOptions.Add(indivisualConfig);
             }
             if (indivisualConfig.Options == null)
-                indivisualConfig.Options = new EngineOptionsForIndivisual();
+                indivisualConfig.Options = new List<EngineOptionForIndivisual>();
 
             var ind_setting = new EngineOptionsForSetting()
             {
