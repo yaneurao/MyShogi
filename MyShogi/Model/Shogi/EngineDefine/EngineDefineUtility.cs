@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -50,7 +51,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
         }
 
         /// <summary>
-        /// 現在の環境で動作するエンジンのファイル名を決定する。
+        /// 現在の環境に合わせた実行ファイル名が返る。
+        /// 
+        /// 例) "EngineExeName_avx2.exe"
         /// </summary>
         /// <param name="engine_define"></param>
         /// <returns></returns>
@@ -139,5 +142,71 @@ namespace MyShogi.Model.Shogi.EngineDefine
             return engineDefine.SupportedExtendedProtocol == null ? false :
                 engineDefine.SupportedExtendedProtocol.Contains(protocol);
         }
+
+        /// <summary>
+        /// UsiEngineに渡すEngineOptionsを生成する。
+        /// 
+        /// ・エンジン共通設定
+        /// ・エンジン個別設定
+        /// 
+        /// ・エンジン側から送られてきた"option"の列
+        /// →　これは送られて来る前に、OptionListを設定しないといけないので使えない？
+        /// →　エンジン共通設定にあるものしか設定できないので、エンジンからオプションリストをもらわないと
+        /// どうにもならないのでは…。
+        /// 
+        /// </summary>
+        /// <param name="optionList">これが改変される</param>
+        /// <param name="engineDefineEx"></param>
+        /// <param name="selectedPresetIndex">プリセットの番号</param>
+        /// <param name="commonSetting">共通設定</param>
+        /// <returns></returns>
+        public static void SetDefaultOption(List<UsiOption> optionList, EngineDefineEx engineDefineEx, int selectedPresetIndex ,
+            EngineConfig config)
+        {
+            var engineDefine = engineDefineEx.EngineDefine;
+            var folderPath = engineDefineEx.FolderPath;
+
+            // EnginePreset
+            var index = selectedPresetIndex - 1;
+            List<EngineOption> preset = null;
+            if (0 <= index && index < engineDefine.Presets.Count)
+            {
+                preset = engineDefine.Presets[index].Options.Options;
+            }
+
+            // 共通設定
+            var commonSetting = config.CommonOptions;
+            // 個別設定
+            var indSetting = config.IndivisualEnginesOptions.Find(x => x.FolderPath == folderPath);
+
+            foreach (var option in optionList)
+            {
+                // 共通設定の反映
+                if (commonSetting != null)
+                {
+                    var opt = commonSetting.Options.Find(x => x.Name == option.Name);
+                    if (opt != null)
+                        option.SetDefault(opt.Value);
+                }
+
+                // 個別設定の反映
+                if (indSetting != null)
+                {
+                    var opt = indSetting.Options.Options.Find(x => x.Name == option.Name);
+                    if (opt != null && !opt.FollowCommonSetting /* 共通設定に従わない */)
+                        option.SetDefault(opt.Value);
+                }
+
+                // プリセットの適用
+                if (preset != null)
+                {
+                    var opt = preset.Find(x => x.Name == option.Name);
+                    if (opt != null)
+                        option.SetDefault(opt.Value);
+                }
+            }
+
+        }
+
     }
 }

@@ -6,6 +6,7 @@ using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.Usi;
+using MyShogi.Model.Shogi.EngineDefine;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -79,6 +80,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 以下の初期化中に駒が動かされるの気持ち悪いのでユーザー操作を禁止しておく。
             CanUserMove = false;
             Initializing = true;
+            var nextGameMode = GameModeEnum.InTheGame;
 
             // 音声:「よろしくお願いします。」
             TheApp.app.soundManager.Stop(); // 再生中の読み上げをすべて停止
@@ -90,12 +92,20 @@ namespace MyShogi.Model.Shogi.LocalServer
             // プレイヤーの生成
             foreach (var c in All.Colors())
             {
-                var playerType = gameSetting.Player(c).IsHuman ? PlayerTypeEnum.Human : PlayerTypeEnum.UsiEngine;
+                var gamePlayer = gameSetting.Player(c);
+                var playerType = gamePlayer.IsHuman ? PlayerTypeEnum.Human : PlayerTypeEnum.UsiEngine;
                 Players[(int)c] = PlayerBuilder.Create(playerType);
 
-                // UsiEngineなら実行ファイルを起動しておく。
                 if (playerType == PlayerTypeEnum.UsiEngine)
-                    (Players[(int)c] as UsiEnginePlayer).Start("engine/gpsfish/gpsfish_sse2.exe");
+                {
+                    var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == gamePlayer.EngineDefineFolderPath);
+                    if (engineDefineEx == null)
+                    {
+                        TheApp.app.MessageShow("エンジンがありませんでした。" + gamePlayer.EngineDefineFolderPath);
+                        return;
+                    }
+                    InitUsiEnginePlayer(Players[(int)c] as UsiEnginePlayer, engineDefineEx , gamePlayer.SelectedEnginePreset, nextGameMode);
+                }
             }
 
             // 局面の設定
@@ -174,11 +184,52 @@ namespace MyShogi.Model.Shogi.LocalServer
                 BoardReverse = (stm == Color.BLACK);
 
             // プレイヤー情報などを検討ダイアログに反映させる。
-            var nextGameMode = GameModeEnum.InTheGame;
             InitEngineConsiderationInfo(nextGameMode);
 
             // 検討モードならそれを停止させる必要があるが、それはGameModeのsetterがやってくれる。
             GameMode = nextGameMode;
+        }
+
+        /// <summary>
+        /// エンジンを初期化する。
+        /// </summary>
+        /// <param name="usiEnginePlayer"></param>
+        /// <param name="selectedPresetIndex">プリセットの選択番号+1。選んでなければ0。</param>
+        private void InitUsiEnginePlayer(UsiEnginePlayer usiEnginePlayer , EngineDefineEx engineDefineEx , int selectedPresetIndex , GameModeEnum nextGameMode)
+        {
+            var engine = usiEnginePlayer.Engine;
+            var engineDefine = engineDefineEx.EngineDefine;
+
+            // "usiok"に対してオプションを設定するので、Stateの変更イベントをハンドルする。
+            engine.AddPropertyChangedHandler("State", (args) =>
+            {
+                var state = (UsiEngineState)args.value;
+                if (state == UsiEngineState.UsiOk)
+                {
+                    var engine_config = TheApp.app.EngineConfigs;
+                    EngineConfig config = null;
+
+                    switch (nextGameMode)
+                    {
+                        case GameModeEnum.InTheGame:
+                            config = engine_config.NormalConfig;
+                            break;
+                        case GameModeEnum.ConsiderationWithEngine:
+                            config = engine_config.ConsiderationConfig;
+                            break;
+                        case GameModeEnum.ConsiderationWithMateEngine:
+                            config = engine_config.MateConfig;
+                            break;
+                    }
+
+                    // オプションの値を設定しなおす。
+                    EngineDefineUtility.SetDefaultOption(engine.OptionList, engineDefineEx, selectedPresetIndex , config);
+                }
+            });
+
+            // 実行ファイルを起動する
+            usiEnginePlayer.Start(engineDefine.EngineExeFileName());
+
         }
 
         /// <summary>
@@ -213,11 +264,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                 {
                     var num_ = num; // copy for capturing
 
-                    // 検討モードなら、名前は..
-                    var name =
-                        (nextGameMode == GameModeEnum.ConsiderationWithEngine    ) ? "検討用エンジン" :
-                        (nextGameMode == GameModeEnum.ConsiderationWithMateEngine) ? "詰将棋エンジン" :
-                            DisplayName(c);
+                    var engineDefineFolderPath = "\\engine\\gpsfish"; // TODO : あとで検討用エンジン選択ダイアログを作成し、そこから取得するように変更する。
+                    var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == engineDefineFolderPath);
+                    var engineDefine = engineDefineEx.EngineDefine;
+
+                    // 検討モードの名前はエンジン名から取得
+                    var name = engineDefine.DisplayName;
 
                     ThinkReport = new UsiThinkReportMessage()
                     {
@@ -248,6 +300,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                             };
                         }
                     });
+
+                    // エンジンを開始する。
+                    InitUsiEnginePlayer(engine_player ,engineDefineEx , 0 , nextGameMode);
 
                     num++;
                 }

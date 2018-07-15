@@ -132,19 +132,11 @@ namespace MyShogi.Model.Shogi.Usi
 
         /// <summary>
         /// エンジンから受け取ったoptionの一覧
+        /// 
+        /// "State" propertyをハンドルして、State == UsiOkに変化した時にこのValueをセットしなおしたり、
+        /// 変更したりすると良い。(その値が"setoption"でエンジンに渡される。)
         /// </summary>
         public List<UsiOption> OptionList { get; set; } = new List<UsiOption>();
-
-        /// <summary>
-        /// デフォルトのオプション一覧を取得または設定します。
-        /// </summary>
-        /// <remarks>
-        /// エンジン接続後のオプション一覧取得後に値を更新するために使います。
-        /// それ以外で使われることはありません。
-        /// 
-        /// Connect()を呼び出す前にsetしておくべき。
-        /// </remarks>
-        public List<UsiOptionMin> DefaultOptionList { get; set; }
 
         /// <summary>
         /// エンジンの設定ダイアログ用であるか？
@@ -178,12 +170,16 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public Move PonderMove { get { return ThinkingBridge.PonderMove; } }
 
-        /// <summary>
-        /// 現在思考中であるかどうかの状態管理フラグ
-        /// </summary>
-        private UsiEngineThinkingBridge ThinkingBridge { get; set; }
-
         public int MultiPV { set { ThinkingBridge.MultiPV = value; } }
+
+        /// <summary>
+        /// エンジンの状態。
+        /// </summary>
+        public UsiEngineState State
+        {
+            get { return GetValue<UsiEngineState>("State"); }
+            private set { SetValue<UsiEngineState>("State", value); }
+        }
 
         /// <summary>
         /// 読み筋。
@@ -210,14 +206,10 @@ namespace MyShogi.Model.Shogi.Usi
         private ProcessNegotiator negotiator;
 
         /// <summary>
-        /// エンジンの状態。
+        /// 現在思考中であるかどうかの状態管理フラグ
         /// </summary>
-        private UsiEngineState State
-        {
-            get { return GetValue<UsiEngineState>("State"); }
-            set { SetValue<UsiEngineState>("State", value); }
-        }
-        
+        private UsiEngineThinkingBridge ThinkingBridge { get; set; }
+
         /// <summary>
         /// "usi"コマンドを思考ンジンに送信した時刻。思考エンジンは起動時にすぐに応答するように作るべき。
         /// 一応、タイムアウトを監視する。
@@ -336,8 +328,11 @@ namespace MyShogi.Model.Shogi.Usi
             // "usiok"に対してエンジン設定などを渡してやる。
 
             ComplementOptions();
-            LoadDefaultOption();
+
+            // この変更メッセージをハンドルしてDefaultOptionをセットしてくれていることを期待する。
             ChangeState(UsiEngineState.UsiOk);
+
+            SendSetOptionList();
         }
 
         /// <summary>
@@ -358,46 +353,12 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
-        /// デフォルトオプション一覧と取得したオプションとの
-        /// 整合性を取りながら、オプション値を更新します。
-        /// </summary>
-        private void LoadDefaultOption()
-        {
-            // デフォルトオプションが設定されていないなら、この処理はskipする。
-            if (DefaultOptionList == null)
-                return;
-
-            foreach (var option in OptionList)
-            {
-                if (option.OptionType == UsiOptionType.None ||
-                    option.OptionType == UsiOptionType.Button)
-                {
-                    continue;
-                }
-
-                // 名前と型が同じオプションを保存済みオプションから検索します。
-                var saved = DefaultOptionList.FirstOrDefault(_ =>
-                    _.Name == option.Name &&
-                    _.OptionType == option.OptionType);
-                if (saved == null)
-                {
-                    continue;
-                }
-
-                // 例外は握りつぶします。
-                //Util.SafeCall(() => option.SetDefault(saved.Value));
-            }
-
-            SendSetOptionList();
-        }
-
-        /// <summary>
         /// setoptionコマンドをまとめて送信します。
         /// </summary>
         public void SendSetOptionList()
         {
             var list = OptionList
-                .Where(_ => _.OptionType != UsiOptionType.Button)
+                .Where(_ => _.OptionType != UsiOptionType.Button) // Button型以外はそのまま垂れ流してOk.
                 .Select(_ => _.CreateSetOptionCommandString())
                 .Where(_ => !string.IsNullOrEmpty(_))
                 //.Select(_ => _ + '\n')

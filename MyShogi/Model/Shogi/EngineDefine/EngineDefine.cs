@@ -44,7 +44,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <summary>
         /// エンジンの実行ファイル名。
         /// 
-        /// 例えば"engine"としておくと、AVX2用ならば"engine_avx2.exe"のようになる。
+        /// 例えばこの値を"engine"としておくと、EngineExeFileName()を使った時に、AVX2用ならば"engine_avx2.exe"のようになる。
+        /// 
         /// 例)
         ///     "engine_nosse.exe"  : 32bit版
         ///     "engine_sse2.exe"   : 64bit版sse2対応

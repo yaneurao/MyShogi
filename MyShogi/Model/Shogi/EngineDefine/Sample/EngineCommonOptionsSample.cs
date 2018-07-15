@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MyShogi.Model.Shogi.Usi;
+using System.Collections.Generic;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -93,6 +94,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
             return setting;
         }
 
+
         /// <summary>
         /// エンジンオプションの共通設定に表示すべきオブジェクトを生成する。
         /// これをそのままエンジンオプションの設定ダイアログにbindすれば
@@ -100,6 +102,22 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         /// <returns></returns>
         public static EngineOptionsForSetting CreateEngineCommonOptions()
+        {
+            // 生成に時間がかかる＆エンジンの起動ごとに必要なので
+            // 生成したものを保存している。
+            
+            if (engineCommonOptions == null)
+                engineCommonOptions = CreateEngineCommonOptions_();
+
+            return engineCommonOptions;
+        }
+
+        /// <summary>
+        /// singleton object
+        /// </summary>
+        private static EngineOptionsForSetting engineCommonOptions;
+
+        private static EngineOptionsForSetting CreateEngineCommonOptions_()
         {
             var setting = new EngineOptionsForSetting()
             {
@@ -411,5 +429,29 @@ namespace MyShogi.Model.Shogi.EngineDefine
             return setting;
         }
 
+        /// <summary>
+        /// 通常対局、検討モードの共通設定のデフォルト値を返す。
+        /// </summary>
+        /// <returns></returns>
+        public static EngineOptions CommonOptionDefault()
+        {
+            if (commonOptionDefault == null)
+            {
+                var options = new List<EngineOption>();
+
+                var opt = CreateEngineCommonOptions();
+                foreach (var desc in opt.Descriptions)
+                {
+                    // この文字列でUsiOptionオブジェクトを構築して、nameとdefault値を得る
+                    var usiOption = UsiOption.Parse(desc.UsiBuildString);
+                    options.Add(new EngineOption(usiOption.Name, usiOption.GetDefault()));
+                }
+
+                commonOptionDefault = new EngineOptions() { Options = options };
+            }
+            return commonOptionDefault;
+        }
+
+        private static EngineOptions commonOptionDefault;
     }
 }

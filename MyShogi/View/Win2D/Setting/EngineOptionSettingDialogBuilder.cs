@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Diagnostics;
+using System.Collections.Generic;
 using MyShogi.App;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.Player;
-using System.Collections.Generic;
 
 namespace MyShogi.View.Win2D.Setting
 {

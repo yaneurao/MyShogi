@@ -132,8 +132,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
             if (config.NormalConfig == null)
                 config.NormalConfig = new EngineConfig();
 
+            if (config.NormalConfig.CommonOptions == null)
+                config.NormalConfig.CommonOptions = EngineCommonOptionsSample.CommonOptionDefault();
+
             if (config.ConsiderationConfig == null)
                 config.ConsiderationConfig = new EngineConfig();
+
+            if (config.ConsiderationConfig.CommonOptions == null)
+                config.ConsiderationConfig.CommonOptions = EngineCommonOptionsSample.CommonOptionDefault();
 
             if (config.MateConfig == null)
                 config.MateConfig = new EngineConfig();

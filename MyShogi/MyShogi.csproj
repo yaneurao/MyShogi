@@ -138,7 +138,6 @@
     <Compile Include="Model\Shogi\Usi\UsiEngineException.cs" />
     <Compile Include="Model\Shogi\Usi\UsiException.cs" />
     <Compile Include="Model\Shogi\Usi\UsiOption.cs" />
-    <Compile Include="Model\Shogi\Usi\UsiOptionMin.cs" />
     <Compile Include="Model\Shogi\Usi\UsiOptionType.cs" />
     <Compile Include="Model\Test\DevTest2\EvalControlTestForm.cs">
       <SubType>Form</SubType>
