@@ -128,14 +128,14 @@ namespace MyShogi.View.Win2D.Setting
 
                 //ind_descriptions = new List<EngineOptionDescription>();
 
-                // headerに存在しないoptionを追加。
+                // headerに存在しないoptionをheaderに追加。
                 foreach (var option in ind_options)
                     if (!ind_descriptions.Exists( x => x.Name == option.Name  ))
                         ind_descriptions.Add(new EngineOptionDescription(option.Name, option.Name, null, null, option.UsiBuildString));
 
-                // headerを追加したことにより、発生した、ind_optionsにない要素を追加。
+                // headerにあり、ind_optionsにない要素を追加。
                 foreach (var desc in ind_descriptions)
-                    if (!desc.Hide)
+                    if (!ind_options.Exists(x => x.Name == desc.Name))
                     {
                         var option = new EngineOptionForSetting(desc.Name, desc.Name)
                         {
@@ -161,7 +161,7 @@ namespace MyShogi.View.Win2D.Setting
                 }
             }
 
-            // エンジン個別設定でシリアライズしていた値で上書きしてやる。
+            // -- エンジン個別設定でシリアライズしていた値で上書きしてやる。
             var indivisualConfig = config.IndivisualEnginesOptions.Find(x => x.FolderPath == engineDefineEx.FolderPath);
             if (indivisualConfig == null)
             {
@@ -173,14 +173,12 @@ namespace MyShogi.View.Win2D.Setting
 
             var ind_setting = new EngineOptionsForSetting()
             {
-                Options = ind_options,
-                Descriptions = ind_descriptions,
-                IndivisualSetting = true, // エンジン個別設定
+                Options = ind_options,           // エンジンから取得したオプション一式
+                Descriptions = ind_descriptions, // 個別設定のDescription
+                IndivisualSetting = true,        // エンジン個別設定モードに
             };
-
-            // エンジン共通設定の、ユーザーの選択をシリアライズしたものがあるなら、そのValueを上書きする。
-            if (ind_options != null)
-                ind_setting.OverwriteEngineOptions(indivisualConfig.Options , commonSettings);
+            if (ind_setting.Options != null)
+                ind_setting.OverwriteEngineOptions(indivisualConfig.Options, commonSettings);
 
             // -- ダイアログの構築
 

@@ -1,6 +1,6 @@
-﻿using MyShogi.Model.Shogi.Usi;
+﻿using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Usi;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -89,6 +89,33 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "スレッド数を増やすとCPU負荷率が上がるのでCPUの温度を下げたい時などはスレッド数を減らしてみてください。" +
                         "なお、PCの論理コア数より増やしても棋力は普通、強くなりません。",
                         "option name Threads type spin default 4 min 1 max 4096"),
+
+                    // -- 以下、CreateEngineCommonOptions()のほうで設定いるものと重複している。
+                    // こちらは、gpsfishなど外部エンジンに対して表示する用。
+
+                    new EngineOptionDescription(null           , "思考設定" ,
+                        null,
+                        "エンジンの思考の設定です。棋力に直接的な影響のある部分です。",
+                        null
+                        ),
+
+                    new EngineOptionDescription("MultiPV"   , null ,
+                        "候補手の数を設定します",
+                        "例えば、この項目(MultiPV)を5に設定すると、思考するときに候補手として5手挙げます。\r\n"+
+                        "このとき、5手分調べないといけなくなるので、MultiPVを1に設定している時の約5倍の時間がかかるようになります。" +
+                        "通常対局の時は1に設定しておくのが一番強くなります。\r\n" +
+                        "また、検討モードの時は、この設定値は無視され、検討ウィンドウの『候補手』の数が反映されます。",
+
+                        "option name MultiPV type spin default 1 min 1 max 800"),
+
+                    // ここに水平線欲しいので「その他」という見出しを作る。
+
+                    new EngineOptionDescription(null, "その他" ,
+                        null ,
+                        "その他の設定",
+                        null
+                        ),
+
                 }
             };
 
@@ -419,14 +446,24 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     new EngineOptionDescription("Param2") { Hide = true },
                     new EngineOptionDescription("SkipLoadingEval") { Hide = true },
                     new EngineOptionDescription("EvalSaveDir") { Hide = true },
-                    
+
+                    // -- その他
+
+                    // すべて分類したので、このエンジン設定にはその他は必要ない。gpsfishのような他のエンジンを追加する時には必要。
+
+                    new EngineOptionDescription(null, "その他" ,"その他の設定",null) { Hide = true },
                 }
             };
 
             // ハッシュ設定、スレッド設定をいま生成したsettingの前方に挿入する。
+            // MultiPVとPonderはすでに持っているので、こういう重複を除去しながら挿入する。
             var header = CreateEngineMinimumOptions();
-            setting.Descriptions.InsertRange(0, header.Descriptions);
+            //setting.Descriptions.InsertRange(0, header.Descriptions);
 
+            foreach (var h in header.Descriptions.ReverseIterator() /* 逆向きのiterator */)
+                if (!setting.Descriptions.Exists(x => x.DisplayName == h.DisplayName))
+                    setting.Descriptions.Insert(0, h);
+            
             return setting;
         }
 

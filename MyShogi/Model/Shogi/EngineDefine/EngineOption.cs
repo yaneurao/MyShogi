@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Serialization;
 using MyShogi.Model.Common.ObjectModel;
 
@@ -78,6 +80,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         [DataMember]
         public bool FollowCommonSetting;
+
+        /// <summary>
+        /// デバッガーで見たときに値が見えないと不便なのでToString()を用意しておく。
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"{Name}({Value})";
+        }
     }
 
     /// <summary>
@@ -213,6 +224,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// (共通設定のほうに同じ名前の項目がなければチェックボックスを出せない。)
         /// </summary>
         public bool EnableFollowCommonSetting;
+
+        /// <summary>
+        /// デバッガーで見たときに値が見えないと不便なのでToString()を用意しておく。
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"{Name}({Value})";
+        }
     }
 
     /// <summary>
@@ -278,6 +298,16 @@ namespace MyShogi.Model.Shogi.EngineDefine
             }
         }
 
+        /// <summary>
+        /// エンジンオプションの個別設定の初期化用。
+        /// ユーザーの選択値でValueを上書きする。
+        /// 
+        /// this.Options : エンジンから取得したオプションのリスト。
+        /// options : この値でdefault値を上書きする。
+        /// commonSetting : 共通設定
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="commonSetting"></param>
         public void OverwriteEngineOptions(List<EngineOptionForIndivisual> options , EngineOptionsForSetting commonSetting)
         {
             // 前回なかった(ユーザーの選択が保存されていない)新規要素で、
