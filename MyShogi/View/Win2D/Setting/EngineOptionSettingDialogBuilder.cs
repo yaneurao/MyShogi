@@ -197,6 +197,7 @@ namespace MyShogi.View.Win2D.Setting
             {
                 indivisualConfig.Options = ind_setting.ToEngineOptionsForIndivisual();
             });
+            dialog.ViewModel.EngineDisplayName = engineDefine.DisplayName;
 
             return dialog;
         }

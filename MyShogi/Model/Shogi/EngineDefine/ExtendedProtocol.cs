@@ -10,6 +10,8 @@
         /// <summary>
         /// "go"コマンドでbbyoyomi , wbyoyomiとして先手と後手の秒読み設定を送ってもらう。
         /// また"go ponder" , "ponderhit" 時にも先後の残り時間がやってくる。
+        /// 
+        /// ※　まだ実装してない。[2018/07/15]
         /// </summary>
         GoCommandTimeExtention,
 

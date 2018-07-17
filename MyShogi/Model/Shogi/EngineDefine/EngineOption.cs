@@ -7,7 +7,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
     /// <summary>
     /// エンジンのoptionとその値のペア
     /// ユーザーの設定した値を保存するのに用いる。
-    /// エンジン共通設定用。
+    /// EngineOptionに関する、最小限の表現形式。
     /// </summary>
     [DataContract]
     public class EngineOption

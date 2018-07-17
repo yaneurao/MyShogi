@@ -55,6 +55,10 @@ namespace MyShogi.View.Win2D
                     CreateEngineSelectionDialog(c);
                 });
 
+                // 反対側のプレイヤーに詳細設定ボタンのEnable/Disableを伝達する。
+                var playerSetting2 = playerSettings[(int)c.Not()].ViewModel;
+                playerSetting.AddPropertyChangedHandler("SettingButton", (args) => playerSetting2.SettingButton = (bool)args.value);
+
                 var timeSetting = timeSettings[(int)c].ViewModel;
                 timeSetting.Color = c;
             }

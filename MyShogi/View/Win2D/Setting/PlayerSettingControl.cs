@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
@@ -9,7 +6,6 @@ using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.LocalServer;
-using MyShogi.Model.Shogi.Player;
 
 namespace MyShogi.View.Win2D.Setting
 {
@@ -57,6 +53,17 @@ namespace MyShogi.View.Win2D.Setting
                 get { return GetValue<Color>("Color"); }
                 set { SetValue("Color", value); }
             }
+
+            /// <summary>
+            /// 「詳細設定」ボタンのEnableが変化して欲しい時に発生するイベント。
+            /// 詳細設定ダイアログを出している時にもう片側のプレイヤーのこのボタンも無効化しないといけないので
+            /// このイベントを介して行う。
+            /// </summary>
+            public bool SettingButton
+            {
+                get { return GetValue<bool>("SettingButton"); }
+                set { SetValue("SettingButton", value); }
+            }
         }
 
         public PlayerSettingViewModel ViewModel = new PlayerSettingViewModel();
@@ -95,10 +102,16 @@ namespace MyShogi.View.Win2D.Setting
             var vm = ViewModel;
 
             vm.AddPropertyChangedHandler("Color", (args) =>
-             {
-                 var color = (Color)args.value;
-                 groupBox1.Text = color == Color.BLACK ? "先手/下手" : "後手/上手";
-             });
+            {
+                var color = (Color)args.value;
+                groupBox1.Text = color == Color.BLACK ? "先手/下手" : "後手/上手";
+            });
+
+            vm.AddPropertyChangedHandler("SettingButton", (args) =>
+            {
+                var b = (bool)args.value;
+                button2.Enabled = b;
+            });
 
             vm.AddPropertyChangedHandler("EngineDefineChanged", (args) =>
             {
@@ -203,6 +216,14 @@ namespace MyShogi.View.Win2D.Setting
         /// </summary>
         private void ShowEngineOptionSettingDialog()
         {
+            // 前回ダイアログを出しているなら消しておく。
+            // (ボタンを無効化しているので出せないはずなのだが…)
+            if (engineSettingDialog != null)
+            {
+                engineSettingDialog.Dispose();
+                engineSettingDialog = null;
+            }
+
             var dialog = EngineOptionSettingDialogBuilder.Build(
                 EngineCommonOptionsSample.CreateEngineCommonOptions(), // 共通設定のベース
                 TheApp.app.EngineConfigs.NormalConfig,                 // 共通設定の値はこの値で上書き
@@ -213,8 +234,20 @@ namespace MyShogi.View.Win2D.Setting
             if (dialog == null)
                 return;
 
-            dialog.Show();
+            // 「詳細設定」ボタンをDisableにする。
+
+            ViewModel.SettingButton = false;
+
+            engineSettingDialog = dialog;
+            engineSettingDialog.Disposed += (sender, args) => { ViewModel.SettingButton = true; };
+
+            engineSettingDialog.Show();
         }
+
+        /// <summary>
+        /// 詳細設定ダイアログ
+        /// </summary>
+        private EngineOptionSettingDialog engineSettingDialog;
 
         // -- handlers
 
