@@ -41,6 +41,22 @@ namespace MyShogi.Model.Shogi.EngineDefine
     }
 
     /// <summary>
+    /// 「通常対局用」「検討用」「詰将棋」用のいずれであるか。
+    /// </summary>
+    [DataContract]
+    public enum EngineConfigType
+    {
+        [EnumMember]
+        Normal ,        // 通常対局用
+
+        [EnumMember]
+        Consideration , // 検討用
+
+        [EnumMember]
+        Mate,           // 詰将棋用
+    }
+
+    /// <summary>
     /// エンジンの共通設定＋個別設定 
     /// </summary>
     [DataContract]
@@ -57,6 +73,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         [DataMember]
         public List<IndivisualEngineOptions> IndivisualEnginesOptions;
+
+        /// <summary>
+        /// このインスタンスがs「通常対局用」「検討用」「詰将棋」用のいずれであるか。
+        /// </summary>
+        [DataMember]
+        public EngineConfigType EngineConfigType;
 
         /// <summary>
         /// [UI Thread] : engine_pathに一致するエンジン設定を引っ張ってくる。
@@ -130,13 +152,13 @@ namespace MyShogi.Model.Shogi.EngineDefine
             // 改めてnull checkが必要。
 
             if (config.NormalConfig == null)
-                config.NormalConfig = new EngineConfig();
+                config.NormalConfig = new EngineConfig() { EngineConfigType = EngineConfigType.Normal };
 
             if (config.ConsiderationConfig == null)
-                config.ConsiderationConfig = new EngineConfig();
+                config.ConsiderationConfig = new EngineConfig() { EngineConfigType = EngineConfigType.Consideration };
 
             if (config.MateConfig == null)
-                config.MateConfig = new EngineConfig();
+                config.MateConfig = new EngineConfig() { EngineConfigType = EngineConfigType.Mate };
 
             void NullCheck(EngineConfig c)
             {
@@ -215,6 +237,22 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 }
 
                 return options;
+            }
+        }
+
+        /// <summary>
+        /// EngineConfigTypeを日本語文字列化して返す。
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
+        public static string Pretty(this EngineConfigType config)
+        {
+            switch(config)
+            {
+                case EngineConfigType.Normal: return "通常対局";
+                case EngineConfigType.Consideration: return "検討";
+                case EngineConfigType.Mate: return "詰将棋";
+                default: return null;
             }
         }
     }
