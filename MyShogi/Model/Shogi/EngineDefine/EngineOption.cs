@@ -154,6 +154,16 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         [DataMember]
         public bool Hide;
+
+        /// <summary>
+        /// デバッガーで見たときに表示名か何かが表示されていないとわかりにくいので、
+        /// DisplayNameをToString()で返すようにしておく。
+        /// </summary>
+        /// <returns></returns>
+        public new string ToString()
+        {
+            return DisplayName;
+        }
     }
 
     /// <summary>

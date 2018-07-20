@@ -132,7 +132,7 @@ namespace MyShogi.View.Win2D.Setting
                     {
                         var label = new Label();
                         // 水平線なのでフォントは問題ではない
-                        label.Font = new Font("ＭＳ ゴシック", 9, GraphicsUnit.Pixel);
+                        label.Font = new Font("ＭＳ ゴシック", 9);
                         label.Location = new Point(label_x[0] + x_offset, y);
                         label.Size = new Size(ClientSize.Width, 1);
                         label.BorderStyle = BorderStyle.FixedSingle;
@@ -153,7 +153,10 @@ namespace MyShogi.View.Win2D.Setting
                     label1.Location = new Point(label_x[0] + x_offset, y);
                     label1.AutoSize = true;
                     label1.Text = desc.DisplayName;
-                    label1.Font = new Font("ＭＳ ゴシック", 30, GraphicsUnit.Pixel);
+                    label1.Font = new Font("ＭＳ ゴシック", 14 );
+                    // Font()の第三引数に " GraphicsUnit.Pixel "をつけるとdpi設定の影響を受けない。
+                    // ここでは、dpi設定の影響を受けないといけないので、指定しない。
+
                     label1.MouseHover += h;
                     Controls.Add(label1);
                     page.Add(label1);
@@ -179,6 +182,9 @@ namespace MyShogi.View.Win2D.Setting
                 }
                 catch
                 {
+                    // デバッグ用に、Parse()に失敗した文字列を出力してみる。
+                    //Console.WriteLine(e.UsiBuildString);
+
                     continue;
                 }
 
@@ -261,7 +267,7 @@ namespace MyShogi.View.Win2D.Setting
                     });
 
                     var label1 = new Label();
-                    label1.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
+                    label1.Font = new Font("ＭＳ ゴシック", 10);
                     label1.Location = new Point(label_x[0] + x_offset, y);
                     label1.AutoSize = true;
                     label1.Text = displayName.Left(16); // GPS将棋とか長すぎるオプション名がある。
@@ -270,19 +276,19 @@ namespace MyShogi.View.Win2D.Setting
                     page.Add(label1);
 
                     var label2 = new Label();
-                    label2.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
-                    label2.Location = new Point(label_x[2] + hh /* 配置したcontrolから少し右に配置 */ + x_offset, y);
+                    label2.Font = new Font("ＭＳ ゴシック", 10);
+                    label2.Location = new Point(label_x[2] + x_offset  + hh /* 配置したcontrolから少し右に配置 */ , y);
                     label2.AutoSize = true;
                     label2.Text = desc.DescriptionSimple;
                     label2.MouseHover += h;
                     Controls.Add(label2);
                     page.Add(label2);
 
-                    control.Location = new Point(label_x[1], y);
+                    control.Location = new Point(label_x[1] + x_offset , y);
                     control.MouseHover += h;
-                    control.Font = new Font("ＭＳ ゴシック", 24, GraphicsUnit.Pixel);
+                    control.Font = new Font("ＭＳ ゴシック", 9);
 
-                    control.Size = new Size(label_x[2] - label_x[1] + x_offset, control.Height);
+                    control.Size = new Size(label_x[2] - label_x[1] , control.Height);
                     Controls.Add(control);
                     page.Add(control);
 
@@ -320,7 +326,7 @@ namespace MyShogi.View.Win2D.Setting
                     y += control.Height + hh/3;
                 }
 
-                if (y >= label4.Location.Y - label4.Height * 2)
+                if (y >= label4.Location.Y - label4.Height * 2.5 /* 見出しがありうる */)
                 {
                     // 次ページに
 
