@@ -136,7 +136,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// "State" propertyをハンドルして、State == UsiOkに変化した時にこのValueをセットしなおしたり、
         /// 変更したりすると良い。(その値が"setoption"でエンジンに渡される。)
         /// </summary>
-        public List<UsiOption> OptionList { get; set; } = new List<UsiOption>();
+        public List<UsiOption> OptionList { get; } = new List<UsiOption>();
 
         /// <summary>
         /// エンジンの設定ダイアログ用であるか？

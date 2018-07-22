@@ -196,7 +196,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 }
 
                 // 個別設定の反映
-                if (indSetting != null)
+                if (indSetting != null && indSetting.Options != null)
                 {
                     var opt = indSetting.Options.Find(x => x.Name == option.Name);
                     if (opt != null && !opt.FollowCommonSetting /* 共通設定に従わない */)

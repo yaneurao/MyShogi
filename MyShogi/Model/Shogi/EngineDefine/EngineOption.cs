@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using MyShogi.Model.Common.ObjectModel;
 
@@ -35,6 +33,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         [DataMember]
         public string Value;
+
+        /// <summary>
+        /// デバッガーで見たときに値が見えないと不便なのでToString()を用意しておく。
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"{Name}({Value})";
+        }
     }
 
     /// <summary>

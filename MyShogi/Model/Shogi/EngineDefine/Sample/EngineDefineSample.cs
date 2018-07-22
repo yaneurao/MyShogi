@@ -32,51 +32,51 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 // ここの段位は、持ち時間15分切れ負けぐらいの時の棋力。
 
                 new EnginePreset( "九段" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","200000"),
                 }),
                 new EnginePreset("八段" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","100000"),
                 }),
                 new EnginePreset("七段" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","80000"),
                 }),
                 new EnginePreset("六段" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","40000"),
                 }),
                 new EnginePreset("五段" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","20000"),
                 }),
                 new EnginePreset("四段" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","10000"),
                 }),
                 new EnginePreset("三段" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","5000"),
                 }),
                 new EnginePreset("二段" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","3000"),
                 }),
                 new EnginePreset("初段" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","500"),
                 }),
                 new EnginePreset("一級" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","400"),
                 }),
                 new EnginePreset("二級" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","300"),
                 }),
                 new EnginePreset("三級" , new EngineOption[] {
-                        new EngineOption("Thread","4"),
+                        new EngineOption("Threads","4"),
                         new EngineOption("NodesLimit","200"),
                 }),
             };
@@ -225,6 +225,26 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                 //Console.WriteLine(EngineDefineUtility.EngineExeFileName(engine_define));
             }
+
+            {
+                // gpsfish2(動作テスト用) 『将棋神　やねうら王』には含めない。
+                // presetの動作テストなどに用いる。
+                var engine_define = new EngineDefine()
+                {
+                    DisplayName = "Gpsfish2",
+                    EngineExeName = "gpsfish",
+                    SupportedCpus = new List<Cpu>(new[] { Cpu.SSE2 }),
+                    RequiredMemory = 10,
+                    Presets = default_preset,
+                    DescriptionSimple = "GPS将棋2(テスト用)",
+                    Description = "presetなどのテスト用。",
+                    DisplayOrder = 9999,
+                    SupportedExtendedProtocol = default_extend,
+                    EngineOptionDescriptions = default_descriptions,
+                };
+                EngineDefineUtility.WriteFile("engine/gpsfish2/engine_define.xml", engine_define);
+            }
+
         }
     }
 }

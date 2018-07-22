@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Collections.Generic;
 using MyShogi.App;
 using MyShogi.Model.Shogi.Core;
@@ -7,7 +8,6 @@ using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Shogi.EngineDefine;
-using System;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -240,7 +240,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// プレイヤー情報を検討ダイアログに反映させる。
+        /// プレイヤー情報を検討ダイアログにリダイレクトする設定をする。
         /// </summary>
         private void InitEngineConsiderationInfo(GameModeEnum nextGameMode)
         {
@@ -271,18 +271,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 {
                     var num_ = num; // copy for capturing
 
-                    var engineDefineFolderPath = "\\engine\\gpsfish"; // TODO : あとで検討用エンジン選択ダイアログを作成し、そこから取得するように変更する。
-                    var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == engineDefineFolderPath);
-                    var engineDefine = engineDefineEx.EngineDefine;
-
-                    // 検討モードの名前はエンジン名から取得
-                    var name = engineDefine.DisplayName;
-
                     ThinkReport = new UsiThinkReportMessage()
                     {
                         type = UsiEngineReportMessageType.SetEngineName,
                         number = num_, // is captured
-                        data = name,
+                        data = DisplayName(c),
                     };
 
                     // UsiEngineのThinkReportプロパティを捕捉して、それを転送してやるためのハンドラをセットしておく。
@@ -307,9 +300,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                             };
                         }
                     });
-
-                    // エンジンを開始する。
-                    InitUsiEnginePlayer(engine_player ,engineDefineEx , 0 , nextGameMode);
 
                     num++;
                 }
@@ -688,21 +678,30 @@ namespace MyShogi.Model.Shogi.LocalServer
             CanUserMove = true;
 
             // 検討モード用のプレイヤーセッティングを行う。
+
+            // 検討用エンジン
+            var engineDefineFolderPath = "\\engine\\gpsfish"; // TODO : あとで検討用エンジン選択ダイアログを作成し、そこから取得するように変更する。
+            var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == engineDefineFolderPath);
+
             {
                 var setting = new GameSetting();
+
+                // 検討モードの名前はエンジン名から取得
+                var engineDefine = engineDefineEx.EngineDefine;
+                var engineName = engineDefine.DisplayName;
 
                 switch (GameMode)
                 {
                     // 検討用エンジン
                     case GameModeEnum.ConsiderationWithEngine:
-                        setting.Player(Color.BLACK).PlayerName = "検討エンジン";
+                        setting.Player(Color.BLACK).PlayerName = engineName;
                         setting.Player(Color.BLACK).IsCpu = true;
                         Players[0 /*検討用のプレイヤー*/ ] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
                         break;
 
                     // 詰将棋エンジン
                     case GameModeEnum.ConsiderationWithMateEngine:
-                        setting.Player(Color.BLACK).PlayerName = "詰将棋エンジン";
+                        setting.Player(Color.BLACK).PlayerName = engineName;
                         setting.Player(Color.BLACK).IsCpu = true;
                         Players[0 /* 詰将棋用のプレイヤー */] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
                         break;
@@ -712,6 +711,10 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 局面の設定
             kifuManager.EnableKifuList = false;
+
+            // 検討用エンジンの開始
+            var engine_player = Players[0] as UsiEnginePlayer;
+            InitUsiEnginePlayer(engine_player, engineDefineEx, 0, GameMode);
 
             // 検討ウィンドウへの読み筋などのリダイレクトを設定
             InitEngineConsiderationInfo(GameMode);

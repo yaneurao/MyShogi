@@ -2,6 +2,7 @@
 using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
+using MyShogi.Model.Shogi.EngineDefine;
 
 namespace MyShogi.Model.Shogi.Player
 {
@@ -68,8 +69,11 @@ namespace MyShogi.Model.Shogi.Player
         /// </summary>
         public bool Initializing { get; set; }
 
+        /// <summary>
+        /// Engine本体
+        /// </summary>
         public UsiEngine Engine;
-        
+
         public void OnIdle()
         {
             // 思考するように命令が来ていれば、エンジンに対して思考を指示する。
