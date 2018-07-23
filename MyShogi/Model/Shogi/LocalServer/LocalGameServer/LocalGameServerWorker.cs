@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Threading;
 using System.Collections.Generic;
+using System.Threading;
 using MyShogi.App;
-using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Shogi.Player;
-using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Resource.Sounds;
-using MyShogi.Model.Shogi.Usi;
+using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
+using MyShogi.Model.Shogi.Kifu;
+using MyShogi.Model.Shogi.Player;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -91,6 +91,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             sengo_read_out = new bool[2] { false, false };
 
             // プレイヤーの生成
+            UsiEngineHashManager.Init();
             foreach (var c in All.Colors())
             {
                 var gamePlayer = gameSetting.Player(c);
@@ -105,9 +106,13 @@ namespace MyShogi.Model.Shogi.LocalServer
                         TheApp.app.MessageShow("エンジンがありませんでした。" + gamePlayer.EngineDefineFolderPath);
                         return;
                     }
-                    InitUsiEnginePlayer(Players[(int)c] as UsiEnginePlayer, engineDefineEx , gamePlayer.SelectedEnginePreset, nextGameMode);
+                    var usiEnginePlayer = Players[(int)c] as UsiEnginePlayer;
+                    InitUsiEnginePlayer(c , usiEnginePlayer, engineDefineEx, gamePlayer.SelectedEnginePreset, nextGameMode);
                 }
             }
+
+            // エンジンに与えるHashSizeの計算
+            UsiEngineHashManager.CalcHashSize();
 
             // 局面の設定
             kifuManager.EnableKifuList = true;
@@ -196,8 +201,31 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         /// <param name="usiEnginePlayer"></param>
         /// <param name="selectedPresetIndex">プリセットの選択番号+1。選んでなければ0。</param>
-        private void InitUsiEnginePlayer(UsiEnginePlayer usiEnginePlayer , EngineDefineEx engineDefineEx , int selectedPresetIndex , GameModeEnum nextGameMode)
+        private void InitUsiEnginePlayer(Color c , UsiEnginePlayer usiEnginePlayer , EngineDefineEx engineDefineEx , int selectedPresetIndex , 
+            GameModeEnum nextGameMode)
         {
+
+            var engine_config = TheApp.app.EngineConfigs;
+            EngineConfig config = null;
+
+            switch (nextGameMode)
+            {
+                case GameModeEnum.InTheGame:
+                    config = engine_config.NormalConfig;
+                    break;
+                case GameModeEnum.ConsiderationWithEngine:
+                    config = engine_config.ConsiderationConfig;
+                    break;
+                case GameModeEnum.ConsiderationWithMateEngine:
+                    config = engine_config.MateConfig;
+                    break;
+            }
+
+            // Hashマネージメントのために代入しておく。
+            UsiEngineHashManager.EngineDefines[(int)c] = engineDefineEx;
+            UsiEngineHashManager.Players[(int)c] = usiEnginePlayer;
+            UsiEngineHashManager.EngineConfigs[(int)c] = config;
+
             var engine = usiEnginePlayer.Engine;
             var engineDefine = engineDefineEx.EngineDefine;
 
@@ -209,24 +237,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var state = (UsiEngineState)args.value;
                     if (state == UsiEngineState.UsiOk)
                     {
-                        var engine_config = TheApp.app.EngineConfigs;
-                        EngineConfig config = null;
-
-                        switch (nextGameMode)
-                        {
-                            case GameModeEnum.InTheGame:
-                                config = engine_config.NormalConfig;
-                                break;
-                            case GameModeEnum.ConsiderationWithEngine:
-                                config = engine_config.ConsiderationConfig;
-                                break;
-                            case GameModeEnum.ConsiderationWithMateEngine:
-                                config = engine_config.MateConfig;
-                                break;
-                        }
-
                         // オプションの値を設定しなおす。
-                        EngineDefineUtility.SetDefaultOption(engine.OptionList, engineDefineEx, selectedPresetIndex, config);
+                        EngineDefineUtility.SetDefaultOption( engine.OptionList, engineDefineEx, selectedPresetIndex,
+                            config , UsiEngineHashManager.HashSize[(int)c]);
                     }
                 } catch (Exception ex)
                 {
@@ -713,8 +726,12 @@ namespace MyShogi.Model.Shogi.LocalServer
             kifuManager.EnableKifuList = false;
 
             // 検討用エンジンの開始
-            var engine_player = Players[0] as UsiEnginePlayer;
-            InitUsiEnginePlayer(engine_player, engineDefineEx, 0, GameMode);
+
+            var usiEnginePlayer = Players[0] as UsiEnginePlayer;
+            InitUsiEnginePlayer(Color.BLACK , usiEnginePlayer, engineDefineEx, 0, GameMode);
+
+            // エンジンに与えるHashSizeの計算
+            UsiEngineHashManager.CalcHashSize();
 
             // 検討ウィンドウへの読み筋などのリダイレクトを設定
             InitEngineConsiderationInfo(GameMode);
@@ -729,8 +746,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             // disconnect the consideration engine
             Disconnect();
         }
-
-
 
         #endregion
     }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-
-namespace MyShogi.Model.Common.Win32API
+﻿namespace MyShogi.Model.Common.Win32API
 {
     /// <summary>
     /// Win32 絡みのAPIを直接呼ばないと解決しない群。

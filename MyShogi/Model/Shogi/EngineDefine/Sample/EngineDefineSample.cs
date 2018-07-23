@@ -95,7 +95,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             var default_preset = new List<EnginePreset>(preset_default_array);
 
-            var default_cpus = new List<Cpu>(new[] { Cpu.NO_SSE, Cpu.SSE2, Cpu.SSE41, Cpu.SSE42, Cpu.AVX2 });
+            var default_cpus = new List<CpuType>(new[] { CpuType.NO_SSE, CpuType.SSE2, CpuType.SSE41, CpuType.SSE42, CpuType.AVX2 });
 
             var default_extend = new List<ExtendedProtocol>();
             default_extend.Add(ExtendedProtocol.UseHashCommandExtension);
@@ -211,7 +211,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 {
                     DisplayName = "gpsfish",
                     EngineExeName = "gpsfish",
-                    SupportedCpus = new List<Cpu>(new[] { Cpu.SSE2 }),
+                    SupportedCpus = new List<CpuType>(new[] { CpuType.SSE2 }),
                     RequiredMemory = 10, // gpsfishこれくらいで動くような？
                     Presets = default_preset,
                     DescriptionSimple = "GPS将棋(テスト用)",
@@ -233,7 +233,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 {
                     DisplayName = "Gpsfish2",
                     EngineExeName = "gpsfish",
-                    SupportedCpus = new List<Cpu>(new[] { Cpu.SSE2 }),
+                    SupportedCpus = new List<CpuType>(new[] { CpuType.SSE2 }),
                     RequiredMemory = 10,
                     Presets = default_preset,
                     DescriptionSimple = "GPS将棋2(テスト用)",

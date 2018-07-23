@@ -63,7 +63,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
             var current_cpu = CpuUtil.GetCurrentCpu();
 
             // サポートしている実行ファイルのなかで、一番いいものにする。
-            var cpu = Cpu.UNKNOWN;
+            var cpu = CpuType.UNKNOWN;
             foreach (var c in engine_define.SupportedCpus)
                 if (c <= current_cpu /* 現在のCPUで動作する*/ && cpu < c /* 一番ええやつ */)
                     cpu = c;
@@ -159,9 +159,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <param name="engineDefineEx"></param>
         /// <param name="selectedPresetIndex">プリセットの番号</param>
         /// <param name="commonSetting">共通設定</param>
+        /// <param name="HashSize">hashサイズ[MB] 0を指定するとoption設定に従う。AutoHashの時に呼び出し元のほうで設定する。</param>
         /// <returns></returns>
         public static void SetDefaultOption(List<UsiOption> optionList, EngineDefineEx engineDefineEx, int selectedPresetIndex ,
-            EngineConfig config)
+            EngineConfig config , int hashSize)
         {
             var engineDefine = engineDefineEx.EngineDefine;
             var folderPath = engineDefineEx.FolderPath;
@@ -175,10 +176,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
             }
 
             // HASHメモリの自動マネージメントについて..
-
             // "USI_Hash" → "HASH_"
             // "HASH" → "HASH_"
-            // に置換して、HASH_"の値を適用
+            // に置換されているはず。なので、HASH_"の値をまず設定。
 
             // 共通設定
             var commonSetting = config.CommonOptions;
@@ -187,31 +187,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             foreach (var option in optionList)
             {
-                // 共通設定の反映
-                if (commonSetting != null)
-                {
-                    var opt = commonSetting.Find(x => x.Name == option.Name);
-                    if (opt != null)
-                        option.SetDefault(opt.Value);
-                }
+                var value = config.GetDefault(option.Name , commonSetting , indSetting , preset);
 
-                // 個別設定の反映
-                if (indSetting != null && indSetting.Options != null)
-                {
-                    var opt = indSetting.Options.Find(x => x.Name == option.Name);
-                    if (opt != null && !opt.FollowCommonSetting /* 共通設定に従わない */)
-                        option.SetDefault(opt.Value);
-                }
+                // Hashサイズの自動マネージメント
+                if (option.Name == "Hash_" && hashSize != 0)
+                    value = hashSize.ToString();
 
-                // プリセットの適用
-                if (preset != null)
-                {
-                    var opt = preset.Find(x => x.Name == option.Name);
-                    if (opt != null)
-                        option.SetDefault(opt.Value);
-                }
+                if (value != null)
+                    option.SetDefault(value);
             }
-
 
             // スレッド数の自動マネージメントについて..
             // ponderの自動マネージメントについて..

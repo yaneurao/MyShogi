@@ -4,6 +4,7 @@ using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Shogi.Usi;
 
@@ -374,6 +375,11 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             KifuListSelectedIndex = ply;
         }
+
+        /// <summary>
+        /// UsiEnginePlayerのHash , Threadの自動マネージメントのためのクラス
+        /// </summary>
+        private UsiEngineHashManager UsiEngineHashManager = new UsiEngineHashManager();
 
         #endregion
     }

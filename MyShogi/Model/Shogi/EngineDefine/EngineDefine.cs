@@ -66,7 +66,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// ※　EngineUtility.EngineExeFileName()がそういう処理を行っている。
         /// </summary>
         [DataMember]
-        public List<Cpu> SupportedCpus { get; set; } = new List<Cpu>(new []{ Cpu.NO_SSE, Cpu.SSE2 , Cpu.SSE41 , Cpu.SSE42 , Cpu.AVX2 });
+        public List<CpuType> SupportedCpus { get; set; } = new List<CpuType>(new []
+        { CpuType.NO_SSE, CpuType.SSE2 , CpuType.SSE41 , CpuType.SSE42 , CpuType.AVX2 });
 
         /// <summary>
         /// 使用するメモリ 評価関数が使用するメモリ＋探索で使用するメモリ(HASHは除く)

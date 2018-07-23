@@ -5,7 +5,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
     /// <summary>
     /// 思考エンジンが対応しているCPU
     /// </summary>
-    public enum Cpu : int
+    public enum CpuType : int
     {
         UNKNOWN, // 不明。未確定の時の値。
 
@@ -18,7 +18,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         AVX512, // 64bit版 AVX512
     }
 
-    public static class CpuExtensions
+    public static class CpuTypeExtensions
     {
         /// <summary>
         /// 実行ファイルのファイル名の末尾につけるsuffixを返す。
@@ -27,18 +27,18 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         /// <param name="cpu"></param>
         /// <returns></returns>
-        public static string ToSuffix(this Cpu cpu)
+        public static string ToSuffix(this CpuType cpu)
         {
             switch (cpu)
             {
-                case Cpu.UNKNOWN : return "unknown";
-                case Cpu.NO_SSE  : return "no_sse";
-                case Cpu.SSE2    : return "sse2";
-                case Cpu.SSE41   : return "sse41";
-                case Cpu.SSE42   : return "sse42";
-                case Cpu.AVX     : return "avx";
-                case Cpu.AVX2    : return "avx2";
-                case Cpu.AVX512  : return "avx512";
+                case CpuType.UNKNOWN : return "unknown";
+                case CpuType.NO_SSE  : return "no_sse";
+                case CpuType.SSE2    : return "sse2";
+                case CpuType.SSE41   : return "sse41";
+                case CpuType.SSE42   : return "sse42";
+                case CpuType.AVX     : return "avx";
+                case CpuType.AVX2    : return "avx2";
+                case CpuType.AVX512  : return "avx512";
                 default:
                     throw new Exception("未知のCPU");
             }
@@ -51,17 +51,17 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// 現在の環境のCPU
         /// </summary>
         /// <returns></returns>
-        public static Cpu GetCurrentCpu()
+        public static CpuType GetCurrentCpu()
         {
-            Cpu c = cpu;
+            CpuType c = cpu;
 
             // 一度調べたのであれば保存してあるのでそれを返す。
-            if (c != Cpu.UNKNOWN)
+            if (c != CpuType.UNKNOWN)
                 return c;
 
             // 64bit環境でなければ無条件でNO_SSE
             if (!Environment.Is64BitOperatingSystem)
-                c = Cpu.NO_SSE;
+                c = CpuType.NO_SSE;
             else
             {
                 // 64bit環境である。
@@ -70,17 +70,17 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 var cpuid = Model.Common.Utility.CpuId.flags;
 
                 if (cpuid.hasAVX512F)
-                    c = Cpu.AVX512;
+                    c = CpuType.AVX512;
                 else if (cpuid.hasAVX2)
-                    c = Cpu.AVX2;
+                    c = CpuType.AVX2;
                 else if (cpuid.hasAVX)
-                    c = Cpu.AVX;
+                    c = CpuType.AVX;
                 else if (cpuid.hasSSE42)
-                    c = Cpu.SSE42;
+                    c = CpuType.SSE42;
                 else if (cpuid.hasSSE41)
-                    c = Cpu.SSE41;
+                    c = CpuType.SSE41;
                 else if (cpuid.hasSSE2)
-                    c = Cpu.SSE2;
+                    c = CpuType.SSE2;
                 else
                     // そんな阿呆な…。
                     throw new Exception("CPU判別に失敗しました。");
@@ -93,6 +93,6 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <summary>
         /// 一度調べたら保存しておく。
         /// </summary>
-        private static Cpu cpu;
+        private static CpuType cpu;
     }
 }

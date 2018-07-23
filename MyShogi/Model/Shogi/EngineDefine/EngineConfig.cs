@@ -88,6 +88,46 @@ namespace MyShogi.Model.Shogi.EngineDefine
         {
             return EngineConfigUtility.Find(this, engine_folder_path);
         }
+
+        /// <summary>
+        /// 思考エンジンに渡すべきエンジンオプションの値を求める。
+        /// </summary>
+        /// <param name="name">option名</param>
+        /// <param name="commonSetting">共通設定</param>
+        /// <param name="indSetting">個別設定</param>
+        /// <param name="preset">プリセット</param>
+        /// <returns></returns>
+        public string GetDefault(string name , List<EngineOption> commonSetting ,
+            IndivisualEngineOptions indSetting , List<EngineOption> preset)
+        {
+            string value = null;
+
+            // 共通設定の反映
+            if (commonSetting != null)
+            {
+                var opt = commonSetting.Find(x => x.Name == name);
+                if (opt != null)
+                    value = opt.Value;
+            }
+
+            // 個別設定の反映
+            if (indSetting != null && indSetting.Options != null)
+            {
+                var opt = indSetting.Options.Find(x => x.Name == name);
+                if (opt != null && !opt.FollowCommonSetting /* 共通設定に従わない */)
+                    value = opt.Value;
+            }
+
+            // プリセットの適用
+            if (preset != null)
+            {
+                var opt = preset.Find(x => x.Name == name);
+                if (opt != null)
+                    value = opt.Value;
+            }
+
+            return value;
+        }
     }
 
 
