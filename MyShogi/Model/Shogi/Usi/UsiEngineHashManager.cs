@@ -22,21 +22,22 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public void Init()
         {
-            Players = new UsiEnginePlayer[2];     /*  { null, null } */
-            EngineDefines = new EngineDefineEx[2];/*  { null, null } */
-            EngineConfigs = new EngineConfig[2];  /*  { null, null } */
-            HashSize = new long[2];               /*  { 0, 0} */
+            EngineDefines = new EngineDefineEx[2];      /*  { null, null }    */
+            EngineConfigs = new EngineConfig[2];        /*  { null, null }    */
+            Ponders = new bool[2];                      /*  { false , false } */
+            HashSize = new long[2];                     /*  { 0, 0 }          */
+            Threads = new int[2];                       /*  { 0, 0 }          */
         }
 
         /// <summary>
-        /// Hashサイズの自動計算を行う。
-        /// ・this.EngineDefines[2] にエンジンの設定が入っている。(ものとする)
-        /// ・this.EngineConfigs[2] にエンジン共通設定が入っている。(ものとする)
-        /// これらに基づいて、
-        /// this.HashSize[2]にそれぞれのエンジンの適切なHashサイズを設定する。
+        /// Hashサイズ , Threads の自動計算を行う。
+        /// ・SetValue()で初期化されているものとする。
+        /// これに基づいて、
+        /// ・this.HashSize[2]にそれぞれのエンジンの適切なHashサイズを設定する。
         /// エンジンオプションに従う場合は、0が設定される。
+        /// ・this.Threads[2]にそれぞれのエンジンの適切なThreads数を設定する。
         /// </summary>
-        public void CalcHashSize()
+        public void CalcValue()
         {
             // エンジンの数
             int numOfEngines = (EngineDefines[0] != null ? 1 : 0) + (EngineDefines[1] != null ? 1 : 0);
@@ -58,6 +59,9 @@ namespace MyShogi.Model.Shogi.Usi
 
             var min_total = (long)0;                  // 最低必要メモリの合計。(Working + Eval + Hash の先後分)
 
+            var autoThread = new bool[2];             // 自動Threadなのか
+            var threadsValues = new int[2];           // そうでない時のThreadsの設定値。
+
             foreach (var c in All.IntColors())
             {
                 var config = EngineConfigs[c];
@@ -76,8 +80,11 @@ namespace MyShogi.Model.Shogi.Usi
 
                 autoHash[c] = GetOptionValue("AutoHash_") == "true";
                 autoHashPercentage[c] = int.Parse(GetOptionValue("AutoHashPercentage_"));
-                hashValues[c] = int.Parse(GetOptionValue( "Hash_" ));
+                hashValues[c] = long.Parse(GetOptionValue( "Hash_" ));
                 evalShare[c] = GetOptionValue("EvalShare") == "true";
+
+                autoThread[c] = GetOptionValue("AutoThread_") == "true";
+                threadsValues[c] = int.Parse(GetOptionValue("Threads"));
 
                 numOfAutoHash += autoHash[c] ? 1 : 0;
 
@@ -87,7 +94,7 @@ namespace MyShogi.Model.Shogi.Usi
                 engine_min_hash[c] = engineDefine.MinimumHashMemory;
 
                 // 必要最低メモリ
-                min_total += engine_eval_memory[c] + engine_working_memory[c] + engine_min_hash[c];
+                min_total += engine_eval_memory[c] + engine_working_memory[c];
             }
 
             // 先後が同じエンジンでかつ、EvalShareしているなら、その分、必要メモリ量は下がるはず。
@@ -97,25 +104,12 @@ namespace MyShogi.Model.Shogi.Usi
             }
 
             // 空き物理メモリ[MB]
-            var physicalMemory = (long)Enviroment.GetFreePhysicalMemory() / 1024;
+            // 1) GetFreePhysicalMemory()はkBなので1024で割っている。
+            // 2) GUIの動作のために100MBぐらい必要なので100MBほど差し引いてから計算している。
+            // (メモリが足りなくなれば少しぐらいならOSが他のソフトをswapさせて空き物理メモリを確保してくれるとは思うが..)
+            var physicalMemory = (long)Enviroment.GetFreePhysicalMemory() / 1024 - 100;
 
-            // 人間側は、engine_req_memory[c] == 0になっているはずなので普通に計算していいはず…。
-
-            // 必要最低メモリのほうが空き物理メモリ以上なので、この最低値に設定しておく。
-            // 固定で確保すると足りなくなるので仕方がない。
-            if (min_total >= physicalMemory)
-            {
-                foreach (var c in All.IntColors())
-                {
-                    var hash = engine_min_hash[c];
-                    HashSize[c] = hash;
-                    min_total += hash;
-                }
-                goto EndCalcHash;
-            }
-
-            // totalからhash分を除いて、再度割当てする。
-            min_total -= (engine_min_hash[0] + engine_min_hash[1]);
+            // 人間側は、engine_eval_memory[c]などは 0になっているはずなので普通に計算していいはず…。
 
             // 片側だけAutoHashなら、そちらは後回しにして先に固定で確保して、残りメモリをAutoHashで割り当てる。
             foreach (var c in All.IntColors())
@@ -126,8 +120,8 @@ namespace MyShogi.Model.Shogi.Usi
                     // hashValues[c]と、engine_min_hash[c]の大きいほうを選択したほうがいいような気は少しする。
                     // しかし、そうするとhash sizeを小さくして勝率を見るようなことが出来なくなるのでユーザーの選択を尊重する。
 
-                    min_total += hash;
                     HashSize[c] = hash;
+                    min_total += hash;
                 }
             }
 
@@ -150,39 +144,86 @@ namespace MyShogi.Model.Shogi.Usi
                     }
                 }
 
-            EndCalcHash:;
+            string error = null;
+
+            // エンジン要求する最小要求hash量を満たしているか。
+            foreach (var c in All.IntColors())
+                if (HashSize[c] < engine_min_hash[c])
+                    error += $"{((Color)c).Pretty()}側のエンジンのハッシュが少なすぎます。少なくとも{engine_min_hash[c]}[MB]必要なところ、" +
+                        $"{HashSize[c]}[MB]しか確保されません。思考エンジンの動作が不安定になる可能性があります。";
+
             // Hash割当が大きくて物理メモリを大量に割り込む時、警告を出す必要があると思う。
             // しかし連続対局でこれが毎回表示されるとうざい気はしなくもない。
             // とりあえず連続対局のことはあとで考える。まずは警告を出す。
             if (physicalMemory <= min_total)
-                TheApp.app.MessageShow("空き物理メモリが足りないので動作が不安定になる可能性があります。" +
-                    $"エンジンの動作のために、物理メモリが{min_total - physicalMemory}[MB] 足りません。");
+                error += $"エンジンの動作のために、物理メモリが{min_total - physicalMemory}[MB] 足りません。"
+                    + "空き物理メモリが足りないので思考エンジンの動作が不安定になる可能性があります。";
 
             // スレッド数の自動マネージメントに関して
 
+            // 1) AutoThread_なら基本的には、OSが返すコアの数にする。
+            // 2) 2つのエンジンがそれぞれPonderありなら、スレッド数を2で割るべき。
+
+            var os_threads = Enviroment.GetProcessorCount(); // 1)
+            var ponder = Ponders[0] && Ponders[1] ? 2 : 1;   // 2)
+
+            foreach (var c in All.IntColors())
+            {
+                Threads[c] = autoThread[c] ? (os_threads / ponder) : threadsValues[c];
+
+                // エンジンがあるのにスレッド数が0に設定されている場合、警告ぐらい出すべきでは…。
+                // 通常、ThreadsはMinValueが1なので、GUI上で1以上しか設定できないから、0が設定されていることはないはずだが、
+                // エンジン側がMinValueの設定を忘れている可能性もあるので…。
+                if (EngineDefines[c] != null && Threads[c] == 0)
+                    error += $"{((Color)c).Pretty()}側の思考エンジンのスレッド数が0になっています。(エンジンオプションのThreadsの設定を見直してください。)";
+            }
+
+            if (error != null)
+                TheApp.app.MessageShow(error);
 
             // ここで計算された先後の最終的なHashSize、Thread数などをログに出力しておく。
-            Log.Write(LogInfoType.UsiServer, $"自動Hash = {{ {HashSize[0]} [MB] , {HashSize[1]} [MB] }}");
+            Log.Write(LogInfoType.UsiServer, $"自動Hash = {{ {HashSize[0]} [MB] , {HashSize[1]} [MB] }} ," +
+                $" 自動Threads = {{ { Threads[0] } , { Threads[1] } }}");
         }
 
         /// <summary>
-        /// UsiEnginePlayerの先後分。
+        /// 各メンバーの値を設定する。CalcValue()の前に呼び出して設定しないといけない。
         /// </summary>
-        public UsiEnginePlayer[] Players;
+        public void SetValue(Color c , EngineDefineEx engineDefineEx , EngineConfig config , bool ponder)
+        {
+            EngineDefines[(int)c] = engineDefineEx;
+            EngineConfigs[(int)c] = config;
+            Ponders[(int)c] = ponder;
+        }
+
+        /// <summary>
+        /// それぞれのEngineに設定するHash値。0の時はエンジンオプションに従う。
+        /// CalcValue()によって計算される。
+        /// </summary>
+        public long[] HashSize;
+
+        /// <summary>
+        /// それぞれのEngineに設定するThreads値。
+        /// CalcValue()によって計算される。
+        /// </summary>
+        public int[] Threads;
+
+        // -- privates
 
         /// <summary>
         /// EngineDefineExの先後分。
         /// </summary>
-        public EngineDefineEx[] EngineDefines;
+        private EngineDefineEx[] EngineDefines;
 
         /// <summary>
         /// EngineConfigの先後分。
         /// </summary>
-        public EngineConfig[] EngineConfigs;
+        private EngineConfig[] EngineConfigs;
 
         /// <summary>
-        /// それぞれのEngineに設定するHash値。0の時はエンジンオプションに従う。
+        /// Ponderが有効なのか。先後分。
         /// </summary>
-        public long[] HashSize;
+        private bool[] Ponders;
+
     }
 }

@@ -112,7 +112,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             // エンジンに与えるHashSizeの計算
-            UsiEngineHashManager.CalcHashSize();
+            UsiEngineHashManager.CalcValue();
 
             // 局面の設定
             kifuManager.EnableKifuList = true;
@@ -221,11 +221,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                     break;
             }
 
-            // Hashマネージメントのために代入しておく。
-            UsiEngineHashManager.EngineDefines[(int)c] = engineDefineEx;
-            UsiEngineHashManager.Players[(int)c] = usiEnginePlayer;
-            UsiEngineHashManager.EngineConfigs[(int)c] = config;
-
+            // Hash、Threadsのマネージメントのために代入しておく。
+            // TODO : ponder あとで書く
+            UsiEngineHashManager.SetValue(c, engineDefineEx , config, false);
+            
             var engine = usiEnginePlayer.Engine;
             var engineDefine = engineDefineEx.EngineDefine;
 
@@ -239,7 +238,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     {
                         // オプションの値を設定しなおす。
                         EngineDefineUtility.SetDefaultOption( engine.OptionList, engineDefineEx, selectedPresetIndex,
-                            config , UsiEngineHashManager.HashSize[(int)c]);
+                            config , UsiEngineHashManager.HashSize[(int)c] , UsiEngineHashManager.Threads[(int)c]);
                     }
                 } catch (Exception ex)
                 {
@@ -730,8 +729,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             var usiEnginePlayer = Players[0] as UsiEnginePlayer;
             InitUsiEnginePlayer(Color.BLACK , usiEnginePlayer, engineDefineEx, 0, GameMode);
 
-            // エンジンに与えるHashSizeの計算
-            UsiEngineHashManager.CalcHashSize();
+            // エンジンに与えるHashSize,Threadsの計算
+            UsiEngineHashManager.CalcValue();
 
             // 検討ウィンドウへの読み筋などのリダイレクトを設定
             InitEngineConsiderationInfo(GameMode);

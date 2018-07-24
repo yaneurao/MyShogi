@@ -160,9 +160,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <param name="selectedPresetIndex">プリセットの番号</param>
         /// <param name="commonSetting">共通設定</param>
         /// <param name="HashSize">hashサイズ[MB] 0を指定するとoption設定に従う。AutoHashの時に呼び出し元のほうで設定する。</param>
+        /// <param name="threads">スレッド数。エンジンオプションのThreadsの値は、この値で設定される。</param>
         /// <returns></returns>
         public static void SetDefaultOption(List<UsiOption> optionList, EngineDefineEx engineDefineEx, int selectedPresetIndex ,
-            EngineConfig config , long hashSize)
+            EngineConfig config , long hashSize , int threads)
         {
             var engineDefine = engineDefineEx.EngineDefine;
             var folderPath = engineDefineEx.FolderPath;
@@ -175,11 +176,6 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 preset = engineDefine.Presets[index].Options;
             }
 
-            // HASHメモリの自動マネージメントについて..
-            // "USI_Hash" → "HASH_"
-            // "HASH" → "HASH_"
-            // に置換されているはず。なので、HASH_"の値をまず設定。
-
             // 共通設定
             var commonSetting = config.CommonOptions;
             // 個別設定
@@ -189,20 +185,24 @@ namespace MyShogi.Model.Shogi.EngineDefine
             {
                 var value = config.GetOptionValue(option.Name , commonSetting , indSetting , preset);
 
+                // 値を変更したい場合は、この変数valueを上書きする。(最後にSetDefault(value)しているので)
+
                 // Hashサイズの自動マネージメント
                 if (option.Name == "Hash" || option.Name == "USI_Hash")
                 {
                     if (hashSize != 0)
-                        option.DefaultValue = hashSize;
+                        value = hashSize.ToString();
 
                     // option名を適切なoption名にrename
                     // デフォルトでは"USI_Hash" , extentionで指定されていれば"Hash"
 
                     var option_name = engineDefine.IsSupported(ExtendedProtocol.UseHashCommandExtension) ? "Hash" : "USI_Hash";
                     option.SetName(option_name);
-                } else if (option.Name == "Threads_")
+                }
+                // Threadsの自動マネージメント
+                else if (option.Name == "Threads")
                 {
-
+                    value = threads.ToString();
                 }
 
                 if (value != null)
