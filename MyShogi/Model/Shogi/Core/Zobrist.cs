@@ -67,14 +67,14 @@ namespace MyShogi.Model.Shogi.Core
                     }
 
             // またpr==NO_PIECEのときは0であることを保証したいのでSET_HASHしない。
-            foreach (var c in All.Colors())
+            foreach (var c in All.IntColors())
                 for (Piece pr = Piece.ZERO + 1; pr < Piece.HAND_NB; ++pr)
                     {
                         var r0 = rng.Rand();
                         var r1 = rng.Rand();
                         var r2 = rng.Rand();
                         var r3 = rng.Rand();
-                        SET_HASH(ref hand[c.ToInt(),pr.ToInt()], r0, r1, r2, r3);
+                        SET_HASH(ref hand[c , pr.ToInt()], r0, r1, r2, r3);
                     }
         }
 

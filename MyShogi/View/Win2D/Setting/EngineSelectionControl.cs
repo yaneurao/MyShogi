@@ -107,11 +107,13 @@ namespace MyShogi.View.Win2D
 
             // ソフトの使用メモリ
             var free_memory = ViewModel.FreePhysicalMemory;
-            var required_memory = ViewModel.EngineDefine.RequiredMemory + ViewModel.EngineDefine.MinimumHashMemory;
+            var engine_define = ViewModel.EngineDefine;
+            var eval_work_memory = engine_define.EvalMemory + engine_define.WorkingMemory;
+            var required_memory = eval_work_memory + engine_define.MinimumHashMemory;
             var is_enough = required_memory <= free_memory;
 
             label2.Text = "必要メモリ : ";
-            label3.Text = $"本体 {engineDefine.RequiredMemory}[MB] + HASH {engineDefine.MinimumHashMemory}[MB]以上 ＝ ";
+            label3.Text = $"本体 {eval_work_memory}[MB] + HASH {engineDefine.MinimumHashMemory}[MB]以上 ＝ ";
             label4.Text = required_memory.ToString();
             label4.ForeColor = is_enough ? Color.Black : Color.Red;
             label5.Text = "[MB]以上" + (is_enough ? "≦" : "＞") + $" 現在の空き物理メモリ {free_memory}[MB]";
@@ -131,7 +133,8 @@ namespace MyShogi.View.Win2D
             // メモリ足りないならこの時点で警告ダイアログを出す。
 
             var free_memory = ViewModel.FreePhysicalMemory;
-            var required_memory = ViewModel.EngineDefine.RequiredMemory + ViewModel.EngineDefine.MinimumHashMemory;
+            var engine_define = ViewModel.EngineDefine;
+            var required_memory = engine_define.EvalMemory + engine_define.WorkingMemory + engine_define.MinimumHashMemory;
             var is_enough = required_memory <= free_memory;
 
             if (!is_enough)

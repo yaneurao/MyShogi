@@ -91,13 +91,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
         /// <summary>
         /// 思考エンジンに渡すべきエンジンオプションの値を求める。
+        /// nameで指定したoptionが存在しなければnullが返る。
         /// </summary>
         /// <param name="name">option名</param>
         /// <param name="commonSetting">共通設定</param>
         /// <param name="indSetting">個別設定</param>
         /// <param name="preset">プリセット</param>
         /// <returns></returns>
-        public string GetDefault(string name , List<EngineOption> commonSetting ,
+        public string GetOptionValue(string name , List<EngineOption> commonSetting ,
             IndivisualEngineOptions indSetting , List<EngineOption> preset)
         {
             string value = null;

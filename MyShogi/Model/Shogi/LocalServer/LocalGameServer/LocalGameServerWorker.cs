@@ -675,10 +675,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             // Playerの終了処理をしてNullPlayerを突っ込んでおく。
 
-            foreach (var c in All.Colors())
+            foreach (var c in All.IntColors())
             {
-                Players[(int)c].Dispose();
-                Players[(int)c] = new NullPlayer();
+                Players[c].Dispose();
+                Players[c] = new NullPlayer();
             }
         }
 

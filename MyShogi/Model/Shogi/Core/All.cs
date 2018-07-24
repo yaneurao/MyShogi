@@ -15,6 +15,16 @@ namespace MyShogi.Model.Shogi.Core
                 yield return c;
         }
 
+        /// <summary>
+        /// int型が返ってくるColors()
+        /// </summary>
+        /// <returns></returns>
+        public static IEnumerable<int> IntColors()
+        {
+            for (var c = Color.ZERO; c < Color.NB; ++c)
+                yield return (int)c;
+        }
+
         public static IEnumerable<Square> Squares()
         {
             for (var sq = Square.ZERO; sq < Square.NB; ++sq)

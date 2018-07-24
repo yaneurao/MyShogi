@@ -327,13 +327,17 @@ namespace MyShogi.Model.Shogi.Usi
 
             // "usiok"に対してエンジン設定などを渡してやる。
 
-            ComplementOptions();
+            //ComplementOptions();
 
             // この変更メッセージをハンドルしてDefaultOptionをセットしてくれていることを期待する。
             ChangeState(UsiEngineState.UsiOk);
 
             SendSetOptionList();
         }
+
+#if false
+        // "USI_Ponder"と"USI_Hash"をわざわざ隠し持っているようなエンジン実装は考えられない。
+        // このoptionを送らなくて良いというUSIプロトコルの規定は廃止べきである。
 
         /// <summary>
         /// 必要ならUSI_PonderやUSI_Hashなど必要なオプションを追加します。
@@ -351,6 +355,7 @@ namespace MyShogi.Model.Shogi.Usi
                 OptionList.Insert(0, UsiOption.USI_Ponder.Clone());
             }
         }
+#endif
 
         /// <summary>
         /// setoptionコマンドをまとめて送信します。

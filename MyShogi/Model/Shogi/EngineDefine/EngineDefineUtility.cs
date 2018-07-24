@@ -162,7 +162,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <param name="HashSize">hashサイズ[MB] 0を指定するとoption設定に従う。AutoHashの時に呼び出し元のほうで設定する。</param>
         /// <returns></returns>
         public static void SetDefaultOption(List<UsiOption> optionList, EngineDefineEx engineDefineEx, int selectedPresetIndex ,
-            EngineConfig config , int hashSize)
+            EngineConfig config , long hashSize)
         {
             var engineDefine = engineDefineEx.EngineDefine;
             var folderPath = engineDefineEx.FolderPath;
@@ -187,11 +187,23 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             foreach (var option in optionList)
             {
-                var value = config.GetDefault(option.Name , commonSetting , indSetting , preset);
+                var value = config.GetOptionValue(option.Name , commonSetting , indSetting , preset);
 
                 // Hashサイズの自動マネージメント
-                if (option.Name == "Hash_" && hashSize != 0)
-                    value = hashSize.ToString();
+                if (option.Name == "Hash" || option.Name == "USI_Hash")
+                {
+                    if (hashSize != 0)
+                        option.DefaultValue = hashSize;
+
+                    // option名を適切なoption名にrename
+                    // デフォルトでは"USI_Hash" , extentionで指定されていれば"Hash"
+
+                    var option_name = engineDefine.IsSupported(ExtendedProtocol.UseHashCommandExtension) ? "Hash" : "USI_Hash";
+                    option.SetName(option_name);
+                } else if (option.Name == "Threads_")
+                {
+
+                }
 
                 if (value != null)
                     option.SetDefault(value);

@@ -70,11 +70,17 @@ namespace MyShogi.Model.Shogi.EngineDefine
         { CpuType.NO_SSE, CpuType.SSE2 , CpuType.SSE41 , CpuType.SSE42 , CpuType.AVX2 });
 
         /// <summary>
-        /// 使用するメモリ 評価関数が使用するメモリ＋探索で使用するメモリ(HASHは除く)
-        /// 単位は[MB]
+        /// 使用するメモリ 探索で使用するメモリ(HASHは除く)単位は[MB]
         /// </summary>
         [DataMember]
-        public Int64 RequiredMemory { get; set; } = 500;
+        public Int64 WorkingMemory { get; set; } = 30;
+
+        /// <summary>
+        /// 評価関数用のメモリ。単位は[MB]
+        /// (メモリ共有する場合は、2つ目のエンジンはこの分だけ減算される。)
+        /// </summary>
+        [DataMember]
+        public Int64 EvalMemory { get; set; } = 470;
 
         /// <summary>
         /// 置換表(HASH)用の最小メモリ。これくらいはないとまともに動かないというライン。

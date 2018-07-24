@@ -84,7 +84,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
             // presetのDescription
             {
                 // 2個目以降を設定。
-                for (var i = 1; i< preset_default_array.Length; ++i)
+                for (var i = 1; i < preset_default_array.Length; ++i)
                 {
                     var preset = preset_default_array[i];
 
@@ -97,8 +97,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             var default_cpus = new List<CpuType>(new[] { CpuType.NO_SSE, CpuType.SSE2, CpuType.SSE41, CpuType.SSE42, CpuType.AVX2 });
 
-            var default_extend = new List<ExtendedProtocol>();
-            default_extend.Add(ExtendedProtocol.UseHashCommandExtension);
+            var default_extend = new List<ExtendedProtocol>( new[] { ExtendedProtocol.UseHashCommandExtension } );
+            var gps_extend = new List<ExtendedProtocol>( new[] { ExtendedProtocol.UseHashCommandExtension } );
 
             // EngineOptionDescriptionsは、エンジンオプション共通設定に使っているDescriptionsと共用。
             var common_setting = EngineCommonOptionsSample.CreateEngineCommonOptions();
@@ -113,7 +113,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "やねうら王",
                     EngineExeName = "yaneuraou2018_kpp_kkpt",
                     SupportedCpus = default_cpus ,
-                    RequiredMemory = 512, // KPP_KKPTは、これくらい？
+                    EvalMemory = 480, // KPP_KKPTは、これくらい？
+                    WorkingMemory = 30 , 
                     Presets = default_preset,
                     DescriptionSimple = "やねうら王 2018年度版",
                     Description = "プロの棋譜を一切利用せずに自己学習で身につけた異次元の大局観。"+
@@ -135,7 +136,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "tanuki- SDT5",
                     EngineExeName = "yaneuraou2018_kppt",
                     SupportedCpus = default_cpus,
-                    RequiredMemory = 1024, // KPPTは、これくらい？
+                    EvalMemory = 960, // KPPTは、これくらい？
+                    WorkingMemory = 30,
                     Presets = default_preset,
                     DescriptionSimple = "tanuki- SDT5版",
                     Description = "SDT5(第5回 将棋電王トーナメント)で絶対王者Ponanzaを下し堂々の優勝を果たした実力派。" +
@@ -154,7 +156,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "tanuki- 2018",
                     EngineExeName = "yaneuraou2018_nuee",
                     SupportedCpus = default_cpus,
-                    RequiredMemory = 512, // NNUEは、これくらい？
+                    EvalMemory = 480, // NNUEは、これくらい？
+                    WorkingMemory = 30,
                     Presets = default_preset,
                     DescriptionSimple = "tanuki- 2018年版",
                     Description = "WCSC28(第28回 世界コンピュータ将棋選手権)に出場した時からさらに強化されたtanuki-シリーズ最新作。" +
@@ -174,7 +177,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "Qhapaq 2018",
                     EngineExeName = "yaneuraou2018_kppt",
                     SupportedCpus = default_cpus,
-                    RequiredMemory = 1024, // KPPTはこれくらい？
+                    EvalMemory = 960, // KPPTは、これくらい？
+                    WorkingMemory = 30,
                     Presets = default_preset,
                     DescriptionSimple = "Qhapaq 2018年版",
                     Description = "河童の愛称で知られるQhapaqの最新版。"+
@@ -193,7 +197,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "読み太 2018",
                     EngineExeName = "yaneuraou2018_kppt",
                     SupportedCpus = default_cpus,
-                    RequiredMemory = 1024, // KPPTはこれくらい？
+                    EvalMemory = 960, // KPPTは、これくらい？
+                    WorkingMemory = 30,
                     Presets = default_preset,
                     DescriptionSimple = "読み太 2018年版",
                     Description = "直感精読の個性派、読みの確かさに定評あり。" +
@@ -212,13 +217,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "gpsfish",
                     EngineExeName = "gpsfish",
                     SupportedCpus = new List<CpuType>(new[] { CpuType.SSE2 }),
-                    RequiredMemory = 10, // gpsfishこれくらいで動くような？
+                    EvalMemory = 10, // gpsfishこれくらいで動くような？
+                    WorkingMemory = 30,
                     Presets = default_preset,
                     DescriptionSimple = "GPS将棋(テスト用)",
                     Description = "いまとなっては他のソフトと比べると棋力的には見劣りがするものの、" +
                         "ファイルサイズが小さいので動作検証用に最適。",
                     DisplayOrder = 10000,
-                    SupportedExtendedProtocol = null,
+                    SupportedExtendedProtocol = gps_extend,
                     EngineOptionDescriptions = null,
                 };
                 EngineDefineUtility.WriteFile("engine/gpsfish/engine_define.xml", engine_define);
@@ -234,12 +240,13 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "Gpsfish2",
                     EngineExeName = "gpsfish",
                     SupportedCpus = new List<CpuType>(new[] { CpuType.SSE2 }),
-                    RequiredMemory = 10,
+                    EvalMemory = 10, // gpsfishこれくらいで動くような？
+                    WorkingMemory = 30,
                     Presets = default_preset,
                     DescriptionSimple = "GPS将棋2(テスト用)",
                     Description = "presetなどのテスト用。",
                     DisplayOrder = 9999,
-                    SupportedExtendedProtocol = default_extend,
+                    SupportedExtendedProtocol = gps_extend,
                     EngineOptionDescriptions = default_descriptions,
                 };
                 EngineDefineUtility.WriteFile("engine/gpsfish2/engine_define.xml", engine_define);
