@@ -83,8 +83,11 @@ namespace MyShogi.View.Win2D.Setting
             binder.Bind(player , "IsHuman" , radioButton1);
             binder.Bind(player , "IsCpu"  , radioButton2);
 
-            // プレセット
+            // プリセット
             binder.Bind(player, "SelectedEnginePreset", comboBox1);
+
+            // ponder(相手の手番でも思考するか)
+            binder.Bind(player, "Ponder", checkBox1);
         }
 
         /// <summary>

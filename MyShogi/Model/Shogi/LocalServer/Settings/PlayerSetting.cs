@@ -71,5 +71,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue("SelectedEnginePreset", value); }
         }
 
+        /// <summary>
+        /// ponder(コンピュータが相手の手番でも考えるのか)の設定。
+        /// </summary>
+        public bool Ponder
+        {
+            get { return GetValue<bool>("Ponder"); }
+            set { SetValue("Ponder", value); }
+        }
     }
 }

@@ -38,10 +38,10 @@
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.numericUpDown11 = new System.Windows.Forms.NumericUpDown();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.playerSettingControl2 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
+            this.playerSettingControl1 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
             this.timeSettingControl2 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
             this.timeSettingControl1 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
-            this.playerSettingControl1 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
-            this.playerSettingControl2 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).BeginInit();
             this.groupBox6.SuspendLayout();
@@ -52,7 +52,7 @@
             this.groupBox3.Controls.Add(this.comboBox3);
             this.groupBox3.Controls.Add(this.radioButton6);
             this.groupBox3.Controls.Add(this.radioButton5);
-            this.groupBox3.Location = new System.Drawing.Point(12, 320);
+            this.groupBox3.Location = new System.Drawing.Point(12, 354);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(8);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(8);
@@ -125,7 +125,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(798, 572);
+            this.checkBox1.Location = new System.Drawing.Point(798, 578);
             this.checkBox1.Margin = new System.Windows.Forms.Padding(6);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(367, 31);
@@ -178,14 +178,30 @@
             // 
             this.groupBox6.Controls.Add(this.checkBox4);
             this.groupBox6.Controls.Add(this.numericUpDown11);
-            this.groupBox6.Location = new System.Drawing.Point(776, 322);
+            this.groupBox6.Location = new System.Drawing.Point(776, 354);
             this.groupBox6.Margin = new System.Windows.Forms.Padding(6);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox6.Size = new System.Drawing.Size(748, 224);
+            this.groupBox6.Size = new System.Drawing.Size(748, 154);
             this.groupBox6.TabIndex = 31;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "その他の設定";
+            // 
+            // playerSettingControl2
+            // 
+            this.playerSettingControl2.Location = new System.Drawing.Point(770, 0);
+            this.playerSettingControl2.Margin = new System.Windows.Forms.Padding(12);
+            this.playerSettingControl2.Name = "playerSettingControl2";
+            this.playerSettingControl2.Size = new System.Drawing.Size(772, 352);
+            this.playerSettingControl2.TabIndex = 35;
+            // 
+            // playerSettingControl1
+            // 
+            this.playerSettingControl1.Location = new System.Drawing.Point(6, 0);
+            this.playerSettingControl1.Margin = new System.Windows.Forms.Padding(12);
+            this.playerSettingControl1.Name = "playerSettingControl1";
+            this.playerSettingControl1.Size = new System.Drawing.Size(772, 352);
+            this.playerSettingControl1.TabIndex = 34;
             // 
             // timeSettingControl2
             // 
@@ -202,22 +218,6 @@
             this.timeSettingControl1.Name = "timeSettingControl1";
             this.timeSettingControl1.Size = new System.Drawing.Size(762, 262);
             this.timeSettingControl1.TabIndex = 32;
-            // 
-            // playerSettingControl1
-            // 
-            this.playerSettingControl1.Location = new System.Drawing.Point(6, 0);
-            this.playerSettingControl1.Margin = new System.Windows.Forms.Padding(12);
-            this.playerSettingControl1.Name = "playerSettingControl1";
-            this.playerSettingControl1.Size = new System.Drawing.Size(772, 298);
-            this.playerSettingControl1.TabIndex = 34;
-            // 
-            // playerSettingControl2
-            // 
-            this.playerSettingControl2.Location = new System.Drawing.Point(770, 0);
-            this.playerSettingControl2.Margin = new System.Windows.Forms.Padding(12);
-            this.playerSettingControl2.Name = "playerSettingControl2";
-            this.playerSettingControl2.Size = new System.Drawing.Size(772, 298);
-            this.playerSettingControl2.TabIndex = 35;
             // 
             // GameSettingDialog
             // 
