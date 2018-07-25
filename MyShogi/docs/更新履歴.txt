@@ -1,36 +1,21 @@
 ﻿
 TODO:
-・ここでβ版。βテスターに配布。7/13付近。
 ・インストーラー作成(3日ぐらい？)
 	cf. https://www.osadasoft.com/visual-studio-2017%E3%81%A7%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%A9%E4%BD%9C%E6%88%90/
-・各思考エンジンの動作検証等(4,5日) 7/14..19
 
 -- 以下、できれば
 ・連続対局
 ・形勢表示(できれば)
 ・棋譜解析(できれば)
 
-・完了
-	・エンジンごとの選択されたpresetの保存/(次回起動時の)復元
-	・思考エンジンの共通設定のダイアログ作成
-	・思考エンジンの共通設定の保存～復元
-	・思考エンジンの個別設定ダイアログの作成
-	・思考エンジンの個別設定を思考エンジンから取得するコード
-	・思考エンジンのCPU判別
-
-・思考エンジンの個別設定の内容の思考エンジンへの反映
-・思考エンジンの共通設定の、各思考エンジンへの反映
-・思考エンジンの個別設定の保存/復元
-・思考エンジンの個別設定の説明文
-
+- 残り作業
+・エンジンが読み込むべき評価関数、フォルダをeval/で固定すべき。エンジン側に"eval_dir.txt"でEvalDirのデフォルト値を読み込むような何かが必要だ。
+	- 共通設定に"EvalDir"は存在すべきではない気がする。
 ・preset (段位ごとの強さ)の調整
-・presetの思考エンジンへの反映
-
+・検討モードの思考エンジンの選択画面
 ・各思考エンジンの各CPU向け実行ファイルの用意
 ・各思考エンジンの各CPUでの動作検証
 ・各思考エンジン用の定跡ファイルの用意
-・思考エンジンのHASHメモリの自動マネージメント
-・ponder(相手番のときに思考する)の処理
 ・インストーラー作成
 
 - 評価関数
@@ -40,16 +25,308 @@ TODO:
 	- tanuki-2018 NNUE
 	- やねうら王 KPP_KKPT
 
-	- エンジン個別設定画面作成
-		- EngineOptionSettingControlに追加。
-		- エンジンに対して"usi"コマンドを送信して、option項目をもらって、parseする部分を書く。
+
+■  2018/07/26
+
+
+- ponder(相手番のときに思考する)の処理
+	- 対局設定ダイアログにPonder設定追加。
+	- Ponderの設定の反映
+	// 　作業中
+
+
+■  2018/07/25
+
+
+- とりま、出来たこと。
+	・エンジンごとの選択されたpresetの保存/(次回起動時の)復元
+	・思考エンジンの共通設定のダイアログ作成
+	・思考エンジンの共通設定の保存～復元
+	・思考エンジンの個別設定ダイアログの作成
+	・思考エンジンの個別設定を思考エンジンから取得するコード
+	・思考エンジンの個別設定の保存/復元
+	・思考エンジンのCPU判別
+	・思考エンジンの設定のページャー実装
+	・思考エンジンの個別設定の内容の思考エンジンへの反映
+	・思考エンジンの共通設定の、各思考エンジンへの反映
+	・presetの思考エンジンへの反映
+
+
+- エンジン設定の作業その43
+	- 自動HASHの計算、リファクタリング
+		- 計算されたHASHの値、反映してなかったの修正。
+	- UsiEngineHashManager、リファクタリング。
+	- 自動スレッド設定
+		 - 計算する部分書けた
+		 - 反映する部分書けた。適切に反映してる。
+		 - 両方のエンジンが両方ともponder設定になっている場合、自動スレッドによるスレッド数は、OSが返したコア数の値の1/2にすることにした。
+		 - Ponderの実装してからしか、スレッドのPonderの反映が出来ない。次はPonderの実装する。
+
+
+■  2018/07/24
+
+
+- USI2.0.md更新 USI_PonderとUSI_Hashの送信を強制するように。
+
+
+- エンジン設定の作業その42
+	- 思考エンジンのHASHメモリの自動マネージメント
+	- エンジン設定で、HASH用とEVAL用とWORKで使用メモリ分ける。
+	- All.IntColors()追加。
+	- 自動Hashの値がエンジンに反映されるようになった。
+	- 自動Hashの計算した値をログに出力するようにした。
+	- Hash、物理メモリの自動マネージメント
+		- 完了
+- USI2.0では、USI_Hash , USI_Ponder、エンジン側から送ることを強制する。
+
+
+- エンジン設定の作業その41
+	- 思考エンジンのHASHメモリの自動マネージメント
+		- LocalGameServerがEngineDefineExを持たせる。
+			- この設計よくなかった。
+			- UsiEngineHashManager追加。
+		- Hashサイズの自動計算のためのコードを書く。
+			- かなり大変。7割ぐらい書けた。
+	- CPU→CpuTypeにrename
+
+
+
+■  2018/07/22
+
+
+- エンジン設定の作業その40
+	- optionがきちんと渡ってきているかのテスト
+		- 共通設定
+		- 個別設定
+		- preset
+			- 一応反映されているっぽい。
+	- presetのテストをするためにgpsfish2 に対してプリセットを用意。
+	- presetのスレッドのオプション名がThreadになっていたのThreadsに修正。
+	- UsiOptionのToString()、もう少しダイレクトに表示するように変更。
+	- Gpsfishのinstanceがまた走っていたの修正。
+	- 検討用エンジンを変更できるように準備。
+
+
+■  2018/07/20
+
+
+- エンジン設定の作業その39
+	- 共通設定のところハッシュ割合の項目が消えてたの修正
+	- エンジンオプションの文字フォントサイズ調整。
+	- エンジンオプションの個別設定のレイアウト調整
+- エンジンオプションのダイアログ、high dpiでおかしくなるらしい。
+	 - FontBuilder作成。Fontの生成を抽象化する。
+		 - このアイデア良くなかった。
+	 - 単にエンジンオプション設定のFont生成部、調整する。
+
+
+
+■  2018/07/18
+
+
+- エンジン設定の作業その38
+	- エンジン共通設定のHash、Threadsまわりの説明文、追記。
+
+
+■  2018/07/17
+
+
+- エンジン設定の作業その37
+	- エンジン詳細設定のオプションが保存されているかのテスト
+		- やねうら王は保存されているがgpsfishは反映していないみたい。
+		- EngineOptionForSettingにToString()追加。
+		- EngineOptionForIndivisualにもToString()追加。
+		- gpsfishの個別設定が保存されていなかった件、修正。
+		- gpsfishの個別設定でMultiPVの説明文が出て欲しい気はする。
+			- gpsfishの個別設定にMultiPV追加。「思考設定」追加。
+			- gpsfishの個別設定に「その他」の見出しを追加。
+- ListExtensions追加。ReverseIterator追加。
+
+
+- エンジン設定の作業その36
+	- エンジン設定ダイアログのCaptionに「エンジンオプション設定(通常対局用)」のように設定種別を表示するようにした。
+- tanuki詰将棋エンジンのバナー受け取った。
+	- engine/tanuki_mate/banner.png 配置
+
+
+- エンジン設定の作業その35
+	- 詳細設定ダイアログを出した時に詳細設定ボタンをDisableにする。
+	- 詳細設定ダイアログのtab pageのTextにエンジン名を表記するように。
+
+
+■  2018/07/15
+
+
+- エンジン設定の作業その34
+	- 例外ダイアログ、captionを表示するほう、メインウインドウの破棄時に呼び出されるとまずかったの修正。
+	- 検討ウィンドウ、×ボタンで非表示にするの、閉じるのをcancelしているので他の場所から終了できなくなってしまう。まずい気がする。
+	- 検討ウィンドウを出しているとメニューから閉じられなかったの修正。
+	- EngineOptions、null checkうざすぎる。typedefしたい。どうしたものか…。
+		- EngineOptionsとEngineOptionsForIndivisual廃止する。
+		- メンバとしてList<X>しか持たないclassを定義するの、シリアライズ/デシリアライズしないといけない状況だとよろしくないという学びを得た。
+
+
+- エンジン設定の作業その33
+	- UsiOptionMin削除。これ使わない。
+	- 思考エンジンの個別設定の内容の思考エンジンへの反映
+	- 思考エンジンの共通設定の、各思考エンジンへの反映
+	- presetの思考エンジンへの反映
+	- 選択した思考エンジンが起動するようにした。(現状、gpsfishしか入れてないのでそれしか起動しない)
+	- 検討モードの時の検討ウィンドウに出るエンジン名はエンジン表示名に変更。
+
+
+■  2018/07/13
+
+
+- 詰将棋エンジンのバナーも必要な気がしてきたので発注。
+
+
+- エンジン設定の作業その32
+	- エンジン個別設定の名前が長い時に16文字ぐらいで切る処理追加。GPS将棋で必要。
+		- String.Left()バグってた。修正。
+	- 個別設定の画面、共通設定にも存在する項目だけチェックボックスを出すように修正。
+	- 個別設定の画面、GPS将棋でHASH_が２つ出るの修正。(GPS将棋、USI_HashとHashと２つoptionを持っていたのが原因)
+	- GPS将棋のような外部エンジンに対してHashとThreadの自動マネージメント機能を提供する。
+	- 個別設定画面でのDisplayNameの字下げわかりにくかったので廃止。
+
+
+- エンジン設定の作業その31
+	- エンジン設定ダイアログ、横幅750→775に広げた
+	- 個別設定で共通設定に従うチェックボックスの追加
+		- 説明文追加。
+		- チェックボックスにチェックが入っている時は、その右側にある項目をグレーアウトするようにした。
+	- 個別設定の保存/復元
+		- 通常対局、検討エンジン、詰将棋エンジンに対する、共通設定と個別設定のclass設計をした。
+			- EngineConfigs
+		- EngineOptionSettingDialogBuilder作成、コード分離
+	- 個別設定のControl、更新中はSuspendLayout()を呼ぶようにした。
+	- 個別設定の保存/復元できた。
+	- 個別設定の左のラベルをクリックしても左端のチェックボックスのオンオフが出来るように。
+            // …ようにしようと思ったら、label1がEnable == falseになってしまうので
+	        // このクリックイベントが発生しなくなるのか…。うーむ、、そうか…。
+- 検討エンジンの設定、対局時の設定そのままでええんかな…。検討時には定跡をオフにしたいとかあるかも。
+	- 検討エンジンの選択ダイアログが必要なような…。
+		- 共通設定と個別設定が必要なような…。
+	- 詰将棋エンジンのオプション設定も必要なような…。
+
+
+
+- エンジン設定の作業その30
+	- エンジン設定のコンボボックスの文字フォント、もうひと回り小さく。
+	- エンジン設定で配置している短い説明文の手前、少しスペースあける。
+	- エンジン共通設定に項目追加。
+		- MultiPV , Contempt , ContemptFromBlack追加。
+		- PvInterval , ConsiderationMode , OutputFailLHPV 追加。
+		- 定跡設定
+			option name BookMoves type spin default 16 min 0 max 10000
+			option name BookIgnoreRate type spin default 0 min 0 max 100
+			option name BookEvalDiff type spin default 30 min 0 max 99999
+			option name BookEvalBlackLimit type spin default 0 min -99999 max 99999
+			option name BookEvalWhiteLimit type spin default -140 min -99999 max 99999
+			option name BookDepthLimit type spin default 16 min 0 max 99999
+			option name NarrowBook type check default false
+			option name ConsiderBookMoveCount type check default false
+		- 設定項目、日本語化は、これですべて終わり。
+	- エンジンオプション関連の残り作業
+		- 個別設定で共通設定に従うチェックボックス
+		- 個別設定の保存/復元
+		- 共通設定・個別設定の思考エンジンへの反映
+
+
+- エンジン設定の作業その29
+	- 対局設定で思考エンジンが選択されていない時は詳細設定ボタンを無効化するように修正。
+	- WindowsServer 2012R2で動かすとエンジンオプションとかすごく小さい。なんぞこれ…。
+		TextBoxのFontの生成がおかしいのか。
+		TextBoxのデフォルトフォントが"MS UI Gothic, 9pt"になっているが、これがdpi scalingの影響受けている。
+		この.NET Frameworkの実装ひどすぎない？
+		- .NET Framework 4.6以降ならこれでいけるのか？app.configで
+			<appSettings> 
+			<add key="EnableWindowsFormsHighDpiAutoResizing" value="true" /> 
+			</appSettings>
+		- cf. https://blogs.msdn.microsoft.com/visualstudio_jpn/2015/07/20/net-framework-4-6/
+		- これでなさげ。
+		- フォントが、
+		"UI Gothic, 9pt"　→　high dpiの影響受けて小さくなる , デフォルトフォントなのに…。
+		"MS UI Gothic, 9pt"　→　いける(scalingされる) ということのようだ。なんぞこれ。
+		- ああ、わかった。デフォルトフォントだと、Fontクラス作って代入されなくて、それでまずいのか。
+		明示的に代入するようにしたらうまく動いた。そうか…。
+		- エンジンオプションの画面、フォント指定しなおした。
+	- 検討ウィンドウのListViewもフォント指定しなおす。
+		- Windows Server 2012 R2でもうまく表示されるようになった。
+
+
+
+- エンジン設定の作業その28
+	- エンジン個別設定で、先後で同じ思考エンジンを選択した時に、別の設定に出来る必要があるのだろうか…。
+		- これ出来ない。したいなら、engine配下のフォルダをコピーして解決して欲しい。
+		- エンジンごとに設定を持っているので、これは仕様ということで仕方がない。
+	- エンジンオプション設定ダイアログ、もう少し縦長に変更。
+	- エンジン個別設定の1ページの項目数がきちんと決まっていないの修正。
+	- エンジン設定のところ、見出し前に対して水平線追加
+	- エンジン個別設定の日本語化進める
+		- BookOnTheFly , SlowMover , ResignValue追加。
+
+
+- エンジン設定の作業その27
+	- エンジン個別設定のコード色々書いた。だいたいうまく動く感じになった。
+	- エンジンオプションの日本語説明文を追加していく。
+	- エンジン設定ダイアログで最後のページに何もコントロールが表示されていない(ちょうど設定項目がなくなる時に1ページ余分に表示される)バグ修正。
+	- エンジン設定ダイアログの項目のページわけ調整。
+	- エンジン共通設定にデバッグ用の項目追加。
+		- Param1 , Param2をHide設定に。
+		- 「着手遅延設定」追加。
+		- 「思考時間設定」追加。
+		- 「入玉設定」改め「持将棋の設定」
+			- 引き分けの手数もここに。
+		- 「評価関数の設定」追加
+			- EvalShareはdefault trueに変更。これtrueで問題ないやろ。
+			- よく考えると空き物理メモリの計算の時、EvalShare考慮する必要あるのか…。これわりと面倒なのでは…。
+	- 日本語化、半分ぐらい終わった。
+
+
+- エンジン設定の作業その26
+	- エンジン個別設定のほう、日本語化していく。
+	- GPS将棋に対して詳細設定で落ちるの修正。
+		- EngineDefine.IsSupported()追加。
+	- option名 Thread 間違い→　Threadsに変更。
+	- エンジン個別設定のほう、エンジン共通設定のDescriptionを持ってきた。
+	- エンジン共通設定にハッシュ、スレッド、入玉設定まで表示できた。
+	- 自動ハッシュの設定、エンジン個別設定でも出来ないといけないのか…。あとで考える。
+
+
+- エンジン設定の作業その25
+	- エンジン設定、comboboxを日本語化する。
+	- EngineOptionDescriptionにComboboxDisplayNameとHide追加。
+	- ComboBoxの日本語化、うまく行った。
+- ControlBinderのunbind、きちんと呼び出すようにした。
+
 
 
 ■  2018/07/12
 
 
+- エンジン設定の作業その24
+	- エンジン共通設定に従う設定であっても、エンジン個別設定のほうの値域を守らないといけないという話はあるか…。まあいいか…。
+	- エンジン個別設定で、エンジンから送られてきたoption USI_Ponderは無視する。
+		- この項目はGUI側のponder設定に従うべき。
+		- 同じく、Hash,USI_Hashは統合されるようにした。
+	- エンジンオプションのページャー、大変すぎない？
+		- そうでもなかった。ページャー実装完了。
+
+
+- USI2.0.md更新
+	- ハッシュ用のメモリを透過的に扱うためには、USI2.0にUSI_Hashの代わりにHashを使うという拡張が必要。
+	- UseHashCommandExtension追加
+
+
 - エンジン設定の作業その23
-	//
+	- EngineOptionを共通設定用と個別設定用に分離した。
+	- オプションの共通設定のところに定跡設定・入玉設定追加。
+	- ページの代わりに垂直スクロールにしたら波打った。ページャー実装する。
+	- 前ページボタンと次ページボタン追加。
+		- ボタンとテキストボックスをControlの大きさに追随するコード実装。
+	- comboboxの内容も、日本語化したほうが良いのでは…。
+		- 考える。
 
 
 - 更新履歴.txt 更新
@@ -65,43 +342,68 @@ TODO:
 
 	- 作業対象 option項目
 
-	option name USI_Ponder type check default false
-	option name USI_Hash type spin default 256 min -9223372036854775808 max 9223372036854775807
-	option name Threads type spin default 4 min 1 max 512
-	option name Hash type spin default 16 min 1 max 1048576
-	option name MultiPV type spin default 1 min 1 max 800
-	option name WriteDebugLog type check default false
-	option name NetworkDelay type spin default 120 min 0 max 10000
-	option name NetworkDelay2 type spin default 1120 min 0 max 10000
-	option name MinimumThinkingTime type spin default 2000 min 1000 max 100000
-	option name SlowMover type spin default 100 min 1 max 1000
-	option name MaxMovesToDraw type spin default 0 min 0 max 100000
-	option name DepthLimit type spin default 0 min 0 max 2147483647
-	option name NodesLimit type spin default 0 min 0 max 9223372036854775807
-	option name Contempt type spin default 2 min -30000 max 30000
-	option name ContemptFromBlack type check default false
-	option name EnteringKingRule type combo default CSARule27 var NoEnteringKing CSARule24 CSARule27 TryRule
-	option name EvalDir type string default eval
-	option name EvalShare type check default false
-	option name SkipLoadingEval type check default false
-	option name NarrowBook type check default false
-	option name BookMoves type spin default 16 min 0 max 10000
-	option name BookIgnoreRate type spin default 0 min 0 max 100
-	option name BookFile type combo default standard_book.db var no_book standard_book.db yaneura_book1.db yaneura_book2.db yaneura_book3.db yaneura_book4.db user_book1.db user_book2.db user_book3.db book.bin
-	option name BookEvalDiff type spin default 30 min 0 max 99999
-	option name BookEvalBlackLimit type spin default 0 min -99999 max 99999
-	option name BookEvalWhiteLimit type spin default -140 min -99999 max 99999
-	option name BookDepthLimit type spin default 16 min 0 max 99999
-	option name BookOnTheFly type check default false
-	option name ConsiderBookMoveCount type check default false
-	option name PvInterval type spin default 300 min 0 max 100000
-	option name ResignValue type spin default 99999 min 0 max 99999
-	option name nodestime type spin default 0 min 0 max 99999
-	option name Param1 type spin default 0 min 0 max 100000
-	option name Param2 type spin default 0 min 0 max 100000
-	option name EvalSaveDir type string default evalsave
-	option name ConsiderationMode type check default false
-	option name OutputFailLHPV type check default true
+		option name USI_Ponder type check default false
+			 // この値は、GUIのponder設定に従うべき。
+		option name USI_Hash type spin default 256 min -9223372036854775808 max 9223372036854775807
+			 // この値は無視される
+		option name Hash type spin default 16 min 1 max 1048576
+			// これはUSI拡張でこちらを使うことになっているので問題ない。
+
+		option name Threads type spin default 4 min 1 max 512
+			// スレッド設定
+
+			// デバッグ用
+		option name WriteDebugLog type check default false
+		option name Param1 type spin default 0 min 0 max 100000
+		option name Param2 type spin default 0 min 0 max 100000
+
+			// 思考時間設定
+		option name MinimumThinkingTime type spin default 2000 min 1000 max 100000
+		option name NetworkDelay type spin default 120 min 0 max 10000
+		option name NetworkDelay2 type spin default 1120 min 0 max 10000
+
+			// 持将棋の設定
+		option name EnteringKingRule type combo default CSARule27 var NoEnteringKing var CSARule24 var CSARule27 var TryRule
+		option name MaxMovesToDraw type spin default 0 min 0 max 100000
+
+			// 定跡
+		option name BookFile type combo default standard_book.db var no_book var standard_book.db
+			var yaneura_book1.db var yaneura_book2.db var yaneura_book3.db var yaneura_book4.db var user_book1.db var user_book2.db var user_book3.db var book.bin
+		option name BookOnTheFly type check default false
+
+		option name BookMoves type spin default 16 min 0 max 10000
+		option name BookIgnoreRate type spin default 0 min 0 max 100
+		option name BookEvalDiff type spin default 30 min 0 max 99999
+		option name BookEvalBlackLimit type spin default 0 min -99999 max 99999
+		option name BookEvalWhiteLimit type spin default -140 min -99999 max 99999
+		option name BookDepthLimit type spin default 16 min 0 max 99999
+		option name NarrowBook type check default false
+		option name ConsiderBookMoveCount type check default false
+
+			// 評価関数
+		option name EvalDir type string default eval
+		option name EvalShare type check default false
+
+			// 思考設定
+		option name MultiPV type spin default 1 min 1 max 800
+		option name Contempt type spin default 2 min -30000 max 30000
+		option name ContemptFromBlack type check default false
+		option name ResignValue type spin default 99999 min 0 max 99999
+		option name SlowMover type spin default 100 min 1 max 1000
+
+		option name DepthLimit type spin default 0 min 0 max 2147483647
+		option name NodesLimit type spin default 0 min 0 max 9223372036854775807
+		option name nodestime type spin default 0 min 0 max 99999
+
+			// 読み筋の表示
+		option name PvInterval type spin default 300 min 0 max 100000
+		option name ConsiderationMode type check default false
+		option name OutputFailLHPV type check default true
+
+			// 非表示にしておく。
+		option name SkipLoadingEval type check default false
+		option name EvalSaveDir type string default evalsave
+
 
 
 
@@ -112,6 +414,9 @@ TODO:
 	- エンジン個別設定がエンジンから取得したものが表示できるようになったが、項目多すぎて入りきらん…。
 		- Pager必須なのか。禿げそう。
 		- ちょっと考える。
+	- エンジン個別設定画面作成
+		- EngineOptionSettingControlに追加。
+		- エンジンに対して"usi"コマンドを送信して、option項目をもらって、parseする部分を書く。
 
 
 - エンジン設定の作業その20
@@ -508,7 +813,7 @@ TODO:
 
 
 - EvalValueの定義変更による評価値グラフ表示エラーの修正。 #23(Mizarさんのプルリク)
-	- -Int.MaxValueが無効値扱いに変更されたため、float.NaNを用いて描画しようとしていた。
+	- Int.MaxValueが無効値扱いに変更されたため、float.NaNを用いて描画しようとしていた。
 
 
 - 対局中のCPUの読み筋表示が終わったので、実装済みの機能.md更新
@@ -609,7 +914,7 @@ TODO:
 	スレッド数
 	- 一応、表示されるところまで書けた。あとで調整する。
 - 別の棋譜を読み込んで同じ手数であった場合にその局面に移動できないバグ修正。
-
+	
 
 - 検討機能の実装その7
 	- EngineConsiderationControlのクリックで読み筋を継ぎ盤で見せる機能
@@ -620,7 +925,7 @@ TODO:
 		- これ絡みでミニ盤面また更新されなくなった。あとで原因調査する。
 	- MainGameDialogに初期局面に戻すボタンと末尾の局面に移動するボタン追加。
 		- 実装した。
-
+	
 
 - 検討機能の実装その6
 	- EngineConsiderationControlのクリックで読み筋を継ぎ盤で見せる機能
@@ -635,7 +940,7 @@ TODO:
 		- ハンドラまだ
 	- EngineConsiderationControlのPVの読み筋の棋譜表示。(KIF2形式で)
 - EvalValue、IsSpecialValue()追加。
-
+	
 
 - EvalValue、"score mate+" "score mate-"のこと忘れていたので追加。
 
@@ -1335,7 +1640,7 @@ TODO:
 	- イベントをUpdateイベント1回で収まるようにする。
 	- NotifyObjectでイベント抑制してもRaise..を直接呼び出した時のイベントが発生していたの修正。
 	- 棋譜書き込み後に棋譜ウィンドウで局面移動すると例外で落ちるのはあとで修正する。
-
+	
 
 - PSNの書き出しに対応。
 	- KifuFileTypeExtensions追加
@@ -1401,7 +1706,7 @@ TODO:
 	- currentNode.selectedKifuMove追加。
 	- 対局の再開時に棋譜が同期されるようになった。
 
-
+	
 - 局面戻した時に時間が反映しなくなっている。修正せねば。
 	- ああ、終局後に戻す処理は未実装であった。
 	- 反映するように修正した。
@@ -1440,7 +1745,7 @@ TODO:
 	- cf. http://8thway.blogspot.com/2013/07/per-monitor-dpi.html
 	- Visual Studioターゲットが.NET Framework 4.6になっている。これを4.7.2に変更するとどうか。
 - ターゲットとする.NET Frameworkを4.7.2に変更した。
-	- 4.7.0でWindows Formのhigh dpi対応に大きな修正が入ったようだ。
+	- 4.7.0でWindows Formのhigh dpi対応に大きな修正が入ったようだ。 
 	- これでもずれる…なんぞこれ。
 	- high dpiでVSのデザイナで編集するのがいけないのかもな…。
 	- 1574×979でダイアログ作っているのに、686×446で作られてしまっている。
@@ -1771,7 +2076,7 @@ TODO:
 - 「連続王手千日手反則勝ち」はKIF2として合法な文字列ではないと思うのでMizarさんに修正を依頼。
 	- 棋譜ウィンドウへの出力文字列、KIF2の出力で不適切なものに関して、KifuManagerのほうで吸収することも
 	考えられるが、なるべくならKIF2の表記に準拠しておきたいので、それはしないことにする。
-
+	
 
 - LocalGameServerの初期化抜けていたの修正。
 - 参照のdelegateどう束縛されるのか、テスト
@@ -2093,7 +2398,7 @@ TODO:
 	- 移動できる升のみ光らせるぐらいのほうが良いのでは…。
 	- 光らせる設定もメニューに追加した。
 	- 升の塗りつぶしエフェクト、ダサすぎなのでデザインお願いしたほうが良いのでは…。
-
+	
 
 - 成り・不成のダイアログに描画されている駒のセンタリング
 	- SpriteManagerのほう修正した。
@@ -2251,7 +2556,7 @@ TODO:
 
 - aboutダイアログのhtmlで文字フォントを指定した。
 	- これで、複数の環境でうまく表示できることを確認。
-
+	
 
 ■　2018/06/01
 
@@ -2649,7 +2954,7 @@ TODO:
 
             // 1画面に盤面が複数表示できたほうが良いので(2画面、4画面、16画面、あるいは選択、みたいな)
             // mainDialogViewModelのインスタンス自体は1つではなくN個用意して、そのなかから1つ、もしくは2,4,16個を
-            // 切り替えて表示できるようにしたほうがいいような気がする。
+            // 切り替えて表示できるようにしたほうがいいような気がする。            
             // mainDialog.bind(mainDialogViewModel);
 
 	- MainDialogとMainDialogViewModelは 1:1にしておき、MainDialogViewModelのなかに1:Nでさらに対局関連の情報をもたせるべきでは..
@@ -2890,7 +3195,7 @@ TODO:
 	- SetSfen()でも更新されるようにした。
 	- やねうら王のほう、Position::Set()でcontinuousCheck更新してなくて、
 		初期局面で王手がかかっていると連続王手の千日手判定に間違うような気がしてきた。まあそんな局面を開始局面として与えないのでいいや…。
-
+	
 
 
 ■  2018/05/16
@@ -3127,7 +3432,7 @@ TODO:
 	- PRNG追加
 - Position.csにStateInfo追加
 - StateInfoにHash実装
-
+	
 
 ■　2018/05/10
 
