@@ -44,7 +44,7 @@ namespace MyShogi.View.Win2D
             gameScreenControl1.ThinkReportChanged = ThinkReportChanged;
         }
 
-#endregion
+        #endregion
 
         #region properties
         /// <summary>
@@ -87,7 +87,12 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public EngineConsiderationDialog engineConsiderationDialog;
 
-#endregion
+        /// <summary>
+        /// 評価値グラフの出力用
+        /// </summary>
+        public Info.EvalGraphDialog evalGraphDialog;
+
+        #endregion
 
         #region event handlers
 
@@ -95,10 +100,10 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// [UI thread] : 定期的に呼び出されるタイマー
-        /// 
+        ///
         /// このタイマーは15msごとに呼び出される。
         /// dirtyフラグが立っていなければ即座に帰るのでさほど負荷ではないという考え。
-        /// 
+        ///
         /// 1000ms / 60fps ≒ 16.67 ms
         /// </summary>
         /// <param name="sender"></param>
@@ -132,7 +137,7 @@ namespace MyShogi.View.Win2D
 
         private bool first_tick = true;
 
-        // -- 
+        // --
 
         public void MainDialog_Move(object sender, System.EventArgs e)
         {
@@ -231,6 +236,21 @@ namespace MyShogi.View.Win2D
         private void ThinkReportChanged(PropertyChangedEventArgs args)
         {
             var message = args.value as UsiThinkReportMessage;
+
+            // 評価値グラフの更新など
+            gameServer.ThinkReportChangedCommand(message);
+            if (evalGraphDialog == null)
+            {
+                evalGraphDialog = new Info.EvalGraphDialog();
+                // ToDo: 要らない時は形勢グラフウィンドウを開かないようにするべき？
+                evalGraphDialog.Visible = true;
+            }
+            else if (evalGraphDialog.IsDisposed || !evalGraphDialog.Visible)
+            {
+                goto cancelEvalGraph;
+            }
+            evalGraphDialog.DispatchEvalGraphUpdate(gameServer);
+            cancelEvalGraph:;
 
             if (engineConsiderationDialog == null)
             {
@@ -515,9 +535,9 @@ namespace MyShogi.View.Win2D
                         {
                             var fd = new OpenFileDialog();
 
-                                //[ファイルの種類]に表示される選択肢を指定する
-                                //指定しないとすべてのファイルが表示される
-                                fd.Filter = string.Join("|", new string[]
+                            // [ファイルの種類]に表示される選択肢を指定する
+                            // 指定しないとすべてのファイルが表示される
+                            fd.Filter = string.Join("|", new string[]
                             {
                                 "棋譜ファイル|*.kif;*.kifu;*.ki2;*.kif2;*.ki2u;*.kif2u;*.csa;*.psn;*.psn2;*.sfen;*.json;*.jkf;*.txt",
                                 "KIF形式|*.kif;*.kifu",
@@ -530,8 +550,9 @@ namespace MyShogi.View.Win2D
                             });
                             fd.FilterIndex = 1;
                             fd.Title = "開く棋譜ファイルを選択してください";
-                                //ダイアログを表示する
-                                if (fd.ShowDialog() == DialogResult.OK)
+
+                            // ダイアログを表示する
+                            if (fd.ShowDialog() == DialogResult.OK)
                             {
                                 var filename = fd.FileName;
                                 try
@@ -539,7 +560,7 @@ namespace MyShogi.View.Win2D
                                     var kifu_text = FileIO.ReadText(filename);
                                     gameServer.KifuReadCommand(kifu_text);
                                     lastFileName = filename; // 最後に開いたファイルを記録しておく。
-                                    }
+                                }
                                 catch
                                 {
                                     TheApp.app.MessageShow("ファイル読み込みエラー");
@@ -556,11 +577,11 @@ namespace MyShogi.View.Win2D
                         {
                             try
                             {
-                                    // 「開く」もしくは「名前をつけて保存無したファイルに上書きする。
-                                    // 「局面の保存」は棋譜ではないのでこれは無視する。
-                                    // ファイル形式は、拡張子から自動判別する。
-                                    gameServer.KifuWriteCommand(lastFileName,
-                                    KifuFileTypeExtensions.StringToKifuFileType(lastFileName));
+                                // 「開く」もしくは「名前をつけて保存無したファイルに上書きする。
+                                // 「局面の保存」は棋譜ではないのでこれは無視する。
+                                // ファイル形式は、拡張子から自動判別する。
+                                gameServer.KifuWriteCommand(lastFileName,
+                                KifuFileTypeExtensions.StringToKifuFileType(lastFileName));
                             }
                             catch
                             {
@@ -577,15 +598,16 @@ namespace MyShogi.View.Win2D
                         {
                             var fd = new SaveFileDialog();
 
-                                //[ファイルの種類]に表示される選択肢を指定する
-                                //指定しないとすべてのファイルが表示される
-                                fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
+                            // [ファイルの種類]に表示される選択肢を指定する
+                            // 指定しないとすべてのファイルが表示される
+                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
                                 + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
                                 + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
                             fd.FilterIndex = 1;
                             fd.Title = "棋譜を保存するファイル形式を選択してください";
-                                //ダイアログを表示する
-                                if (fd.ShowDialog() == DialogResult.OK)
+
+                            // ダイアログを表示する
+                            if (fd.ShowDialog() == DialogResult.OK)
                             {
                                 var filename = fd.FileName;
                                 try
@@ -600,17 +622,17 @@ namespace MyShogi.View.Win2D
                                         case 5: kifuType = KifuFileType.PSN2; break;
                                         case 6: kifuType = KifuFileType.SFEN; break;
 
-                                            // ファイル名から自動判別すべき
-                                            default:
+                                        // ファイル名から自動判別すべき
+                                        default:
                                             kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
                                             if (kifuType == KifuFileType.UNKNOWN)
                                                 kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
-                                                break;
+                                            break;
                                     }
 
                                     gameServer.KifuWriteCommand(filename, kifuType);
                                     lastFileName = filename; // 最後に保存したファイルを記録しておく。
-                                    }
+                                }
                                 catch
                                 {
                                     TheApp.app.MessageShow("ファイル書き出しエラー");
@@ -627,15 +649,16 @@ namespace MyShogi.View.Win2D
                         {
                             var fd = new SaveFileDialog();
 
-                                //[ファイルの種類]に表示される選択肢を指定する
-                                //指定しないとすべてのファイルが表示される
-                                fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
+                            // [ファイルの種類]に表示される選択肢を指定する
+                            // 指定しないとすべてのファイルが表示される
+                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
                                 + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
                                 + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
                             fd.FilterIndex = 1;
                             fd.Title = "局面を保存するファイル形式を選択してください";
-                                //ダイアログを表示する
-                                if (fd.ShowDialog() == DialogResult.OK)
+
+                            // ダイアログを表示する
+                            if (fd.ShowDialog() == DialogResult.OK)
                             {
                                 var filename = fd.FileName;
                                 try
@@ -650,12 +673,12 @@ namespace MyShogi.View.Win2D
                                         case 5: kifuType = KifuFileType.PSN2; break;
                                         case 6: kifuType = KifuFileType.SFEN; break;
 
-                                            // ファイル名から自動判別すべき
-                                            default:
+                                        // ファイル名から自動判別すべき
+                                        default:
                                             kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
                                             if (kifuType == KifuFileType.UNKNOWN)
                                                 kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
-                                                break;
+                                            break;
                                     }
 
                                     gameServer.PositionWriteCommand(filename, kifuType);
@@ -1291,13 +1314,28 @@ namespace MyShogi.View.Win2D
                         };
                         item_window.DropDownItems.Add(item);
                     }
+                    { // ×ボタンで消していた形勢グラフウィンドウの復活
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "形勢グラフウィンドウの表示";
+                        item.Click += (sender, e) =>
+                        {
+                            if (evalGraphDialog == null || evalGraphDialog.IsDisposed)
+                            {
+                                evalGraphDialog = new Info.EvalGraphDialog();
+                            }
+                            evalGraphDialog.DispatchEvalGraphUpdate(gameServer);
+                            evalGraphDialog.Visible = true;
+                        };
+                        item_window.DropDownItems.Add(item);
+                    }
                 }
 
                 // 「情報」
                 {
                     var item_others = new ToolStripMenuItem();
-                item_others.Text = "情報";
-                menu.Items.Add(item_others);
+                    item_others.Text = "情報";
+                    menu.Items.Add(item_others);
 
                     {
                         // メモリへのロギング
@@ -1395,14 +1433,14 @@ namespace MyShogi.View.Win2D
                         item1.Text = "アップデートの確認";
                         item1.Click += (sender, e) =>
                         {
-                                // ・オープンソース版は、MyShogiのプロジェクトのサイト
-                                // ・商用版は、マイナビの公式サイトのアップデートの特設ページ
-                                // が開くようにしておく。
-                                var url = config.CommercialVersion == 0 ?
-                            "https://github.com/yaneurao/MyShogi" :
-                            "https://book.mynavi.jp/ec/products/detail/id=92007"; // 予定地
+                            // ・オープンソース版は、MyShogiのプロジェクトのサイト
+                            // ・商用版は、マイナビの公式サイトのアップデートの特設ページ
+                            // が開くようにしておく。
+                            var url = config.CommercialVersion == 0 ?
+                                "https://github.com/yaneurao/MyShogi" :
+                                "https://book.mynavi.jp/ec/products/detail/id=92007"; // 予定地
 
-                                System.Diagnostics.Process.Start(url);
+                            System.Diagnostics.Process.Start(url);
                         };
                         item_others.DropDownItems.Add(item1);
                     }
@@ -1465,12 +1503,12 @@ namespace MyShogi.View.Win2D
                 }
 #endif
 
-                            Controls.Add(menu);
-                //フォームのメインメニューとする
+                Controls.Add(menu);
+                // フォームのメインメニューとする
                 MainMenuStrip = menu;
                 old_menu = menu;
 
-                //レイアウトロジックを再開する
+                // レイアウトロジックを再開する
                 menu.ResumeLayout(false);
                 menu.PerformLayout();
                 ResumeLayout(false);

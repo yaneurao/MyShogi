@@ -52,7 +52,7 @@ namespace MyShogi.Model.Shogi.Usi
             var limit = new UsiThinkLimit();
 
             var ourPlayer = timer.Player(us).KifuTimeSetting;
-            if (ourPlayer.IgnoreTime)
+            if (ourPlayer.TimeLimitless)
                 limit.LimitType = UsiThinkLimitEnum.Infinite;
             else
             {
@@ -67,7 +67,7 @@ namespace MyShogi.Model.Shogi.Usi
                 if (blackPlayer.IncTimeEnable)
                     limit.IncTimeBlack = new TimeSpan(0, 0, blackPlayer.IncTime);
                 if (whitePlayer.IncTimeEnable)
-                    limit.IncTimeBlack = new TimeSpan(0, 0, whitePlayer.IncTime);
+                    limit.IncTimeWhite = new TimeSpan(0, 0, whitePlayer.IncTime);
 
                 // 先後の残り時間を保存
                 limit.RestTimeBlack = timer.GetKifuMoveTimes().Player(Color.BLACK).RestTime;
@@ -125,7 +125,7 @@ namespace MyShogi.Model.Shogi.Usi
                             sb.Append(" binc ");
                             sb.Append(IncTimeBlack == null ? "0" : IncTimeBlack.TotalMilliseconds.ToString());
 
-                            sb.Append("winc ");
+                            sb.Append(" winc ");
                             sb.Append(IncTimeWhite == null ? "0" : IncTimeWhite.TotalMilliseconds.ToString());
                         }
                     }

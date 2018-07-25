@@ -5,10 +5,10 @@ namespace MyShogi.Model.Shogi.Core
     /// <summary>
     /// 評価値として用いる値。
     /// 探索部を用意していないので、表示に使う程度であるが…。
-    /// 
+    ///
     /// MatePlus = -MatedMinus
     /// Mate = -Mated
-    /// 
+    ///
     /// のように符号を反転させると先後入替えた側から見た評価値になることが保証されている。
     /// </summary>
     public enum EvalValue : Int32
@@ -36,7 +36,7 @@ namespace MyShogi.Model.Shogi.Core
         // この値は使わない。
         Unknown = Int32.MinValue,
     }
-    
+
     /// <summary>
     /// ある評価値が、探索のupperbound(上界) , lowerbound(下界)の値であるかなどを表現する。
     /// </summary>
@@ -71,6 +71,22 @@ namespace MyShogi.Model.Shogi.Core
 
         public EvalValue Eval;
         public ScoreBound Bound;
+
+        /// <summary>
+        /// 評価値を反転する。
+        /// </summary>
+        public EvalValueEx negate()
+        {
+            EvalValue eval = (Eval != EvalValue.Unknown && Eval != EvalValue.NoValue) ? (EvalValue)(-(Int32)Eval) : Eval;
+            ScoreBound bound;
+            switch (Bound)
+            {
+                case ScoreBound.Upper: bound = ScoreBound.Lower; break;
+                case ScoreBound.Lower: bound = ScoreBound.Upper; break;
+                default: bound = Bound; break;
+            }
+            return new EvalValueEx(eval, bound);
+        }
     }
 
     public static class EvalValueExtensions
@@ -116,7 +132,7 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// ScoreBoundの値を文字列で表現する。
-        /// 
+        ///
         /// Chessの記法に倣う。
         /// </summary>
         /// <param name="bound"></param>

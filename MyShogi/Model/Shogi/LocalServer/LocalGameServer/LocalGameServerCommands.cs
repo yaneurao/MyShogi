@@ -18,7 +18,7 @@ namespace MyShogi.Model.Shogi.LocalServer
          * これはdelegateでWorker Thread(対局監視スレッド)に渡され、実行される。
          * delegateのなかのkifuManager.PositionやkifuManager.KifuListは、無名関数の束縛の性質から、
          * 現在のものであって過去のPositionやKifuListのへ参照ではない。
-         * 
+         *
          * また、処理するのは対局監視スレッドであるから(対局監視スレッドはシングルスレッドでかつ、対局監視スレッド側でしか
          * Position.DoMove()は行わないので)、これが処理されるタイミングでは、kifuManager.Positionは最新のPositionであり、
          * これを調べているときに他のスレッドが勝手にPosition.DoMove()を行ったり、他のコマンドを受け付けたり、持ち時間切れに
@@ -57,7 +57,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// ユーザーから指し手が指されたときにUI側から呼び出す。
-        /// 
+        ///
         /// ユーザーがマウス操作によってmの指し手を入力した。
         /// ユーザーはこれを合法手だと思っているが、これが受理されるかどうかは別の話。
         /// (時間切れなどがあるので)
@@ -179,7 +179,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 棋譜の選択行が変更になった。
         /// 対局中でなければ、現在局面をその棋譜の局面に変更する。
-        /// 
+        ///
         /// このメソッドを直接呼び出さずに、this.KifuListSelectedIndexのsetterを使うこと。
         /// </summary>
         private void KifuListSelectedIndexChangedCommand(PropertyChangedEventArgs args)
@@ -242,7 +242,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                         // GameSetting、原則immutableだが、まあいいや…。
                         foreach(var c in All.Colors())
                             GameSetting.Player(c).PlayerName = kifuManager.KifuHeader.GetPlayerName(c);
-                        
+
                     }
                 }
             });
@@ -444,7 +444,97 @@ namespace MyShogi.Model.Shogi.LocalServer
                 NotifyTurnChanged();
             });
         }
-        
+
+        /// <summary>
+        /// 評価値の更新
+        /// </summary>
+        public void ThinkReportChangedCommand(Usi.UsiThinkReportMessage message)
+        {
+            // ToDo: タイミングによっては思考した局面と異なる局面に評価値を記録してしまうかも。どう同期させる？
+            var currentNode = kifuManager.Tree.currentNode;
+            if (currentNode.thinkmsgs == null)
+                currentNode.thinkmsgs = new System.Collections.Generic.List<Usi.UsiThinkReportMessage>();
+            currentNode.thinkmsgs.Add(message);
+
+            if (message.type != Usi.UsiEngineReportMessageType.UsiThinkReport) return;
+            // ToDo: 場合によっては GameMode が InTheGame から外れてから対局中の思考を受信する場合があるので、numberの振り分け方を再考する
+            var number = message.number + (GameMode != GameModeEnum.InTheGame ? 2 : 0);
+
+            var thinkReport = message.data as Usi.UsiThinkReport;
+            if (thinkReport.Moves == null && thinkReport.InfoString == null) return;
+            if (thinkReport.MultiPvString != null && thinkReport.MultiPvString != "1") return;
+            if (thinkReport.Eval.Eval == EvalValue.NoValue) return;
+            while (currentNode.evalList.Count <= number) currentNode.evalList.Add(new EvalValueEx(EvalValue.NoValue, ScoreBound.Exact));
+            switch (number)
+            {
+                case 0:
+                    currentNode.evalList[number] = thinkReport.Eval;
+                    break;
+                case 1:
+                    currentNode.evalList[number] = thinkReport.Eval.negate();
+                    break;
+                default:
+                    currentNode.evalList[number] = kifuManager.Position.sideToMove == Color.BLACK ? thinkReport.Eval : thinkReport.Eval.negate();
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 評価値グラフ用データ生成
+        /// </summary>
+        public EvaluationGraphData GetEvaluationGraphDataCommand(EvaluationGraphType evalType = EvaluationGraphType.TrigonometricSigmoid, bool reverse = false)
+        {
+            var dataList = new System.Collections.Generic.List<GameEvaluationData>
+            {
+                new GameEvaluationData{ values = new System.Collections.Generic.List<EvalValue>() },
+                new GameEvaluationData{ values = new System.Collections.Generic.List<EvalValue>() },
+            };
+            var ply = kifuManager.Tree.gamePly - 1;
+            var n = kifuManager.Tree.currentNode;
+            var endIndex = -1;
+            while (true)
+            {
+                if (n.evalList != null)
+                {
+                    while (n.evalList.Count > dataList.Count) dataList.Add(new GameEvaluationData{ values = new System.Collections.Generic.List<EvalValue>() });
+                    for (var p = 0; p < n.evalList.Count; ++p)
+                    {
+                        while (ply >= dataList[p].values.Count) dataList[p].values.Add(EvalValue.NoValue);
+                        dataList[p].values[ply] = n.evalList[p].Eval;
+                        endIndex = System.Math.Max(endIndex, ply);
+                    }
+                }
+                if (n.prevNode == null) break;
+                n = n.prevNode;
+                --ply;
+            }
+            for (n = kifuManager.Tree.currentNode, ply = kifuManager.Tree.gamePly; n.moves.Count > 0; ++ply)
+            {
+                n = n.moves[0].nextNode;
+                if (n == null) break;
+                if (n.evalList == null) continue;
+                while (n.evalList.Count > dataList.Count) dataList.Add(new GameEvaluationData{ values = new System.Collections.Generic.List<EvalValue>() });
+                for (var p = 0; p < n.evalList.Count; ++p)
+                {
+                    while (ply >= dataList[p].values.Count) dataList[p].values.Add(EvalValue.NoValue);
+                    dataList[p].values[ply] = n.evalList[p].Eval;
+                    endIndex = System.Math.Max(endIndex, ply);
+                }
+            }
+            foreach (var data in dataList)
+            {
+                while (data.values.Count <= endIndex) data.values.Add(EvalValue.NoValue);
+            }
+            return new EvaluationGraphData
+            {
+                data_array = dataList.ToArray(),
+                maxIndex = endIndex + 1,
+                selectedIndex = kifuManager.Tree.gamePly - 1,
+                type = evalType,
+                reverse = reverse,
+            };
+        }
+
         /// <summary>
         /// UI側から、worker threadで実行して欲しいコマンドを渡す。
         /// View-ViewModelアーキテクチャにおいてViewからViewModelにcommandを渡す感じ。

@@ -31,23 +31,27 @@
             this.evalGraphPictureBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.evalGraphPictureBox)).BeginInit();
             this.SuspendLayout();
-            //
+            // 
             // evalGraphPictureBox
-            //
-            this.evalGraphPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            // 
+            this.evalGraphPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.evalGraphPictureBox.Location = new System.Drawing.Point(0, 0);
+            this.evalGraphPictureBox.Margin = new System.Windows.Forms.Padding(0);
             this.evalGraphPictureBox.Name = "evalGraphPictureBox";
-            this.evalGraphPictureBox.Size = new System.Drawing.Size(147, 147);
+            this.evalGraphPictureBox.Size = new System.Drawing.Size(150, 150);
             this.evalGraphPictureBox.TabIndex = 0;
             this.evalGraphPictureBox.TabStop = false;
-            //
+            this.evalGraphPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.evalGraphPictureBox_MouseDown);
+            this.evalGraphPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.evalGraphPictureBox_MouseMove);
+            this.evalGraphPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.evalGraphPictureBox_MouseUp);
+            // 
             // EvalGraphControl
-            //
-            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 21F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            // 
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.AutoScroll = true;
             this.Controls.Add(this.evalGraphPictureBox);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "EvalGraphControl";
             this.Scroll += new System.Windows.Forms.ScrollEventHandler(this.EvalGraphControl_Scroll);
             ((System.ComponentModel.ISupportInitialize)(this.evalGraphPictureBox)).EndInit();

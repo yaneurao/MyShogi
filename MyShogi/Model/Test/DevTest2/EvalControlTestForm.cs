@@ -16,7 +16,7 @@ namespace MyShogi.Model.Test
         public EvalControlTestForm()
         {
             InitializeComponent();
-            seed = Environment.TickCount;
+            seed = 75698453; //Environment.TickCount;
             type = EvaluationGraphType.TrigonometricSigmoid;
             reverse = false;
             evaldata = new EvaluationGraphData
@@ -35,7 +35,7 @@ namespace MyShogi.Model.Test
 
         public void EvalUpdate(EvaluationGraphData evaldata)
         {
-            evalGraphControl1.OnEvalDataChanged(new PropertyChangedEventArgs("EvalData", evaldata));
+            evalGraphControl.OnEvalDataChanged(new PropertyChangedEventArgs("EvalData", evaldata));
         }
 
         static GameEvaluationData randomEval(Random rand, int player, int length)
@@ -97,6 +97,7 @@ namespace MyShogi.Model.Test
 
         private void UpdateData_Click(object sender, EventArgs e)
         {
+            Console.WriteLine($"seed: {seed}");
             var rand = new Random(seed++);
             var maxIndex = rand.Next(10, 300);
             evaldata = new EvaluationGraphData
@@ -106,6 +107,10 @@ namespace MyShogi.Model.Test
                     randomEval(rand, 0, maxIndex),
                     randomEval(rand, 1, maxIndex),
                     randomEval(rand, 2, maxIndex),
+                    randomEval(rand, 3, maxIndex),
+                    randomEval(rand, 4, maxIndex),
+                    randomEval(rand, 5, maxIndex),
+                    randomEval(rand, 6, maxIndex),
                 },
                 selectedIndex = rand.Next(-1, maxIndex),
                 maxIndex = maxIndex,
