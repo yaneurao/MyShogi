@@ -107,7 +107,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                         return;
                     }
                     var usiEnginePlayer = Players[(int)c] as UsiEnginePlayer;
-                    InitUsiEnginePlayer(c , usiEnginePlayer, engineDefineEx, gamePlayer.SelectedEnginePreset, nextGameMode);
+                    var ponder = gamePlayer.Ponder;
+                    InitUsiEnginePlayer(c , usiEnginePlayer, engineDefineEx, gamePlayer.SelectedEnginePreset, nextGameMode , ponder);
                 }
             }
 
@@ -201,8 +202,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         /// <param name="usiEnginePlayer"></param>
         /// <param name="selectedPresetIndex">プリセットの選択番号+1。選んでなければ0。</param>
-        private void InitUsiEnginePlayer(Color c , UsiEnginePlayer usiEnginePlayer , EngineDefineEx engineDefineEx , int selectedPresetIndex , 
-            GameModeEnum nextGameMode)
+        private void InitUsiEnginePlayer(Color c , UsiEnginePlayer usiEnginePlayer ,
+            EngineDefineEx engineDefineEx , int selectedPresetIndex , GameModeEnum nextGameMode , bool ponder)
         {
 
             var engine_config = TheApp.app.EngineConfigs;
@@ -222,8 +223,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             // Hash、Threadsのマネージメントのために代入しておく。
-            // TODO : ponder あとで書く
-            UsiEngineHashManager.SetValue(c, engineDefineEx , config, false);
+            UsiEngineHashManager.SetValue(c, engineDefineEx , config, ponder);
             
             var engine = usiEnginePlayer.Engine;
             var engineDefine = engineDefineEx.EngineDefine;
@@ -238,7 +238,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     {
                         // オプションの値を設定しなおす。
                         EngineDefineUtility.SetDefaultOption( engine.OptionList, engineDefineEx, selectedPresetIndex,
-                            config , UsiEngineHashManager.HashSize[(int)c] , UsiEngineHashManager.Threads[(int)c]);
+                            config , UsiEngineHashManager.HashSize[(int)c] , UsiEngineHashManager.Threads[(int)c] , ponder);
                     }
                 } catch (Exception ex)
                 {
@@ -727,7 +727,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 検討用エンジンの開始
 
             var usiEnginePlayer = Players[0] as UsiEnginePlayer;
-            InitUsiEnginePlayer(Color.BLACK , usiEnginePlayer, engineDefineEx, 0, GameMode);
+            InitUsiEnginePlayer(Color.BLACK , usiEnginePlayer, engineDefineEx, 0, GameMode , false);
 
             // エンジンに与えるHashSize,Threadsの計算
             UsiEngineHashManager.CalcValue();

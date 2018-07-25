@@ -163,7 +163,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <param name="threads">スレッド数。エンジンオプションのThreadsの値は、この値で設定される。</param>
         /// <returns></returns>
         public static void SetDefaultOption(List<UsiOption> optionList, EngineDefineEx engineDefineEx, int selectedPresetIndex ,
-            EngineConfig config , long hashSize , int threads)
+            EngineConfig config , long hashSize , int threads , bool ponder)
         {
             var engineDefine = engineDefineEx.EngineDefine;
             var folderPath = engineDefineEx.FolderPath;
@@ -203,6 +203,11 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 else if (option.Name == "Threads")
                 {
                     value = threads.ToString();
+                }
+                // Ponder設定の反映。
+                else if (option.Name == "USI_Ponder")
+                {
+                    value = ponder ? "true" : "false";
                 }
 
                 if (value != null)

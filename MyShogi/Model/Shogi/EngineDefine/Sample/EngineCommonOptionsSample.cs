@@ -450,6 +450,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "思考エンジンとGUIとのやりとりをエンジン側からファイルに書き出します。",
                         "option name WriteDebugLog type check default false"),
 
+                    // Ponderに関しては、対局設定ダイアログで行うので、エンジン個別オプションでは設定しない。
+                    new EngineOptionDescription("USI_Ponder") { Hide = true },
+
                     // これは非表示にしておく。
                     new EngineOptionDescription("Param1") { Hide = true },
                     new EngineOptionDescription("Param2") { Hide = true },
