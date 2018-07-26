@@ -118,29 +118,40 @@ namespace MyShogi.View.Win2D
             public float rPad;
             public float uPad;
             public float bPad;
+            public float xlen;
+            public float ymul;
+            public float yadd;
             public float graphBodyWidth;
             public float plyWidth;
             public float plyFontSize;
             public float scoreRound;
             public float scoreLineWidth;
+            public float lineWidthMul;
             public int boxWidth;
-            public float xlen;
-            public float ymul;
-            public float yadd;
 
             public ViewGeo(EvalGraphControl con)
             {
                 plyMax = Math.Max((Math.Max(con.evaldata.maxIndex, con.evaldata.selectedIndex) + 9) / 10 * 10, 50);
+                var plyMaxLen = $"{plyMax}".Length;
                 hScrollValue = con.HorizontalScroll.Value;
-                scoreFontSize = Math.Min(Math.Max(con.Width / 16f, 12f), Math.Max(con.Height / 16f, 8f));
-                scaleLineLen = 6;
-                scaleTextPad = 8;
+                scoreFontSize = Math.Max(Math.Min(con.Width / 16f, con.Height / 16f), 1f);
+                lineWidthMul = Math.Max(Math.Min(con.Width, con.Height) / 512f, 1f);
+                scaleLineLen = 6 * lineWidthMul;
+                scaleTextPad = 8 * lineWidthMul;
+                RectangleF bounds;
+                using (var path = new System.Drawing.Drawing2D.GraphicsPath())
                 {
-                    var path = new System.Drawing.Drawing2D.GraphicsPath();
-                    path.AddString("+9999", new FontFamily(con.fontFamilyName), (int)FontStyle.Regular, scoreFontSize, new PointF(0, 0), new StringFormat() { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Near });
-                    var bounds = path.GetBounds();
+                    path.AddString(
+                        "+9999",
+                        new FontFamily(con.fontFamilyName),
+                        (int)FontStyle.Regular,
+                        scoreFontSize,
+                        new PointF(0f, 0f),
+                        new StringFormat() { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Near }
+                        );
+                    bounds = path.GetBounds();
                     lPad = 4 + (int)(-1.0f * bounds.Left + scaleTextPad);
-                    rPad = 4 + (int)(-0.3f * bounds.Left);
+                    rPad = 4 + (int)(-0.1f * plyMaxLen * bounds.Left);
                     uPad = 4 + (int)(+0.5f * bounds.Bottom);
                     bPad = 4 + (int)(+1.0f * bounds.Bottom + scaleTextPad);
                 }
@@ -149,9 +160,9 @@ namespace MyShogi.View.Win2D
                 yadd = uPad + ymul;
                 graphBodyWidth = con.Width - lPad - rPad;
                 plyWidth = Math.Max(graphBodyWidth / plyMax, 4f);
-                plyFontSize = Math.Max(Math.Min(plyWidth * 4f, scoreFontSize), 8f);
+                plyFontSize = Math.Max(Math.Min(scoreFontSize * plyWidth * -80f / (plyMaxLen * bounds.Left), scoreFontSize), 1f);
                 scoreRound = Math.Max(Math.Min(con.Height * 0.01f, plyWidth * 0.5f), 3f);
-                scoreLineWidth = Math.Max(scoreRound * 0.25f, 1f);
+                scoreLineWidth = Math.Max(scoreRound * 0.5f, 1f);
                 boxWidth = Math.Max((int)(lPad + rPad + plyMax * plyWidth), con.Width);
             }
         }
@@ -214,10 +225,10 @@ namespace MyShogi.View.Win2D
 
             // 手数目盛りの描画
             using (var font = new Font(fontFamilyName, geo.plyFontSize, GraphicsUnit.Pixel))
-            using (var bpen = new Pen(DColor.Black, 2))
+            using (var bpen = new Pen(DColor.Black, 2f * geo.lineWidthMul))
             using (var bbrush = new SolidBrush(DColor.Black))
             for (var i = 0; ; i += 10)
-            using (var pen = new Pen(DColor.Silver, (i % 50) == 0 ? 2 : 1))
+            using (var pen = new Pen(DColor.Silver, ((i % 50) == 0 ? 2f : 1f) * geo.lineWidthMul))
             {
                 float x = geo.lPad + geo.plyWidth * i;
                 if (x < geo.lPad + geo.hScrollValue) continue;
@@ -283,7 +294,7 @@ namespace MyShogi.View.Win2D
                         var color = DColor.Silver;
                         var y0 = -vert * geo.ymul + geo.yadd;
                         var y1 = +vert * geo.ymul + geo.yadd;
-                        using (var pen = new Pen(color, ent.width))
+                        using (var pen = new Pen(color, ent.width * geo.lineWidthMul))
                         {
                             g.DrawLine(pen, geo.lPad + geo.hScrollValue, y0, geo.lPad + geo.xlen, y0);
                             if (ent.score != 0)
@@ -310,14 +321,15 @@ namespace MyShogi.View.Win2D
                         var vert = vertFunc((EvalValue)ent.score);
                         var color = Vert2Color(vert, evaldata.reverse);
                         var y = -vert * geo.ymul + geo.yadd;
-                        using (var pen = new Pen(color, 2))
+                        using (var pen = new Pen(color, 2f * geo.lineWidthMul))
                             g.DrawLine(pen, geo.lPad + geo.hScrollValue - geo.scaleLineLen, y, geo.lPad + geo.hScrollValue, y);
                         using (var brush = new SolidBrush(color))
                             g.DrawString(ent.text, font, brush, geo.lPad + geo.hScrollValue - geo.scaleTextPad, y, strformatScore);
                     }
                     break;
                 case EvaluationGraphType.TrigonometricSigmoid:
-                    foreach (var ent in new[]
+                    foreach (var ent in evalGraphPictureBox.Height >= 192 ?
+                    new[]
                     {
                         new { score = 0, width = 3 },
                         new { score = 100, width = 1 },
@@ -340,13 +352,23 @@ namespace MyShogi.View.Win2D
                         new { score = 9000, width = 1 },
                         new { score = 9999, width = 2 },
                         new { score = 99999, width = 1 },
+                    }:
+                    new[]
+                    {
+                        new { score = 0, width = 3 },
+                        new { score = 200, width = 1 },
+                        new { score = 500, width = 1 },
+                        new { score = 1000, width = 2 },
+                        new { score = 2000, width = 1 },
+                        new { score = 9999, width = 2 },
+                        new { score = 99999, width = 1 },
                     })
                     {
                         var vert = vertFunc((EvalValue)ent.score);
                         var color = DColor.Silver;
                         var y0 = -vert * geo.ymul + geo.yadd;
                         var y1 = +vert * geo.ymul + geo.yadd;
-                        using (var pen = new Pen(color, ent.width))
+                        using (var pen = new Pen(color, ent.width * geo.lineWidthMul))
                         {
                             g.DrawLine(pen, geo.lPad + geo.hScrollValue, y0, geo.lPad + geo.xlen, y0);
                             if (ent.score != 0)
@@ -373,7 +395,7 @@ namespace MyShogi.View.Win2D
                         var vert = vertFunc((EvalValue)ent.score);
                         var color = Vert2Color(vert, evaldata.reverse);
                         var y = -vert * geo.ymul + geo.yadd;
-                        using (var pen = new Pen(color, 2))
+                        using (var pen = new Pen(color, 2f * geo.lineWidthMul))
                             g.DrawLine(pen, geo.lPad + geo.hScrollValue - geo.scaleLineLen, y, geo.lPad + geo.hScrollValue, y);
                         using (var brush = new SolidBrush(color))
                             g.DrawString(ent.text, font, brush, geo.lPad + geo.hScrollValue - geo.scaleTextPad, y, strformatScore);
@@ -409,7 +431,7 @@ namespace MyShogi.View.Win2D
                         var color = DColor.Silver;
                         var y0 = -vert * geo.ymul + geo.yadd;
                         var y1 = +vert * geo.ymul + geo.yadd;
-                        using (var pen = new Pen(color, ent.width))
+                        using (var pen = new Pen(color, ent.width * geo.lineWidthMul))
                         {
                             g.DrawLine(pen, geo.lPad + geo.hScrollValue, y0, geo.lPad + geo.xlen, y0);
                             if (ent.vert != 0)
@@ -434,7 +456,7 @@ namespace MyShogi.View.Win2D
                         var vert = (evaldata.reverse ? -1 : +1) * ent.vert;
                         var color = Vert2Color(vert, evaldata.reverse);
                         var y = -vert * geo.ymul + geo.yadd;
-                        using (var pen = new Pen(color, 2))
+                        using (var pen = new Pen(color, 2f * geo.lineWidthMul))
                             g.DrawLine(pen, geo.lPad + geo.hScrollValue - geo.scaleLineLen, y, geo.lPad + geo.hScrollValue, y);
                         using (var brush = new SolidBrush(color))
                             g.DrawString(ent.text, font, brush, geo.lPad + geo.hScrollValue - geo.scaleTextPad, y, strformatScore);
@@ -443,7 +465,7 @@ namespace MyShogi.View.Win2D
             }
 
             // 外枠線の描画
-            using (var pen = new Pen(DColor.Silver, 3f))
+            using (var pen = new Pen(DColor.Silver, 3f * geo.lineWidthMul))
             {
                 g.DrawRectangle(pen, geo.lPad + geo.hScrollValue, geo.yadd - geo.ymul, geo.xlen - geo.hScrollValue, geo.ymul + geo.ymul);
             }
@@ -512,8 +534,9 @@ namespace MyShogi.View.Win2D
             var xl = geo.hScrollValue + geo.lPad;
             var xr = xl + geo.xlen;
             var ply = (p.X - geo.lPad) / geo.plyWidth;
+#if DEBUG
             Console.WriteLine($"EvalGraph Click: Xl{xl} Xr{xr} X{p.X} Y{p.Y} ply{ply}");
-
+#endif
             // ToDo: 入力を受けた手数の局面に移動する
         }
 
@@ -524,8 +547,9 @@ namespace MyShogi.View.Win2D
             var xr = xl + geo.xlen;
             var ply0 = (p0.X - geo.lPad) / geo.plyWidth;
             var ply1 = (p1.X - geo.lPad) / geo.plyWidth;
+#if DEBUG
             Console.WriteLine($"EvalGraph Drag: Xl{xl} Xr{xr} X0{p0.X} Y0{p0.Y} ply0{ply0} X1{p1.X} Y1{p1.Y} ply1{ply1}");
-
+#endif
             // ToDo: 用途があれば…？ (グラフのスクロール？)
         }
 
@@ -535,8 +559,9 @@ namespace MyShogi.View.Win2D
             var xl = geo.hScrollValue + geo.lPad;
             var xr = xl + geo.xlen;
             var ply = (p.X - geo.lPad) / geo.plyWidth;
+#if DEBUG
             Console.WriteLine($"EvalGraph RightClick: Xl{xl} Xr{xr} X{p.X} Y{p.Y} ply{ply}");
-
+#endif
             // ToDo: 用途があれば…？ (右クリックメニューを開く？)
         }
 
