@@ -154,9 +154,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 var engine_define = new EngineDefine()
                 {
                     DisplayName = "tanuki- 2018",
-                    EngineExeName = "yaneuraou2018_nuee",
+                    EngineExeName = "YaneuraOu2018NNUE",
                     SupportedCpus = default_cpus,
-                    EvalMemory = 480, // NNUEは、これくらい？
+                    EvalMemory = 300, // NNUEは、これくらい？
                     WorkingMemory = 30,
                     Presets = default_preset,
                     DescriptionSimple = "tanuki- 2018年版",

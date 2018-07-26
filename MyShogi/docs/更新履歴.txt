@@ -1,7 +1,5 @@
 ﻿
 TODO:
-・インストーラー作成(3日ぐらい？)
-	cf. https://www.osadasoft.com/visual-studio-2017%E3%81%A7%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%A9%E4%BD%9C%E6%88%90/
 
 -- 以下、できれば
 ・連続対局
@@ -9,33 +7,123 @@ TODO:
 ・棋譜解析(できれば)
 
 - 残り作業
-・エンジンが読み込むべき評価関数、フォルダをeval/で固定すべき。エンジン側に"eval_dir.txt"でEvalDirのデフォルト値を読み込むような何かが必要だ。
-	- 共通設定に"EvalDir"は存在すべきではない気がする。
-・preset (段位ごとの強さ)の調整
 ・検討モードの思考エンジンの選択画面
-・各思考エンジンの各CPU向け実行ファイルの用意
-・各思考エンジンの各CPUでの動作検証
-・各思考エンジン用の定跡ファイルの用意
 ・インストーラー作成
+	cf. https://www.osadasoft.com/visual-studio-2017%E3%81%A7%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%A9%E4%BD%9C%E6%88%90/
 
-- 評価関数
-	- 読み太 KPPT
-	- Qhapaq KPPT
-	- ぽんぽこ KPPT
-	- tanuki-2018 NNUE
-	- やねうら王 KPP_KKPT
+  - YaneuraOu2018NNUE_nosse.exe
+    - まだ
+
+- ponder(相手番のときに思考する)の処理その3
+	- Ponderの指し手を受け取っているなら、Ponderの局面を非手番側のエンジンに送信してやる処理。
+- 時間無制限の時のコンピュータに渡す思考時間見直す。
+- preset (段位ごとの強さ)の調整
+
+
+■  2018/07/27
+
+
+- WIP.md追加
+
+
+- tanuki-(2018)の各CPU用の実行ファイルを用意。
+	- build
+		mingw32-make clean
+		mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+	  - buildうまくでけへん。吐きそう。
+      - pacmanしたらnosse以外はbuildできたっぽい。
+    - YaneuraOu2018NNUE_avx2.exe
+    - YaneuraOu2018NNUE_sse42.exe
+    - YaneuraOu2018NNUE_sse41.exe
+    - YaneuraOu2018NNUE_sse2.exe
+      - ここまで出来た。
+    - YaneuraOu2018NNUE_nosse.exe
+      - まだ
+
+
+- やねうら王(2018)の各CPU用の実行ファイルを用意。
+	Yaneuraou2018_kpp_kkpt_avx2.exe
+	Yaneuraou2018_kpp_kkpt_sse42.exe
+	Yaneuraou2018_kpp_kkpt_sse41.exe
+	Yaneuraou2018_kpp_kkpt_sse2.exe
+	Yaneuraou2018_kpp_kkpt_nosse.exe
+
+
+- 形勢グラフのレイアウト調整・インストーラ設定たたき台 (Mizarさんのプルリク #27)
+	* .editorconfig
+	* 形勢グラフ: レイアウト調整
+	* YaneuraOuSetup
+
+
+- 各思考エンジンの各CPU向け実行ファイルの用意
+	- 各思考エンジンの各CPUでの動作検証
+- tanuki-(SDT5)用,Qhapaq(2018)用,読み太(2018)用に実行ファイルを用意
+	- YaneuraOu2018KPPT_avx2.exe
+	- YaneuraOu2018KPPT_sse42.exe
+	- YaneuraOu2018KPPT_sse41.exe
+	- YaneuraOu2018KPPT_sse2.exe
+	- YaneuraOu2018KPPT_nosse.exe
+- エンジンから"info string"が送られてきた時の検討ウィンドウへの表示処理実装
+	- 定跡の表示がややおかしい気はする。
+- 検討ウィンドウのHASH使用率、横幅狭かったので広げた
+
+- 各思考エンジン用の定跡ファイルの用意
+	- book/standard_book.db
+	- book/yaneura_book1.db
+	- book/yaneura_book3.db
+	- book/yaneura_book4.db
+	- 定跡一つ見つからない。あとで探してくる。
+		- book/yaneura_book2.db
+
+
+- やねうら王の思考エンジンのほうの改修
+	- BookDir option追加
+		- https://github.com/yaneurao/YaneuraOu/commit/315dd4b42120a824c09d394a28c044fcaa6f9417
+	- 起動時に、"engine_option.txt"を読み込み、Optionsに反映するように。
+		- https://github.com/yaneurao/YaneuraOu/commit/2458e32e518438db19cea57239e77b1864aeed14
+	- エンジンが読み込むべき評価関数、フォルダをeval/で固定すべき。エンジン側に"eval_dir.txt"でEvalDirのデフォルト値を読み込むような何かが必要だ。
+		- 共通設定に"EvalDir"は存在すべきではない気がする。
 
 
 ■  2018/07/26
 
 
-- ponder(相手番のときに思考する)の処理
-	- 対局設定ダイアログにPonder設定追加。
+- ponder(相手番のときに思考する)の処理その2
 	- Ponderの設定の反映
-	// 　作業中
+		- ponder設定、エンジンオプションで設定するようにしてしまうと、先後両方がエンジンのときはponderしない、というような
+		ことがしにくくなってしまう。そう考えるとponderは、対局設定ダイアログで設定できるべきのような気はする。だから
+		思考エンジンのオプション設定にはponder設定について表示しないようにする。
+		- エンジンに対してこの設定をHideするように。
+- 定跡ファイルは book/ , 評価関数ファイルは、 eval/ 配下に配置するように。
+	 - 評価関数を配置
+		d-----       2018/07/25     23:53                qhapaq2018_kppt                                                       
+		d-----       2018/07/25     23:52                tanuki2018_nnue                                                       
+		d-----       2018/07/25     23:52                tanuki_sdt5_kppt                                                      
+		d-----       2018/07/25     23:52                yaneuraou2018_kppkkpt                                                 
+		d-----       2018/07/25     23:53                yomita2018_kppt   
+	- 評価関数
+		- 読み太 KPPT
+		- Qhapaq KPPT
+		- ぽんぽこ KPPT
+		- tanuki-2018 NNUE
+		- やねうら王 KPP_KKPT
+
+
+- ponder(相手番のときに思考する)の処理その1
+	- 対局設定ダイアログにPonder設定追加。
+	- PlayerSettingにPonder追加。
 
 
 ■  2018/07/25
+
+
+- Mizarさんのプルリクをマージ
+	* 対局オプション「時間切れを負けにしない」でエンジンの思考時間が無制限になっていた
+	* 後手のフィッシャー加算時間がエンジンに0と通知されていた
+	winc前の空白が抜けていた
+	* GameScreenControlEventHandler: コメント追記
+	* 形勢グラフウィンドウの実装
+	* 形勢グラフウィンドウ名の修正
 
 
 - とりま、出来たこと。
