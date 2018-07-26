@@ -90,7 +90,7 @@
             this.textBox5.Margin = new System.Windows.Forms.Padding(4);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
-            this.textBox5.Size = new System.Drawing.Size(230, 31);
+            this.textBox5.Size = new System.Drawing.Size(237, 31);
             this.textBox5.TabIndex = 2;
             // 
             // listView1

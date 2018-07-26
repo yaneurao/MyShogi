@@ -463,7 +463,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             var thinkReport = message.data as Usi.UsiThinkReport;
             if (thinkReport.Moves == null && thinkReport.InfoString == null) return;
             if (thinkReport.MultiPvString != null && thinkReport.MultiPvString != "1") return;
-            if (thinkReport.Eval.Eval == EvalValue.NoValue) return;
+            if (thinkReport.Eval == null || thinkReport.Eval.Eval == EvalValue.NoValue) return;
             while (currentNode.evalList.Count <= number) currentNode.evalList.Add(new EvalValueEx(EvalValue.NoValue, ScoreBound.Exact));
             switch (number)
             {

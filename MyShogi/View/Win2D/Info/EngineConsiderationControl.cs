@@ -175,8 +175,9 @@ namespace MyShogi.View.Win2D
                         {
                             if (move.IsSpecial())
                                 append(move_to_kif_string(pos, move));
-                            else
+                            else if (move.To() != Square.NB)
                                 // 非合法手に対してKIF2の文字列を生成しないようにする。(それが表示できるとは限らないので..)
+                                // また、Square.NBはparseに失敗した文字列であるから、これは出力する意味がない。(あえて出力するなら元の文字列を出力してやるべき)
                                 append($"非合法手({ move.Pretty()})");
 
                             break;
@@ -198,16 +199,21 @@ namespace MyShogi.View.Win2D
 
                 // それぞれの項目、nullである可能性を考慮しながら表示すべし。
                 // 経過時間、1/10秒まで表示する。
+                // "info string"の文字列を表示する時は、info.Eval == nullでkifuStringにその表示すべき文字列が渡されてここに来るので注意。
+
                 var elpasedTimeString = info.ElapsedTime == null ? null : info.ElapsedTime.ToString("hh':'mm':'ss'.'f");
                 var ranking = info.MultiPvString == null ? "1" : info.MultiPvString;
+                var depthString = info.Eval == null ? null : $"{info.Depth}/{info.SelDepth}";
+                var evalString = info.Eval == null ? null : info.Eval.Eval.Pretty();
+                var evalBound = info.Eval == null ? null : info.Eval.Bound.Pretty();
 
                 var list = new[]{
                     ranking,                          // MultiPVの順
                     elpasedTimeString,                // 思考時間
-                    $"{info.Depth}/{info.SelDepth}" , // 探索深さ
+                    depthString,                      // 探索深さ
                     info.NodesString ,                // ノード数
-                    info.Eval.Eval.Pretty(),          // 評価値
-                    info.Eval.Bound.Pretty(),         // "+-"
+                    evalString,                       // 評価値
+                    evalBound,                        // "+-"
                     kifuString.ToString()             // 読み筋
                 };
 

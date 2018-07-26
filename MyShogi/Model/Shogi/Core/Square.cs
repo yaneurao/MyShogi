@@ -157,6 +157,9 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public static string Pretty(this Square sq)
         {
+            if (sq == Square.NB)
+                return "NB";
+
             return sq.ToFile().Pretty() + sq.ToRank().Pretty();
         }
 

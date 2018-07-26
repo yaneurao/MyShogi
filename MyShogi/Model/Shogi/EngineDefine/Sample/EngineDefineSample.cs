@@ -134,7 +134,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 var engine_define = new EngineDefine()
                 {
                     DisplayName = "tanuki- SDT5",
-                    EngineExeName = "yaneuraou2018_kppt",
+                    EngineExeName = "YaneuraOu2018KPPT",
                     SupportedCpus = default_cpus,
                     EvalMemory = 960, // KPPTは、これくらい？
                     WorkingMemory = 30,
@@ -175,7 +175,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 var engine_define = new EngineDefine()
                 {
                     DisplayName = "Qhapaq 2018",
-                    EngineExeName = "yaneuraou2018_kppt",
+                    EngineExeName = "YaneuraOu2018KPPT",
                     SupportedCpus = default_cpus,
                     EvalMemory = 960, // KPPTは、これくらい？
                     WorkingMemory = 30,
@@ -195,7 +195,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 var engine_define = new EngineDefine()
                 {
                     DisplayName = "読み太 2018",
-                    EngineExeName = "yaneuraou2018_kppt",
+                    EngineExeName = "YaneuraOu2018KPPT",
                     SupportedCpus = default_cpus,
                     EvalMemory = 960, // KPPTは、これくらい？
                     WorkingMemory = 30,
