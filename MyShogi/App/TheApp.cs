@@ -26,7 +26,7 @@ namespace MyShogi.App
         /// </summary>
         public void Run()
         {
-#if false
+#if true // is beta
             try
             {
                 DevTest();
@@ -34,7 +34,7 @@ namespace MyShogi.App
             } catch (Exception ex)
             {
                 // これを表示するようにしておくと、開発環境以外で実行した時のデバッグが楽ちん。
-                MessageBox.Show(ex);
+                MessageShow(ex);
             }
 #else
             // 開発時に例外がここでcatchされてしまうとデバッグがしにくいので
