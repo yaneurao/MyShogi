@@ -6,7 +6,6 @@ TODO:
   - 棋譜解析(できれば)
 
 - 残り作業
-  - 
   - EvalDir共通設定を反映していないの修正。
     - 共通設定からEvalDirを削除する。
     - 逆にこれ、なぜ共通設定が反映されてないのだろう？
@@ -14,9 +13,6 @@ TODO:
   - 定跡、欠けてるファイルどうにかする。
   - 検討モードの思考エンジンの選択画面 
   - 詰将棋エンジンまわり。
-  - YaneuraOu2018NNUE_nosse.exe
-    - build失敗。原因調査中。
-    - Mizarさんに調査依頼。
   - ponder(相手番のときに思考する)の処理その3
   	- Ponderの指し手を受け取っているなら、Ponderの局面を非手番側のエンジンに送信してやる処理。
   - 時間無制限の時のコンピュータに渡す思考時間見直す。
@@ -27,7 +23,103 @@ TODO:
     - Mizarさんに作ってもらった。確認。
 
 
+  - 後手の時に評価値を手番側から見た評価値にする件。
+    - メニューの「表示」のところに用意
+  - 棋譜をドラッグ＆ドロップで読み込めるようにして欲しい。(まふさん)
+  - クリップボードからの棋譜の貼り付け(tibigameさん)
+  - メニュー項目にアクセスキーを設定する。(kumaさん)
+  - GPSfish、手番側から見た評価値を返すのか調査。
+  - 検討ボタンを押した時に1度目、エンジン初期化のダイアログが出ない。(masaさん)
+  - 対局中に対局メニューでエンジン変更が出来てしまう。(masaさん)
+  - エンジン同士の対局で「中」を押した時にファイルメニューがアクティブにならないことがある。(masaさん)
+  - 駒落ちの時、詰まされると落ちる。(tkponさん)
+    - 形勢グラフの範囲外にプロットしている模様。
+  - 対局設定で先後入替えを押した時、後手の時間設定を個別にするがオフの時でも時間設定グループがアクティブになる。(masaさん)
+
+  // 作業中
+
+
+■　2018/07/28
+
+
+- β2配布
+  - 本体 : MyShogi201807280620beta2.zip
+  - eval : MyShogi201807260000Eval.zip
+
+
+- β1.1に関してβテスターの人たちの意見反映その3
+  - 検討ウィンドウの「着順」「R順」も解像度によって少し見切れる件(48さん)
+    - ボタン少し大きくした。
+  - 棋譜の名前をつけて保存でデフォルト値を「先手名後手名_YYYYMMDDHHmmss.kif」にして欲しい。(ぐららるさん)
+    - 対応しました。
+- ファイルを保存する時にファイル名をescapeするようにした。(エンジン名にファイルに使えない文字列が含まれている可能性があるため)
+  - Utility.EscapeFileName()追加。
+- EngineConsiderationDialog.cs、VSのデザイナで開くとぬるぽで落ちてたの修正。
+
+
+- tanuki-2018、no sse版を含めてビルドできたっぽい。差し替える。
+  - YaneuraOu2018NNUE_nosse.exe
+    - build失敗。原因調査中。
+    - Mizarさんに調査依頼。
+    - 原因判明。
+
+      makefileを使ってcleanするときに、.oファイルを削除しないといけないが、そのときにYANEURAOU_EDITIONを指定していないと
+      コンパイル対象のソースファイルとしてNNUE用の評価関数のソースコードファイルが追加されず、.oファイルが全部消えないので
+      コンパイルに失敗することがある。cleanするときは、この点に注意すること。
+
+      mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+
+
+
 ■  2018/07/27
+
+
+- β1.1に関してβテスターの人たちの意見反映その2
+  - 対局設定ダイアログがまだ見切れる件。(うさ親さん)
+    - AutoScaleFixerうまく動いてない。ClientSizeもリサイズする…。
+    - InitializeComponet()抜けるときにResumeLayout()呼ぶからその瞬間にレイアウト変更がされて、ClientSizeが適用されて、現在の画面サイズに収まらないからリサイズが発生しているのでは…。これは死にそう..。
+      - これは悪いアイデアだった。仕方ないので96dpi環境でVSのデザイナを使うことにする。
+
+        public static void Init(Form form)
+        {
+            form.SuspendLayout();
+
+            // 元のscalingと変更後のscaling
+            var org_scale = form.AutoScaleDimensions;
+            var new_scale = new SizeF(96F, 96F);
+
+            // scale_x == scale_yのはずではあるが、一応分けておく。
+            var scale_x = new_scale.Width / org_scale.Width;
+            var scale_y = new_scale.Height / org_scale.Height;
+
+            // 全体的に(すべての子Controlに対して)このScale変換を適用してやる。
+
+            void ResizeControls(Control.ControlCollection controls)
+            {
+                if (controls != null)
+                {
+                    foreach (Control c in controls)
+                    {
+                        c.Location = new Point((int)(c.Location.X * scale_x), (int)(c.Location.Y * scale_y));
+                        c.Size = new Size((int)(c.Size.Width * scale_x), (int)(c.Size.Height * scale_y));
+                        c.ClientSize = new Size((int)(c.ClientSize.Width * scale_x), (int)(c.ClientSize.Height * scale_y));
+                        c.Margin = new Padding((int)(c.Margin.Left * scale_x), (int)(c.Margin.Top * scale_y), (int)(c.Margin.Right * scale_x), (int)(c.Margin.Bottom * scale_y));
+
+                        // 子コントロールの子コントロールにもこれを適用するために再帰的に処理しておく。
+                        // →　コントロールには、AutoScaleDimensionsというプロパティがないため、ここに書いてある問題は起きないっぽい。ほんまかいな…。
+
+                        //ResizeControls(c.Controls);
+                    }
+                }
+            }
+            ResizeControls(form.Controls);
+
+            form.AutoScaleDimensions = new_scale;
+
+            form.ResumeLayout();
+        }
+
+      - MyShogi201807271800beta1.1a.zip
 
 
 - β1.1に関してβテスターの人たちの意見反映その1
