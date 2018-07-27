@@ -63,7 +63,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// プリセットの選択している番号。
+        /// プリセットの選択している番号 + 1。(0 = カスタム)
         /// </summary>
         public int SelectedEnginePreset
         {

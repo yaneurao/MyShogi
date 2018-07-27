@@ -31,53 +31,77 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                 // ここの段位は、持ち時間15分切れ負けぐらいの時の棋力。
 
+                /*
+                  uuunuuunさんの実験によるとthreads = 4で、
+                    rating =  295.14 ln( nodes/1000) + 1319.8
+                  の関係があるらしいのでここからnodes数を計算。
+                  ratingは将棋倶楽部24のものとする。またlnは自然対数を意味する。
+
+                    ln (nodes/1000) = (rating - 1319.8) / 295.14
+                     右辺をXとすると nodes = 1000 * e^X
+
+                    Excelの式で言うとA1にratingが入っているとして、
+                    =1000*2.718^((A1-1319.8)/295.14)
+                 */
+
+                // 8段 = R3000なので上式に代入するとnodes = 296575。以下同様。
+                // 9段は将棋倶楽部24では存在しない(?) 初段からはR200ごとの増加なので、おそらくR3200。
+
                 new EnginePreset( "九段" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","200000"),
+                        new EngineOption("NodesLimit","583985"),
                 }),
                 new EnginePreset("八段" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","100000"),
+                        new EngineOption("NodesLimit","296575"),
                 }),
                 new EnginePreset("七段" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","80000"),
+                        new EngineOption("NodesLimit","150615"),
                 }),
                 new EnginePreset("六段" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","40000"),
+                        new EngineOption("NodesLimit","76489"),
                 }),
                 new EnginePreset("五段" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","20000"),
+                        new EngineOption("NodesLimit","38844"),
                 }),
                 new EnginePreset("四段" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","10000"),
+                        new EngineOption("NodesLimit","19727"),
                 }),
                 new EnginePreset("三段" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","5000"),
+                        new EngineOption("NodesLimit","10018"),
                 }),
                 new EnginePreset("二段" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","3000"),
+                        new EngineOption("NodesLimit","5087"),
                 }),
                 new EnginePreset("初段" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","500"),
+                        new EngineOption("NodesLimit","2583"),
                 }),
                 new EnginePreset("一級" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","400"),
+                        new EngineOption("NodesLimit","1841"),
                 }),
                 new EnginePreset("二級" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","300"),
+                        new EngineOption("NodesLimit","1312"),
                 }),
                 new EnginePreset("三級" , new EngineOption[] {
                         new EngineOption("Threads","4"),
-                        new EngineOption("NodesLimit","200"),
+                        new EngineOption("NodesLimit","935"),
+                }),
+                new EnginePreset("四級" , new EngineOption[] {
+                        new EngineOption("Threads","4"),
+                        new EngineOption("NodesLimit","666"),
+                }),
+                new EnginePreset("五級" , new EngineOption[] {
+                        new EngineOption("Threads","4"),
+                        new EngineOption("NodesLimit","474"),
                 }),
             };
 

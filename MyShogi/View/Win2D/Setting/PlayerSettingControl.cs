@@ -164,6 +164,8 @@ namespace MyShogi.View.Win2D.Setting
                 // プリセットは前回のエンジンの選択時のSelectedPresetIndexを持って来て選ぶ。
                 var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(engine_define_ex.FolderPath);
                 var preset = indivisualEngine.SelectedPresetIndex;
+                if (preset < 0) // 未選択だと-1がありうるので0に補整してやる。
+                    preset = 0;
 
                 // プリセットをコンボボックスに反映
                 comboBox1.Items.Clear();

@@ -169,7 +169,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
             var folderPath = engineDefineEx.FolderPath;
 
             // EnginePreset
-            var index = selectedPresetIndex - 1;
+            var index = selectedPresetIndex /* - 1 */; // EngineDefineのデシリアライズ時に0番目に「カスタム」を自動挿入している。ゆえに、このまま対応する。
             List<EngineOption> preset = null;
             if (0 <= index && index < engineDefine.Presets.Count)
             {
