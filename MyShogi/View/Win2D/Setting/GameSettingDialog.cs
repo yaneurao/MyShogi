@@ -3,7 +3,6 @@ using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.View.Win2D.Common;
 using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
@@ -16,8 +15,6 @@ namespace MyShogi.View.Win2D
         public GameSettingDialog(MainDialog mainDialog_)
         {
             InitializeComponent();
-
-            AutoScaleFixer.Init(this);
 
             mainDialog = mainDialog_;
 

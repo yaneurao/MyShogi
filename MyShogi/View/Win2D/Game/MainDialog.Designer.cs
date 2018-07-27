@@ -261,17 +261,17 @@
             // 
             this.gameScreenControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gameScreenControl1.Location = new System.Drawing.Point(0, 28);
-            this.gameScreenControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.gameScreenControl1.Margin = new System.Windows.Forms.Padding(6);
             this.gameScreenControl1.Name = "gameScreenControl1";
             this.gameScreenControl1.Setting = null;
-            this.gameScreenControl1.Size = new System.Drawing.Size(518, 227);
+            this.gameScreenControl1.Size = new System.Drawing.Size(518, 228);
             this.gameScreenControl1.TabIndex = 1;
             // 
             // MainDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(518, 255);
+            this.ClientSize = new System.Drawing.Size(518, 256);
             this.Controls.Add(this.gameScreenControl1);
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;

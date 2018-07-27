@@ -1,10 +1,9 @@
-﻿using MyShogi.App;
+﻿using System.Drawing;
+using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.View.Win2D.Common;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D
 {
@@ -16,8 +15,6 @@ namespace MyShogi.View.Win2D
         public EngineSelectionDialog()
         {
             InitializeComponent();
-
-            AutoScaleFixer.Init(this);
 
             InitSelectionControls();
         }

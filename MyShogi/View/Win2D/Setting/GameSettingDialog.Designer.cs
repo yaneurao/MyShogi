@@ -52,11 +52,11 @@
             this.groupBox3.Controls.Add(this.comboBox3);
             this.groupBox3.Controls.Add(this.radioButton6);
             this.groupBox3.Controls.Add(this.radioButton5);
-            this.groupBox3.Location = new System.Drawing.Point(12, 354);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(8);
+            this.groupBox3.Location = new System.Drawing.Point(6, 177);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(8);
-            this.groupBox3.Size = new System.Drawing.Size(748, 154);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Size = new System.Drawing.Size(374, 77);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "開始局面";
@@ -80,19 +80,17 @@
             "六枚落ち",
             "八枚落ち",
             "十枚落ち"});
-            this.comboBox3.Location = new System.Drawing.Point(246, 44);
-            this.comboBox3.Margin = new System.Windows.Forms.Padding(6);
+            this.comboBox3.Location = new System.Drawing.Point(123, 22);
             this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(216, 35);
+            this.comboBox3.Size = new System.Drawing.Size(110, 21);
             this.comboBox3.TabIndex = 9;
             // 
             // radioButton6
             // 
             this.radioButton6.AutoSize = true;
-            this.radioButton6.Location = new System.Drawing.Point(26, 92);
-            this.radioButton6.Margin = new System.Windows.Forms.Padding(6);
+            this.radioButton6.Location = new System.Drawing.Point(13, 46);
             this.radioButton6.Name = "radioButton6";
-            this.radioButton6.Size = new System.Drawing.Size(181, 31);
+            this.radioButton6.Size = new System.Drawing.Size(96, 18);
             this.radioButton6.TabIndex = 8;
             this.radioButton6.TabStop = true;
             this.radioButton6.Text = "現在の局面 ";
@@ -102,10 +100,9 @@
             // 
             this.radioButton5.AutoSize = true;
             this.radioButton5.Checked = true;
-            this.radioButton5.Location = new System.Drawing.Point(26, 46);
-            this.radioButton5.Margin = new System.Windows.Forms.Padding(6);
+            this.radioButton5.Location = new System.Drawing.Point(13, 23);
             this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(151, 31);
+            this.radioButton5.Size = new System.Drawing.Size(81, 18);
             this.radioButton5.TabIndex = 8;
             this.radioButton5.TabStop = true;
             this.radioButton5.Text = "初期局面";
@@ -113,10 +110,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(258, 890);
-            this.button1.Margin = new System.Windows.Forms.Padding(6);
+            this.button1.Location = new System.Drawing.Point(129, 445);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(200, 54);
+            this.button1.Size = new System.Drawing.Size(100, 27);
             this.button1.TabIndex = 19;
             this.button1.Text = "対局開始";
             this.button1.UseVisualStyleBackColor = true;
@@ -125,20 +121,18 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(798, 578);
-            this.checkBox1.Margin = new System.Windows.Forms.Padding(6);
+            this.checkBox1.Location = new System.Drawing.Point(399, 289);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(367, 31);
+            this.checkBox1.Size = new System.Drawing.Size(194, 18);
             this.checkBox1.TabIndex = 20;
             this.checkBox1.Text = "後手の時間設定を個別にする";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(1068, 890);
-            this.button2.Margin = new System.Windows.Forms.Padding(6);
+            this.button2.Location = new System.Drawing.Point(534, 445);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(200, 54);
+            this.button2.Size = new System.Drawing.Size(100, 27);
             this.button2.TabIndex = 29;
             this.button2.Text = "先後入替";
             this.button2.UseVisualStyleBackColor = true;
@@ -147,25 +141,23 @@
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(24, 40);
-            this.checkBox4.Margin = new System.Windows.Forms.Padding(6);
+            this.checkBox4.Location = new System.Drawing.Point(12, 20);
             this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(335, 31);
+            this.checkBox4.Size = new System.Drawing.Size(177, 18);
             this.checkBox4.TabIndex = 20;
             this.checkBox4.Text = "指定手数で引き分けにする";
             this.checkBox4.UseVisualStyleBackColor = true;
             // 
             // numericUpDown11
             // 
-            this.numericUpDown11.Location = new System.Drawing.Point(406, 40);
-            this.numericUpDown11.Margin = new System.Windows.Forms.Padding(6);
+            this.numericUpDown11.Location = new System.Drawing.Point(203, 20);
             this.numericUpDown11.Maximum = new decimal(new int[] {
             999999,
             0,
             0,
             0});
             this.numericUpDown11.Name = "numericUpDown11";
-            this.numericUpDown11.Size = new System.Drawing.Size(120, 34);
+            this.numericUpDown11.Size = new System.Drawing.Size(60, 21);
             this.numericUpDown11.TabIndex = 30;
             this.numericUpDown11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericUpDown11.Value = new decimal(new int[] {
@@ -178,52 +170,50 @@
             // 
             this.groupBox6.Controls.Add(this.checkBox4);
             this.groupBox6.Controls.Add(this.numericUpDown11);
-            this.groupBox6.Location = new System.Drawing.Point(776, 354);
-            this.groupBox6.Margin = new System.Windows.Forms.Padding(6);
+            this.groupBox6.Location = new System.Drawing.Point(388, 177);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Padding = new System.Windows.Forms.Padding(6);
-            this.groupBox6.Size = new System.Drawing.Size(748, 154);
+            this.groupBox6.Size = new System.Drawing.Size(374, 77);
             this.groupBox6.TabIndex = 31;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "その他の設定";
             // 
             // playerSettingControl2
             // 
-            this.playerSettingControl2.Location = new System.Drawing.Point(770, 0);
-            this.playerSettingControl2.Margin = new System.Windows.Forms.Padding(12);
+            this.playerSettingControl2.Location = new System.Drawing.Point(385, 0);
+            this.playerSettingControl2.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.playerSettingControl2.Name = "playerSettingControl2";
-            this.playerSettingControl2.Size = new System.Drawing.Size(772, 352);
+            this.playerSettingControl2.Size = new System.Drawing.Size(386, 176);
             this.playerSettingControl2.TabIndex = 35;
             // 
             // playerSettingControl1
             // 
-            this.playerSettingControl1.Location = new System.Drawing.Point(6, 0);
-            this.playerSettingControl1.Margin = new System.Windows.Forms.Padding(12);
+            this.playerSettingControl1.Location = new System.Drawing.Point(3, 0);
+            this.playerSettingControl1.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.playerSettingControl1.Name = "playerSettingControl1";
-            this.playerSettingControl1.Size = new System.Drawing.Size(772, 352);
+            this.playerSettingControl1.Size = new System.Drawing.Size(386, 176);
             this.playerSettingControl1.TabIndex = 34;
             // 
             // timeSettingControl2
             // 
-            this.timeSettingControl2.Location = new System.Drawing.Point(778, 622);
-            this.timeSettingControl2.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
+            this.timeSettingControl2.Location = new System.Drawing.Point(389, 311);
+            this.timeSettingControl2.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.timeSettingControl2.Name = "timeSettingControl2";
-            this.timeSettingControl2.Size = new System.Drawing.Size(758, 258);
+            this.timeSettingControl2.Size = new System.Drawing.Size(379, 129);
             this.timeSettingControl2.TabIndex = 33;
             // 
             // timeSettingControl1
             // 
-            this.timeSettingControl1.Location = new System.Drawing.Point(12, 618);
-            this.timeSettingControl1.Margin = new System.Windows.Forms.Padding(2, 4, 2, 4);
+            this.timeSettingControl1.Location = new System.Drawing.Point(6, 309);
+            this.timeSettingControl1.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.timeSettingControl1.Name = "timeSettingControl1";
-            this.timeSettingControl1.Size = new System.Drawing.Size(762, 262);
+            this.timeSettingControl1.Size = new System.Drawing.Size(381, 131);
             this.timeSettingControl1.TabIndex = 32;
             // 
             // GameSettingDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(192F, 192F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(1542, 956);
+            this.ClientSize = new System.Drawing.Size(771, 478);
             this.Controls.Add(this.playerSettingControl2);
             this.Controls.Add(this.playerSettingControl1);
             this.Controls.Add(this.timeSettingControl2);
@@ -235,7 +225,7 @@
             this.Controls.Add(this.groupBox3);
             this.Font = new System.Drawing.Font("MS UI Gothic", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(8);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "GameSettingDialog";
