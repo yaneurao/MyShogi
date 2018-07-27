@@ -32,7 +32,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
             switch (cpu)
             {
                 case CpuType.UNKNOWN : return "unknown";
-                case CpuType.NO_SSE  : return "no_sse";
+                case CpuType.NO_SSE  : return "nosse";
                 case CpuType.SSE2    : return "sse2";
                 case CpuType.SSE41   : return "sse41";
                 case CpuType.SSE42   : return "sse42";

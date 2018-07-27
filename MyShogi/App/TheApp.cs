@@ -27,6 +27,8 @@ namespace MyShogi.App
         public void Run()
         {
 #if true // is beta
+
+            // -- リリース時
             try
             {
                 DevTest();
@@ -37,6 +39,8 @@ namespace MyShogi.App
                 MessageShow(ex);
             }
 #else
+            // -- 開発(デバッグ)時
+
             // 開発時に例外がここでcatchされてしまうとデバッグがしにくいので
             // 開発時にはこちらを使う。(といいかも)
             DevTest();
