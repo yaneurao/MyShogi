@@ -168,6 +168,13 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "コンピューターが用いる定跡はここで設定します。",
                         null),
 
+                    new EngineOptionDescription("BookDir"      , null ,
+                        "コンピューターが用いる定跡ファイルの配置フォルダです。",
+                        "コンピューターが用いる定跡ファイルの配置フォルダを指定できます。" +
+                        "思考エンジンの存在するフォルダからの相対パスで ../../book のように指定するか、c:/user/xxx のように絶対パスで指定するかします。前者が便利だと思います。" +
+                        "詳しい人向けの設定であり、変更することはお勧めしません。",
+                        "option name BookDir type string default ../../book"),
+
                     new EngineOptionDescription("BookFile"      , "定跡ファイル" ,
                         "コンピューターが用いる定跡ファイル。",
                         "各エンジンのフォルダ配下のbookフォルダ内にある定跡ファイルが読み込まれます。",
@@ -396,7 +403,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                     new EngineOptionDescription("EvalDir"   , null ,
                         "評価関数用のファイルのあるフォルダの設定。",
-                        "評価関数用のファイルの配置するフォルダを変更する時にこの設定を使います。通常、変更する必要はありません。",
+                        "評価関数用のファイルの配置するフォルダを変更する時にこの設定を使います。通常、変更する必要はありません。\r\n" +
+                        "思考エンジンの存在するフォルダからの相対パスで ../../xxx_eval のように指定するか、c:/user/xxx のように絶対パスで指定するかします。前者が便利だと思います。" +
+                        "詳しい人向けの設定であり、変更することはお勧めしません。",
                         "option name EvalDir type string default eval"),
 
                     new EngineOptionDescription("EvalShare"   , null ,
