@@ -22,10 +22,13 @@ namespace MyShogi.View.Win2D
         public EngineConsiderationControl()
         {
             InitializeComponent();
-
-            InitListView();
-            InitKifuFormatter();
-            InitNotifyObject();
+            
+            if (!TheApp.app.DesignMode)
+            {
+                InitListView();
+                InitKifuFormatter();
+                InitNotifyObject();
+            }
         }
 
         // -- properties

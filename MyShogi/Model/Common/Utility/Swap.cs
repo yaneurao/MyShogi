@@ -1,6 +1,6 @@
 ﻿namespace MyShogi.Model.Common.Utility
 {
-    public static class Utility
+    public static partial class Utility
     {
         /// <summary>
         /// aとbの入替え。

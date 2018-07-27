@@ -308,16 +308,25 @@ namespace MyShogi.App
         }
         private EngineConfigs engine_configs;
 
-    /// <summary>
-    /// サウンドマネージャー
-    /// </summary>
-    public SoundManager soundManager { get; private set; }
+        /// <summary>
+        /// サウンドマネージャー
+        /// </summary>
+        public SoundManager soundManager { get; private set; }
 
         /// <summary>
         /// メインのForm
         /// これがないとMessageBox.Show()などで親を指定できなくて困る。
         /// </summary>
         public Form mainForm { get; private set; }
+
+        /// <summary>
+        /// Visual Studioのデザインモードであるかの判定。
+        /// デザインモードだとconfigが未代入なのでnullのはずであるから…。
+        ///
+        /// Form.DesignModeは、Formのコンストラクタでは未代入であるので使えない。
+        /// こういう方法に頼らざるを得ない。Formクラスの設計ミスであるように思う。
+        /// </summary>
+        public bool DesignMode { get { return config == null; } }
 
         /// <summary>
         /// singletonなinstance。それぞれのViewModelなどにアクセスしたければ、これ経由でアクセスする。

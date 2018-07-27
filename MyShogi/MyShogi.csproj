@@ -59,6 +59,7 @@
     <Compile Include="Model\Common\Process\RemoteService.cs" />
     <Compile Include="Model\Common\Utility\CpuId.cs" />
     <Compile Include="Model\Common\Utility\Encode.cs" />
+    <Compile Include="Model\Common\Utility\EscapeFileName.cs" />
     <Compile Include="Model\Common\Utility\FileIO.cs" />
     <Compile Include="Model\Common\Utility\Enviroment.cs" />
     <Compile Include="Model\Common\Utility\ListExtensions.cs" />

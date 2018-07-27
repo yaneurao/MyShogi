@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
@@ -605,6 +606,10 @@ namespace MyShogi.View.Win2D
                                 + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
                             fd.FilterIndex = 1;
                             fd.Title = "棋譜を保存するファイル形式を選択してください";
+                            // デフォルトでは、先手名 + 後手名 + YYYYMMDDhhmmss.kif
+                            // 柿木やkifu for Windowsがこの形式らしい。
+                            var default_filename = $"{gameServer.DisplayName(SCore.Color.BLACK)}_{gameServer.DisplayName(SCore.Color.WHITE)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.KIF";
+                            fd.FileName = Utility.EscapeFileName(default_filename);
 
                             // ダイアログを表示する
                             if (fd.ShowDialog() == DialogResult.OK)
