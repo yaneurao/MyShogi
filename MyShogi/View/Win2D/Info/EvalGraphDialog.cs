@@ -1,5 +1,8 @@
 ﻿namespace MyShogi.View.Win2D.Info
 {
+    /// <summary>
+    /// 形勢グラフ
+    /// </summary>
     public partial class EvalGraphDialog : System.Windows.Forms.Form
     {
         private Model.Shogi.Data.EvaluationGraphData graphData;

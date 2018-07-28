@@ -88,10 +88,12 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public EngineConsiderationDialog engineConsiderationDialog;
 
+#if false
         /// <summary>
         /// 評価値グラフの出力用
         /// </summary>
         public Info.EvalGraphDialog evalGraphDialog;
+#endif
 
         #endregion
 
@@ -240,6 +242,8 @@ namespace MyShogi.View.Win2D
 
             // 評価値グラフの更新など
             gameServer.ThinkReportChangedCommand(message);
+
+#if false // このデバッグをしているとマスターアップに間に合わなさそう。後回し。
             if (evalGraphDialog == null)
             {
                 evalGraphDialog = new Info.EvalGraphDialog();
@@ -252,6 +256,7 @@ namespace MyShogi.View.Win2D
             }
             evalGraphDialog.DispatchEvalGraphUpdate(gameServer);
             cancelEvalGraph:;
+#endif
 
             if (engineConsiderationDialog == null)
             {
@@ -465,9 +470,9 @@ namespace MyShogi.View.Win2D
             kifuControl.ViewModel.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に移動するはず */;
         }
 
-        #endregion
+#endregion
 
-        #region update menu
+#region update menu
 
         /// <summary>
         /// 棋譜の上書き保存のために、前回保存したときの名前を保持しておく。
@@ -710,6 +715,7 @@ namespace MyShogi.View.Win2D
 
                 var item_playgame = new ToolStripMenuItem();
                 item_playgame.Text = "対局(&P)"; // PlayGame
+                item_playgame.Enabled = gameServer != null && !gameServer.InTheGame; // 対局中はこのメニューを無効化
                 menu.Items.Add(item_playgame);
 
                 // -- 「対局」配下のメニュー
@@ -1339,6 +1345,8 @@ namespace MyShogi.View.Win2D
                         };
                         item_window.DropDownItems.Add(item);
                     }
+
+#if false // マスターアップに間に合わなさそう。
                     { // ×ボタンで消していた形勢グラフウィンドウの復活
 
                         var item = new ToolStripMenuItem();
@@ -1354,6 +1362,7 @@ namespace MyShogi.View.Win2D
                         };
                         item_window.DropDownItems.Add(item);
                     }
+#endif
                 }
 
                 // 「情報」
@@ -1545,7 +1554,7 @@ namespace MyShogi.View.Win2D
         }
 
         private MenuStrip old_menu { get; set; } = null;
-        #endregion
+#endregion
 
     }
 }

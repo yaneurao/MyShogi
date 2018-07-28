@@ -80,7 +80,10 @@ namespace MyShogi.View.Win2D.Setting
             {
                 // 時間無制限の時、GroupBox丸ごとDisableに。
                 // ただし、自分のチェックボックスは除外。この除外は、コンストラクタでGroupから除外している。
-                group.Enabled = !v;
+                group.Enabled = !v &&
+                    // 後手ならば、個別設定を有効にするのチェックが有効ではない時は、このGroupBoxは無効化されなければならない。 
+                    !(ViewModel.Color == SCore.Color.WHITE && !ViewModel.WhiteEnable)
+                    ;
             });
         }
 
@@ -117,6 +120,7 @@ namespace MyShogi.View.Win2D.Setting
                  if (color == SCore.Color.BLACK)
                  {
                      groupBox1.Text = whiteEnable ? "時間設定[先手/下手]" : "時間設定";
+                     //groupBox1.Enabled = true; // 常に有効
                  }
                  else
                  {
