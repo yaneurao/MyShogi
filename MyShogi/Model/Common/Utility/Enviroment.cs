@@ -28,6 +28,13 @@ namespace MyShogi.Model.Common.Utility
             }
             catch { }
 
+            if (! Environment.Is64BitOperatingSystem)
+            {
+                // 32bitで動作しているプロセス空間では、2GBまでしか物理メモリを扱えないので
+                // 物理メモリがいかにあろうと2GBであるとみなす。
+                result = System.Math.Min(result, 2 * 1024 * 1024ul);
+            }
+
             return result;
         }
 

@@ -23,25 +23,31 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private void thread_worker()
         {
-            while (!workerStop)
+            try
             {
-                // 各プレイヤーのプロセスの標準入出力に対する送受信の処理
-                foreach (var player in Players)
+                while (!workerStop)
                 {
-                    player.OnIdle();
+                    // 各プレイヤーのプロセスの標準入出力に対する送受信の処理
+                    foreach (var player in Players)
+                    {
+                        player.OnIdle();
+                    }
+
+                    // UI側からのコマンドがあるかどうか。あればdispatchする。
+                    CheckUICommand();
+
+                    // 各プレイヤーから指し手が指されたかのチェック
+                    CheckPlayerMove();
+
+                    // 時間消費のチェック。時間切れのチェック。
+                    CheckTime();
+
+                    // 10msごとに各種処理を行う。
+                    Thread.Sleep(10);
                 }
-
-                // UI側からのコマンドがあるかどうか。あればdispatchする。
-                CheckUICommand();
-
-                // 各プレイヤーから指し手が指されたかのチェック
-                CheckPlayerMove();
-
-                // 時間消費のチェック。時間切れのチェック。
-                CheckTime();
-
-                // 10msごとに各種処理を行う。
-                Thread.Sleep(10);
+            } catch (Exception ex)
+            {
+                TheApp.app.MessageShow(ex);
             }
         }
 
