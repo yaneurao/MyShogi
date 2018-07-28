@@ -1085,6 +1085,26 @@ namespace MyShogi.View.Win2D
                         item_display.DropDownItems.Add(item);
                     }
 
+                    { // -- 検討ウィンドウで思考エンジンが後手番のときに評価値を反転させるか(自分から見た評価値にするか)
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "後手番のCPUの評価値を反転表示させるか(&V)"; // reVerse eval
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "通常(手番側から見た評価値)(&N)"; // None
+                        item1.Checked = !config.NegateEvalWhenWhite;
+                        item1.Click += (sender, e) => { config.NegateEvalWhenWhite = false; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "反転(先手側から見た評価値)(&R)"; // Reverse
+                        item2.Checked = config.NegateEvalWhenWhite;
+                        item2.Click += (sender, e) => { config.NegateEvalWhenWhite = true; };
+                        item.DropDownItems.Add(item2);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
                 }
 
                 // 「音声」

@@ -359,6 +359,16 @@ namespace MyShogi.App
         public int ConsiderationMultiPV { get; set; }
 
         /// <summary>
+        /// 検討ウィンドウで思考エンジンが後手番のときに評価値を反転させるか(先手から見た評価値にするか)のフラグ
+        /// デフォルト : false
+        /// </summary>
+        public bool NegateEvalWhenWhite
+        {
+            get { return GetValue<bool>("NegateEvalWhenWhite"); }
+            set { SetValue<bool>("NegateEvalWhenWhite",value); }
+        }
+
+        /// <summary>
         /// 対局ダイアログの設定
         /// </summary>
         public GameSetting GameSetting { get; set; } = new GameSetting();

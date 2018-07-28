@@ -65,6 +65,19 @@ namespace MyShogi.View.Win2D
                 get { return GetValue<MiniShogiBoardData>("PvClicked"); }
                 set { SetValue<MiniShogiBoardData>("PvClicked", value); }
             }
+
+#if false
+            // Evalの元の値を残していない即時反映無理..GlobalConfigを見に行く実装にしてある。いずれ修正するかも。
+
+            /// <summary>
+            /// [UI Thread] 検討ウィンドウで思考エンジンが後手番のときに評価値を反転させるか(自分から見た評価値にするか)のフラグ
+            /// </summary>
+            public bool NegateEvalWhenWhite
+            {
+                get { return GetValue<bool>("NegateEvalWhenWhite"); }
+                set { SetValue<bool>("NegateEvalWhenWhite", value); }
+            }
+#endif
         }
 
         /// <summary>
@@ -207,6 +220,16 @@ namespace MyShogi.View.Win2D
                 var elpasedTimeString = info.ElapsedTime == null ? null : info.ElapsedTime.ToString("hh':'mm':'ss'.'f");
                 var ranking = info.MultiPvString == null ? "1" : info.MultiPvString;
                 var depthString = info.Eval == null ? null : $"{info.Depth}/{info.SelDepth}";
+
+                // 後手番の時に自分から見た評価値を表示する設定であるなら、評価値の表示を反転させる。
+                // ここで表示している値、保存していないので即時反映は無理だわ…。まあ、これは仕様ということで…。
+                var isWhite = position.sideToMove == Model.Shogi.Core.Color.WHITE;
+                if (isWhite && TheApp.app.config.NegateEvalWhenWhite)
+                {
+                    if (info.Eval != null)
+                        info.Eval = info.Eval.negate();
+                }
+
                 var evalString = info.Eval == null ? null : info.Eval.Eval.Pretty();
                 var evalBound = info.Eval == null ? null : info.Eval.Bound.Pretty();
 
@@ -422,6 +445,12 @@ namespace MyShogi.View.Win2D
             Notify.AddPropertyChangedHandler("EnableMultiPVComboBox", (e) =>
             { UpdateMultiPVComboBox(Notify.EnableMultiPVComboBox); });
             Notify.RaisePropertyChanged("EnableMultiPVComboBox", false);
+
+            // 後手の時に評価値を反転させるかのフラグ
+            // Evalの元の値を残していない即時反映無理..
+            //Notify.AddPropertyChangedHandler("NegateEvalWhenWhite", (e) =>
+            //{
+            //});
         }
 
         /// <summary>
