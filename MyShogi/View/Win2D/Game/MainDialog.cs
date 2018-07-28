@@ -300,6 +300,14 @@ namespace MyShogi.View.Win2D
             engineConsiderationDialog.DispatchThinkReportMessage(message);
         }
 
+        /// <summary>
+        /// 棋譜ウィンドウの横幅が設定で変更になった時に棋譜ウィンドウを実際にリサイズする。
+        /// </summary>
+        public void ResizeKifuControl(PropertyChangedEventArgs args)
+        {
+            gameScreenControl1.ResizeKifuControl();
+        }
+
         // -- 以下、ToolStripのハンドラ
 
         /// <summary>
@@ -1107,6 +1115,44 @@ namespace MyShogi.View.Win2D
                         item2.Checked = config.NegateEvalWhenWhite;
                         item2.Click += (sender, e) => { config.NegateEvalWhenWhite = true; };
                         item.DropDownItems.Add(item2);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
+                    { // -- 棋譜ウィンドウの横幅
+                        
+                        var item = new ToolStripMenuItem();
+                        item.Text = "棋譜ウィンドウの横幅(&K)"; // Kifu window
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "100%(通常)(&1)"; // None
+                        item1.Checked = config.KifuWindowWidthType == 0;
+                        item1.Click += (sender, e) => { config.KifuWindowWidthType = 0; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "125%(&2)";
+                        item2.Checked = config.KifuWindowWidthType == 1;
+                        item2.Click += (sender, e) => { config.KifuWindowWidthType = 1; };
+                        item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "150%(&3)";
+                        item3.Checked = config.KifuWindowWidthType == 2;
+                        item3.Click += (sender, e) => { config.KifuWindowWidthType = 2; };
+                        item.DropDownItems.Add(item3);
+
+                        var item4 = new ToolStripMenuItem();
+                        item4.Text = "175%(&4)";
+                        item4.Checked = config.KifuWindowWidthType == 3;
+                        item4.Click += (sender, e) => { config.KifuWindowWidthType = 3; };
+                        item.DropDownItems.Add(item4);
+
+                        var item5 = new ToolStripMenuItem();
+                        item5.Text = "200%(&5)";
+                        item5.Checked = config.KifuWindowWidthType == 4;
+                        item5.Click += (sender, e) => { config.KifuWindowWidthType = 4; };
+                        item.DropDownItems.Add(item5);
 
                         item_display.DropDownItems.Add(item);
                     }

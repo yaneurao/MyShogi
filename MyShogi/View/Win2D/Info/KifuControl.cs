@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.View.Win2D
@@ -146,8 +147,9 @@ namespace MyShogi.View.Win2D
             UpdateButtonState(inTheGame);
 
             // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
-            var font_size = (float)(19.5 * scale);
-
+            var w_rate = 1.0f + TheApp.app.config.KifuWindowWidthType * 0.25f; // 横幅をどれだけ引き伸ばすのか
+            var font_size = (float)(19.5 * scale * w_rate);
+            var font_size2 = (float)(19.5 * scale); // button用のフォントサイズ
             /*
                 // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ
                 // fontを小さく表示してやる。
@@ -164,11 +166,15 @@ namespace MyShogi.View.Win2D
             // 筋が良くないということに。最初からスクロールバーの分だけ控えて描画すべき。
 
             // ところがスクロールバーの横幅不明。実測34だったが、環境によって異なる可能性が..
+            // AutoScaleの値とか反映されてると困るのだが…。
             font_size *= ((float)Width - 34 /* scroll bar */) / Width;
+            font_size2 *= ((float)Width - 34 /* scroll bar */) / Width;
 
             // 幅を縮めるとfont_sizeが負になるが、負のサイズのFontは生成できないので1にしておく。
             if (font_size <= 0)
                 font_size = 1;
+            if (font_size2 <= 0)
+                font_size2 = 1;
 
             // 前回のフォントサイズと異なるときだけ再設定する
             //if (last_font_size == font_size)
@@ -177,11 +183,13 @@ namespace MyShogi.View.Win2D
             last_font_size = font_size;
 
             var font = new Font("MS Gothic", font_size, FontStyle.Regular, GraphicsUnit.Pixel);
-
             listBox1.Font = font;
-            button1.Font = font;
-            button2.Font = font;
-            button3.Font = font;
+
+            // buttonのFontSizeあまり変更すると高さが足りなくなるので横幅の比率変更は反映させない。
+            var font2 = new Font("MS Gothic", font_size2, FontStyle.Regular, GraphicsUnit.Pixel);
+            button1.Font = font2;
+            button2.Font = font2;
+            button3.Font = font2;
         }
 
         private float last_font_size = 0;

@@ -369,6 +369,20 @@ namespace MyShogi.App
         }
 
         /// <summary>
+        /// 棋譜ウィンドウの横幅
+        /// 0 = 100%
+        /// 1 = 125%
+        /// 2 = 150%
+        /// 3 = 175%
+        /// 4 = 200%
+        /// </summary>
+        public int KifuWindowWidthType
+        {
+            get { return GetValue<int>("KifuWindowWidthType"); }
+            set { SetValue<int>("KifuWindowWidthType", value); }
+        }
+
+        /// <summary>
         /// 対局ダイアログの設定
         /// </summary>
         public GameSetting GameSetting { get; set; } = new GameSetting();

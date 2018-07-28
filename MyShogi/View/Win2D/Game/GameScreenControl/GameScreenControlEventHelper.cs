@@ -267,9 +267,15 @@ namespace MyShogi.View.Win2D
             var kifu = kifuControl;
             var inTheGame = gameServer!= null && gameServer.InTheGame;
 
-            var point = new Point(229, 600);
+            // 棋譜ウィンドウの横幅の倍率
+            float w_rate = TheApp.app.config.KifuWindowWidthType * 0.25f;
+            // 棋譜ウィンドウを横にどれだけ延ばすのか
+            int w_offset = (int)(w_rate * 265);
+
+            var point = new Point(229 - w_offset , 600);
             kifu.Location = Affine(point);
-            var size = new Size(265, 423);
+
+            var size = new Size( 265 + w_offset , 423);
             kifu.Size = AffineScale(size);
 
             kifu.OnResize(AffineMatrix.Scale.X, inTheGame);

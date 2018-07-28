@@ -24,6 +24,9 @@ namespace MyShogi.View.Win2D.Setting
 
             InitViewModel();
 
+            // ponder設定、マスターアップに間に合わなさそうなのでいったん非表示に。
+            checkBox1.Visible = false;
+
             Disposed += OnDisposed;
         }
 

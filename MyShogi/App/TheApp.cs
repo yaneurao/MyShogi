@@ -128,6 +128,7 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("NegateEvalWhenWhite", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.UpdateMenuItems, mainDialog);
 
             // -- ロギング用のハンドラをセット
 
@@ -159,6 +160,8 @@ namespace MyShogi.App
 
             config.AddPropertyChangedHandler("MemoryLoggingEnable", MemoryLoggingEnableHandler);
             config.AddPropertyChangedHandler("FileLoggingEnable", FileLoggingEnable);
+
+            config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl , mainDialog);
 
             // 上のハンドラを呼び出して、必要ならばロギングを開始しておいてやる。
             MemoryLoggingEnableHandler(null);
