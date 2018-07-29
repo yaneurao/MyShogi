@@ -97,7 +97,7 @@ namespace MyShogi.Model.Shogi.Usi
                 min_total += engine_eval_memory[c] + engine_working_memory[c];
             }
 
-            // 先後が同じエンジンでかつ、EvalShareしているなら、その分、必要メモリ量は下がるはず。
+            // 先後が同じエンジンでかつ、EvalShare対応で、かつEvalShare trueなら、その分、必要メモリ量は下がるはず。
             if (EngineDefines[0] == EngineDefines[1] && evalShare[0] && evalShare[1] )
             {
                 min_total -= engine_eval_memory[0]; // [0]も[1]も同じはず。同じエンジンなので…。
