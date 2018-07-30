@@ -67,6 +67,14 @@ namespace MyShogi.View.Win2D.Setting
                 get { return GetValue<bool>("SettingButton"); }
                 set { SetValue("SettingButton", value); }
             }
+
+            /// <summary>
+            /// エンジンが選択された時に、CPUのほうが選択されて欲しいのでそのためのイベント。
+            /// </summary>
+            public object EngineSelected
+            {
+                set { SetValue("EngineSelected",value); }
+            }
         }
 
         public PlayerSettingViewModel ViewModel = new PlayerSettingViewModel();
@@ -122,6 +130,8 @@ namespace MyShogi.View.Win2D.Setting
 
             vm.AddPropertyChangedHandler("EngineDefineChanged", (args) =>
             {
+                SuspendLayout();
+
                 var player = TheApp.app.config.GameSetting.Player(vm.Color);
 
                 var engine_define_ex = ViewModel.EngineDefine;
@@ -158,7 +168,9 @@ namespace MyShogi.View.Win2D.Setting
 
                 // -- 対局者名の設定
 
-                textBox1.Text = engine_define.DisplayName;
+                // 人間が選択されている時は、Radioボタンのハンドラでプレイヤー名が「先手」「後手」になるのでここでは設定しない。
+                if (player.IsCpu)
+                    textBox1.Text = engine_define.DisplayName;
 
                 // -- プリセットのコンボボックス
 
@@ -172,6 +184,8 @@ namespace MyShogi.View.Win2D.Setting
                     preset = 0;
 
                 // プリセットをコンボボックスに反映
+                // SuspendLayout()～ResumeLayout()中にやらないとイベントハンドラが呼び出されておかしいことになる。
+
                 comboBox1.Items.Clear();
                 foreach (var e in engine_define.Presets)
                     comboBox1.Items.Add(e.Name);
@@ -180,15 +194,26 @@ namespace MyShogi.View.Win2D.Setting
                 player.EngineDefineFolderPath = engine_define_ex.FolderPath;
 
                 // 前回と同じものを選んでおいたほうが使いやすいかも。
-                // →　「やねうら王」初段　のあと「tanuki」を選んだ時も初段であって欲しい気がするので。
+                // →　「やねうら王」初段　のあと「tanuki」を選んだ時も初段であって欲しい気がするが…。
+                // 先後入替えなどもあるので、やはりそれは良くない気がする。
 
                 // 復元する。データバインドされているのであとは何とかなるはず。
                 PlayerSetting.SelectedEnginePreset = preset;
+                //Console.WriteLine($"preset = {preset}");
                 PlayerSetting.RaisePropertyChanged("SelectedEnginePreset", preset);
 
                 UpdatePresetText();
 
                 // エンジンを選択したのだから、対局相手はコンピュータになっていて欲しいはず。
+                // →　エンジンを選択したとは限らない。先後入替えでもここが呼び出される。
+                //radioButton2.Checked = true;
+
+                ResumeLayout();
+            });
+
+            vm.AddPropertyChangedHandler("EngineSelected", args =>
+            {
+                // -- CPUの選択
                 radioButton2.Checked = true;
             });
 

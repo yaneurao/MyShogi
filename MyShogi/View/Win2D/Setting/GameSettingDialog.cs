@@ -113,12 +113,13 @@ namespace MyShogi.View.Win2D
             {
                 // 対局者設定をbindする。
                 playerSettings[(int)c].Bind(setting.Player(c));
+
+                // エンジンバナーなどの反映
                 set_engine_define(c);
 
                 // 対局時間設定をbindする
                 timeSettings[(int)c].Bind(setting.KifuTimeSettings.RawPlayer(c));
             }
-
 
             // -- 開始局面
 
@@ -200,6 +201,7 @@ namespace MyShogi.View.Win2D
                     var vm = playerSettings[(int)c].ViewModel;
 
                     vm.EngineDefine = engineDefine;
+                    vm.RaisePropertyChanged("EngineSelected", null);
                     vm.RaisePropertyChanged("EngineDefineChanged",(int)c);
                 }
                 ReleaseEngineSelectionDialog();
