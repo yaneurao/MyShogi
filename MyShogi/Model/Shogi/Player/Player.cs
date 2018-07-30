@@ -73,7 +73,7 @@ namespace MyShogi.Model.Shogi.Player
         /// HumanPlayerのときは、usiPositionを生成するコストがもったいないのでnullが渡ってくることになっている。
         /// </summary>
         /// <param name="usiPosition"></param>
-        void Think(string usiPosition , UsiThinkLimit limit);
+        void Think(string usiPosition , UsiThinkLimit limit , Color sideToMove);
 
         void Dispose();
     }

@@ -166,7 +166,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             // EngineOptionDescriptionsは、エンジンオプション共通設定に使っているDescriptionsと共用。
             var common_setting = EngineCommonOptionsSample.CreateEngineCommonOptions();
+
             var default_descriptions = common_setting.Descriptions;
+            var default_descriptions_nnue = new List<EngineOptionDescription>(default_descriptions);
+            default_descriptions_nnue.RemoveAll(x => x.Name == "EvalShare"); // NNUEはEvalShare持ってない。
 
             // -- 各エンジン用の設定ファイルを生成して書き出す。
 
@@ -229,7 +232,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "PC性能を極限まで使うため、CPUの温度が他のソフトの場合より上がりやすいので注意してください。",
                     DisplayOrder = 10003,
                     SupportedExtendedProtocol = default_nnue_extend,
-                    EngineOptionDescriptions = default_descriptions,
+                    EngineOptionDescriptions = default_descriptions_nnue,
                 };
                 EngineDefineUtility.WriteFile("engine/tanuki2018/engine_define.xml", engine_define);
             }

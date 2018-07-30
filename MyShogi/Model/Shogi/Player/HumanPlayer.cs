@@ -46,7 +46,7 @@ namespace MyShogi.Model.Shogi.Player
 
         public void OnIdle() { }
 
-        public void Think(string usiPosition , UsiThinkLimit limit) { }
+        public void Think(string usiPosition , UsiThinkLimit limit , Color sideToMove) { }
 
         public void Dispose() { }
 

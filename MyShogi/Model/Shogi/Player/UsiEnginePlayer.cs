@@ -82,9 +82,9 @@ namespace MyShogi.Model.Shogi.Player
             Engine.OnIdle();
         }
 
-        public void Think(string usiPosition, UsiThinkLimit limit)
+        public void Think(string usiPosition, UsiThinkLimit limit , Color sideToMove)
         {
-            Engine.Think(usiPosition,limit);
+            Engine.Think(usiPosition,limit,sideToMove);
         }
 
         public void Dispose()

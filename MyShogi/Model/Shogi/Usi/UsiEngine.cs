@@ -84,9 +84,9 @@ namespace MyShogi.Model.Shogi.Usi
         /// 現在の
         /// </summary>
         /// <param name="usiPositionString"></param>
-        public void Think(string usiPositionString , UsiThinkLimit limit)
+        public void Think(string usiPositionString , UsiThinkLimit limit , Color sideToMove)
         {
-            ThinkingBridge.Think($"position {usiPositionString}" , $"go {limit.ToUsiString()}");
+            ThinkingBridge.Think($"position {usiPositionString}" , $"go {limit.ToUsiString(sideToMove)}");
         }
 
         /// <summary>

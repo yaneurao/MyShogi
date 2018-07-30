@@ -376,5 +376,19 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             return options;
         }
+
+        /// <summary>
+        /// オブジェクトを複製して返す。
+        /// </summary>
+        /// <returns></returns>
+        public EngineOptionsForSetting Clone()
+        {
+            return new EngineOptionsForSetting()
+            {
+                IndivisualSetting = IndivisualSetting,
+                Options = new List<EngineOptionForSetting>(Options),
+                Descriptions = new List<EngineOptionDescription>(Descriptions),
+            };
+        }
     }
 }

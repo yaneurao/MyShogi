@@ -58,16 +58,22 @@ namespace MyShogi.Model.Shogi.Usi
             {
                 limit.LimitType = UsiThinkLimitEnum.Time;
 
-                // USIプロトコルでは先後の秒読みの違いを表現できない…。
-                limit.ByoyomiTime = new TimeSpan(0,0,ourPlayer.Byoyomi);
-
                 var blackPlayer = timer.Player(Color.BLACK).KifuTimeSetting;
                 var whitePlayer = timer.Player(Color.WHITE).KifuTimeSetting;
 
+                // USIプロトコルでは先後の秒読みの違いを表現できないが、無理やり表現する
+                //limit.ByoyomiTime = new TimeSpan(0, 0, ourPlayer.Byoyomi);
+
+                // byoyomiとinctimeを同時に選択は出来ないので、IncTimeEnableを見て代入するほうを切り替える。
                 if (blackPlayer.IncTimeEnable)
                     limit.IncTimeBlack = new TimeSpan(0, 0, blackPlayer.IncTime);
+                else
+                    limit.ByoyomiTimeBlack = new TimeSpan(0, 0, blackPlayer.Byoyomi);
+
                 if (whitePlayer.IncTimeEnable)
                     limit.IncTimeWhite = new TimeSpan(0, 0, whitePlayer.IncTime);
+                else
+                    limit.ByoyomiTimeWhite = new TimeSpan(0, 0, whitePlayer.Byoyomi);
 
                 // 先後の残り時間を保存
                 limit.RestTimeBlack = timer.GetKifuMoveTimes().Player(Color.BLACK).RestTime;
@@ -81,7 +87,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// この条件を元に、USIプロトコルで用いる"goコマンド"の"go","go ponder"以降の文字列を構築する。
         /// </summary>
         /// <returns></returns>
-        public string ToUsiString()
+        public string ToUsiString(Color sideToMove)
         {
             switch(LimitType)
             {
@@ -105,7 +111,11 @@ namespace MyShogi.Model.Shogi.Usi
                     sb.Append(RestTimeWhite == null ? "0" : RestTimeWhite.TotalMilliseconds.ToString());
 
                     // ByoyomiTimeが0相当である。
-                    var b1 = ByoyomiTime == null || ByoyomiTime == TimeSpan.Zero;
+
+                    // 手番側の秒読み
+                    var byoyomiTime = sideToMove == Color.BLACK ? ByoyomiTimeBlack : ByoyomiTimeWhite;
+                    var b1 = byoyomiTime == null || byoyomiTime == TimeSpan.Zero;
+
                     // IncTimeがどちらも0相当である。
                     var b2 = (IncTimeBlack == null || IncTimeBlack == TimeSpan.Zero) &&
                              (IncTimeWhite == null || IncTimeWhite == TimeSpan.Zero);
@@ -116,12 +126,16 @@ namespace MyShogi.Model.Shogi.Usi
                         sb.Append(" byoyomi 0");
                     else
                     {
-                        if (b2)
+                        // 持ち時間の拡張プロトコルが採用されていれば何も考えずに全部出力すれば良いのだが…。
+
+                        if (!b1)
                         {
-                            // inc timeが指定されていないのでbyoyomiを出力しておくしかない。
-                            sb.Append($" byoyomi {ByoyomiTime.TotalMilliseconds.ToString()}");
-                        } else // if (!b2)
+                            // この手番側の秒読みが指定されているので、これを出力しておくしかない。このとき binc/wincは出力できない。
+                            sb.Append($" byoyomi { byoyomiTime.TotalMilliseconds.ToString()}");
+                        } else // if (b1 && !b2)
                         {
+                            // 秒読みが指定されていないのでinctimeを出力する。
+
                             sb.Append(" binc ");
                             sb.Append(IncTimeBlack == null ? "0" : IncTimeBlack.TotalMilliseconds.ToString());
 
@@ -166,9 +180,23 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
-        /// byoyomi (1手ごとの秒数)
+        /// byoyomi (1手ごとの秒数) 先手
+        ///
+        /// USIプロトコル上は、byoyomiとinctimeの併用不可で、
+        /// byoyomiは先後に同時に適用されるが、本GUIでは先後個別に設定できるので、
+        /// 先手だけbyoyomiということがありうる。
+        ///
+        /// この場合、先手に対してはbyoyomiで渡して、後手に対してはwincで渡すようにする。
         /// </summary>
-        public TimeSpan ByoyomiTime
+        public TimeSpan ByoyomiTimeBlack
+        {
+            get; set;
+        }
+
+        /// <summary>
+        /// byoyomi (1手ごとの秒数) 後手
+        /// </summary>
+        public TimeSpan ByoyomiTimeWhite
         {
             get; set;
         }

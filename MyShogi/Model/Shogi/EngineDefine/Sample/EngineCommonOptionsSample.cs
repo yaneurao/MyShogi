@@ -321,7 +321,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "例えば、秒読み10秒(1手ごとに10秒で、それを過ぎると切れ負け)になる指し手の時に、この値を300[ms]に設定した場合、9.7秒で指し手を返します。\r\n"+
                         "ネットワーク対局で、サーバー側が重い場合やネットワーク遅延がある場合には大きめの値(1000～1500)にすることを推奨します。",
 
-                        "option name NetworkDelay2 type spin default 1120 min 0 max 10000"),
+                        "option name NetworkDelay2 type spin default 300 min 0 max 10000"),
 
 
                     // -- 思考設定

@@ -558,7 +558,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 UsiThinkLimit.TimeLimitLess : 
                 UsiThinkLimit.FromTimeSetting(PlayTimers, stm);
 
-            stmPlayer.Think(usiPosition , limit);
+            stmPlayer.Think(usiPosition , limit , stm);
 
             // -- 検討ウィンドウに対して、ここをrootSfenとして設定
             if (ThinkReportEnable && isUsiEngine)
