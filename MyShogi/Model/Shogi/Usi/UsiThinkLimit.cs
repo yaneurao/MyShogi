@@ -51,33 +51,49 @@ namespace MyShogi.Model.Shogi.Usi
         {
             var limit = new UsiThinkLimit();
 
+            limit.LimitType = UsiThinkLimitEnum.Time;
+
+            var blackPlayer = timer.Player(Color.BLACK).KifuTimeSetting;
+            var whitePlayer = timer.Player(Color.WHITE).KifuTimeSetting;
+
+            // USIプロトコルでは先後の秒読みの違いを表現できないが、無理やり表現する
+            //limit.ByoyomiTime = new TimeSpan(0, 0, ourPlayer.Byoyomi);
+
+            // byoyomiとinctimeを同時に選択は出来ないので、IncTimeEnableを見て代入するほうを切り替える。
+            if (blackPlayer.IncTimeEnable)
+                limit.IncTimeBlack = new TimeSpan(0, 0, blackPlayer.IncTime);
+            else
+                limit.ByoyomiTimeBlack = new TimeSpan(0, 0, blackPlayer.Byoyomi);
+
+            if (whitePlayer.IncTimeEnable)
+                limit.IncTimeWhite = new TimeSpan(0, 0, whitePlayer.IncTime);
+            else
+                limit.ByoyomiTimeWhite = new TimeSpan(0, 0, whitePlayer.Byoyomi);
+
+            // 先後の残り時間を保存
+            limit.RestTimeBlack = timer.GetKifuMoveTimes().Player(Color.BLACK).RestTime;
+            limit.RestTimeWhite = timer.GetKifuMoveTimes().Player(Color.WHITE).RestTime;
+
             var ourPlayer = timer.Player(us).KifuTimeSetting;
             if (ourPlayer.TimeLimitless)
-                limit.LimitType = UsiThinkLimitEnum.Infinite;
-            else
             {
+                // 検討モードでもないのに無制限に思考するわけにはいかないので、1手5秒とかに設定しておいてやる。
+
+                //limit.LimitType = UsiThinkLimitEnum.Infinite;
+
                 limit.LimitType = UsiThinkLimitEnum.Time;
-
-                var blackPlayer = timer.Player(Color.BLACK).KifuTimeSetting;
-                var whitePlayer = timer.Player(Color.WHITE).KifuTimeSetting;
-
-                // USIプロトコルでは先後の秒読みの違いを表現できないが、無理やり表現する
-                //limit.ByoyomiTime = new TimeSpan(0, 0, ourPlayer.Byoyomi);
-
-                // byoyomiとinctimeを同時に選択は出来ないので、IncTimeEnableを見て代入するほうを切り替える。
-                if (blackPlayer.IncTimeEnable)
-                    limit.IncTimeBlack = new TimeSpan(0, 0, blackPlayer.IncTime);
+                if (us == Color.BLACK)
+                {
+                    limit.ByoyomiTimeBlack = new TimeSpan(0, 0, 5);
+                    limit.IncTimeBlack = TimeSpan.Zero;
+                    limit.RestTimeBlack = TimeSpan.Zero;
+                }
                 else
-                    limit.ByoyomiTimeBlack = new TimeSpan(0, 0, blackPlayer.Byoyomi);
-
-                if (whitePlayer.IncTimeEnable)
-                    limit.IncTimeWhite = new TimeSpan(0, 0, whitePlayer.IncTime);
-                else
-                    limit.ByoyomiTimeWhite = new TimeSpan(0, 0, whitePlayer.Byoyomi);
-
-                // 先後の残り時間を保存
-                limit.RestTimeBlack = timer.GetKifuMoveTimes().Player(Color.BLACK).RestTime;
-                limit.RestTimeWhite = timer.GetKifuMoveTimes().Player(Color.WHITE).RestTime;
+                {
+                    limit.ByoyomiTimeWhite = new TimeSpan(0, 0, 5);
+                    limit.IncTimeWhite = TimeSpan.Zero;
+                    limit.RestTimeWhite = TimeSpan.Zero;
+                }
             }
 
             return limit;
