@@ -58,7 +58,7 @@ namespace MyShogi.View.Win2D.Setting
             }
 
             /// <summary>
-            /// 「詳細設定」ボタンのEnableが変化して欲しい時に発生するイベント。
+            /// 「エンジン選択」「詳細設定」ボタンのEnableが変化して欲しい時に発生するイベント。
             /// 詳細設定ダイアログを出している時にもう片側のプレイヤーのこのボタンも無効化しないといけないので
             /// このイベントを介して行う。
             /// </summary>
@@ -116,7 +116,8 @@ namespace MyShogi.View.Win2D.Setting
             vm.AddPropertyChangedHandler("SettingButton", (args) =>
             {
                 var b = (bool)args.value;
-                button2.Enabled = b;
+                button1.Enabled = b; // エンジン選択ボタン
+                button2.Enabled = b; // 詳細設定ボタン
             });
 
             vm.AddPropertyChangedHandler("EngineDefineChanged", (args) =>
