@@ -25,5 +25,12 @@
         /// "USI_Hash"の代わりに"Hash"を送信する。
         /// </summary>
         UseHashCommandExtension,
+
+        /// <summary>
+        /// "EvalShare"の機能を持っているのか。
+        /// これを持っていて、EvalShareのオプションがtrueになっているなら、
+        /// 同じエンジンを2つ起動する時にHASH用のメモリが半分になる。
+        /// </summary>
+        HasEvalShareOption,
     }
 }

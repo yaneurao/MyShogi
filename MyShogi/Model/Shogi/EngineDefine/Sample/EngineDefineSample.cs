@@ -160,7 +160,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             var default_cpus = new List<CpuType>(new[] { CpuType.NO_SSE, CpuType.SSE2, CpuType.SSE41, CpuType.SSE42, CpuType.AVX2 });
 
-            var default_extend = new List<ExtendedProtocol>( new[] { ExtendedProtocol.UseHashCommandExtension } );
+            var default_extend = new List<ExtendedProtocol>( new[] { ExtendedProtocol.UseHashCommandExtension , ExtendedProtocol.HasEvalShareOption } );
+            var default_nnue_extend = new List<ExtendedProtocol>(new[] { ExtendedProtocol.UseHashCommandExtension });
             var gps_extend = new List<ExtendedProtocol>( new[] { ExtendedProtocol.UseHashCommandExtension } );
 
             // EngineOptionDescriptionsは、エンジンオプション共通設定に使っているDescriptionsと共用。
@@ -227,7 +228,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "ニューラルネットワークを用いた評価関数で、他のソフトとは毛並みの違う新時代のコンピュータ将棋。"+
                         "PC性能を極限まで使うため、CPUの温度が他のソフトの場合より上がりやすいので注意してください。",
                     DisplayOrder = 10003,
-                    SupportedExtendedProtocol = default_extend,
+                    SupportedExtendedProtocol = default_nnue_extend,
                     EngineOptionDescriptions = default_descriptions,
                 };
                 EngineDefineUtility.WriteFile("engine/tanuki2018/engine_define.xml", engine_define);
