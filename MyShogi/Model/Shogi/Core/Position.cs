@@ -1472,6 +1472,7 @@ namespace MyShogi.Model.Shogi.Core
         ///
         /// ruleでトライルール(TRY_RULE)を指定している場合は、トライ(玉を51の升に移動させること)出来る条件を
         /// 満たしているなら、その指し手を返す。
+        /// →　これやめる。非手番側が入玉したかを判定して返す。
         /// </summary>
         /// <returns></returns>
         public Move DeclarationWin(EnteringKingRule rule)
@@ -1551,27 +1552,33 @@ namespace MyShogi.Model.Shogi.Core
                         return Move.WIN;
                     }
 
-                // トライルールの条件を満たしているか。
+                // 非手番側がトライルールの条件を満たしているか。
                 case EnteringKingRule.TRY_RULE:
                     {
-                        Color us = sideToMove;
-                        Square king_try_sq = (us == Color.BLACK ? Square.SQ_51 : Square.SQ_59);
-                        Square king_sq = KingSquare(us);
+                        Color them = sideToMove.Not();
+                        Square king_try_sq = (them == Color.BLACK ? Square.SQ_51 : Square.SQ_59);
 
-                        // 1) 初期陣形で敵玉がいた場所に自玉が移動できるか。
-                        if ((Bitboard.KingEffect(king_sq) & king_try_sq).IsZero())
-                            return Move.NONE;
+                        Square king_sq = KingSquare(them);
+                        /*
+                            // 1) 初期陣形で敵玉がいた場所に自玉が移動できるか。
+                            if ((Bitboard.KingEffect(king_sq) & king_try_sq).IsZero())
+                                return Move.NONE;
 
-                        // 2) トライする升に自駒がないか。
-                        if ((Pieces(us) & king_try_sq).IsNotZero())
-                            return Move.NONE;
+                            // 2) トライする升に自駒がないか。
+                            if ((Pieces(us) & king_try_sq).IsNotZero())
+                                return Move.NONE;
 
-                        // 3) トライする升に移動させたときに相手に取られないか。
-                        if (EffectedTo(us.Not(), king_try_sq, king_sq))
-                            return Move.NONE;
+                            // 3) トライする升に移動させたときに相手に取られないか。
+                            if (EffectedTo(us.Not(), king_try_sq, king_sq))
+                                return Move.NONE;
 
-                        // 王の移動の指し手により勝ちが確定する
-                        return Util.MakeMove(king_sq, king_try_sq);
+                            // 王の移動の指し手により勝ちが確定する
+                            return Util.MakeMove(king_sq, king_try_sq);
+                        */
+                        if (king_try_sq == king_sq)
+                            return Move.WIN_THEM;
+
+                        return Move.NONE;
                     }
 
             }

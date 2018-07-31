@@ -117,4 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="comboBox1.ToolTip" xml:space="preserve">
+    <value>入玉条件を変更できます。コンピューターと対局する場合には詳細設定の「入玉条件」の項目も
+ここで選んだものと同様の設定にする必要があります。
+普通の入玉宣言ルールにしたいならば、27点法を選択してください。
+トライルールは、平手の初期局面で相手の玉のいた升に移動すれば入玉したとみなす特殊ルールです。
+(おまけ機能なので、このルールで対局された棋譜ファイルの読み書きは正式には対応していません。)</value>
+  </data>
 </root>

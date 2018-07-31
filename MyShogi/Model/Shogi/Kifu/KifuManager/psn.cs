@@ -228,6 +228,10 @@ namespace MyShogi.Model.Shogi.Kifu
                                     move = Move.MAX_MOVES_DRAW;
                                     goto FINISH_MOVE_PARSE;
 
+                                case "TryRuleWin":
+                                    move = Move.WIN_THEM;
+                                    goto FINISH_MOVE_PARSE;
+
                                 case "DeclarationWin":
                                     move = Move.WIN;
                                     goto FINISH_MOVE_PARSE;
@@ -517,6 +521,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             case Move.REPETITION_WIN: mes = "Sennichite"; break;
                             case Move.REPETITION_DRAW: mes = "Sennichite"; break;
                             case Move.WIN: mes = "Jishogi"; break;
+                            case Move.WIN_THEM: mes = "Jishogi"; break;
                             case Move.MAX_MOVES_DRAW: mes = "Jishogi"; break;
                             case Move.RESIGN: mes = "Resigns"; break;
                             case Move.TIME_UP: mes = "Timeup"; break;
@@ -530,6 +535,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             case Move.REPETITION_WIN: mes = "RepetitionWin"; break;
                             case Move.REPETITION_DRAW: mes = "RepetitionDraw"; break;
                             case Move.WIN: mes = "DeclarationWin"; break;
+                            case Move.WIN_THEM: mes = "TryRuleWin"; break;
                             case Move.MAX_MOVES_DRAW: mes = "MaxMovesDraw"; break;
                             case Move.RESIGN: mes = "Resigns"; break;
                             case Move.TIME_UP: mes = "Timeup"; break;

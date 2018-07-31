@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using MyShogi.Model.Common.ObjectModel;
@@ -11,8 +12,109 @@ namespace MyShogi.Model.Shogi.Kifu
     /// 対局時間設定
     /// 片側のプレイヤー分
     /// </summary>
+    [DataContract]
     public class KifuTimeSetting : NotifyObject
     {
+        // -- DataMembers
+
+        /// <summary>
+        /// 持ち時間の[時]
+        /// </summary>
+        [DataMember]
+        public int Hour
+        {
+            get { return GetValue<int>("Hour"); }
+            set { SetValue("Hour", value); }
+        }
+
+        /// <summary>
+        /// 持ち時間の[分]
+        /// </summary>
+        [DataMember]
+        public int Minute
+        {
+            get { return GetValue<int>("Minute"); }
+            set { SetValue("Minute", value); }
+        }
+
+        /// <summary>
+        /// 持ち時間の[秒]
+        /// </summary>
+        [DataMember]
+        public int Second
+        {
+            get { return GetValue<int>("Second"); }
+            set { SetValue("Second", value); }
+        }
+
+        /// <summary>
+        /// 持ち時間を使い切ったときの
+        /// 秒読みの[秒]
+        /// </summary>
+        [DataMember]
+        public int Byoyomi
+        {
+            get { return GetValue<int>("Byoyomi"); }
+            set { SetValue("Byoyomi", value); }
+        }
+
+        /// <summary>
+        /// Byoyomiは有効か？
+        /// これがfalseならByoyomiの値は無効。
+        /// </summary>
+        [DataMember]
+        public bool ByoyomiEnable
+        {
+            get { return GetValue<bool>("ByoyomiEnable"); }
+            set { SetValue("ByoyomiEnable", value); }
+        }
+
+        /// <summary>
+        /// 1手ごとの加算(秒)
+        /// </summary>
+        [DataMember]
+        public int IncTime
+        {
+            get { return GetValue<int>("IncTime"); }
+            set { SetValue("IncTime", value); }
+        }
+
+        /// <summary>
+        /// IncTimeは有効か？
+        /// これがfalseならIncTimeの値は無効。
+        /// </summary>
+        [DataMember]
+        public bool IncTimeEnable
+        {
+            get { return GetValue<bool>("IncTimeEnable"); }
+            set { SetValue("IncTimeEnable", value); }
+        }
+
+        /// <summary>
+        /// 時間切れを負けにしない
+        /// </summary>
+        [DataMember]
+        public bool IgnoreTime
+        {
+            get { return GetValue<bool>("IgnoreTime"); }
+            set { SetValue("IgnoreTime", value); }
+        }
+
+        /// <summary>
+        /// 時間制限なし
+        /// (残り時間のところが"無制限"になる。
+        /// 消費時間が減っていくのが気になる人向け)
+        /// </summary>
+        [DataMember]
+        public bool TimeLimitless
+        {
+            get { return GetValue<bool>("TimeLimitless"); }
+            set { SetValue("TimeLimitless", value); }
+        }
+
+
+        // -- public methods
+
         public KifuTimeSetting()
         {
             Minute = 15;
@@ -46,92 +148,6 @@ namespace MyShogi.Model.Shogi.Kifu
                 ((ByoyomiEnable && Byoyomi == 0) || (IncTimeEnable && IncTime == 0));
             
             return b1 && !b2; 
-        }
-
-        /// <summary>
-        /// 持ち時間の[時]
-        /// </summary>
-        public int Hour
-        {
-            get { return GetValue<int>("Hour"); }
-            set { SetValue("Hour", value); }
-        }
-
-        /// <summary>
-        /// 持ち時間の[分]
-        /// </summary>
-        public int Minute
-        {
-            get { return GetValue<int>("Minute"); }
-            set { SetValue("Minute", value); }
-        }
-
-        /// <summary>
-        /// 持ち時間の[秒]
-        /// </summary>
-        public int Second
-        {
-            get { return GetValue<int>("Second"); }
-            set { SetValue("Second", value); }
-        }
-
-        /// <summary>
-        /// 持ち時間を使い切ったときの
-        /// 秒読みの[秒]
-        /// </summary>
-        public int Byoyomi
-        {
-            get { return GetValue<int>("Byoyomi"); }
-            set { SetValue("Byoyomi", value); }
-        }
-
-        /// <summary>
-        /// Byoyomiは有効か？
-        /// これがfalseならByoyomiの値は無効。
-        /// </summary>
-        public bool ByoyomiEnable
-        {
-            get { return GetValue<bool>("ByoyomiEnable"); }
-            set { SetValue("ByoyomiEnable", value); }
-        }
-
-        /// <summary>
-        /// 1手ごとの加算(秒)
-        /// </summary>
-        public int IncTime
-        {
-            get { return GetValue<int>("IncTime"); }
-            set { SetValue("IncTime", value); }
-        }
-
-        /// <summary>
-        /// IncTimeは有効か？
-        /// これがfalseならIncTimeの値は無効。
-        /// </summary>
-        public bool IncTimeEnable
-        {
-            get { return GetValue<bool>("IncTimeEnable"); }
-            set { SetValue("IncTimeEnable", value); }
-        }
-
-        /// <summary>
-        /// 時間切れを負けにしない
-        /// </summary>
-        public bool IgnoreTime
-        {
-            get { return GetValue<bool>("IgnoreTime"); }
-            set { SetValue("IgnoreTime", value); }
-        }
-
-        /// <summary>
-        /// 時間制限なし
-        /// (残り時間のところが"無制限"になる。
-        /// 消費時間が減っていくのが気になる人向け)
-        /// </summary>
-        public bool TimeLimitless
-        {
-            get { return GetValue<bool>("TimeLimitless"); }
-            set { SetValue("TimeLimitless", value); }
         }
 
         /// <summary>
@@ -239,8 +255,18 @@ namespace MyShogi.Model.Shogi.Kifu
     /// <summary>
     /// 対局時間設定 先後の両方の分
     /// </summary>
+    [DataContract]
     public class KifuTimeSettings : NotifyObject
     {
+        /// <summary>
+        /// 対局時間設定、先後分
+        /// getのときは、このメンバに直接アクセスせずにPlayer()のほうを用いること。
+        /// </summary>
+        [DataMember]
+        public KifuTimeSetting[] Players;
+
+        // -- public methods
+
         public KifuTimeSettings()
         {
             Players = new KifuTimeSetting[2] { new KifuTimeSetting(), new KifuTimeSetting() };
@@ -341,10 +367,5 @@ namespace MyShogi.Model.Shogi.Kifu
             return new KifuTimeSettings(new KifuTimeSetting[2] { player, player } , true);
         }
 
-        /// <summary>
-        /// 対局時間設定、先後分
-        /// getのときは、このメンバに直接アクセスせずにPlayer()のほうを用いること。
-        /// </summary>
-        public KifuTimeSetting[] Players;
     }
 }

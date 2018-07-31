@@ -42,7 +42,12 @@ namespace MyShogi.View.Win2D.Setting
             public string EngineDefineFolderPath
             {
                 get { return GetValue<string>("EngineDefineFolderPath"); }
-                set { SetValue<string>("EngineDefineFolderPath", value); PlayerSetting.EngineDefineFolderPath = value; } // 手動bind
+                set {
+                    // 手動bind
+                    if (PlayerSetting != null)
+                        PlayerSetting.EngineDefineFolderPath = value;
+                    SetValue<string>("EngineDefineFolderPath", value);
+                }
             }
 
             /// <summary>
@@ -107,19 +112,22 @@ namespace MyShogi.View.Win2D.Setting
             // -- プレイヤーごとの設定
 
             // 対局者氏名
-            binder.Bind(player ,"PlayerName", textBox1);
+            binder.Bind(player, "PlayerName", textBox1);
 
             // 対局者の種別
-            binder.Bind(player , "IsHuman" , radioButton1);
-            binder.Bind(player , "IsCpu"  , radioButton2);
+            binder.Bind(player, "IsHuman", radioButton1);
+            binder.Bind(player, "IsCpu", radioButton2);
 
             // プリセット
-            binder.Bind(player, "SelectedEnginePreset", comboBox1);
+            // この値を変更した時に、エンジンのプリセット選択のほうにも反映しないといけないが、それはcomboBoxの変更イベントで行っている。
+            
+            binder.Bind(player, "SelectedEnginePreset", comboBox1 );
 
             // ponder(相手の手番でも思考するか)
             binder.Bind(player, "Ponder", checkBox1);
 
-            // ここに保存しておく。
+            // ここに保存しておく。(ViewModel.EngineDefineFolderPathを変更した時に、ここに反映させる必要があるため。)
+            
             ViewModel.PlayerSetting = player;
         }
 
@@ -129,6 +137,7 @@ namespace MyShogi.View.Win2D.Setting
         public void Unbind()
         {
             binder.UnbindAll();
+            ViewModel.PlayerSetting = null;
         }
 
         // -- ViewModelの初期化
@@ -380,8 +389,15 @@ namespace MyShogi.View.Win2D.Setting
         {
             UpdatePresetText();
 
+            var folderPath = ViewModel.EngineDefineFolderPath;
+            if (folderPath == null)
+                return;
+
             // プリセットは前回のエンジンの選択時のSelectedPresetIndexを持って来て選ぶ。
-            var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(ViewModel.EngineDefineFolderPath);
+            var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(folderPath);
+            if (indivisualEngine == null)
+                return;
+
             indivisualEngine.SelectedPresetIndex = comboBox1.SelectedIndex;
         }
 

@@ -98,6 +98,8 @@ namespace MyShogi.Model.Shogi.Converter
                     return "%TORYO";
                 case Move.WIN:
                     return "%WIN";
+                case Move.WIN_THEM: // これに対応するものがないので仕方がない。
+                    return "%WIN";
                 case Move.INTERRUPT:
                     return "%CHUDAN";
                 case Move.REPETITION_DRAW:

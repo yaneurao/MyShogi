@@ -1,7 +1,8 @@
-﻿using MyShogi.Model.Common.ObjectModel;
+﻿using System.Drawing;
+using System.Runtime.Serialization;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.LocalServer;
-using System.Drawing;
 
 namespace MyShogi.App
 {
@@ -9,6 +10,7 @@ namespace MyShogi.App
     /// 全体設定。
     /// 駒画像番号、サウンドの有無、ウインドウ比率など…
     /// </summary>
+    [DataContract]
     public class GlobalConfig : NotifyObject
     {
         /// <summary>
@@ -118,6 +120,7 @@ namespace MyShogi.App
         /// <summary>
         /// 盤画像のバージョン
         /// </summary>
+        [DataMember]
         public int BoardImageVersion
         {
             get { return GetValue<int>("BoardImageVersion"); }
@@ -127,6 +130,7 @@ namespace MyShogi.App
         /// <summary>
         /// 畳画像のバージョン
         /// </summary>
+        [DataMember]
         public int TatamiImageVersion
         {
             get { return GetValue<int>("TatamiImageVersion"); }
@@ -136,6 +140,7 @@ namespace MyShogi.App
         /// <summary>
         /// 駒画像のバージョン
         /// </summary>
+        [DataMember]
         public int PieceImageVersion
         {
             get { return GetValue<int>("PieceImageVersion"); }
@@ -148,6 +153,7 @@ namespace MyShogi.App
         /// 1 : 赤
         /// その他、あとで追加するかも知れないのでboolにしておくとまずい。
         /// </summary>
+        [DataMember]
         public int PromotePieceColorType
         {
             get { return GetValue<int>("PromotePieceColorType"); }
@@ -158,6 +164,7 @@ namespace MyShogi.App
         /// 駒の移動できる方向が描いてある画像
         /// 0 : なし
         /// </summary>
+        [DataMember]
         public int PieceAttackImageVersion
         {
             get { return GetValue<int>("PieceAttackImageVersion"); }
@@ -172,6 +179,7 @@ namespace MyShogi.App
         /// 1 : 標準
         /// 2 : Chess式
         /// </summary>
+        [DataMember]
         public int BoardNumberImageVersion
         {
             get { return GetValue<int>("BoardNumberImageVersion"); }
@@ -186,6 +194,7 @@ namespace MyShogi.App
         /// 3 : 緑色
         /// 4 : 駒のシャドウのみ
         /// </summary>
+        [DataMember]
         public int LastMoveFromColorType
         {
             get { return GetValue<int>("LastMoveFromColorType"); }
@@ -199,6 +208,7 @@ namespace MyShogi.App
         /// 2 : 青色
         /// 3 : 緑色
         /// </summary>
+        [DataMember]
         public int LastMoveToColorType
         {
             get { return GetValue<int>("LastMoveToColorType"); }
@@ -213,6 +223,7 @@ namespace MyShogi.App
         /// 3 : 緑色
         /// 4 : 駒のシャドウのみ
         /// </summary>
+        [DataMember]
         public int PickedMoveFromColorType
         {
             get { return GetValue<int>("PickedMoveFromColorType"); }
@@ -228,6 +239,7 @@ namespace MyShogi.App
         /// 4 : 少し明るい
         /// 5 : ずいぶん明るい
         /// </summary>
+        [DataMember]
         public int PickedMoveToColorType
         {
             get { return GetValue<int>("PickedMoveToColorType"); }
@@ -239,6 +251,7 @@ namespace MyShogi.App
         /// 0 : なし
         /// 1 : あり
         /// </summary>
+        [DataMember]
         public int TurnDisplay
         {
             get { return GetValue<int>("TurnDisplay"); }
@@ -251,6 +264,7 @@ namespace MyShogi.App
         /// 0 : なし
         /// 1 : あり(デフォルト)
         /// </summary>
+        [DataMember]
         public int PieceSoundInTheGame
         {
             get { return GetValue<int>("PieceSoundInTheGame"); }
@@ -265,6 +279,7 @@ namespace MyShogi.App
         /// 0 : なし
         /// 1 : あり(デフォルト)
         /// </summary>
+        [DataMember]
         public int CrashPieceSoundInTheGame
         {
             get { return GetValue<int>("CrashPieceSoundInTheGame"); }
@@ -277,6 +292,7 @@ namespace MyShogi.App
         /// 0 : なし
         /// 1 : あり(デフォルト) : 商用版のみ素材あり。
         /// </summary>
+        [DataMember]
         public int KifuReadOut
         {
             get { return GetValue<int>("KifuReadOut"); }
@@ -288,6 +304,7 @@ namespace MyShogi.App
         /// 0 : なし
         /// 1 : あり(デフォルト)
         /// </summary>
+        [DataMember]
         public int ReadOutSenteGoteEverytime
         {
             get { return GetValue<int>("ReadOutSenteGoteEverytime"); }
@@ -299,6 +316,7 @@ namespace MyShogi.App
         /// false : なし(デフォルト)
         ///  true : あり
         /// </summary>
+        [DataMember]
         public bool MemoryLoggingEnable
         {
             get { return GetValue<bool>("MemoryLoggingEnable"); }
@@ -310,6 +328,7 @@ namespace MyShogi.App
         /// false : なし(デフォルト)
         ///  true : あり
         /// </summary>
+        [DataMember]
         public bool FileLoggingEnable
         {
             get { return GetValue<bool>("FileLoggingEnable"); }
@@ -327,6 +346,7 @@ namespace MyShogi.App
         /// 
         /// 検討モードの時　→　自動的に表示
         /// </summary>
+        [DataMember]
         public bool EngineConsiderationWindowEnableWhenVsHuman
         {
             get { return GetValue<bool>("EngineConsiderationWindowEnableWhenVsHuman"); }
@@ -338,30 +358,35 @@ namespace MyShogi.App
         /// メインウィンドウのサイズ。
         /// 記憶しておいて、次回同じサイズで生成する。
         /// </summary>
+        [DataMember]
         public Size MainDialogClientSize { get; set; }
 
         /// <summary>
         /// 検討ウィンドウのサイズ。
         /// 記憶しておいて、次回同じサイズで生成する。
         /// </summary>
+        [DataMember]
         public Size ConsiderationDialogClientSize { get; set; }
 
         /// <summary>
         /// 検討ウィンドウの位置。(メインのウィンドウ相対)
         /// 記憶しておいて、次回同じサイズで生成する。
         /// </summary>
+        [DataMember]
         public Point ConsiderationDialogClientLocation { get; set; }
 
         /// <summary>
         /// 検討時の候補手(MultiPV)の数。
         /// デフォルト : 5
         /// </summary>
+        [DataMember]
         public int ConsiderationMultiPV { get; set; }
 
         /// <summary>
         /// 検討ウィンドウで思考エンジンが後手番のときに評価値を反転させるか(先手から見た評価値にするか)のフラグ
         /// デフォルト : false
         /// </summary>
+        [DataMember]
         public bool NegateEvalWhenWhite
         {
             get { return GetValue<bool>("NegateEvalWhenWhite"); }
@@ -376,6 +401,7 @@ namespace MyShogi.App
         /// 3 = 175%
         /// 4 = 200%
         /// </summary>
+        [DataMember]
         public int KifuWindowWidthType
         {
             get { return GetValue<int>("KifuWindowWidthType"); }
@@ -385,6 +411,7 @@ namespace MyShogi.App
         /// <summary>
         /// 対局ダイアログの設定
         /// </summary>
+        [DataMember]
         public GameSetting GameSetting { get; set; } = new GameSetting();
     }
 }

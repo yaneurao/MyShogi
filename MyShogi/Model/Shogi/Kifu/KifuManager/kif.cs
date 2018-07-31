@@ -629,6 +629,9 @@ namespace MyShogi.Model.Shogi.Kifu
                         case Move.WIN:
                             mes = "勝ち宣言";
                             break;
+                        case Move.WIN_THEM: // トライルールに対応するものがKIF形式にないので仕方がない。
+                            mes = "勝ち宣言";
+                            break;
                         case Move.MAX_MOVES_DRAW:
                             mes = "最大手数超過";
                             break;
@@ -679,6 +682,9 @@ namespace MyShogi.Model.Shogi.Kifu
                             break;
                         case Move.WIN:
                             sb.AppendLine($"まで{Tree.gamePly - 1}手で{sides[Tree.position.sideToMove.ToInt()]}の勝ち");
+                            break;
+                        case Move.WIN_THEM: // トライしたので一つ前の手番側の勝ち
+                            sb.AppendLine($"まで{Tree.gamePly - 1}手で{sides[Tree.position.sideToMove.Not().ToInt()]}の勝ち");
                             break;
                         case Move.TIME_UP:
                             sb.AppendLine($"まで{Tree.gamePly - 1}手で時間切れにより{sides[Tree.position.sideToMove.Not().ToInt()]}の勝ち");
@@ -887,6 +893,9 @@ namespace MyShogi.Model.Shogi.Kifu
                             break;
                         case Move.WIN:
                             sb.AppendLine($"まで{Tree.gamePly - 1}手で{sides[Tree.position.sideToMove.ToInt()]}の勝ち");
+                            break;
+                        case Move.WIN_THEM: // トライしたので一つ前の手番側の勝ち
+                            sb.AppendLine($"まで{Tree.gamePly - 1}手で{sides[Tree.position.sideToMove.Not().ToInt()]}の勝ち");
                             break;
                         case Move.TIME_UP:
                             sb.AppendLine($"まで{Tree.gamePly - 1}手で時間切れにより{sides[Tree.position.sideToMove.Not().ToInt()]}の勝ち");

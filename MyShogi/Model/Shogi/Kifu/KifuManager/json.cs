@@ -601,6 +601,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             case Move.REPETITION_WIN:  jkfMove.special = "SENNICHITE"; break;
                             case Move.REPETITION_DRAW: jkfMove.special = "SENNICHITE"; break;
                             case Move.WIN:             jkfMove.special = "KACHI"; break;
+                            case Move.WIN_THEM:        jkfMove.special = "KACHI"; break; // ないので仕方がない..
                             case Move.MAX_MOVES_DRAW:  jkfMove.special = "JISHOGI"; break;
                             case Move.RESIGN:          jkfMove.special = "TORYO"; break;
                             case Move.TIME_UP:         jkfMove.special = "TIME_UP"; break;

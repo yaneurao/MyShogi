@@ -247,6 +247,7 @@ namespace MyShogi.Model.Resource.Sounds
 
                 // 最大手数による引き分けも音声上は「持将棋」
                 case Move.WIN            : ReadOut(SoundEnum.Jisyougi); break;
+                case Move.WIN_THEM       : ReadOut(SoundEnum.Jisyougi); break;
                 case Move.MAX_MOVES_DRAW : ReadOut(SoundEnum.Jisyougi); break;
 
                 case Move.MATED          : ReadOut(SoundEnum.Tsumi); break;

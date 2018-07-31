@@ -379,7 +379,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                         {
                             // 入玉宣言勝ち
                             case Move.WIN:
-                                if (Position.DeclarationWin(EnteringKingRule.POINT27) != Move.WIN)
+                                var rule = (EnteringKingRule)GameSetting.MiscSettings.EnteringKingRule;
+                                if (Position.DeclarationWin(rule) != Move.WIN)
                                     // 入玉宣言条件を満たしていない入玉宣言
                                     goto ILLEGAL_MOVE;
                                 break;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using SysMath = System.Math;
 using MyShogi.Model.Shogi.Core;
@@ -346,6 +345,7 @@ namespace MyShogi.Model.Shogi.Converter
                     case Move.NULL: kif.Append("パス"); break;
                     case Move.RESIGN: kif.Append("投了"); break;
                     case Move.WIN: kif.Append("入玉宣言"); break;
+                    case Move.WIN_THEM: kif.Append("入玉宣言"); break; // ないので仕方がない
                     case Move.DRAW: kif.Append("引き分け"); break;
                     case Move.MATED: kif.Append("詰み"); break;
                     case Move.REPETITION_DRAW: kif.Append("千日手"); break;

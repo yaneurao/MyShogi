@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Windows.Forms;
 
 // WPFで使うNotifyObjectっぽい何か。
@@ -92,7 +93,11 @@ namespace MyShogi.Model.Common.ObjectModel
     /// <summary>
     /// MVVMのViewModelで用いる、プロパティが変更されたときに、それをsubscribe(購読)しているobserverに
     /// 通知を送るための仕組み。
+    /// 
+    /// ※ これを派生したクラスをDataContractで使うために、このクラスもDataContractにはなってはいるが、
+    /// 実際はDataMemberを一つも持たない。
     /// </summary>
+    [DataContract]
     public class NotifyObject
     {
         /// <summary>
@@ -105,7 +110,7 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void SetValue<T>(string name, T value)
+        public void SetValue<T>(string name, T value )
         {
             var raise = false;
             lock (lockObject)
@@ -280,8 +285,6 @@ namespace MyShogi.Model.Common.ObjectModel
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
         public void RaisePropertyChanged(string name, object value = null)
         {
             RaisePropertyChanged(new PropertyChangedEventArgs(name, value));

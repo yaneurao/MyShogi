@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
@@ -50,6 +51,7 @@ namespace MyShogi.View.Win2D
             foreach (var c in All.Colors())
             {
                 var playerSetting = playerSettings[(int)c].ViewModel;
+                // これ真っ先に設定しないと、間違えたほうの手番側に設定を保存してしまう。
                 playerSetting.Color = c;
                 playerSetting.AddPropertyChangedHandler("EngineSelectionButtonClicked", (args) =>
                 {
@@ -64,6 +66,7 @@ namespace MyShogi.View.Win2D
                 //var playerSetting2 = playerSettings[(int)c.Not()].ViewModel;
                 //playerSetting.AddPropertyChangedHandler("SettingButton", (args) => playerSetting2.SettingButton = (bool)args.value);
 
+                // 持ち時間設定も同様にColorを反映する。
                 var timeSetting = timeSettings[(int)c].ViewModel;
                 timeSetting.Color = c;
             }
@@ -79,7 +82,7 @@ namespace MyShogi.View.Win2D
             var setting = TheApp.app.config.GameSetting;
 
             var path = setting.PlayerSetting(c).EngineDefineFolderPath;
-            playerSettings[(int)c].ViewModel.RaisePropertyChanged("EngineDefineFolderPath",path);
+            playerSettings[(int)c].ViewModel.EngineDefineFolderPath = path;
         }
 
         /// <summary>
@@ -109,8 +112,8 @@ namespace MyShogi.View.Win2D
             // -- 開始局面
 
             // 手合割有効か
-            binder.Bind(setting.BoardSetting , "BoardTypeEnable" , radioButton5 );
-            binder.Bind(setting.BoardSetting, "BoardType" , comboBox3 );
+            binder.Bind(setting.BoardSetting, "BoardTypeEnable" , radioButton5 );
+            binder.Bind(setting.BoardSetting, "BoardType" , comboBox2 );
 
             // 現在の局面から
             binder.Bind(setting.BoardSetting, "BoardTypeCurrent" , radioButton6);
@@ -136,6 +139,9 @@ namespace MyShogi.View.Win2D
             });
 
             binder.Bind(misc , "MaxMovesToDraw" , numericUpDown11);
+
+            // 入玉ルール設定
+            binder.Bind(misc, "EnteringKingRule", comboBox1);
 
             ResumeLayout();
         }
@@ -190,6 +196,8 @@ namespace MyShogi.View.Win2D
 
                     vm.EngineDefineFolderPath = engineDefine.FolderPath;
                     vm.RaisePropertyChanged("EngineSelected", null); // CPUのradio buttonを選択
+
+                    Debug.Assert(engineDefine.FolderPath != null);
 
                     var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(engineDefine.FolderPath);
                     var preset = indivisualEngine.SelectedPresetIndex;

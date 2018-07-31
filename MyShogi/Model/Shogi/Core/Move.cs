@@ -27,6 +27,7 @@ namespace MyShogi.Model.Shogi.Core
         NULL   ,  // NULL MOVEを意味する指し手
         RESIGN ,  // << で出力したときに"resign"と表示する投了を意味する指し手。自分による手番時の投了。
         WIN    ,  // 入玉時の宣言勝ちのために使う特殊な指し手
+        WIN_THEM, // トライルールにおいて相手に入玉された局面であった
         DRAW   ,  // 引き分け。(CSAプロトコルにある) 引き分けの原因は不明。
         MATED  ,  // 詰み(合法手がない)局面(手番側が詰まされていて合法手がない) 
         REPETITION     , // 千日手(PSN形式で、DRAWかWINかわからない"Sennichite"という文字列が送られてくるのでその解釈用)
@@ -115,6 +116,7 @@ namespace MyShogi.Model.Shogi.Core
                 case Move.ILLEGAL_MOVE:
                 case Move.TIME_UP:
                 case Move.ILLEGAL_ACTION_LOSE:
+                case Move.WIN_THEM:
                     return MoveGameResult.LOSE;
 
                 case Move.DRAW:
@@ -151,6 +153,7 @@ namespace MyShogi.Model.Shogi.Core
                     case Move.NULL:            return "null";
                     case Move.RESIGN:          return "投了";
                     case Move.WIN:             return "入玉宣言勝ち";
+                    case Move.WIN_THEM:        return "入玉トライ勝ち";
                     case Move.DRAW:            return "引き分け";
                     case Move.MATED:           return "詰み";
                     case Move.REPETITION:      return "千日手";
@@ -198,6 +201,10 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// 指し手をUSI形式の文字列にする。
+        ///
+        /// 特殊な指し手は、Move.RESIGN , Move.WIN , Move.NULLしかサポートしていない。
+        /// (USIでこれ以外の特殊な指し手は規定されていないため。
+        /// "null"はUSIでサポートされていないが、Null Move Pruningを表現するのに使うことがあるので入れておく。)
         /// </summary>
         public static string ToUsi(this Move m)
         {

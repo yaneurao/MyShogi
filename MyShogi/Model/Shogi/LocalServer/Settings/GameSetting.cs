@@ -1,4 +1,5 @@
-﻿using MyShogi.Model.Shogi.Core;
+﻿using System.Runtime.Serialization;
+using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Common.Utility;
 
@@ -18,8 +19,39 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// の集合
     /// 
     /// </summary>
+    [DataContract]
     public class GameSetting
     {
+        // -- DataMember
+
+        /// <summary>
+        /// 開始盤面
+        /// </summary>
+        [DataMember]
+        public BoardSetting BoardSetting;
+
+        /// <summary>
+        /// 持ち時間設定
+        /// </summary>
+        [DataMember]
+        public KifuTimeSettings KifuTimeSettings;
+
+        /// <summary>
+        /// その他の細かい設定
+        /// </summary>
+        [DataMember]
+        public MiscSettings MiscSettings;
+
+        /// <summary>
+        /// このメンバーには直接アクセスせずに、Player(Color)のほうを用いて欲しい。
+        /// XmlSerializerでシリアライズするときにpublicにしておかないとシリアライズ対象とならないので
+        /// publicにしてある。
+        /// </summary>
+        [DataMember]
+        public PlayerSetting[] PlayerSettings;
+
+        // -- public methods
+
         /// <summary>
         /// デフォルトコンストラクタ
         /// </summary>
@@ -45,8 +77,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="players"></param>
         /// <param name="board"></param>
         /// <param name="timeSetting"></param>
-        private GameSetting(PlayerSetting[] players , BoardSetting board ,
-            KifuTimeSettings kifuTimeSettings , MiscSettings miscSettings )
+        private GameSetting(PlayerSetting[] players, BoardSetting board,
+            KifuTimeSettings kifuTimeSettings, MiscSettings miscSettings)
         {
             PlayerSettings = players;
             BoardSetting = board;
@@ -94,11 +126,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 開始盤面
-        /// </summary>
-        public BoardSetting BoardSetting;
-
-        /// <summary>
         /// c側の設定情報を取得する。
         /// </summary>
         /// <param name="c"></param>
@@ -114,22 +141,5 @@ namespace MyShogi.Model.Shogi.LocalServer
             Utility.Swap(ref PlayerSettings[0], ref PlayerSettings[1]);
             KifuTimeSettings.SwapPlayer();
         }
-
-        /// <summary>
-        /// 持ち時間設定
-        /// </summary>
-        public KifuTimeSettings KifuTimeSettings;
-
-        /// <summary>
-        /// その他の細かい設定
-        /// </summary>
-        public MiscSettings MiscSettings;
-
-        /// <summary>
-        /// このメンバーには直接アクセスせずに、Player(Color)のほうを用いて欲しい。
-        /// XmlSerializerでシリアライズするときにpublicにしておかないとシリアライズ対象とならないので
-        /// publicにしてある。
-        /// </summary>
-        public PlayerSetting[] PlayerSettings;
     }
 }

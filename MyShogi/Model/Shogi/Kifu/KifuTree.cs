@@ -775,8 +775,16 @@ namespace MyShogi.Model.Shogi.Kifu
 
             var rep = position.IsRepetition();
 
+            // 入玉ルール
+            var rule = (EnteringKingRule)misc.EnteringKingRule;
+
+            // トライルールによる勝ち
+            if (rule == EnteringKingRule.TRY_RULE && position.DeclarationWin(rule) == Move.WIN_THEM)
+            {
+                m = Move.WIN_THEM; // 一つ前の手番側の入玉勝ち
+            }
             // 手数による引き分けの局面であるか
-            if (misc.MaxMovesToDrawEnable && misc.MaxMovesToDraw < position.gamePly)
+            else if (misc.MaxMovesToDrawEnable && misc.MaxMovesToDraw < position.gamePly)
             {
                 m = Move.MAX_MOVES_DRAW;
             }
@@ -800,7 +808,7 @@ namespace MyShogi.Model.Shogi.Kifu
             // 人間が入玉局面の条件を満たしているなら自動的に入玉局面して勝ちとする。
             // コンピューターの時は、これをやってしまうとコンピューターが入玉宣言の指し手(Move.WIN)をちゃんと指せているかの
             // チェックが出来なくなってしまうので、コンピューターの時はこの処理を行わない。
-            else if (isHuman && position.DeclarationWin(EnteringKingRule.POINT27) == Move.WIN)
+            else if (isHuman && rule != EnteringKingRule.TRY_RULE && position.DeclarationWin(rule) == Move.WIN)
             {
                 m = Move.WIN;
             }
