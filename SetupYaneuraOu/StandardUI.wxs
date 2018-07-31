@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment Id="LicenseDlg">
+    <Property Id="EulaForm_PrevArgs" Value="SplashForm" />
+    <Property Id="EulaForm_NextArgs" Value="ReadmeForm" />
+    <UI Id="LicenseDlg">
+      <Property Id="EulaForm_Property" Value="No" />
+      <RadioButtonGroup Property="EulaForm_Property">
+        <RadioButton Height="15" Text="{\VSI_MS_Sans_Serif13.0_0_0}同意しない(&amp;D)" Value="No" Width="138" X="0" Y="0" />
+        <RadioButton Height="15" Text="{\VSI_MS_Sans_Serif13.0_0_0}同意する(&amp;A)" Value="Yes" Width="138" X="138" Y="0" />
+      </RadioButtonGroup>
+      <Dialog Id="EulaForm" X="50" Y="50" Width="373" Height="287" Title="[ProductName]">
+        <Control Id="LicenseText" Type="ScrollableText" X="18" Y="105" Width="348" Height="120" Sunken="yes" TabSkip="no">
+          <Text SourceFile="..\MyShogi\bin\Debug\docs\YaneuraOuLicense.rtf" />
+        </Control>
+        <Control Id="AgreeRadioGroup" Type="RadioButtonGroup" X="18" Y="231" Width="348" Height="15" Property="EulaForm_Property" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiRadioButtonGroup" TabSkip="no" />
+        <Control Id="CancelButton" Type="PushButton" X="156" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}キャンセル" TabSkip="no" Cancel="yes">
+          <Publish Event="SpawnDialog" Value="Cancel" />
+        </Control>
+        <Control Id="PreviousButton" Type="PushButton" X="228" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}&lt; 戻る(&amp;B)" TabSkip="no">
+          <Condition Action="disable"><![CDATA[EulaForm_PrevArgs=""]]></Condition>
+          <Condition Action="enable"><![CDATA[EulaForm_PrevArgs<>""]]></Condition>
+          <Publish Event="NewDialog" Value="[EulaForm_PrevArgs]"><![CDATA[EulaForm_PrevArgs<>""]]></Publish>
+        </Control>
+        <Control Id="NextButton" Type="PushButton" X="300" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}次へ(&amp;N) &gt;" TabSkip="no" Default="yes">
+          <Condition Action="disable"><![CDATA[EulaForm_Property<>"Yes"]]></Condition>
+          <Condition Action="enable"><![CDATA[EulaForm_Property="Yes"]]></Condition>
+          <Publish Event="EndDialog" Value="Return"><![CDATA[EulaForm_NextArgs=""]]></Publish>
+          <Publish Event="NewDialog" Value="[EulaForm_NextArgs]"><![CDATA[EulaForm_NextArgs<>""]]></Publish>
+          <Subscribe Event="EulaEvent" Attribute="Enabled" />
+        </Control>
+        <Control Id="BannerBmp" Type="Bitmap" X="0" Y="0" Width="375" Height="52" Text="_DBE77D57_0056_4763_8A31_1420F44D20CD" TabSkip="no" Disabled="yes" />
+        <Control Id="BannerText" Type="Text" X="9" Y="9" Width="306" Height="33" Text="{\VSI_MS_Sans_Serif16.0_1_0}ライセンス条項" TabSkip="yes" Transparent="yes" NoPrefix="yes" />
+        <Control Id="Line1" Type="Line" X="0" Y="52" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
+        <Control Id="BodyText" Type="Text" X="9" Y="63" Width="354" Height="27" Text="{\VSI_MS_Sans_Serif13.0_0_0}ライセンス条項をお読みください。以下の条件に同意される場合は［同意する］をクリックしてから［次へ］をクリックしてください。その他の場合は［キャンセル］をクリックしてください。" TabSkip="yes" NoPrefix="yes" />
+        <Control Id="Line2" Type="Line" X="0" Y="252" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
+      </Dialog>
+    </UI>
+    <InstallUISequence>
+    </InstallUISequence>
+  </Fragment>
+  <Fragment Id="SplashDlg">
+    <Property Id="SplashForm_NextArgs" Value="EulaForm" />
+    <UI Id="SplashDlg">
+      <Dialog Id="SplashForm" X="50" Y="50" Width="373" Height="287" Title="[ProductName]">
+        <Control Id="NextButton" Type="PushButton" X="300" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}次へ(&amp;N) &gt;" TabSkip="no" Default="yes">
+          <Publish Event="EndDialog" Value="Return"><![CDATA[SplashForm_NextArgs=""]]></Publish>
+          <Publish Event="NewDialog" Value="[SplashForm_NextArgs]"><![CDATA[SplashForm_NextArgs<>""]]></Publish>
+        </Control>
+        <Control Id="CancelButton" Type="PushButton" X="156" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}キャンセル" TabSkip="no" Cancel="yes">
+          <Publish Event="SpawnDialog" Value="Cancel" />
+        </Control>
+        <Control Id="PreviousButton" Type="PushButton" X="228" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}&lt; 戻る(&amp;B)" TabSkip="no">
+          <Condition Action="disable"><![CDATA[SplashForm_PrevArgs=""]]></Condition>
+          <Condition Action="enable"><![CDATA[SplashForm_PrevArgs<>""]]></Condition>
+          <Publish Event="NewDialog" Value="[SplashForm_PrevArgs]"><![CDATA[SplashForm_PrevArgs<>""]]></Publish>
+        </Control>
+        <Control Id="Line1" Type="Line" X="0" Y="252" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
+        <Control Id="SplashBmp" Type="Bitmap" X="6" Y="6" Width="360" Height="240" TabSkip="yes" Sunken="yes" Disabled="yes" Text="_88BEF0B8_D53C_4946_AEA2_2B10B1EBA8F1" />
+      </Dialog>
+    </UI>
+    <InstallUISequence>
+      <Show Dialog="SplashForm" Sequence="1001"><![CDATA[Installed="" AND NOT RESUME]]></Show>
+    </InstallUISequence>
+  </Fragment>
+  <Fragment Id="FolderDlg">
+  </Fragment>
+  <Fragment Id="ReadmeDlg">
+    <Property Id="ReadmeForm_PrevArgs" Value="EulaForm" />
+    <UI Id="ReadmeDlg">
+      <Dialog Id="ReadmeForm" X="50" Y="50" Width="373" Height="287" Title="[ProductName]">
+        <Control Id="NextButton" Type="PushButton" X="300" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}次へ(&amp;N) &gt;" TabSkip="no" Default="yes">
+          <Publish Event="EndDialog" Value="Return"><![CDATA[ReadmeForm_NextArgs=""]]></Publish>
+          <Publish Event="NewDialog" Value="[ReadmeForm_NextArgs]"><![CDATA[ReadmeForm_NextArgs<>""]]></Publish>
+        </Control>
+        <Control Id="ReadmeText" Type="ScrollableText" X="9" Y="63" Width="357" Height="180" Sunken="yes" TabSkip="no">
+          <Text SourceFile="..\MyShogi\bin\Debug\docs\YaneuraOuReadme.rtf" />
+        </Control>
+        <Control Id="CancelButton" Type="PushButton" X="156" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}キャンセル" TabSkip="no" Cancel="yes">
+          <Publish Event="SpawnDialog" Value="Cancel" />
+        </Control>
+        <Control Id="PreviousButton" Type="PushButton" X="228" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}&lt; 戻る(&amp;B)" TabSkip="no">
+          <Condition Action="disable"><![CDATA[ReadmeForm_PrevArgs=""]]></Condition>
+          <Condition Action="enable"><![CDATA[ReadmeForm_PrevArgs<>""]]></Condition>
+          <Publish Event="NewDialog" Value="[ReadmeForm_PrevArgs]"><![CDATA[ReadmeForm_PrevArgs<>""]]></Publish>
+        </Control>
+        <Control Id="BannerBmp" Type="Bitmap" X="0" Y="0" Width="375" Height="52" Text="_DBE77D57_0056_4763_8A31_1420F44D20CD" TabSkip="no" Disabled="yes" />
+        <Control Id="Line1" Type="Line" X="0" Y="52" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
+        <Control Id="BannerText" Type="Text" X="9" Y="9" Width="306" Height="33" Text="{\VSI_MS_Sans_Serif16.0_1_0}[ProductName] 情報" TabSkip="yes" Transparent="yes" NoPrefix="yes" />
+        <Control Id="Line2" Type="Line" X="0" Y="252" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
+      </Dialog>
+    </UI>
+  </Fragment>
+  <Fragment Id="ProgressDlg">
+    <UI Id="ProgressDlg">
+      <Dialog Id="ProgressForm" X="50" Y="50" Width="373" Height="287" Title="[ProductName]" Modeless="yes">
+        <Control Id="NextButton" Type="PushButton" X="300" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}次へ(&amp;N) &gt;" TabSkip="no" Disabled="yes" />
+        <Control Id="CancelButton" Type="PushButton" X="156" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}キャンセル" TabSkip="no" Cancel="yes">
+          <Publish Event="SpawnDialog" Value="Cancel" />
+        </Control>
+        <Control Id="PreviousButton" Type="PushButton" X="228" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}&lt; 戻る(&amp;B)" TabSkip="no" Disabled="yes" />
+        <Control Id="BannerBmp" Type="Bitmap" X="0" Y="0" Width="375" Height="52" Text="_DBE77D57_0056_4763_8A31_1420F44D20CD" TabSkip="no" Disabled="yes" />
+        <Control Id="Line1" Type="Line" X="0" Y="52" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
+        <Control Id="ProgressBar" Type="ProgressBar" X="18" Y="108" Width="336" Height="15" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiProgressBar" TabSkip="yes" Disabled="yes">
+          <Subscribe Event="InstallFiles" Attribute="Progress" />
+          <Subscribe Event="WriteRegistryValues" Attribute="Progress" />
+          <Subscribe Event="WriteIniValues" Attribute="Progress" />
+          <Subscribe Event="UnmoveFiles" Attribute="Progress" />
+          <Subscribe Event="StopServices" Attribute="Progress" />
+          <Subscribe Event="StartServices" Attribute="Progress" />
+          <Subscribe Event="RemoveRegistryValues" Attribute="Progress" />
+          <Subscribe Event="RemoveFiles" Attribute="Progress" />
+          <Subscribe Event="MoveFiles" Attribute="Progress" />
+          <Subscribe Event="InstallAdminPackage" Attribute="Progress" />
+          <Subscribe Event="DeleteServices" Attribute="Progress" />
+          <Subscribe Event="SetProgress" Attribute="Progress" />
+        </Control>
+        <Control Id="Line2" Type="Line" X="0" Y="252" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
+        <Control Id="ProgressLabel" Type="Text" X="18" Y="96" Width="336" Height="12" Text="{\VSI_MS_Sans_Serif13.0_0_0}お待ちください..." TabSkip="yes" />
+        <Control Id="InstalledBody" Type="Text" X="9" Y="63" Width="354" Height="12" Text="{\VSI_MS_Sans_Serif13.0_0_0}[ProductName] をインストールしています。" TabSkip="yes" NoPrefix="yes">
+          <Condition Action="show"><![CDATA[REMOVE=""]]></Condition>
+          <Condition Action="hide"><![CDATA[REMOVE<>""]]></Condition>
+        </Control>
+        <Control Id="RemovedBody" Type="Text" X="18" Y="63" Width="336" Height="12" Text="{\VSI_MS_Sans_Serif13.0_0_0}[ProductName] を削除しています。" TabSkip="yes" NoPrefix="yes">
+          <Condition Action="show"><![CDATA[REMOVE<>""]]></Condition>
+          <Condition Action="hide"><![CDATA[REMOVE=""]]></Condition>
+        </Control>
+        <Control Id="RemoveBannerText" Type="Text" X="9" Y="9" Width="306" Height="33" Text="{\VSI_MS_Sans_Serif16.0_1_0}[ProductName] を削除しています" TabSkip="yes" Transparent="yes" NoPrefix="yes">
+          <Condition Action="show"><![CDATA[REMOVE<>""]]></Condition>
+          <Condition Action="hide"><![CDATA[REMOVE=""]]></Condition>
+        </Control>
+        <Control Id="InstalledBannerText" Type="Text" X="9" Y="9" Width="255" Height="33" Text="{\VSI_MS_Sans_Serif16.0_1_0}[ProductName] をインストールしています" TabSkip="yes" Transparent="yes" NoPrefix="yes">
+          <Condition Action="show"><![CDATA[REMOVE=""]]></Condition>
+          <Condition Action="hide"><![CDATA[REMOVE<>""]]></Condition>
+        </Control>
+      </Dialog>
+    </UI>
+    <InstallUISequence>
+      <Show Dialog="ProgressForm" Sequence="1299" />
+    </InstallUISequence>
+  </Fragment>
+</Wix>
