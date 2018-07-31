@@ -44,20 +44,21 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     new EngineOptionDescription("AutoHash_"           , "自動ハッシュ" ,
                         "ハッシュメモリを自動的に割り当てます。",
                         "このオプションを有効にすると、空き物理メモリから『Hash割合』の分だけ自動的にハッシュメモリを割当てます。"+
-                        "このオプションを無効にすると、『Hash[MB]』の分だけ強制的にハッシュメモリを割り当てます。\r\n"+
+                        "このオプションを無効にすると、『Hash[MB]』の分だけ強制的にハッシュメモリを割り当てます。\r\n" +
                         "※　ハッシュメモリについての詳しい説明は『ハッシュメモリ管理』のところにマウスをホバーさせてください。",
                         "option name AutoHash_ type check default true"
                         ),
-
 
                     new EngineOptionDescription("AutoHashPercentage_" , "Hash割合"   ,
                         "空き物理メモリの何%をハッシュメモリに用いるかを設定します。" ,
                         "上記の『自動ハッシュ割当』をオンにしている時に、空き物理メモリの何%をハッシュメモリに用いるかを設定します。" +
                         "『自動ハッシュ割当』がオフの時は、この値は無視されます。"+
                         "0%～100%までの数値で指定できます。小さな値を指定した場合、思考エンジンの最低必要ハッシュメモリに足りなくなるので" +
-                        "その場合、後者の数値が優先されます。\r\n" +
+                        "その場合、後者の数値が優先されます。\r\n"+
+                        "物理メモリが足りなくなる場合には、ここを少なめに設定してみてください。\r\n" +
                         "※　ハッシュメモリについての詳しい説明は『ハッシュメモリ管理』のところにマウスをホバーさせてください。",
-                        "option name AutoHashPercentage_ type spin default 80 min 0 max 100"
+                        "option name AutoHashPercentage_ type spin default 70 min 0 max 100"
+                        // 定跡ファイルなどでメモリを圧迫することがあるので少し余裕を見ておいたほうが無難。
                         ),
 
                     // ※　"Hash_"という項目に設定しているが、これは、のちに"USI_Hash"か"Hash"に置換される。
@@ -67,6 +68,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "上記の『自動ハッシュ割当』をオフにしている時に、何[MB]をハッシュメモリに用いるかを手動で設定します。" +
                         "『自動ハッシュ割当』がオンの時は、この値は無視されます。"+
                         "ここで指定した値が思考エンジンの最低必要ハッシュメモリに満たない場合、後者の値が優先されます。\r\n"+
+                        "物理メモリが足りなくなる場合には、ここを少なめに設定してみてください。\r\n"+
                         "※　ハッシュメモリについての詳しい説明は『ハッシュメモリ管理』のところにマウスをホバーさせてください。",
                         "option name Hash_ type spin default 4096 min 0 max 1048576"),
 
@@ -177,23 +179,32 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                     new EngineOptionDescription("BookFile"      , "定跡ファイル" ,
                         "コンピューターが用いる定跡ファイル。",
-                        "各エンジンのフォルダ配下のbookフォルダ内にある定跡ファイルが読み込まれます。",
+                        "各エンジンのフォルダ配下のbookフォルダ内にある定跡ファイルが読み込まれます。\r\n" +
+                        "標準定跡 : 出現頻度の情報付き、評価値の情報なしの小さな定跡です。\r\n" +
+                        "やねうら大定跡 : 浅い読み(depth18)で作った評価値付きの大きな定跡です。評価値・depth情報付き、出現頻度情報なし。\r\n" +
+                        "超やねうら定跡 : 浅い読み(depth18)で作った評価値付きの小さな定跡です。評価値・depth情報付き、出現頻度情報なし。\r\n" +
+                        "真やねうら定跡 : 深い読み(depth28)で作った評価値付きの小さな定跡です。評価値・depth情報付き、出現頻度情報なし。\r\n" +
+                        "極やねうら定跡 : 深い読み(depth34)で作った評価値付きの小さな定跡です。評価値・depth情報付き、出現頻度情報なし。\r\n" +
+                        "ユーザー定跡1～3   : user_book1.db ～ user_book3.dbというファイル名の定跡ファイルを定跡フォルダに配置するとそれが使えます。(わかる人向け)\r\n" +
+                        "Aperyの定跡ファイル : Aperyという将棋ソフトで使われている形式の定跡ファイルを使います。ファイル名は book.bin固定 です。(わかる人向け)",
 
                         "option name BookFile type combo default standard_book.db "+
                         "var no_book var standard_book.db var yaneura_book1.db var yaneura_book2.db var yaneura_book3.db var yaneura_book4.db "+
                         "var user_book1.db var user_book2.db var user_book3.db var book.bin"
                         ){
                         ComboboxDisplayName =
-                        "no_book,定跡なし,standard_book.db,やねうら大定跡,yaneura_book1.db,裏やねうら定跡,"+
-                        "yaneura_book2.db,真やねうら定跡,yaneura_book3.db,極やねうら定跡,yaneura_book4.db,やねうら定跡2017,"+
+                        "no_book,定跡なし,standard_book.db,標準定跡,yaneura_book1.db,やねうら大定跡,"+
+                        "yaneura_book2.db,超やねうら定跡,yaneura_book3.db,真やねうら定跡,yaneura_book4.db,極やねうら定跡,"+
                         "user_book1.db,ユーザー定跡1,user_book2.db,ユーザー定跡2,user_book3.db,ユーザー定跡3,book.bin,Aperyの定跡ファイル"
                         },
 
                     new EngineOptionDescription("BookOnTheFly"      , null ,
                         "定跡ファイルを対局開始時にメモリに丸読みしない。",
                         "この設定をオンにすると、定跡ファイルを対局開始時にメモリに丸読みしません。" +
-                        "大きな定跡ファイルに対しては、対局開始時に丸読みしなくて済むので起動時間が短くなる効果がありますが、"+
-                        "そんな巨大な定跡ファイルを使うことはあまりないため、デフォルトではオフになっています。",
+                        "大きな定跡ファイルに対しては、対局開始時に丸読みしなくて済むので起動時間が短くなる効果と空き物理メモリが節約できる効果がありますが、"+
+                        "そんな巨大な定跡ファイルを使うことはあまりないため、デフォルトではオフになっています。\r\n" +
+                        "また、このオプションをオンにするには定跡ファイルがこのオプションに対応している必要があります。(このオプション非対応の定跡があります)\r\n" +
+                        "※　局面順にソート(並び替え)されている必要があります。定跡フォーマットに詳しくない人はオンにしないでください。" ,
 
                         "option name BookOnTheFly type check default false"
                         ),
@@ -218,7 +229,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "定跡の第一候補手との評価値の差",
                         "定跡の指し手で1番目の候補の指し手と、2番目以降の候補の指し手との評価値の差が、" +
                         "この範囲内であれば採用する。(1番目の候補の指し手しか選ばれて欲しくないときは0を指定する)\r\n" +
-                        "指し手に評価値がついている定跡ファイルに対してのみ有効。",
+                        "指し手に評価値がついている定跡ファイルに対してのみ有効です。",
 
                         "option name BookEvalDiff type spin default 30 min 0 max 99999"
                         ),
@@ -226,7 +237,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     new EngineOptionDescription("BookEvalBlackLimit"      , null ,
                         "定跡の先手の評価値下限",
                         "定跡の指し手のうち、先手のときの評価値の下限。これより評価値が低くなる指し手は選択しない。\r\n" +
-                        "指し手に評価値がついている定跡ファイルに対してのみ有効。",
+                        "指し手に評価値がついている定跡ファイルに対してのみ有効です。",
 
                         "option name BookEvalBlackLimit type spin default 0 min -99999 max 99999"
                         ),
@@ -234,7 +245,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     new EngineOptionDescription("BookEvalWhiteLimit"      , null ,
                         "定跡の後手の評価値下限",
                         "定跡の指し手のうち、後手のときの評価値の下限。これより評価値が低くなる指し手は選択しない。\r\n" +
-                        "指し手に評価値がついている定跡ファイルに対してのみ有効。",
+                        "指し手に評価値がついている定跡ファイルに対してのみ有効です。",
 
                         "option name BookEvalWhiteLimit type spin default -140 min -99999 max 99999"
                         ),
@@ -242,7 +253,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     new EngineOptionDescription("BookDepthLimit"      , null ,
                         "定跡の指し手のdepth下限",
                         "定跡に登録されている指し手の(定跡生成時の)depthがこれを下回るなら採用しない。0を指定するとdepth無視。\r\n" +
-                        "指し手にdepth情報がついている定跡ファイルに対してのみ有効。",
+                        "指し手にdepth情報がついている定跡ファイルに対してのみ有効です。",
 
                         "option name BookDepthLimit type spin default 16 min 0 max 99999"
                         ),

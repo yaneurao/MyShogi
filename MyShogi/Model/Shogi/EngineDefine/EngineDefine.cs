@@ -72,8 +72,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <summary>
         /// 使用するメモリ 探索で使用するメモリ(HASHは除く)単位は[MB]
         ///
-        /// EvalHashが130MBほどあるのでUSI待受スレッド用(25MB)+α=200MB。
-        /// NO SSEだけこれは無効だが、まあ、少し多めに評価している分には問題ないか…。
+        /// EvalHashが130MBほどあるのでUSI待受スレッド用(25MB)+定跡丸読み(50MB程度) ≒ 200MB。
+        /// NO SSEの時はEvalHashは無効だが、まあ、少し多めに評価している分には問題ないか…。
+        /// 定跡ファイルが大きいとこれよりメモリがたくさん必要になる。
         /// </summary>
         [DataMember]
         public Int64 WorkingMemory { get; set; } = 200;
