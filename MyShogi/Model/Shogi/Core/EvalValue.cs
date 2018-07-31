@@ -43,12 +43,12 @@ namespace MyShogi.Model.Shogi.Core
     public enum ScoreBound
     {
         /// <summary>
-        /// 上界
+        /// 上界(真の評価値はこれ以下の値)
         /// </summary>
         Upper ,
 
         /// <summary>
-        /// 下界
+        /// 下界(真の評価値はこれ以上の値)
         /// </summary>
         Lower ,
 
@@ -142,8 +142,8 @@ namespace MyShogi.Model.Shogi.Core
             switch(bound)
             {
                 case ScoreBound.Exact: return "";
-                case ScoreBound.Upper: return "++";
-                case ScoreBound.Lower: return "--";
+                case ScoreBound.Lower: return "++"; // 真の値は、この値以上のはずなので
+                case ScoreBound.Upper: return "--"; // 真の値は、この値以下のはずなので
             }
             return "??";
         }

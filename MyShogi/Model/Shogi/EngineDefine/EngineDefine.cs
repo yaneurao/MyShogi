@@ -71,9 +71,19 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
         /// <summary>
         /// 使用するメモリ 探索で使用するメモリ(HASHは除く)単位は[MB]
+        ///
+        /// EvalHashが130MBほどあるのでUSI待受スレッド用(25MB)+α=200MB。
+        /// NO SSEだけこれは無効だが、まあ、少し多めに評価している分には問題ないか…。
         /// </summary>
         [DataMember]
-        public Int64 WorkingMemory { get; set; } = 30;
+        public Int64 WorkingMemory { get; set; } = 200;
+
+        /// <summary>
+        /// スレッドごとのサイズ。単位は[MB]
+        /// Threads設定×この値分だけ余分に物理メモリを消費するものとする。
+        /// </summary>
+        [DataMember]
+        public Int64 StackPerThread { get; set; } = 25;
 
         /// <summary>
         /// 評価関数用のメモリ。単位は[MB]

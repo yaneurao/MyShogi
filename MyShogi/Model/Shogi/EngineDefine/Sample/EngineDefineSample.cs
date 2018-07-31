@@ -181,7 +181,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     EngineExeName = "yaneuraou2018_kpp_kkpt",
                     SupportedCpus = default_cpus ,
                     EvalMemory = 480, // KPP_KKPTは、これくらい？
-                    WorkingMemory = 30 , 
+                    WorkingMemory = 200 ,
+                    StackPerThread = 25, // clangでコンパイルの時にstack size = 25[MB]に設定している。
                     Presets = default_preset,
                     DescriptionSimple = "やねうら王 2018年度版",
                     Description = "プロの棋譜を一切利用せずに自己学習で身につけた異次元の大局観。"+
@@ -203,8 +204,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "tanuki- SDT5",
                     EngineExeName = "YaneuraOu2018KPPT",
                     SupportedCpus = default_cpus,
-                    EvalMemory = 960, // KPPTは、これくらい？
-                    WorkingMemory = 30,
+                    EvalMemory = 850, // KPPTは、これくらい？
+                    WorkingMemory = 150,
+                    StackPerThread = 25, // clangでコンパイルの時にstack size = 25[MB]に設定している。
                     Presets = default_preset,
                     DescriptionSimple = "tanuki- SDT5版",
                     Description = "SDT5(第5回 将棋電王トーナメント)で絶対王者Ponanzaを下し堂々の優勝を果たした実力派。" +
@@ -223,8 +225,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "tanuki- 2018",
                     EngineExeName = "YaneuraOu2018NNUE",
                     SupportedCpus = default_cpus,
-                    EvalMemory = 300, // NNUEは、これくらい？
-                    WorkingMemory = 30,
+                    EvalMemory = 200, // NNUEは、これくらい？
+                    WorkingMemory = 200,
+                    StackPerThread = 25, // clangでコンパイルの時にstack size = 25[MB]に設定している。
                     Presets = default_preset,
                     DescriptionSimple = "tanuki- 2018年版",
                     Description = "WCSC28(第28回 世界コンピュータ将棋選手権)に出場した時からさらに強化されたtanuki-シリーズ最新作。" +
@@ -244,8 +247,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "Qhapaq 2018",
                     EngineExeName = "YaneuraOu2018KPPT",
                     SupportedCpus = default_cpus,
-                    EvalMemory = 960, // KPPTは、これくらい？
-                    WorkingMemory = 30,
+                    EvalMemory = 850, // KPPTは、これくらい？
+                    WorkingMemory = 200,
+                    StackPerThread = 25, // clangでコンパイルの時にstack size = 25[MB]に設定している。
                     Presets = default_preset,
                     DescriptionSimple = "Qhapaq 2018年版",
                     Description = "河童の愛称で知られるQhapaqの最新版。"+
@@ -264,8 +268,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     DisplayName = "読み太 2018",
                     EngineExeName = "YaneuraOu2018KPPT",
                     SupportedCpus = default_cpus,
-                    EvalMemory = 960, // KPPTは、これくらい？
-                    WorkingMemory = 30,
+                    EvalMemory = 850, // KPPTは、これくらい？
+                    WorkingMemory = 200,
+                    StackPerThread = 25, // clangでコンパイルの時にstack size = 25[MB]に設定している。
                     Presets = default_preset,
                     DescriptionSimple = "読み太 2018年版",
                     Description = "直感精読の個性派、読みの確かさに定評あり。" +
@@ -285,7 +290,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     EngineExeName = "gpsfish",
                     SupportedCpus = new List<CpuType>(new[] { CpuType.SSE2 }),
                     EvalMemory = 10, // gpsfishこれくらいで動くような？
-                    WorkingMemory = 30,
+                    WorkingMemory = 100,
+                    StackPerThread = 25,
                     Presets = default_preset,
                     DescriptionSimple = "GPS将棋(テスト用)",
                     Description = "いまとなっては他のソフトと比べると棋力的には見劣りがするものの、" +
@@ -308,7 +314,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     EngineExeName = "gpsfish",
                     SupportedCpus = new List<CpuType>(new[] { CpuType.SSE2 }),
                     EvalMemory = 10, // gpsfishこれくらいで動くような？
-                    WorkingMemory = 30,
+                    WorkingMemory = 100,
+                    StackPerThread = 25,
                     Presets = default_preset,
                     DescriptionSimple = "GPS将棋2(テスト用)",
                     Description = "presetなどのテスト用。",

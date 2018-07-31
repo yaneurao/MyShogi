@@ -108,12 +108,12 @@ namespace MyShogi.View.Win2D
             // ソフトの使用メモリ
             var free_memory = ViewModel.FreePhysicalMemory;
             var engine_define = ViewModel.EngineDefine;
-            var eval_work_memory = engine_define.EvalMemory + engine_define.WorkingMemory;
-            var required_memory = eval_work_memory + engine_define.MinimumHashMemory;
+            var work_memory = engine_define.EvalMemory + engine_define.WorkingMemory + engine_define.StackPerThread * 4;
+            var required_memory = work_memory + engine_define.MinimumHashMemory;
             var is_enough = required_memory <= free_memory;
 
             label2.Text = "必要メモリ : ";
-            label3.Text = $"本体 {eval_work_memory}[MB] + HASH {engineDefine.MinimumHashMemory}[MB]以上 ＝ ";
+            label3.Text = $"本体 {work_memory}[MB] + HASH {engineDefine.MinimumHashMemory}[MB]以上 ＝ ";
             label4.Text = required_memory.ToString();
             label4.ForeColor = is_enough ? Color.Black : Color.Red;
             label5.Text = "[MB]以上" + (is_enough ? "≦" : "＞") + $" 現在の空き物理メモリ {free_memory}[MB]";

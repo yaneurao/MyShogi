@@ -56,6 +56,7 @@ namespace MyShogi.Model.Shogi.Usi
             var engine_working_memory = new long[2];  // エンジンのWorking用のメモリ量[MB]
             var engine_eval_memory = new long[2];     // エンジンのEval用のメモリ量[MB]
             var engine_min_hash = new long[2];        // エンジンの最低Hash[MB]
+            var engine_stack_per_thread = new long[2];// エンジンのStackのメモリ量[MB]
 
             var min_total = (long)0;                  // 最低必要メモリの合計。(Working + Eval + Hash の先後分)
 
@@ -92,10 +93,37 @@ namespace MyShogi.Model.Shogi.Usi
                 engine_eval_memory[c] = engineDefine.EvalMemory;
                 engine_working_memory[c] = engineDefine.WorkingMemory;
                 engine_min_hash[c] = engineDefine.MinimumHashMemory;
+                engine_stack_per_thread[c] = engineDefine.StackPerThread;
 
                 // 必要最低メモリ
                 min_total += engine_eval_memory[c] + engine_working_memory[c];
             }
+
+            string error = null;
+
+            // スレッド数の自動マネージメントに関して
+
+            // 1) AutoThread_なら基本的には、OSが返すコアの数にする。
+            // 2) 2つのエンジンがそれぞれPonderありなら、スレッド数を2で割るべき。
+
+            var os_threads = Enviroment.GetProcessorCount(); // 1)
+            var ponder = Ponders[0] && Ponders[1] ? 2 : 1;   // 2)
+
+            foreach (var c in All.IntColors())
+            {
+                Threads[c] = autoThread[c] ? (os_threads / ponder) : threadsValues[c];
+
+                // エンジンがあるのにスレッド数が0に設定されている場合、警告ぐらい出すべきでは…。
+                // 通常、ThreadsはMinValueが1なので、GUI上で1以上しか設定できないから、0が設定されていることはないはずだが、
+                // エンジン側がMinValueの設定を忘れている可能性もあるので…。
+                if (EngineDefines[c] != null && Threads[c] == 0)
+                    error += $"{((Color)c).Pretty()}側の思考エンジンのスレッド数が0になっています。(エンジンオプションのThreadsの設定を見直してください。)";
+            }
+
+            // スレッド数が確定したので、スレッドスタック分を必要メモリとして加算する。
+            foreach (var c in All.IntColors())
+                min_total += engine_stack_per_thread[c] * Threads[c];
+
 
             // 先後が同じエンジンでかつ、EvalShare対応で、かつEvalShare trueなら、その分、必要メモリ量は下がるはず。
             if (EngineDefines[0] == EngineDefines[1]
@@ -147,8 +175,6 @@ namespace MyShogi.Model.Shogi.Usi
                     }
                 }
 
-            string error = null;
-
             // エンジン要求する最小要求hash量を満たしているか。
             foreach (var c in All.IntColors())
                 if (HashSize[c] < engine_min_hash[c])
@@ -162,30 +188,11 @@ namespace MyShogi.Model.Shogi.Usi
                 error += $"エンジンの動作のために、物理メモリが{min_total - physicalMemory}[MB] 足りません。"
                     + "空き物理メモリが足りないので思考エンジンの動作が不安定になる可能性があります。";
 
-            // スレッド数の自動マネージメントに関して
-
-            // 1) AutoThread_なら基本的には、OSが返すコアの数にする。
-            // 2) 2つのエンジンがそれぞれPonderありなら、スレッド数を2で割るべき。
-
-            var os_threads = Enviroment.GetProcessorCount(); // 1)
-            var ponder = Ponders[0] && Ponders[1] ? 2 : 1;   // 2)
-
-            foreach (var c in All.IntColors())
-            {
-                Threads[c] = autoThread[c] ? (os_threads / ponder) : threadsValues[c];
-
-                // エンジンがあるのにスレッド数が0に設定されている場合、警告ぐらい出すべきでは…。
-                // 通常、ThreadsはMinValueが1なので、GUI上で1以上しか設定できないから、0が設定されていることはないはずだが、
-                // エンジン側がMinValueの設定を忘れている可能性もあるので…。
-                if (EngineDefines[c] != null && Threads[c] == 0)
-                    error += $"{((Color)c).Pretty()}側の思考エンジンのスレッド数が0になっています。(エンジンオプションのThreadsの設定を見直してください。)";
-            }
-
             if (error != null)
                 TheApp.app.MessageShow(error);
 
             // ここで計算された先後の最終的なHashSize、Thread数などをログに出力しておく。
-            Log.Write(LogInfoType.UsiServer, $"自動Hash = {{ {HashSize[0]} [MB] , {HashSize[1]} [MB] }} ," +
+            Log.Write(LogInfoType.UsiServer, $"ThreadsStack = {{ {engine_stack_per_thread[0] * Threads[0]} [MB] , {engine_stack_per_thread[1] * Threads[1]} [MB]}} , 自動Hash = {{ {HashSize[0]} [MB] , {HashSize[1]} [MB] }} ," +
                 $" 自動Threads = {{ { Threads[0] } , { Threads[1] } }}");
         }
 
