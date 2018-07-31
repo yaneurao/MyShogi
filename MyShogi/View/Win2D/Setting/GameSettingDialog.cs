@@ -61,8 +61,8 @@ namespace MyShogi.View.Win2D
                 set_engine_define(c);
 
                 // 反対側のプレイヤーに詳細設定ボタンのEnable/Disableを伝達する。
-                var playerSetting2 = playerSettings[(int)c.Not()].ViewModel;
-                playerSetting.AddPropertyChangedHandler("SettingButton", (args) => playerSetting2.SettingButton = (bool)args.value);
+                //var playerSetting2 = playerSettings[(int)c.Not()].ViewModel;
+                //playerSetting.AddPropertyChangedHandler("SettingButton", (args) => playerSetting2.SettingButton = (bool)args.value);
 
                 var timeSetting = timeSettings[(int)c].ViewModel;
                 timeSetting.Color = c;
@@ -162,13 +162,16 @@ namespace MyShogi.View.Win2D
         private void CreateEngineSelectionDialog(SCore.Color c)
         {
             ReleaseEngineSelectionDialog();
+            // 詳細設定ボタンの無効化と、このエンジン選択ダイアログを閉じる時に詳細設定ボタンの再有効化。
             engineSelectionDialog = new EngineSelectionDialog();
-
             {
-                // 詳細設定ボタンの無効化と、このエンジン選択ダイアログを閉じる時に詳細設定ボタンの再有効化。
                 var player = playerSettingControl1;
-                player.ViewModel.SettingButton = false;
-                engineSelectionDialog.Disposed += (sender, args) => { player.ViewModel.SettingButton = true; };
+                //player.ViewModel.EngineSelectButton = false;
+                //player.ViewModel.EngineOptionButton = false;
+
+                engineSelectionDialog.Disposed += (sender, args) =>
+                {
+                };
             }
 
             var playerSettings = new[] { playerSettingControl1, playerSettingControl2 };
@@ -199,7 +202,8 @@ namespace MyShogi.View.Win2D
                 }
                 ReleaseEngineSelectionDialog();
             });
-            engineSelectionDialog.Show(this);
+            // modal dialogとして出すべき。
+            engineSelectionDialog.ShowDialog(this);
         }
 
         /// <summary>

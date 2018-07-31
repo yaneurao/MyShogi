@@ -738,7 +738,7 @@ namespace MyShogi.View.Win2D
                             gameSettingDialog.Dispose();
 
                             gameSettingDialog = new GameSettingDialog(this);
-                            gameSettingDialog.Show(this);
+                            gameSettingDialog.ShowDialog(this); // Modal Dialogにしておく。
                         };
 
                         item_playgame.DropDownItems.Add(item);

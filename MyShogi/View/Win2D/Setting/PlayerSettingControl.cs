@@ -69,16 +69,23 @@ namespace MyShogi.View.Win2D.Setting
                 set { SetValue("Color", value); }
             }
 
+#if false
             /// <summary>
             /// 「エンジン選択」「詳細設定」ボタンのEnableが変化して欲しい時に発生するイベント。
             /// 詳細設定ダイアログを出している時にもう片側のプレイヤーのこのボタンも無効化しないといけないので
             /// このイベントを介して行う。
             /// </summary>
-            public bool SettingButton
+            public bool EngineSelectButton
             {
-                get { return GetValue<bool>("SettingButton"); }
-                set { SetValue("SettingButton", value); }
+                get { return GetValue<bool>("EngineSelectButton"); }
+                set { SetValue("EngineSelectButton", value); }
             }
+            public bool EngineOptionButton
+            {
+                get { return GetValue<bool>("EngineOptionButton"); }
+                set { SetValue("EngineOptionButton", value); }
+            }
+#endif
 
             /// <summary>
             /// エンジンが選択された時に、CPUのほうが選択されて欲しいのでそのためのイベント。
@@ -136,12 +143,18 @@ namespace MyShogi.View.Win2D.Setting
                 groupBox1.Text = color == Color.BLACK ? "先手/下手" : "後手/上手";
             });
 
-            vm.AddPropertyChangedHandler("SettingButton", (args) =>
+#if false
+            vm.AddPropertyChangedHandler("EngineSelectButton", (args) =>
             {
                 var b = (bool)args.value;
                 button1.Enabled = b; // エンジン選択ボタン
+            });
+            vm.AddPropertyChangedHandler("EngineOptionButton", (args) =>
+            {
+                var b = (bool)args.value;
                 button2.Enabled = b; // 詳細設定ボタン
             });
+#endif
 
             vm.AddPropertyChangedHandler("EngineDefineFolderPath", (args) =>
             {
@@ -270,13 +283,14 @@ namespace MyShogi.View.Win2D.Setting
                 return;
 
             // 「詳細設定」ボタンをDisableにする。
-
-            ViewModel.SettingButton = false;
+            //ViewModel.SettingButton = false;
+            // →　この処理やめる。modal dialogとして出せばOk.
 
             engineSettingDialog = dialog;
-            engineSettingDialog.Disposed += (sender, args) => { ViewModel.SettingButton = true; };
+            //engineSettingDialog.Disposed += (sender, args) => { ViewModel.SettingButton = true; };
 
-            engineSettingDialog.Show();
+            // modal dialogとして出す
+            engineSettingDialog.ShowDialog(this.Parent);
         }
 
         /// <summary>
