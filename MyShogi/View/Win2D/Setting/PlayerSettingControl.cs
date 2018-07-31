@@ -32,16 +32,28 @@ namespace MyShogi.View.Win2D.Setting
 
         public class PlayerSettingViewModel : NotifyObject
         {
+            // Bind()の時に参照を持ってる。
+            public PlayerSetting PlayerSetting;
+
             /// <summary>
             /// エンジン設定
             /// </summary>
-            public EngineDefineEx EngineDefine;
-            
+            //public EngineDefineEx EngineDefine;
+            public string EngineDefineFolderPath
+            {
+                get { return GetValue<string>("EngineDefineFolderPath"); }
+                set { SetValue<string>("EngineDefineFolderPath", value); PlayerSetting.EngineDefineFolderPath = value; } // 手動bind
+            }
+
             /// <summary>
-            /// ↑のEngineDefinesの要素が変更された時に発生するイベント
-            /// 変更されたほうのColorがargs.Valueに入ってくる。
+            /// これは、EngineDefineFolderPathを設定した時に設定される。
+            /// 直接設定してはならない。
             /// </summary>
-            //public int EngineDefineChanged;
+            public EngineDefineEx EngineDefineEx
+            {
+                get; set;
+            }
+
 
             /// <summary>
             /// エンジン選択ボタンが押された時に飛んでくるイベント
@@ -99,6 +111,9 @@ namespace MyShogi.View.Win2D.Setting
 
             // ponder(相手の手番でも思考するか)
             binder.Bind(player, "Ponder", checkBox1);
+
+            // ここに保存しておく。
+            ViewModel.PlayerSetting = player;
         }
 
         /// <summary>
@@ -128,13 +143,15 @@ namespace MyShogi.View.Win2D.Setting
                 button2.Enabled = b; // 詳細設定ボタン
             });
 
-            vm.AddPropertyChangedHandler("EngineDefineChanged", (args) =>
+            vm.AddPropertyChangedHandler("EngineDefineFolderPath", (args) =>
             {
                 SuspendLayout();
 
-                var player = TheApp.app.config.GameSetting.Player(vm.Color);
+                var player = TheApp.app.config.GameSetting.PlayerSetting(vm.Color);
 
-                var engine_define_ex = ViewModel.EngineDefine;
+                var folderPath = (string)args.value;
+                var engine_define_ex = TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
+                ViewModel.EngineDefineEx = engine_define_ex; // ついでなので保存しておく。
 
                 button2.Enabled = engine_define_ex != null;
                 if (engine_define_ex == null)
@@ -174,35 +191,19 @@ namespace MyShogi.View.Win2D.Setting
 
                 // -- プリセットのコンボボックス
 
-                var PlayerSetting = TheApp.app.config.GameSetting.Player(vm.Color);
-                //int preset = PlayerSetting.SelectedEnginePreset;
-
-                // プリセットは前回のエンジンの選択時のSelectedPresetIndexを持って来て選ぶ。
-                var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(engine_define_ex.FolderPath);
-                var preset = indivisualEngine.SelectedPresetIndex;
-                if (preset < 0) // 未選択だと-1がありうるので0に補整してやる。
-                    preset = 0;
-
+                var PlayerSetting = TheApp.app.config.GameSetting.PlayerSetting(vm.Color);
+                
                 // プリセットをコンボボックスに反映
                 // SuspendLayout()～ResumeLayout()中にやらないとイベントハンドラが呼び出されておかしいことになる。
+                // このプリセットのどこを選ぶかは、この外側でこのcomboBoxとdata bindしている変数を書き換えることで示す。
 
                 comboBox1.Items.Clear();
                 foreach (var e in engine_define.Presets)
                     comboBox1.Items.Add(e.Name);
 
-                // ComboBoxとデータバインドされているのでこれで変更されるはず。
-                player.EngineDefineFolderPath = engine_define_ex.FolderPath;
-
                 // 前回と同じものを選んでおいたほうが使いやすいかも。
                 // →　「やねうら王」初段　のあと「tanuki」を選んだ時も初段であって欲しい気がするが…。
                 // 先後入替えなどもあるので、やはりそれは良くない気がする。
-
-                // 復元する。データバインドされているのであとは何とかなるはず。
-                PlayerSetting.SelectedEnginePreset = preset;
-                //Console.WriteLine($"preset = {preset}");
-                PlayerSetting.RaisePropertyChanged("SelectedEnginePreset", preset);
-
-                UpdatePresetText();
 
                 // エンジンを選択したのだから、対局相手はコンピュータになっていて欲しいはず。
                 // →　エンジンを選択したとは限らない。先後入替えでもここが呼び出される。
@@ -227,7 +228,7 @@ namespace MyShogi.View.Win2D.Setting
         /// </summary>
         private void UpdatePresetText()
         {
-            var engineDefine = ViewModel.EngineDefine;
+            var engineDefine = ViewModel.EngineDefineEx;
             if (engineDefine == null)
                 return;
 
@@ -261,7 +262,7 @@ namespace MyShogi.View.Win2D.Setting
             var dialog = EngineOptionSettingDialogBuilder.Build(
                 EngineCommonOptionsSample.CreateEngineCommonOptions(), // 共通設定のベース
                 TheApp.app.EngineConfigs.NormalConfig,                 // 共通設定の値はこの値で上書き
-                ViewModel.EngineDefine                                 // 個別設定の情報はここにある。
+                ViewModel.EngineDefineEx                               // 個別設定の情報はここにある。
                 );
 
             // 構築に失敗。
@@ -329,8 +330,8 @@ namespace MyShogi.View.Win2D.Setting
             if (radioButton2.Checked)
             {
                 // コンピュータの名前を持ってくる。
-                var engineDefine = ViewModel.EngineDefine;
-                if (engineDefine == null)
+                var engineDefineEx = ViewModel.EngineDefineEx;
+                if (engineDefineEx == null)
                 {
 #if false
                     if (TheApp.app.EngineDefines.Count == 0)
@@ -352,7 +353,7 @@ namespace MyShogi.View.Win2D.Setting
                     return;
                 } 
 
-                textBox1.Text = engineDefine.EngineDefine.DisplayName;
+                textBox1.Text = engineDefineEx.EngineDefine.DisplayName;
             }
         }
 
@@ -366,7 +367,7 @@ namespace MyShogi.View.Win2D.Setting
             UpdatePresetText();
 
             // プリセットは前回のエンジンの選択時のSelectedPresetIndexを持って来て選ぶ。
-            var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(ViewModel.EngineDefine.FolderPath);
+            var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(ViewModel.EngineDefineFolderPath);
             indivisualEngine.SelectedPresetIndex = comboBox1.SelectedIndex;
         }
 

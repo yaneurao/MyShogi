@@ -27,13 +27,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             // 初回起動時などデシリアライズに失敗した時のためにデフォルト値をきちんと設定しておく。
 
-            Board = new BoardSetting();
-            Players = new PlayerSetting[2] { new PlayerSetting(), new PlayerSetting() };
+            BoardSetting = new BoardSetting();
+            PlayerSettings = new PlayerSetting[2] { new PlayerSetting(), new PlayerSetting() };
 
             // 先後入れ替えるので名前が「先手」「後手」がデフォルトだと紛らわしい。
             // 名前を「わたし」と「あなた」にしとく。
-            Player(Color.BLACK).PlayerName = "わたし";
-            Player(Color.WHITE).PlayerName = "あなた";
+            PlayerSetting(Color.BLACK).PlayerName = "わたし";
+            PlayerSetting(Color.WHITE).PlayerName = "あなた";
 
             KifuTimeSettings = new KifuTimeSettings();
             MiscSettings = new MiscSettings();
@@ -48,8 +48,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         private GameSetting(PlayerSetting[] players , BoardSetting board ,
             KifuTimeSettings kifuTimeSettings , MiscSettings miscSettings )
         {
-            Players = players;
-            Board = board;
+            PlayerSettings = players;
+            BoardSetting = board;
             KifuTimeSettings = kifuTimeSettings;
             MiscSettings = miscSettings;
         }
@@ -63,8 +63,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // premitive typeでないとMemberwiseClone()でClone()されないので自前でCloneする。
 
             return new GameSetting(
-                new PlayerSetting[2] { Players[0].Clone(), Players[1].Clone() },
-                Board.Clone(),
+                new PlayerSetting[2] { PlayerSettings[0].Clone(), PlayerSettings[1].Clone() },
+                BoardSetting.Clone(),
                 KifuTimeSettings.Clone(),
                 MiscSettings.Clone()
             );
@@ -80,7 +80,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             foreach (var c in All.Colors())
             {
-                var player = Player(c);
+                var player = PlayerSetting(c);
                 if (player.IsCpu)
                 {
                     if (player.EngineDefineFolderPath == null)
@@ -96,14 +96,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 開始盤面
         /// </summary>
-        public BoardSetting Board;
+        public BoardSetting BoardSetting;
 
         /// <summary>
         /// c側の設定情報を取得する。
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public PlayerSetting Player(Color c) { return Players[(int)c]; }
+        public PlayerSetting PlayerSetting(Color c) { return PlayerSettings[(int)c]; }
 
         /// <summary>
         /// 先手と後手のプレイヤーを入れ替える。
@@ -111,7 +111,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void SwapPlayer()
         {
-            Utility.Swap(ref Players[0], ref Players[1]);
+            Utility.Swap(ref PlayerSettings[0], ref PlayerSettings[1]);
             KifuTimeSettings.SwapPlayer();
         }
 
@@ -130,6 +130,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// XmlSerializerでシリアライズするときにpublicにしておかないとシリアライズ対象とならないので
         /// publicにしてある。
         /// </summary>
-        public PlayerSetting[] Players;
+        public PlayerSetting[] PlayerSettings;
     }
 }

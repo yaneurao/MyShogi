@@ -56,6 +56,10 @@ namespace MyShogi.View.Win2D
                     CreateEngineSelectionDialog(c);
                 });
 
+                // GlobalConfigの値をPlayerSettingControl.ViewModelのEngineDefineに反映させる。
+                // playerSetting.Colorを設定後に呼ぶ必要がある。
+                set_engine_define(c);
+
                 // 反対側のプレイヤーに詳細設定ボタンのEnable/Disableを伝達する。
                 var playerSetting2 = playerSettings[(int)c.Not()].ViewModel;
                 playerSetting.AddPropertyChangedHandler("SettingButton", (args) => playerSetting2.SettingButton = (bool)args.value);
@@ -63,11 +67,6 @@ namespace MyShogi.View.Win2D
                 var timeSetting = timeSettings[(int)c].ViewModel;
                 timeSetting.Color = c;
             }
-
-            // GlobalConfigの値をPlayerSettingControl.ViewModelのEngineDefineに反映させる。
-            foreach (var c in All.Colors())
-                set_engine_define(c);
-
         }
 
         /// <summary>
@@ -76,25 +75,11 @@ namespace MyShogi.View.Win2D
         /// <param name="c"></param>
         private void set_engine_define(Color c)
         {
-            var engine_defines = TheApp.app.EngineDefines;
-
             var playerSettings = new[] { playerSettingControl1, playerSettingControl2 };
+            var setting = TheApp.app.config.GameSetting;
 
-            var player = TheApp.app.config.GameSetting.Player(c);
-            var path = player.EngineDefineFolderPath;
-            var playerSetting = playerSettings[(int)c].ViewModel;
-
-            foreach (var e in engine_defines)
-            {
-                if (e.FolderPath == path)
-                {
-                    // 見つかった。これを設定する。
-
-                    playerSetting.EngineDefine = e;
-                    playerSetting.RaisePropertyChanged("EngineDefineChanged", (int)c);
-                    break;
-                }
-            }
+            var path = setting.PlayerSetting(c).EngineDefineFolderPath;
+            playerSettings[(int)c].ViewModel.RaisePropertyChanged("EngineDefineFolderPath",path);
         }
 
         /// <summary>
@@ -111,11 +96,11 @@ namespace MyShogi.View.Win2D
             var timeSettings = new[] { timeSettingControl1, timeSettingControl2 };
             foreach (var c in All.Colors())
             {
-                // 対局者設定をbindする。
-                playerSettings[(int)c].Bind(setting.Player(c));
-
-                // エンジンバナーなどの反映
+                // エンジンバナー、プリセットテキストなどの反映
                 set_engine_define(c);
+
+                // 対局者設定をbindする。
+                playerSettings[(int)c].Bind(setting.PlayerSetting(c));
 
                 // 対局時間設定をbindする
                 timeSettings[(int)c].Bind(setting.KifuTimeSettings.RawPlayer(c));
@@ -124,11 +109,11 @@ namespace MyShogi.View.Win2D
             // -- 開始局面
 
             // 手合割有効か
-            binder.Bind(setting.Board , "BoardTypeEnable" , radioButton5 );
-            binder.Bind(setting.Board , "BoardType" , comboBox3 );
+            binder.Bind(setting.BoardSetting , "BoardTypeEnable" , radioButton5 );
+            binder.Bind(setting.BoardSetting, "BoardType" , comboBox3 );
 
             // 現在の局面から
-            binder.Bind(setting.Board , "BoardTypeCurrent" , radioButton6);
+            binder.Bind(setting.BoardSetting, "BoardTypeCurrent" , radioButton6);
 
             // -- 詳細設定であるか
 
@@ -200,9 +185,17 @@ namespace MyShogi.View.Win2D
 
                     var vm = playerSettings[(int)c].ViewModel;
 
-                    vm.EngineDefine = engineDefine;
-                    vm.RaisePropertyChanged("EngineSelected", null);
-                    vm.RaisePropertyChanged("EngineDefineChanged",(int)c);
+                    vm.EngineDefineFolderPath = engineDefine.FolderPath;
+                    vm.RaisePropertyChanged("EngineSelected", null); // CPUのradio buttonを選択
+
+                    var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(engineDefine.FolderPath);
+                    var preset = indivisualEngine.SelectedPresetIndex;
+                    if (preset < 0) // 前回未選択だと-1がありうるので0に補整してやる。
+                        preset = 0;
+
+                    var setting = TheApp.app.config.GameSetting;
+                    setting.PlayerSetting(c).SelectedEnginePreset = preset; // TwoWayでbindingしているのでこれで値変わるのでは？
+
                 }
                 ReleaseEngineSelectionDialog();
             });
@@ -259,7 +252,7 @@ namespace MyShogi.View.Win2D
             // 対局者氏名、エンジン、持ち時間設定を入れ替える。
             // データバインドされているはずなので、DataSourceのほうで入替えて、
             // rebindすればいいような..
-
+            
             UnbindSetting();
             TheApp.app.config.GameSetting.SwapPlayer();
             BindSetting();

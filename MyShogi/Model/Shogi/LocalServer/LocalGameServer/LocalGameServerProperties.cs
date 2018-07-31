@@ -143,7 +143,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             //return kifuManager.KifuHeader.GetPlayerName(c);
 
             // 対局ダイアログの設定を活かす
-            return GameSetting.Player(c).PlayerName;
+            return GameSetting.PlayerSetting(c).PlayerName;
         }
 
         /// <summary>

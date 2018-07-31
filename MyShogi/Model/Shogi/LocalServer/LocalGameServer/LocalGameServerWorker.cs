@@ -100,7 +100,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             UsiEngineHashManager.Init();
             foreach (var c in All.Colors())
             {
-                var gamePlayer = gameSetting.Player(c);
+                var gamePlayer = gameSetting.PlayerSetting(c);
                 var playerType = gamePlayer.IsHuman ? PlayerTypeEnum.Human : PlayerTypeEnum.UsiEngine;
                 Players[(int)c] = PlayerBuilder.Create(playerType);
 
@@ -123,7 +123,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 局面の設定
             kifuManager.EnableKifuList = true;
-            if (gameSetting.Board.BoardTypeCurrent)
+            if (gameSetting.BoardSetting.BoardTypeCurrent)
             {
                 // 現在の局面からなので、いま以降の局面を削除する。
                 // ただし、いまの局面と棋譜ウィンドウとが同期しているとは限らない。
@@ -141,7 +141,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             else // if (gameSetting.Board.BoardTypeEnable)
             {
                 kifuManager.Init();
-                kifuManager.InitBoard(gameSetting.Board.BoardType);
+                kifuManager.InitBoard(gameSetting.BoardSetting.BoardType);
             }
 
             // 本譜の手順に変更したので現在局面と棋譜ウィンドウのカーソルとを同期させておく。
@@ -159,7 +159,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 switch (player.PlayerType)
                 {
                     case PlayerTypeEnum.Human:
-                        name = gameSetting.Player(c).PlayerName;
+                        name = gameSetting.PlayerSetting(c).PlayerName;
                         break;
 
                     default:
@@ -190,10 +190,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 人間 vs 人間の場合も最初の手番側を手前にしてやる。
             var stm = kifuManager.Position.sideToMove;
             // 1. 手番側が人間である場合(非手番側が人間 or CPU)
-            if (gameSetting.Player(stm).IsHuman)
+            if (gameSetting.PlayerSetting(stm).IsHuman)
                 BoardReverse = (stm == Color.WHITE);
             // 2. 手番側がCPUで、非手番側が人間である場合。
-            else if (gameSetting.Player(stm).IsCpu && gameSetting.Player(stm.Not()).IsHuman)
+            else if (gameSetting.PlayerSetting(stm).IsCpu && gameSetting.PlayerSetting(stm.Not()).IsHuman)
                 BoardReverse = (stm == Color.BLACK);
 
             // プレイヤー情報などを検討ダイアログに反映させる。
@@ -265,7 +265,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // CPUの数をNumberOfEngineに反映。
             int num = 0;
             foreach (var c in All.Colors())
-                if (GameSetting.Player(c).IsCpu)
+                if (GameSetting.PlayerSetting(c).IsCpu)
                     ++num;
             NumberOfEngine = num;
 
@@ -285,7 +285,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             num = 0;
             foreach (var c in All.Colors())
             {
-                if (GameSetting.Player(c).IsCpu)
+                if (GameSetting.PlayerSetting(c).IsCpu)
                 {
                     var num_ = num; // copy for capturing
 
@@ -712,15 +712,15 @@ namespace MyShogi.Model.Shogi.LocalServer
                 {
                     // 検討用エンジン
                     case GameModeEnum.ConsiderationWithEngine:
-                        setting.Player(Color.BLACK).PlayerName = engineName;
-                        setting.Player(Color.BLACK).IsCpu = true;
+                        setting.PlayerSetting(Color.BLACK).PlayerName = engineName;
+                        setting.PlayerSetting(Color.BLACK).IsCpu = true;
                         Players[0 /*検討用のプレイヤー*/ ] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
                         break;
 
                     // 詰将棋エンジン
                     case GameModeEnum.ConsiderationWithMateEngine:
-                        setting.Player(Color.BLACK).PlayerName = engineName;
-                        setting.Player(Color.BLACK).IsCpu = true;
+                        setting.PlayerSetting(Color.BLACK).PlayerName = engineName;
+                        setting.PlayerSetting(Color.BLACK).IsCpu = true;
                         Players[0 /* 詰将棋用のプレイヤー */] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
                         break;
                 }

@@ -18,10 +18,8 @@ namespace MyShogi.Model.Common.ObjectModel
         /// </summary>
         public void UnbindAll()
         {
-            for (int i = 0; i < list.Count; ++i)
+            foreach (var e in list)
             {
-                var e = list[i];
-
                 if (e.h1 != null)
                     e.notify.RemovePropertyChangedHandler(e.name, e.h1);
 
@@ -86,7 +84,10 @@ namespace MyShogi.Model.Common.ObjectModel
 
             if (way == DataBindWay.TwoWay)
             {
-                h2 = new EventHandler((sender, args) => { notify.SetValue<int>(name, (int)control.SelectedIndex); });
+                h2 = new EventHandler((sender, args) => {
+                    //Console.WriteLine($"{name} = {(int)control.SelectedIndex}");
+                    notify.SetValue<int>(name, (int)control.SelectedIndex);
+                });
                 c.SelectedIndexChanged += h2;
             }
 
@@ -362,7 +363,9 @@ namespace MyShogi.Model.Common.ObjectModel
 
             if (way == DataBindWay.TwoWay)
             {
-                h2 = new EventHandler((sender, args) => { notify.SetValue<string>(name, (string)control.SelectedItem); });
+                h2 = new EventHandler((sender, args) => {
+                    notify.SetValue<string>(name, (string)control.SelectedItem);
+                });
                 c.SelectedIndexChanged += h2;
             }
 

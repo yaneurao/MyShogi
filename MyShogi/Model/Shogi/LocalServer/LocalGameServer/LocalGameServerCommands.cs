@@ -36,7 +36,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (!InTheGame)
                 {
                     // 現局面から開始するとき、局面が非合法局面であれば受理しない。
-                    if (gameSetting.Board.BoardTypeCurrent)
+                    if (gameSetting.BoardSetting.BoardTypeCurrent)
                     {
                         var error = Position.IsValid();
                         if (error != null)
@@ -241,7 +241,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                         // GameSetting、原則immutableだが、まあいいや…。
                         foreach(var c in All.Colors())
-                            GameSetting.Player(c).PlayerName = kifuManager.KifuHeader.GetPlayerName(c);
+                            GameSetting.PlayerSetting(c).PlayerName = kifuManager.KifuHeader.GetPlayerName(c);
 
                     }
                 }
