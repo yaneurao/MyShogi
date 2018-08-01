@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using MyShogi.App;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D
@@ -12,12 +13,15 @@ namespace MyShogi.View.Win2D
         private void GameScreenControl_Paint(object sender, PaintEventArgs e)
         {
             // ここで弾いておかないとVisual Studioのデザイナで貼り付けた時にエラーになる。
-            if (Setting != null)
+            if (!TheApp.app.DesignMode)
                 OnDraw(e.Graphics);
         }
 
         private void GameScreenControl_SizeChanged(object sender, System.EventArgs e)
         {
+            if (TheApp.app.DesignMode)
+                return;
+
             // 画面サイズに合わせてaffine行列を設定する。
             FitToClientSize();
 

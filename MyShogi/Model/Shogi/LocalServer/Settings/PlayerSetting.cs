@@ -91,6 +91,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             return (PlayerSetting)this.MemberwiseClone();
         }
 
+#if false
         public PlayerSettingMin ToPlayerSettingMin()
         {
             return new PlayerSettingMin()
@@ -116,8 +117,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 Ponder = min.Ponder,
             };
         }
+#endif
     }
 
+#if false
     [DataContract]
     public class PlayerSettingMin
     {
@@ -128,4 +131,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         [DataMember] public int SelectedEnginePreset;
         [DataMember] public bool Ponder;
     }
+#endif
+
 }

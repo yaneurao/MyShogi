@@ -138,7 +138,8 @@ namespace MyShogi.View.Win2D
             var is_enough = required_memory <= free_memory;
 
             if (!is_enough)
-                TheApp.app.MessageShow("空き物理メモリが足りないので思考エンジンの動作が不安定になる可能性があります。");
+                TheApp.app.MessageShow("空き物理メモリが足りないので思考エンジンの動作が不安定になる可能性があります。"
+                    , MessageShowType.Warning);
 
             ViewModel.RaisePropertyChanged("ButtonClicked");
         }

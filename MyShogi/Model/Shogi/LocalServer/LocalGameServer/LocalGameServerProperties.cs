@@ -54,7 +54,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var error = Position.IsValid(GameMode == GameModeEnum.ConsiderationWithMateEngine);
                     if (error != null)
                     {
-                        TheApp.app.MessageShow(error);
+                        TheApp.app.MessageShow(error , MessageShowType.Error);
                         return;
                     }
                 }
@@ -260,6 +260,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             get { return GetValue<UsiThinkReportMessage>("ThinkReport"); }
             private set { SetValue<UsiThinkReportMessage>("ThinkReport", value); }
+        }
+
+        /// <summary>
+        /// 最後に棋譜を保存してから棋譜が更新されたかのフラグ
+        /// </summary>
+        public bool KifuDirty
+        {
+            get; set;
         }
 
         #endregion

@@ -121,7 +121,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     list.Add(engine_define_ex);
                 } catch (Exception ex)
                 {
-                    TheApp.app.MessageShow($"{filename}の解析に失敗しました。\n例外名" + ex.Message);
+                    TheApp.app.MessageShow($"{filename}の解析に失敗しました。\n例外名" + ex.Message , MessageShowType.Error);
                 }
             }
 

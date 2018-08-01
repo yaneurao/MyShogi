@@ -170,15 +170,6 @@ namespace MyShogi.View.Win2D
             ReleaseEngineSelectionDialog();
             // 詳細設定ボタンの無効化と、このエンジン選択ダイアログを閉じる時に詳細設定ボタンの再有効化。
             engineSelectionDialog = new EngineSelectionDialog();
-            {
-                var player = playerSettingControl1;
-                //player.ViewModel.EngineSelectButton = false;
-                //player.ViewModel.EngineOptionButton = false;
-
-                engineSelectionDialog.Disposed += (sender, args) =>
-                {
-                };
-            }
 
             var playerSettings = new[] { playerSettingControl1, playerSettingControl2 };
 
@@ -241,7 +232,7 @@ namespace MyShogi.View.Win2D
             var error = gameSetting.IsValid();
             if (error != null)
             {
-                TheApp.app.MessageShow(error);
+                TheApp.app.MessageShow(error , MessageShowType.Error);
                 return;
             }
 

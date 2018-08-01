@@ -64,6 +64,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             return clone;
         }
 
+#if false
         public MiscSettingsMin ToMiscSettingsMin()
         {
             return new MiscSettingsMin()
@@ -83,8 +84,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 EnteringKingRule = min.EnteringKingRule,
             };
         }
+#endif
     }
 
+#if false
     [DataContract]
     public class MiscSettingsMin
     {
@@ -92,4 +95,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         [DataMember] public int MaxMovesToDraw;
         [DataMember] public int EnteringKingRule;
     }
+#endif
+
 }

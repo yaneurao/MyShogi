@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
+    <Compile Include="App\TheAppMessageShow.cs" />
     <Compile Include="Model\Common\ObjectModel\ControlBinder.cs" />
     <Compile Include="Model\Common\Process\RemoteService.cs" />
     <Compile Include="Model\Common\Utility\CpuId.cs" />

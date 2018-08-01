@@ -49,15 +49,6 @@ namespace MyShogi.App
             if (config == null)
                 config = new GlobalConfig();
 
-#if false
-            // GameSettingがNotifyObject派生クラスであるため、シリアライズ不可なのでGameSettingMinのほうをシリアライズしていた。
-            // ここからGameSettingを復元する。
-            if (config.GameSettingMin != null)
-                config.GameSetting = GameSetting.FromGameSettingMin(config.GameSettingMin);
-            else
-                config.GameSetting = new GameSetting();
-#endif
-
             config.Init();
 
             return config;
@@ -102,14 +93,6 @@ namespace MyShogi.App
         /// </summary>
         public void Save()
         {
-#if false
-            // GameSettingがNotifyObject派生クラスであるため、シリアライズ不可なのでGameSettingの内容をGameSettingMinのほうにコピーしてやる。
-            if (GameSetting != null)
-                GameSettingMin = GameSetting.ToGameSettingMin();
-            else
-                GameSettingMin = new GameSettingMin();
-#endif
-
             Serializer.Serialize(xmlFile, this);
         }
 
@@ -428,16 +411,7 @@ namespace MyShogi.App
         /// 対局ダイアログの設定
         /// </summary>
         [DataMember]
-        public GameSetting GameSetting { get; set; }
+        public GameSetting GameSetting { get; set; } = new GameSetting();
 
-#if false
-        /// <summary>
-        /// GameSettingの、NotifyObject派生クラスでないほう。
-        /// 保存前にこちらにGameSettingの内容をコピーしてからシリアライズ。
-        /// デシリアライズ時は、こいつからGameSettingにコピー。
-        /// </summary>
-        [DataMember]
-        public GameSettingMin GameSettingMin { get; set; }
-#endif
     }
 }

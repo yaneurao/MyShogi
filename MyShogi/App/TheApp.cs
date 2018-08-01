@@ -19,7 +19,7 @@ namespace MyShogi.App
     /// このアプリケーション
     /// singletonで生成
     /// </summary>
-    public class TheApp
+    public partial class TheApp
     {
         /// <summary>
         /// ここが本アプリのエントリーポイント
@@ -208,59 +208,6 @@ namespace MyShogi.App
 
             Application.Run(mainDialog);
         }
-
-        /// <summary>
-        /// 最前面に来るようにしてMessageBox.Show(text)を呼び出す。
-        /// </summary>
-        /// <param name="text"></param>
-        public void MessageShow(string text , string caption = null)
-        {
-            if (mainForm != null && mainForm.IsHandleCreated && !mainForm.IsDisposed)
-            {
-                var show = new Action( () =>
-                {
-                    if (caption == null)
-                        MessageBox.Show(mainForm, text);
-                    else
-                        MessageBox.Show(mainForm, text, caption);
-                });
-
-                if (mainForm.InvokeRequired)
-                    mainForm.Invoke(new Action(() => { show(); }));
-                else
-                    show();
-            }
-            else
-                if (caption == null)
-                    MessageBox.Show(text);
-                else
-                    MessageBox.Show(text,caption);
-        }
-
-        /// <summary>
-        /// 例外をダイアログで表示する用。
-        /// </summary>
-        /// <param name="ex"></param>
-        public void MessageShow(Exception ex)
-        {
-            MessageShow("例外が発生しましたので終了します。\r\n例外内容 : " + ex.Message + "\r\nスタックトレース : \r\n" + ex.StackTrace);
-            ApplicationExit();
-        }
-
-        public void ApplicationExit()
-        {
-            // 検討ウィンドウがあると閉じるのを阻害する。(window closingに対してCancelしているので)
-            // 検討ウィンドウはメインウインドウにぶら下がっているはずなので、メインウインドウを終了させてしまう。
-
-            Exiting = true; // このフラグを検討ウィンドウから見に来ている。
-
-            Application.Exit(); // 終了させてしまう。
-        }
-
-        /// <summary>
-        /// App.ApplicationExit()が呼び出された時のフラグ
-        /// </summary>
-        public bool Exiting;
 
         // -- それぞれのViewModel
         // 他のViewModelにアクションが必要な場合は、これを経由して通知などを行えば良い。

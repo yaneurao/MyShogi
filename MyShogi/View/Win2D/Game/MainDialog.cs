@@ -577,7 +577,7 @@ namespace MyShogi.View.Win2D
                                 }
                                 catch
                                 {
-                                    TheApp.app.MessageShow("ファイル読み込みエラー");
+                                    TheApp.app.MessageShow("ファイル読み込みエラー" , MessageShowType.Error);
                                 }
                             }
                         };
@@ -599,7 +599,7 @@ namespace MyShogi.View.Win2D
                             }
                             catch
                             {
-                                TheApp.app.MessageShow("ファイル書き出しエラー");
+                                TheApp.app.MessageShow("ファイル書き出しエラー" , MessageShowType.Error);
                             }
                         };
                         item_file.DropDownItems.Add(item);
@@ -650,10 +650,11 @@ namespace MyShogi.View.Win2D
 
                                     gameServer.KifuWriteCommand(filename, kifuType);
                                     lastFileName = filename; // 最後に保存したファイルを記録しておく。
+                                    gameServer.KifuDirty = false; // 棋譜綺麗になった。
                                 }
                                 catch
                                 {
-                                    TheApp.app.MessageShow("ファイル書き出しエラー");
+                                    TheApp.app.MessageShow("ファイル書き出しエラー" , MessageShowType.Error);
                                 }
                             }
                         };
@@ -703,7 +704,7 @@ namespace MyShogi.View.Win2D
                                 }
                                 catch
                                 {
-                                    TheApp.app.MessageShow("ファイル書き出しエラー");
+                                    TheApp.app.MessageShow("ファイル書き出しエラー",MessageShowType.Error);
                                 }
                             }
                         };
@@ -1600,7 +1601,27 @@ namespace MyShogi.View.Win2D
         }
 
         private MenuStrip old_menu { get; set; } = null;
-#endregion
+        #endregion
 
+        /// <summary>
+        /// 閉じるときに本当に終了しますかの確認を出す。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (gameScreenControl1.gameServer.InTheGame)
+            {
+                if (TheApp.app.MessageShow("対局中ですが本当に終了しますか？" , MessageShowType.Confirmation , MessageBoxButtons.OKCancel )
+                    != DialogResult.OK)
+                    e.Cancel = true;
+
+            } else if (gameScreenControl1.gameServer.KifuDirty)
+            {
+                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に終了しますか？", MessageShowType.Confirmation , MessageBoxButtons.OKCancel)
+                    != DialogResult.OK)
+                    e.Cancel = true;
+            }
+        }
     }
 }

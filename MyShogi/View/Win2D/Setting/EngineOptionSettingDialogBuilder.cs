@@ -59,7 +59,7 @@ namespace MyShogi.View.Win2D.Setting
                     {
                         // time outも例外が飛んでくる…ようにすべき…。
                         // 現状の思考エンジンでここでタイムアウトにならないから、まあいいや…。
-                        TheApp.app.MessageShow(ex.ToString());
+                        TheApp.app.MessageShow(ex.ToString() , MessageShowType.Error);
                         return null;
                     }
                 }

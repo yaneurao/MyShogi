@@ -109,7 +109,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == gamePlayer.EngineDefineFolderPath);
                     if (engineDefineEx == null)
                     {
-                        TheApp.app.MessageShow("エンジンがありませんでした。" + gamePlayer.EngineDefineFolderPath);
+                        TheApp.app.MessageShow("エンジンがありませんでした。" + gamePlayer.EngineDefineFolderPath , MessageShowType.Error);
                         return;
                     }
                     var usiEnginePlayer = Players[(int)c] as UsiEnginePlayer;
@@ -201,6 +201,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 検討モードならそれを停止させる必要があるが、それはGameModeのsetterがやってくれる。
             GameMode = nextGameMode;
+
+            // 棋譜が汚れ始めたのでフラグを立てておく。
+            KifuDirty = true;
         }
 
         /// <summary>
@@ -621,7 +624,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var ex = engine.Exception;
                     if (ex != null)
                     {
-                        TheApp.app.MessageShow($"エンジン側で例外が発生しました。\n例外 : { ex.Message }\nスタックトレース : { ex.StackTrace}");
+                        TheApp.app.MessageShow($"エンジン側で例外が発生しました。\n例外 : { ex.Message }\nスタックトレース : { ex.StackTrace}",
+                            MessageShowType.Error);
                         engine.Exception = null;
                         Player(stm).SpecialMove = Move.INTERRUPT;
                     }

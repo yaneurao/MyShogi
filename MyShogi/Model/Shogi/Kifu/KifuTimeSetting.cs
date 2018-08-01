@@ -412,6 +412,7 @@ namespace MyShogi.Model.Shogi.Kifu
             return new KifuTimeSettings(new KifuTimeSetting[2] { player, player } , true);
         }
 
+#if false
         public KifuTimeSettingsMin ToKifuTimeSettingsMin()
         {
             return new KifuTimeSettingsMin()
@@ -429,13 +430,15 @@ namespace MyShogi.Model.Shogi.Kifu
                 WhiteEnable = min.WhiteEnable,
             };
         }
-
+#endif
     }
 
+#if false
     [DataContract]
     public class KifuTimeSettingsMin
     {
         [DataMember] public KifuTimeSettingMin[] Players;
         [DataMember] public bool WhiteEnable;
     }
+#endif
 }

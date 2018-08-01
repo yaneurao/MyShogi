@@ -41,7 +41,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                         var error = Position.IsValid();
                         if (error != null)
                         {
-                            TheApp.app.MessageShow(error);
+                            TheApp.app.MessageShow(error , MessageShowType.Error);
                             return;
                         }
                     }
@@ -220,7 +220,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     if (error != null)
                     {
-                        TheApp.app.MessageShow("棋譜の読み込みに失敗しました。\n" + error, "読み込みエラー");
+                        TheApp.app.MessageShow("棋譜の読み込みに失敗しました。\n" + error,  MessageShowType.Error);
 
                         kifuManager.Init(); // 不正な局面のままになるとまずいので初期化。
 
@@ -262,7 +262,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     FileIO.WriteFile(path, content);
                 } catch
                 {
-                    TheApp.app.MessageShow("棋譜ファイルの書き出しに失敗しました。");
+                    TheApp.app.MessageShow("棋譜ファイルの書き出しに失敗しました。" , MessageShowType.Error);
                 }
             });
         }
@@ -288,7 +288,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 }
                 catch
                 {
-                    TheApp.app.MessageShow("棋譜ファイルの書き出しに失敗しました。");
+                    TheApp.app.MessageShow("棋譜ファイルの書き出しに失敗しました。" , MessageShowType.Error);
                 }
             });
         }
@@ -362,7 +362,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var error = kifuManager.FromString($"sfen {sfen}");
                     // sfenのparser経由で代入するのが楽ちん。
                     if (error != null)
-                        TheApp.app.MessageShow(error);
+                        TheApp.app.MessageShow(error , MessageShowType.Error);
 
                 }
             }
@@ -415,7 +415,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 kifuManager.EnableKifuList = false;
 
                 if (error != null)
-                    TheApp.app.MessageShow(error);
+                    TheApp.app.MessageShow(error , MessageShowType.Error);
                 else
                     RaisePropertyChanged("SetKifuListIndex", ply); // rootの局面からply手進める
 

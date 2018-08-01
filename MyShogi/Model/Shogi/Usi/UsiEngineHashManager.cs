@@ -189,7 +189,7 @@ namespace MyShogi.Model.Shogi.Usi
                     + "空き物理メモリが足りないので思考エンジンの動作が不安定になる可能性があります。";
 
             if (error != null)
-                TheApp.app.MessageShow(error);
+                TheApp.app.MessageShow(error , MessageShowType.Warning);
 
             // ここで計算された先後の最終的なHashSize、Thread数などをログに出力しておく。
             Log.Write(LogInfoType.UsiServer, $"ThreadsStack = {{ {engine_stack_per_thread[0] * Threads[0]} [MB] , {engine_stack_per_thread[1] * Threads[1]} [MB]}} , 自動Hash = {{ {HashSize[0]} [MB] , {HashSize[1]} [MB] }} ," +

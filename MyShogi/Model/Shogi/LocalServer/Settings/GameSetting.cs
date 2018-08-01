@@ -141,6 +141,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             KifuTimeSettings.SwapPlayer();
         }
 
+#if false
         public GameSettingMin ToGameSettingMin()
         {
             return new GameSettingMin()
@@ -162,8 +163,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 PlayerSettings = new PlayerSetting[2] { LocalServer.PlayerSetting.FromPlayerSettingMin(min.PlayerSettings[0]) , LocalServer.PlayerSetting.FromPlayerSettingMin(min.PlayerSettings[1]) },
             };
         }
+#endif
     }
 
+#if false
     [DataContract]
     public class GameSettingMin
     {
@@ -172,4 +175,5 @@ namespace MyShogi.Model.Shogi.LocalServer
         public MiscSettingsMin MiscSettings;
         public PlayerSettingMin[] PlayerSettings;
     }
+#endif
 }

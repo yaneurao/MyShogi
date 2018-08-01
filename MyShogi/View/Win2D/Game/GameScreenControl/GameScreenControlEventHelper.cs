@@ -265,6 +265,7 @@ namespace MyShogi.View.Win2D
         public void ResizeKifuControl()
         {
             var kifu = kifuControl;
+
             var inTheGame = gameServer!= null && gameServer.InTheGame;
 
             // 棋譜ウィンドウの横幅の倍率

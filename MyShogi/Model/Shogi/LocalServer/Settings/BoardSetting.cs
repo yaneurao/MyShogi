@@ -58,6 +58,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             return (BoardSetting)MemberwiseClone();
         }
 
+#if false
         public BoardSettingMin ToBoardSettingMin()
         {
             return new BoardSettingMin()
@@ -77,8 +78,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 BoardTypeCurrent = m.BoardTypeCurrent,
             };
         }
+#endif
     }
 
+#if false
     [DataContract]
     public class BoardSettingMin
     {
@@ -86,4 +89,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         [DataMember] public bool BoardTypeEnable;
         [DataMember] public bool BoardTypeCurrent;
     }
+#endif
+
 }
