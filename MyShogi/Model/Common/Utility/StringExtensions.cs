@@ -1,4 +1,6 @@
-﻿namespace MyShogi.Model.Common.Utility
+﻿using System.Text;
+
+namespace MyShogi.Model.Common.Utility
 {
     /// <summary>
     /// string型に対する、LeftやRightを提供するextensions
@@ -40,6 +42,30 @@
             if (m < 0)
                 m = 0;
             return s.Substring(s.Length - m , m);
+        }
+
+
+        /// <summary>
+        /// string.Left()と同じだが、全角スペースは2文字分として扱ってLeftする。
+        /// n : 半角何文字分にして返すか。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static string LeftUnicode(this string s, int n)
+        {
+            if (s == null)
+                return null;
+
+            var sb = new StringBuilder();
+            foreach (var c in s)
+            {
+                n -= (c < 256) ? 1 : 2;
+                if (n < 0)
+                    return sb.ToString();
+                sb.Append(c);
+            }
+            return s; // 文字列丸ごとが、nの範囲に収まった。
         }
 
         // 他、また気が向いたら書く。

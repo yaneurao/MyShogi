@@ -65,6 +65,7 @@
     <Compile Include="Model\Common\Utility\Enviroment.cs" />
     <Compile Include="Model\Common\Utility\ListExtensions.cs" />
     <Compile Include="Model\Common\Utility\Log.cs" />
+    <Compile Include="Model\Common\Utility\MessageShow.cs" />
     <Compile Include="Model\Common\Utility\Scanner.cs" />
     <Compile Include="Model\Common\Utility\Serializer.cs" />
     <Compile Include="Model\Common\Utility\StringExtensions.cs" />
@@ -390,6 +391,7 @@
       <DependentUpon>TimeSettingControl.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.manifest" />
+    <None Include="docs\faq.md" />
     <None Include="docs\PSN2format.md" />
     <None Include="docs\USI2.0.md" />
     <None Include="docs\実装済みの機能.md" />

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Common;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
@@ -1495,7 +1496,7 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item1 = new ToolStripMenuItem();
-                        item1.Text = "FAQ : よくある質問 (&F)"; // Faq
+                        item1.Text = "よくある質問 (&F)"; // Faq
                         item1.Click += (sender, e) =>
                         {
                             // MyShogi公式のFAQ
@@ -1510,7 +1511,7 @@ namespace MyShogi.View.Win2D
                         // aboutダイアログ
 
                         var item1 = new ToolStripMenuItem();
-                        item1.Text = "about : バージョン情報(&V)"; // Version
+                        item1.Text = "バージョン情報(&V)"; // Version
                         item1.Click += (sender, e) =>
                         {
                             if (aboutDialog != null)
@@ -1625,13 +1626,13 @@ namespace MyShogi.View.Win2D
         {
             if (gameScreenControl1.gameServer.InTheGame)
             {
-                if (TheApp.app.MessageShow("対局中ですが本当に終了しますか？" , MessageShowType.Confirmation , MessageBoxButtons.OKCancel )
+                if (TheApp.app.MessageShow("対局中ですが本当に終了しますか？" , MessageShowType.WarningOkCancel )
                     != DialogResult.OK)
                     e.Cancel = true;
 
             } else if (gameScreenControl1.gameServer.KifuDirty)
             {
-                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に終了しますか？", MessageShowType.Confirmation , MessageBoxButtons.OKCancel)
+                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に終了しますか？", MessageShowType.ConfirmationOkCancel )
                     != DialogResult.OK)
                     e.Cancel = true;
             }

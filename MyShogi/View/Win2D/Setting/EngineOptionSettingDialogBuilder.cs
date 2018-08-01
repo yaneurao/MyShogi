@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using MyShogi.App;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.Player;
+using MyShogi.Model.Common;
 
 namespace MyShogi.View.Win2D.Setting
 {

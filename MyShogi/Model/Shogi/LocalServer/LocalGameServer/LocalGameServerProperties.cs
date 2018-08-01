@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using MyShogi.App;
+using MyShogi.Model.Common;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
@@ -148,14 +149,14 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 画面上に表示する短い名前を取得する。
-        /// 先頭の8文字だけ返ってくる。
+        /// 先頭の16文字(半角換算)だけ返ってくる。
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
         public string ShortDisplayName(Color c)
         {
             var name = DisplayName(c);
-            return name.Left(8); // 最大で8文字まで
+            return name.LeftUnicode(16); // 半角換算で16文字まで
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Common;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.EngineDefine;
@@ -138,8 +139,14 @@ namespace MyShogi.View.Win2D
             var is_enough = required_memory <= free_memory;
 
             if (!is_enough)
-                TheApp.app.MessageShow("空き物理メモリが足りないので思考エンジンの動作が不安定になる可能性があります。"
-                    , MessageShowType.Warning);
+            {
+                var result = TheApp.app.MessageShow("空き物理メモリが足りないので思考エンジンの動作が不安定になる可能性があります。"
+                    , MessageShowType.WarningOkCancel);
+
+                // 選択をキャンセル
+                if (result == DialogResult.Cancel)
+                    return;
+            }
 
             ViewModel.RaisePropertyChanged("ButtonClicked");
         }

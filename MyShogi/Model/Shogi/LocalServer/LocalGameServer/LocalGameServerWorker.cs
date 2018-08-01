@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using MyShogi.App;
+using MyShogi.Model.Common;
 using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
@@ -118,9 +119,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                 }
             }
 
-            // エンジンに与えるHashSizeの計算
-            UsiEngineHashManager.CalcValue();
-
             // 局面の設定
             kifuManager.EnableKifuList = true;
             if (gameSetting.BoardSetting.BoardTypeCurrent)
@@ -147,11 +145,23 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 本譜の手順に変更したので現在局面と棋譜ウィンドウのカーソルとを同期させておく。
             UpdateKifuSelectedIndex();
 
+            // エンジンに与えるHashSizeの計算
+            if (UsiEngineHashManager.CalcValue() != 0)
+            {
+                // Hash足りなくてダイアログ出した時にキャンセルボタン押されとる
+                Disconnect();
+
+                // ゲームが終局したことを通知するために音声があったほうがよさげ。
+                TheApp.app.soundManager.ReadOut(SoundEnum.End);
+
+                return;
+            }
+
             // 現在の時間設定を、KifuManager.Treeに反映させておく(棋譜保存時にこれが書き出される)
             kifuManager.Tree.KifuTimeSettings = gameSetting.KifuTimeSettings;
 
             // 対局者氏名の設定
-            // 人間の時のみ有効。エンジンの時は、エンジン設定などから取得することにする。(TODO:あとで考える)
+            // 人間の時のみ有効。エンジンの時は、エンジン設定などから取得することにする。
             foreach (var c in All.Colors())
             {
                 var player = Player(c);
@@ -741,7 +751,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             InitUsiEnginePlayer(Color.BLACK , usiEnginePlayer, engineDefineEx, 0, GameMode , false);
 
             // エンジンに与えるHashSize,Threadsの計算
-            UsiEngineHashManager.CalcValue();
+            if (UsiEngineHashManager.CalcValue() != 0)
+            {
+                // Hash足りなくてダイアログ出した時にキャンセルボタン押されとる
+                Disconnect();
+                return;
+            }
+
 
             // 検討ウィンドウへの読み筋などのリダイレクトを設定
             InitEngineConsiderationInfo(GameMode);

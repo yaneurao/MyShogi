@@ -1,9 +1,10 @@
-﻿using MyShogi.App;
+﻿using System;
+using System.Windows.Forms;
+using MyShogi.App;
+using MyShogi.Model.Common;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
-using MyShogi.Model.Shogi.Player;
-using System;
 
 namespace MyShogi.Model.Shogi.Usi
 {
@@ -37,14 +38,15 @@ namespace MyShogi.Model.Shogi.Usi
         /// エンジンオプションに従う場合は、0が設定される。
         /// ・this.Threads[2]にそれぞれのエンジンの適切なThreads数を設定する。
         /// </summary>
-        public void CalcValue()
+        /// <returns>キャンセルボタンを押したなら非0</returns>
+        public int CalcValue()
         {
             // エンジンの数
             int numOfEngines = (EngineDefines[0] != null ? 1 : 0) + (EngineDefines[1] != null ? 1 : 0);
 
             // 両方エンジンではない。Hashの計算の必要がない。
             if (numOfEngines == 0)
-                return;
+                return 0;
 
             // engine optionとして渡すHashの値など。
             var autoHash = new bool[2];               // 自動Hashなのか
@@ -189,11 +191,17 @@ namespace MyShogi.Model.Shogi.Usi
                     + "空き物理メモリが足りないので思考エンジンの動作が不安定になる可能性があります。";
 
             if (error != null)
-                TheApp.app.MessageShow(error , MessageShowType.Warning);
+            {
+                var result = TheApp.app.MessageShow(error, MessageShowType.WarningOkCancel);
+                if (result == DialogResult.Cancel)
+                    return 1;
+            }
 
             // ここで計算された先後の最終的なHashSize、Thread数などをログに出力しておく。
             Log.Write(LogInfoType.UsiServer, $"ThreadsStack = {{ {engine_stack_per_thread[0] * Threads[0]} [MB] , {engine_stack_per_thread[1] * Threads[1]} [MB]}} , 自動Hash = {{ {HashSize[0]} [MB] , {HashSize[1]} [MB] }} ," +
                 $" 自動Threads = {{ { Threads[0] } , { Threads[1] } }}");
+
+            return 0;
         }
 
         /// <summary>

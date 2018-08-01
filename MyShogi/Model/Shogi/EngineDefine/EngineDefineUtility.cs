@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Common;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Usi;
 
