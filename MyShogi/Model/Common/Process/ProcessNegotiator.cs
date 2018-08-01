@@ -154,9 +154,8 @@ namespace MyShogi.Model.Common.Process
         /// <summary>
         /// 実行ファイルの優先度を普通より下げる。
         /// UpdateProcessPriority()したときに反映される。
-        /// デフォルト = true
         /// </summary>
-        public bool IsLowPriority { get; set; } = true;
+        public bool IsLowPriority { get; set; }
 
         // --- 以下private members
 

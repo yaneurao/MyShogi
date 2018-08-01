@@ -1494,10 +1494,23 @@ namespace MyShogi.View.Win2D
                     item_others.DropDownItems.Add(new ToolStripSeparator());
 
                     {
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "FAQ : よくある質問 (&F)"; // Faq
+                        item1.Click += (sender, e) =>
+                        {
+                            // MyShogi公式のFAQ
+                            var url = "https://github.com/yaneurao/MyShogi/tree/master/MyShogi/docs/faq.md";
+
+                            System.Diagnostics.Process.Start(url);
+                        };
+                        item_others.DropDownItems.Add(item1);
+                    }
+
+                    {
                         // aboutダイアログ
 
                         var item1 = new ToolStripMenuItem();
-                        item1.Text = "バージョン情報(&V)"; // Version
+                        item1.Text = "about : バージョン情報(&V)"; // Version
                         item1.Click += (sender, e) =>
                         {
                             if (aboutDialog != null)

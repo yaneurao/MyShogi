@@ -2,7 +2,6 @@
 using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
-using MyShogi.Model.Shogi.EngineDefine;
 
 namespace MyShogi.Model.Shogi.Player
 {
@@ -22,8 +21,12 @@ namespace MyShogi.Model.Shogi.Player
         public void Start(string exePath)
         {
             Engine.AddPropertyChangedHandler("State", StateChanged);
-            
-            var data = new ProcessNegotiatorData(exePath);
+
+            var data = new ProcessNegotiatorData(exePath)
+            {
+                IsLowPriority = true
+            };
+
             Engine.Connect(data);
             // 接続できているものとする。
         }

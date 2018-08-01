@@ -36,8 +36,10 @@ namespace MyShogi.Model.Common.Process
         public string ExeArguments { get; set; }
 
         /// <summary>
-        /// 実行ファイルの優先度を探す
+        /// 実行ファイルの優先度を下げる。
+        ///
+        /// デフォルト : true
         /// </summary>
-        public bool IsLowPriority { get; set; }
+        public bool IsLowPriority { get; set; } = true;
     }
 }
