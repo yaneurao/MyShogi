@@ -3,7 +3,9 @@ using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
-    [DataContract]
+    /// <summary>
+    /// 対局設定のうちのその他の設定
+    /// </summary>
     public class MiscSettings : NotifyObject
     {
         // -- DataMembers
@@ -62,5 +64,32 @@ namespace MyShogi.Model.Shogi.LocalServer
             return clone;
         }
 
+        public MiscSettingsMin ToMiscSettingsMin()
+        {
+            return new MiscSettingsMin()
+            {
+                MaxMovesToDrawEnable = MaxMovesToDrawEnable,
+                MaxMovesToDraw = MaxMovesToDraw,
+                EnteringKingRule = EnteringKingRule,
+            };
+        }
+
+        public static MiscSettings FromMiscSettingsMin(MiscSettingsMin min)
+        {
+            return new MiscSettings()
+            {
+                MaxMovesToDrawEnable = min.MaxMovesToDrawEnable,
+                MaxMovesToDraw = min.MaxMovesToDraw,
+                EnteringKingRule = min.EnteringKingRule,
+            };
+        }
+    }
+
+    [DataContract]
+    public class MiscSettingsMin
+    {
+        [DataMember] public bool MaxMovesToDrawEnable;
+        [DataMember] public int MaxMovesToDraw;
+        [DataMember] public int EnteringKingRule;
     }
 }

@@ -10,7 +10,6 @@ namespace MyShogi.App
     /// 全体設定。
     /// 駒画像番号、サウンドの有無、ウインドウ比率など…
     /// </summary>
-    [DataContract]
     public class GlobalConfig : NotifyObject
     {
         /// <summary>
@@ -49,6 +48,15 @@ namespace MyShogi.App
             // ファイルがなかったら新規に作成する。
             if (config == null)
                 config = new GlobalConfig();
+
+#if false
+            // GameSettingがNotifyObject派生クラスであるため、シリアライズ不可なのでGameSettingMinのほうをシリアライズしていた。
+            // ここからGameSettingを復元する。
+            if (config.GameSettingMin != null)
+                config.GameSetting = GameSetting.FromGameSettingMin(config.GameSettingMin);
+            else
+                config.GameSetting = new GameSetting();
+#endif
 
             config.Init();
 
@@ -94,6 +102,14 @@ namespace MyShogi.App
         /// </summary>
         public void Save()
         {
+#if false
+            // GameSettingがNotifyObject派生クラスであるため、シリアライズ不可なのでGameSettingの内容をGameSettingMinのほうにコピーしてやる。
+            if (GameSetting != null)
+                GameSettingMin = GameSetting.ToGameSettingMin();
+            else
+                GameSettingMin = new GameSettingMin();
+#endif
+
             Serializer.Serialize(xmlFile, this);
         }
 
@@ -114,7 +130,7 @@ namespace MyShogi.App
         /// 1 : やねうら王 商用版(2018年度)
         /// 2 : 以下、来年以降の商用版の番号を振るかも。
         /// </summary>
-        public int CommercialVersion { get; set; }
+        public int CommercialVersion { get; private set; }
 
 
         /// <summary>
@@ -412,6 +428,16 @@ namespace MyShogi.App
         /// 対局ダイアログの設定
         /// </summary>
         [DataMember]
-        public GameSetting GameSetting { get; set; } = new GameSetting();
+        public GameSetting GameSetting { get; set; }
+
+#if false
+        /// <summary>
+        /// GameSettingの、NotifyObject派生クラスでないほう。
+        /// 保存前にこちらにGameSettingの内容をコピーしてからシリアライズ。
+        /// デシリアライズ時は、こいつからGameSettingにコピー。
+        /// </summary>
+        [DataMember]
+        public GameSettingMin GameSettingMin { get; set; }
+#endif
     }
 }

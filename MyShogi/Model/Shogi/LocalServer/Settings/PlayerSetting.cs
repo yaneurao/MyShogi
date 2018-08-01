@@ -7,7 +7,6 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// 各プレイヤーごとの対局設定
     /// LocalGameServer.GameStart()の引数に渡す、対局条件などを一式書いた設定データの片側のプレイヤー分。
     /// </summary>
-    [DataContract]
     public class PlayerSetting : NotifyObject
     {
         // -- DataMembers
@@ -92,5 +91,41 @@ namespace MyShogi.Model.Shogi.LocalServer
             return (PlayerSetting)this.MemberwiseClone();
         }
 
+        public PlayerSettingMin ToPlayerSettingMin()
+        {
+            return new PlayerSettingMin()
+            {
+                PlayerName = PlayerName,
+                IsHuman = IsHuman,
+                IsCpu = IsCpu,
+                EngineDefineFolderPath = EngineDefineFolderPath,
+                SelectedEnginePreset = SelectedEnginePreset,
+                Ponder = Ponder,
+            };
+        }
+
+        public static PlayerSetting FromPlayerSettingMin(PlayerSettingMin min)
+        {
+            return new PlayerSetting()
+            {
+                PlayerName = min.PlayerName,
+                IsHuman = min.IsHuman,
+                IsCpu = min.IsCpu,
+                EngineDefineFolderPath = min.EngineDefineFolderPath,
+                SelectedEnginePreset = min.SelectedEnginePreset,
+                Ponder = min.Ponder,
+            };
+        }
+    }
+
+    [DataContract]
+    public class PlayerSettingMin
+    {
+        [DataMember] public string PlayerName;
+        [DataMember] public bool IsHuman;
+        [DataMember] public bool IsCpu;
+        [DataMember] public string EngineDefineFolderPath;
+        [DataMember] public int SelectedEnginePreset;
+        [DataMember] public bool Ponder;
     }
 }

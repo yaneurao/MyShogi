@@ -7,7 +7,6 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// <summary>
     /// 対局の開始盤面の設定
     /// </summary>
-    [DataContract]
     public class BoardSetting : NotifyObject
     {
         // -- DataMembers
@@ -58,5 +57,33 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             return (BoardSetting)MemberwiseClone();
         }
+
+        public BoardSettingMin ToBoardSettingMin()
+        {
+            return new BoardSettingMin()
+            {
+                BoardType = BoardType,
+                BoardTypeEnable = BoardTypeEnable,
+                BoardTypeCurrent = BoardTypeCurrent,
+            };
+        }
+
+        public static BoardSetting FromBoardSettingMin(BoardSettingMin m)
+        {
+            return new BoardSetting()
+            {
+                BoardType = m.BoardType,
+                BoardTypeEnable = m.BoardTypeEnable,
+                BoardTypeCurrent = m.BoardTypeCurrent,
+            };
+        }
+    }
+
+    [DataContract]
+    public class BoardSettingMin
+    {
+        [DataMember] public BoardType BoardType;
+        [DataMember] public bool BoardTypeEnable;
+        [DataMember] public bool BoardTypeCurrent;
     }
 }

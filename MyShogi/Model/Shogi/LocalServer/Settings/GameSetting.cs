@@ -19,7 +19,6 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// の集合
     /// 
     /// </summary>
-    [DataContract]
     public class GameSetting
     {
         // -- DataMember
@@ -141,5 +140,36 @@ namespace MyShogi.Model.Shogi.LocalServer
             Utility.Swap(ref PlayerSettings[0], ref PlayerSettings[1]);
             KifuTimeSettings.SwapPlayer();
         }
+
+        public GameSettingMin ToGameSettingMin()
+        {
+            return new GameSettingMin()
+            {
+                BoardSetting = BoardSetting.ToBoardSettingMin(),
+                KifuTimeSettings = KifuTimeSettings.ToKifuTimeSettingsMin(),
+                MiscSettings = MiscSettings.ToMiscSettingsMin(),
+                PlayerSettings = new PlayerSettingMin[2] { PlayerSettings[0].ToPlayerSettingMin() , PlayerSettings[1].ToPlayerSettingMin() },
+            };
+        }
+
+        public static GameSetting FromGameSettingMin(GameSettingMin min)
+        {
+            return new GameSetting()
+            {
+                BoardSetting = BoardSetting.FromBoardSettingMin(min.BoardSetting),
+                KifuTimeSettings = KifuTimeSettings.FromKifuTimeSettingsMin(min.KifuTimeSettings),
+                MiscSettings = MiscSettings.FromMiscSettingsMin(min.MiscSettings),
+                PlayerSettings = new PlayerSetting[2] { LocalServer.PlayerSetting.FromPlayerSettingMin(min.PlayerSettings[0]) , LocalServer.PlayerSetting.FromPlayerSettingMin(min.PlayerSettings[1]) },
+            };
+        }
+    }
+
+    [DataContract]
+    public class GameSettingMin
+    {
+        public BoardSettingMin BoardSetting;
+        public KifuTimeSettingsMin KifuTimeSettings;
+        public MiscSettingsMin MiscSettings;
+        public PlayerSettingMin[] PlayerSettings;
     }
 }

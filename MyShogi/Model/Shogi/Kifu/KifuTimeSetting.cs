@@ -12,7 +12,6 @@ namespace MyShogi.Model.Shogi.Kifu
     /// 対局時間設定
     /// 片側のプレイヤー分
     /// </summary>
-    [DataContract]
     public class KifuTimeSetting : NotifyObject
     {
         // -- DataMembers
@@ -250,12 +249,57 @@ namespace MyShogi.Model.Shogi.Kifu
 
             return setting;
         }
+
+        public KifuTimeSettingMin ToKifuTimeSettingMin()
+        {
+            return new KifuTimeSettingMin()
+            {
+                Hour = Hour,
+                Minute = Minute,
+                Second = Second,
+                Byoyomi = Byoyomi,
+                ByoyomiEnable = ByoyomiEnable,
+                IncTime = IncTime,
+                IncTimeEnable = IncTimeEnable,
+                IgnoreTime = IgnoreTime,
+                TimeLimitless = TimeLimitless,
+            };
+        }
+
+        public static KifuTimeSetting FromKifuTimeSettingMin(KifuTimeSettingMin min)
+        {
+            return new KifuTimeSetting()
+            {
+                Hour = min.Hour,
+                Minute = min.Minute,
+                Second = min.Second,
+                Byoyomi = min.Byoyomi,
+                ByoyomiEnable = min.ByoyomiEnable,
+                IncTime = min.IncTime,
+                IncTimeEnable = min.IncTimeEnable,
+                IgnoreTime = min.IgnoreTime,
+                TimeLimitless = min.TimeLimitless,
+            };
+        }
+    }
+
+    [DataContract]
+    public class KifuTimeSettingMin
+    {
+        [DataMember] public int Hour;
+        [DataMember] public int Minute;
+        [DataMember] public int Second;
+        [DataMember] public int Byoyomi;
+        [DataMember] public bool ByoyomiEnable;
+        [DataMember] public int IncTime;
+        [DataMember] public bool IncTimeEnable;
+        [DataMember] public bool IgnoreTime;
+        [DataMember] public bool TimeLimitless;
     }
 
     /// <summary>
     /// 対局時間設定 先後の両方の分
     /// </summary>
-    [DataContract]
     public class KifuTimeSettings : NotifyObject
     {
         /// <summary>
@@ -264,6 +308,16 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         [DataMember]
         public KifuTimeSetting[] Players;
+
+        /// <summary>
+        /// 後手の対局時間設定を先手とは別に設定する。
+        /// </summary>
+        [DataMember]
+        public bool WhiteEnable
+        {
+            get { return GetValue<bool>("WhiteEnable"); }
+            set { SetValue("WhiteEnable", value); }
+        }
 
         // -- public methods
 
@@ -320,15 +374,6 @@ namespace MyShogi.Model.Shogi.Kifu
             Utility.Swap(ref Players[0], ref Players[1]);
         }
 
-        /// <summary>
-        /// 後手の対局時間設定を先手とは別に設定する。
-        /// </summary>
-        public bool WhiteEnable
-        {
-            get { return GetValue<bool>("WhiteEnable"); }
-            set { SetValue("WhiteEnable", value); }
-        }
-
         // -- properties
 
         /// <summary>
@@ -367,5 +412,30 @@ namespace MyShogi.Model.Shogi.Kifu
             return new KifuTimeSettings(new KifuTimeSetting[2] { player, player } , true);
         }
 
+        public KifuTimeSettingsMin ToKifuTimeSettingsMin()
+        {
+            return new KifuTimeSettingsMin()
+            {
+                Players = new KifuTimeSettingMin[2] { Players[0].ToKifuTimeSettingMin(), Players[1].ToKifuTimeSettingMin() },
+                WhiteEnable = WhiteEnable,
+            };
+        }
+
+        public static KifuTimeSettings FromKifuTimeSettingsMin(KifuTimeSettingsMin min)
+        {
+            return new KifuTimeSettings()
+            {
+                Players = new KifuTimeSetting[2] { KifuTimeSetting.FromKifuTimeSettingMin(min.Players[0]), KifuTimeSetting.FromKifuTimeSettingMin(min.Players[1]) },
+                WhiteEnable = min.WhiteEnable,
+            };
+        }
+
+    }
+
+    [DataContract]
+    public class KifuTimeSettingsMin
+    {
+        [DataMember] public KifuTimeSettingMin[] Players;
+        [DataMember] public bool WhiteEnable;
     }
 }

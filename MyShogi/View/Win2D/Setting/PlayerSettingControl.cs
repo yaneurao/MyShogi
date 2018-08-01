@@ -168,70 +168,82 @@ namespace MyShogi.View.Win2D.Setting
             vm.AddPropertyChangedHandler("EngineDefineFolderPath", (args) =>
             {
                 SuspendLayout();
-
-                var player = TheApp.app.config.GameSetting.PlayerSetting(vm.Color);
-
-                var folderPath = (string)args.value;
-                var engine_define_ex = TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
-                ViewModel.EngineDefineEx = engine_define_ex; // ついでなので保存しておく。
-
-                button2.Enabled = engine_define_ex != null;
-                if (engine_define_ex == null)
-                    return;
-
-                var engine_define = engine_define_ex.EngineDefine;
-
-                // -- バナーの設定
-
-                // (w,h)=(320,100)のつもりだが、dpi scalingのせいで
-                // 環境によって異なるのでここで再取得してそれに合わせる。
-                int w = pictureBox1.Width;
-                int h = pictureBox1.Height;
-
-                // バナーファイルの設定
-                // ファイルがないならNO BANNERの画像。
-                var banner_file_name = engine_define.BannerFileName;
-                ImageLoader banner;
-                if (!System.IO.File.Exists(banner_file_name))
-                    banner = TheApp.app.imageManager.NoBannerImage;
-                else
+                try
                 {
-                    banner = new ImageLoader();
-                    banner.Load(engine_define.BannerFileName);
+
+                    var player = TheApp.app.config.GameSetting.PlayerSetting(vm.Color);
+
+                    var folderPath = (string)args.value;
+                    var engine_define_ex = TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
+                    ViewModel.EngineDefineEx = engine_define_ex; // ついでなので保存しておく。
+
+                    button2.Enabled = engine_define_ex != null;
+                    if (engine_define_ex == null)
+                    {
+                        // バナー等をクリアしてから返る。
+                        pictureBox1.Image = null;
+                        comboBox1.Items.Clear();
+                        textBox2.Text = null;
+                        return;
+                    }
+
+                    var engine_define = engine_define_ex.EngineDefine;
+
+                    // -- バナーの設定
+
+                    // (w,h)=(320,100)のつもりだが、dpi scalingのせいで
+                    // 環境によって異なるのでここで再取得してそれに合わせる。
+                    int w = pictureBox1.Width;
+                    int h = pictureBox1.Height;
+
+                    // バナーファイルの設定
+                    // ファイルがないならNO BANNERの画像。
+                    var banner_file_name = engine_define.BannerFileName;
+                    ImageLoader banner;
+                    if (!System.IO.File.Exists(banner_file_name))
+                        banner = TheApp.app.imageManager.NoBannerImage;
+                    else
+                    {
+                        banner = new ImageLoader();
+                        banner.Load(engine_define.BannerFileName);
+                    }
+                    if (banner_mini != null)
+                        banner_mini.Dispose();
+                    banner_mini = banner.CreateAndCopy(w, h);
+
+                    pictureBox1.Image = banner_mini.image;
+
+                    // -- 対局者名の設定
+
+                    // 人間が選択されている時は、Radioボタンのハンドラでプレイヤー名が「先手」「後手」になるのでここでは設定しない。
+                    if (player.IsCpu)
+                        textBox1.Text = engine_define.DisplayName;
+
+                    // -- プリセットのコンボボックス
+
+                    var PlayerSetting = TheApp.app.config.GameSetting.PlayerSetting(vm.Color);
+
+                    // プリセットをコンボボックスに反映
+                    // SuspendLayout()～ResumeLayout()中にやらないとイベントハンドラが呼び出されておかしいことになる。
+                    // このプリセットのどこを選ぶかは、この外側でこのcomboBoxとdata bindしている変数を書き換えることで示す。
+
+                    comboBox1.Items.Clear();
+                    foreach (var e in engine_define.Presets)
+                        comboBox1.Items.Add(e.Name);
+
+                    // 前回と同じものを選んでおいたほうが使いやすいかも。
+                    // →　「やねうら王」初段　のあと「tanuki」を選んだ時も初段であって欲しい気がするが…。
+                    // 先後入替えなどもあるので、やはりそれは良くない気がする。
+
+                    // エンジンを選択したのだから、対局相手はコンピュータになっていて欲しいはず。
+                    // →　エンジンを選択したとは限らない。先後入替えでもここが呼び出される。
+                    //radioButton2.Checked = true;
+
                 }
-                if (banner_mini != null)
-                    banner_mini.Dispose();
-                banner_mini = banner.CreateAndCopy(w, h);
-
-                pictureBox1.Image = banner_mini.image;
-
-                // -- 対局者名の設定
-
-                // 人間が選択されている時は、Radioボタンのハンドラでプレイヤー名が「先手」「後手」になるのでここでは設定しない。
-                if (player.IsCpu)
-                    textBox1.Text = engine_define.DisplayName;
-
-                // -- プリセットのコンボボックス
-
-                var PlayerSetting = TheApp.app.config.GameSetting.PlayerSetting(vm.Color);
-                
-                // プリセットをコンボボックスに反映
-                // SuspendLayout()～ResumeLayout()中にやらないとイベントハンドラが呼び出されておかしいことになる。
-                // このプリセットのどこを選ぶかは、この外側でこのcomboBoxとdata bindしている変数を書き換えることで示す。
-
-                comboBox1.Items.Clear();
-                foreach (var e in engine_define.Presets)
-                    comboBox1.Items.Add(e.Name);
-
-                // 前回と同じものを選んでおいたほうが使いやすいかも。
-                // →　「やねうら王」初段　のあと「tanuki」を選んだ時も初段であって欲しい気がするが…。
-                // 先後入替えなどもあるので、やはりそれは良くない気がする。
-
-                // エンジンを選択したのだから、対局相手はコンピュータになっていて欲しいはず。
-                // →　エンジンを選択したとは限らない。先後入替えでもここが呼び出される。
-                //radioButton2.Checked = true;
-
-                ResumeLayout();
+                finally
+                {
+                    ResumeLayout();
+                }
             });
 
             vm.AddPropertyChangedHandler("EngineSelected", args =>
@@ -250,20 +262,32 @@ namespace MyShogi.View.Win2D.Setting
         /// </summary>
         private void UpdatePresetText()
         {
-            var engineDefine = ViewModel.EngineDefineEx;
-            if (engineDefine == null)
-                return;
+            string text = null;
+            try
+            {
+                var engineDefine = ViewModel.EngineDefineEx;
+                if (engineDefine == null)
+                {
+                    return;
+                }
 
-            var presets = engineDefine.EngineDefine.Presets;
-            var selectedIndex = comboBox1.SelectedIndex;
-            // 未選択か？
-            if (selectedIndex < 0)
-                return;
+                var presets = engineDefine.EngineDefine.Presets;
+                var selectedIndex = comboBox1.SelectedIndex;
+                // 未選択か？
+                if (selectedIndex < 0)
+                {
+                    return;
+                }
 
-            if (presets.Count <= selectedIndex)
-                selectedIndex = comboBox1.SelectedIndex = 0;
+                if (presets.Count <= selectedIndex)
+                    selectedIndex = comboBox1.SelectedIndex = 0;
 
-            textBox2.Text = presets[selectedIndex].Description;
+                text = presets[selectedIndex].Description;
+            }
+            finally
+            {
+                textBox2.Text = text;
+            }
         }
 
         /// <summary>

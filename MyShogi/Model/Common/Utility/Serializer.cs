@@ -1,10 +1,17 @@
-﻿using System.Xml;
+﻿using System;
+using System.Xml;
 using System.Runtime.Serialization;
 
 namespace MyShogi.Model.Common.Utility
 {
     /// <summary>
     /// ファイルにSerialize/ファイルからDeserializeするヘルパークラス
+    ///
+    /// Tには、DataContract 属性をつけて、シリアライズしたいメンバーに DataMember属性がついていることが前提。
+    /// 
+    /// ただし、DataContractをつけると型に厳しくなるのでNotifyObject派生クラスがシリアライズできなくなる。
+    /// DataContractをつけるメリットはList型,Dictionary型などが使えることだが、単なる配列しか使っていないならば
+    /// つけなくとも問題ない。
     /// </summary>
     public static class Serializer
     {
@@ -42,8 +49,9 @@ namespace MyShogi.Model.Common.Utility
                 result = (T)serializer.ReadObject(xr);
                 xr.Close();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 result = default(T);
             }
 

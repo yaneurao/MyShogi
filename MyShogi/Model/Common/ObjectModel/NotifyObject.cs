@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Windows.Forms;
 
 // WPFで使うNotifyObjectっぽい何か。
@@ -97,7 +96,6 @@ namespace MyShogi.Model.Common.ObjectModel
     /// ※ これを派生したクラスをDataContractで使うために、このクラスもDataContractにはなってはいるが、
     /// 実際はDataMemberを一つも持たない。
     /// </summary>
-    [DataContract]
     public class NotifyObject
     {
         /// <summary>
@@ -112,6 +110,9 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <param name="value"></param>
         public void SetValue<T>(string name, T value )
         {
+            if (lockObject == null)
+                return;
+
             var raise = false;
             lock (lockObject)
             {
