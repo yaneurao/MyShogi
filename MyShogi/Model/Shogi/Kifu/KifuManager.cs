@@ -214,7 +214,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 if (line.StartsWith("#") || line.IndexOf("：") > 0)
                     return FromKifString(lines, KifuFileType.KIF);
 
-                return null;
+                return "棋譜の形式が判別できませんでした。";
             }
             finally
             {

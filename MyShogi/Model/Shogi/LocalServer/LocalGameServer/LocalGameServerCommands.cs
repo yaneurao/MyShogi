@@ -245,6 +245,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                             GameSetting.PlayerSetting(c).PlayerName = kifuManager.KifuHeader.GetPlayerName(c);
 
                     }
+
+                    // 棋譜が綺麗になった扱い。
+                    KifuDirty = false;
                 }
             });
         }
@@ -446,6 +449,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             });
         }
 
+        #region 形勢グラフ用。あとで見直す。
+
         /// <summary>
         /// 評価値の更新
         /// </summary>
@@ -479,8 +484,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                     break;
             }
         }
-
-        // -- 形勢グラフ用。あとで見直す。
 
         /// <summary>
         /// 評価値グラフ用データ生成
@@ -537,6 +540,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 reverse = reverse,
             };
         }
+        #endregion
 
         /// <summary>
         /// UI側から、worker threadで実行して欲しいコマンドを渡す。
@@ -544,7 +548,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// ここで渡されたコマンドは、CheckUICommand()で吸い出されて実行される。
         /// </summary>
         /// <param name="command"></param>
-            private void AddCommand(UICommand command)
+        private void AddCommand(UICommand command)
         {
             // workerを作っていないなら、自分のスレッドで実行すれば良い。
             if (NoThread)

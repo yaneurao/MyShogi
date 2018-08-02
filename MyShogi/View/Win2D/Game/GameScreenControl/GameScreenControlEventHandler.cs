@@ -76,6 +76,7 @@ namespace MyShogi.View.Win2D
             mouseLastDown = new Point(-1, -1); // また意味のない地点を指すようにしておく
         }
 
+
         /// <summary>
         /// MouseDownが最後に発生した場所
         /// </summary>

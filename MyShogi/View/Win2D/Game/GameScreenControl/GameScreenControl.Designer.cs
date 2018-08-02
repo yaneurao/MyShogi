@@ -34,6 +34,7 @@
             // kifuControl1
             // 
             this.kifuControl1.Location = new System.Drawing.Point(148, 546);
+            this.kifuControl1.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.kifuControl1.Name = "kifuControl1";
             this.kifuControl1.Size = new System.Drawing.Size(100, 100);
             this.kifuControl1.TabIndex = 0;
@@ -42,8 +43,8 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.DoubleBuffered = true;
             this.Controls.Add(this.kifuControl1);
+            this.DoubleBuffered = true;
             this.Name = "GameScreenControl";
             this.Size = new System.Drawing.Size(400, 400);
             this.SizeChanged += new System.EventHandler(this.GameScreenControl_SizeChanged);

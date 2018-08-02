@@ -63,15 +63,19 @@ namespace MyShogi.Model.Common.Utility
         public static int GetProcessorCores()
         {
             if (processor_cores == 0)
+            {
+                var sumOfCores = 0;
                 using (ManagementClass mc = new ManagementClass("Win32_Processor"))
                 using (ManagementObjectCollection moc = mc.GetInstances())
-                    // これプロセッサが複数ある環境だとmocが複数あるのか…。
-                    //最初に見つけたやつか、足し合わせた数にすべきでは…。
+                    // これプロセッサが複数ある環境だとmocが複数あるので足し合わせたものにする。
                     foreach (ManagementObject mo in moc)
                     {
-                        processor_cores = (int)(uint)mo["NumberOfCores"];
-                        break;
+                        var obj = mo["NumberOfCores"];
+                        if (obj != null) // 普通、このプロパティが取得できないことはないはずなのだが…。
+                            sumOfCores += (int)(uint)obj;
                     }
+                processor_cores = sumOfCores;
+            }
 
             return processor_cores;
         }

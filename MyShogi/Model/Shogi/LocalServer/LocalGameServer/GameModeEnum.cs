@@ -11,7 +11,7 @@
         NotInit,                    // 初期状態。LocalGameServer.Start()で値を代入した時にGameModeの変更通知が飛ぶように。
         InTheGame ,                 // 対局中
         InTheBoardEdit ,            // 盤面編集中
-        ConsiderationWithoutEngine, // 検討中(エンジンが動作していない)
+        ConsiderationWithoutEngine, // 検討中(エンジンが動作していない) : ユーザーが何もしていないならこの状態。
         ConsiderationWithEngine,    // 検討中(検討用エンジンが動作している)
         ConsiderationWithMateEngine,// 検討中(詰将棋エンジンが動作している)
     }

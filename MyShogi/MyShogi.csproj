@@ -191,6 +191,9 @@
     <Compile Include="App\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\Win2D\Common\FontBuilder.cs" />
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlViewModel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="View\Win2D\Info\AboutYaneuraOu.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -228,11 +231,11 @@
     <Compile Include="View\Win2D\Setting\EngineSelectionControl.Designer.cs">
       <DependentUpon>EngineSelectionControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlMain.cs">
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlMain.Designer.cs">
-      <DependentUpon>GameScreenControlMain.cs</DependentUpon>
+    <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControl.Designer.cs">
+      <DependentUpon>GameScreenControl.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlConst.cs">
       <SubType>UserControl</SubType>
@@ -346,8 +349,8 @@
     <EmbeddedResource Include="View\Win2D\Info\EngineConsiderationControl.resx">
       <DependentUpon>EngineConsiderationControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\Game\GameScreenControl\GameScreenControlMain.resx">
-      <DependentUpon>GameScreenControlMain.cs</DependentUpon>
+    <EmbeddedResource Include="View\Win2D\Game\GameScreenControl\GameScreenControl.resx">
+      <DependentUpon>GameScreenControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Info\EvalGraphControl.resx">
       <DependentUpon>EvalGraphControl.cs</DependentUpon>

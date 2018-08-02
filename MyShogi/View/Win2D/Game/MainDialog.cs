@@ -2,14 +2,12 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
-using MyShogi.Model.Common;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Usi;
-using MyShogi.Model.Test;
 using ObjectModel = MyShogi.Model.Common.ObjectModel;
 using SCore = MyShogi.Model.Shogi.Core;
 
@@ -44,6 +42,7 @@ namespace MyShogi.View.Win2D
 
             // エンジンの読み筋などを、検討ダイアログにリダイレクトする。
             gameScreenControl1.ThinkReportChanged = ThinkReportChanged;
+
         }
 
         #endregion
@@ -490,14 +489,76 @@ namespace MyShogi.View.Win2D
             kifuControl.ViewModel.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に移動するはず */;
         }
 
-#endregion
+        /// <summary>
+        /// キーイベント
+        /// KeyPreview == trueなのですべてのキーイベントはいったんここに来るる
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainDialog_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (gameScreenControl1.gameServer.GameMode == GameModeEnum.ConsiderationWithoutEngine)
+            {
+                if (e.KeyCode == Keys.V && e.Control == true)
+                {
+                    if (gameScreenControl1.gameServer.KifuDirty)
+                    {
+                        if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に棋譜を貼り付けますか？", MessageShowType.WarningOkCancel)
+                            != DialogResult.OK)
+                            return;
+                    }
 
-#region update menu
+                    //クリップボードからテキスト取得
+                    var text = Clipboard.GetText();
+                    gameServer.KifuReadCommand(text);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 閉じるときに本当に終了しますかの確認を出す。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (gameScreenControl1.gameServer.InTheGame)
+            {
+                if (TheApp.app.MessageShow("対局中ですが本当に終了しますか？", MessageShowType.WarningOkCancel)
+                    != DialogResult.OK)
+                    e.Cancel = true;
+
+            }
+            else if (gameScreenControl1.gameServer.KifuDirty)
+            {
+                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に終了しますか？", MessageShowType.ConfirmationOkCancel)
+                    != DialogResult.OK)
+                    e.Cancel = true;
+            }
+        }
+
+        #endregion
+
+        #region update menu
 
         /// <summary>
         /// 棋譜の上書き保存のために、前回保存したときの名前を保持しておく。
         /// </summary>
         private string lastFileName;
+
+        private void ReadKifFile(string filename)
+        {
+            try
+            {
+                var kifu_text = FileIO.ReadText(filename);
+                gameServer.KifuReadCommand(kifu_text);
+                lastFileName = filename; // 最後に開いたファイルを記録しておく。
+            }
+            catch
+            {
+                TheApp.app.MessageShow("ファイル読み込みエラー", MessageShowType.Error);
+            }
+        }
 
         /// <summary>
         /// [UI thread] : メニューのitemを動的に追加する。
@@ -579,19 +640,7 @@ namespace MyShogi.View.Win2D
 
                             // ダイアログを表示する
                             if (fd.ShowDialog() == DialogResult.OK)
-                            {
-                                var filename = fd.FileName;
-                                try
-                                {
-                                    var kifu_text = FileIO.ReadText(filename);
-                                    gameServer.KifuReadCommand(kifu_text);
-                                    lastFileName = filename; // 最後に開いたファイルを記録しておく。
-                                }
-                                catch
-                                {
-                                    TheApp.app.MessageShow("ファイル読み込みエラー" , MessageShowType.Error);
-                                }
-                            }
+                                ReadKifFile(fd.FileName);
                         };
                         item_file.DropDownItems.Add(item);
                     }
@@ -1648,27 +1697,8 @@ namespace MyShogi.View.Win2D
         }
 
         private MenuStrip old_menu { get; set; } = null;
+
         #endregion
 
-        /// <summary>
-        /// 閉じるときに本当に終了しますかの確認を出す。
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MainDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (gameScreenControl1.gameServer.InTheGame)
-            {
-                if (TheApp.app.MessageShow("対局中ですが本当に終了しますか？" , MessageShowType.WarningOkCancel )
-                    != DialogResult.OK)
-                    e.Cancel = true;
-
-            } else if (gameScreenControl1.gameServer.KifuDirty)
-            {
-                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に終了しますか？", MessageShowType.ConfirmationOkCancel )
-                    != DialogResult.OK)
-                    e.Cancel = true;
-            }
-        }
     }
 }

@@ -276,11 +276,13 @@
             this.Controls.Add(this.toolStrip1);
             this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(185, 55);
             this.Name = "MainDialog";
             this.Text = "MyShogi";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainDialog_FormClosing);
             this.Load += new System.EventHandler(this.MainDialog_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainDialog_KeyDown);
             this.Move += new System.EventHandler(this.MainDialog_Move);
             this.Resize += new System.EventHandler(this.MainDialog_Resize);
             this.toolStrip1.ResumeLayout(false);
