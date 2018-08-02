@@ -21,14 +21,14 @@ namespace MyShogi.Model.Common.Utility
                 using (var moc = mc.GetInstances())
                     foreach (var mo in moc) // 何故か複数あることが想定されている。NUMA環境か？
                     {
-                        result = (ulong) mo["FreePhysicalMemory"];
+                        result = (ulong)mo["FreePhysicalMemory"];
 
                         mo.Dispose(); // これ要るのか？
                     }
             }
             catch { }
 
-            if (! Environment.Is64BitOperatingSystem)
+            if (!Environment.Is64BitOperatingSystem)
             {
                 // 32bitで動作しているプロセス空間では、2GBまでしか物理メモリを扱えないので
                 // 物理メモリがいかにあろうと2GBであるとみなす。
@@ -52,5 +52,35 @@ namespace MyShogi.Model.Common.Utility
             // 10[us]以下で実行できるのでcacheしない。
             return Environment.ProcessorCount;
         }
+
+        /// <summary>
+        /// 実行環境の物理コア数。
+        /// 
+        /// AutoSettingでThreadを指定してある場合、現環境のスレッド数に制限されるべきなので
+        /// そのためにこのメソッドが必要。
+        /// </summary>
+        /// <returns></returns>
+        public static int GetProcessorCores()
+        {
+            if (processor_cores == 0)
+                using (ManagementClass mc = new ManagementClass("Win32_Processor"))
+                using (ManagementObjectCollection moc = mc.GetInstances())
+                    // これプロセッサが複数ある環境だとmocが複数あるのか…。
+                    //最初に見つけたやつか、足し合わせた数にすべきでは…。
+                    foreach (ManagementObject mo in moc)
+                    {
+                        processor_cores = (int)(uint)mo["NumberOfCores"];
+                        break;
+                    }
+
+            return processor_cores;
+        }
+
+        /// <summary>
+        /// 一度調べた物理コア数をcacheしておくための変数。
+        /// </summary>
+        private static int processor_cores;
+
+
     }
 }

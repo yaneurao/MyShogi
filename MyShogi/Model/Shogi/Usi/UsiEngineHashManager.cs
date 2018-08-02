@@ -105,10 +105,10 @@ namespace MyShogi.Model.Shogi.Usi
 
             // スレッド数の自動マネージメントに関して
 
-            // 1) AutoThread_なら基本的には、OSが返すコアの数にする。
+            // 1) AutoThread_なら基本的には、PCの物理コア数にする。
             // 2) 2つのエンジンがそれぞれPonderありなら、スレッド数を2で割るべき。
 
-            var os_threads = Enviroment.GetProcessorCount(); // 1)
+            var os_threads = Enviroment.GetProcessorCores(); // 1)
             var ponder = Ponders[0] && Ponders[1] ? 2 : 1;   // 2)
 
             foreach (var c in All.IntColors())
