@@ -207,6 +207,19 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 // とりま、同じでいいような気もしている。
                 if (c.CommonOptions == null || c.CommonOptions.Count == 0 /*前回保存時に設定忘れ*/)
                     c.CommonOptions = EngineCommonOptionsSample.CommonOptionDefault();
+                else
+                {
+                    // この共通設定に現在存在しないオプションが混じっていると、その値によって個別設定が上書きされかねないので削除しておく。
+                    var currentCommonOptions = EngineCommonOptionsSample.CommonOptionDefault();
+
+                    var engineOptions = new List<EngineOption>();
+                    foreach(var option in c.CommonOptions)
+                    {
+                        if (currentCommonOptions.Exists(x => x.Name == option.Name))
+                            engineOptions.Add(option);
+                    }
+                    c.CommonOptions = engineOptions;
+                }
 
                 if (c.IndivisualEnginesOptions == null)
                     c.IndivisualEnginesOptions = new List<IndivisualEngineOptions>();

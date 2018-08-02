@@ -1,6 +1,7 @@
 ﻿using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Usi;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -170,6 +171,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
         {
             // 生成に時間がかかる＆エンジンの起動ごとに必要なので
             // 生成したものを保存している。
+            if (options == null)
+                options = new EngineCommonOptionsSampleOptions();
 
             if (engineCommonOptions == null || !engineCommonOptionsOptions.Equals(options) )
             {
@@ -184,10 +187,12 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// singleton object
         /// </summary>
         private static EngineOptionsForSetting engineCommonOptions;
-        private static EngineCommonOptionsSampleOptions engineCommonOptionsOptions;
+        private static EngineCommonOptionsSampleOptions engineCommonOptionsOptions = new EngineCommonOptionsSampleOptions();
 
         private static EngineOptionsForSetting CreateEngineCommonOptions_(EngineCommonOptionsSampleOptions options)
         {
+            Debug.Assert(options != null);
+
             var setting = new EngineOptionsForSetting()
             {
 
