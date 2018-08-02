@@ -36,6 +36,7 @@ namespace MyShogi.App
             ReadOutSenteGoteEverytime = 1;
             //EngineConsiderationWindowEnableWhenVsHuman = true;
             ConsiderationMultiPV = 5;
+            ConsiderationWindowFollowMainWindow = true;
         }
 
         /// <summary>
@@ -380,6 +381,18 @@ namespace MyShogi.App
         /// </summary>
         [DataMember]
         public int ConsiderationMultiPV { get; set; }
+
+
+        /// <summary>
+        /// 検討ウィンドウがメインウインドウを追随するか
+        /// デフォルト : true
+        /// </summary>
+        [DataMember]
+        public bool ConsiderationWindowFollowMainWindow
+        {
+            get { return GetValue<bool>("ConsiderationWindowFollowMainWindow"); }
+            set { SetValue<bool>("ConsiderationWindowFollowMainWindow", value); }
+        }
 
         /// <summary>
         /// 検討ウィンドウで思考エンジンが後手番のときに評価値を反転させるか(先手から見た評価値にするか)のフラグ

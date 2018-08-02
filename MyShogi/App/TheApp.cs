@@ -129,6 +129,7 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("NegateEvalWhenWhite", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("ConsiderationWindowFollowMainWindow", mainDialog.UpdateMenuItems, mainDialog);
 
             // -- ロギング用のハンドラをセット
 

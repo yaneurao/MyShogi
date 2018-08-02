@@ -720,6 +720,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var setting = new GameSetting();
 
                 // 検討モードの名前はエンジン名から取得
+                // →　ただし、棋譜を汚してはならないので棋譜の対局者名には反映しない。
+
                 var engineDefine = engineDefineEx.EngineDefine;
                 var engineName = engineDefine.DisplayName;
 

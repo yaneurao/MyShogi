@@ -480,6 +480,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
         }
 
+        // -- 形勢グラフ用。あとで見直す。
+
         /// <summary>
         /// 評価値グラフ用データ生成
         /// </summary>

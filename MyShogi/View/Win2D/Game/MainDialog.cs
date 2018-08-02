@@ -158,11 +158,14 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void UpdateEngineConsiderationDialogLocation()
         {
-            if (engineConsiderationDialog != null)
+            if (TheApp.app.config.ConsiderationWindowFollowMainWindow)
             {
-                var loc = Location;
-                engineConsiderationDialog.Location =
-                    new Point(loc.X, loc.Y + Height);
+                if (engineConsiderationDialog != null)
+                {
+                    var loc = Location;
+                    engineConsiderationDialog.Location =
+                        new Point(loc.X, loc.Y + Height);
+                }
             }
         }
 
@@ -1408,6 +1411,18 @@ namespace MyShogi.View.Win2D
                             };
                             item_.DropDownItems.Add(item);
                         }
+
+                        {
+                            var item = new ToolStripMenuItem();
+                            item.Text = "メインウィンドウに追随する(&F)"; // Follow the main window
+                            item.Checked = config.ConsiderationWindowFollowMainWindow;
+                            item.Click += (sender, e) =>
+                            {
+                                config.ConsiderationWindowFollowMainWindow ^= true;
+                            };
+                            item_.DropDownItems.Add(item);
+                        }
+
 
                     }
 
