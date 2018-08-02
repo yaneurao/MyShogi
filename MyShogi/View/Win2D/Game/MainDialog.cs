@@ -23,6 +23,26 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
         }
 
+        #region ViewModel
+
+        public class MainDialogViewModel : NotifyObject
+        {
+            /// <summary>
+            /// 棋譜の上書き保存のために、前回保存したときの名前を保持しておく。
+            /// この値がnullになると、ファイルの上書き保存ができなくなるので
+            /// この値の変更イベントをハンドルしてメニューの更新を行う。
+            /// </summary>
+            public string LastFileName
+            {
+                get { return GetValue<string>("LastFileName"); }
+                set { SetValue<string>("LastFileName", value); }
+            }
+
+        }
+        public MainDialogViewModel ViewModel = new MainDialogViewModel();
+
+        #endregion
+
         #region public methods
         /// <summary>
         /// LocalGameServerを渡して、このウィンドウに貼り付けているGameScreenControlを初期化してやる。
@@ -43,6 +63,9 @@ namespace MyShogi.View.Win2D
             // エンジンの読み筋などを、検討ダイアログにリダイレクトする。
             gameScreenControl1.ThinkReportChanged = ThinkReportChanged;
 
+            // -- ViewModelのハンドラの設定
+
+            ViewModel.AddPropertyChangedHandler("LastFileName", (_) => UpdateMenuItems() );
         }
 
         #endregion
@@ -497,6 +520,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void MainDialog_KeyDown(object sender, KeyEventArgs e)
         {
+            // Ctrl+V による棋譜の貼り付け
             if (gameScreenControl1.gameServer.GameMode == GameModeEnum.ConsiderationWithoutEngine)
             {
                 if (e.KeyCode == Keys.V && e.Control == true)
@@ -511,8 +535,61 @@ namespace MyShogi.View.Win2D
                     //クリップボードからテキスト取得
                     var text = Clipboard.GetText();
                     gameServer.KifuReadCommand(text);
+                    ViewModel.LastFileName = null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Drag & Dropのためのハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainDialog_DragEnter(object sender, DragEventArgs e)
+        {
+            // 対局中は受け付けない。
+            if (gameScreenControl1.gameServer.GameMode != GameModeEnum.ConsiderationWithoutEngine)
+                return;
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                // ドラッグ中のファイルやディレクトリの取得
+                var drags = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                // ファイル以外であればイベント・ハンドラを抜ける
+                foreach (string d in drags)
+                    if (!System.IO.File.Exists(d))
+                        return;
+
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        /// <summary>
+        /// Drag & Dropによる棋譜ファイルの貼り付け
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainDialog_DragDrop(object sender, DragEventArgs e)
+        {
+            if (gameScreenControl1.gameServer.GameMode != GameModeEnum.ConsiderationWithoutEngine)
+                return;
+
+            var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (files.Length == 0)
+                return;
+            var file = files[0];
+
+            // このファイルを読み込みたいということはわかった。
+
+            if (gameScreenControl1.gameServer.KifuDirty)
+            {
+                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に棋譜を貼り付けますか？", MessageShowType.WarningOkCancel)
+                    != DialogResult.OK)
+                    return;
+            }
+
+            ReadKifFile(file);
         }
 
         /// <summary>
@@ -541,18 +618,13 @@ namespace MyShogi.View.Win2D
 
         #region update menu
 
-        /// <summary>
-        /// 棋譜の上書き保存のために、前回保存したときの名前を保持しておく。
-        /// </summary>
-        private string lastFileName;
-
         private void ReadKifFile(string filename)
         {
             try
             {
                 var kifu_text = FileIO.ReadText(filename);
                 gameServer.KifuReadCommand(kifu_text);
-                lastFileName = filename; // 最後に開いたファイルを記録しておく。
+                ViewModel.LastFileName = filename; // 最後に開いたファイルを記録しておく。
             }
             catch
             {
@@ -648,6 +720,7 @@ namespace MyShogi.View.Win2D
                     {
                         var item = new ToolStripMenuItem();
                         item.Text = "棋譜の上書き保存(&S)";
+                        item.Enabled = ViewModel.LastFileName != null; // 棋譜を読み込んだ時などにしか有効ではない。
                         item.Click += (sender, e) =>
                         {
                             try
@@ -655,8 +728,8 @@ namespace MyShogi.View.Win2D
                                 // 「開く」もしくは「名前をつけて保存無したファイルに上書きする。
                                 // 「局面の保存」は棋譜ではないのでこれは無視する。
                                 // ファイル形式は、拡張子から自動判別する。
-                                gameServer.KifuWriteCommand(lastFileName,
-                                KifuFileTypeExtensions.StringToKifuFileType(lastFileName));
+                                gameServer.KifuWriteCommand(ViewModel.LastFileName,
+                                    KifuFileTypeExtensions.StringToKifuFileType(ViewModel.LastFileName));
                             }
                             catch
                             {
@@ -668,7 +741,7 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "棋譜の名前をつけて保存(&N)";
+                        item.Text = "棋譜を名前をつけて保存(&N)";
                         item.Click += (sender, e) =>
                         {
                             var fd = new SaveFileDialog();
@@ -710,7 +783,7 @@ namespace MyShogi.View.Win2D
                                     }
 
                                     gameServer.KifuWriteCommand(filename, kifuType);
-                                    lastFileName = filename; // 最後に保存したファイルを記録しておく。
+                                    ViewModel.LastFileName = filename; // 最後に保存したファイルを記録しておく。
                                     gameServer.KifuDirty = false; // 棋譜綺麗になった。
                                 }
                                 catch
@@ -724,7 +797,7 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "局面の保存(&O)"; // Pは印刷(Print)で使いたいため、Positionの"O"をショートカットキーにする。
+                        item.Text = "局面の保存(&I)"; // Pは印刷(Print)で使いたいため、positionの"I"をショートカットキーにする。
                         item.Click += (sender, e) =>
                         {
                             var fd = new SaveFileDialog();

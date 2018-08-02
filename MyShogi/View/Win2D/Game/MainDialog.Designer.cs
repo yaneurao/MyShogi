@@ -269,6 +269,7 @@
             // 
             // MainDialog
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(518, 256);
@@ -282,6 +283,8 @@
             this.Text = "MyShogi";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainDialog_FormClosing);
             this.Load += new System.EventHandler(this.MainDialog_Load);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainDialog_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainDialog_DragEnter);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainDialog_KeyDown);
             this.Move += new System.EventHandler(this.MainDialog_Move);
             this.Resize += new System.EventHandler(this.MainDialog_Resize);
