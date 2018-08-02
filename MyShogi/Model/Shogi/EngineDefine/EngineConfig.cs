@@ -115,8 +115,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
             if (indSetting != null && indSetting.Options != null)
             {
                 var opt = indSetting.Options.Find(x => x.Name == name);
-                if (opt != null && !opt.FollowCommonSetting /* 共通設定に従わない */)
-                    value = opt.Value;
+                if (opt != null)
+                {
+                    if (!opt.FollowCommonSetting /* 共通設定に従わない */)
+                        value = opt.Value;
+                    else if (value == null)
+                        // 共通設定、以前にあったこの項目が削除されている。この項目を共通設定に従うことは出来ない。ゆえに、ここで個別設定の値が代入されなければならない。
+                        // 次回のエンジンの個別設定ダイアログを開いた時に、opt.FollowCommonSetting には falseが代入されるので辻褄は合う。
+                        value = opt.Value;
+                }
             }
 
             // プリセットの適用

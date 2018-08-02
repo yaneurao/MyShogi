@@ -250,6 +250,7 @@ namespace MyShogi.Model.Shogi.Kifu
             return setting;
         }
 
+#if false
         public KifuTimeSettingMin ToKifuTimeSettingMin()
         {
             return new KifuTimeSettingMin()
@@ -281,8 +282,10 @@ namespace MyShogi.Model.Shogi.Kifu
                 TimeLimitless = min.TimeLimitless,
             };
         }
+#endif
     }
 
+#if false
     [DataContract]
     public class KifuTimeSettingMin
     {
@@ -296,6 +299,7 @@ namespace MyShogi.Model.Shogi.Kifu
         [DataMember] public bool IgnoreTime;
         [DataMember] public bool TimeLimitless;
     }
+#endif
 
     /// <summary>
     /// 対局時間設定 先後の両方の分
