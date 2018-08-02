@@ -375,6 +375,13 @@ namespace MyShogi.App
         public Size MainDialogClientSize { get; set; }
 
         /// <summary>
+        /// メインウインドウのデスクトップ上の位置。
+        /// 記憶しておいて、次回同じ位置に生成する。
+        /// </summary>
+        [DataMember]
+        public Point? DesktopLocation { get; set; }
+
+        /// <summary>
         /// 検討ウィンドウのサイズ。
         /// 記憶しておいて、次回同じサイズで生成する。
         /// </summary>

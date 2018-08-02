@@ -243,13 +243,13 @@ namespace MyShogi.Model.Common.Utility
         }
 
         /// <summary>
-        /// PeekTextの結果をcompareと比較します
-        /// upperLowerがfalseなら大文字小文字を区別しない
+        /// PeekText()の結果をtargetと比較する。
+        /// caseSentitiveがfalseなら大文字小文字を区別しない。
         /// </summary>
-        public bool PeekText(string compare, bool upperLower=false)
+        public bool PeekText(string target, bool caseSentitive=false)
         {
-            string peek = PeekText();
-            return upperLower ? peek == compare: peek.ToLower() == compare.ToLower();
+            var peek = PeekText();
+            return caseSentitive ? peek == target : peek.ToLower() == target.ToLower();
         }
 
         // -- 以下 private

@@ -220,9 +220,9 @@ namespace MyShogi.View.Win2D
                 int w = Screen.PrimaryScreen.Bounds.Width;
                 int h = Screen.PrimaryScreen.Bounds.Height - menu_height;
 
-                // いっぱいいっぱいだと邪魔なので90%ぐらい使うか。
-                w = (int)(w * 0.9);
-                h = (int)(h * 0.9);
+                // いっぱいいっぱいだと邪魔なので70%ぐらい使う。(検討ウィンドウのこともあるので…)
+                w = (int)(w * 0.7);
+                h = (int)(h * 0.7);
 
                 // 縦(h)を基準に横方向のクリップ位置を決める
                 // 1920 * 1080が望まれる比率
@@ -245,6 +245,19 @@ namespace MyShogi.View.Win2D
             }
 
             MinimumSize = new Size(192 * 2, 108 * 2 + menu_height);
+
+            // 前回のスクリーンの表示位置を復元する。
+            var desktopLocation = TheApp.app.config.DesktopLocation;
+            if (desktopLocation == null)
+            {
+                // 表示される位置があまりデスクトップの下の方だとウィンドウが画面下にめり込んでしまうのでデスクトップに対してセンタリングする。
+                //desktopLocation = new Point((Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2, (Screen.PrimaryScreen.WorkingArea.Height - this.Height) / 2);
+
+                // →　検討ウィンドウの表示のことを考えて、少し上らへんにする。
+                desktopLocation = new Point((Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2, (Screen.PrimaryScreen.WorkingArea.Height - this.Height) / 4);
+            }
+
+            DesktopLocation = desktopLocation.Value;
         }
 
         /// <summary>
@@ -604,13 +617,18 @@ namespace MyShogi.View.Win2D
                 if (TheApp.app.MessageShow("対局中ですが本当に終了しますか？", MessageShowType.WarningOkCancel)
                     != DialogResult.OK)
                     e.Cancel = true;
-
             }
             else if (gameScreenControl1.gameServer.KifuDirty)
             {
                 if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に終了しますか？", MessageShowType.ConfirmationOkCancel)
                     != DialogResult.OK)
                     e.Cancel = true;
+            }
+
+            if (!e.Cancel)
+            {
+                // 終了することが確定したのでデスクトップ上の位置を保存しておく。
+                TheApp.app.config.DesktopLocation = DesktopLocation;
             }
         }
 
@@ -1254,44 +1272,6 @@ namespace MyShogi.View.Win2D
                         item_display.DropDownItems.Add(item);
                     }
 
-                    { // -- 棋譜ウィンドウの横幅
-                        
-                        var item = new ToolStripMenuItem();
-                        item.Text = "棋譜ウィンドウの横幅(&K)"; // Kifu window
-
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = "100%(通常)(&1)"; // None
-                        item1.Checked = config.KifuWindowWidthType == 0;
-                        item1.Click += (sender, e) => { config.KifuWindowWidthType = 0; };
-                        item.DropDownItems.Add(item1);
-
-                        var item2 = new ToolStripMenuItem();
-                        item2.Text = "125%(&2)";
-                        item2.Checked = config.KifuWindowWidthType == 1;
-                        item2.Click += (sender, e) => { config.KifuWindowWidthType = 1; };
-                        item.DropDownItems.Add(item2);
-
-                        var item3 = new ToolStripMenuItem();
-                        item3.Text = "150%(&3)";
-                        item3.Checked = config.KifuWindowWidthType == 2;
-                        item3.Click += (sender, e) => { config.KifuWindowWidthType = 2; };
-                        item.DropDownItems.Add(item3);
-
-                        var item4 = new ToolStripMenuItem();
-                        item4.Text = "175%(&4)";
-                        item4.Checked = config.KifuWindowWidthType == 3;
-                        item4.Click += (sender, e) => { config.KifuWindowWidthType = 3; };
-                        item.DropDownItems.Add(item4);
-
-                        var item5 = new ToolStripMenuItem();
-                        item5.Text = "200%(&5)";
-                        item5.Checked = config.KifuWindowWidthType == 4;
-                        item5.Click += (sender, e) => { config.KifuWindowWidthType = 4; };
-                        item.DropDownItems.Add(item5);
-
-                        item_display.DropDownItems.Add(item);
-                    }
-
                 }
 
                 // 「音声」
@@ -1545,7 +1525,7 @@ namespace MyShogi.View.Win2D
 
                         {
                             var item = new ToolStripMenuItem();
-                            item.Text = "メインウィンドウに追随する(&F)"; // Follow the main window
+                            item.Text = "メインウィンドウの移動に追随する(&F)"; // Follow the main window
                             item.Checked = config.ConsiderationWindowFollowMainWindow;
                             item.Click += (sender, e) =>
                             {
@@ -1556,6 +1536,54 @@ namespace MyShogi.View.Win2D
 
 
                     }
+
+                    { // -- 棋譜ウィンドウ
+
+
+                        var item_ = new ToolStripMenuItem();
+                        item_.Text = "棋譜ウィンドウ(&K)"; // Kifu window
+
+                        item_window.DropDownItems.Add(item_);
+
+                        { // 横幅
+                            var item = new ToolStripMenuItem();
+                            item.Text = "横幅(&W)"; // Width
+                            item_.DropDownItems.Add(item);
+
+                            {
+                                var item1 = new ToolStripMenuItem();
+                                item1.Text = "100%(通常)(&1)"; // None
+                                item1.Checked = config.KifuWindowWidthType == 0;
+                                item1.Click += (sender, e) => { config.KifuWindowWidthType = 0; };
+                                item.DropDownItems.Add(item1);
+
+                                var item2 = new ToolStripMenuItem();
+                                item2.Text = "125%(&2)";
+                                item2.Checked = config.KifuWindowWidthType == 1;
+                                item2.Click += (sender, e) => { config.KifuWindowWidthType = 1; };
+                                item.DropDownItems.Add(item2);
+
+                                var item3 = new ToolStripMenuItem();
+                                item3.Text = "150%(&3)";
+                                item3.Checked = config.KifuWindowWidthType == 2;
+                                item3.Click += (sender, e) => { config.KifuWindowWidthType = 2; };
+                                item.DropDownItems.Add(item3);
+
+                                var item4 = new ToolStripMenuItem();
+                                item4.Text = "175%(&4)";
+                                item4.Checked = config.KifuWindowWidthType == 3;
+                                item4.Click += (sender, e) => { config.KifuWindowWidthType = 3; };
+                                item.DropDownItems.Add(item4);
+
+                                var item5 = new ToolStripMenuItem();
+                                item5.Text = "200%(&5)";
+                                item5.Checked = config.KifuWindowWidthType == 4;
+                                item5.Click += (sender, e) => { config.KifuWindowWidthType = 4; };
+                                item.DropDownItems.Add(item5);
+                            }
+                        }
+                    }
+
 
 #if false // マスターアップに間に合わなさそう。
                     { // ×ボタンで消していた形勢グラフウィンドウの復活

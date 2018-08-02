@@ -35,7 +35,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             // presetの1つ目に「カスタム」を挿入。
 
-            var custom_preset = new EnginePreset("カスタム", "カスタム・チューニングです。「詳細設定」の設定に従います。");
+            var custom_preset = new EnginePreset("カスタム",
+                "カスタム・チューニングです。「詳細設定」の内容に従います。\r\n" +
+                "CPU負荷率が気になる方は、「詳細設定」の「スレッド数」のところで調整してください。");
             def.Presets.Insert(0, custom_preset);
 
             return def;
