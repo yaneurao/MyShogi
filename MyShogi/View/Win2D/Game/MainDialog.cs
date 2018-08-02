@@ -1671,6 +1671,21 @@ namespace MyShogi.View.Win2D
                     }
 
                     {
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "操作説明(オンラインマニュアル) (&M)"; // Manual
+                        item1.Click += (sender, e) =>
+                        {
+                            // MyShogi公式のonline manual
+                            var url = "https://github.com/yaneurao/MyShogi/tree/master/MyShogi/docs/online_manual.md";
+
+                            System.Diagnostics.Process.Start(url);
+                        };
+                        item_others.DropDownItems.Add(item1);
+                    }
+
+                    
+
+                    {
                         // aboutダイアログ
 
                         var item1 = new ToolStripMenuItem();

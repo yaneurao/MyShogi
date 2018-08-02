@@ -166,7 +166,9 @@ USIプロトコル対応のエンジンならば問題なく使えます。
 
 # 使い方
 
-USIプロトコル対応の将棋エンジンが使えます。
+- USIプロトコル対応の将棋エンジンが使えます。
+- GUIの操作説明については、[オンラインマニュアル](https://github.com/yaneurao/MyShogi/tree/master/MyShogi/docs/online_manual.md")をどうぞ。
+
 
 // 以下、書きかけ
 
