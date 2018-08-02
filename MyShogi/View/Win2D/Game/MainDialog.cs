@@ -1321,7 +1321,16 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item1 = new ToolStripMenuItem();
-                        item1.Text = "棋譜読み上げ(&R)"; // Read out
+                        item1.Text = "検討時の駒音(&Q)"; // Piece soundのPの(アルファベット的に)次の文字。
+                        item1.Checked = TheApp.app.config.PieceSoundOffTheGame == 1;
+                        item1.Click += (sender, e) => { TheApp.app.config.PieceSoundOffTheGame ^= 1 /* 0,1反転 */; };
+                        item_sounds.DropDownItems.Add(item1);
+                    }
+
+
+                    {
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "対局時の棋譜読み上げ(&R)"; // Read out
                         item1.Checked = TheApp.app.config.KifuReadOut == 1;
                         item1.Enabled = TheApp.app.config.CommercialVersion != 0; // 商用版のみ選択可
                         item1.Click += (sender, e) => { TheApp.app.config.KifuReadOut ^= 1 /* 0,1反転 */; };

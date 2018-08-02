@@ -81,12 +81,16 @@ namespace MyShogi.Model.Shogi.LocalServer
                         // これを積んでおけばworker_threadのほうでいずれ処理される。(かも)
                         // 仮に、すでに次の局面になっていたとしても、次にこのユーザーの手番になったときに
                         // BestMove = Move.NONEとされるのでその時に破棄される。
-                        stmPlayer.SpecialMove = m;
+                        stmPlayer.BestMove = m;
                     }
                 } else if (GameMode.IsConsideration()){
 
                     // 対局中でなく、盤面編集中でなければ自由に動かせる。
                     // 受理して、必要ならば分岐棋譜を生成して…。
+
+                    // これが合法手だとわかっているなら駒音を再生する。
+                    if (Position.IsLegal(m))
+                        PlayPieceSound(GameMode, m.To(), stm);
 
                     var misc = config.GameSetting.MiscSettings;
                     kifuManager.Tree.DoMoveUI(m , misc);

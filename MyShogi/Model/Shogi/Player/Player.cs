@@ -32,7 +32,7 @@ namespace MyShogi.Model.Shogi.Player
         /// Think()を二重に呼び出した場合、後者のThink()から戻ってきたあとは、後者のThink()に対応する思考が終わるまでは
         /// Move.NONEが返ることが保証されている。
         /// </summary>
-        Move BestMove { get; }
+        Move BestMove { get; set; }
 
         /// <summary>
         /// TIME_UPなどが積まれる。BestMoveより優先して解釈される。

@@ -50,7 +50,11 @@ namespace MyShogi.Model.Shogi.Player
         /// <summary>
         /// このプレイヤーが指した指し手
         /// </summary>
-        public Move BestMove { get { return Engine.BestMove; } }
+        public Move BestMove
+        {
+            get { return Engine.BestMove; }
+            set { /*実は実装してない*/ }
+        }
 
         /// <summary>
         /// TIME_UPなどが積まれる。BestMoveより優先して解釈される。

@@ -78,13 +78,9 @@ namespace MyShogi.Model.Resource.Sounds
         /// <summary>
         /// 駒音の再生。これは即座に再生される。
         /// </summary>
-        /// <param name="crash"></param>
         public void PlayPieceSound(SoundEnum e)
         {
-            if (TheApp.app.config.PieceSoundInTheGame != 0)
-            {
-                TheApp.app.soundManager.Play(e);
-            }
+            TheApp.app.soundManager.Play(e);
         }
 
         /// <summary>

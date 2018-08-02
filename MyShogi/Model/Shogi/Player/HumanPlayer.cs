@@ -21,7 +21,7 @@ namespace MyShogi.Model.Shogi.Player
         /// <summary>
         /// このプレイヤーが指した指し手
         /// </summary>
-        public Move BestMove { get; }
+        public Move BestMove { get; set; }
 
         /// <summary>
         /// TIME_UPなどが積まれる。BestMoveより優先して解釈される。
@@ -46,7 +46,10 @@ namespace MyShogi.Model.Shogi.Player
 
         public void OnIdle() { }
 
-        public void Think(string usiPosition , UsiThinkLimit limit , Color sideToMove) { }
+        public void Think(string usiPosition , UsiThinkLimit limit , Color sideToMove)
+        {
+            BestMove = Move.NONE; // いったんこのタイミングでクリアする。
+        }
 
         public void Dispose() { }
 

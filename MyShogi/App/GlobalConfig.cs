@@ -31,6 +31,7 @@ namespace MyShogi.App
             PromotePieceColorType = 0;
             TurnDisplay = 1;
             PieceSoundInTheGame = 1;
+            PieceSoundOffTheGame = 1;
             //CrashPieceSoundInTheGame = 1;
             KifuReadOut = 1;
             ReadOutSenteGoteEverytime = 1;
@@ -286,6 +287,18 @@ namespace MyShogi.App
             set { SetValue<int>("CrashPieceSoundInTheGame", value); }
         }
 #endif
+
+        /// <summary>
+        /// 非対局時の駒音
+        /// 0 : なし
+        /// 1 : あり(デフォルト)
+        /// </summary>
+        [DataMember]
+        public int PieceSoundOffTheGame
+        {
+            get { return GetValue<int>("PieceSoundOffTheGame"); }
+            set { SetValue<int>("PieceSoundOffTheGame", value); }
+        }
 
         /// <summary>
         /// 棋譜の読み上げ
