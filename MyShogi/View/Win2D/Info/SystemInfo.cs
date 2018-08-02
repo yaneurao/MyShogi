@@ -29,6 +29,8 @@ namespace MyShogi.View.Win2D
             sb.AppendLine($"Environment.Is64BitProcess: {Environment.Is64BitProcess}");
             sb.AppendLine($"Environment.ProcessorCount: {Environment.ProcessorCount}");
 
+            sb.AppendLine("--------");
+
             var cpuid = Model.Common.Utility.CpuId.flags;
 
 #if false
@@ -54,6 +56,8 @@ namespace MyShogi.View.Win2D
             sb.AppendLine($"hasAVX2: {cpuid.hasAVX2}");
             sb.AppendLine($"hasAVX512F: {cpuid.hasAVX512F}");
 
+            sb.AppendLine("--------");
+
             using (ManagementClass mc = new ManagementClass("Win32_OperatingSystem"))
             using (ManagementObjectCollection moc = mc.GetInstances())
                 foreach (ManagementObject mo in moc)
@@ -75,6 +79,28 @@ namespace MyShogi.View.Win2D
                     {
                         sb.AppendLine($"{key}: {mo[key]:N0}kB");
                     }
+                    sb.AppendLine("--------");
+                    mo.Dispose();
+                }
+
+            using (ManagementClass mc = new ManagementClass("Win32_Processor"))
+            using (ManagementObjectCollection moc = mc.GetInstances())
+                foreach (ManagementObject mo in moc)
+                {
+                    foreach (string key in new[] {
+                        "DeviceID",
+                        "Name",
+                        "NumberOfCores",
+                        "NumberOfEnabledCore",
+                        "NumberOfLogicalProcessors",
+                        "MaxClockSpeed",
+                        "L2CacheSize",
+                        "L3CacheSize",
+                    })
+                    {
+                        sb.AppendLine($"{key}: {mo[key]}");
+                    }
+                    sb.AppendLine("--------");
                     mo.Dispose();
                 }
 
