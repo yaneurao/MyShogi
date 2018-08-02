@@ -70,6 +70,7 @@
     <Compile Include="Model\Common\Utility\Serializer.cs" />
     <Compile Include="Model\Common\Utility\StringExtensions.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
+    <Compile Include="Model\Common\Utility\ToolTipHelper.cs" />
     <Compile Include="Model\Common\Win32\Win32API.cs" />
     <Compile Include="Model\Resource\Images\SpriteEx.cs" />
     <Compile Include="Model\Resource\Sounds\SoundLoader.cs" />

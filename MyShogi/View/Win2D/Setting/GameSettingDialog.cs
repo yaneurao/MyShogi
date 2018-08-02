@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using MyShogi.App;
-using MyShogi.Model.Common;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using SCore = MyShogi.Model.Shogi.Core;
 

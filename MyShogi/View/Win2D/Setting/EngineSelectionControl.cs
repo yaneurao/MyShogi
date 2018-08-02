@@ -2,8 +2,8 @@
 using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
-using MyShogi.Model.Common;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.EngineDefine;
 

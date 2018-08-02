@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace MyShogi.Model.Common
+namespace MyShogi.Model.Common.Utility
 {
     // -- MessageBoxに表示するヘルパークラス
 

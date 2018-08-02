@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using MyShogi.Model.Common;
+using MyShogi.Model.Common.Utility;
 
 namespace MyShogi.App
 {

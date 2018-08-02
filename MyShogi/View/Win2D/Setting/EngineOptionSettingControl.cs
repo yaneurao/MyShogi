@@ -97,6 +97,11 @@ namespace MyShogi.View.Win2D.Setting
         {
             Debug.Assert(setting != null && setting.Options != null && setting.Descriptions != null);
 
+            var followCommonSettingDescription =
+                "左側のチェックボックスの説明\r\n" +
+                "このチェックボックスをオンにすると、この項目は共通設定に従います。\r\n" +
+                "このチェックボックスをオフにすると、このエンジン用にこの項目の値を個別に設定できます。";
+
             // -- 順番にControlを生成して表示する。
             SuspendLayout();
 
@@ -117,8 +122,10 @@ namespace MyShogi.View.Win2D.Setting
             // bindしている値が変化した時にイベントを生起する
             var valueChanged = new Action(() => ViewModel.RaisePropertyChanged("ValueChanged", null));
 
-            foreach (var desc in setting.Descriptions)
+            for (var k = 0; k < setting.Descriptions.Count; ++k)
             {
+                var desc = setting.Descriptions[k];
+
                 if (desc.Hide)
                     continue;
 
@@ -141,13 +148,11 @@ namespace MyShogi.View.Win2D.Setting
                         page.Add(label);
                     }
 
-                    var description = desc.Description;
                     var displayName = desc.DisplayName.TrimStart();
-                    var h = new EventHandler((sender, args) =>
-                    {
-                        label4.Text = displayName + "とは？";
-                        textBox1.Text = description;
-                    });
+
+                    var description =
+                        displayName + "の説明\r\n" +
+                        (desc.Description == null ? "説明文がありません。" : desc.Description);
 
                     var label1 = new Label();
                     label1.Location = new Point(label_x[0] + x_offset, y);
@@ -157,7 +162,8 @@ namespace MyShogi.View.Win2D.Setting
                     // Font()の第三引数に " GraphicsUnit.Pixel "をつけるとdpi設定の影響を受けない。
                     // ここでは、dpi設定の影響を受けないといけないので、指定しない。
 
-                    label1.MouseHover += h;
+                    toolTip1.SetToolTip(label1, description);
+
                     Controls.Add(label1);
                     page.Add(label1);
 
@@ -258,20 +264,18 @@ namespace MyShogi.View.Win2D.Setting
                 }
                 if (control != null)
                 {
-                    var description = desc.Description;
                     var displayName = desc.DisplayName == null ? desc.Name : desc.DisplayName;
-                    var h = new EventHandler( (sender, args) =>
-                    {
-                        label4.Text = displayName + "の説明";
-                        textBox1.Text = description;
-                    });
+                    var description =
+                        displayName + "の説明\r\n"+
+                        (desc.Description == null ? "説明文がありません。" : desc.Description);
 
                     var label1 = new Label();
                     label1.Font = new Font("ＭＳ ゴシック", 10);
                     label1.Location = new Point(label_x[0] + x_offset, y);
                     label1.AutoSize = true;
-                    label1.Text = displayName.Left(16); // GPS将棋とか長すぎるオプション名がある。
-                    label1.MouseHover += h;
+                    label1.Text = displayName.LeftUnicode(18); // GPS将棋とか長すぎるオプション名がある。
+                    toolTip1.SetToolTip(label1, description);
+
                     Controls.Add(label1);
                     page.Add(label1);
 
@@ -280,12 +284,14 @@ namespace MyShogi.View.Win2D.Setting
                     label2.Location = new Point(label_x[2] + x_offset  + hh /* 配置したcontrolから少し右に配置 */ , y);
                     label2.AutoSize = true;
                     label2.Text = desc.DescriptionSimple;
-                    label2.MouseHover += h;
+                    toolTip1.SetToolTip(label2, description);
+
                     Controls.Add(label2);
                     page.Add(label2);
 
                     control.Location = new Point(label_x[1] + x_offset , y);
-                    control.MouseHover += h;
+                    toolTip1.SetToolTip(control, description);
+
                     control.Font = new Font("ＭＳ ゴシック", 9);
 
                     control.Size = new Size(label_x[2] - label_x[1] , control.Height);
@@ -296,16 +302,12 @@ namespace MyShogi.View.Win2D.Setting
                     {
                         // エンジン個別設定なので左端に「共通設定に従う」のチェックボックスを配置する。
 
-                        var followCheckboxHover = new EventHandler((sender, args) =>
-                        {
-                            label4.Text = "左端のチェックボックス";
-                            textBox1.Text = "このチェックボックスをオンにすると、この項目は共通設定に従います。"; ;
-                        });
-
                         var checkbox = new CheckBox();
                         checkbox.Location = new Point(label_x[0], y);
                         checkbox.Size = new Size(x_offset, control.Height);
-                        checkbox.MouseHover += followCheckboxHover;
+                        //checkbox.MouseHover += followCheckboxHover;
+                        toolTip1.SetToolTip(checkbox, followCommonSettingDescription);
+
                         Controls.Add(checkbox);
                         page.Add(checkbox);
 
@@ -326,7 +328,11 @@ namespace MyShogi.View.Win2D.Setting
                     y += control.Height + hh/3;
                 }
 
-                if (y >= label4.Location.Y - label4.Height * 2.5 /* 見出しがありうる */)
+                // 次の項目が見出し項目であるか
+                var nextIsHeader = k+1 < setting.Descriptions.Count && !setting.Descriptions[k+1].Hide && setting.Descriptions[k+1].Name == null;
+                if ((y >= button1.Location.Y - button1.Height * 2.5)
+                    || (nextIsHeader && y >= button1.Location.Y - button1.Height * 4.5) /* 次が見出し項目なら早めに次ページに改ページする */
+                    )
                 {
                     // 次ページに
 
@@ -353,13 +359,13 @@ namespace MyShogi.View.Win2D.Setting
                 ClientSize.Height - button1.Height - 3);
 
             // textBox1は、「前ページ」「次ページ」ボタンの上に位置しているべきである。
-            textBox1.Location = new Point(textBox1.Location.X, button1.Location.Y - textBox1.Height - 3);
-            textBox1.Size = new Size(ClientSize.Width, textBox1.Height);
+            //textBox1.Location = new Point(textBox1.Location.X, button1.Location.Y - textBox1.Height - 3);
+            //textBox1.Size = new Size(ClientSize.Width, textBox1.Height);
 
             // label4はtextBox1に表示されているテキストの説明文である。
             // これをtextBox1の上にdockさせる。
 
-            label4.Location = new Point(label4.Location.X, textBox1.Location.Y - label4.Height - 3);
+            //label4.Location = new Point(label4.Location.X, textBox1.Location.Y - label4.Height - 3);
 
             // -- タブ内に隠れているほうは、Resizeイベントが発生していなくて、label4が移動していない。
             // Resize()に対して、このメソッドが呼び出されるべき。
@@ -422,6 +428,17 @@ namespace MyShogi.View.Win2D.Setting
         {
             UpdatePage(currentPage + 1);
         }
+
+        /// <summary>
+        /// マウスの移動イベント
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EngineOptionSettingControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            toolTipHelper.OnMouseMove(this, this.toolTip1, e.Location);
+        }
+        private ToolTipHelper toolTipHelper = new ToolTipHelper();
 
         private void OnDisposed(object sender, EventArgs e)
         {

@@ -187,7 +187,10 @@ USIプロトコル対応の将棋エンジンが使えます。
 - レーティング計測にご協力いただいたuuunuuunさん
 - やねうら王に貢献してくださっている方々
 - Stockfishの開発チーム
-- βテスターでご協力いただいた皆さん(うさ親さん , masaさん , kumaさん , 48さん , tanuki-さん , まふさん , suimonさん , uuunuuunさん , tibigameさん , ぐららるさん , yoiyoiさん , Wandre-sakさん , …)
+- βテスターでご協力いただいた皆さん
+  - うさ親さん , masaさん , kumaさん , 48さん , かず@なのはさん , tanuki-さん , Wandre-sakさん , tibigameさん
+  - まふさん , suimonさん , uuunuuunさん ,  田中誠さん
+  - ぐららるさん , yoiyoiさん , 和左積 商さん , Backgammonさん , tkponさん
 
 # ライセンス
 
