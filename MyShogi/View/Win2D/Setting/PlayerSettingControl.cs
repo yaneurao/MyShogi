@@ -111,16 +111,17 @@ namespace MyShogi.View.Win2D.Setting
         {
             // -- プレイヤーごとの設定
 
-            // 対局者氏名
-            binder.Bind(player, "PlayerName", textBox1);
-
             // 対局者の種別
             binder.Bind(player, "IsHuman", radioButton1);
             binder.Bind(player, "IsCpu", radioButton2);
 
+            // 対局者氏名
+            // IsCpuにした時にradioButtonの変更イベントが発生するので表示名が変わるから、ここで代入しなおす。
+            binder.Bind(player, "PlayerName", textBox1);
+
             // プリセット
             // この値を変更した時に、エンジンのプリセット選択のほうにも反映しないといけないが、それはcomboBoxの変更イベントで行っている。
-            
+
             binder.Bind(player, "SelectedEnginePreset", comboBox1 );
 
             // ponder(相手の手番でも思考するか)
@@ -215,9 +216,10 @@ namespace MyShogi.View.Win2D.Setting
 
                     // -- 対局者名の設定
 
-                    // 人間が選択されている時は、Radioボタンのハンドラでプレイヤー名が「先手」「後手」になるのでここでは設定しない。
-                    if (player.IsCpu)
-                        textBox1.Text = engine_define.DisplayName;
+                    //// 人間が選択されている時は、Radioボタンのハンドラでプレイヤー名が「先手」「後手」になるのでここでは設定しない。
+                    //if (player.IsCpu)
+                    //    textBox1.Text = engine_define.DisplayName;
+                    // →　ここでやるべきではない。エンジンを選択した瞬間のみに代入するようにしたほうが良い。
 
                     // -- プリセットのコンボボックス
 
@@ -398,9 +400,13 @@ namespace MyShogi.View.Win2D.Setting
 
                     ViewModel.RaisePropertyChanged("EngineSelectionButtonClicked");
                     return;
-                } 
+                }
 
+                // プレイヤー名をエンジンの名前に変更する。
                 textBox1.Text = engineDefineEx.EngineDefine.DisplayName;
+                // →　このタイミングで変更するとdata-bindでこの値が書き換えられた時に設定されてしまう…。
+                // ユーザーがUI操作で変更した時とdata bindによって値が変更された時とは事情が異なる。
+                // data bindするときの順番を調整することで回避しておく。
             }
         }
 

@@ -288,8 +288,12 @@ namespace MyShogi.View.Win2D
                 dialog.ConsiderationInstance(0).Notify.AddPropertyChangedHandler("MultiPV", (h) =>
                  { gameServer.ChangeMultiPvCommand((int)h.value); });
 
+                // 検討ウィンドウを×ボタンで非表示にした時にメニューの検討ウィンドウのところが更新になるのでメニューのrefreshが必要。
+                dialog.ViewModel.AddPropertyChangedHandler("CloseButtonClicked", (_) => { UpdateMenuItems(); });
+
                 engineConsiderationDialog = dialog;
                 // 何にせよ、インスタンスがなくては話にならないので生成だけしておく。
+
             } else
             {
                 // 検討ウィンドウが非表示になっていたら、PVのメッセージ無視していいや…。
@@ -298,7 +302,11 @@ namespace MyShogi.View.Win2D
                         return;
             }
 
+            var visible_old = engineConsiderationDialog.Visible;
             engineConsiderationDialog.DispatchThinkReportMessage(message);
+            // Dispatchした結果、Visible状態が変化したならメニューを更新してやる。
+            if (visible_old != engineConsiderationDialog.Visible)
+                UpdateMenuItems();
         }
 
         /// <summary>
@@ -1381,17 +1389,26 @@ namespace MyShogi.View.Win2D
                 {
                     { // ×ボタンで消していた検討ウィンドウの復活
 
-                        var item = new ToolStripMenuItem();
-                        item.Text = "検討ウィンドウの表示(&C)"; // Consideration window
-                        item.Click += (sender, e) =>
+                        var item_ = new ToolStripMenuItem();
+                        item_.Text = "検討ウィンドウ(&C)"; // Consideration window
+                        item_window.DropDownItems.Add(item_);
+
                         {
-                            if (engineConsiderationDialog != null)
+                            var item = new ToolStripMenuItem();
+                            item.Text = "再表示(&V)"; // Visible
+                            // 生成済みで非表示である時のみ
+                            item.Enabled = engineConsiderationDialog != null && !engineConsiderationDialog.Visible;
+                            item.Click += (sender, e) =>
                             {
-                                if (!engineConsiderationDialog.Visible)
-                                    engineConsiderationDialog.Visible = true;
-                            }
-                        };
-                        item_window.DropDownItems.Add(item);
+                                if (engineConsiderationDialog != null)
+                                {
+                                    if (!engineConsiderationDialog.Visible)
+                                        engineConsiderationDialog.Visible = true;
+                                }
+                            };
+                            item_.DropDownItems.Add(item);
+                        }
+
                     }
 
 #if false // マスターアップに間に合わなさそう。
@@ -1542,7 +1559,8 @@ namespace MyShogi.View.Win2D
 
                 }
 
-#if DEBUG
+                // 開発時にだけオンにして使う。
+#if false //DEBUG
 
                 // デバッグ用にメニューにテストコードを実行する項目を追加する。
                 {

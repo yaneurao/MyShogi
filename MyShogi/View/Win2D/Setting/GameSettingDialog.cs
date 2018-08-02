@@ -174,6 +174,7 @@ namespace MyShogi.View.Win2D
 
             var playerSettings = new[] { playerSettingControl1, playerSettingControl2 };
 
+            // エンジンを選択し、「選択」ボタンが押された時のイベントハンドラ
             engineSelectionDialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
             {
                 // これが選択された。
@@ -197,8 +198,12 @@ namespace MyShogi.View.Win2D
                         preset = 0;
 
                     var setting = TheApp.app.config.GameSetting;
-                    setting.PlayerSetting(c).SelectedEnginePreset = preset; // TwoWayでbindingしているのでこれで値変わるのでは？
+                    //setting.PlayerSetting(c).SelectedEnginePreset = preset;
+                    // TwoWayでbindingしているのでこれで値変わるはずだが同じ番号が選ばれるとイベントが発生しなくて…。
+                    setting.PlayerSetting(c).SetValueAndRaisePropertyChanged("SelectedEnginePreset",preset);
 
+                    // プレイヤー表示名の変更。
+                    setting.PlayerSetting(c).PlayerName = engineDefine.EngineDefine.DisplayName;
                 }
                 ReleaseEngineSelectionDialog();
             });

@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.LocalServer;
@@ -24,6 +25,27 @@ namespace MyShogi.View.Win2D
             InitSpliter();
             InitEngineConsiderationControl();
         }
+
+        // -- ViewModel
+
+        /// <summary>
+        /// このクラスで用いるViewModel
+        /// </summary>
+        public class EngineConsiderationDialogViewModel : NotifyObject
+        {
+            /// <summary>
+            /// 閉じるボタンが押された時に発生するイベント
+            /// </summary>
+            public object CloseButtonClicked
+            {
+                get { return GetValue<object>("CloseButtonClicked"); }
+                set { SetValue<object>("CloseButtonClicked", value); }
+            }
+        }
+
+        public EngineConsiderationDialogViewModel ViewModel = new EngineConsiderationDialogViewModel();
+
+        // -- init
 
         /// <summary>
         /// ミニ盤面の初期化
@@ -175,6 +197,8 @@ namespace MyShogi.View.Win2D
                     ConsiderationInstance(i).ClearHeader();
                     ConsiderationInstance(i).ClearItems();
                 }
+
+                ViewModel.RaisePropertyChanged("CloseButtonClicked");
             }
         }
 

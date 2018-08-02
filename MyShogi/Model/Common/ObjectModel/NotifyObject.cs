@@ -162,6 +162,27 @@ namespace MyShogi.Model.Common.ObjectModel
         }
 
         /// <summary>
+        /// SetValueして、強制的にRaisePropertyChanged()を呼び出す。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        public void SetValueAndRaisePropertyChanged<T>(string name, T value)
+        {
+            if (lockObject == null)
+                return;
+
+            lock (lockObject)
+            {
+                var current = GetProperty(name);
+                if (!GenericEquals(current.obj, value))
+                    current.obj = value;
+            }
+            if (PropertyChangedEventEnable)
+                RaisePropertyChanged(name, value);
+        }
+
+        /// <summary>
         /// propretyのgetterを実装するときに使う。
         /// SetValueと対にして用いる。
         /// 
