@@ -18,12 +18,12 @@ namespace MyShogi.App
             var caption = type.Pretty();
             var icon = type.ToIcon();
             var buttons = type.ToButtons();
-
+            
             if (mainForm != null && mainForm.IsHandleCreated && !mainForm.IsDisposed)
             {
                 var show = new Func<DialogResult>(() =>
                 {
-                    return MessageBox.Show(mainForm, text, caption, buttons , icon);
+                    return MessageBox.Show(mainForm, text, caption, buttons , icon );
                 });
 
                 if (mainForm.InvokeRequired)
@@ -35,7 +35,7 @@ namespace MyShogi.App
                     return show();
             }
             else
-                return MessageBox.Show(text, caption, buttons , icon);
+                return MessageBox.Show(text, caption, buttons , icon );
         }
 
         /// <summary>

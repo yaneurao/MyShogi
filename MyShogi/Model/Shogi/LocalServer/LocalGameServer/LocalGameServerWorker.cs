@@ -145,8 +145,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 本譜の手順に変更したので現在局面と棋譜ウィンドウのカーソルとを同期させておく。
             UpdateKifuSelectedIndex();
 
-            // エンジンに与えるHashSizeの計算
-            if (UsiEngineHashManager.CalcValue() != 0)
+            // エンジンに与えるHashSize,Threadsの計算
+            if (UsiEngineHashManager.CalcHashSize() != 0)
             {
                 // Hash足りなくてダイアログ出した時にキャンセルボタン押されとる
                 Disconnect();
@@ -765,7 +765,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             InitUsiEnginePlayer(Color.BLACK , usiEnginePlayer, engineDefineEx, 0, GameMode , false);
 
             // エンジンに与えるHashSize,Threadsの計算
-            if (UsiEngineHashManager.CalcValue() != 0)
+            if (UsiEngineHashManager.CalcHashSize() != 0)
             {
                 // Hash足りなくてダイアログ出した時にキャンセルボタン押されとる
                 Disconnect();

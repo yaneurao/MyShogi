@@ -5,6 +5,30 @@ using System.Collections.Generic;
 namespace MyShogi.Model.Shogi.EngineDefine
 {
     /// <summary>
+    /// EngineCommonOptionsSample.CreateEngineCommonOptions()でオプションリストを生成する時に
+    /// 必要なものを選択するためのフラグ集。
+    /// </summary>
+    public class EngineCommonOptionsSampleOptions
+    {
+        /// <summary>
+        /// "EvalDir"を有効にするのか。
+        /// </summary>
+        public bool UseEvalDir;
+
+        // 他、何か追加するかも。
+
+        /// <summary>
+        /// 等価性
+        /// </summary>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
+        public bool Equals(EngineCommonOptionsSampleOptions rhs)
+        {
+            return UseEvalDir == rhs.UseEvalDir;
+        }
+    }
+
+    /// <summary>
     /// エンジン共通設定で使うEngineOptionsForSettingのオブジェクトを生成する。
     /// 
     /// シリアライズしてファイルに書き出しておいても良いが、二度手間なので、
@@ -142,13 +166,16 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// いい感じに表示される。
         /// </summary>
         /// <returns></returns>
-        public static EngineOptionsForSetting CreateEngineCommonOptions()
+        public static EngineOptionsForSetting CreateEngineCommonOptions(EngineCommonOptionsSampleOptions options = null)
         {
             // 生成に時間がかかる＆エンジンの起動ごとに必要なので
             // 生成したものを保存している。
-            
-            if (engineCommonOptions == null)
-                engineCommonOptions = CreateEngineCommonOptions_();
+
+            if (engineCommonOptions == null || !engineCommonOptionsOptions.Equals(options) )
+            {
+                engineCommonOptions = CreateEngineCommonOptions_(options);
+                engineCommonOptionsOptions = options; // 生成した時の条件も保存しておく。この条件が異なれば生成しなおす。
+            }
 
             return engineCommonOptions;
         }
@@ -157,8 +184,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// singleton object
         /// </summary>
         private static EngineOptionsForSetting engineCommonOptions;
+        private static EngineCommonOptionsSampleOptions engineCommonOptionsOptions;
 
-        private static EngineOptionsForSetting CreateEngineCommonOptions_()
+        private static EngineOptionsForSetting CreateEngineCommonOptions_(EngineCommonOptionsSampleOptions options)
         {
             var setting = new EngineOptionsForSetting()
             {
@@ -446,7 +474,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     new EngineOptionDescription("EvalShare"   , null ,
                         "評価関数ファイルをメモリ上で共用する設定。",
                         "同じ思考エンジンを2つ以上動かす時に、評価関数ファイルをメモリ上で共用する設定です。\r\n" +
-                        "これをオンにして、同じ思考エンジンを2つ動作させた場合、消費する物理メモリが節約できます。",
+                        "これをオンにして、同じ思考エンジンを2つ動作させた場合、消費する物理メモリが節約できます。\r\n" +
+                        "(この機能に対応している思考エンジンの場合のみ)",
                         "option name EvalShare type check default true"),
 
                     // -- 読み筋の表示
@@ -522,7 +551,11 @@ namespace MyShogi.Model.Shogi.EngineDefine
             foreach (var h in header.Descriptions.ReverseIterator() /* 逆向きのiterator */)
                 if (!setting.Descriptions.Exists(x => x.DisplayName == h.DisplayName))
                     setting.Descriptions.Insert(0, h);
-            
+
+            // 共通設定のときにはEvalDirを消しておく。(エンジンが個別に値を設定したいので)
+            if (options == null || !options.UseEvalDir)
+                setting.Descriptions.RemoveAll(x => x.Name == "EvalDir");
+
             return setting;
         }
 
@@ -538,7 +571,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                 // エンジンオプションの共通設定のDescriptionからEngineOptionsをひねり出す。
 
-                var opt = CreateEngineCommonOptions();
+                var opt = CreateEngineCommonOptions(new EngineCommonOptionsSampleOptions());
                 foreach (var desc in opt.Descriptions)
                 {
                     // 見出し行、非表示の奴はskipする。

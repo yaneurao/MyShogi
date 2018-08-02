@@ -64,17 +64,28 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public void OnIdle()
         {
-            switch (State)
+            try
             {
-                case UsiEngineState.Connected:
-                    if (DateTime.Now - connected_time >= new TimeSpan(0, 0, 30))
-                    {
-                        ChangeState(UsiEngineState.ConnectionTimeout);
-                    }
-                    break;
+                switch (State)
+                {
+                    case UsiEngineState.Connected:
+                        if (DateTime.Now - connected_time >= new TimeSpan(0, 0, 30))
+                        {
+                            ChangeState(UsiEngineState.ConnectionTimeout);
+                        }
+                        break;
+                }
+
+                negotiator.Read();
+
+            } catch (Exception ex)
+            {
+                Exception = new Exception("思考エンジンとの通信が切断されました。" + 
+                    "\n詳細情報 : " + ex.Message);
             }
 
-            negotiator.Read();
+            if (negotiator.ProcessTerminated)
+                Exception = new Exception("思考エンジンが終了しました。");
         }
 
         /// <summary>
@@ -108,7 +119,16 @@ namespace MyShogi.Model.Shogi.Usi
         /// <param name="command"></param>
         public void SendCommand(string command)
         {
-            negotiator.Write(command);
+            try
+            {
+                negotiator.Write(command);
+            }
+            catch (Exception ex)
+            {
+                Exception = new Exception("思考エンジンとの通信が切断されました。" +
+                    "\n詳細情報 : " + ex.Message);
+            }
+
         }
 
         public void Disconnect()
@@ -220,7 +240,12 @@ namespace MyShogi.Model.Shogi.Usi
 
         private void ChangeState(UsiEngineState state)
         {
-            switch(state)
+            var oldState = State;
+            State = state; // この瞬間にイベントが発生するので、これを先にやっておかないとSendSetOptionList()などで困る。
+
+            Log.Write(LogInfoType.UsiServer, $"ChangeState()で{oldState.ToString()}から{state.ToString()}に状態が変化した。");
+
+            switch (state)
             {
                 case UsiEngineState.Connected:
                     // 接続されたので"usi"と送信
@@ -236,6 +261,9 @@ namespace MyShogi.Model.Shogi.Usi
                     // 対局時には、このあと "isready"を送信して readyokを待つ。
                     if (!EngineSetting)
                     {
+                        // このタイミングでoptionを先に送らないとEvalDirの変更などが間に合わない。
+                        SendSetOptionList();
+
                         // これ時間制限はなく、タイムアウトは監視しない。どこかでisreadyは完了するものとする。
                         SendCommand("isready");
                     }
@@ -246,10 +274,6 @@ namespace MyShogi.Model.Shogi.Usi
                     SendCommand("usinewgame");
                     break;
             }
-            var oldState = State;
-            State = state;
-
-            Log.Write(LogInfoType.UsiServer,$"ChangeState()で{oldState.ToString()}から{state.ToString()}に状態が変化した。");
         }
 
 
@@ -331,8 +355,6 @@ namespace MyShogi.Model.Shogi.Usi
 
             // この変更メッセージをハンドルしてDefaultOptionをセットしてくれていることを期待する。
             ChangeState(UsiEngineState.UsiOk);
-
-            SendSetOptionList();
         }
 
 #if false

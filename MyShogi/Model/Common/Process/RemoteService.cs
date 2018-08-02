@@ -22,57 +22,18 @@ namespace MyShogi.Model.Common.Process
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        public RemoteService(Stream readStream, Stream writeStream,
-                             bool outLog = true)
+        public RemoteService(Stream readStream, Stream writeStream)
         {
             this.readStream = readStream;
             this.writeStream = writeStream;
 
-            LogName = string.Empty;
-            IsOutLog = outLog;
-            Encoding = System.Text.Encoding.GetEncoding("Shift_JIS");
-        }
-
-        /// <summary>
-        /// ログ出力時の名前を取得または設定します。
-        /// </summary>
-        public string LogName
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 送受信データのログ出力を行うかどうかを取得または設定します。
-        /// </summary>
-        public bool IsOutLog
-        {
-            get;
-            set;
+            Encoding = Encoding.GetEncoding("Shift_JIS");
         }
 
         /// <summary>
         /// エンコーディングを取得または設定します。
         /// </summary>
         public Encoding Encoding
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// read()で例外が起きたときにここにその例外が格納される
-        /// </summary>
-        public Exception ReadException
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// write()で例外が起きたときにここにその例外が格納される。
-        /// </summary>
-        public Exception WriteException
         {
             get;
             set;
@@ -100,42 +61,36 @@ namespace MyShogi.Model.Common.Process
         /// 受信処理を行う。
         /// 1行読み込んだら、コールバックが呼び出される。→　NotifyCommandReceived()
         /// 受信バッファ1本なので複数スレッドから呼び出してはならない。
+        ///
+        /// 受信に失敗すれば、例外を投げる。
         /// </summary>
         public void Read()
         {
-            try
+            while (task == null || task.IsCompleted)
             {
-                while (task == null || task.IsCompleted)
+                // read()するbufferにデータが積まれているならその分だけ取得したいのだが、
+                // そういうメソッドがStreamに存在しない。仕方ないのでTaskを同期的に用いる。
+
+                if (task == null)
+                    task = readStream.ReadAsync(readBuffer, 0, readBuffer.Length , readCts.Token);
+
+                // 前回のタスクが終了しているなら、その結果を取り出す
+                if (task.IsCompleted)
                 {
-                    // read()するbufferにデータが積まれているならその分だけ取得したいのだが、
-                    // そういうメソッドがStreamに存在しない。仕方ないのでTaskを同期的に用いる。
-
-                    if (task == null)
-                        task = readStream.ReadAsync(readBuffer, 0, readBuffer.Length , readCts.Token);
-
-                    // 前回のタスクが終了しているなら、その結果を取り出す
-                    if (task.IsCompleted)
+                    foreach (var command in SplitCommand(readBuffer, task.Result))
                     {
-                        foreach (var command in SplitCommand(readBuffer, task.Result))
-                        {
-                            Log.Write(LogInfoType.ReceiveCommandFromEngine, command , pipe_id);
+                        Log.Write(LogInfoType.ReceiveCommandFromEngine, command , pipe_id);
 
-                            //if (IsOutLog)
-                            //{
-                            //    LibGlobal.DebugFormViewModel.AddLine(command, LogName, true);
-                            //    Log.Trace("> {0}", command);
-                            //}
+                        //if (IsOutLog)
+                        //{
+                        //    LibGlobal.DebugFormViewModel.AddLine(command, LogName, true);
+                        //    Log.Trace("> {0}", command);
+                        //}
 
-                            CommandReceived(command);
-                        }
-                        task = null;
+                        CommandReceived(command);
                     }
+                    task = null;
                 }
-            }
-            catch (Exception ex)
-            {
-                ReadException = ex;
-                //NotifyDisconnected();
             }
         }
 
@@ -147,28 +102,23 @@ namespace MyShogi.Model.Common.Process
 
         /// <summary>
         /// WriteStreamに書き出し。改行は自動的に付与されるので引数で渡すstringには付与してはならない。
+        /// 
+        /// このメソッドは、例外を投げる。
         /// </summary>
         /// <param name="command"></param>
         public void Write(string command)
         {
-            try
-            {
-                // 送信で待たされることは現実的にはないはずなので非同期処理はしていない。
-                // しかし、UIスレッドからもコマンド送信を行う可能性があるので排他処理は必要である。
+            // 送信で待たされることは現実的にはないはずなので非同期処理はしていない。
+            // しかし、UIスレッドからもコマンド送信を行う可能性があるので排他処理は必要である。
 
-                lock (writeLockObjcet)
-                {
-                    byte[] buffer = Encoding.GetBytes($"{command}\n");
-                    writeStream.Write(buffer, 0, buffer.Length);
-                    writeStream.Flush(); // これを行わないとエンジンに渡されないことがある。
-                }
-
-                Log.Write(LogInfoType.SendCommandToEngine , command , pipe_id);
-            }
-            catch (Exception ex)
+            lock (writeLockObjcet)
             {
-                WriteException = ex;
+                byte[] buffer = Encoding.GetBytes($"{command}\n");
+                writeStream.Write(buffer, 0, buffer.Length);
+                writeStream.Flush(); // これを行わないとエンジンに渡されないことがある。
             }
+
+            Log.Write(LogInfoType.SendCommandToEngine , command , pipe_id);
         }
 
         // --- 以下private methods

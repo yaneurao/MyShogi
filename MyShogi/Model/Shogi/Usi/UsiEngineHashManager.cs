@@ -39,7 +39,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// ・this.Threads[2]にそれぞれのエンジンの適切なThreads数を設定する。
         /// </summary>
         /// <returns>キャンセルボタンを押したなら非0</returns>
-        public int CalcValue()
+        public int CalcHashSize()
         {
             // エンジンの数
             int numOfEngines = (EngineDefines[0] != null ? 1 : 0) + (EngineDefines[1] != null ? 1 : 0);

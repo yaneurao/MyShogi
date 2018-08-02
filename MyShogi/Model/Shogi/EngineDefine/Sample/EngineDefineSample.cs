@@ -165,7 +165,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
             var gps_extend = new List<ExtendedProtocol>( new[] { ExtendedProtocol.UseHashCommandExtension } );
 
             // EngineOptionDescriptionsは、エンジンオプション共通設定に使っているDescriptionsと共用。
-            var common_setting = EngineCommonOptionsSample.CreateEngineCommonOptions();
+            var common_setting = EngineCommonOptionsSample.CreateEngineCommonOptions(new EngineCommonOptionsSampleOptions() {
+                UseEvalDir = true, // ただし、"EvalDir"オプションはエンジンごとに固有に異なる値を保持しているのが普通であるから共通オプションにこの項目を足してやる。
+            });
 
             var default_descriptions = common_setting.Descriptions;
             var default_descriptions_nnue = new List<EngineOptionDescription>(default_descriptions);

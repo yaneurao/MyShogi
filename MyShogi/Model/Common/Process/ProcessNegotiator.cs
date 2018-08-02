@@ -54,8 +54,8 @@ namespace MyShogi.Model.Common.Process
                 // remote service
                 remoteService = new RemoteService(
                     process.StandardOutput.BaseStream, // read stream
-                    process.StandardInput.BaseStream,  // write stream
-                    true);
+                    process.StandardInput.BaseStream   // write stream
+                 );
 
                 IsLowPriority = engineData.IsLowPriority;
             }
@@ -64,6 +64,8 @@ namespace MyShogi.Model.Common.Process
         /// <summary>
         /// 接続している子プロセスから行を読み込む。
         /// 読み込む行がなければ、ブロッキングせずにすぐ戻る。
+        /// 
+        /// このメソッドは、例外を投げる。
         /// </summary>
         public void Read()
         {
@@ -73,6 +75,8 @@ namespace MyShogi.Model.Common.Process
 
         /// <summary>
         /// 接続している子プロセスに行を流し込む。
+        ///
+        /// このメソッドは、例外を投げる。
         /// </summary>
         /// <param name="s"></param>
         public void Write(string s)
@@ -156,6 +160,11 @@ namespace MyShogi.Model.Common.Process
         /// UpdateProcessPriority()したときに反映される。
         /// </summary>
         public bool IsLowPriority { get; set; }
+
+        /// <summary>
+        /// プロセスが終了したかのフラグ。
+        /// </summary>
+        public bool ProcessTerminated { get { return exeProcess == null ? false : exeProcess.HasExited; } }
 
         // --- 以下private members
 
