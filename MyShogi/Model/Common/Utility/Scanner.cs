@@ -242,6 +242,16 @@ namespace MyShogi.Model.Common.Utility
             return result;
         }
 
+        /// <summary>
+        /// PeekTextの結果をcompareと比較します
+        /// upperLowerがfalseなら大文字小文字を区別しない
+        /// </summary>
+        public bool PeekText(string compare, bool upperLower=false)
+        {
+            string peek = PeekText();
+            return upperLower ? peek == compare: peek.ToLower() == compare.ToLower();
+        }
+
         // -- 以下 private
 
         /// <summary>

@@ -163,6 +163,14 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
+        /// string中に現れる文字をカウントする
+        /// </summary>
+        private static int CountKeywrod(string str, char ch)
+        {
+            return str.Length - str.Replace(ch.ToString(), "").Length;
+        }
+
+        /// <summary>
         /// 棋譜ファイルを読み込む。
         /// this.Treeに反映する。また本譜の手順の最終局面までthis.Tree.posを自動的に進める。
         /// フォーマットは自動判別。
@@ -177,6 +185,25 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="filename"></param>
         public string FromString(string content /* , KifuFileType kf */)
         {
+            // なるべくファジーに判定する
+
+            /// <summary>
+            /// 文字列がsfenっぽいならtrue
+            /// (position ){,1}((sfen ){,1}(.*\/){8})|(startpos)
+            /// 大文字小文字の差異も許容しておく
+            /// </summary>
+            bool isSfen(string line)
+            {
+                string[] token = line.Split(' ');
+                if (token.Length <= 3) { return false; }
+                int i = 0;
+                if (token[i].ToLower() == "position") { ++i; } // 先頭のpositionは任意
+                if (token[i].ToLower() == "startpos") { return true; } // 平手の開始局面を表すsfenだった
+                if (token[i].ToLower() == "sfen") { ++i; } // sfenも必須ではないようにする
+                if (CountKeywrod(token[i], '/') == 8) { return true; } // 最初のトークンで/が8個ならおそらくsfenだろう
+                return false;
+            }
+
             try
             {
                 // イベントの一時抑制
@@ -188,10 +215,11 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 if (lines.Length == 0)
                     return "棋譜が空でした。";
-                var line = lines[0];
 
+                var line = lines[0];
+                
                 // sfen形式なのか？
-                if (line.StartsWith("sfen") || line.StartsWith("startpos"))
+                if (isSfen(line))
                     return FromSfenString(line);
 
                 // PSN形式なのか？
@@ -203,7 +231,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     return FromPsnString(lines, KifuFileType.PSN2);
 
                 // CSA形式なのか？
-                if (line.StartsWith("V2")) // 将棋所だと"V2.2"など書いてあるはず。
+                if (line.StartsWith("V2") || line.StartsWith("N+")) // 将棋所だと"V2.2"など書いてあるはず。バージョンなしでも許容する。
                     return FromCsaString(lines, KifuFileType.CSA);
 
                 // JSON形式なのか？
@@ -211,7 +239,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     return FromJsonString(content, KifuFileType.JSON);
 
                 // KIF/KI2形式なのか？
-                if (line.StartsWith("#") || line.IndexOf("：") > 0)
+                if (line.StartsWith("#") || line.IndexOf("：") > 0 || line.StartsWith("後手の持駒"))
                     return FromKifString(lines, KifuFileType.KIF);
 
                 return "棋譜の形式が判別できませんでした。";

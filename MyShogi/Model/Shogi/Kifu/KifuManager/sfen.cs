@@ -32,26 +32,16 @@ namespace MyShogi.Model.Shogi.Kifu
                 //if (split.Length == 0)
                 //    return;
 
-                if (scanner.PeekText() == "sfen")
+                if (scanner.PeekText("position"))
                 {
                     scanner.ParseText();
-
-                    // "sfen ... moves ..."形式かな..
-                    // movesの手前までをくっつけてSetSfen()する
-                    var sfen_pos = new List<string>();
-                    while (scanner.PeekText() != "moves")
-                    {
-                        if (sfen_pos.Count >= 4)
-                            break;
-
-                        sfen_pos.Add(scanner.ParseText());
-                    }
-
-                    Tree.rootSfen = string.Join(" ", sfen_pos.ToArray());
-                    Tree.position.SetSfen(Tree.rootSfen);
-                    Tree.rootBoardType = BoardType.Others;
                 }
-                else if (scanner.PeekText() == "startpos")
+
+                if (scanner.PeekText("sfen"))
+                {
+                    scanner.ParseText();
+                }
+                else if (scanner.PeekText("startpos"))
                 {
                     scanner.ParseText();
 
@@ -59,6 +49,21 @@ namespace MyShogi.Model.Shogi.Kifu
                     Tree.position.SetSfen(Tree.rootSfen);
                     Tree.rootBoardType = BoardType.NoHandicap;
                 }
+
+                // "sfen ... moves ..."形式かな..
+                // movesの手前までをくっつけてSetSfen()する
+                var sfen_pos = new List<string>();
+                while (scanner.PeekText() != "moves")
+                {
+                    if (sfen_pos.Count >= 4)
+                        break;
+
+                    sfen_pos.Add(scanner.ParseText());
+                }
+
+                Tree.rootSfen = string.Join(" ", sfen_pos.ToArray());
+                Tree.position.SetSfen(Tree.rootSfen);
+                Tree.rootBoardType = BoardType.Others;
 
                 // "moves"以降の文字列をUSIの指し手と解釈しながら、局面を進める。
                 if (scanner.PeekText() == "moves")
