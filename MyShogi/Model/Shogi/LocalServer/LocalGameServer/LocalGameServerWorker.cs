@@ -222,6 +222,11 @@ namespace MyShogi.Model.Shogi.LocalServer
             EngineDefineEx engineDefineEx , int selectedPresetIndex , GameModeEnum nextGameMode , bool ponder)
         {
             EngineDefineExes[(int)c] = engineDefineEx; // ここに保存しておく。
+            var presets = engineDefineEx.EngineDefine.Presets;
+
+            presetNames[(int)c] = (selectedPresetIndex < presets.Count) ?
+                presets[selectedPresetIndex].Name :
+                null;
 
             var engine_config = TheApp.app.EngineConfigs;
             EngineConfig config = null;
@@ -307,11 +312,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var num_ = num; // copy for capturing
 
                     var engineName = GetEngineDefine(c).EngineDefine.DisplayName;
+                    var engineName2 = PresetName(c) == null ? engineName : $"{engineName} {PresetName(c)}";
                     var playerName = (nextGameMode.IsConsiderationWithEngine() || DisplayName(c) == engineName) ?
                         // 検討時には、エンジンの名前をそのまま表示。
-                          engineName :
+                          engineName2 :
                         // 通常対局モードなら対局者名に括弧でエンジン名を表記。
-                          $"{DisplayName(c)}({engineName})";
+                          $"{DisplayName(c)}({engineName2})";
 
                     ThinkReport = new UsiThinkReportMessage()
                     {
@@ -756,7 +762,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// [Worker Thread] : 検討モードに入る。
         /// GameModeのsetterから呼び出される。
         /// </summary>
-        private void StartConsideration()
+        private void StartConsiderationWithEngine()
         {
             try
             {
@@ -767,7 +773,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 検討用エンジン
                 //var engineDefineFolderPath = "\\engine\\gpsfish"; // 開発テスト用
 
-                var engineDefineFolderPath = TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath;
+                var engineDefineFolderPath =
+                    (GameMode == GameModeEnum.ConsiderationWithEngine)     ? TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath :
+                    (GameMode == GameModeEnum.ConsiderationWithMateEngine) ? TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath :
+                    null;
+
                 var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == engineDefineFolderPath);
 
                 if (engineDefineEx == null)

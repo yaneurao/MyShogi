@@ -68,7 +68,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (old.IsConsiderationWithEngine())
                     EndConsideration();
                 if (value.IsConsiderationWithEngine())
-                    StartConsideration();
+                    StartConsiderationWithEngine();
 
                 // 依存プロパティの更新
                 SetValue<bool>("InTheGame", value == GameModeEnum.InTheGame);
@@ -276,6 +276,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public EngineDefineEx GetEngineDefine(Color c) { return EngineDefineExes[(int)c]; }
         private EngineDefineEx[] EngineDefineExes = new EngineDefineEx[2];
+
+        /// <summary>
+        /// 通常対局のときにエンジンの選択しているPreset名。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public string PresetName(Color c) { return presetNames[(int)c]; }
+        private string[] presetNames = new string[2];
 
         #endregion
 
