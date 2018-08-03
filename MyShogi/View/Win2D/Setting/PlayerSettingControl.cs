@@ -6,6 +6,7 @@ using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.LocalServer;
+using MyShogi.View.Win2D.Common;
 
 namespace MyShogi.View.Win2D.Setting
 {
@@ -321,6 +322,7 @@ namespace MyShogi.View.Win2D.Setting
             //ViewModel.SettingButton = false;
             // →　この処理やめる。modal dialogとして出せばOk.
 
+            FormLocationUtility.CenteringToThisForm(dialog, this.Parent as Form /* thisはControlなのでParentはFormのはず.. */);
             engineSettingDialog = dialog;
             //engineSettingDialog.Disposed += (sender, args) => { ViewModel.SettingButton = true; };
 

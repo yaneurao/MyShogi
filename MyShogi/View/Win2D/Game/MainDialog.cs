@@ -8,6 +8,7 @@ using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Usi;
+using MyShogi.View.Win2D.Common;
 using MyShogi.View.Win2D.Setting;
 using ObjectModel = MyShogi.Model.Common.ObjectModel;
 using SCore = MyShogi.Model.Shogi.Core;
@@ -139,7 +140,7 @@ namespace MyShogi.View.Win2D
         private void ShowConsiderationSettingDialog()
         {
             var dialog = new ConsiderationEngineSettingDialog();
-            CenteringToThisForm(dialog);
+            FormLocationUtility.CenteringToThisForm(dialog,this);
             dialog.ShowDialog(this);
         }
 
@@ -150,21 +151,8 @@ namespace MyShogi.View.Win2D
         private void ShowMateEngineSettingDialog()
         {
             var dialog = new ConsiderationEngineSettingDialog();
-            CenteringToThisForm(dialog);
+            FormLocationUtility.CenteringToThisForm(dialog,this);
             dialog.ShowDialog(this);
-        }
-
-        /// <summary>
-        /// あるFormをこのFormに対してセンタリングする。
-        /// </summary>
-        /// <param name="form"></param>
-        private void CenteringToThisForm(Form form)
-        {
-            form.StartPosition = FormStartPosition.Manual;
-            form.DesktopLocation = new Point(
-                this.DesktopLocation.X + ( this.Width - form.Width) / 2,
-                this.DesktopLocation.Y + ( this.Height - form.Height) / 2
-                );
         }
 
         #endregion
@@ -300,10 +288,8 @@ namespace MyShogi.View.Win2D
             if (desktopLocation == null)
             {
                 // 表示される位置があまりデスクトップの下の方だとウィンドウが画面下にめり込んでしまうのでデスクトップに対してセンタリングする。
-                //desktopLocation = new Point((Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2, (Screen.PrimaryScreen.WorkingArea.Height - this.Height) / 2);
-
                 // →　検討ウィンドウの表示のことを考えて、少し上らへんにする。
-                desktopLocation = new Point((Screen.PrimaryScreen.WorkingArea.Width - this.Width) / 2, (Screen.PrimaryScreen.WorkingArea.Height - this.Height) / 4);
+                desktopLocation = FormLocationUtility.DesktopLocation(this, 50, 25); // Desktopに対して左から50%(center),25%(上寄り)にする。
             }
 
             DesktopLocation = desktopLocation.Value;
@@ -961,7 +947,7 @@ namespace MyShogi.View.Win2D
                             //gameSettingDialog.Dispose();
 
                             var gameSettingDialog = new GameSettingDialog(this);
-                            CenteringToThisForm(gameSettingDialog);
+                            FormLocationUtility.CenteringToThisForm(gameSettingDialog,this);
                             gameSettingDialog.ShowDialog(this); // Modal Dialogにしておく。
                         };
 
@@ -1722,7 +1708,7 @@ namespace MyShogi.View.Win2D
 
                             if (debugDialog != null)
                             {
-                                CenteringToThisForm(debugDialog);
+                                FormLocationUtility.CenteringToThisForm(debugDialog , this);
                                 debugDialog.Show();
                             }
                         };
@@ -1748,11 +1734,8 @@ namespace MyShogi.View.Win2D
                         item1.Text = "システム情報(&S)"; // System Infomation
                         item1.Click += (sender, e) =>
                         {
-                            //if (cpuInfoDialog != null)
-                            //    cpuInfoDialog.Dispose();
-
                             var cpuInfoDialog = new SystemInfo();
-                            CenteringToThisForm(cpuInfoDialog);
+                            FormLocationUtility.CenteringToThisForm(cpuInfoDialog , this);
                             cpuInfoDialog.ShowDialog(this);
                         };
                         item_others.DropDownItems.Add(item1);
@@ -1799,7 +1782,7 @@ namespace MyShogi.View.Win2D
                             //    aboutDialog.Dispose();
 
                             var aboutDialog = new AboutYaneuraOu();
-                            CenteringToThisForm(aboutDialog);
+                            FormLocationUtility.CenteringToThisForm(aboutDialog , this);
                             aboutDialog.ShowDialog(this);
                         };
                         item_others.DropDownItems.Add(item1);

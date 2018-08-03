@@ -5,6 +5,7 @@ using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.View.Win2D.Common;
 using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
@@ -207,8 +208,10 @@ namespace MyShogi.View.Win2D
                 }
                 ReleaseEngineSelectionDialog();
             });
+
             // modal dialogとして出すべき。
-            engineSelectionDialog.ShowDialog(this);
+            FormLocationUtility.CenteringToThisForm(engineSelectionDialog, this);
+            engineSelectionDialog.ShowDialog(Parent);
         }
 
         /// <summary>
