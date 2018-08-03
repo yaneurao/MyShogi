@@ -1096,7 +1096,7 @@ namespace MyShogi.Model.Shogi.Converter
             // 盤上の駒
             var bRegex = new Regex(@"^\|((?:[ v][・歩香桂銀金角飛玉王と杏圭全馬龍竜]){9})\|([一二三四五六七八九])");
             // 持駒
-            var hRegex = new Regex(@"(歩香桂銀金角飛)(十[一二三四五六七八]|[一二三四五六七八九])?");
+            var hRegex = new Regex(@"([歩香桂銀金角飛])(十[一二三四五六七八]?|[一二三四五六七八九])?");
 
             foreach (var line in bod)
             {
