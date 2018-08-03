@@ -217,7 +217,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     return "棋譜が空でした。";
 
                 var line = lines[0];
-                
+
                 // sfen形式なのか？
                 if (isSfen(line))
                     return FromSfenString(line);
@@ -239,7 +239,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     return FromJsonString(content, KifuFileType.JSON);
 
                 // KIF/KI2形式なのか？
-                if (line.StartsWith("#") || line.IndexOf("：") > 0 || line.StartsWith("後手の持駒"))
+                if (line.StartsWith("#") || line.IndexOf("：") > 0 || line.StartsWith("後手の持駒") || line.IndexOf("▲") > 0 || line.IndexOf("△") > 0)
                     return FromKifString(lines, KifuFileType.KIF);
 
                 return "棋譜の形式が判別できませんでした。";
@@ -249,7 +249,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 // -- 本譜の手順の末尾に移動。
 
                 Tree.RewindToRoot();
-            
+
                 // moves[0]を選択していけば本譜の手順の末尾に行けることは保証されている。
                 while (Tree.currentNode.moves.Count != 0)
                     Tree.DoMove(Tree.currentNode.moves[0].nextMove);
@@ -308,7 +308,7 @@ namespace MyShogi.Model.Shogi.Kifu
             var e1 = Tree.PropertyChangedEventEnable;
             Tree.PropertyChangedEventEnable = false;
 
-            // 棋譜ウィンドウを操作してはならないので棋譜ウィンドウとのsyncを停止させておく。 
+            // 棋譜ウィンドウを操作してはならないので棋譜ウィンドウとのsyncを停止させておく。
             var e2 = Tree.EnableKifuList;
             Tree.EnableKifuList = false;
 
