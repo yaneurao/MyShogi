@@ -63,5 +63,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         // その他、node制限なども入れるかも..
 
+        public ConsiderationEngineSetting()
+        {
+            Limitless = true;
+        }
     }
 }

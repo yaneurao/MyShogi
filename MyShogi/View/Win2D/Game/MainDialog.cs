@@ -134,6 +134,52 @@ namespace MyShogi.View.Win2D
         #region dialog
 
         /// <summary>
+        /// エンジンによる検討を開始する。
+        /// </summary>
+        private void ToggleConsideration()
+        {
+            var consideration = gameServer.GameMode == GameModeEnum.ConsiderationWithEngine;
+
+            if (!consideration && TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath == null)
+            {
+                // 検討エンジン設定されてないじゃん…。
+                ShowConsiderationEngineSettingDialog();
+
+                // ↑のメソッド内であとは勝手にやってくれるじゃろ…。
+                return;
+            }
+
+            gameServer.ChangeGameModeCommand(
+                consideration ?
+                GameModeEnum.ConsiderationWithoutEngine :
+                GameModeEnum.ConsiderationWithEngine
+            );
+        }
+
+        /// <summary>
+        /// エンジンによる詰検討を開始する。
+        /// </summary>
+        private void ToggleMateConsideration()
+        {
+            var mate_consideration = gameServer.GameMode == GameModeEnum.ConsiderationWithMateEngine;
+
+            if (!mate_consideration && TheApp.app.config.MateEngineSetting.EngineDefineFolderPath == null)
+            {
+                // 検討エンジン設定されてないじゃん…。
+                ShowMateEngineSettingDialog();
+
+                // ↑のメソッド内であとは勝手にやってくれるじゃろ…。
+                return;
+            }
+
+            gameServer.ChangeGameModeCommand(
+                mate_consideration ?
+                GameModeEnum.ConsiderationWithoutEngine :
+                GameModeEnum.ConsiderationWithMateEngine
+            );
+        }
+
+        /// <summary>
         /// 検討エンジンの設定ダイアログを表示する。
         /// (イベントハンドラを適切に設定した上で)
         /// </summary>
@@ -143,6 +189,7 @@ namespace MyShogi.View.Win2D
             FormLocationUtility.CenteringToThisForm(dialog,this);
             var setting = TheApp.app.config.ConsiderationEngineSetting;
             dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.ConsiderationSetting;
+            dialog.ViewModel.AddPropertyChangedHandler("StartButtonClicked", _ => ToggleConsideration());
             dialog.Bind(setting);
             dialog.ShowDialog(this);
         }
@@ -157,6 +204,7 @@ namespace MyShogi.View.Win2D
             FormLocationUtility.CenteringToThisForm(dialog,this);
             var setting = TheApp.app.config.MateEngineSetting;
             dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.MateSetting;
+            dialog.ViewModel.AddPropertyChangedHandler("StartButtonClicked", _ => ToggleMateConsideration());
             dialog.Bind(setting);
             dialog.ShowDialog(this);
         }
@@ -473,22 +521,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton5_Click(object sender, System.EventArgs e)
         {
-            var consideration = gameServer.GameMode == GameModeEnum.ConsiderationWithEngine;
-
-            if (!consideration && TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath == null)
-            {
-                // 検討エンジン設定されてないじゃん…。
-                ShowConsiderationEngineSettingDialog();
-
-                // ↑のメソッド内であとは勝手にやってくれるじゃろ…。
-                return; 
-            }
-
-            gameServer.ChangeGameModeCommand(
-                consideration ?
-                GameModeEnum.ConsiderationWithoutEngine :
-                GameModeEnum.ConsiderationWithEngine
-            );
+            ToggleConsideration();
         }
 
         /// <summary>
@@ -509,22 +542,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton7_Click(object sender, System.EventArgs e)
         {
-            var mate_consideration = gameServer.GameMode == GameModeEnum.ConsiderationWithMateEngine;
-
-            if (!mate_consideration && TheApp.app.config.MateEngineSetting.EngineDefineFolderPath == null)
-            {
-                // 検討エンジン設定されてないじゃん…。
-                ShowMateEngineSettingDialog();
-
-                // ↑のメソッド内であとは勝手にやってくれるじゃろ…。
-                return;
-            }
-
-            gameServer.ChangeGameModeCommand(
-                mate_consideration ?
-                GameModeEnum.ConsiderationWithoutEngine :
-                GameModeEnum.ConsiderationWithMateEngine
-            );
+            ToggleMateConsideration();
         }
 
         /// <summary>
@@ -973,7 +991,7 @@ namespace MyShogi.View.Win2D
                         toolStripButton5.Enabled = !inTheGame;
                         item.Click += (sender, e) => {
                             if (consideration)
-                                toolStripButton5_Click(null, null); // 検討モードを終了させる
+                                ToggleConsideration(); // 検討モードを終了させる
                             else
                                 ShowConsiderationEngineSettingDialog(); // 検討エンジンの選択画面に
                         };
@@ -997,7 +1015,7 @@ namespace MyShogi.View.Win2D
                         toolStripButton7.Enabled = !inTheGame;
                         item.Click += (sender, e) => {
                             if (mate_consideration)
-                                toolStripButton7_Click(null, null);
+                                ToggleMateConsideration();
                             else
                                 ShowMateEngineSettingDialog(); // 詰検討エンジンの選択画面に
 

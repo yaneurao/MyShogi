@@ -174,6 +174,7 @@
             this.button3.Text = "検討開始";
             this.toolTip1.SetToolTip(this.button3, "検討を開始します。");
             this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // pictureBox1
             // 

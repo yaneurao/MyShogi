@@ -169,7 +169,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <returns></returns>
         public new string ToString()
         {
-            return DisplayName;
+            return DisplayName != null ? DisplayName : Name;
         }
     }
 

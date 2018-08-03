@@ -12,9 +12,16 @@ namespace MyShogi.Model.Shogi.EngineDefine
     public class EngineCommonOptionsSampleOptions
     {
         /// <summary>
-        /// "EvalDir"を有効にするのか。
+        /// "EvalDir"を用いるのか。
+        /// falseにすると、"EvalDir"の項目がオプションから消える。
         /// </summary>
         public bool UseEvalDir;
+
+        /// <summary>
+        /// ConsiderationModeのデフォルト値をtrueにしたい場合、これをtrueにする。
+        /// (検討モードの共通設定では、デフォルト値でそうなっているのが好ましいと思う)
+        /// </summary>
+        public bool EnableConsiderationMode;
 
         // 他、何か追加するかも。
 
@@ -563,8 +570,13 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     setting.Descriptions.Insert(0, h);
 
             // 共通設定のときにはEvalDirを消しておく。(エンジンが個別に値を設定したいので)
-            if (options == null || !options.UseEvalDir)
+            if (!options.UseEvalDir)
                 setting.Descriptions.RemoveAll(x => x.Name == "EvalDir");
+
+            // 検討モード、詰検討モードの共通設定では、デフォルトでConsiderationMode == trueに。
+            if (options.EnableConsiderationMode)
+                setting.Descriptions.Find(x => x.Name == "ConsiderationMode")
+                    .UsiBuildString = "option name ConsiderationMode type check default true";
 
             return setting;
         }

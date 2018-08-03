@@ -330,6 +330,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 EngineDefineUtility.WriteFile("engine/yomita2018/engine_define.xml", engine_define);
             }
 
+#if false
             {
                 // gpsfish(動作テスト用) 『将棋神　やねうら王』には含めない。
                 var engine_define = new EngineDefine()
@@ -374,6 +375,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 EngineDefineUtility.WriteFile("engine/gpsfish2/engine_define.xml", engine_define);
             }
 
+#endif
         }
     }
 }

@@ -300,14 +300,6 @@ namespace MyShogi.View.Win2D.Setting
         /// </summary>
         private void ShowEngineOptionSettingDialog()
         {
-            // 前回ダイアログを出しているなら消しておく。
-            // (ボタンを無効化しているので出せないはずなのだが…)
-            if (engineSettingDialog != null)
-            {
-                engineSettingDialog.Dispose();
-                engineSettingDialog = null;
-            }
-
             var dialog = EngineOptionSettingDialogBuilder.Build(
                 EngineCommonOptionsSample.CreateEngineCommonOptions(), // 共通設定のベース
                 TheApp.app.EngineConfigs.NormalConfig,                 // 共通設定の値はこの値で上書き
@@ -323,17 +315,10 @@ namespace MyShogi.View.Win2D.Setting
             // →　この処理やめる。modal dialogとして出せばOk.
 
             FormLocationUtility.CenteringToThisForm(dialog, this.Parent as Form /* thisはControlなのでParentはFormのはず.. */);
-            engineSettingDialog = dialog;
-            //engineSettingDialog.Disposed += (sender, args) => { ViewModel.SettingButton = true; };
 
             // modal dialogとして出す
-            engineSettingDialog.ShowDialog(this.Parent);
+            dialog.ShowDialog(this.Parent);
         }
-
-        /// <summary>
-        /// 詳細設定ダイアログ
-        /// </summary>
-        private EngineOptionSettingDialog engineSettingDialog;
 
         // -- handlers
 

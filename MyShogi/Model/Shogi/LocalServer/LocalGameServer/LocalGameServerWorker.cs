@@ -719,61 +719,72 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private void StartConsideration()
         {
-            CanUserMove = true;
-
-            // 検討モード用のプレイヤーセッティングを行う。
-
-            // 検討用エンジン
-            var engineDefineFolderPath = "\\engine\\gpsfish"; // TODO : あとで検討用エンジン選択ダイアログを作成し、そこから取得するように変更する。
-            var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == engineDefineFolderPath);
-
+            try
             {
-                var setting = new GameSetting();
+                CanUserMove = true;
 
-                // 検討モードの名前はエンジン名から取得
-                // →　ただし、棋譜を汚してはならないので棋譜の対局者名には反映しない。
+                // 検討モード用のプレイヤーセッティングを行う。
 
-                var engineDefine = engineDefineEx.EngineDefine;
-                var engineName = engineDefine.DisplayName;
+                // 検討用エンジン
+                //var engineDefineFolderPath = "\\engine\\gpsfish"; // 開発テスト用
 
-                switch (GameMode)
+                var engineDefineFolderPath = TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath;
+                var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == engineDefineFolderPath);
+
+                if (engineDefineEx == null)
+                    throw new Exception("検討用エンジンが存在しません。\r\n" +
+                        "EngineDefineFolderPath = " + engineDefineFolderPath);
+
                 {
-                    // 検討用エンジン
-                    case GameModeEnum.ConsiderationWithEngine:
-                        setting.PlayerSetting(Color.BLACK).PlayerName = engineName;
-                        setting.PlayerSetting(Color.BLACK).IsCpu = true;
-                        Players[0 /*検討用のプレイヤー*/ ] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
-                        break;
+                    var setting = new GameSetting();
 
-                    // 詰将棋エンジン
-                    case GameModeEnum.ConsiderationWithMateEngine:
-                        setting.PlayerSetting(Color.BLACK).PlayerName = engineName;
-                        setting.PlayerSetting(Color.BLACK).IsCpu = true;
-                        Players[0 /* 詰将棋用のプレイヤー */] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
-                        break;
+                    // 検討モードの名前はエンジン名から取得
+                    // →　ただし、棋譜を汚してはならないので棋譜の対局者名には反映しない。
+
+                    var engineDefine = engineDefineEx.EngineDefine;
+                    var engineName = engineDefine.DisplayName;
+
+                    switch (GameMode)
+                    {
+                        // 検討用エンジン
+                        case GameModeEnum.ConsiderationWithEngine:
+                            setting.PlayerSetting(Color.BLACK).PlayerName = engineName;
+                            setting.PlayerSetting(Color.BLACK).IsCpu = true;
+                            Players[0 /*検討用のプレイヤー*/ ] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
+                            break;
+
+                        // 詰将棋エンジン
+                        case GameModeEnum.ConsiderationWithMateEngine:
+                            setting.PlayerSetting(Color.BLACK).PlayerName = engineName;
+                            setting.PlayerSetting(Color.BLACK).IsCpu = true;
+                            Players[0 /* 詰将棋用のプレイヤー */] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
+                            break;
+                    }
+                    GameSetting = setting;
                 }
-                GameSetting = setting;
-            }
 
-            // 局面の設定
-            kifuManager.EnableKifuList = false;
+                // 局面の設定
+                kifuManager.EnableKifuList = false;
 
-            // 検討用エンジンの開始
+                // 検討用エンジンの開始
 
-            var usiEnginePlayer = Players[0] as UsiEnginePlayer;
-            InitUsiEnginePlayer(Color.BLACK , usiEnginePlayer, engineDefineEx, 0, GameMode , false);
+                var usiEnginePlayer = Players[0] as UsiEnginePlayer;
+                InitUsiEnginePlayer(Color.BLACK, usiEnginePlayer, engineDefineEx, 0, GameMode, false);
 
-            // エンジンに与えるHashSize,Threadsの計算
-            if (UsiEngineHashManager.CalcHashSize() != 0)
+                // エンジンに与えるHashSize,Threadsの計算
+                if (UsiEngineHashManager.CalcHashSize() != 0)
+                    // Hash足りなくてダイアログ出した時にキャンセルボタン押されとる
+                    throw null;
+
+                // 検討ウィンドウへの読み筋などのリダイレクトを設定
+                InitEngineConsiderationInfo(GameMode);
+
+            } catch (Exception ex)
             {
-                // Hash足りなくてダイアログ出した時にキャンセルボタン押されとる
+                if (ex != null)
+                    TheApp.app.MessageShow(ex.Message , MessageShowType.Error);
                 Disconnect();
-                return;
             }
-
-
-            // 検討ウィンドウへの読み筋などのリダイレクトを設定
-            InitEngineConsiderationInfo(GameMode);
         }
 
         /// <summary>
