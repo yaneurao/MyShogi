@@ -258,6 +258,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 Tree.PropertyChangedEventEnable = true;
                 Tree.RaisePropertyChanged("KifuList",Tree.KifuList);
                 Tree.RaisePropertyChanged("Position",Tree.position);
+
             }
         }
 

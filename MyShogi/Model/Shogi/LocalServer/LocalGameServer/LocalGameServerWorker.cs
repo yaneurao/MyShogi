@@ -211,9 +211,6 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 検討モードならそれを停止させる必要があるが、それはGameModeのsetterがやってくれる。
             GameMode = nextGameMode;
-
-            // 棋譜が汚れ始めたのでフラグを立てておく。
-            KifuDirty = true;
         }
 
         /// <summary>
@@ -462,6 +459,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // 受理できる性質の指し手であることは検証済み
                     // special moveであってもDoMove()してしまう。
                     kifuManager.DoMove(bestMove);
+
+                    KifuDirty = true; // 新しいnodeに到達したので棋譜は汚れた扱い。
 
                     // -- 音声の読み上げ
 

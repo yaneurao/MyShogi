@@ -268,7 +268,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public bool KifuDirty
         {
-            get; set;
+            get { return kifuManager.Tree.KifuDirty; }
+            set { kifuManager.Tree.KifuDirty = value; }
         }
 
         #endregion

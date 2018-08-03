@@ -166,9 +166,19 @@ namespace MyShogi.Model.Shogi.Kifu
                     // 要素が1つしかないときは末尾の"moves"を取って渡す。
                     // cf. UsiPositionString
                 }
+
+                KifuDirty = true;
             }
         }
         private string rootSfen_;
+
+        /// <summary>
+        /// 棋譜が汚れたか。
+        /// 棋譜を保存したときにこれをfalseにしておけば、そのあと何らかの操作で棋譜が汚れた(更新があった)時に
+        /// 自動的にtrueになるので、棋譜が未保存であるか判定できて便利である。
+        /// </summary>
+        public bool KifuDirty { get; set; }
+
 
         // -- 以下、文字列化された棋譜絡み
 
@@ -696,6 +706,8 @@ namespace MyShogi.Model.Shogi.Kifu
             RaisePropertyChanged("Position", position);
 
             EnableKifuList = e; // 元の値
+
+            KifuDirty = true; // 分岐の削除に成功して棋譜が変更になった
         }
 
         /// <summary>
@@ -902,6 +914,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
             RaisePropertyChanged("KifuList", KifuList);
             RaisePropertyChanged("Position", position);
+
+            KifuDirty = true; // 新しいnodeに到達したので棋譜は汚れた扱い。
         }
 
         /// <summary>

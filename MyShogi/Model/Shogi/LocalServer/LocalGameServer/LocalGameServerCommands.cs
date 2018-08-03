@@ -250,7 +250,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     }
 
-                    // 棋譜が綺麗になった扱い。
+                    // 棋譜が綺麗になった扱いにする。(この棋譜はファイルなどに丸ごと保存されているはずであるから)
                     KifuDirty = false;
                 }
             });
@@ -371,7 +371,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // sfenのparser経由で代入するのが楽ちん。
                     if (error != null)
                         TheApp.app.MessageShow(error , MessageShowType.Error);
-
                 }
             }
             );
