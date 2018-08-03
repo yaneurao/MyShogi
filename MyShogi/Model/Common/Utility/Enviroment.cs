@@ -21,7 +21,7 @@ namespace MyShogi.Model.Common.Utility
                 using (var moc = mc.GetInstances())
                     foreach (var mo in moc) // 何故か複数あることが想定されている。NUMA環境か？
                     {
-                        result = (ulong)mo["FreePhysicalMemory"];
+                        result = (ulong)mo["FreePhysicalMemory"]; // このメンバ存在しないということはないはず。
 
                         mo.Dispose(); // これ要るのか？
                     }

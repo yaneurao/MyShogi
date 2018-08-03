@@ -109,6 +109,14 @@ namespace MyShogi.Model.Shogi.Usi
             // 2) 2つのエンジンがそれぞれPonderありなら、スレッド数を2で割るべき。
 
             var os_threads = Enviroment.GetProcessorCores(); // 1)
+
+            // 32bit環境だと8スレッドを超えると思考エンジン側の(スタック絡みの？)アドレス空間が2GBをオーバーするようなので7スレッドまでに制限する。
+            // エンジンによってはこの制約は不要かも知れないが、評価関数によらず、やねうら王系だとこうなるようだ。
+            // Windows7にて確認。Windows 8以降は状況が異なるのかも。(いまどきのPCでなぜ32bit OSを選んだのかという気もするが…)
+
+            if (!Environment.Is64BitOperatingSystem && os_threads >= 8)
+                os_threads = 7;
+
             var ponder = Ponders[0] && Ponders[1] ? 2 : 1;   // 2)
 
             foreach (var c in All.IntColors())
@@ -189,6 +197,11 @@ namespace MyShogi.Model.Shogi.Usi
             if (physicalMemory <= min_total)
                 error += $"エンジンの動作のために、物理メモリが{min_total - physicalMemory}[MB] 足りません。"
                     + "空き物理メモリが足りないので思考エンジンの動作が不安定になる可能性があります。";
+
+            // 32bit環境のスレッド数に関する制約
+            foreach (var c in All.IntColors())
+                if (!Environment.Is64BitOperatingSystem && Threads[c] >= 8)
+                    error += $"{((Color)c).Pretty()}側のエンジンのスレッド数が{Threads[c]}に設定されていますが、8以上を設定するとOSが32bitの環境ではうまく動かない場合があります。";
 
             if (error != null)
             {
