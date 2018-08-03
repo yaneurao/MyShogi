@@ -35,21 +35,33 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 時間制限なしか？
+        /// 思考時間等の制限なしか？
         /// </summary>
-        public bool TimeLimitless
+        public bool Limitless
         {
-            get { return GetValue<bool>("TimeLimitless"); }
-            set { SetValue("TimeLimitless", value); }
+            get { return GetValue<bool>("Limitless"); }
+            set { SetValue("Limitless", value); }
         }
 
         /// <summary>
-        /// 時間制限あり(TimeLimitless == false)のときに、その1局面に使う秒数。
+        /// 時間制限ありか
+        /// </summary>
+        public bool TimeLimitEnable
+        {
+            get { return GetValue<bool>("TimeLimitEnable"); }
+            set { SetValue("TimeLimitEnable", value); }
+        }
+
+        /// <summary>
+        /// 制限あり(TimeLimitEnable == true)のときに、その1局面に使う秒数。
         /// </summary>
         public int Second
         {
             get { return GetValue<int>("Second"); }
             set { SetValue("Second", value); }
         }
+
+        // その他、node制限なども入れるかも..
+
     }
 }

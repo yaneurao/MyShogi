@@ -137,10 +137,13 @@ namespace MyShogi.View.Win2D
         /// 検討エンジンの設定ダイアログを表示する。
         /// (イベントハンドラを適切に設定した上で)
         /// </summary>
-        private void ShowConsiderationSettingDialog()
+        private void ShowConsiderationEngineSettingDialog()
         {
             var dialog = new ConsiderationEngineSettingDialog();
             FormLocationUtility.CenteringToThisForm(dialog,this);
+            var setting = TheApp.app.config.ConsiderationEngineSetting;
+            dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.ConsiderationSetting;
+            dialog.Bind(setting);
             dialog.ShowDialog(this);
         }
 
@@ -152,6 +155,9 @@ namespace MyShogi.View.Win2D
         {
             var dialog = new ConsiderationEngineSettingDialog();
             FormLocationUtility.CenteringToThisForm(dialog,this);
+            var setting = TheApp.app.config.MateEngineSetting;
+            dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.MateSetting;
+            dialog.Bind(setting);
             dialog.ShowDialog(this);
         }
 
@@ -472,7 +478,7 @@ namespace MyShogi.View.Win2D
             if (!consideration && TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath == null)
             {
                 // 検討エンジン設定されてないじゃん…。
-                ShowConsiderationSettingDialog();
+                ShowConsiderationEngineSettingDialog();
 
                 // ↑のメソッド内であとは勝手にやってくれるじゃろ…。
                 return; 
@@ -959,13 +965,18 @@ namespace MyShogi.View.Win2D
                     { // -- 検討モード
 
                         var item = new ToolStripMenuItem();
-                        item.Text = consideration ? "検討モードを終了する(&C)" : "検討モード(&C)"; // ConsiderationMode
+                        item.Text = consideration ? "検討モードを終了する(&C)" : "検討エンジン設定(&C)"; // ConsiderationMode
 
                         // toolStripのボタンのテキストを検討モードであるかどうかにより変更する。
                         toolStripButton5.Text = consideration ? "終" : "検";
                         toolStripButton5.ToolTipText = consideration ? "検討モードを終了します。" : "検討モードに入ります。";
                         toolStripButton5.Enabled = !inTheGame;
-                        item.Click += (sender, e) => { toolStripButton5_Click(null, null); };
+                        item.Click += (sender, e) => {
+                            if (consideration)
+                                toolStripButton5_Click(null, null); // 検討モードを終了させる
+                            else
+                                ShowConsiderationEngineSettingDialog(); // 検討エンジンの選択画面に
+                        };
 
                         item_playgame.DropDownItems.Add(item);
                     }
@@ -977,14 +988,20 @@ namespace MyShogi.View.Win2D
                     { // -- 検討モード
 
                         var item = new ToolStripMenuItem();
-                        item.Text = mate_consideration ? "詰検討モードを終了する(&M)" : "詰検討モード(&M)"; // MateMode
+                        item.Text = mate_consideration ? "詰検討モードを終了する(&M)" : "詰検討エンジン設定(&M)"; // MateMode
 
                         // toolStripのボタンのテキストを検討モードであるかどうかにより変更する。
                         toolStripButton7.Text = mate_consideration ? "終" : "詰";
                         toolStripButton7.ToolTipText = mate_consideration ? "詰検討モードを終了します。" : "詰検討モードに入ります。";
                         // 「詰」ボタン : 詰将棋ボタン
                         toolStripButton7.Enabled = !inTheGame;
-                        item.Click += (sender, e) => { toolStripButton7_Click(null, null); };
+                        item.Click += (sender, e) => {
+                            if (mate_consideration)
+                                toolStripButton7_Click(null, null);
+                            else
+                                ShowMateEngineSettingDialog(); // 詰検討エンジンの選択画面に
+
+                        };
 
                         item_playgame.DropDownItems.Add(item);
                     }
