@@ -54,7 +54,7 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public static bool IsOk(this Square sq)
         {
-            return Square.ZERO <= sq && sq <= Square.NB;
+            return Square.ZERO <= sq && sq < Square.NB;
         }
 
         /// <summary>

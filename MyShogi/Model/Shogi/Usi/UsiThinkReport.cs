@@ -59,8 +59,11 @@ namespace MyShogi.Model.Shogi.Usi
 
         /// <summary>
         /// 読み筋
+        ///
+        /// MovesSuffixはそこ以降、解釈できなかった文字列。そのまま検討ウィンドウに表示させておけば良い。
         /// </summary>
         public List<Move> Moves;
+        public string MovesSuffix;
 
         /// <summary>
         /// "info string ..."で渡された文字列

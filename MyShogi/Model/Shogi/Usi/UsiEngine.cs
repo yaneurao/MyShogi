@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
 using MyShogi.Model.Common.Utility;
@@ -571,7 +572,11 @@ namespace MyShogi.Model.Shogi.Usi
 
                         case "pv":
                             info.Moves = HandlePVSeq(scanner);
-                            parseEnd = true; // "pv"はそのあと末尾まで。
+                            //parseEnd = true; // "pv"はそのあと末尾まで。
+
+                            // ここから、解釈できない文字列はinfo.MovesSuffixに追加。
+                            info.MovesSuffix = HandlePVSuffix(scanner);
+
                             break;
 
                         // リポート情報のみ更新
@@ -633,12 +638,44 @@ namespace MyShogi.Model.Shogi.Usi
 
             while (!scanner.IsEof)
             {
-                var move = Core.Util.FromUsiMove(scanner.ParseText());
+                var move = Core.Util.FromUsiMove(scanner.PeekText());
                 if (move == Move.NONE)
                     break;
+                scanner.ParseText();
                 list.Add(move);
             }
             return list;
+        }
+
+        /// <summary>
+        /// "info"に出てきうるtoken
+        /// </summary>
+        private string[] InfoTokens = new[]{ "hashfull" , "nps" , "currmove" , "nodes" , "depth" , "seldepth" ,
+            "score", "pv" , "time" , "multipv" , "string"};
+
+        /// <summary>
+        /// 読み筋のうち解釈できない文字列をまとめてつなげて返す。
+        ///
+        /// InfoTokensのtokenが出現したところで終了。
+        /// </summary>
+        /// <param name="scanner"></param>
+        /// <returns></returns>
+        private string HandlePVSuffix(Scanner scanner)
+        {
+            var sb = new StringBuilder();
+
+            while (!scanner.IsEof)
+            {
+                var token = scanner.PeekText();
+                if (InfoTokens.Contains(token))
+                    break;
+
+                scanner.ParseText();
+                sb.Append(' ');
+                sb.Append(token);
+            }
+
+            return sb.ToString();
         }
 
         /// <summary>

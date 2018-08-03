@@ -232,6 +232,8 @@ namespace MyShogi.View.Win2D
 
                 var evalString = info.Eval == null ? null : info.Eval.Eval.Pretty();
                 var evalBound = info.Eval == null ? null : info.Eval.Bound.Pretty();
+                kifuString.Append(info.MovesSuffix);
+                var pvString = kifuString.ToString();
 
                 var list = new[]{
                     ranking,                          // MultiPVの順
@@ -240,7 +242,7 @@ namespace MyShogi.View.Win2D
                     info.NodesString ,                // ノード数
                     evalString,                       // 評価値
                     evalBound,                        // "+-"
-                    kifuString.ToString()             // 読み筋
+                    pvString,                         // 読み筋
                 };
 
                 var item = new ListViewItem(list);
