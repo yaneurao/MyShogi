@@ -160,19 +160,16 @@ namespace MyShogi.View.Win2D.Setting
             // 詳細設定ボタンの無効化と、このエンジン選択ダイアログを閉じる時に詳細設定ボタンの再有効化。
             var dialog = new EngineSelectionDialog();
 
+            if (ViewModel.DialogType == ConsiderationEngineSettingDialogType.ConsiderationSetting)
+                dialog.InitEngineDefines(true, false); // 通常のエンジンのみ表示
+            else
+                dialog.InitEngineDefines(false, true); // 詰将棋エンジンのみ表示
+
             // エンジンを選択し、「選択」ボタンが押された時のイベントハンドラ
             dialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
             {
-                // これが選択された。
-                var selectedEngine = (int)args.value;
-                var defines = TheApp.app.EngineDefines;
-                if (selectedEngine < defines.Count)
-                {
-                    var engineDefine = defines[selectedEngine];
-                    // 先手か後手かは知らんが、そこにこのEngineDefineを設定
-
-                    ViewModel.EngineDefineFolderPath = engineDefine.FolderPath;
-                }
+                var engineDefine = (EngineDefineEx)args.value;
+                ViewModel.EngineDefineFolderPath = engineDefine.FolderPath;
                 dialog.Dispose();
             });
 

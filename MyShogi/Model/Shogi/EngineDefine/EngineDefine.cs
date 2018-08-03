@@ -119,6 +119,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
         public List<EnginePreset> Presets;
 
         /// <summary>
+        /// EngineType == 0 : 通常探索エンジン。(goコマンドが送れる)
+        /// EngineType == 1 : 詰み将棋に対応しているか。(go mateコマンドが送れる)
+        /// EngineType == 2 : 通常探索＋詰将棋対応のエンジン
+        /// </summary>
+        [DataMember]
+        public int EngineType { get; set; } = 0;
+
+        /// <summary>
         /// setoptionで設定出来るオプションに対する説明。
         /// nullであってもエンジンに対して"usi"を送信して、その時に返ってきたものを
         /// 表示するので問題はない。

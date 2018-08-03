@@ -219,7 +219,7 @@ namespace MyShogi.View.Win2D
 
                 var elpasedTimeString = info.ElapsedTime == null ? null : info.ElapsedTime.ToString("hh':'mm':'ss'.'f");
                 var ranking = info.MultiPvString == null ? "1" : info.MultiPvString;
-                var depthString = info.Eval == null ? null : $"{info.Depth}/{info.SelDepth}";
+                var depthString = info.Eval == null ? null : (info.SelDepth != null) ? $"{info.Depth}/{info.SelDepth}" : info.Depth.ToString();
 
                 // 後手番の時に自分から見た評価値を表示する設定であるなら、評価値の表示を反転させる。
                 // ここで表示している値、保存していないので即時反映は無理だわ…。まあ、これは仕様ということで…。

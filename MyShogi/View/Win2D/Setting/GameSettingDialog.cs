@@ -5,6 +5,7 @@ using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.View.Win2D.Common;
 using SCore = MyShogi.Model.Shogi.Core;
 
@@ -172,6 +173,7 @@ namespace MyShogi.View.Win2D
             ReleaseEngineSelectionDialog();
             // 詳細設定ボタンの無効化と、このエンジン選択ダイアログを閉じる時に詳細設定ボタンの再有効化。
             engineSelectionDialog = new EngineSelectionDialog();
+            engineSelectionDialog.InitEngineDefines(true, false);
 
             var playerSettings = new[] { playerSettingControl1, playerSettingControl2 };
 
@@ -179,33 +181,27 @@ namespace MyShogi.View.Win2D
             engineSelectionDialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
             {
                 // これが選択された。
-                var selectedEngine = (int)args.value;
-                var defines = TheApp.app.EngineDefines;
-                if (selectedEngine < defines.Count)
-                {
-                    var engineDefine = defines[selectedEngine];
-                    // 先手か後手かは知らんが、そこにこのEngineDefineを設定
+                var engineDefine = (EngineDefineEx)args.value;
 
-                    var vm = playerSettings[(int)c].ViewModel;
+                var vm = playerSettings[(int)c].ViewModel;
 
-                    vm.EngineDefineFolderPath = engineDefine.FolderPath;
-                    vm.RaisePropertyChanged("EngineSelected", null); // CPUのradio buttonを選択
+                vm.EngineDefineFolderPath = engineDefine.FolderPath;
+                vm.RaisePropertyChanged("EngineSelected", null); // CPUのradio buttonを選択
 
-                    Debug.Assert(engineDefine.FolderPath != null);
+                Debug.Assert(engineDefine.FolderPath != null);
 
-                    var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(engineDefine.FolderPath);
-                    var preset = indivisualEngine.SelectedPresetIndex;
-                    if (preset < 0) // 前回未選択だと-1がありうるので0に補整してやる。
-                        preset = 0;
+                var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(engineDefine.FolderPath);
+                var preset = indivisualEngine.SelectedPresetIndex;
+                if (preset < 0) // 前回未選択だと-1がありうるので0に補整してやる。
+                    preset = 0;
 
-                    var setting = TheApp.app.config.GameSetting;
-                    //setting.PlayerSetting(c).SelectedEnginePreset = preset;
-                    // TwoWayでbindingしているのでこれで値変わるはずだが同じ番号が選ばれるとイベントが発生しなくて…。
-                    setting.PlayerSetting(c).SetValueAndRaisePropertyChanged("SelectedEnginePreset",preset);
+                var setting = TheApp.app.config.GameSetting;
+                //setting.PlayerSetting(c).SelectedEnginePreset = preset;
+                // TwoWayでbindingしているのでこれで値変わるはずだが同じ番号が選ばれるとイベントが発生しなくて…。
+                setting.PlayerSetting(c).SetValueAndRaisePropertyChanged("SelectedEnginePreset",preset);
 
-                    // プレイヤー表示名の変更。
-                    setting.PlayerSetting(c).PlayerName = engineDefine.EngineDefine.DisplayName;
-                }
+                // プレイヤー表示名の変更。
+                setting.PlayerSetting(c).PlayerName = engineDefine.EngineDefine.DisplayName;
                 ReleaseEngineSelectionDialog();
             });
 

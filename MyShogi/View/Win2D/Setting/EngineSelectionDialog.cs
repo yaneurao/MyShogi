@@ -1,9 +1,11 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.EngineDefine;
 
 namespace MyShogi.View.Win2D
 {
@@ -27,25 +29,46 @@ namespace MyShogi.View.Win2D
         public EngineSelectionDialog()
         {
             InitializeComponent();
-
-            InitSelectionControls();
         }
 
         public class EngineSelectionViewModel : NotifyObject
         {
             /// <summary>
             /// エンジンの選択ボタンが押された時に
-            /// 0から(TheApp.app.engine_defines.Length - 1 )までの値が返ってくるので、
             /// 変更通知イベントを捕捉して使うと良い。
             /// </summary>
-            public int ButtonClicked
+            public EngineDefineEx ButtonClicked
             {
-                get { return GetValue<int>("ButtonClicked"); }
+                get { return GetValue<EngineDefineEx>("ButtonClicked"); }
                 set { SetValue("ButtonClicked", value); }
             }
         }
 
         public EngineSelectionViewModel ViewModel = new EngineSelectionViewModel();
+
+        private List<EngineDefineEx> engineDefines;
+
+        /// <summary>
+        /// 条件にマッチするエンジンだけを選択肢として表示する。
+        /// コンストラクタのあと呼び出すこと。
+        /// 
+        /// NormalSearchSupportEngine : 通常探索に対応しているエンジンを表示するのか。
+        /// MateSupportEngine         : 詰将棋探索に対応しているエンジンを表示するのか。
+        /// </summary>
+        public void InitEngineDefines(bool NormalSearchSupportEngine , bool MateSupportEngine )
+        {
+            engineDefines = new List<EngineDefineEx>();
+            foreach(var e in TheApp.app.EngineDefines)
+            {
+                var type = e.EngineDefine.EngineType;
+                if ((NormalSearchSupportEngine && (type == 0 || type == 2)) ||
+                    (MateSupportEngine         && (type == 1 || type == 2))
+                    )
+                        engineDefines.Add(e);
+            }
+
+            InitSelectionControls();
+        }
 
         /// <summary>
         /// このFormにぶら下がっているエンジン選択(1個)のControl×5個
@@ -78,7 +101,8 @@ namespace MyShogi.View.Win2D
                 // 子コントロールの「決定」ボタンが押された時のハンドラ
                 control.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
                  {
-                     var engine_defines = TheApp.app.EngineDefines;
+                     var engine_defines = engineDefines;
+
                      foreach (int j in All.Int(5))
                      {
                          if (SelectionControls[j].ViewModel == args.sender)
@@ -87,7 +111,7 @@ namespace MyShogi.View.Win2D
                              var selectedEngineIndex = SelectionControlTopIndex + j;
                              // 範囲内であることを確認する。
                              if (selectedEngineIndex < engine_defines.Count)
-                                 ViewModel.RaisePropertyChanged("ButtonClicked", selectedEngineIndex);
+                                 ViewModel.RaisePropertyChanged("ButtonClicked", engineDefines[selectedEngineIndex]);
                              break;
                          }
                      }
@@ -115,7 +139,7 @@ namespace MyShogi.View.Win2D
         {
             // 空き物理メモリ[MB]
             var free_memory = Enviroment.GetFreePhysicalMemory() / 1024;
-            var defines = TheApp.app.EngineDefines;
+            var defines = engineDefines;
 
             foreach (var i in All.Int(5))
             {
@@ -123,11 +147,12 @@ namespace MyShogi.View.Win2D
                 if (j < defines.Count)
                 {
                     SelectionControls[i].ViewModel.FreePhysicalMemory = (int)free_memory;
-                    SelectionControls[i].ViewModel.EngineDefine = defines[j].EngineDefine;
+                    SelectionControls[i].ViewModel.SetValueAndRaisePropertyChanged("EngineDefine", defines[j].EngineDefine);
                 } else
                 {
                     SelectionControls[i].ViewModel.FreePhysicalMemory = (int)free_memory;
-                    SelectionControls[i].ViewModel.EngineDefine = null; // 無効化しとく
+                    SelectionControls[i].ViewModel.SetValueAndRaisePropertyChanged<EngineDefineEx>("EngineDefine", null); // 無効化しとく
+                    // 最初nullで、そのあとnullをセットしてもイベントが発生しないのでこのようにセットしてやる必要がある。
                 }
             }
 

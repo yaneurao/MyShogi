@@ -376,6 +376,30 @@ namespace MyShogi.Model.Shogi.EngineDefine
             }
 
 #endif
+
+            {
+                // 詰将棋エンジン
+                var engine_define = new EngineDefine()
+                {
+                    DisplayName = "tanuki-詰将棋エンジン",
+                    EngineExeName = "tanuki_mate",
+                    SupportedCpus = default_cpus,
+                    EvalMemory = 0, // KPPTは、これくらい？
+                    WorkingMemory = 200,
+                    StackPerThread = 40, // clangでコンパイルの時にstack size = 25[MB]に設定している。ここに加えてheapがスレッド当たり15MBと見積もっている。
+                    Presets = default_preset,
+                    DescriptionSimple = "tanuki-詰将棋エンジン",
+                    Description = "長手数の詰将棋が解ける詰将棋エンジンです。\r\n" +
+                        "詰み手順が最短手数のものであることは保証されません。" +
+                        "複数スレッドには対応していません。",
+                    DisplayOrder = 10006,
+                    SupportedExtendedProtocol = default_extend,
+                    EngineOptionDescriptions = default_descriptions,
+                    EngineType = 1, // go mateコマンドに対応している。通常探索には使えない。
+                };
+                EngineDefineUtility.WriteFile("engine/tanuki_mate/engine_define.xml", engine_define);
+            }
+
         }
     }
 }

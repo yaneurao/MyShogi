@@ -4,6 +4,7 @@ using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Shogi.Usi;
 
@@ -269,6 +270,12 @@ namespace MyShogi.Model.Shogi.LocalServer
             get { return kifuManager.Tree.KifuDirty; }
             set { kifuManager.Tree.KifuDirty = value; }
         }
+
+        /// <summary>
+        /// 各PlayerのEngineDefine
+        /// </summary>
+        public EngineDefineEx GetEngineDefine(Color c) { return EngineDefineExes[(int)c]; }
+        private EngineDefineEx[] EngineDefineExes = new EngineDefineEx[2];
 
         #endregion
 

@@ -115,7 +115,7 @@ namespace MyShogi.View.Win2D
         /// ・詰将棋エンジン設定ダイアログ
         /// 共通。
         /// </summary>
-        //public Form ConsiderationSettingDialog;
+        //public Form ConsiderationEngineSettingDialog;
 
         /// <summary>
         /// エンジンの思考出力用

@@ -221,6 +221,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         private void InitUsiEnginePlayer(Color c , UsiEnginePlayer usiEnginePlayer ,
             EngineDefineEx engineDefineEx , int selectedPresetIndex , GameModeEnum nextGameMode , bool ponder)
         {
+            EngineDefineExes[(int)c] = engineDefineEx; // ここに保存しておく。
 
             var engine_config = TheApp.app.EngineConfigs;
             EngineConfig config = null;
@@ -274,9 +275,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             // CPUの数をNumberOfEngineに反映。
             int num = 0;
-            foreach (var c in All.Colors())
-                if (GameSetting.PlayerSetting(c).IsCpu)
-                    ++num;
+
+            if (nextGameMode.IsConsiderationWithEngine())
+                num = 1; // エンジンによる検討モードなら出力は一つ。
+            else 
+                foreach (var c in All.Colors())
+                    if (GameSetting.PlayerSetting(c).IsCpu)
+                        ++num;
             NumberOfEngine = num;
 
             // エンジン数が確定したので、検討ウィンドウにNumberOfInstanceメッセージを送信してやる。
@@ -295,15 +300,24 @@ namespace MyShogi.Model.Shogi.LocalServer
             num = 0;
             foreach (var c in All.Colors())
             {
-                if (GameSetting.PlayerSetting(c).IsCpu)
+                if (GameSetting.PlayerSetting(c).IsCpu ||
+                    (c == Color.BLACK && nextGameMode.IsConsiderationWithEngine()) // 検討用エンジンがぶら下がっている。
+                    )
                 {
                     var num_ = num; // copy for capturing
+
+                    var engineName = GetEngineDefine(c).EngineDefine.DisplayName;
+                    var playerName = (nextGameMode.IsConsiderationWithEngine() || DisplayName(c) == engineName) ?
+                        // 検討時には、エンジンの名前をそのまま表示。
+                          engineName :
+                        // 通常対局モードなら対局者名に括弧でエンジン名を表記。
+                          $"{DisplayName(c)}({engineName})";
 
                     ThinkReport = new UsiThinkReportMessage()
                     {
                         type = UsiEngineReportMessageType.SetEngineName,
                         number = num_, // is captured
-                        data = DisplayName(c),
+                        data = playerName,
                     };
 
                     // UsiEngineのThinkReportプロパティを捕捉して、それを転送してやるためのハンドラをセットしておく。
@@ -761,31 +775,27 @@ namespace MyShogi.Model.Shogi.LocalServer
                         "EngineDefineFolderPath = " + engineDefineFolderPath);
 
                 {
-                    var setting = new GameSetting();
-
                     // 検討モードの名前はエンジン名から取得
                     // →　ただし、棋譜を汚してはならないので棋譜の対局者名には反映しない。
 
                     var engineDefine = engineDefineEx.EngineDefine;
-                    var engineName = engineDefine.DisplayName;
+
+                    //var engineName = engineDefine.DisplayName;
+                    //setting.PlayerSetting(Color.BLACK).PlayerName = engineName;
+                    //setting.PlayerSetting(Color.BLACK).IsCpu = true;
 
                     switch (GameMode)
                     {
                         // 検討用エンジン
                         case GameModeEnum.ConsiderationWithEngine:
-                            setting.PlayerSetting(Color.BLACK).PlayerName = engineName;
-                            setting.PlayerSetting(Color.BLACK).IsCpu = true;
                             Players[0 /*検討用のプレイヤー*/ ] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
                             break;
 
                         // 詰将棋エンジン
                         case GameModeEnum.ConsiderationWithMateEngine:
-                            setting.PlayerSetting(Color.BLACK).PlayerName = engineName;
-                            setting.PlayerSetting(Color.BLACK).IsCpu = true;
                             Players[0 /* 詰将棋用のプレイヤー */] = PlayerBuilder.Create(PlayerTypeEnum.UsiEngine);
                             break;
                     }
-                    GameSetting = setting;
                 }
 
                 // 局面の設定
