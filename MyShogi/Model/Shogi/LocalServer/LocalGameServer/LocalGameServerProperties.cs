@@ -47,7 +47,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 // 次のモードがエンジンを使った検討モードであるなら局面の合法性のチェックが必要。
 
-                if (value.IsWithEngine())
+                if (value.IsConsiderationWithEngine())
                 {
                     // 現在の局面が不正でないかをチェック。
                     var error = Position.IsValid(GameMode == GameModeEnum.ConsiderationWithMateEngine);
@@ -64,9 +64,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 // エンジンを用いた検討モードを抜ける or 入るのであれば、そのコマンドを叩く。
 
-                if (old.IsWithEngine())
+                if (old.IsConsiderationWithEngine())
                     EndConsideration();
-                if (value.IsWithEngine())
+                if (value.IsConsiderationWithEngine())
                     StartConsideration();
 
                 // 依存プロパティの更新

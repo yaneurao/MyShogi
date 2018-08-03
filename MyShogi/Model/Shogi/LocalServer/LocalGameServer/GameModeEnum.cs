@@ -38,7 +38,7 @@
         /// </summary>
         /// <param name="mode"></param>
         /// <returns></returns>
-        public static bool IsWithEngine(this GameModeEnum mode)
+        public static bool IsConsiderationWithEngine(this GameModeEnum mode)
         {
             return
                 mode == GameModeEnum.ConsiderationWithEngine ||

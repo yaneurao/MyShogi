@@ -100,6 +100,22 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
+        /// 指定秒だけ思考するUsiTimeLimitを生成して返す。
+        /// </summary>
+        /// <param name="second"></param>
+        /// <param name="us"></param>
+        /// <returns></returns>
+        public static UsiThinkLimit FromSecond(int second)
+        {
+            var limit = new UsiThinkLimit();
+
+            limit.LimitType = UsiThinkLimitEnum.Time;
+            limit.ByoyomiTimeBlack = limit.ByoyomiTimeWhite = new TimeSpan(0, 0, second);
+
+            return limit;
+        }
+
+        /// <summary>
         /// この条件を元に、USIプロトコルで用いる"goコマンド"の"go","go ponder"以降の文字列を構築する。
         /// </summary>
         /// <returns></returns>

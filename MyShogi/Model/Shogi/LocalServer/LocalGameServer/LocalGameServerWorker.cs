@@ -389,7 +389,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // -- 指し手
 
             Move bestMove;
-            if (GameMode.IsWithEngine())
+            if (GameMode.IsConsiderationWithEngine())
             {
                 // 検討モードなのでエンジンから送られてきたbestMoveの指し手は無視。
                 bestMove = stmPlayer.SpecialMove;
@@ -527,7 +527,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             var stm = Position.sideToMove;
 
             // 検討モードでは、先手側のプレイヤーがエンジンに紐づけられている。
-            if (GameMode.IsWithEngine())
+            if (GameMode.IsConsiderationWithEngine())
                 stm = Color.BLACK;
 
             var stmPlayer = Player(stm);
@@ -571,17 +571,42 @@ namespace MyShogi.Model.Shogi.LocalServer
             if (GameMode == GameModeEnum.ConsiderationWithEngine)
                 // MultiPVは、GlobalConfigの設定を引き継ぐ
                 (stmPlayer as UsiEnginePlayer).Engine.MultiPV = TheApp.app.config.ConsiderationMultiPV;
-                // それ以外のGameModeなら、USIのoption設定を引き継ぐので変更しない。
+            // それ以外のGameModeなら、USIのoption設定を引き継ぐので変更しない。
 
 
             // -- Think()
 
-            // エンジン検討モードなら時間無制限
             // 通常対局モードのはずなので現在の持ち時間設定を渡してやる。
+            // エンジン検討モードなら検討エンジン設定に従う
 
-            var limit = GameMode.IsWithEngine() ?
-                UsiThinkLimit.TimeLimitLess : 
-                UsiThinkLimit.FromTimeSetting(PlayTimers, stm);
+            UsiThinkLimit limit = UsiThinkLimit.TimeLimitLess;
+
+            switch(GameMode)
+            {
+                case GameModeEnum.InTheGame:
+                    limit = UsiThinkLimit.FromTimeSetting(PlayTimers, stm);
+                    break;
+
+                case GameModeEnum.ConsiderationWithEngine:
+                    {
+                        var setting = TheApp.app.config.ConsiderationEngineSetting;
+                        if (setting.Limitless)
+                            limit = UsiThinkLimit.TimeLimitLess;
+                        else // if (setting.TimeLimit)
+                            limit = UsiThinkLimit.FromSecond(setting.Second);
+                    }
+                    break;
+
+                case GameModeEnum.ConsiderationWithMateEngine:
+                    {
+                        var setting = TheApp.app.config.MateEngineSetting;
+                        if (setting.Limitless)
+                            limit = UsiThinkLimit.TimeLimitLess;
+                        else // if (setting.TimeLimit)
+                            limit = UsiThinkLimit.FromSecond(setting.Second);
+                    }
+                    break;
+            }
 
             stmPlayer.Think(usiPosition , limit , stm);
 

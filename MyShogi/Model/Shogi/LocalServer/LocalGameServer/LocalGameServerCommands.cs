@@ -99,7 +99,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     UpdateKifuSelectedIndex();
 
                     // 再度、Thinkコマンドを叩く。
-                    if (GameMode.IsWithEngine())
+                    if (GameMode.IsConsiderationWithEngine())
                        NotifyTurnChanged();
                 }
             }
