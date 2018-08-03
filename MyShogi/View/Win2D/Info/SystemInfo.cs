@@ -58,6 +58,17 @@ namespace MyShogi.View.Win2D
 
             sb.AppendLine("--------");
 
+            // 32bit環境でManagementObjectが持っていない項目があるとそこで落ちるので…。
+            object GetVManagementObjectValue(ManagementObject mo , string key)
+            {
+                object value = null;
+                try
+                {
+                    value = mo[key];
+                } catch { }
+                return value;
+            }
+
             using (ManagementClass mc = new ManagementClass("Win32_OperatingSystem"))
             using (ManagementObjectCollection moc = mc.GetInstances())
                 foreach (ManagementObject mo in moc)
@@ -77,7 +88,7 @@ namespace MyShogi.View.Win2D
                         "SizeStoredInPagingFiles",
                     })
                     {
-                        sb.AppendLine($"{key}: {mo[key]:N0}kB");
+                        sb.AppendLine($"{key}: {GetVManagementObjectValue(mo,key):N0}kB");
                     }
                     sb.AppendLine("--------");
                     mo.Dispose();
@@ -98,7 +109,7 @@ namespace MyShogi.View.Win2D
                         "L3CacheSize",
                     })
                     {
-                        sb.AppendLine($"{key}: {mo[key]}");
+                        sb.AppendLine($"{key}: {GetVManagementObjectValue(mo,key)}");
                     }
                     sb.AppendLine("--------");
                     mo.Dispose();

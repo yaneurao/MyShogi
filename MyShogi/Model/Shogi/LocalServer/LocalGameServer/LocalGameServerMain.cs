@@ -68,6 +68,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             // GameModeの初期値は、GameMode.NotInitなのでここで変更通知イベントが発生する。
             GameMode = GameModeEnum.ConsiderationWithoutEngine;
 
+            // 初期化が終わった。この時点では棋譜は汚れていない扱いとする。
+            KifuDirty = false;
+
             // 対局監視スレッドを起動して回しておく。
             if (!NoThread)
                 new Thread(thread_worker).Start();
