@@ -495,14 +495,16 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "読み筋を出力する最小間隔を設定します。単位は[ms]",
                         "思考エンジンが読み筋を出力する最小間隔を設定します。\r\n" +
                         "これをあまり小さい値にすると読み筋が出力される回数が増えて、見づらくなります。\r\n" +
-                        "また出力にも時間がかかるため、あまりたくさん出力すると棋力に影響します。",
+                        "また出力にも時間がかかるため、あまりたくさん出力すると棋力に影響します。\r\n" +
+                        "※　ConsiderationModeがオンのときはこの値は無視されます。",
 
                         "option name PvInterval type spin default 300 min 0 max 100000"),
 
                     new EngineOptionDescription("ConsiderationMode"   , null ,
                         "なるべく綺麗な読み筋を出力します。",
                         "この設定をオンにすると、読み筋が途中で途切れにくくなります。\r\n" +
-                        "(読み筋の出力頻度は少し減ります。)",
+                        "(読み筋の出力頻度は少し減ります。)\r\n" +
+                        "※　この設定をオンにした時、PvIntervalの値は無視されます。",
 
                         "option name ConsiderationMode type check default false"),
 
@@ -513,7 +515,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "そのため、fail low/highのとき読み筋の表示は短くなります。\r\n" +
                         "このオプションをオフにすると、fail low/highの時には読み筋を出力しなくなるので、\r\n" +
                         "短い読み筋が表示されにくくなります。\r\n" +
-                        "このオプションは、ConsiderationModeオンのときも有効。",
+                        "※　このオプションは、ConsiderationModeオンのときも有効。",
 
                         "option name OutputFailLHPV type check default true"),
 

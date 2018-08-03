@@ -13,6 +13,16 @@ TODO:
 ■　2018/08/02
 
 
+- β6に関してβテスターの人たちの意見反映その2
+  - エンジンの詳細設定で"ConsiderationMode"をtrueにしたときに "PvInterval"の設定値が無視される件(masaさん)
+    - 設定のところに説明文追加
+  - 「将棋神」のプリセットで、棋力に直接影響しそうなところに関して値を設定する。(NodesLimit = 0 , DepthLimit = 0 , MultiPv = 1など)
+  - 「九段」～「10級」も DepthLimit = 0 , MultiPv = 1 を設定しておく。
+
+
+- Kif形式棋譜読み込みで初期局面の持駒が読み込まれない問題の修正 (thanks tibigameさん) #31 (Mizarさんのプルリク)
+
+
 - 検討ウィンドウ設定まわりの作業その1
   - ConsiderationSettingDialog追加。
     - デザインできた。

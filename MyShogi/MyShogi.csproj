@@ -81,6 +81,7 @@
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineConfig.cs" />
+    <Compile Include="Model\Shogi\LocalServer\Settings\ConsiderationSetting.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngineHashManager.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EnginePreset.cs" />
     <Compile Include="Model\Shogi\EngineDefine\CpuType.cs" />
