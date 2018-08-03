@@ -1,6 +1,6 @@
 ﻿namespace MyShogi.View.Win2D.Setting
 {
-    partial class ConsiderationSettingDialog
+    partial class ConsiderationEngineSettingDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -32,18 +32,18 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.label2 = new System.Windows.Forms.Label();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.button3 = new System.Windows.Forms.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
@@ -67,14 +67,6 @@
             this.toolTip1.SetToolTip(this.button2, "思考エンジンの細かい設定を変更できます。\\r\\nこれは検討時用の設定です。");
             this.button2.UseVisualStyleBackColor = true;
             // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(121, 37);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(160, 50);
-            this.pictureBox1.TabIndex = 8;
-            this.pictureBox1.TabStop = false;
-            // 
             // textBox1
             // 
             this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -83,7 +75,6 @@
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(198, 19);
             this.textBox1.TabIndex = 7;
-            this.textBox1.Text = "あなた";
             this.toolTip1.SetToolTip(this.textBox1, "選択されているエンジン名が表示されています。");
             // 
             // label1
@@ -98,6 +89,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.AutoSize = true;
             this.groupBox1.Controls.Add(this.radioButton2);
             this.groupBox1.Controls.Add(this.radioButton1);
             this.groupBox1.Controls.Add(this.label2);
@@ -110,16 +102,38 @@
             this.groupBox1.Text = "時間設定";
             this.toolTip1.SetToolTip(this.groupBox1, "検討時の1つの局面に対する時間を設定できます。");
             // 
-            // button3
+            // radioButton2
             // 
-            this.button3.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.button3.Location = new System.Drawing.Point(83, 185);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(113, 31);
-            this.button3.TabIndex = 13;
-            this.button3.Text = "検討開始";
-            this.toolTip1.SetToolTip(this.button3, "検討を開始します。");
-            this.button3.UseVisualStyleBackColor = true;
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(17, 41);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(65, 16);
+            this.radioButton2.TabIndex = 3;
+            this.radioButton2.Text = "制限あり";
+            this.toolTip1.SetToolTip(this.radioButton2, "時間制限ありで思考します。1局面あたりの秒数を設定できます。");
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Checked = true;
+            this.radioButton1.Location = new System.Drawing.Point(17, 19);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(66, 16);
+            this.radioButton1.TabIndex = 2;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "制限なし";
+            this.toolTip1.SetToolTip(this.radioButton1, "時間無制限で思考します。");
+            this.radioButton1.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(193, 41);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(17, 12);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "秒";
             // 
             // numericUpDown1
             // 
@@ -144,38 +158,24 @@
             0,
             0});
             // 
-            // label2
+            // button3
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(193, 41);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(17, 12);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "秒";
+            this.button3.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.button3.Location = new System.Drawing.Point(83, 185);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(113, 31);
+            this.button3.TabIndex = 13;
+            this.button3.Text = "検討開始";
+            this.toolTip1.SetToolTip(this.button3, "検討を開始します。");
+            this.button3.UseVisualStyleBackColor = true;
             // 
-            // radioButton1
+            // pictureBox1
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(17, 19);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(66, 16);
-            this.radioButton1.TabIndex = 2;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "制限なし";
-            this.toolTip1.SetToolTip(this.radioButton1, "時間無制限で思考します。");
-            this.radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(17, 41);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(65, 16);
-            this.radioButton2.TabIndex = 3;
-            this.radioButton2.Text = "制限あり";
-            this.toolTip1.SetToolTip(this.radioButton2, "時間制限ありで思考します。1局面あたりの秒数を設定できます。");
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.pictureBox1.Location = new System.Drawing.Point(121, 37);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(160, 50);
+            this.pictureBox1.TabIndex = 8;
+            this.pictureBox1.TabStop = false;
             // 
             // ConsiderationSettingDialog
             // 
@@ -194,10 +194,10 @@
             this.MinimizeBox = false;
             this.Name = "ConsiderationSettingDialog";
             this.Text = "検討エンジン設定";
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

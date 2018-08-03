@@ -13,6 +13,20 @@ TODO:
 ■　2018/08/02
 
 
+- 検討ウィンドウ設定まわりの作業その2
+  - ToolStripの検討ボタンを押した時に検討エンジンが選択されていなければ、検討エンジンの設定画面を出す。(初回など)
+  - AboutDialog , SystemInfoDialogをmodal dialogに変更。
+  - 各種設定ダイアログを表示するとき、メインウィンドウ上にセンタリングするようにした。
+  - ConsiderationSetting → ConsiderationEngineSettingにrename
+    - 詰検討エンジンの設定もこのクラスを使い回すことにした。
+
+- USI2.0に以下の文、追加。
+  - "isready"の前に"setoption"を送らないといけない問題
+    - 思考エンジンは、"isready"に対して時間のかかる処理(評価関数ファイルの読み込み、置換表の確保・ゼロクリアなど)を行う必要があるが、
+    評価関数ファイルの存在するフォルダを"setoption"コマンドで受け取りたい場合、isreadyの前に"setoption"が完了している必要がある。
+    - GUI側はこのことを保証しなければならないし、保証するべきである。
+
+
 - β6に関してβテスターの人たちの意見反映その2
   - エンジンの詳細設定で"ConsiderationMode"をtrueにしたときに "PvInterval"の設定値が無視される件(masaさん)
     - 設定のところに説明文追加

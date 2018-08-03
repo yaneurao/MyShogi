@@ -81,7 +81,7 @@
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineConfig.cs" />
-    <Compile Include="Model\Shogi\LocalServer\Settings\ConsiderationSetting.cs" />
+    <Compile Include="Model\Shogi\LocalServer\Settings\ConsiderationEngineSetting.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngineHashManager.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EnginePreset.cs" />
     <Compile Include="Model\Shogi\EngineDefine\CpuType.cs" />
@@ -213,11 +213,11 @@
     <Compile Include="View\Win2D\Info\EngineConsiderationControl.Designer.cs">
       <DependentUpon>EngineConsiderationControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\Setting\ConsiderationSettingDialog.cs">
+    <Compile Include="View\Win2D\Setting\ConsiderationEngineSettingDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\Setting\ConsiderationSettingDialog.Designer.cs">
-      <DependentUpon>ConsiderationSettingDialog.cs</DependentUpon>
+    <Compile Include="View\Win2D\Setting\ConsiderationEngineSettingDialog.Designer.cs">
+      <DependentUpon>ConsiderationEngineSettingDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\Setting\EngineOptionSettingControl.cs">
       <SubType>UserControl</SubType>
@@ -365,8 +365,8 @@
     <EmbeddedResource Include="View\Win2D\Info\EvalGraphDialog.resx">
       <DependentUpon>EvalGraphDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\Setting\ConsiderationSettingDialog.resx">
-      <DependentUpon>ConsiderationSettingDialog.cs</DependentUpon>
+    <EmbeddedResource Include="View\Win2D\Setting\ConsiderationEngineSettingDialog.resx">
+      <DependentUpon>ConsiderationEngineSettingDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\EngineOptionSettingControl.resx">
       <DependentUpon>EngineOptionSettingControl.cs</DependentUpon>

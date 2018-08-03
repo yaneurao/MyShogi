@@ -8,6 +8,7 @@ using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Usi;
+using MyShogi.View.Win2D.Setting;
 using ObjectModel = MyShogi.Model.Common.ObjectModel;
 using SCore = MyShogi.Model.Shogi.Core;
 
@@ -86,25 +87,34 @@ namespace MyShogi.View.Win2D
 
         // -- メニューが生成しうるダイアログ
 
+        /// modal dialogとして表示するするものはコメントアウトした。
+
         /// <summary>
         /// 「やねうら王について」のダイアログ
         /// </summary>
-        public Form aboutDialog;
+        //public Form aboutDialog;
 
         /// <summary>
         /// 「通常対局」の設定ダイアログ
         /// </summary>
-        public Form gameSettingDialog;
+        //public Form gameSettingDialog;
 
         /// <summary>
         /// CPU infoを表示するダイアログ
         /// </summary>
-        public Form cpuInfoDialog;
+        //public Form cpuInfoDialog;
 
         /// <summary>
         /// デバッグウィンドウ
         /// </summary>
         public Form debugDialog;
+
+        /// <summary>
+        /// ・検討エンジン設定ダイアログ
+        /// ・詰将棋エンジン設定ダイアログ
+        /// 共通。
+        /// </summary>
+        //public Form ConsiderationSettingDialog;
 
         /// <summary>
         /// エンジンの思考出力用
@@ -117,6 +127,45 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public Info.EvalGraphDialog evalGraphDialog;
 #endif
+
+        #endregion
+
+        #region dialog
+
+        /// <summary>
+        /// 検討エンジンの設定ダイアログを表示する。
+        /// (イベントハンドラを適切に設定した上で)
+        /// </summary>
+        private void ShowConsiderationSettingDialog()
+        {
+            var dialog = new ConsiderationEngineSettingDialog();
+            CenteringToThisForm(dialog);
+            dialog.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// 詰検討エンジンの設定ダイアログを表示する。
+        /// (イベントハンドラを適切に設定した上で)
+        /// </summary>
+        private void ShowMateEngineSettingDialog()
+        {
+            var dialog = new ConsiderationEngineSettingDialog();
+            CenteringToThisForm(dialog);
+            dialog.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// あるFormをこのFormに対してセンタリングする。
+        /// </summary>
+        /// <param name="form"></param>
+        private void CenteringToThisForm(Form form)
+        {
+            form.StartPosition = FormStartPosition.Manual;
+            form.DesktopLocation = new Point(
+                this.DesktopLocation.X + ( this.Width - form.Width) / 2,
+                this.DesktopLocation.Y + ( this.Height - form.Height) / 2
+                );
+        }
 
         #endregion
 
@@ -433,6 +482,16 @@ namespace MyShogi.View.Win2D
         private void toolStripButton5_Click(object sender, System.EventArgs e)
         {
             var consideration = gameServer.GameMode == GameModeEnum.ConsiderationWithEngine;
+
+            if (!consideration && TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath == null)
+            {
+                // 検討エンジン設定されてないじゃん…。
+                ShowConsiderationSettingDialog();
+
+                // ↑のメソッド内であとは勝手にやってくれるじゃろ…。
+                return; 
+            }
+
             gameServer.ChangeGameModeCommand(
                 consideration ?
                 GameModeEnum.ConsiderationWithoutEngine :
@@ -447,7 +506,8 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton6_Click(object sender, System.EventArgs e)
         {
-
+            // とりま未実装なので取り除いておいた。
+            // あとで実装する。
         }
 
         /// <summary>
@@ -458,6 +518,16 @@ namespace MyShogi.View.Win2D
         private void toolStripButton7_Click(object sender, System.EventArgs e)
         {
             var mate_consideration = gameServer.GameMode == GameModeEnum.ConsiderationWithMateEngine;
+
+            if (!mate_consideration && TheApp.app.config.MateEngineSetting.EngineDefineFolderPath == null)
+            {
+                // 検討エンジン設定されてないじゃん…。
+                ShowMateEngineSettingDialog();
+
+                // ↑のメソッド内であとは勝手にやってくれるじゃろ…。
+                return;
+            }
+
             gameServer.ChangeGameModeCommand(
                 mate_consideration ?
                 GameModeEnum.ConsiderationWithoutEngine :
@@ -887,10 +957,11 @@ namespace MyShogi.View.Win2D
                         item.Click += (sender, e) =>
                         {
                             // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
-                            if (gameSettingDialog != null)
-                            gameSettingDialog.Dispose();
+                            //if (gameSettingDialog != null)
+                            //gameSettingDialog.Dispose();
 
-                            gameSettingDialog = new GameSettingDialog(this);
+                            var gameSettingDialog = new GameSettingDialog(this);
+                            CenteringToThisForm(gameSettingDialog);
                             gameSettingDialog.ShowDialog(this); // Modal Dialogにしておく。
                         };
 
@@ -915,7 +986,7 @@ namespace MyShogi.View.Win2D
 
 
                     // 「解」ボタン : 棋譜解析
-                    toolStripButton6.Enabled = !inTheGame;
+                    //toolStripButton6.Enabled = !inTheGame;
 
                     { // -- 検討モード
 
@@ -1650,7 +1721,10 @@ namespace MyShogi.View.Win2D
                             }
 
                             if (debugDialog != null)
+                            {
+                                CenteringToThisForm(debugDialog);
                                 debugDialog.Show();
+                            }
                         };
                         item_others.DropDownItems.Add(item1);
                     }
@@ -1674,11 +1748,12 @@ namespace MyShogi.View.Win2D
                         item1.Text = "システム情報(&S)"; // System Infomation
                         item1.Click += (sender, e) =>
                         {
-                            if (cpuInfoDialog != null)
-                                cpuInfoDialog.Dispose();
+                            //if (cpuInfoDialog != null)
+                            //    cpuInfoDialog.Dispose();
 
-                            cpuInfoDialog = new SystemInfo();
-                            cpuInfoDialog.Show(this);
+                            var cpuInfoDialog = new SystemInfo();
+                            CenteringToThisForm(cpuInfoDialog);
+                            cpuInfoDialog.ShowDialog(this);
                         };
                         item_others.DropDownItems.Add(item1);
                     }
@@ -1720,11 +1795,12 @@ namespace MyShogi.View.Win2D
                         item1.Text = "バージョン情報(&V)"; // Version
                         item1.Click += (sender, e) =>
                         {
-                            if (aboutDialog != null)
-                                aboutDialog.Dispose();
+                            //if (aboutDialog != null)
+                            //    aboutDialog.Dispose();
 
-                            aboutDialog = new AboutYaneuraOu();
-                            aboutDialog.Show(this);
+                            var aboutDialog = new AboutYaneuraOu();
+                            CenteringToThisForm(aboutDialog);
+                            aboutDialog.ShowDialog(this);
                         };
                         item_others.DropDownItems.Add(item1);
                     }
@@ -1824,6 +1900,7 @@ namespace MyShogi.View.Win2D
         private MenuStrip old_menu { get; set; } = null;
 
         #endregion
+
 
     }
 }

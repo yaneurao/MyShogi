@@ -441,10 +441,23 @@ namespace MyShogi.App
         }
 
         /// <summary>
-        /// 対局ダイアログの設定
+        /// 対局設定。
+        /// 対局設定ダイアログとdata bindingして使う。
         /// </summary>
         [DataMember]
         public GameSetting GameSetting { get; set; } = new GameSetting();
+
+        /// <summary>
+        /// 検討用エンジン設定
+        /// 検討用エンジン設定ダイアログとdata bindingして使う。
+        /// </summary>
+        public ConsiderationEngineSetting ConsiderationEngineSetting { get; set; } = new ConsiderationEngineSetting();
+
+        /// <summary>
+        /// 詰検討用エンジン設定
+        /// 詰検討用エンジン設定ダイアログとdata bindして使う。
+        /// </summary>
+        public ConsiderationEngineSetting MateEngineSetting { get; set; } = new ConsiderationEngineSetting();
 
     }
 }

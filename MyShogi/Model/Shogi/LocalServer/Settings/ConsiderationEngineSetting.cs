@@ -4,12 +4,12 @@ using MyShogi.Model.Common.ObjectModel;
 namespace MyShogi.Model.Shogi.LocalServer
 {
     /// <summary>
-    /// 検討設定
-    /// 検討設定ダイアログにdata-bindして使う用。
+    /// 検討時の設定
+    /// 検討エンジン設定ダイアログにdata-bindして使う用。
     /// 
     /// 単独エンジン設定用。
     /// </summary>
-    public class ConsiderationSetting : NotifyObject
+    public class ConsiderationEngineSetting : NotifyObject
     {
         /// <summary>
         /// エンジン名
