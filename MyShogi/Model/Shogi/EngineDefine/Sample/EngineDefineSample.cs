@@ -230,7 +230,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     SupportedCpus = default_cpus ,
                     EvalMemory = 480, // KPP_KKPTは、これくらい？
                     WorkingMemory = 200 ,
-                    StackPerThread = 25, // clangでコンパイルの時にstack size = 25[MB]に設定している。
+                    StackPerThread = 40, // clangでコンパイルの時にstack size = 25[MB]に設定している。ここに加えてheapがスレッド当たり15MBと見積もっている。
                     Presets = default_preset,
                     DescriptionSimple = "やねうら王 2018年度版",
                     Description = "プロの棋譜を一切利用せずに自己学習で身につけた異次元の大局観。"+
@@ -254,7 +254,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     SupportedCpus = default_cpus,
                     EvalMemory = 850, // KPPTは、これくらい？
                     WorkingMemory = 150,
-                    StackPerThread = 25, // clangでコンパイルの時にstack size = 25[MB]に設定している。
+                    StackPerThread = 40, // clangでコンパイルの時にstack size = 25[MB]に設定している。ここに加えてheapがスレッド当たり15MBと見積もっている。
                     Presets = default_preset,
                     DescriptionSimple = "tanuki- SDT5版",
                     Description = "SDT5(第5回 将棋電王トーナメント)で絶対王者Ponanzaを下し堂々の優勝を果たした実力派。" +
@@ -275,7 +275,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     SupportedCpus = default_cpus,
                     EvalMemory = 200, // NNUEは、これくらい？
                     WorkingMemory = 200,
-                    StackPerThread = 25, // clangでコンパイルの時にstack size = 25[MB]に設定している。
+                    StackPerThread = 40, // clangでコンパイルの時にstack size = 25[MB]に設定している。ここに加えてheapがスレッド当たり15MBと見積もっている。
                     Presets = default_preset,
                     DescriptionSimple = "tanuki- 2018年版",
                     Description = "WCSC28(第28回 世界コンピュータ将棋選手権)に出場した時からさらに強化されたtanuki-シリーズ最新作。" +
@@ -297,7 +297,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     SupportedCpus = default_cpus,
                     EvalMemory = 850, // KPPTは、これくらい？
                     WorkingMemory = 200,
-                    StackPerThread = 25, // clangでコンパイルの時にstack size = 25[MB]に設定している。
+                    StackPerThread = 40, // clangでコンパイルの時にstack size = 25[MB]に設定している。ここに加えてheapがスレッド当たり15MBと見積もっている。
                     Presets = default_preset,
                     DescriptionSimple = "Qhapaq 2018年版",
                     Description = "河童の愛称で知られるQhapaqの最新版。"+
@@ -318,7 +318,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     SupportedCpus = default_cpus,
                     EvalMemory = 850, // KPPTは、これくらい？
                     WorkingMemory = 200,
-                    StackPerThread = 25, // clangでコンパイルの時にstack size = 25[MB]に設定している。
+                    StackPerThread = 40, // clangでコンパイルの時にstack size = 25[MB]に設定している。ここに加えてheapがスレッド当たり15MBと見積もっている。
                     Presets = default_preset,
                     DescriptionSimple = "読み太 2018年版",
                     Description = "直感精読の個性派、読みの確かさに定評あり。" +
