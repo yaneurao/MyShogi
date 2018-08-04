@@ -185,13 +185,15 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void ShowConsiderationEngineSettingDialog()
         {
-            var dialog = new ConsiderationEngineSettingDialog();
-            FormLocationUtility.CenteringToThisForm(dialog,this);
-            var setting = TheApp.app.config.ConsiderationEngineSetting;
-            dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.ConsiderationSetting;
-            dialog.ViewModel.AddPropertyChangedHandler("StartButtonClicked", _ => ToggleConsideration());
-            dialog.Bind(setting);
-            dialog.ShowDialog(this);
+            using (var dialog = new ConsiderationEngineSettingDialog())
+            {
+                FormLocationUtility.CenteringToThisForm(dialog, this);
+                var setting = TheApp.app.config.ConsiderationEngineSetting;
+                dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.ConsiderationSetting;
+                dialog.ViewModel.AddPropertyChangedHandler("StartButtonClicked", _ => ToggleConsideration());
+                dialog.Bind(setting);
+                dialog.ShowDialog(this);
+            }
         }
 
         /// <summary>
@@ -200,13 +202,15 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void ShowMateEngineSettingDialog()
         {
-            var dialog = new ConsiderationEngineSettingDialog();
-            FormLocationUtility.CenteringToThisForm(dialog,this);
-            var setting = TheApp.app.config.MateEngineSetting;
-            dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.MateSetting;
-            dialog.ViewModel.AddPropertyChangedHandler("StartButtonClicked", _ => ToggleMateConsideration());
-            dialog.Bind(setting);
-            dialog.ShowDialog(this);
+            using (var dialog = new ConsiderationEngineSettingDialog())
+            {
+                FormLocationUtility.CenteringToThisForm(dialog, this);
+                var setting = TheApp.app.config.MateEngineSetting;
+                dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.MateSetting;
+                dialog.ViewModel.AddPropertyChangedHandler("StartButtonClicked", _ => ToggleMateConsideration());
+                dialog.Bind(setting);
+                dialog.ShowDialog(this);
+            }
         }
 
         #endregion
@@ -797,12 +801,12 @@ namespace MyShogi.View.Win2D
                         item.Text = "棋譜を開く(&O)";
                         item.Click += (sender, e) =>
                         {
-                            var fd = new OpenFileDialog();
-
-                            // [ファイルの種類]に表示される選択肢を指定する
-                            // 指定しないとすべてのファイルが表示される
-                            fd.Filter = string.Join("|", new string[]
+                            using (var fd = new OpenFileDialog())
                             {
+                                // [ファイルの種類]に表示される選択肢を指定する
+                                // 指定しないとすべてのファイルが表示される
+                                fd.Filter = string.Join("|", new string[]
+                                {
                                 "棋譜ファイル|*.kif;*.kifu;*.ki2;*.kif2;*.ki2u;*.kif2u;*.csa;*.psn;*.psn2;*.sfen;*.json;*.jkf;*.txt",
                                 "KIF形式|*.kif;*.kifu",
                                 "KIF2形式|*.ki2;*.kif2;*.ki2u;*.kif2u",
@@ -811,13 +815,14 @@ namespace MyShogi.View.Win2D
                                 "PSN2形式|*.psn2",
                                 "SFEN形式|*.sfen",
                                 "すべてのファイル|*.*",
-                            });
-                            fd.FilterIndex = 1;
-                            fd.Title = "開く棋譜ファイルを選択してください";
+                                });
+                                fd.FilterIndex = 1;
+                                fd.Title = "開く棋譜ファイルを選択してください";
 
-                            // ダイアログを表示する
-                            if (fd.ShowDialog() == DialogResult.OK)
-                                ReadKifFile(fd.FileName);
+                                // ダイアログを表示する
+                                if (fd.ShowDialog() == DialogResult.OK)
+                                    ReadKifFile(fd.FileName);
+                            }
                         };
                         item_file.DropDownItems.Add(item);
                     }
@@ -849,51 +854,53 @@ namespace MyShogi.View.Win2D
                         item.Text = "棋譜を名前をつけて保存(&N)";
                         item.Click += (sender, e) =>
                         {
-                            var fd = new SaveFileDialog();
-
-                            // [ファイルの種類]に表示される選択肢を指定する
-                            // 指定しないとすべてのファイルが表示される
-                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
-                                + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
-                                + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
-                            fd.FilterIndex = 1;
-                            fd.Title = "棋譜を保存するファイル形式を選択してください";
-                            // デフォルトでは、先手名 + 後手名 + YYYYMMDDhhmmss.kif
-                            // 柿木やkifu for Windowsがこの形式らしい。
-                            var default_filename = $"{gameServer.DisplayName(SCore.Color.BLACK)}_{gameServer.DisplayName(SCore.Color.WHITE)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.KIF";
-                            fd.FileName = Utility.EscapeFileName(default_filename);
-
-                            // ダイアログを表示する
-                            if (fd.ShowDialog() == DialogResult.OK)
+                            using (var fd = new SaveFileDialog())
                             {
-                                var filename = fd.FileName;
-                                try
+
+                                // [ファイルの種類]に表示される選択肢を指定する
+                                // 指定しないとすべてのファイルが表示される
+                                fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
+                                    + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
+                                    + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
+                                fd.FilterIndex = 1;
+                                fd.Title = "棋譜を保存するファイル形式を選択してください";
+                                // デフォルトでは、先手名 + 後手名 + YYYYMMDDhhmmss.kif
+                                // 柿木やkifu for Windowsがこの形式らしい。
+                                var default_filename = $"{gameServer.DisplayName(SCore.Color.BLACK)}_{gameServer.DisplayName(SCore.Color.WHITE)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.KIF";
+                                fd.FileName = Utility.EscapeFileName(default_filename);
+
+                                // ダイアログを表示する
+                                if (fd.ShowDialog() == DialogResult.OK)
                                 {
-                                    KifuFileType kifuType;
-                                    switch (fd.FilterIndex)
+                                    var filename = fd.FileName;
+                                    try
                                     {
-                                        case 1: kifuType = KifuFileType.KIF; break;
-                                        case 2: kifuType = KifuFileType.KI2; break;
-                                        case 3: kifuType = KifuFileType.CSA; break;
-                                        case 4: kifuType = KifuFileType.PSN; break;
-                                        case 5: kifuType = KifuFileType.PSN2; break;
-                                        case 6: kifuType = KifuFileType.SFEN; break;
+                                        KifuFileType kifuType;
+                                        switch (fd.FilterIndex)
+                                        {
+                                            case 1: kifuType = KifuFileType.KIF; break;
+                                            case 2: kifuType = KifuFileType.KI2; break;
+                                            case 3: kifuType = KifuFileType.CSA; break;
+                                            case 4: kifuType = KifuFileType.PSN; break;
+                                            case 5: kifuType = KifuFileType.PSN2; break;
+                                            case 6: kifuType = KifuFileType.SFEN; break;
 
-                                        // ファイル名から自動判別すべき
-                                        default:
-                                            kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
-                                            if (kifuType == KifuFileType.UNKNOWN)
-                                                kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
-                                            break;
+                                            // ファイル名から自動判別すべき
+                                            default:
+                                                kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
+                                                if (kifuType == KifuFileType.UNKNOWN)
+                                                    kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
+                                                break;
+                                        }
+
+                                        gameServer.KifuWriteCommand(filename, kifuType);
+                                        ViewModel.LastFileName = filename; // 最後に保存したファイルを記録しておく。
+                                        gameServer.KifuDirty = false; // 棋譜綺麗になった。
                                     }
-
-                                    gameServer.KifuWriteCommand(filename, kifuType);
-                                    ViewModel.LastFileName = filename; // 最後に保存したファイルを記録しておく。
-                                    gameServer.KifuDirty = false; // 棋譜綺麗になった。
-                                }
-                                catch
-                                {
-                                    TheApp.app.MessageShow("ファイル書き出しエラー" , MessageShowType.Error);
+                                    catch
+                                    {
+                                        TheApp.app.MessageShow("ファイル書き出しエラー", MessageShowType.Error);
+                                    }
                                 }
                             }
                         };
@@ -905,45 +912,47 @@ namespace MyShogi.View.Win2D
                         item.Text = "局面の保存(&I)"; // Pは印刷(Print)で使いたいため、positionの"I"をショートカットキーにする。
                         item.Click += (sender, e) =>
                         {
-                            var fd = new SaveFileDialog();
-
-                            // [ファイルの種類]に表示される選択肢を指定する
-                            // 指定しないとすべてのファイルが表示される
-                            fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
-                                + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
-                                + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
-                            fd.FilterIndex = 1;
-                            fd.Title = "局面を保存するファイル形式を選択してください";
-
-                            // ダイアログを表示する
-                            if (fd.ShowDialog() == DialogResult.OK)
+                            using (var fd = new SaveFileDialog())
                             {
-                                var filename = fd.FileName;
-                                try
+
+                                // [ファイルの種類]に表示される選択肢を指定する
+                                // 指定しないとすべてのファイルが表示される
+                                fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
+                                    + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
+                                    + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
+                                fd.FilterIndex = 1;
+                                fd.Title = "局面を保存するファイル形式を選択してください";
+
+                                // ダイアログを表示する
+                                if (fd.ShowDialog() == DialogResult.OK)
                                 {
-                                    KifuFileType kifuType;
-                                    switch (fd.FilterIndex)
+                                    var filename = fd.FileName;
+                                    try
                                     {
-                                        case 1: kifuType = KifuFileType.KIF; break;
-                                        case 2: kifuType = KifuFileType.KI2; break;
-                                        case 3: kifuType = KifuFileType.CSA; break;
-                                        case 4: kifuType = KifuFileType.PSN; break;
-                                        case 5: kifuType = KifuFileType.PSN2; break;
-                                        case 6: kifuType = KifuFileType.SFEN; break;
+                                        KifuFileType kifuType;
+                                        switch (fd.FilterIndex)
+                                        {
+                                            case 1: kifuType = KifuFileType.KIF; break;
+                                            case 2: kifuType = KifuFileType.KI2; break;
+                                            case 3: kifuType = KifuFileType.CSA; break;
+                                            case 4: kifuType = KifuFileType.PSN; break;
+                                            case 5: kifuType = KifuFileType.PSN2; break;
+                                            case 6: kifuType = KifuFileType.SFEN; break;
 
-                                        // ファイル名から自動判別すべき
-                                        default:
-                                            kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
-                                            if (kifuType == KifuFileType.UNKNOWN)
-                                                kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
-                                            break;
+                                            // ファイル名から自動判別すべき
+                                            default:
+                                                kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
+                                                if (kifuType == KifuFileType.UNKNOWN)
+                                                    kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
+                                                break;
+                                        }
+
+                                        gameServer.PositionWriteCommand(filename, kifuType);
                                     }
-
-                                    gameServer.PositionWriteCommand(filename, kifuType);
-                                }
-                                catch
-                                {
-                                    TheApp.app.MessageShow("ファイル書き出しエラー",MessageShowType.Error);
+                                    catch
+                                    {
+                                        TheApp.app.MessageShow("ファイル書き出しエラー", MessageShowType.Error);
+                                    }
                                 }
                             }
                         };
@@ -973,13 +982,11 @@ namespace MyShogi.View.Win2D
                         item.Text = "通常対局(&N)"; // NormalGame
                         item.Click += (sender, e) =>
                         {
-                            // ShowDialog()はリソースが開放されないので、都度生成して、Form.Show()で表示する。
-                            //if (gameSettingDialog != null)
-                            //gameSettingDialog.Dispose();
-
-                            var gameSettingDialog = new GameSettingDialog(this);
-                            FormLocationUtility.CenteringToThisForm(gameSettingDialog,this);
-                            gameSettingDialog.ShowDialog(this); // Modal Dialogにしておく。
+                            using (var gameSettingDialog = new GameSettingDialog(this))
+                            {
+                                FormLocationUtility.CenteringToThisForm(gameSettingDialog, this);
+                                gameSettingDialog.ShowDialog(this); // Modal Dialogにしておく。
+                            }
                         };
 
                         item_playgame.DropDownItems.Add(item);
@@ -1785,9 +1792,11 @@ namespace MyShogi.View.Win2D
                         item1.Text = "システム情報(&S)"; // System Infomation
                         item1.Click += (sender, e) =>
                         {
-                            var cpuInfoDialog = new SystemInfo();
-                            FormLocationUtility.CenteringToThisForm(cpuInfoDialog , this);
-                            cpuInfoDialog.ShowDialog(this);
+                            using (var cpuInfoDialog = new SystemInfo())
+                            {
+                                FormLocationUtility.CenteringToThisForm(cpuInfoDialog, this);
+                                cpuInfoDialog.ShowDialog(this);
+                            }
                         };
                         item_others.DropDownItems.Add(item1);
                     }
@@ -1829,12 +1838,11 @@ namespace MyShogi.View.Win2D
                         item1.Text = "バージョン情報(&V)"; // Version
                         item1.Click += (sender, e) =>
                         {
-                            //if (aboutDialog != null)
-                            //    aboutDialog.Dispose();
-
-                            var aboutDialog = new AboutYaneuraOu();
-                            FormLocationUtility.CenteringToThisForm(aboutDialog , this);
-                            aboutDialog.ShowDialog(this);
+                            using (var aboutDialog = new AboutYaneuraOu())
+                            {
+                                FormLocationUtility.CenteringToThisForm(aboutDialog, this);
+                                aboutDialog.ShowDialog(this);
+                            }
                         };
                         item_others.DropDownItems.Add(item1);
                     }

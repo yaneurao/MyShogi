@@ -39,7 +39,6 @@ namespace MyShogi.View.Win2D.Setting
             /// <summary>
             /// エンジン設定
             /// </summary>
-            //public EngineDefineEx EngineDefine;
             public string EngineDefineFolderPath
             {
                 get { return GetValue<string>("EngineDefineFolderPath"); }
@@ -51,14 +50,14 @@ namespace MyShogi.View.Win2D.Setting
                 }
             }
 
-            /// <summary>
-            /// これは、EngineDefineFolderPathを設定した時に設定される。
-            /// 直接設定してはならない。
-            /// </summary>
-            public EngineDefineEx EngineDefineEx
-            {
-                get; set;
-            }
+            ///// <summary>
+            ///// これは、EngineDefineFolderPathを設定した時に設定される。
+            ///// 直接設定してはならない。
+            ///// </summary>
+            //public EngineDefineEx EngineDefineEx
+            //{
+            //    get; set;
+            //}
 
 
             /// <summary>
@@ -177,7 +176,6 @@ namespace MyShogi.View.Win2D.Setting
 
                     var folderPath = (string)args.value;
                     var engine_define_ex = TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
-                    ViewModel.EngineDefineEx = engine_define_ex; // ついでなので保存しておく。
 
                     button2.Enabled = engine_define_ex != null;
                     if (engine_define_ex == null)
@@ -252,6 +250,8 @@ namespace MyShogi.View.Win2D.Setting
             vm.AddPropertyChangedHandler("EngineSelected", args =>
             {
                 // -- CPUの選択
+
+                // この変更がトリガーになってエンジン選択ダイアログが出るイベントが発生すると嫌だ..
                 radioButton2.Checked = true;
             });
 
@@ -263,12 +263,11 @@ namespace MyShogi.View.Win2D.Setting
         /// 選択しているプリセットが変更されたか、もしくはViewModelにセットされているEngineDefineが
         /// 変更になったかした時に、プリセットの説明文を更新するためのハンドラ
         /// </summary>
-        private void UpdatePresetText()
+        private void UpdatePresetText(EngineDefineEx engineDefine)
         {
             string text = null;
             try
             {
-                var engineDefine = ViewModel.EngineDefineEx;
                 if (engineDefine == null)
                 {
                     return;
@@ -303,7 +302,7 @@ namespace MyShogi.View.Win2D.Setting
             var dialog = EngineOptionSettingDialogBuilder.Build(
                 EngineCommonOptionsSample.CreateEngineCommonOptions(), // 共通設定のベース
                 TheApp.app.EngineConfigs.NormalConfig,                 // 共通設定の値はこの値で上書き
-                ViewModel.EngineDefineEx                               // 個別設定の情報はここにある。
+                ViewModel.EngineDefineFolderPath                       // 個別設定の情報はここにある。
                 );
 
             // 構築に失敗。
@@ -366,31 +365,23 @@ namespace MyShogi.View.Win2D.Setting
             if (radioButton2.Checked)
             {
                 // コンピュータの名前を持ってくる。
-                var engineDefineEx = ViewModel.EngineDefineEx;
-                if (engineDefineEx == null)
+                var folderPath = ViewModel.EngineDefineFolderPath;
+                if (folderPath == null)
                 {
-#if false
-                    if (TheApp.app.EngineDefines.Count == 0)
-                        return;
-
-                    // 一つ目のエンジンを選択しておく。
-                    // これはEngineOrder順に並んでいるはずなので0番目がいいエンジンなはず…。
-                    engineDefine = ViewModel.EngineDefine = TheApp.app.EngineDefines[0];
-                    ViewModel.RaisePropertyChanged("EngineDefineChanged", engineDefine);
-#endif
                     // 自分でエンジンの説明を見てから選ばないと空き物理メモリが足りない時に
                     // そのエンジンを選択してしまっていることがある。
 
                     //textBox2.Text = "エンジン未選択です。「エンジン選択」ボタンを押してエンジンを選択してください。";
 
                     // エンジン選択ダイアログを出したほうが親切か？
-
                     ViewModel.RaisePropertyChanged("EngineSelectionButtonClicked");
                     return;
                 }
 
                 // プレイヤー名をエンジンの名前に変更する。
+                var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
                 textBox1.Text = engineDefineEx.EngineDefine.DisplayName;
+
                 // →　このタイミングで変更するとdata-bindでこの値が書き換えられた時に設定されてしまう…。
                 // ユーザーがUI操作で変更した時とdata bindによって値が変更された時とは事情が異なる。
                 // data bindするときの順番を調整することで回避しておく。
@@ -404,11 +395,12 @@ namespace MyShogi.View.Win2D.Setting
         /// <param name="e"></param>
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdatePresetText();
-
             var folderPath = ViewModel.EngineDefineFolderPath;
             if (folderPath == null)
                 return;
+
+            var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
+            UpdatePresetText(engineDefineEx);
 
             // プリセットは前回のエンジンの選択時のSelectedPresetIndexを持って来て選ぶ。
             var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(folderPath);

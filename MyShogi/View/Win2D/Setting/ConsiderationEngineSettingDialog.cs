@@ -63,8 +63,6 @@ namespace MyShogi.View.Win2D.Setting
                 get { return GetValue<object>("StartButtonClicked"); }
                 set { SetValue("StartButtonClicked", value); }
             }
-
-            public EngineDefineEx EngineDefineEx { get; set; }
         }
 
         public ConsiderationEngineSettingDialogViewModel ViewModel = new ConsiderationEngineSettingDialogViewModel();
@@ -81,7 +79,6 @@ namespace MyShogi.View.Win2D.Setting
                 {
                     var folderPath = (string)args.value;
                     var engine_define_ex = TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
-                    ViewModel.EngineDefineEx = engine_define_ex; // ついでなので保存しておく。
                     Setting.EngineDefineFolderPath = folderPath;
 
                     button2.Enabled = engine_define_ex != null;
@@ -158,24 +155,26 @@ namespace MyShogi.View.Win2D.Setting
         private void CreateEngineSelectionDialog()
         {
             // 詳細設定ボタンの無効化と、このエンジン選択ダイアログを閉じる時に詳細設定ボタンの再有効化。
-            var dialog = new EngineSelectionDialog();
-
-            if (ViewModel.DialogType == ConsiderationEngineSettingDialogType.ConsiderationSetting)
-                dialog.InitEngineDefines(true, false); // 通常のエンジンのみ表示
-            else
-                dialog.InitEngineDefines(false, true); // 詰将棋エンジンのみ表示
-
-            // エンジンを選択し、「選択」ボタンが押された時のイベントハンドラ
-            dialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
+            using (var dialog = new EngineSelectionDialog())
             {
-                var engineDefine = (EngineDefineEx)args.value;
-                ViewModel.EngineDefineFolderPath = engineDefine.FolderPath;
-                dialog.Dispose();
-            });
 
-            // modal dialogとして出すべき。
-            FormLocationUtility.CenteringToThisForm(dialog, this);
-            dialog.ShowDialog(Parent);
+                if (ViewModel.DialogType == ConsiderationEngineSettingDialogType.ConsiderationSetting)
+                    dialog.InitEngineDefines(true, false); // 通常のエンジンのみ表示
+                else
+                    dialog.InitEngineDefines(false, true); // 詰将棋エンジンのみ表示
+
+                // エンジンを選択し、「選択」ボタンが押された時のイベントハンドラ
+                dialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
+                {
+                    var engineDefine = (EngineDefineEx)args.value;
+                    ViewModel.EngineDefineFolderPath = engineDefine.FolderPath;
+                    dialog.Close(); // 閉じる
+                });
+
+                // modal dialogとして出すべき。
+                FormLocationUtility.CenteringToThisForm(dialog, this);
+                dialog.ShowDialog(Parent);
+            }
         }
 
         /// <summary>
@@ -190,17 +189,24 @@ namespace MyShogi.View.Win2D.Setting
             var dialog = EngineOptionSettingDialogBuilder.Build(
                 EngineCommonOptionsSample.CreateEngineCommonOptions(opt), // 共通設定のベース(検討、詰検討用)
                 TheApp.app.EngineConfigs.ConsiderationConfig,             // 共通設定の値はこの値で上書き
-                ViewModel.EngineDefineEx                                  // 個別設定の情報はここにある。
+                ViewModel.EngineDefineFolderPath                          // 個別設定の情報はここにある。
                 );
 
             // 構築に失敗。
             if (dialog == null)
                 return;
 
-            FormLocationUtility.CenteringToThisForm(dialog, this);
+            try
+            {
+                FormLocationUtility.CenteringToThisForm(dialog, this);
 
-            // modal dialogとして出す
-            dialog.ShowDialog(this);
+                // modal dialogとして出す
+                dialog.ShowDialog(this);
+            }
+            finally
+            {
+                dialog.Dispose();
+            }
         }
 
         #endregion

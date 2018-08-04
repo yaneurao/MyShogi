@@ -170,55 +170,45 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void CreateEngineSelectionDialog(SCore.Color c)
         {
-            ReleaseEngineSelectionDialog();
             // 詳細設定ボタンの無効化と、このエンジン選択ダイアログを閉じる時に詳細設定ボタンの再有効化。
-            engineSelectionDialog = new EngineSelectionDialog();
-            engineSelectionDialog.InitEngineDefines(true, false);
-
-            var playerSettings = new[] { playerSettingControl1, playerSettingControl2 };
-
-            // エンジンを選択し、「選択」ボタンが押された時のイベントハンドラ
-            engineSelectionDialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
+            using (var engineSelectionDialog = new EngineSelectionDialog())
             {
-                // これが選択された。
-                var engineDefine = (EngineDefineEx)args.value;
+                engineSelectionDialog.InitEngineDefines(true, false);
 
-                var vm = playerSettings[(int)c].ViewModel;
+                var playerSettings = new[] { playerSettingControl1, playerSettingControl2 };
 
-                vm.EngineDefineFolderPath = engineDefine.FolderPath;
-                vm.RaisePropertyChanged("EngineSelected", null); // CPUのradio buttonを選択
+                // エンジンを選択し、「選択」ボタンが押された時のイベントハンドラ
+                engineSelectionDialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
+                {
+                    // これが選択された。
+                    var engineDefine = (EngineDefineEx)args.value;
 
-                Debug.Assert(engineDefine.FolderPath != null);
+                    var vm = playerSettings[(int)c].ViewModel;
 
-                var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(engineDefine.FolderPath);
-                var preset = indivisualEngine.SelectedPresetIndex;
-                if (preset < 0) // 前回未選択だと-1がありうるので0に補整してやる。
+                    vm.EngineDefineFolderPath = engineDefine.FolderPath;
+                    vm.RaisePropertyChanged("EngineSelected", null); // CPUのradio buttonを選択。先にEngineDefineを設定してからでないとエンジン選択ダイアログがまた出てしまう。
+
+                    Debug.Assert(engineDefine.FolderPath != null);
+
+                    var indivisualEngine = TheApp.app.EngineConfigs.NormalConfig.Find(engineDefine.FolderPath);
+                    var preset = indivisualEngine.SelectedPresetIndex;
+                    if (preset < 0) // 前回未選択だと-1がありうるので0に補整してやる。
                     preset = 0;
 
-                var setting = TheApp.app.config.GameSetting;
-                //setting.PlayerSetting(c).SelectedEnginePreset = preset;
-                // TwoWayでbindingしているのでこれで値変わるはずだが同じ番号が選ばれるとイベントが発生しなくて…。
-                setting.PlayerSetting(c).SetValueAndRaisePropertyChanged("SelectedEnginePreset",preset);
+                    var setting = TheApp.app.config.GameSetting;
+                    //setting.PlayerSetting(c).SelectedEnginePreset = preset;
+                    // TwoWayでbindingしているのでこれで値変わるはずだが同じ番号が選ばれるとイベントが発生しなくて…。
+                    setting.PlayerSetting(c).SetValueAndRaisePropertyChanged("SelectedEnginePreset", preset);
 
-                // プレイヤー表示名の変更。
-                setting.PlayerSetting(c).PlayerName = engineDefine.EngineDefine.DisplayName;
-                ReleaseEngineSelectionDialog();
-            });
+                    // プレイヤー表示名の変更。
+                    setting.PlayerSetting(c).PlayerName = engineDefine.EngineDefine.DisplayName;
 
-            // modal dialogとして出すべき。
-            FormLocationUtility.CenteringToThisForm(engineSelectionDialog, this);
-            engineSelectionDialog.ShowDialog(Parent);
-        }
+                    engineSelectionDialog.Close();
+                });
 
-        /// <summary>
-        /// エンジン選択ダイアログの解体
-        /// </summary>
-        private void ReleaseEngineSelectionDialog()
-        {
-            if (engineSelectionDialog != null)
-            {
-                engineSelectionDialog.Dispose();
-                engineSelectionDialog = null;
+                // modal dialogとして出すべき。
+                FormLocationUtility.CenteringToThisForm(engineSelectionDialog, this);
+                engineSelectionDialog.ShowDialog(Parent);
             }
         }
 

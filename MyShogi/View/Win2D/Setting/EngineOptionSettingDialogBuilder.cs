@@ -21,9 +21,10 @@ namespace MyShogi.View.Win2D.Setting
             EngineConfig config,
 
             // 個別設定のために必要なもの
-            EngineDefineEx engineDefineEx
+            string engineDefineFolderPath
             )
         {
+            var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == engineDefineFolderPath);
 
             // -- エンジン共通設定
 
