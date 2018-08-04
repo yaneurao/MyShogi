@@ -246,12 +246,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                         UpdateTimeString();
 
                         // 末尾の局面に移動するコマンドを叩いておく。
-                        RaisePropertyChanged("SetKifuListIndex",kifuManager.KifuList.Count - 1);
-
+                        SetValueAndRaisePropertyChanged("KifuListSelectedIndex", kifuManager.KifuList.Count - 1);
+                        
                         // -- 棋譜上の名前をプレイヤー名に反映させる。
 
                         // GameSetting、原則immutableだが、まあいいや…。
-                        foreach(var c in All.Colors())
+                        foreach (var c in All.Colors())
                             GameSetting.PlayerSetting(c).PlayerName = kifuManager.KifuHeader.GetPlayerName(c);
 
                     }
@@ -430,7 +430,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (error != null)
                     TheApp.app.MessageShow(error , MessageShowType.Error);
                 else
-                    RaisePropertyChanged("SetKifuListIndex", ply); // rootの局面からply手進める
+                    SetValueAndRaisePropertyChanged("KifuListSelectedIndex", ply); // rootの局面からply手進める
 
             }
             );

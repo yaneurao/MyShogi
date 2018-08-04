@@ -416,7 +416,14 @@ namespace MyShogi.View.Win2D
                  { gameServer.ChangeMultiPvCommand((int)h.value); });
 
                 // 検討ウィンドウを×ボタンで非表示にした時にメニューの検討ウィンドウのところが更新になるのでメニューのrefreshが必要。
-                dialog.ViewModel.AddPropertyChangedHandler("CloseButtonClicked", (_) => { UpdateMenuItems(); });
+                dialog.ViewModel.AddPropertyChangedHandler("CloseButtonClicked", (_) =>
+                {
+                    // ConsiderationModeなら、解除しておく。
+                    if (gameServer.GameMode.IsConsideration())
+                       gameServer.ChangeGameModeCommand(GameModeEnum.ConsiderationWithoutEngine);
+
+                    UpdateMenuItems();
+                });
 
                 engineConsiderationDialog = dialog;
                 // 何にせよ、インスタンスがなくては話にならないので生成だけしておく。

@@ -69,6 +69,9 @@ namespace MyShogi.View.Win2D
                     // 非表示なので検討ウィンドウが表示されているなら消しておく。
                     Visible = message.number != 0;
                     SetEngineInstanceNumber(message.number);
+
+                    // このメッセージに対して、継ぎ盤の局面を初期化したほうが良いのでは…。
+
                     break;
 
                 case UsiEngineReportMessageType.SetGameMode:
@@ -369,6 +372,7 @@ namespace MyShogi.View.Win2D
             miniShogiBoard1.Size = new Size(board_width, board_height);
             miniShogiBoard1.Location = new Point(0, y);
         }
+
 
         // -- test code
 

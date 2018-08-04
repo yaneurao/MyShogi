@@ -100,7 +100,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// ※　GUI側では、RequiredMemory + MinimumHashMemoryの分だけ空き物理メモリがないとエンジン選択時に警告を出す。
         /// </summary>
         [DataMember]
-        public Int64 MinimumHashMemory { get; set; } = 100;
+        public Int64 MinimumHashMemory { get; set; } = 128;
 
         /// <summary>
         /// エンジン選択画面での表示順。これが大きい順に表示することになっている。
