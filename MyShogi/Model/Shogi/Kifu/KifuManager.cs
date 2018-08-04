@@ -87,7 +87,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// このクラスが保持しているPosition。これはDoMove()/UndoMove()に対して変化するのでimmutableではない。
-        /// data bindするならば、これをClone()して用いること。
+        /// data bindするならば、Tree.Positionにbindして用いること。
         ///
         /// また、このクラスが生成された時点では、局面は初期化されていないので、何らかの方法で初期化してから用いること。
         /// </summary>
@@ -256,8 +256,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 // イベントの一時抑制を解除して、更新通知を送る。
                 Tree.PropertyChangedEventEnable = true;
-                Tree.RaisePropertyChanged("KifuList",Tree.KifuList);
-                Tree.RaisePropertyChanged("Position",Tree.position);
+                Tree.RaisePropertyChanged("KifuList",new List<string>(Tree.KifuList));
+                Tree.RaisePropertyChanged("Position",Tree.position.Clone());
 
             }
         }

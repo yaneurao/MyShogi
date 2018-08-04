@@ -64,7 +64,8 @@ namespace MyShogi.Model.Shogi.Kifu
             KifuTimeSettings = KifuTimeSettings.TimeLimitless;
             KifuBranch = -1;
 
-            RaisePropertyChanged("Position", position);
+            // mutableなオブジェクトのraiseは、raiseする側でClone()してimmutableにしておかないと駄目。
+            RaisePropertyChanged("Position", position.Clone());
         }
 
         // -------------------------------------------------------------------------
@@ -141,13 +142,13 @@ namespace MyShogi.Model.Shogi.Kifu
                 rootSfen_ = value;
 
                 // rootSfenは局面を設定して、最後に呼び出すはずなので、ここで通知しても大丈夫。
-                RaisePropertyChanged("Position", position);
+                RaisePropertyChanged("Position", position.Clone());
 
                 if (EnableKifuList)
                 {
                     KifuList = new List<string>();
                     KifuList.Add("   === 開始局面 ===");
-                    RaisePropertyChanged("KifuList", KifuList);
+                    RaisePropertyChanged("KifuList", new List<string>(KifuList));
                 }
 
                 if (EnableUsiMoveList)
@@ -316,7 +317,7 @@ namespace MyShogi.Model.Shogi.Kifu
             if (!m.nextMove.IsSpecial())
             {
                 position.DoMove(m.nextMove);
-                RaisePropertyChanged("Position", position);
+                RaisePropertyChanged("Position", position.Clone());
             }
 
             ++pliesFromRoot;
@@ -343,7 +344,7 @@ namespace MyShogi.Model.Shogi.Kifu
             if (!IsSpecialNode())
             {
                 position.UndoMove();
-                RaisePropertyChanged("Position", position);
+                RaisePropertyChanged("Position", position.Clone());
             }
 
             --pliesFromRoot;
@@ -474,7 +475,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 // 棋譜が同期していない可能性があるので現在行以降を削除
                 ClearKifuForward();
 
-                RaisePropertyChanged("KifuList", KifuList);
+                RaisePropertyChanged("KifuList", new List<string>(KifuList));
             }
         }
 
@@ -592,8 +593,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
             PropertyChangedEventEnable = true;
 
-            RaisePropertyChanged("KifuList", KifuList);
-            RaisePropertyChanged("Position", position);
+            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("Position", position.Clone());
 
             EnableKifuList = e; // 元の値
 
@@ -644,8 +645,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
             PropertyChangedEventEnable = true;
 
-            RaisePropertyChanged("KifuList", KifuList);
-            RaisePropertyChanged("Position", position);
+            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("Position", position.Clone());
 
             EnableKifuList = e; // 元の値
         }
@@ -702,8 +703,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
             PropertyChangedEventEnable = true;
 
-            RaisePropertyChanged("KifuList", KifuList);
-            RaisePropertyChanged("Position", position);
+            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("Position", position.Clone());
 
             EnableKifuList = e; // 元の値
 
@@ -739,7 +740,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             EnableKifuList = e;
             PropertyChangedEventEnable = true;
-            RaisePropertyChanged("KifuList", KifuList);
+            RaisePropertyChanged("KifuList", new List<string>(KifuList));
         }
 
         /// <summary>
@@ -912,8 +913,8 @@ namespace MyShogi.Model.Shogi.Kifu
             EnableKifuList = false;
             PropertyChangedEventEnable = true;
 
-            RaisePropertyChanged("KifuList", KifuList);
-            RaisePropertyChanged("Position", position);
+            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("Position", position.Clone());
 
             KifuDirty = true; // 新しいnodeに到達したので棋譜は汚れた扱い。
         }

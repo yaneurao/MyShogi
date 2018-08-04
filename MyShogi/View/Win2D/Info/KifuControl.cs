@@ -255,6 +255,8 @@ namespace MyShogi.View.Win2D
             listBox1.SelectedIndexChanged -= listBox1_SelectedIndexChanged;
 
             var list = args.value as List<string>;
+            if (list == null)
+                return; // まだ初期化終わってない。
 
             int start = 0;
             /*

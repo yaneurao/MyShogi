@@ -34,8 +34,10 @@ namespace MyShogi.View.Win2D
             var config = app.config;
 
             // 描画する局面
-            var pos = gameServer.Position; // MainDialogViewModel
-                                           // 掴んでいる駒などのViewの状態
+            var pos = gameServer.Position; // MainDialogViewModel。掴んでいる駒などのViewの状態
+            if (pos == null)
+                return; // 初期化まだ終わってない。
+
             var state = viewState;
 
             var picked_from = state.picked_from;

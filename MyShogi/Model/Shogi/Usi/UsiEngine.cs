@@ -65,6 +65,9 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public void OnIdle()
         {
+            if (negotiator == null)
+                return;
+
             try
             {
                 switch (State)
@@ -123,6 +126,9 @@ namespace MyShogi.Model.Shogi.Usi
         /// <param name="command"></param>
         public void SendCommand(string command)
         {
+            if (negotiator == null)
+                return;
+
             try
             {
                 negotiator.Write(command);

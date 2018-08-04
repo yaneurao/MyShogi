@@ -182,6 +182,21 @@ namespace MyShogi.Model.Common.ObjectModel
                 RaisePropertyChanged(name, value);
         }
 
+        public void SetValueAndRaisePropertyChanged(PropertyChangedEventArgs args)
+        {
+            if (lockObject == null)
+                return;
+
+            lock (lockObject)
+            {
+                var current = GetProperty(args.name);
+                if (!GenericEquals(current.obj, args.value))
+                    current.obj = args.value;
+            }
+            if (PropertyChangedEventEnable)
+                RaisePropertyChanged(args);
+        }
+
         /// <summary>
         /// propretyのgetterを実装するときに使う。
         /// SetValueと対にして用いる。
@@ -298,7 +313,7 @@ namespace MyShogi.Model.Common.ObjectModel
                 foreach (var notify in current.notifies)
                     // 無限再帰になるのを防ぐため、送信元を付与して呼び出す。
                     if (notify != e.sender /* is original sender */)
-                        notify.RaisePropertyChanged(e2);
+                        notify.SetValueAndRaisePropertyChanged(e2);
             }
         }
 

@@ -41,13 +41,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             var config = TheApp.app.config;
 
-            // Position,KifuListは、kifuManagerから半自動でデータバインドする。
-            // (それぞれがimmutable objectではないため、Clone()が必要になるので)
-
-            kifuManager.Tree.AddPropertyChangedHandler("Position", PositionChanged);
-            kifuManager.Tree.AddPropertyChangedHandler("KifuList", KifuListChanged);
-            kifuManager.Tree.AddPropertyChangedHandler("KifuListAdded", KifuListAdded);
-            kifuManager.Tree.AddPropertyChangedHandler("KifuListRemoved", KifuListRemoved);
+            kifuManager.Tree.Bind("Position", this , DataBindWay.OneWay);
+            kifuManager.Tree.Bind("KifuList", this , DataBindWay.OneWay);
+            kifuManager.Tree.Bind("KifuListAdded"  , this , DataBindWay.OneWay);
+            kifuManager.Tree.Bind("KifuListRemoved", this , DataBindWay.OneWay);
 
             AddPropertyChangedHandler("KifuListSelectedIndex", KifuListSelectedIndexChangedCommand);
 

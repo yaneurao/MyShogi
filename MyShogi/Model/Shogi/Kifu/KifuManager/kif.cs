@@ -642,8 +642,10 @@ namespace MyShogi.Model.Shogi.Kifu
                             mes = "時間切れ";
                             break;
                         default:
-                            mes = "";
-                            break;
+                            // mes = ""; // これ書き出してしまうと読み込み時に解析できない不正な棋譜になってしまう。注意すべき。
+                            //break;
+
+                            goto NextMove;
                     }
                 }
                 else
@@ -666,6 +668,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 sb.AppendLine($"{Tree.gamePly,3} {mes}({time_string1}/{time_string2})");
 
+            NextMove:;
                 if (m.IsSpecial())
                 {
                     switch (m)
