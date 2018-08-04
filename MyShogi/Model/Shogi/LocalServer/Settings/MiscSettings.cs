@@ -35,8 +35,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 入玉ルールの設定
         ///
         /// 0 : 入玉ルールなし
-        /// 1 : 27点法(CSAルール)
-        /// 2 : 24点法(CSAルール)
+        /// 1 : 24点法(CSAルール)
+        /// 2 : 27点法(CSAルール)
         /// 3 : トライルール
         ///
         /// EnteringKingRule enumと同じ値。
@@ -54,7 +54,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             MaxMovesToDrawEnable = false;
             MaxMovesToDraw = 256;
-            EnteringKingRule = 1; // デフォルトでは27点法
+            EnteringKingRule = 2; // デフォルトでは27点法
         }
 
         public MiscSettings Clone()

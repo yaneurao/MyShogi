@@ -206,8 +206,8 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
             "入玉ルールなし",
-            "27点法(CSAルール)",
             "24点法(CSAルール)",
+            "27点法(CSAルール)",
             "トライルール"});
             this.comboBox1.Location = new System.Drawing.Point(85, 46);
             this.comboBox1.Name = "comboBox1";
