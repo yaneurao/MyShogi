@@ -9,6 +9,11 @@ namespace MyShogi.View.Win2D
 {
     public partial class KifuControl : UserControl
     {
+        /// <summary>
+        /// 棋譜表示用のコントロール
+        ///
+        /// InitViewModel(Form)を初期化のために必ず呼び出すこと。
+        /// </summary>
         public KifuControl()
         {
             InitializeComponent();
@@ -56,6 +61,18 @@ namespace MyShogi.View.Win2D
         }
 
         public KifuControlViewModel ViewModel = new KifuControlViewModel();
+
+        /// <summary>
+        /// 外部から初期化して欲しい。
+        /// </summary>
+        /// <param name="parent"></param>
+        public void InitViewModel(Form parent)
+        {
+            ViewModel.AddPropertyChangedHandler("KifuListSelectedIndex", setKifuListIndex, parent);
+            ViewModel.AddPropertyChangedHandler("KifuList", KifuListChanged, parent);
+            ViewModel.AddPropertyChangedHandler("KifuListAdded", KifuListAdded, parent);
+            ViewModel.AddPropertyChangedHandler("KifuListRemoved", KifuListRemoved, parent);
+        }
 
         /// <summary>
         /// [UI Thread] : 表示している棋譜の行数
@@ -196,14 +213,6 @@ namespace MyShogi.View.Win2D
 
         // -- handlers
 
-        private void KifuControl_Load(object sender, EventArgs e)
-        {
-            ViewModel.AddPropertyChangedHandler("KifuListSelectedIndex", setKifuListIndex, Parent);
-            ViewModel.AddPropertyChangedHandler("KifuList", KifuListChanged, Parent);
-            ViewModel.AddPropertyChangedHandler("KifuListAdded", KifuListAdded, Parent);
-            ViewModel.AddPropertyChangedHandler("KifuListRemoved", KifuListRemoved, Parent);
-        }
-
         /// <summary>
         /// [UI thread] : リストが1行追加されたときに呼び出されるハンドラ
         /// </summary>
@@ -325,7 +334,8 @@ namespace MyShogi.View.Win2D
             else if (listBox1.Items.Count <= selectedIndex)
                 selectedIndex = listBox1.Items.Count - 1;
 
-            listBox1.SelectedIndex = selectedIndex;
+            // 押し戻された可能性があるので、"ViewModel.KifuListSelectedIndex"に書き戻しておく。
+            ViewModel.KifuListSelectedIndex = listBox1.SelectedIndex = selectedIndex;
         }
 
         /// <summary>

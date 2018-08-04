@@ -185,10 +185,7 @@ namespace MyShogi.View.Win2D.Setting
         /// </summary>
         private void ShowEngineOptionSettingDialog()
         {
-            var opt = new EngineCommonOptionsSampleOptions()
-            {
-                EnableConsiderationMode = true // 検討モードなのでこれがtrueになっているほうが綺麗な読み筋出力になるのではないかと…。
-            };
+            var opt = EngineCommonOptionsSampleOptions.InstanceForConsideration();
 
             var dialog = EngineOptionSettingDialogBuilder.Build(
                 EngineCommonOptionsSample.CreateEngineCommonOptions(opt), // 共通設定のベース(検討、詰検討用)

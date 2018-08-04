@@ -428,9 +428,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 kifuManager.EnableKifuList = false;
 
                 if (error != null)
-                    TheApp.app.MessageShow(error , MessageShowType.Error);
+                    TheApp.app.MessageShow(error, MessageShowType.Error);
                 else
+                {
                     SetValueAndRaisePropertyChanged("KifuListSelectedIndex", ply); // rootの局面からply手進める
+                }
 
             }
             );

@@ -208,16 +208,16 @@ namespace MyShogi.Model.Shogi.EngineDefine
             if (config.MateConfig == null)
                 config.MateConfig = new EngineConfig() { EngineConfigType = EngineConfigType.Mate };
 
-            void NullCheck(EngineConfig c)
+            void NullCheck(EngineConfig c , bool forConsideration)
             {
                 // あとでMateEngine用の共通設定用のデフォルトオプションを別に用意するかも知れんが、
                 // とりま、同じでいいような気もしている。
                 if (c.CommonOptions == null || c.CommonOptions.Count == 0 /*前回保存時に設定忘れ*/)
-                    c.CommonOptions = EngineCommonOptionsSample.CommonOptionDefault();
+                    c.CommonOptions = EngineCommonOptionsSample.CommonOptionDefault(forConsideration);
                 else
                 {
                     // この共通設定に現在存在しないオプションが混じっていると、その値によって個別設定が上書きされかねないので削除しておく。
-                    var currentCommonOptions = EngineCommonOptionsSample.CommonOptionDefault();
+                    var currentCommonOptions = EngineCommonOptionsSample.CommonOptionDefault(forConsideration);
 
                     var engineOptions = new List<EngineOption>();
                     foreach(var option in c.CommonOptions)
@@ -232,9 +232,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     c.IndivisualEnginesOptions = new List<IndivisualEngineOptions>();
             }
 
-            NullCheck(config.NormalConfig);
-            NullCheck(config.ConsiderationConfig);
-            NullCheck(config.MateConfig);
+            NullCheck(config.NormalConfig , false);
+            NullCheck(config.ConsiderationConfig , true);
+            NullCheck(config.MateConfig , true);
 
             return config;
         }

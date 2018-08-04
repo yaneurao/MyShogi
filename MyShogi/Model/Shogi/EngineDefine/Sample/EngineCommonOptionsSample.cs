@@ -1,4 +1,5 @@
 ﻿using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Usi;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,6 +13,19 @@ namespace MyShogi.Model.Shogi.EngineDefine
     public class EngineCommonOptionsSampleOptions
     {
         /// <summary>
+        /// エンジン検討モード、詰み検討モード用のエンジン共通設定を返すためのもの。
+        /// </summary>
+        /// <returns></returns>
+        public static EngineCommonOptionsSampleOptions InstanceForConsideration()
+        {
+            return new EngineCommonOptionsSampleOptions()
+            {
+                EnableConsiderationMode = true, // 検討モードなのでこれがtrueになっているほうが綺麗な読み筋出力になるのではないかと…。
+                DisableOutputFailLHPV = true,   // OutputFailLHPVこれもfalseにしておいたほうが、fail low/highの読み筋が出力されなくて綺麗な読み筋だと思う。
+            };
+        }
+
+        /// <summary>
         /// "EvalDir"を用いるのか。
         /// falseにすると、"EvalDir"の項目がオプションから消える。
         /// </summary>
@@ -22,6 +36,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// (検討モードの共通設定では、デフォルト値でそうなっているのが好ましいと思う)
         /// </summary>
         public bool EnableConsiderationMode;
+        public bool DisableOutputFailLHPV;
 
         // 他、何か追加するかも。
 
@@ -32,7 +47,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// <returns></returns>
         public bool Equals(EngineCommonOptionsSampleOptions rhs)
         {
-            return UseEvalDir == rhs.UseEvalDir;
+            return
+                UseEvalDir == rhs.UseEvalDir &&
+                EnableConsiderationMode == rhs.EnableConsiderationMode &&
+                DisableOutputFailLHPV == rhs.DisableOutputFailLHPV;
         }
     }
 
@@ -573,43 +591,45 @@ namespace MyShogi.Model.Shogi.EngineDefine
             if (!options.UseEvalDir)
                 setting.Descriptions.RemoveAll(x => x.Name == "EvalDir");
 
-            // 検討モード、詰検討モードの共通設定では、デフォルトでConsiderationMode == trueに。
+            // 検討モード、詰検討モードの共通設定では、デフォルトでConsiderationMode == true , OutputFailLHPV = falseに。
             if (options.EnableConsiderationMode)
                 setting.Descriptions.Find(x => x.Name == "ConsiderationMode")
-                    .UsiBuildString = "option name ConsiderationMode type check default true";
+                    .UsiBuildString = "option name ConsiderationMode type check default true"; // これ、値だけ書き換えたいんだけどなぁ…。
+            if (options.DisableOutputFailLHPV)
+                setting.Descriptions.Find(x => x.Name == "OutputFailLHPV")
+                    .UsiBuildString = "option name OutputFailLHPV type check default false";
 
             return setting;
         }
 
         /// <summary>
         /// 通常対局、検討モードの共通設定のデフォルト値を返す。
+        ///
+        /// forConsideration : 検討モード用
         /// </summary>
         /// <returns></returns>
-        public static List<EngineOption> CommonOptionDefault()
+        public static List<EngineOption> CommonOptionDefault(bool forConsideration)
         {
-            if (commonOptionDefault == null)
+            var options = new List<EngineOption>();
+
+            // エンジンオプションの共通設定のDescriptionからEngineOptionsをひねり出す。
+            EngineCommonOptionsSampleOptions op = forConsideration ?
+                EngineCommonOptionsSampleOptions.InstanceForConsideration() :
+                null;
+
+            var opt = CreateEngineCommonOptions(op);
+            foreach (var desc in opt.Descriptions)
             {
-                var options = new List<EngineOption>();
+                // 見出し行、非表示の奴はskipする。
+                if (desc.Name == null || desc.Hide || desc.UsiBuildString == null /* これ存在がおかしい気はする*/)
+                    continue;
 
-                // エンジンオプションの共通設定のDescriptionからEngineOptionsをひねり出す。
-
-                var opt = CreateEngineCommonOptions(new EngineCommonOptionsSampleOptions());
-                foreach (var desc in opt.Descriptions)
-                {
-                    // 見出し行、非表示の奴はskipする。
-                    if (desc.Name == null || desc.Hide || desc.UsiBuildString == null /* これ存在がおかしい気はする*/)
-                        continue;
-
-                    // この文字列でUsiOptionオブジェクトを構築して、nameとdefault値を得る
-                    var usiOption = UsiOption.Parse(desc.UsiBuildString);
-                    options.Add(new EngineOption(usiOption.Name, usiOption.GetDefault()));
-                }
-
-                commonOptionDefault = options;
+                // この文字列でUsiOptionオブジェクトを構築して、nameとdefault値を得る
+                var usiOption = UsiOption.Parse(desc.UsiBuildString);
+                options.Add(new EngineOption(usiOption.Name, usiOption.GetDefault()));
             }
-            return commonOptionDefault;
-        }
 
-        private static List<EngineOption> commonOptionDefault;
+            return options;
+        }
     }
 }
