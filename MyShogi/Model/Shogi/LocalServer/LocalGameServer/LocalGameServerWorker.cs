@@ -766,7 +766,9 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// [Worker Thread] : 検討モードに入る。
         /// GameModeのsetterから呼び出される。
         /// </summary>
-        private void StartConsiderationWithEngine()
+        /// <param name="nextGameMode">次に遷移するGameMode</param>
+        /// <returns>返し値としてfalseを返すとcancel動作</returns>
+        private bool StartConsiderationWithEngine(GameModeEnum nextGameMode)
         {
             try
             {
@@ -778,8 +780,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                 //var engineDefineFolderPath = "\\engine\\gpsfish"; // 開発テスト用
 
                 var engineDefineFolderPath =
-                    (GameMode == GameModeEnum.ConsiderationWithEngine)     ? TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath :
-                    (GameMode == GameModeEnum.ConsiderationWithMateEngine) ? TheApp.app.config.MateEngineSetting.EngineDefineFolderPath :
+                    (nextGameMode == GameModeEnum.ConsiderationWithEngine)     ? TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath :
+                    (nextGameMode == GameModeEnum.ConsiderationWithMateEngine) ? TheApp.app.config.MateEngineSetting.EngineDefineFolderPath :
                     null;
 
                 var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == engineDefineFolderPath);
@@ -798,7 +800,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     //setting.PlayerSetting(Color.BLACK).PlayerName = engineName;
                     //setting.PlayerSetting(Color.BLACK).IsCpu = true;
 
-                    switch (GameMode)
+                    switch (nextGameMode)
                     {
                         // 検討用エンジン
                         case GameModeEnum.ConsiderationWithEngine:
@@ -818,21 +820,26 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 検討用エンジンの開始
 
                 var usiEnginePlayer = Players[0] as UsiEnginePlayer;
-                InitUsiEnginePlayer(Color.BLACK, usiEnginePlayer, engineDefineEx, 0, GameMode, false);
+                InitUsiEnginePlayer(Color.BLACK, usiEnginePlayer, engineDefineEx, 0, nextGameMode, false);
 
                 // エンジンに与えるHashSize,Threadsの計算
                 if (UsiEngineHashManager.CalcHashSize() != 0)
                     // Hash足りなくてダイアログ出した時にキャンセルボタン押されとる
-                    throw null;
+                    throw new Exception("");
 
                 // 検討ウィンドウへの読み筋などのリダイレクトを設定
-                InitEngineConsiderationInfo(GameMode);
+                InitEngineConsiderationInfo(nextGameMode);
+
+                return true;
 
             } catch (Exception ex)
             {
-                if (ex != null)
+                if (!string.IsNullOrEmpty(ex.Message))
                     TheApp.app.MessageShow(ex.Message , MessageShowType.Error);
                 Disconnect();
+
+                // 失敗。GameModeの状態遷移をcancelすべき。
+                return false;
             }
         }
 

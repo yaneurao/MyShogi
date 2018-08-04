@@ -43,7 +43,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // [Worker Thread] : このsetterはworker thread側からしかsetterは呼び出されない。
             private set {
                 var old = GetValue<GameModeEnum>("GameMode");
-                if (old == value)
+                var next = value;
+                if (old == next)
                     return; // 値が同じなので何もしない
 
                 // 次のモードがエンジンを使った検討モードであるなら局面の合法性のチェックが必要。
@@ -51,7 +52,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (value.IsConsiderationWithEngine())
                 {
                     // 現在の局面が不正でないかをチェック。
-                    var error = Position.IsValid(GameMode == GameModeEnum.ConsiderationWithMateEngine);
+                    var error = Position.IsValid(next == GameModeEnum.ConsiderationWithMateEngine);
                     if (error != null)
                     {
                         TheApp.app.MessageShow(error , MessageShowType.Error);
@@ -59,20 +60,23 @@ namespace MyShogi.Model.Shogi.LocalServer
                     }
                 }
 
-                // 次のモードに移行できることが確定したので値を変更する。
-
-                SetValue<GameModeEnum>("GameMode", value);
-
                 // エンジンを用いた検討モードを抜ける or 入るのであれば、そのコマンドを叩く。
 
                 if (old.IsConsiderationWithEngine())
                     EndConsideration();
                 if (value.IsConsiderationWithEngine())
-                    StartConsiderationWithEngine();
+                {
+                    var success = StartConsiderationWithEngine(value /* 次のgameMode */);
+                    if (!success)
+                        return;
+                }
+
+                // 次のモードに移行できることが確定したので値を変更する。
+                SetValue<GameModeEnum>("GameMode", next);
 
                 // 依存プロパティの更新
-                SetValue<bool>("InTheGame", value == GameModeEnum.InTheGame);
-                SetValue<bool>("InTheBoardEdit" , value == GameModeEnum.InTheBoardEdit);
+                SetValue<bool>("InTheGame", next == GameModeEnum.InTheGame);
+                SetValue<bool>("InTheBoardEdit" , next == GameModeEnum.InTheBoardEdit);
             }
         }
 

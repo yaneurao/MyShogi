@@ -201,6 +201,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                     int selectedIndex = (int)args.value;
                     kifuManager.Tree.GotoSelectedIndex(selectedIndex);
                     PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTimes());
+
+                    // 局面が変わったので思考しなおす。
+                    if (GameMode.IsConsiderationWithEngine())
+                    {
+                        NotifyTurnChanged();
+                    }
                 }
             });
         }
