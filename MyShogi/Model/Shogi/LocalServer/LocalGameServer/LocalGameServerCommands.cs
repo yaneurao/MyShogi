@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using MyShogi.App;
-using MyShogi.Model.Common;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
@@ -258,6 +257,8 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // 棋譜が綺麗になった扱いにする。(この棋譜はファイルなどに丸ごと保存されているはずであるから)
                     KifuDirty = false;
+                    // 駒を持ち上げていたりしたらそれをリセットする必要があるので。
+                    RaisePropertyChanged("TurnChanged");
                 }
             });
         }
