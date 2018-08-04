@@ -48,6 +48,16 @@ namespace MyShogi.Model.Shogi.Player
         public string DisplayName { get { return Name; } }
 
         /// <summary>
+        /// 通常探索なのか、詰将棋探索なのか。
+        /// IsMateSearch == trueなら詰将棋探索
+        /// </summary>
+        public bool IsMateSearch
+        {
+            get { return Engine.IsMateSearch; }
+            set { Engine.IsMateSearch = value; }
+        }
+
+        /// <summary>
         /// このプレイヤーが指した指し手
         /// </summary>
         public Move BestMove

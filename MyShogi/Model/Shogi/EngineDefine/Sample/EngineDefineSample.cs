@@ -390,7 +390,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     Presets = default_preset,
                     DescriptionSimple = "tanuki-詰将棋エンジン",
                     Description = "長手数の詰将棋が解ける詰将棋エンジンです。\r\n" +
-                        "詰み手順が最短手数のものであることは保証されません。" +
+                        "詰手順が最短手数のものであることは保証されません。\r\n" +
                         "複数スレッドには対応していません。",
                     DisplayOrder = 10006,
                     SupportedExtendedProtocol = default_extend,

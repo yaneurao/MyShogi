@@ -268,6 +268,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 }
             });
 
+            // 通常探索なのか、詰将棋探索なのか。
+            usiEnginePlayer.IsMateSearch =
+                nextGameMode == GameModeEnum.ConsiderationWithMateEngine;
+
             // 実行ファイルを起動する
             usiEnginePlayer.Start(engineDefine.EngineExeFileName());
 
@@ -775,7 +779,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 var engineDefineFolderPath =
                     (GameMode == GameModeEnum.ConsiderationWithEngine)     ? TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath :
-                    (GameMode == GameModeEnum.ConsiderationWithMateEngine) ? TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath :
+                    (GameMode == GameModeEnum.ConsiderationWithMateEngine) ? TheApp.app.config.MateEngineSetting.EngineDefineFolderPath :
                     null;
 
                 var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == engineDefineFolderPath);

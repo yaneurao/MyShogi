@@ -98,7 +98,10 @@ namespace MyShogi.Model.Shogi.Usi
         /// <param name="usiPositionString"></param>
         public void Think(string usiPositionString , UsiThinkLimit limit , Color sideToMove)
         {
-            ThinkingBridge.Think($"position {usiPositionString}" , $"go {limit.ToUsiString(sideToMove)}");
+            if (IsMateSearch)
+                ThinkingBridge.Think($"position {usiPositionString}", $"go mate {limit.ToUsiString(sideToMove)}");
+            else
+                ThinkingBridge.Think($"position {usiPositionString}" , $"go {limit.ToUsiString(sideToMove)}");
         }
 
         /// <summary>
@@ -192,6 +195,12 @@ namespace MyShogi.Model.Shogi.Usi
         public Move PonderMove { get { return ThinkingBridge.PonderMove; } }
 
         public int MultiPV { set { ThinkingBridge.MultiPV = value; } }
+
+        /// <summary>
+        /// 通常探索なのか、詰将棋探索なのか。
+        /// IsMateSearch == trueなら詰将棋探索
+        /// </summary>
+        public bool IsMateSearch { get; set; }
 
         /// <summary>
         /// エンジンの状態。
@@ -326,6 +335,10 @@ namespace MyShogi.Model.Shogi.Usi
 
                     // u2bやBonadapterのためのスペシャルコマンド
                     case "B<":
+                        break;
+
+                    case "checkmate":
+                        HandleCheckmate(scanner);
                         break;
 
                     default:
@@ -721,6 +734,60 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
+        /// "go mate"に対しては "bestmove"ではなく、"checkmate.."という文字列が返ってくる。
+        /// これをparseする。
+        /// </summary>
+        /// <param name="scanner"></param>
+        public void HandleCheckmate(Scanner scanner)
+        {
+            EvalValueEx eval = null;
+
+            var moves = new List<Move>();
+            if (scanner.PeekText("nomate"))
+            {
+                // 不詰を表現している(ことにする)
+                moves.Add(Move.MATE_ENGINE_NO_MATE);
+
+            } else if (scanner.PeekText("notimplemented")){
+
+                // 手番側が王手をされているとき、詰将棋エンジンが実装されていない。
+                moves.Add(Move.MATE_ENGINE_NOT_IMPLEMENTED);
+
+            } else
+            {
+                // 詰みを発見した。
+
+                while (!scanner.IsEof)
+                {
+                    var token = scanner.ParseText();
+                    var move = Core.Util.FromUsiMove(token);
+                    if (move == Move.NONE)
+                        break;
+                    moves.Add(move);
+                }
+
+                // {moves.Count}手で詰み…とは限らないのでこれやめとく。
+                //eval = new EvalValueEx(EvalValue.Mate - moves.Count, ScoreBound.Exact);
+
+                // 手数不明の詰み
+                eval = new EvalValueEx(EvalValue.MatePlus , ScoreBound.Exact);
+            }
+
+            // 次のThink()が呼び出されているなら、この読み筋は、無効化されなくてはならない。
+            if (!ThinkingBridge.IsStopping)
+            {
+                ThinkReport = new UsiThinkReport()
+                {
+                    Moves = moves,
+                    Eval = eval,
+                };
+            }
+
+            // 確定したので格納しておく。
+            ThinkingBridge.BestMoveReceived(moves[0] , Move.NONE);
+        }
+
+        /// <summary>
         /// 詰みになったときの手数をパースします。
         /// </summary>
         /// <example>
@@ -736,7 +803,9 @@ namespace MyShogi.Model.Shogi.Usi
             }
 
             var trimmedText = text.Trim();
-            var value = int.Parse(trimmedText);
+
+            // "+"とかあるのでこれがparseできないといけない。
+            var value = StringToInt(trimmedText);
 
             if (value == 0)
             {
@@ -762,6 +831,65 @@ namespace MyShogi.Model.Shogi.Usi
                 return EvalValue.Mate - value;
             else
                 return EvalValue.Mated - value;
+        }
+
+
+        /// <summary>
+        /// 数値に変換可能な部分のみを数値に直します。
+        /// "+"とか"-"とかもparseできないといけない。
+        /// </summary>
+        private static int StringToInt(string text)
+        {
+            var isNegative = false;
+            var startIndex = 0;
+            var result = 0L;
+
+            if (string.IsNullOrEmpty(text))
+            {
+                throw new ArgumentNullException("text");
+            }
+
+            if (text[0] == '-')
+            {
+                isNegative = true;
+                startIndex = 1;
+            }
+            else if (text[0] == '+')
+            {
+                startIndex = 1;
+            }
+
+            for (var i = startIndex; i < text.Length; i++)
+            {
+                if (char.IsWhiteSpace(text[i]))
+                {
+                    continue;
+                }
+
+                if ('0' <= text[i] && text[i] <= '9')
+                {
+                    var n = text[i] - '0';
+
+                    result = result * 10 + n;
+                    if (result > int.MaxValue || result < int.MinValue)
+                    {
+                        throw new OverflowException(
+                            text + ": 評価値がオーバーフローしました。");
+                    }
+                }
+                else
+                {
+                    if (i == startIndex)
+                    {
+                        throw new ArgumentException(
+                            text + ": 評価値が正しくありません。");
+                    }
+
+                    break;
+                }
+            }
+
+            return (int)(result * (isNegative ? -1 : +1));
         }
 
     }

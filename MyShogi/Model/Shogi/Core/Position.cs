@@ -1218,7 +1218,7 @@ namespace MyShogi.Model.Shogi.Core
                 Piece pr = toPcType = m.DroppedPiece();
 
                 // 打てないはずの駒
-                if (pr < Piece.PAWN && Piece.KING <= pr)
+                if (pr < Piece.PAWN || Piece.KING <= pr)
                     return false;
 
                 // 打つ先の升が埋まっていたり、その手駒を持っていなかったりしたら駄目。
