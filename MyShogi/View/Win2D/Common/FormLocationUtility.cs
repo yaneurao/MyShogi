@@ -11,15 +11,33 @@ namespace MyShogi.View.Win2D.Common
         /// <summary>
         /// あるformをthis_のFormに対してセンタリングする。
         /// formをShowDialog()する前に呼び出す。
+        ///
+        /// 画面外には出ないように慎重に位置決めしている。
         /// </summary>
         /// <param name="form"></param>
         public static void CenteringToThisForm(Form form, Form this_)
         {
             form.StartPosition = FormStartPosition.Manual;
-            form.DesktopLocation = new Point(
-                this_.DesktopLocation.X + (this_.Width - form.Width) / 2,
-                this_.DesktopLocation.Y + (this_.Height - form.Height) / 2
-                );
+
+            var x = this_.DesktopLocation.X + (this_.Width - form.Width) / 2;
+            var y = this_.DesktopLocation.Y + (this_.Height - form.Height) / 2;
+
+            // 入り切らないときは左上にめり込むのは許せないので(ウインドウをドラッグする操作、閉じる操作ができなくなるので)
+            // 左と上にはめりこまないようにする。
+
+            // そのためには、まず下と右にめり込んでいたなら押し返して、そのあと上と左にめり込んでいたなら押し返す。
+
+            if (x + form.Width > Screen.PrimaryScreen.WorkingArea.Width)
+                x = Screen.PrimaryScreen.WorkingArea.Width - form.Width;
+            if (x < 0)
+                x = 0;
+
+            if (y + form.Height > Screen.PrimaryScreen.WorkingArea.Height)
+                y = Screen.PrimaryScreen.WorkingArea.Height - form.Height;
+            if (y < 0)
+                y = 0;
+
+            form.DesktopLocation = new Point(x, y);
         }
 
         /// <summary>
