@@ -204,6 +204,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 return false;
             }
 
+            var e = Tree.PropertyChangedEventEnable;
+
             try
             {
                 // イベントの一時抑制
@@ -255,7 +257,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     Tree.DoMove(Tree.currentNode.moves[0].nextMove);
 
                 // イベントの一時抑制を解除して、更新通知を送る。
-                Tree.PropertyChangedEventEnable = true;
+                Tree.PropertyChangedEventEnable = e;
                 Tree.RaisePropertyChanged("KifuList",new List<string>(Tree.KifuList));
                 Tree.RaisePropertyChanged("Position",Tree.position.Clone());
 

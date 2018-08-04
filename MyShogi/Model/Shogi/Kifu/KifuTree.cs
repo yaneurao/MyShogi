@@ -481,7 +481,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// rootから数えてselectedIndex目にある棋譜の局面に移動する。
-        /// 棋譜は消去はしない。
+        /// 棋譜は消去はしない。棋譜の選択行の移動もしない。
         /// </summary>
         /// <param name="index"></param>
         public void GotoSelectedIndex(int selectedIndex)
@@ -500,11 +500,14 @@ namespace MyShogi.Model.Shogi.Kifu
             if (selectedIndex > kifuWindowMoves.Count)
                 return;
 
-            var e = EnableKifuList;
+            var e1 = EnableKifuList;
+            var e2 = PropertyChangedEventEnable;
+
             EnableKifuList = false; // いま棋譜リストが更新されると困る
+            PropertyChangedEventEnable = false; // いまイベントが発生すると困る(DoMove()で発生させてしまう)
 
             RewindToRoot();
-            for(int i=0;i<selectedIndex && i < kifuWindowMoves.Count; ++i)
+            for (int i = 0; i < selectedIndex && i < kifuWindowMoves.Count; ++i)
             {
                 // 棋譜ウィンドウに表示していたものを選んだのだからこれは合法。
                 var move = kifuWindowMoves[i];
@@ -512,7 +515,11 @@ namespace MyShogi.Model.Shogi.Kifu
                 DoMove(move);
             }
 
-            EnableKifuList = e; // 元の値
+            EnableKifuList = e1; // 元の値
+            PropertyChangedEventEnable = e2;
+
+            // 移動が完了したので局面の更新通知を送る。
+            RaisePropertyChanged("Position", position.Clone());
         }
 
         /// <summary>

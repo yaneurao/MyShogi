@@ -67,7 +67,8 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void BoardGotoLeaf()
         {
-            gameScreenControl1.kifuControl.ViewModel.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に行く */;
+            var kifuVm = gameScreenControl1.kifuControl.ViewModel;
+            kifuVm.KifuListSelectedIndex = kifuVm.KifuListCount; // 大きすぎてもclipされて末尾にいくだろうし…。
         }
 
         // -- properties
