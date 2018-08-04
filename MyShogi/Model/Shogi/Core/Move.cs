@@ -41,6 +41,9 @@ namespace MyShogi.Model.Shogi.Core
         ILLEGAL_ACTION_WIN , // 相手の不正なアクション(非手番の時に指し手を送ったなど)による反則勝ち(CSAプロトコルにある)
         ILLEGAL_ACTION_LOSE, // 自分の不正なアクション(手番時に送ってはいけない改行を送ったなど)による反則負け(CSAプロトコルにある)
 
+        // 読み筋を表示するための特殊な指し手
+        REPETITION_SUP , // 優等局面
+        REPETITION_INF , // 劣等局面
         MATE_ENGINE_NO_MATE,         // 不詰を表現している。"go mate"に対してcheckmate nomateが返ってきたときにこれを用いる。
         MATE_ENGINE_NOT_IMPLEMENTED, // 手番側に王手がかかっている局面の詰検討は出来ません
     }
@@ -170,6 +173,8 @@ namespace MyShogi.Model.Shogi.Core
                     case Move.ILLEGAL_ACTION_WIN : return "反則勝ち";
                     case Move.ILLEGAL_ACTION_LOSE: return "反則負け";
 
+                    case Move.REPETITION_SUP:  return "優等局面";
+                    case Move.REPETITION_INF:  return "劣等局面";
                     case Move.MATE_ENGINE_NO_MATE:         return "不詰";                                               // 詰将棋エンジンで用いる
                     case Move.MATE_ENGINE_NOT_IMPLEMENTED: return "手番側に王手がかかっている局面の詰検討は出来ません"; // 詰将棋エンジンで用いる
 

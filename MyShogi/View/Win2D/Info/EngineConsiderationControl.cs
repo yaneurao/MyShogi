@@ -487,7 +487,8 @@ namespace MyShogi.View.Win2D
             // 特殊な指し手は、KIF2フォーマットではきちんと変換できないので自前で変換する。
             // 例えば、連続王手の千日手による反則勝ちが単に「千日手」となってしまってはまずいので。
             // (『Kifu for Windoiws』ではそうなってしまう..)
-            return m.IsOk() ? kifFormatter.format(p, m) : m.SpecialMoveToKif();
+            return m.IsOk() ? kifFormatter.format(p, m) :
+                (p.sideToMove == Model.Shogi.Core.Color.BLACK ? "☗":"☖") + m.SpecialMoveToKif();
         }
 
         /// <summary>

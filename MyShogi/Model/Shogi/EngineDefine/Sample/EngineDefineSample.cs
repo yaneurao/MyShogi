@@ -391,9 +391,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 var descriptions = new List<EngineOptionDescription>();
                 foreach (var d in default_descriptions)
                 {
-                    if (names.Where(x => d.Name == x).FirstOrDefault() != null)
+                    if (names.Contains(d.Name) )
                     {
-                        if (namesHide.Where(x => d.Name == x).FirstOrDefault() != null)
+                        if (namesHide.Contains(d.Name))
                             d.Hide = true;
 
                         descriptions.Add(d);

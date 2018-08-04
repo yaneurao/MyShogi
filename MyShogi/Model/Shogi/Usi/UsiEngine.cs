@@ -657,7 +657,21 @@ namespace MyShogi.Model.Shogi.Usi
 
             while (!scanner.IsEof)
             {
-                var move = Core.Util.FromUsiMove(scanner.PeekText());
+                var token = scanner.PeekText();
+                Move move = Move.NONE;
+                switch(token)
+                {
+                    // USIの規定にはないが、やねうら王で読み筋に使っている特殊な指し手
+                    case "win": move = Move.WIN; break;
+                    case "rep_win":  move = Move.REPETITION_WIN; break;
+                    case "rep_lose": move = Move.REPETITION_LOSE; break;
+                    case "rep_draw": move = Move.REPETITION_DRAW; break;
+                    case "rep_sup":  move = Move.REPETITION_SUP; break;
+                    case "rep_inf":  move = Move.REPETITION_INF; break;
+
+                    default: move = Core.Util.FromUsiMove(token); break;
+                }
+
                 if (move == Move.NONE)
                     break;
                 scanner.ParseText();

@@ -75,7 +75,8 @@ namespace MyShogi.Model.Common.Utility
         /// </summary>
         public bool IsEof
         {
-            get { return (index >= Text.Length); }
+            get { return peek == null /* まだこれをParseText()してない*/
+                    && (index >= Text.Length); }
         }
 
         /// <summary>
