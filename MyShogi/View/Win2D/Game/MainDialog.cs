@@ -741,6 +741,7 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        private GameModeEnum lastGameMode = GameModeEnum.NotInit;
         /// <summary>
         /// [UI thread] : メニューのitemを動的に追加する。
         /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
@@ -775,17 +776,26 @@ namespace MyShogi.View.Win2D
                 // -- LocalGameServerの各フラグ。
                 // ただし、初期化時にgameServer == nullで呼び出されることがあるのでnull checkが必要。
 
+                // LocalGameServer.GameModeは値がいま書き換わっている可能性があるので、イベントを除かしてしまう可能性がある。
+                // ゆえに、引数で渡ってきたargs.value (GameModeEnum)を用いる必要があるが、しかし、args.valueが他の型である可能性もある。(BoardReverseなどを渡すとき)
+                // このため、args.valueがGameModeEnumなら、これを用いて、さもなくば仕方ないので前回渡されたものをそのまま用いる。
+                // (LocalGameServerの値はメニューには直接使わない)
+                var gameMode =
+                    (args != null && args.value != null && args.value is GameModeEnum) ? (GameModeEnum)args.value :
+                    gameServer == null           ?  GameModeEnum.NotInit    :
+                    lastGameMode;
+                lastGameMode = gameMode;
+
                 // 検討モード(通常エンジン)
-                var consideration = gameServer == null ? false : gameServer.GameMode == GameModeEnum.ConsiderationWithEngine;
+                var consideration = gameMode == GameModeEnum.ConsiderationWithEngine;
                 // 検討モード(詰将棋用)
-                var mate_consideration = gameServer == null ? false : gameServer.GameMode == GameModeEnum.ConsiderationWithMateEngine;
+                var mate_consideration = gameMode == GameModeEnum.ConsiderationWithMateEngine;
                 // 対局中
-                var inTheGame = gameServer == null ? false : gameServer.InTheGame;
+                var inTheGame = gameMode == GameModeEnum.InTheGame;
                 // 盤面編集中
-                var inTheBoardEdit = gameServer == null ? false : gameServer.GameMode == GameModeEnum.InTheBoardEdit;
+                var inTheBoardEdit = gameMode == GameModeEnum.InTheBoardEdit;
                 // 盤面反転
                 var boardReverse = gameServer == null ? false : gameServer.BoardReverse;
-
 
                 var item_file = new ToolStripMenuItem();
                 item_file.Text = "ファイル(&F)";

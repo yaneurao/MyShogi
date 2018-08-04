@@ -111,10 +111,10 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// [UI Thread] : このGameScreenControlに紐づけられているメニューの更新を行う。
         /// </summary>
-        public void UpdateMenuItems(PropertyChangedEventArgs args = null)
+        public void UpdateMenuItems(PropertyChangedEventArgs args)
         {
             if (Setting != null && Setting.UpdateMenuItems != null)
-                Setting.UpdateMenuItems(null);
+                Setting.UpdateMenuItems(args);
             else
                 Dirty = true; // 描画の更新イベントは呼び出しておかないといけない。
         }
