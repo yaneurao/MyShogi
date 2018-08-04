@@ -335,8 +335,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // TODO : 別の棋譜を読み込んでたまたま同じ箇所が選択された場合、イベントが発生しない？あとで考える。
-            ViewModel.KifuListSelectedIndex = listBox1.SelectedIndex;
+            ViewModel.SetValueAndRaisePropertyChanged("KifuListSelectedIndex", listBox1.SelectedIndex);
             UpdateButtonState();
         }
 

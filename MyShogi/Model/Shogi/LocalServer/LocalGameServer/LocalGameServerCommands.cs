@@ -416,7 +416,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 Debug.Assert(data != null);
 
-                var sfen = data.moves.Count == 0 ?
+                var sfen = (data.moves == null || data.moves.Count == 0) ?
                     data.rootSfen :
                     $"sfen {data.rootSfen} moves { Core.Util.MovesToUsiString(data.moves) }";
 

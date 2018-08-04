@@ -71,6 +71,10 @@ namespace MyShogi.View.Win2D
                     SetEngineInstanceNumber(message.number);
 
                     // このメッセージに対して、継ぎ盤の局面を初期化したほうが良いのでは…。
+                    miniShogiBoard1.BoardData = new MiniShogiBoardData()
+                    {
+                        rootSfen = BoardType.NoHandicap.ToSfen()
+                    };
 
                     break;
 
