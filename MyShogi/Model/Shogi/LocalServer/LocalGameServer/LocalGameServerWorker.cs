@@ -309,8 +309,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             num = 0;
             foreach (var c in All.Colors())
             {
-                if (GameSetting.PlayerSetting(c).IsCpu ||
-                    (c == Color.BLACK && nextGameMode.IsConsiderationWithEngine()) // 検討用エンジンがぶら下がっている。
+                if ((nextGameMode == GameModeEnum.InTheGame && GameSetting.PlayerSetting(c).IsCpu) ||
+                    (nextGameMode.IsConsiderationWithEngine() && c == Color.BLACK) // // 検討用エンジンがぶら下がっていると考えられる。
                     )
                 {
                     var num_ = num; // copy for capturing
