@@ -725,6 +725,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 対局中だったものが終了したのか？
             if (GameMode == GameModeEnum.InTheGame)
             {
+                if (TheApp.app.config.ReadOutCancelWhenGameEnd == 1)
+                    TheApp.app.soundManager.Stop();
+
                 // 音声:「ありがとうございました。またお願いします。」
                 TheApp.app.soundManager.ReadOut(SoundEnum.End);
             }

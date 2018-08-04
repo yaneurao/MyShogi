@@ -38,6 +38,7 @@ namespace MyShogi.App
             //EngineConsiderationWindowEnableWhenVsHuman = true;
             ConsiderationMultiPV = 5;
             ConsiderationWindowFollowMainWindow = true;
+            ReadOutCancelWhenGameEnd = 1;
         }
 
         /// <summary>
@@ -322,6 +323,18 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("ReadOutSenteGoteEverytime"); }
             set { SetValue<int>("ReadOutSenteGoteEverytime", value); }
+        }
+
+        /// <summary>
+        /// 終局時に以降の音声読み上げをキャンセルする。
+        /// 0 : なし
+        /// 1 : あり(デフォルト)
+        /// </summary>
+        [DataMember]
+        public int ReadOutCancelWhenGameEnd
+        {
+            get { return GetValue<int>("ReadOutCancelWhenGameEnd"); }
+            set { SetValue<int>("ReadOutCancelWhenGameEnd", value); }
         }
 
         /// <summary>

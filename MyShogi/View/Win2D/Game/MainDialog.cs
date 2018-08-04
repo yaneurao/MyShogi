@@ -1425,6 +1425,15 @@ namespace MyShogi.View.Win2D
                         item_sounds.DropDownItems.Add(item1);
                     }
 
+                    {
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "終局時に以降の音声読み上げをキャンセルする。(&C)"; // Cancel
+                        item1.Checked = TheApp.app.config.ReadOutCancelWhenGameEnd == 1;
+                        item1.Enabled = TheApp.app.config.CommercialVersion != 0; // 商用版のみ選択可
+                        item1.Click += (sender, e) => { TheApp.app.config.ReadOutCancelWhenGameEnd ^= 1 /* 0,1反転 */; };
+                        item_sounds.DropDownItems.Add(item1);
+                    }
+                    
                 }
 
                 var item_boardedit = new ToolStripMenuItem();
