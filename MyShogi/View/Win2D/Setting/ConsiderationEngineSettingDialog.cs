@@ -185,10 +185,11 @@ namespace MyShogi.View.Win2D.Setting
         private void ShowEngineOptionSettingDialog()
         {
             var opt = EngineCommonOptionsSampleOptions.InstanceForConsideration();
+            var consideration = ViewModel.DialogType == ConsiderationEngineSettingDialogType.ConsiderationSetting;
 
             var dialog = EngineOptionSettingDialogBuilder.Build(
                 EngineCommonOptionsSample.CreateEngineCommonOptions(opt), // 共通設定のベース(検討、詰検討用)
-                TheApp.app.EngineConfigs.ConsiderationConfig,             // 共通設定の値はこの値で上書き
+                consideration ? TheApp.app.EngineConfigs.ConsiderationConfig : TheApp.app.EngineConfigs.MateConfig , // 共通設定の値はこの値で上書き
                 ViewModel.EngineDefineFolderPath                          // 個別設定の情報はここにある。
                 );
 

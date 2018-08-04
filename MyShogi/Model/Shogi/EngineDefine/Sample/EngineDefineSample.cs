@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -378,7 +379,37 @@ namespace MyShogi.Model.Shogi.EngineDefine
 #endif
 
             {
-                // 詰将棋エンジン
+                // -- 詰将棋エンジン
+
+                // このnamesにあるもの以外、descriptionから削除してしまう。
+                var names = new[] { "AutoHash","Hash_" ,"AutoThread_","Threads_","MultiPV","WriteDebugLog","NetworkDelay","NetworkDelay2", "MinimumThinkingTime",
+                    "SlowMover","DepthLimit","NodesLimit","Contempt","ContemptFromBlack","EvalDir","MorePreciseMatePV"};
+
+                // このnamesHideにあるものは隠す。
+                var namesHide = new[] { "SlowMover", "Comtempt", "ContemptFromBlack" , "EvalDir"};
+
+                var descriptions = new List<EngineOptionDescription>();
+                foreach (var d in default_descriptions)
+                {
+                    if (names.Where(x => d.Name == x).FirstOrDefault() != null)
+                    {
+                        if (namesHide.Where(x => d.Name == x).FirstOrDefault() != null)
+                            d.Hide = true;
+
+                        descriptions.Add(d);
+                    }
+                }
+
+                {
+                    var d = new EngineOptionDescription("MorePreciseMatePv", null , "なるべく正確な詰み手順を返します。",
+                        "この項目をオンにすると、なるべく正確な詰み手順を返すようになります。\r\n" +
+                        "オフにしていると受け方(詰みを逃れる側)が最長になるように逃げる手順になりません。\r\n" +
+                        "ただし、この項目をオンにしても攻め方(詰ます側)が最短手順の詰みになる手順を選択するとは限りません。",
+                        "option name MorePreciseMatePv type check default true");
+
+                     descriptions.Add(d);
+                }
+
                 var engine_define = new EngineDefine()
                 {
                     DisplayName = "tanuki-詰将棋エンジン",
@@ -387,14 +418,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     EvalMemory = 0, // KPPTは、これくらい？
                     WorkingMemory = 200,
                     StackPerThread = 40, // clangでコンパイルの時にstack size = 25[MB]に設定している。ここに加えてheapがスレッド当たり15MBと見積もっている。
-                    Presets = default_preset,
+                    Presets = new List<EnginePreset>() ,
                     DescriptionSimple = "tanuki-詰将棋エンジン",
                     Description = "長手数の詰将棋が解ける詰将棋エンジンです。\r\n" +
-                        "詰手順が最短手数のものであることは保証されません。\r\n" +
-                        "複数スレッドには対応していません。",
+                        "詰手順が最短手数であることは保証されません。\r\n" +
+                        "複数スレッドでの探索には対応していません。",
                     DisplayOrder = 10006,
                     SupportedExtendedProtocol = default_extend,
-                    EngineOptionDescriptions = default_descriptions,
+                    EngineOptionDescriptions = descriptions,
                     EngineType = 1, // go mateコマンドに対応している。通常探索には使えない。
                 };
                 EngineDefineUtility.WriteFile("engine/tanuki_mate/engine_define.xml", engine_define);
