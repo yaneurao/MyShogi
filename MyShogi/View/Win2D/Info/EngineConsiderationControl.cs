@@ -421,6 +421,9 @@ namespace MyShogi.View.Win2D
             var header = new[] { ranking , thinking_time, depth, node, eval, score_bound, pv };
 
             listView1.Columns.AddRange(header);
+
+            //listView1.AutoResizeColumns( ColumnHeaderAutoResizeStyle.ColumnContent);
+            // headerとcontentの文字長さを考慮して、横幅が自動調整されて水平スクロールバーで移動してくれるといいのだが、うまくいかない。よくわからない。
         }
 
         /// <summary>
