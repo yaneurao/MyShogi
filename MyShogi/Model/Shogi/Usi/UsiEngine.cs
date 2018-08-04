@@ -766,11 +766,11 @@ namespace MyShogi.Model.Shogi.Usi
                     moves.Add(move);
                 }
 
-                // {moves.Count}手で詰み…とは限らないのでこれやめとく。
-                //eval = new EvalValueEx(EvalValue.Mate - moves.Count, ScoreBound.Exact);
+                // {moves.Count}手で詰み…とは限らないのでエンジンによってはこれあまり良くなかったり？
+                eval = new EvalValueEx(EvalValue.Mate - moves.Count, ScoreBound.Exact);
 
                 // 手数不明の詰み
-                eval = new EvalValueEx(EvalValue.MatePlus , ScoreBound.Exact);
+                //eval = new EvalValueEx(EvalValue.MatePlus , ScoreBound.Exact);
             }
 
             // 次のThink()が呼び出されているなら、この読み筋は、無効化されなくてはならない。
