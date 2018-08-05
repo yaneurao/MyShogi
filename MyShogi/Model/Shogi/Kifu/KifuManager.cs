@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Kifu
@@ -139,7 +140,12 @@ namespace MyShogi.Model.Shogi.Kifu
                 return false;
 
             // undoできる
+
+            // Tree.UndoMove()で棋譜1行削除するが、このときにEnableKifuList == trueでないと削除されない。
+            Debug.Assert(EnableKifuList);
+
             Tree.UndoMove();
+            
             Tree.Remove(node); // この枝を削除しておく。
 
             return true;

@@ -245,7 +245,7 @@ namespace MyShogi.View.Win2D
 
             listBox1.SelectedIndexChanged -= listBox1_SelectedIndexChanged;
 
-            listBox1.Items.Remove(listBox1.Items.Count - 1);
+            listBox1.Items.RemoveAt(listBox1.Items.Count - 1);
             listBox1.SelectedIndex = listBox1.Items.Count - 1; // last
             ViewModel.KifuListCount = listBox1.Items.Count;
 

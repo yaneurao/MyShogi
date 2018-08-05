@@ -15,7 +15,7 @@ namespace MyShogi.App
         /// <summary>
         /// MyShogiのバージョン文字列。Aboutダイアログに表示される。
         /// </summary>
-        public static readonly string MYSHOGI_VERSION_STRING = "0.01";
+        public static readonly string MYSHOGI_VERSION_STRING = "1.0.0"; // マスターアップ予定版は1.0.0
 
         public GlobalConfig()
         {
