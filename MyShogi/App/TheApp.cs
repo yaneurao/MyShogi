@@ -123,6 +123,7 @@ namespace MyShogi.App
             config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems, mainDialog);
+            config.AddPropertyChangedHandler("PieceSoundOffTheGame", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("KifuReadOut", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
             config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
