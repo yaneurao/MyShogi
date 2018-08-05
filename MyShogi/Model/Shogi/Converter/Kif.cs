@@ -630,7 +630,9 @@ namespace MyShogi.Model.Shogi.Converter
                 toPc = move.IsPromote() ? Util.MakePiecePromote(turn, fromPt) : fromPc;
                 capPc = pos.PieceOn(move.To());
                 sameBB = pos.AttackersTo(turn, move.To()) & pos.Pieces(turn, fromPc.PieceType());
-                same = lastMove.IsSpecial() ? false : (lastMove.To() == move.To());
+                same = lastMove.IsSpecial() ? false :
+                       lastMove == Move.NONE ? false : // 直前の局面が与えられていない場合、Move.NONEのケースがある。
+                       (lastMove.To() == move.To());
 
                 if (!sameBB.IsSet(fromSq) || sameBB.IsOne()) {
                     // ""
