@@ -662,12 +662,15 @@ namespace MyShogi.Model.Shogi.Usi
                 switch(token)
                 {
                     // USIの規定にはないが、やねうら王で読み筋に使っている特殊な指し手
+                    // "win"以外は、"bestmove"に対して受理はしないが、pvとしては受理するのでここに書いてやる。
+
                     case "win": move = Move.WIN; break;
                     case "rep_win":  move = Move.REPETITION_WIN; break;
                     case "rep_lose": move = Move.REPETITION_LOSE; break;
                     case "rep_draw": move = Move.REPETITION_DRAW; break;
                     case "rep_sup":  move = Move.REPETITION_SUP; break;
                     case "rep_inf":  move = Move.REPETITION_INF; break;
+                    case "resign":   move = Move.RESIGN; break;
 
                     default: move = Core.Util.FromUsiMove(token); break;
                 }
