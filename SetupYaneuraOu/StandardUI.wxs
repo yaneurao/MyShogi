@@ -64,30 +64,55 @@
     </InstallUISequence>
   </Fragment>
   <Fragment Id="FolderDlg">
-  </Fragment>
-  <Fragment Id="ReadmeDlg">
-    <Property Id="ReadmeForm_PrevArgs" Value="EulaForm" />
-    <UI Id="ReadmeDlg">
-      <Dialog Id="ReadmeForm" X="50" Y="50" Width="373" Height="287" Title="[ProductName]">
+    <Property Id="FolderForm_PrevArgs" Value="ReadmeForm" />
+    <UI Id="FolderDlg">
+      <Property Id="FolderForm_AllUsers" Value="ME" />
+      <Property Id="FolderForm_AllUsersVisible" Value="1" />
+      <RadioButtonGroup Property="FolderForm_AllUsers">
+        <RadioButton Height="17" Text="{\VSI_MS_Sans_Serif13.0_0_0}すべてのユーザー(&amp;E)" Value="ALL" Width="342" X="0" Y="0" />
+        <RadioButton Height="17" Text="{\VSI_MS_Sans_Serif13.0_0_0}このユーザーのみ(&amp;M)" Value="ME" Width="342" X="0" Y="18" />
+      </RadioButtonGroup>
+      <Dialog Id="FolderForm" X="50" Y="50" Width="373" Height="287" Title="[ProductName]" TrackDiskSpace="yes">
         <Control Id="NextButton" Type="PushButton" X="300" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}次へ(&amp;N) &gt;" TabSkip="no" Default="yes">
-          <Publish Event="EndDialog" Value="Return"><![CDATA[ReadmeForm_NextArgs=""]]></Publish>
-          <Publish Event="NewDialog" Value="[ReadmeForm_NextArgs]"><![CDATA[ReadmeForm_NextArgs<>""]]></Publish>
+          <Publish Event="SetTargetPath" Value="TARGETDIR"><![CDATA[1]]></Publish>
+          <Publish Event="SpawnDialog" Value="DiskCost"><![CDATA[OutOfDiskSpace=1]]></Publish>
+          <Publish Event="EndDialog" Value="Return"><![CDATA[FolderForm_NextArgs="" AND OutOfDiskSpace<>1]]></Publish>
+          <Publish Event="NewDialog" Value="[FolderForm_NextArgs]"><![CDATA[FolderForm_NextArgs<>"" AND OutOfDiskSpace<>1]]></Publish>
+          <Publish Property="ALLUSERS" Value="2"><![CDATA[FolderForm_AllUsers="ALL" AND VersionNT>=400 AND Privileged=1 AND FolderForm_AllUsersVisible=1]]></Publish>
+          <Publish Property="ALLUSERS"><![CDATA[FolderForm_AllUsers="ME" AND VersionNT>=400 AND Privileged=1 AND FolderForm_AllUsersVisible=1]]></Publish>
+          <Publish Event="DoAction" Value="FindRelatedProducts">1</Publish>
         </Control>
-        <Control Id="ReadmeText" Type="ScrollableText" X="9" Y="63" Width="357" Height="180" Sunken="yes" TabSkip="no">
-          <Text SourceFile="..\MyShogi\bin\Debug\docs\YaneuraOuReadme.rtf" />
+        <Control Id="FolderLabel" Type="Text" X="18" Y="114" Width="348" Height="12" Text="{\VSI_MS_Sans_Serif13.0_0_0}フォルダー(&amp;F):" TabSkip="no" />
+        <Control Id="FolderEdit" Type="PathEdit" X="18" Y="126" Width="258" Height="18" Property="TARGETDIR" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiPathEdit" TabSkip="no" Sunken="yes" />
+        <Control Id="BrowseButton" Type="PushButton" X="282" Y="126" Width="84" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}参照(&amp;R)..." TabSkip="no">
+          <Publish Property="SelectFolderDialog_Property" Value="TARGETDIR"><![CDATA[1]]></Publish>
+          <Publish Event="SpawnDialog" Value="SelectFolderDialog"><![CDATA[1]]></Publish>
+        </Control>
+        <Control Id="DiskCostButton" Type="PushButton" X="282" Y="150" Width="84" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}ディスク領域(&amp;D)..." TabSkip="no">
+          <Publish Event="SetTargetPath" Value="TARGETDIR"><![CDATA[1]]></Publish>
+          <Publish Event="SpawnDialog" Value="DiskCost"><![CDATA[1]]></Publish>
+        </Control>
+        <Control Id="AllUsersRadioGroup" Type="RadioButtonGroup" X="24" Y="210" Width="342" Height="42" Property="FolderForm_AllUsers" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiRadioButtonGroup" TabSkip="no">
+          <Condition Action="show"><![CDATA[VersionNT>=400 AND Privileged=1 AND FolderForm_AllUsersVisible=1]]></Condition>
+          <Condition Action="hide"><![CDATA[NOT (VersionNT>=400 AND Privileged=1 AND FolderForm_AllUsersVisible=1)]]></Condition>
         </Control>
         <Control Id="CancelButton" Type="PushButton" X="156" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}キャンセル" TabSkip="no" Cancel="yes">
           <Publish Event="SpawnDialog" Value="Cancel" />
         </Control>
         <Control Id="PreviousButton" Type="PushButton" X="228" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}&lt; 戻る(&amp;B)" TabSkip="no">
-          <Condition Action="disable"><![CDATA[ReadmeForm_PrevArgs=""]]></Condition>
-          <Condition Action="enable"><![CDATA[ReadmeForm_PrevArgs<>""]]></Condition>
-          <Publish Event="NewDialog" Value="[ReadmeForm_PrevArgs]"><![CDATA[ReadmeForm_PrevArgs<>""]]></Publish>
+          <Condition Action="disable"><![CDATA[FolderForm_PrevArgs=""]]></Condition>
+          <Condition Action="enable"><![CDATA[FolderForm_PrevArgs<>""]]></Condition>
+          <Publish Event="NewDialog" Value="[FolderForm_PrevArgs]"><![CDATA[FolderForm_PrevArgs<>""]]></Publish>
         </Control>
         <Control Id="BannerBmp" Type="Bitmap" X="0" Y="0" Width="375" Height="52" Text="_DBE77D57_0056_4763_8A31_1420F44D20CD" TabSkip="no" Disabled="yes" />
-        <Control Id="Line1" Type="Line" X="0" Y="52" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
-        <Control Id="BannerText" Type="Text" X="9" Y="9" Width="306" Height="33" Text="{\VSI_MS_Sans_Serif16.0_1_0}[ProductName] 情報" TabSkip="yes" Transparent="yes" NoPrefix="yes" />
+        <Control Id="Line1" Type="Line" X="0" Y="52" Width="375" Height="9" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
         <Control Id="Line2" Type="Line" X="0" Y="252" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
+        <Control Id="BannerText" Type="Text" X="9" Y="9" Width="306" Height="33" Text="{\VSI_MS_Sans_Serif16.0_1_0}インストール フォルダーの選択" TabSkip="yes" Transparent="yes" NoPrefix="yes" />
+        <Control Id="Body" Type="Text" X="9" Y="63" Width="354" Height="48" Text="{\VSI_MS_Sans_Serif13.0_0_0}インストーラーは次のフォルダーへ [ProductName] をインストールします。&#xD;&#xA;&#xD;&#xA;このフォルダーにインストールするには［次へ］をクリックしてください。別のフォルダーにインストールするには、アドレスを入力するか［参照］をクリックしてください。" TabSkip="yes" NoPrefix="yes" />
+        <Control Id="AllUsersText" Type="Text" X="18" Y="186" Width="348" Height="24" Text="{\VSI_MS_Shell_Dlg13.0_0_0}[ProductName] を現在のユーザー用か、またはすべてのユーザー用にインストールします:" TabSkip="yes" NoPrefix="yes">
+          <Condition Action="show"><![CDATA[VersionNT>=400 AND Privileged=1 AND FolderForm_AllUsersVisible=1]]></Condition>
+          <Condition Action="hide"><![CDATA[NOT (VersionNT>=400 AND Privileged=1 AND FolderForm_AllUsersVisible=1)]]></Condition>
+        </Control>
       </Dialog>
     </UI>
   </Fragment>
@@ -138,5 +163,32 @@
     <InstallUISequence>
       <Show Dialog="ProgressForm" Sequence="1299" />
     </InstallUISequence>
+  </Fragment>
+  <Fragment Id="ReadmeDlg">
+    <Property Id="ReadmeForm_PrevArgs" Value="EulaForm" />
+    <Property Id="ReadmeForm_NextArgs" Value="FolderForm" />
+    <UI Id="ReadmeDlg">
+      <Dialog Id="ReadmeForm" X="50" Y="50" Width="373" Height="287" Title="[ProductName]">
+        <Control Id="NextButton" Type="PushButton" X="300" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}次へ(&amp;N) &gt;" TabSkip="no" Default="yes">
+          <Publish Event="EndDialog" Value="Return"><![CDATA[ReadmeForm_NextArgs=""]]></Publish>
+          <Publish Event="NewDialog" Value="[ReadmeForm_NextArgs]"><![CDATA[ReadmeForm_NextArgs<>""]]></Publish>
+        </Control>
+        <Control Id="ReadmeText" Type="ScrollableText" X="9" Y="63" Width="357" Height="180" Sunken="yes" TabSkip="no">
+          <Text SourceFile="..\MyShogi\bin\Debug\docs\YaneuraOuReadme.rtf" />
+        </Control>
+        <Control Id="CancelButton" Type="PushButton" X="156" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}キャンセル" TabSkip="no" Cancel="yes">
+          <Publish Event="SpawnDialog" Value="Cancel" />
+        </Control>
+        <Control Id="PreviousButton" Type="PushButton" X="228" Y="261" Width="66" Height="18" Text="{\VSI_MS_Sans_Serif13.0_0_0}&lt; 戻る(&amp;B)" TabSkip="no">
+          <Condition Action="disable"><![CDATA[ReadmeForm_PrevArgs=""]]></Condition>
+          <Condition Action="enable"><![CDATA[ReadmeForm_PrevArgs<>""]]></Condition>
+          <Publish Event="NewDialog" Value="[ReadmeForm_PrevArgs]"><![CDATA[ReadmeForm_PrevArgs<>""]]></Publish>
+        </Control>
+        <Control Id="BannerBmp" Type="Bitmap" X="0" Y="0" Width="375" Height="52" Text="_DBE77D57_0056_4763_8A31_1420F44D20CD" TabSkip="no" Disabled="yes" />
+        <Control Id="Line1" Type="Line" X="0" Y="52" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
+        <Control Id="BannerText" Type="Text" X="9" Y="9" Width="306" Height="33" Text="{\VSI_MS_Sans_Serif16.0_1_0}[ProductName] 情報" TabSkip="yes" Transparent="yes" NoPrefix="yes" />
+        <Control Id="Line2" Type="Line" X="0" Y="252" Width="375" Height="6" Text="{\VSI_MS_Sans_Serif13.0_0_0}MsiHorizontalLine" TabSkip="yes" Disabled="yes" />
+      </Dialog>
+    </UI>
   </Fragment>
 </Wix>

@@ -1,13 +1,16 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="{BAFD2BF3-E82A-4C02-87F3-A0767C140828}" Name="将棋神やねうら王(β版)" Language="1041" Version="0.0.0.4" Manufacturer="MyShogi" UpgradeCode="1ff7952e-4d94-4a70-803d-553c605d0d05" Codepage="932">
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+  <Product Id="{BAFD2BF3-E82A-4C02-87F3-A0767C140828}" Name="将棋神やねうら王" Language="1041" Version="1.0.0.0" Manufacturer="Mynavi Publishing Corporation / MyShogi Project" UpgradeCode="1ff7952e-4d94-4a70-803d-553c605d0d05" Codepage="932">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" Manufacturer="Mynavi Publishing Corporation / MyShogi Project" />
+    <Property Id="ARPCONTACT" Value="Mynavi Publishing Corporation / MyShogi Project" />
     <Property Id="ARPHELPLINK" Value="https://github.com/yaneurao/MyShogi/" />
     <Property Id="ARPURLINFOABOUT" Value="https://book.mynavi.jp/ec/products/detail/id=92007" />
     <Property Id="ARPPRODUCTICON">_15A6C8D5F2B3</Property>
     <Icon Id="_15A6C8D5F2B3" SourceFile="..\MyShogi\bin\Debug\image\YaneuraOu.ico" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
     <MediaTemplate />
+    <PropertyRef Id="WIX_IS_NETFRAMEWORK_461_OR_LATER_INSTALLED" />
+    <Condition Message="このセットアップは .NET Framework  バージョン 4.6.1 を必要とします。.NET Framework をインストールして、このセットアップをやり直してください。"><![CDATA[1=WIX_IS_NETFRAMEWORK_461_OR_LATER_INSTALLED]]></Condition>
     <Feature Id="ProductFeature" Title="SetupYaneuraOu" Level="1">
       <ComponentGroupRef Id="MyShogi.Binaries" />
       <ComponentGroupRef Id="MyShogi.Symbols" />
@@ -16,44 +19,6 @@
       <ComponentRef Id="comp_749C7476_CFD4_4D40_9C28_1258D4362963" />
       <ComponentRef Id="comp_BD831F98_0208_4458_8DA0_F6819B76A599" />
       <ComponentRef Id="comp_7E3C8BA1_756B_4983_99CB_14D44D447D4D" />
-      <ComponentRef Id="comp_A85DC6EA_7522_4194_9E91_AEAA6EED195E" />
-      <ComponentRef Id="comp_5C98BEDD_DAB7_4761_82E1_4B78872E1BEA" />
-      <ComponentRef Id="comp_9717D717_5D0B_428B_9986_7ED0A0FF8160" />
-      <ComponentRef Id="comp_54F7BC72_4009_4CBB_A8DE_D32EBC83FBFE" />
-      <ComponentRef Id="comp_21E81965_5345_4E86_BE30_E23DE547430F" />
-      <ComponentRef Id="comp_8F00CC97_7BCA_436F_BE75_2CB4ECC17C50" />
-      <ComponentRef Id="comp_2873CE6D_C354_4CF9_B28A_68EED8E12CE1" />
-      <ComponentRef Id="comp_B16D1909_4EE4_4404_95CE_6697A55BF647" />
-      <ComponentRef Id="comp_A121C59E_8386_47FD_B2EA_2B9C78ED21DF" />
-      <ComponentRef Id="comp_D3C9F578_CB26_40EA_B587_F0D599817AAA" />
-      <ComponentRef Id="comp_CC2873EA_B2B4_4926_ACFA_1D325484851B" />
-      <ComponentRef Id="comp_80249997_DD7A_459C_83B9_8520D47A786F" />
-      <ComponentRef Id="comp_E0C31702_A89F_49CD_8207_CC3BB58DD772" />
-      <ComponentRef Id="comp_5DD44A6C_8248_4D10_9DA8_654D0187E36F" />
-      <ComponentRef Id="comp_19B4EBF0_4EAA_432F_88F1_F57E1DDBAAFD" />
-      <ComponentRef Id="comp_B7CA3123_E3C8_44AA_BD5A_A681E36C9192" />
-      <ComponentRef Id="comp_42ED5E59_AF60_4829_8082_D2B2E3DB4287" />
-      <ComponentRef Id="comp_20709A13_5786_424E_BBD8_BC6A1F314191" />
-      <ComponentRef Id="comp_3DD0D284_10E6_44FE_AB4C_BBD8F3D04C8A" />
-      <ComponentRef Id="comp_7E42A5E8_C839_4E56_891B_B4D1B64A0FDF" />
-      <ComponentRef Id="comp_A15458EF_09C1_43C9_AD6B_AC7963D45C23" />
-      <ComponentRef Id="comp_C5329D41_F213_48FD_B505_4581E668AC9F" />
-      <ComponentRef Id="comp_FAA6578A_A8C6_4ABD_90B6_D4CF6482F64B" />
-      <ComponentRef Id="comp_6A6EA6AF_8648_42EE_9E63_B16C7DDB9EDB" />
-      <ComponentRef Id="comp_9523D780_9ABF_4B6F_B3F0_848A8DDF8D2C" />
-      <ComponentRef Id="comp_AF9FC981_A30D_4E8D_AEB5_DA9049DCC4F5" />
-      <ComponentRef Id="comp_CB266753_3EDB_4289_A97E_F37F148B6430" />
-      <ComponentRef Id="comp_88D1A884_8FC8_4ED9_BB20_66199B257A28" />
-      <ComponentRef Id="comp_00CF4840_9273_43B3_9261_C346289CA8AC" />
-      <ComponentRef Id="comp_66C9A19B_3328_4C06_B43C_D39401125127" />
-      <ComponentRef Id="comp_C02CD99B_8342_4A0D_91C4_A64A7E436028" />
-      <ComponentRef Id="comp_F7773605_805D_4F6A_9368_1AC2732C7A17" />
-      <ComponentRef Id="comp_8AADADDB_FAF3_4478_BCF9_2FC982BE1CDB" />
-      <ComponentRef Id="comp_0323F393_8AC7_49D6_B875_64075DF040E5" />
-      <ComponentRef Id="comp_0151E2EA_1F1A_4BEF_8B24_C3CED3401642" />
-      <ComponentRef Id="comp_ED19F16D_11DD_411D_A158_C4E63810FF22" />
-      <ComponentRef Id="comp_D6913B1C_5C6A_460B_A4BD_87E06E1D0FD2" />
-      <ComponentRef Id="comp_A661DEC8_801E_48B7_9413_2EC9E802C36E" />
       <ComponentRef Id="comp_570444D9_B6B9_473E_99B9_F874AA4B738D" />
       <ComponentRef Id="comp_3667D46C_938D_41FF_80CF_C4A66DA7160D" />
       <ComponentRef Id="comp_33F7B1D0_1334_4550_AE64_5584AF8C0A8A" />
@@ -100,7 +65,6 @@
       <ComponentRef Id="comp_1A22567D_29BE_42C3_81B0_7DEAF62D2336" />
       <ComponentRef Id="comp_6A8CC7A8_D2D9_4DAF_BB81_719C29BA4216" />
       <ComponentRef Id="comp_369CF060_3AE0_4956_9334_9A251C6DE67E" />
-      <ComponentRef Id="comp_56E9745E_F0F9_4B65_AD2E_0D72BBCC7E01" />
       <ComponentRef Id="comp_BD322E03_B77C_4693_8C41_41C1D40EE9D1" />
       <ComponentRef Id="comp_55563C91_671F_4705_9953_3F623DC2EDBB" />
       <ComponentRef Id="comp_FD280B56_6616_43EE_AC07_2D65CFB503E9" />
@@ -359,6 +323,16 @@
       <ComponentRef Id="comp_79D6FB65_0FB0_4F2D_B0D3_7799041FD900" />
       <ComponentRef Id="comp_8922E3FC_9434_4512_B79F_6F8BDA97BAC4" />
       <ComponentRef Id="comp_626FEAA2_63D5_4A2B_BF15_F31EE75526C8" />
+      <ComponentRef Id="comp_D82C60CE_0EFF_40AF_8C6E_34BA2D27C90B" />
+      <ComponentRef Id="comp_4D9C4501_8778_4A60_BFDD_49B87E8A85E0" />
+      <ComponentRef Id="comp_DA7036E3_CDAF_4BB7_B183_7ED834704712" />
+      <ComponentRef Id="comp_75272EA5_58DB_40AB_89CF_43F2BDE06A94" />
+      <ComponentRef Id="comp_A650A85F_2603_4E50_BD31_736D2396D194" />
+      <ComponentRef Id="comp_F4D678A0_17AB_4B47_8171_E1AF0C2FADE8" />
+      <ComponentRef Id="comp_8FECD185_D6DA_4CC6_859D_6B7C9411AAB7" />
+      <ComponentRef Id="comp_0CDB3F1B_865A_4F44_9CC1_BCE3E414BBF0" />
+      <ComponentRef Id="comp_AC0B887B_753D_47F0_98D0_3AAC92CEA7AE" />
+      <ComponentRef Id="comp_6640470A_D651_4DED_96AF_649F3769FD3F" />
     </Feature>
     <InstallUISequence>
       <Custom Action="ERRCA_UIANDADVERTISED" Sequence="5"><![CDATA[ProductState=1]]></Custom>
@@ -371,7 +345,7 @@
       <Show Dialog="FinishedForm" OnExit="success" />
     </InstallUISequence>
     <CustomAction Id="VSDCA_FolderForm_AllUsers" Property="FolderForm_AllUsers" Value="ALL" />
-    <CustomAction Id="DIRCA_TARGETDIR" Property="TARGETDIR" Value="[ProgramFilesFolder][Manufacturer]\[ProductName]" Execute="firstSequence" />
+    <CustomAction Id="DIRCA_TARGETDIR" Property="TARGETDIR" Value="[ProgramFilesFolder]YaneuraOu2018" Execute="firstSequence" />
     <AdminUISequence>
       <Custom Action="DIRCA_TARGETDIR" Before="CostInitialize"><![CDATA[TARGETDIR = ""]]></Custom>
       <Show Dialog="UserExitForm" OnExit="cancel" />
@@ -386,8 +360,9 @@
     <UIRef Id="LicenseDlg" />
     <UIRef Id="FinishedDlg" />
     <UIRef Id="SplashDlg" />
-    <UIRef Id="ReadmeDlg" />
     <UIRef Id="ProgressDlg" />
+    <UIRef Id="FolderDlg" />
+    <UIRef Id="ReadmeDlg" />
     <UI Id="Base">
       <Property Id="VSDNETURLMSG" Value="このセットアップは .NET Framework バージョン [1] を必要とします。.NET Framework をインストールして、このセットアップをやり直してください。.NET Framework は Web から取得できます。今すぐ取得しますか?" />
       <Property Id="VSDIISMSG" Value="このセットアップは Internet Information Server 5.1 かそれ以上を必要とし、加えて Windows XP 以降のバージョンを必要とします。このセットアップは Windows 2000 にインストールすることはできません。Internet Information Server またはより新しいバージョンのオペレーティング システムをインストールして、このセットアップをやり直してください。" />
@@ -683,130 +658,11 @@
         <Component Id="comp_7E3C8BA1_756B_4983_99CB_14D44D447D4D" Guid="F7D228D5-4FFE-42BE-934B-93970F389FF4" Permanent="no" SharedDllRefCount="no" Transitive="no">
           <File Id="_320640BD_1CFB_4823_A0CC_D9A4F188C1FB" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="yaneura_book4.db" Source="..\MyShogi\bin\Debug\book\yaneura_book4.db" KeyPath="yes" />
         </Component>
+        <Component Id="comp_4D9C4501_8778_4A60_BFDD_49B87E8A85E0" Guid="15223A77-B3C4-4265-B2B1-29BB98E2F790" Permanent="no" SharedDllRefCount="no" Transitive="no">
+          <File Id="_63871E9F_F36B_4485_BD96_EC9705675942" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="yaneura_book2.db" Source="..\MyShogi\bin\Debug\book\yaneura_book2.db" KeyPath="yes" />
+        </Component>
       </Directory>
       <Directory Id="dir_A5DB699A_3A9E_4C10_8E8B_DCF71BE4D906" Name="engine">
-        <Directory Id="dir_6718E8CB_8505_433C_9A74_29917CB484C8" Name="gpsfish">
-          <Component Id="comp_A85DC6EA_7522_4194_9E91_AEAA6EED195E" Guid="C35D1750-59CA-4F73-B877-ADDF7EBA1BC2" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_29EBD028_395F_4EA6_AA41_AA43B52139AD" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="AUTHORS.gpsfish" Source="..\MyShogi\bin\Debug\engine\gpsfish\AUTHORS.gpsfish" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_5C98BEDD_DAB7_4761_82E1_4B78872E1BEA" Guid="0868FCF3-404C-4A9D-8B3D-CFD2C85DF053" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_E6A67EE0_3500_41B4_94BD_A9D488EF60C4" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="AUTHORS.osl" Source="..\MyShogi\bin\Debug\engine\gpsfish\AUTHORS.osl" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_9717D717_5D0B_428B_9986_7ED0A0FF8160" Guid="8FBE53C7-FF6A-494F-8C63-70AF926A9B87" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_7333FA31_9BB5_4124_940A_B8FDB89113FC" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="AUTHORS.stockfish" Source="..\MyShogi\bin\Debug\engine\gpsfish\AUTHORS.stockfish" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_54F7BC72_4009_4CBB_A8DE_D32EBC83FBFE" Guid="2C3C38C3-85D0-4B14-B4D2-361C936A6D28" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_413058C5_EA4B_4C55_A980_BC1DE916A70E" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="banner.png" Source="..\MyShogi\bin\Debug\engine\gpsfish\banner.png" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_21E81965_5345_4E86_BE30_E23DE547430F" Guid="F91A7786-739E-4C59-AE97-64CE2240804B" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_9C3FB094_1000_4B3E_83F8_DAFE0233631D" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="Copying.txt.stockfish" Source="..\MyShogi\bin\Debug\engine\gpsfish\Copying.txt.stockfish" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_8F00CC97_7BCA_436F_BE75_2CB4ECC17C50" Guid="8685E5AF-1F91-4E33-BC2E-C64EBCBEDC0E" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_5485CF73_90BB_4B31_A0A2_BE5ACC7A7F73" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="copyright.boost" Source="..\MyShogi\bin\Debug\engine\gpsfish\copyright.boost" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_2873CE6D_C354_4CF9_B28A_68EED8E12CE1" Guid="4D6DEC51-B3C7-4026-A1F3-497EC933FAC7" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_F6B179CC_E742_4A9E_8A56_57238E5AD82F" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="copyright.bzip2" Source="..\MyShogi\bin\Debug\engine\gpsfish\copyright.bzip2" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_B16D1909_4EE4_4404_95CE_6697A55BF647" Guid="66C4A5AF-1F0B-4A06-8853-C696A78F7484" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_F905CAC3_FB02_4456_9233_A5CCFD0BBAB1" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="copyright.mingw" Source="..\MyShogi\bin\Debug\engine\gpsfish\copyright.mingw" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_A121C59E_8386_47FD_B2EA_2B9C78ED21DF" Guid="C15C5586-5BDF-4490-9B60-835E97BC421B" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_3D52F2C3_731F_4840_8132_AED521F46B85" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="copyright.zlib" Source="..\MyShogi\bin\Debug\engine\gpsfish\copyright.zlib" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_D3C9F578_CB26_40EA_B587_F0D599817AAA" Guid="9F349AC3-2578-4907-A9F4-04887ACD8CCD" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_7217C9DE_7A75_40CC_9538_E1DC8690333A" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="engine_define.xml" Source="..\MyShogi\bin\Debug\engine\gpsfish\engine_define.xml" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_CC2873EA_B2B4_4926_ACFA_1D325484851B" Guid="48A40B4D-384B-4BF0-B311-FB9E63F3C629" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_1D0AE8EA_B192_43D3_B193_9EF8CD077D1F" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="GPL-3" Source="..\MyShogi\bin\Debug\engine\gpsfish\GPL-3" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_80249997_DD7A_459C_83B9_8520D47A786F" Guid="DAC4A9F3-AFCA-4A97-A4DB-DCBEF005C3D0" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_28323168_0EC4_415C_99DA_AC97FA2DAEFE" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="gpsfish_sse2.exe" Source="..\MyShogi\bin\Debug\engine\gpsfish\gpsfish_sse2.exe" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_E0C31702_A89F_49CD_8207_CC3BB58DD772" Guid="F6D95E80-7EA2-4E61-8D6A-CAC69D77B621" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_DAAFD4D5_828A_43E9_BDF9_4D1EE7389FBC" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="LICENSE.osl" Source="..\MyShogi\bin\Debug\engine\gpsfish\LICENSE.osl" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_5DD44A6C_8248_4D10_9DA8_654D0187E36F" Guid="924398B4-9057-4AAB-AF95-D1B26B58ECFF" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_F116CBE7_1ACF_4D79_A097_66F81791B02D" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="README.ja.txt" Source="..\MyShogi\bin\Debug\engine\gpsfish\README.ja.txt" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_19B4EBF0_4EAA_432F_88F1_F57E1DDBAAFD" Guid="C0B2D272-F303-48C8-962B-D0683B7DD7BE" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_E7B99A56_AC88_4DF3_B13D_554CE6D6DBD1" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="README.txt" Source="..\MyShogi\bin\Debug\engine\gpsfish\README.txt" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_B7CA3123_E3C8_44AA_BD5A_A681E36C9192" Guid="6D54A04A-2602-404E-A758-0569ADDB2E2D" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_2E95B896_6FB7_4672_856D_FB8BECFB3FD7" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="Readme.txt.stockfish" Source="..\MyShogi\bin\Debug\engine\gpsfish\Readme.txt.stockfish" KeyPath="yes" />
-          </Component>
-          <Directory Id="dir_1E95975E_5EAC_4471_9145_D890D4F1EB0F" Name="data">
-            <Component Id="comp_42ED5E59_AF60_4829_8082_D2B2E3DB4287" Guid="60EBECF7-A11B-4172-B800-BF8C6108D794" Permanent="no" SharedDllRefCount="no" Transitive="no">
-              <File Id="_9C065DB0_F1E5_4EDC_B32B_C4D22DD246A4" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="eval.bin" Source="..\MyShogi\bin\Debug\engine\gpsfish\data\eval.bin" KeyPath="yes" />
-            </Component>
-            <Component Id="comp_20709A13_5786_424E_BBD8_BC6A1F314191" Guid="F8926039-5A77-43F7-9D44-F461D6CBF7D9" Permanent="no" SharedDllRefCount="no" Transitive="no">
-              <File Id="_57AECA65_FDC4_4760_B998_F0A0FC43AC8A" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="joseki.dat" Source="..\MyShogi\bin\Debug\engine\gpsfish\data\joseki.dat" KeyPath="yes" />
-            </Component>
-            <Component Id="comp_3DD0D284_10E6_44FE_AB4C_BBD8F3D04C8A" Guid="4B95D309-9AD2-4879-8DA3-BC075953A554" Permanent="no" SharedDllRefCount="no" Transitive="no">
-              <File Id="_4D79F0CF_17EF_4E3F_8F18_5E88A83C028B" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="progress.txt" Source="..\MyShogi\bin\Debug\engine\gpsfish\data\progress.txt" KeyPath="yes" />
-            </Component>
-          </Directory>
-        </Directory>
-        <Directory Id="dir_ACD8292C_DAB8_4479_9D01_0E1524BC8889" Name="gpsfish2">
-          <Component Id="comp_7E42A5E8_C839_4E56_891B_B4D1B64A0FDF" Guid="EE18B1DB-5EE7-43B8-92E3-379991F910D2" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_AD18DA7F_C707_472B_9C47_B1C17E54092C" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="AUTHORS.gpsfish" Source="..\MyShogi\bin\Debug\engine\gpsfish2\AUTHORS.gpsfish" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_A15458EF_09C1_43C9_AD6B_AC7963D45C23" Guid="25736068-704E-45D3-B1A8-83837BB7544E" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_3E2B547B_24A4_426D_9D91_1DF573D43E02" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="AUTHORS.osl" Source="..\MyShogi\bin\Debug\engine\gpsfish2\AUTHORS.osl" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_C5329D41_F213_48FD_B505_4581E668AC9F" Guid="F8E0B686-CF84-4DDB-A95F-CD7201DB2EB4" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_29A71124_6BA1_4B6E_A757_4A217F2D7635" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="AUTHORS.stockfish" Source="..\MyShogi\bin\Debug\engine\gpsfish2\AUTHORS.stockfish" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_FAA6578A_A8C6_4ABD_90B6_D4CF6482F64B" Guid="518740C2-9CFD-423A-A248-3A8E29531E48" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_D96D38A3_9A39_4360_ACA3_9529E6161690" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="banner.png" Source="..\MyShogi\bin\Debug\engine\gpsfish2\banner.png" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_6A6EA6AF_8648_42EE_9E63_B16C7DDB9EDB" Guid="E86B6FF0-439B-49F1-986A-ED7CE54ED23D" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_3F74AF7B_ED17_4E4D_A2AA_15CDE22E17D2" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="Copying.txt.stockfish" Source="..\MyShogi\bin\Debug\engine\gpsfish2\Copying.txt.stockfish" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_9523D780_9ABF_4B6F_B3F0_848A8DDF8D2C" Guid="4B8C1E7E-28F5-4D3F-931C-3C65161E7A5A" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_780DAF14_79A3_4157_B975_D729C1883500" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="copyright.boost" Source="..\MyShogi\bin\Debug\engine\gpsfish2\copyright.boost" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_AF9FC981_A30D_4E8D_AEB5_DA9049DCC4F5" Guid="C1D7ED07-B4C9-4F84-A228-EFF070868D28" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_8F263480_D929_43E2_9EEB_CF2312C7E4FA" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="copyright.bzip2" Source="..\MyShogi\bin\Debug\engine\gpsfish2\copyright.bzip2" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_CB266753_3EDB_4289_A97E_F37F148B6430" Guid="0FE64270-CEFD-48E4-9A7E-0EAB3DBE490C" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_9EE44B86_ABAF_4A7F_B1E1_31E0DC71980F" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="copyright.mingw" Source="..\MyShogi\bin\Debug\engine\gpsfish2\copyright.mingw" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_88D1A884_8FC8_4ED9_BB20_66199B257A28" Guid="47F19B35-F9C5-42E1-A203-A93D606032CB" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_27D2D267_804E_4DE0_A4F7_8A1405BE21B7" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="copyright.zlib" Source="..\MyShogi\bin\Debug\engine\gpsfish2\copyright.zlib" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_00CF4840_9273_43B3_9261_C346289CA8AC" Guid="98D0D45A-BF8A-4D4A-A70A-E0589CFA81CF" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_703F7294_3C8A_4D38_A5BA_0A2A30119FC5" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="engine_define.xml" Source="..\MyShogi\bin\Debug\engine\gpsfish2\engine_define.xml" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_66C9A19B_3328_4C06_B43C_D39401125127" Guid="41AF036F-56B4-4956-BE99-F42EF1A44A68" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_A0EE241B_51DF_4705_9DBC_D1F87E42B943" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="GPL-3" Source="..\MyShogi\bin\Debug\engine\gpsfish2\GPL-3" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_C02CD99B_8342_4A0D_91C4_A64A7E436028" Guid="69ABA586-CC3E-4259-9A68-B43F9045D88A" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_F5E6C15A_2E3E_43D0_BE58_24821A0FB415" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="gpsfish_sse2.exe" Source="..\MyShogi\bin\Debug\engine\gpsfish2\gpsfish_sse2.exe" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_F7773605_805D_4F6A_9368_1AC2732C7A17" Guid="350B6EFF-8391-4730-AF36-1AD48A3AAC65" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_3EF410CF_3C15_44EA_8613_6C646DB403D3" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="LICENSE.osl" Source="..\MyShogi\bin\Debug\engine\gpsfish2\LICENSE.osl" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_8AADADDB_FAF3_4478_BCF9_2FC982BE1CDB" Guid="2418A082-0BBF-49A2-ADB7-C3AA92F797E8" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_8DB0FB66_6B56_48A0_87B4_3C232EB5F659" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="README.ja.txt" Source="..\MyShogi\bin\Debug\engine\gpsfish2\README.ja.txt" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_0323F393_8AC7_49D6_B875_64075DF040E5" Guid="778BBEA6-C5A4-4BB2-9152-C57DB5C6E6D2" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_8CBF0C80_D810_4DE1_9F00_64E3F09D1E19" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="README.txt" Source="..\MyShogi\bin\Debug\engine\gpsfish2\README.txt" KeyPath="yes" />
-          </Component>
-          <Component Id="comp_0151E2EA_1F1A_4BEF_8B24_C3CED3401642" Guid="6D4729FF-6D63-4BB0-89E0-CAA513193E27" Permanent="no" SharedDllRefCount="no" Transitive="no">
-            <File Id="_20E7686A_CC48_4C2A_A62B_60FC4FEDD7C1" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="Readme.txt.stockfish" Source="..\MyShogi\bin\Debug\engine\gpsfish2\Readme.txt.stockfish" KeyPath="yes" />
-          </Component>
-          <Directory Id="dir_8D9D1ABD_3053_4D29_807E_7F220BE4029C" Name="data">
-            <Component Id="comp_ED19F16D_11DD_411D_A158_C4E63810FF22" Guid="9593ABD1-48DA-4B7D-8945-BBC64B9EEDEB" Permanent="no" SharedDllRefCount="no" Transitive="no">
-              <File Id="_07F87275_B42F_4EC5_9C18_CDC3E83E1C52" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="eval.bin" Source="..\MyShogi\bin\Debug\engine\gpsfish2\data\eval.bin" KeyPath="yes" />
-            </Component>
-            <Component Id="comp_D6913B1C_5C6A_460B_A4BD_87E06E1D0FD2" Guid="DA58621A-B9A0-43E9-96DC-D70E56BA875C" Permanent="no" SharedDllRefCount="no" Transitive="no">
-              <File Id="_46EE885D_67E0_4349_A8AD_B49C3F01B951" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="joseki.dat" Source="..\MyShogi\bin\Debug\engine\gpsfish2\data\joseki.dat" KeyPath="yes" />
-            </Component>
-            <Component Id="comp_A661DEC8_801E_48B7_9413_2EC9E802C36E" Guid="67B8BBFF-63B6-45F7-9007-718DCB32FADA" Permanent="no" SharedDllRefCount="no" Transitive="no">
-              <File Id="_0B671AC8_7E09_464E_82F9_C500A7A2C229" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="progress.txt" Source="..\MyShogi\bin\Debug\engine\gpsfish2\data\progress.txt" KeyPath="yes" />
-            </Component>
-          </Directory>
-        </Directory>
         <Directory Id="dir_ABAB9A70_83EA_4050_999C_E7B86A8BF766" Name="qhapaq2018">
           <Component Id="comp_66BD6D60_819A_404A_B1D2_CE69FA298900" Guid="62D1485E-A99B-4B64-8971-00BDA625F60E" Permanent="no" SharedDllRefCount="no" Transitive="no">
             <File Id="_F32CAA33_93AB_4A26_BF65_58B39E9B7CC9" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="banner.png" Source="..\MyShogi\bin\Debug\engine\qhapaq2018\banner.png" KeyPath="yes" />
@@ -836,6 +692,24 @@
         <Directory Id="dir_BAB80D79_E95C_47BD_8C97_946BC7CCCCA9" Name="tanuki_mate">
           <Component Id="comp_CA61F95E_541A_4C21_AD6F_C8A051349C39" Guid="F3804002-52E7-4D27-A87F-D6BB7B044B51" Permanent="no" SharedDllRefCount="no" Transitive="no">
             <File Id="_C0AEFE03_7CA8_42BF_9A55_4BD0EC75423F" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="banner.png" Source="..\MyShogi\bin\Debug\engine\tanuki_mate\banner.png" KeyPath="yes" />
+          </Component>
+          <Component Id="comp_A650A85F_2603_4E50_BD31_736D2396D194" Guid="6442C0F4-C09D-4B31-9913-9F1D6CB8CBD5" Permanent="no" SharedDllRefCount="no" Transitive="no">
+            <File Id="_337D91C5_F1FC_41AF_926A_C118E24DF16E" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="engine_define.xml" Source="..\MyShogi\bin\Debug\engine\tanuki_mate\engine_define.xml" KeyPath="yes" />
+          </Component>
+          <Component Id="comp_F4D678A0_17AB_4B47_8171_E1AF0C2FADE8" Guid="7B7F79FE-723D-4D1F-8310-B492F0CE5A35" Permanent="no" SharedDllRefCount="no" Transitive="no">
+            <File Id="_8B26F781_A3FE_4C25_837E_7F1C6751B1C9" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="tanuki_mate_avx2.exe" Source="..\MyShogi\bin\Debug\engine\tanuki_mate\tanuki_mate_avx2.exe" KeyPath="yes" />
+          </Component>
+          <Component Id="comp_8FECD185_D6DA_4CC6_859D_6B7C9411AAB7" Guid="D3F0A14F-F768-4982-A6DE-12E0DBDE447A" Permanent="no" SharedDllRefCount="no" Transitive="no">
+            <File Id="_0225FE76_93DA_4B18_A1D4_CC701C6B566E" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="tanuki_mate_nosse.exe" Source="..\MyShogi\bin\Debug\engine\tanuki_mate\tanuki_mate_nosse.exe" KeyPath="yes" />
+          </Component>
+          <Component Id="comp_0CDB3F1B_865A_4F44_9CC1_BCE3E414BBF0" Guid="FBC26B0C-6B1F-46A4-9226-F9204F7ECF75" Permanent="no" SharedDllRefCount="no" Transitive="no">
+            <File Id="_118F28DF_B0FB_4434_9B73_8A8D7C25F106" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="tanuki_mate_sse2.exe" Source="..\MyShogi\bin\Debug\engine\tanuki_mate\tanuki_mate_sse2.exe" KeyPath="yes" />
+          </Component>
+          <Component Id="comp_AC0B887B_753D_47F0_98D0_3AAC92CEA7AE" Guid="540F82ED-7AB1-42D6-82A9-36E25FCD6C28" Permanent="no" SharedDllRefCount="no" Transitive="no">
+            <File Id="_AC4A94B8_44C4_4ED0_8E6C_1F88CB6A581E" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="tanuki_mate_sse41.exe" Source="..\MyShogi\bin\Debug\engine\tanuki_mate\tanuki_mate_sse41.exe" KeyPath="yes" />
+          </Component>
+          <Component Id="comp_6640470A_D651_4DED_96AF_649F3769FD3F" Guid="24FA1917-FBD5-45A2-B414-2234F23358FC" Permanent="no" SharedDllRefCount="no" Transitive="no">
+            <File Id="_88AA7EBE_E60F_474E_AFCF_3DD03F2EEE6A" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="tanuki_mate_sse42.exe" Source="..\MyShogi\bin\Debug\engine\tanuki_mate\tanuki_mate_sse42.exe" KeyPath="yes" />
           </Component>
         </Directory>
         <Directory Id="dir_BA57877C_5315_4096_97BA_2231EDBECD58" Name="tanuki_sdt5">
@@ -1751,8 +1625,11 @@
         <Component Id="comp_369CF060_3AE0_4956_9334_9A251C6DE67E" Guid="358CB13C-A0CE-492C-9517-42E803C383E9" Permanent="no" SharedDllRefCount="no" Transitive="no">
           <File Id="_CBDCAF88_B70B_4C73_B64C_2D3718DBA1AD" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="YaneuraOuLicense.rtf" Source="..\MyShogi\bin\Debug\docs\YaneuraOuLicense.rtf" KeyPath="yes" />
         </Component>
-        <Component Id="comp_56E9745E_F0F9_4B65_AD2E_0D72BBCC7E01" Guid="A66A6008-CABE-4BDE-9B1D-D8A6BF22F550" Permanent="no" SharedDllRefCount="no" Transitive="no">
-          <File Id="_3B7EB864_0BB6_416E_A19F_01717D84FFBE" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="YaneuraOuReadme.rtf" Source="..\MyShogi\bin\Debug\docs\YaneuraOuReadme.rtf" KeyPath="yes" />
+        <Component Id="comp_DA7036E3_CDAF_4BB7_B183_7ED834704712" Guid="BF0EB76F-B557-4BBF-986D-1AFEA218DC92" Permanent="no" SharedDllRefCount="no" Transitive="no">
+          <File Id="_A2DEAA4F_82CD_43B3_9BD0_14E2C0E90BD7" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="gpl.rtf" Source="..\MyShogi\bin\Debug\docs\gpl.rtf" KeyPath="yes" />
+        </Component>
+        <Component Id="comp_75272EA5_58DB_40AB_89CF_43F2BDE06A94" Guid="CF9B48E9-AC2B-43B9-BA1C-DB7E1AA03B07" Permanent="no" SharedDllRefCount="no" Transitive="no">
+          <File Id="_90D286F5_9752_4D35_9175_47A378D3EE5F" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="YaneuraOuReadme.rtf" Source="..\MyShogi\bin\Debug\docs\YaneuraOuReadme.rtf" KeyPath="yes" />
         </Component>
       </Directory>
       <Directory Id="DesktopFolder">
@@ -1764,6 +1641,9 @@
         </Component>
       </Directory>
       <Directory Id="dir_89E74135_E020_41F8_B081_6E1A6364E58D" Name="sources">
+        <Component Id="comp_D82C60CE_0EFF_40AF_8C6E_34BA2D27C90B" Guid="9AF2F53C-0A34-4800-8B1F-6BD429BD26A3" Permanent="no" SharedDllRefCount="no" Transitive="no">
+          <File Id="_974B03D0_5B4A_4A56_A49C_0BC8167470B5" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="gpl.txt" Source="..\MyShogi\bin\Debug\docs\gpl.txt" KeyPath="yes" />
+        </Component>
         <Directory Id="MyShogi.Sources" />
       </Directory>
       <Directory Id="StartMenuFolder">
