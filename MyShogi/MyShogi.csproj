@@ -411,6 +411,7 @@
     <None Include="docs\online_manual.md" />
     <None Include="docs\PSN2format.md" />
     <None Include="docs\USI2.0.md" />
+    <None Include="docs\やねうら王2019の予定.md" />
     <None Include="docs\実装済みの機能.md" />
     <None Include="docs\過去の改修履歴.md" />
     <None Include="Properties\Settings.settings">
