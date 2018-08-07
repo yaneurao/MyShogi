@@ -150,8 +150,13 @@ namespace MyShogi.Model.Shogi.LocalServer
                         kifuManager.UndoMoveInTheGame();
                         kifuManager.UndoMoveInTheGame();
 
-                        // 時刻を巻き戻さないといけない
-                        PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTimes());
+                        // 残り持ち時間などを巻き戻さないといけない。
+                        // ただし、再開局で開始局面以上に巻き戻すと、いまより持ち時間が減ってしまう可能性がある。
+                        // 開始局面以上に巻き戻す場合は、再開時の時間にしてやる必要がある。
+                        // しかし、中断局であるなら、遡れなければならない。難しい。
+                        
+                        var nextTime = kifuManager.Tree.GetKifuMoveTimes();
+                        PlayTimers.SetKifuMoveTimes(nextTime);
 
                         // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
                         NotifyTurnChanged();

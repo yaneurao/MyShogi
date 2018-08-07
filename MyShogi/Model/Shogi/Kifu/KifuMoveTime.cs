@@ -44,10 +44,16 @@ namespace MyShogi.Model.Shogi.Kifu
             RestTime = TimeSpan.Zero;
         }
 
+#if false
+        /// <summary>
+        /// 基本的にimmutable objectなのでClone不要なのだが..
+        /// </summary>
+        /// <returns></returns>
         public KifuMoveTime Clone()
         {
             return (KifuMoveTime)MemberwiseClone();
         }
+#endif
 
         /// <summary>
         /// コンストラクタ
@@ -107,9 +113,16 @@ namespace MyShogi.Model.Shogi.Kifu
             Players = new KifuMoveTime[2] { black, white };
         }
 
+        /// <summary>
+        /// Cloneして返す。
+        /// KifuMoveTime自体はimmutableなのでClone不要なのだが、
+        /// KifuMoveTimesは、片側のプレイヤー分だけ
+        /// 挿げ替えたり出来るのでCloneが必要である。
+        /// </summary>
+        /// <returns></returns>
         public KifuMoveTimes Clone()
         {
-            return new KifuMoveTimes(Players[0].Clone(), Players[1].Clone());
+            return new KifuMoveTimes(Players[0], Players[1]);
         }
 
         /// <summary>
