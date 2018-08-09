@@ -66,7 +66,7 @@
             this.button2.Size = new System.Drawing.Size(97, 24);
             this.button2.TabIndex = 10;
             this.button2.Text = "詳細設定";
-            this.toolTip1.SetToolTip(this.button2, "思考エンジンの細かい設定を変更できます。\\r\\nこれは検討時用の設定です。");
+            this.toolTip1.SetToolTip(this.button2, "思考エンジンの細かい設定を変更できます。\r\nこれは検討時用の設定です。");
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 

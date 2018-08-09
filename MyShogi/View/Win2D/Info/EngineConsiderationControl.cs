@@ -367,6 +367,17 @@ namespace MyShogi.View.Win2D
             SortRanking ^= true;
         }
 
+        /// <summary>
+        /// ListViewの横幅をユーザーが変更した時に発生する。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listView1_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+        {
+            //e.ColumnIndex
+            // あとで書く。
+        }
+
         // -- privates
 
         private void InitListView()

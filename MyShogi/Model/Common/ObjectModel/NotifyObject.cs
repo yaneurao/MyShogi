@@ -25,13 +25,12 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <returns></returns>
         public PropertyChangedEventArgs Clone()
         {
-            var args = new PropertyChangedEventArgs();
-
-            args.sender = sender;
-            args.name = name;
-            args.value = value;
-
-            return args;
+            return new PropertyChangedEventArgs()
+            {
+                sender = sender,
+                name = name,
+                value = value,
+            };
         }
 
         /// <summary>
@@ -110,9 +109,6 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <param name="value"></param>
         public void SetValue<T>(string name, T value )
         {
-            if (lockObject == null)
-                return;
-
             var raise = false;
             lock (lockObject)
             {
