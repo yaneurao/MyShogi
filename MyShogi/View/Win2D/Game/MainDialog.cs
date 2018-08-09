@@ -929,7 +929,7 @@ namespace MyShogi.View.Win2D
                                 // 指定しないとすべてのファイルが表示される
                                 fd.Filter = "KIF形式(*.KIF)|*.KIF|KIF2形式(*.KI2)|*.KI2|CSA形式(*.CSA)|*.CSA"
                                     + "|PSN形式(*.PSN)|*.PSN|PSN2形式(*.PSN2)|*.PSN2"
-                                    + "|SFEN形式(*.SFEN)|*.SFEN|すべてのファイル(*.*)|*.*";
+                                    + "|SFEN形式(*.SFEN)|*.SFEN|SVG形式(*.SVG)|*.SVG|すべてのファイル(*.*)|*.*";
                                 fd.FilterIndex = 1;
                                 fd.Title = "局面を保存するファイル形式を選択してください";
 
@@ -948,6 +948,7 @@ namespace MyShogi.View.Win2D
                                             case 4: kifuType = KifuFileType.PSN; break;
                                             case 5: kifuType = KifuFileType.PSN2; break;
                                             case 6: kifuType = KifuFileType.SFEN; break;
+                                            case 7: kifuType = KifuFileType.SVG; break;
 
                                             // ファイル名から自動判別すべき
                                             default:
@@ -968,6 +969,7 @@ namespace MyShogi.View.Win2D
                         };
                         item_file.DropDownItems.Add(item);
                     }
+
 
                     item_file.DropDownItems.Add(new ToolStripSeparator());
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using SysMath = System.Math;
 using MyShogi.Model.Shogi.Core;

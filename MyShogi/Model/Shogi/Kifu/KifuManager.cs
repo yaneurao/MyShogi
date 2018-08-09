@@ -356,6 +356,10 @@ namespace MyShogi.Model.Shogi.Kifu
                     result = ToJsonString();
                     break;
 
+                case KifuFileType.SVG:
+                    result = ToSvgString();
+                    break;
+
                 // ToDo : 他の形式もサポートする
             }
 

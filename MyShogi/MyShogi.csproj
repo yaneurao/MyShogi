@@ -70,6 +70,7 @@
     <Compile Include="Model\Common\Utility\Scanner.cs" />
     <Compile Include="Model\Common\Utility\Serializer.cs" />
     <Compile Include="Model\Common\Utility\StringExtensions.cs" />
+    <Compile Include="Model\Common\Utility\Svg.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="Model\Common\Utility\ToolTipHelper.cs" />
     <Compile Include="Model\Common\Win32\Win32API.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Model\Resource\Sounds\SoundEnum.cs" />
     <Compile Include="Model\Resource\Sounds\SoundManager.cs" />
     <Compile Include="Model\Resource\Sounds\SoundQueue.cs" />
+    <Compile Include="Model\Shogi\Converter\Svg.cs" />
     <Compile Include="Model\Shogi\Core\All.cs" />
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
