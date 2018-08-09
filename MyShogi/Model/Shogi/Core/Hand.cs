@@ -74,11 +74,48 @@ namespace MyShogi.Model.Shogi.Core
                 // 0枚ではないなら出力。
                 if (c != 0)
                 {
-                    // 1枚なら枚数は出力しない。2枚以上なら枚数を最初に出力
+                    // 1枚なら枚数は出力しない。2枚以上なら枚数を後に出力
                     sb.Append(pr.Pretty2());
                     if (c != 1)
                         sb.Append(c.ToString());
                     sb.Append(" ");
+                }
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 手駒を日本語形式で出力する。持ち駒用。
+        /// 例) "飛金二歩十"
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        public static string Pretty2(this Hand hand)
+        {
+            var sb = new StringBuilder();
+            Piece[] pieceType =
+            {
+                Piece.ROOK, Piece.BISHOP, Piece.GOLD,  Piece.SILVER, Piece.KNIGHT, Piece.LANCE, Piece.PAWN
+            };
+            foreach (var pr in pieceType)
+            {
+                int c = hand.Count(pr);
+                // 0枚ではないなら出力。
+                if (c != 0)
+                {
+                    // 1枚なら枚数は出力しない。2枚以上なら枚数を後に出力
+                    sb.Append(pr.Pretty2());
+                    // 18枚以下を想定した漢数字変換
+                    if (c >= 10)
+                    {
+                        sb.Append('十');
+                    }
+                    if (c != 1)
+                    {
+                        c %= 10;
+                        string[] nl = new string[] { "", "一", "二", "三", "四", "五", "六", "七", "八", "九" };
+                        sb.Append(nl[c]);
+                    }
                 }
             }
             return sb.ToString();
