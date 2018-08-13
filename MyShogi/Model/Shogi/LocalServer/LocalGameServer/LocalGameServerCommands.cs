@@ -303,22 +303,23 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="type"></param>
         public void KifuWriteClipboardCommand(Kifu.KifuFileType type)
         {
-            // Clipboard.SetText() を実行するスレッドは Single Thread Apartment モードに設定されていなければならない
-            //AddCommand(() => {
-            try
+            AddCommand(() =>
             {
-                // プレイヤー名を棋譜上に反映させる。
-                foreach (var c in All.Colors())
-                    kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
+                try
+                {
+                    // プレイヤー名を棋譜上に反映させる。
+                    foreach (var c in All.Colors())
+                        kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
 
-                var content = kifuManager.ToString(type);
-                System.Windows.Forms.Clipboard.SetText(content);
-            }
-            catch (System.Exception e)
-            {
-                TheApp.app.MessageShow($"棋譜の書き出しに失敗しました。\n{e}", MessageShowType.Error);
-            }
-            //});
+                    var content = kifuManager.ToString(type);
+                    // Clipboard.SetText() を実行するスレッドは Single Thread Apartment モードに設定されていなければならない
+                    TheApp.app.UIThread(() => System.Windows.Forms.Clipboard.SetText(content));
+                }
+                catch (System.Exception e)
+                {
+                    TheApp.app.MessageShow($"棋譜のクリップボードへの書き出しに失敗しました。\n{e}", MessageShowType.Error);
+                }
+            });
         }
 
         /// <summary>
@@ -353,22 +354,22 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="type"></param>
         public void PositionWriteClipboardCommand(Kifu.KifuFileType type)
         {
-            // Clipboard.SetText() を実行するスレッドは Single Thread Apartment モードに設定されていなければならない
-            //AddCommand(() => {
-            try
+            AddCommand(() =>
             {
-                // プレイヤー名を棋譜上に反映させる。
-                foreach (var c in All.Colors())
-                    kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
+                try
+                {
+                    // プレイヤー名を棋譜上に反映させる。
+                    foreach (var c in All.Colors())
+                        kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
 
-                var content = kifuManager.ToPositionString(type);
-                System.Windows.Forms.Clipboard.SetText(content);
-            }
-            catch (System.Exception e)
-            {
-                TheApp.app.MessageShow($"局面の書き出しに失敗しました。\n{e}", MessageShowType.Error);
-            }
-            //});
+                    var content = kifuManager.ToPositionString(type);
+                    TheApp.app.UIThread(() => System.Windows.Forms.Clipboard.SetText(content));
+                }
+                catch (System.Exception e)
+                {
+                    TheApp.app.MessageShow($"局面のクリップボードへの書き出しに失敗しました。\n{e}", MessageShowType.Error);
+                }
+            });
         }
 
         /// <summary>

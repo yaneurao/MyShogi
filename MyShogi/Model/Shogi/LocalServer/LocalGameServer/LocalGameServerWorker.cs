@@ -26,6 +26,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             try
             {
+                // GameModeの初期値は、GameMode.NotInitなのでここで変更通知イベントが発生するはず…。
+                // →　ウィンドウ生成前なのでイベント発生しないっぽい。なんぞこれ…。
+                GameMode = GameModeEnum.ConsiderationWithoutEngine;
+
                 while (!workerStop)
                 {
                     // 各プレイヤーのプロセスの標準入出力に対する送受信の処理

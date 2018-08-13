@@ -62,9 +62,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 開始時は、対局中でないことは保証されているのでユーザーが駒を動かせるはず。
             CanUserMove = true;
 
-            // GameModeの初期値は、GameMode.NotInitなのでここで変更通知イベントが発生する。
-            GameMode = GameModeEnum.ConsiderationWithoutEngine;
-
             // 初期化が終わった。この時点では棋譜は汚れていない扱いとする。
             KifuDirty = false;
 

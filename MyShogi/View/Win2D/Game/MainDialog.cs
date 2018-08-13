@@ -741,7 +741,11 @@ namespace MyShogi.View.Win2D
             }
         }
 
-        private GameModeEnum lastGameMode = GameModeEnum.NotInit;
+        /// <summary>
+        /// 前回にUpdateMenuItems()が呼び出された時のGameMode。
+        /// </summary>
+        private GameModeEnum lastGameMode = GameModeEnum.ConsiderationWithoutEngine;
+
         /// <summary>
         /// [UI thread] : メニューのitemを動的に追加する。
         /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
@@ -801,8 +805,8 @@ namespace MyShogi.View.Win2D
                 item_file.Text = "ファイル(&F)";
                 menu.Items.Add(item_file);
 
-                // 対局中は、ファイルメニュー項目は丸ごと無効化
-                item_file.Enabled = !inTheGame;
+                // 対局中などは、ファイルメニュー項目は丸ごと無効化
+                item_file.Enabled = gameMode == GameModeEnum.ConsiderationWithoutEngine;
 
                 // -- 「ファイル」配下のメニュー
                 {

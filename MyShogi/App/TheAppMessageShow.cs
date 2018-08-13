@@ -71,5 +71,29 @@ namespace MyShogi.App
         /// </summary>
         public bool Exiting;
 
+
+        /// <summary>
+        /// UI threadで実行したい時にこれを用いる。
+        /// </summary>
+        /// <param name="action"></param>
+        public void UIThread(Action action)
+        {
+            var a = new Action(() =>
+            {
+                try
+                {
+                    action();
+                }
+                catch (Exception ex)
+                {
+                    MessageShow(ex);
+                }
+            });
+            if (mainForm == null)
+                a();
+            else
+                mainForm.BeginInvoke(a);
+        }
+
     }
 }
