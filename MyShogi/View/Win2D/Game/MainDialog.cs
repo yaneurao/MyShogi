@@ -970,6 +970,78 @@ namespace MyShogi.View.Win2D
                         item_file.DropDownItems.Add(item);
                     }
 
+                    item_file.DropDownItems.Add(new ToolStripSeparator());
+
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "クリップボードにコピー(&C)";
+
+                        var itemk1 = new ToolStripMenuItem();
+                        itemk1.Text = "棋譜KIF形式(&1)";
+                        itemk1.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.KIF); };
+                        item.DropDownItems.Add(itemk1);
+
+                        var itemk2 = new ToolStripMenuItem();
+                        itemk2.Text = "棋譜KI2形式(&2)";
+                        itemk2.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.KI2); };
+                        item.DropDownItems.Add(itemk2);
+
+                        var itemk3 = new ToolStripMenuItem();
+                        itemk3.Text = "棋譜CSA形式(&3)";
+                        itemk3.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.CSA); };
+                        item.DropDownItems.Add(itemk3);
+
+                        var itemk4 = new ToolStripMenuItem();
+                        itemk4.Text = "棋譜SFEN形式(&4)";
+                        itemk4.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.SFEN); };
+                        item.DropDownItems.Add(itemk4);
+
+                        var itemk5 = new ToolStripMenuItem();
+                        itemk5.Text = "棋譜PSN形式(&5)";
+                        itemk5.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.PSN); };
+                        item.DropDownItems.Add(itemk5);
+
+                        var itemk6 = new ToolStripMenuItem();
+                        itemk6.Text = "棋譜PSN2形式(&6)";
+                        itemk6.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.PSN2); };
+                        item.DropDownItems.Add(itemk6);
+
+                        item.DropDownItems.Add(new ToolStripSeparator());
+
+                        var itemp1 = new ToolStripMenuItem();
+                        itemp1.Text = "局面BOD形式(&A)";
+                        itemp1.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.KI2); };
+                        item.DropDownItems.Add(itemp1);
+
+                        var itemp2 = new ToolStripMenuItem();
+                        itemp2.Text = "局面CSA形式(&B)";
+                        itemp2.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.CSA); };
+                        item.DropDownItems.Add(itemp2);
+
+                        var itemp3 = new ToolStripMenuItem();
+                        itemp3.Text = "局面SFEN形式(&C)";
+                        itemp3.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.SFEN); };
+                        item.DropDownItems.Add(itemp3);
+
+                        var itemp4 = new ToolStripMenuItem();
+                        itemp4.Text = "局面PSN形式(&D)";
+                        itemp4.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.PSN); };
+                        item.DropDownItems.Add(itemp4);
+
+                        var itemp5 = new ToolStripMenuItem();
+                        itemp5.Text = "局面PSN2形式(&E)";
+                        itemp5.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.PSN2); };
+                        item.DropDownItems.Add(itemp5);
+
+                        item_file.DropDownItems.Add(item);
+                    }
+
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "クリップボードからペースト(&P)";
+                        item.Click += (sender, e) => { gameServer.KifuReadCommand(System.Windows.Forms.Clipboard.GetText()); };
+                        item_file.DropDownItems.Add(item);
+                    }
 
                     item_file.DropDownItems.Add(new ToolStripSeparator());
 
@@ -1096,7 +1168,7 @@ namespace MyShogi.View.Win2D
                     { // -- 盤画像の選択メニュー
 
                         var item = new ToolStripMenuItem();
-                        item.Text = "盤画像(&B)"; // BoardImage 
+                        item.Text = "盤画像(&B)"; // BoardImage
 
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "白色(&W)"; // White
@@ -1452,7 +1524,7 @@ namespace MyShogi.View.Win2D
                         item1.Click += (sender, e) => { TheApp.app.config.ReadOutCancelWhenGameEnd ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
-                    
+
                 }
 
                 var item_boardedit = new ToolStripMenuItem();
@@ -1841,7 +1913,7 @@ namespace MyShogi.View.Win2D
                         item_others.DropDownItems.Add(item1);
                     }
 
-                    
+
 
                     {
                         // aboutダイアログ

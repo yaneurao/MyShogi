@@ -1,6 +1,7 @@
 ﻿// IEや Edgeを無視する
 // #define NeglectEdge
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Kifu;
 using System.Collections.Generic;
 
 namespace MyShogi.Model.Shogi.Kifu
@@ -15,7 +16,7 @@ namespace MyShogi.Model.Shogi.Kifu
         private string ToSvgString()
         {
             var svg = new Converter.Svg.Svg();
-            var result = svg.ToString(Position);
+            var result = svg.ToString(Position, KifuHeader);
             return result;
         }
     }
@@ -132,16 +133,30 @@ namespace MyShogi.Model.Shogi.Converter.Svg
         /// svgのヘッダーとフッターを追加します
         /// </summary>
         void InsertSvg(Paragraph p) =>
-            p.InsertTag("svg", "xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"");
+            p.InsertTag("svg", "xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" xml:lang=\"ja-JP\"");
 
         Paragraph MakeStyle()
         {
             string[] MintyoList = {
-            "ヒラギノ明朝体5", "IPAex明朝", "HiraMinProN-W5", "小塚明朝 Pro M", "HG明朝E", "ＭＳ 明朝", "sans-serif"
-        };
+                "HiraMinProN-W5", "Hiragino Mincho ProN W5", "ヒラギノ明朝体5",
+                "HiraMinProN-W6", "Hiragino Mincho ProN W6", "ヒラギノ明朝 ProN W6",
+                "HiraMinPro-W6", "Hiragino Mincho Pro W6", "ヒラギノ明朝 Pro W6",
+                "IPAexMincho", "IPAex明朝",
+                "Kozuka Mincho Pr6N R", "小塚明朝 Pr6N R",
+                "Kozuka Mincho Pro M", "小塚明朝 Pro M",
+                "HG明朝E",
+                "MS Mincho", "ＭＳ 明朝",
+                "serif"
+            };
             string[] GothicList = {
-            "ヒラギノ角ゴ5", "IPAexゴシック", "ＭＳ ゴシック", "sans-serif"
-        };
+                "HiraKakuProN-W5", "ヒラギノ角ゴ5",
+                "HiraKakuProN-W6", "ヒラギノ角ゴ ProN W6",
+                "HiraKakuPro-W6", "ヒラギノ角ゴ Pro W6",
+                "IPAexGothic", "IPAexゴシック",
+                "Kozuka Gothic Pr6N M", "小塚ゴシック Pr6N M",
+                "MS Gothic", "ＭＳ ゴシック",
+                "sans-serif"
+            };
             string exList(string[] strArray)
             {
                 string t = "";
@@ -169,20 +184,29 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             Piece.Concat(PieceFontSize);
             Piece.Concat(Base);
             Piece.Insert(".piece {", "}");
+            Paragraph Info = new Paragraph();
+            Info.Concat(Mintyo);
+            Info.Concat(HandFontSize);
+            Info.Concat(Base);
+            Info.Insert(".info {", "}");
             Paragraph Hand = new Paragraph();
             Hand.Concat(Mintyo);
             Hand.Concat(HandFontSize);
-            Hand.Concat(Base);
+            Hand.Concat("stroke: #000000;");
+            Hand.Concat("-webkit-writing-mode: tb-rl;");
+            Hand.Concat("-ms-writing-mode: tb-rl;");
+            Hand.Concat("writing-mode: tb-rl;");
             Hand.Insert(".hand {", "}");
             Paragraph tempP = new Paragraph();
             tempP.Concat(PieceBold);
             tempP.Concat(Piece);
+            tempP.Concat(Info);
             tempP.Concat(Hand);
             tempP.Insert("<style>", "</style>");
             return tempP;
         }
 
-        Paragraph Draw(Position pos)
+        Paragraph Draw(Position pos, KifuHeader kifuHeader)
         {
             Color sideToView = Color.BLACK; // 後手なら盤面の出力を反転する
             int gamePly = pos.gamePly; // 手数が1以外なら直前の指し手を出力する
@@ -268,17 +292,22 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             // 直前の指し手情報の描写
             Paragraph drawState()
             {
-                // TODO: これでは同金とか上、打みたいな情報がつかないが方法が不明
                 var move = pos.State().lastMove;
-                var moveStr = move.Pretty();
-                moveStr = moveStr.Substring(2, 2);
-                moveStr += pos.PieceOn(move.To()).Pretty2();
+                var moveStr = "";
+                if (move != Move.NONE && move != Move.NULL && !move.IsSpecial())
+                {
+                    var lastPos = pos.Clone();
+                    lastPos.UndoMove();
+                    moveStr = lastPos.ToKi2(move);
+                }
                 Paragraph tempP = new Paragraph();
-                if (gamePly != 1)
+                if (gamePly == 1)
+                {}
+                else if (move != Move.NONE && move != Move.NULL && !move.IsSpecial())
                 {
                     var x = boardLeft + blockSize * 9 / 2;
                     var y = fontSize + 10;
-                    var str1 = $"【図は5{s(gamePly - 1)}手目 　";
+                    var str1 = $"【図は{s(gamePly - 1)}手目 　";
                     var str2 = $"{moveStr} まで】";
                     var str = $"{str1}{str2}";
                     tempP.Concat(textEx(x, y, str, fontSize));
@@ -293,7 +322,14 @@ namespace MyShogi.Model.Shogi.Converter.Svg
                     var py = y - fontSize;
                     tempP.Concat(drawPentagon(px, py, prevSide == Color.BLACK));
                 }
-                tempP.InsertTag("g", "class=\"hand\"");
+                else
+                {
+                    var x = boardLeft + blockSize * 9 / 2;
+                    var y = fontSize + 10;
+                    var str = $"【図は{s(gamePly - 1)}手目まで】";
+                    tempP.Concat(textEx(x, y, str, fontSize));
+                }
+                tempP.InsertTag("g", "class=\"info\"");
                 return tempP;
             }
 
@@ -325,88 +361,54 @@ namespace MyShogi.Model.Shogi.Converter.Svg
 
             // 名前、持駒領域の描写
             // とりあえず正位置でレンダリングして盤の中央で180回転させれば逆位置に行く
+            // IE11/Edgeでは縦書き文字の位置が半文字分ほどずれる
             Paragraph drawHand(string hand, string name, bool isBlack, bool isReverse)
             {
                 var x = boardRight + boardRightMargin;
-                var y = boardTop + boardTopMargin + fontSize;
-                var option = $"writing-mode=\"tb\" font-size=\"{s(fontSize)}\"";
+                var y = boardTop + boardTopMargin + fontSize / 2;
                 var offsetX = boardLeft + blockSize * 9 / 2;
                 var offsetY = boardTop + blockSize * 9 / 2;
 
-                var tempP = drawPentagon(x, y - fontSize * 2, isBlack);
+                var tempP = drawPentagon(x, y - fontSize * 5 / 4, isBlack);
 
-                // 縦書きのレンダリングがうんこなので手動で1文字ずつ配置する
+                // 縦書きのレンダリングがうんこだけど我慢してみる
                 var handStr = "持駒";
                 var totalLength = name.Length + handStr.Length + hand.Length;
-                var lenderSize = 0;
+                var renderSize = 0;
                 // 文字数に応じて適当にフォントサイズを変更する
                 if (totalLength <= 15)
                 {
-                    lenderSize = fontSize;
+                    renderSize = fontSize;
                 }
                 else if (totalLength <= 17)
                 {
-                    lenderSize = (int)(fontSize * 0.9);
+                    renderSize = (int)(fontSize * 0.9);
                 }
                 else if (totalLength <= 19)
                 {
-                    lenderSize = (int)(fontSize * 0.8);
+                    renderSize = (int)(fontSize * 0.8);
                 }
                 else if (totalLength <= 22)
                 {
-                    lenderSize = (int)(fontSize * 0.7);
+                    renderSize = (int)(fontSize * 0.7);
                 }
                 else if (totalLength <= 24)
                 {
-                    lenderSize = (int)(fontSize * 0.65);
+                    renderSize = (int)(fontSize * 0.65);
                 }
                 else
                 {
-                    lenderSize = (int)(fontSize * 0.6);
+                    renderSize = (int)(fontSize * 0.6);
                 }
 
-                // もうちょっとすっきり書けるだろうが、愚直にdraw関数を呼んでいく
                 // 出力を簡潔にするため、フォントサイズがデフォルトのときはExじゃない方を呼ぶ
-                for (int i = 0; i < name.Length; ++i)
+                if (renderSize == fontSize)
                 {
-                    char[] subTchar = { name[i] };
-                    string subTstr = new string(subTchar);
-                    if (lenderSize == fontSize)
-                    {
-                        tempP.Concat(drawText(x, y + i * lenderSize, subTstr));
-                    }
-                    else
-                    {
-                        tempP.Concat(drawTextEx(x, y + i * lenderSize, subTstr, lenderSize));
-                    }
+                    tempP.Concat(drawText(x, y, $"{name}　{handStr}　{hand}"));
                 }
-                var offset = name.Length;
-                for (int i = 0; i < handStr.Length; ++i)
+                else
                 {
-                    char[] subTchar = { handStr[i] };
-                    string subTstr = new string(subTchar);
-                    if (lenderSize == fontSize)
-                    {
-                        tempP.Concat(drawText(x, (int)(y + (offset + i + 0.5) * lenderSize), subTstr));
-                    }
-                    else
-                    {
-                        tempP.Concat(drawTextEx(x, (int)(y + (offset + i + 0.5) * lenderSize), subTstr, lenderSize));
-                    }
-                }
-                offset += handStr.Length;
-                for (int i = 0; i < hand.Length; ++i)
-                {
-                    char[] subTchar = { hand[i] };
-                    string subTstr = new string(subTchar);
-                    if (lenderSize == fontSize)
-                    {
-                        tempP.Concat(drawText(x, y + (offset + i + 1) * lenderSize, subTstr));
-                    }
-                    else
-                    {
-                        tempP.Concat(drawTextEx(x, y + (offset + i + 1) * lenderSize, subTstr, lenderSize));
-                    }
+                    tempP.Concat(drawTextEx(x, y, $"{name}　{handStr}　{hand}", renderSize));
                 }
 
                 if (isReverse)
@@ -439,8 +441,8 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             {
                 Hand b = pos.Hand(Color.BLACK);
                 Hand w = pos.Hand(Color.WHITE);
-                var tempP = drawHand(b.Pretty2(), "先手", true, sideToView == Color.WHITE);
-                tempP.Concat(drawHand(w.Pretty2(), "後手", false, sideToView == Color.BLACK));
+                var tempP = drawHand(b == Hand.ZERO ? "なし" : b.Pretty2(), kifuHeader.PlayerNameBlack, true, sideToView == Color.WHITE);
+                tempP.Concat(drawHand(w == Hand.ZERO ? "なし" : w.Pretty2(), kifuHeader.PlayerNameWhite, false, sideToView == Color.BLACK));
                 tempP.InsertTag("g", "class=\"hand\"");
                 return tempP;
             }
@@ -449,6 +451,7 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             Paragraph drawBoardPiece()
             {
                 var tempP = new Paragraph();
+                var lastMove = pos.State().lastMove;
 
                 for (SquareHand sqh = SquareHand.SquareZero; sqh < SquareHand.SquareNB; ++sqh)
                 {
@@ -466,7 +469,7 @@ namespace MyShogi.Model.Shogi.Converter.Svg
                             isReverse = !isReverse;
                         }
                         // 直前の指し手を強調する
-                        bool isBold = gamePly != 1 && sq == pos.State().lastMove.To();
+                        bool isBold = gamePly != 1 && lastMove != Move.NONE && !lastMove.IsSpecial() && sq == pos.State().lastMove.To();
                         if (isBold)
                         {
                             tempP.Concat(drawSquare(boardRight - file * blockSize, boardTop + (rank - 1) * blockSize, blockSize, 1, "#ffff80"));
@@ -487,9 +490,9 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             return p;
         }
 
-        public void Output(Position pos)
+        public void Output(Position pos, KifuHeader kifuHeader)
         {
-            Paragraph p = Draw(pos);
+            var p = Draw(pos, kifuHeader);
             InsertSvg(p);
             p.ToFile();
         }
@@ -499,9 +502,9 @@ namespace MyShogi.Model.Shogi.Converter.Svg
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
-        public string ToString(Position pos)
+        public string ToString(Position pos, KifuHeader kifuHeader)
         {
-            var p = Draw(pos);
+            var p = Draw(pos, kifuHeader);
             InsertSvg(p);
             return p.ToString();
         }

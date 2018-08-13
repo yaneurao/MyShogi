@@ -145,7 +145,7 @@ namespace MyShogi.Model.Shogi.Kifu
             Debug.Assert(EnableKifuList);
 
             Tree.UndoMove();
-            
+
             Tree.Remove(node); // この枝を削除しておく。
 
             return true;
@@ -369,6 +369,38 @@ namespace MyShogi.Model.Shogi.Kifu
 
             Tree.EnableKifuList = e2;
             Tree.PropertyChangedEventEnable = e1;
+
+            return result;
+        }
+
+        /// <summary>
+        /// 局面文字列を書き出す
+        /// フォーマットは引数のkfで指定する。
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="kf"></param>
+        public string ToPositionString(KifuFileType kt)
+        {
+            string result = string.Empty;
+            switch(kt)
+            {
+                case KifuFileType.SVG:
+                    // SVG形式は専用ルーチンを使用
+                    result = ToSvgString();
+                    break;
+
+                default:
+                    // SVG形式以外は、棋譜書き出しルーチンを流用して出力する
+                    var kifu = new KifuManager();
+                    // 経路を消すためにsfen化して代入しなおして書き出す
+                    kifu.FromString($"sfen {Position.ToSfen()}");
+                    kifu.KifuHeader.PlayerNameBlack = KifuHeader.PlayerNameBlack;
+                    kifu.KifuHeader.PlayerNameWhite = KifuHeader.PlayerNameWhite;
+                    result = kifu.ToString(kt);
+                    break;
+
+                // ToDo : 他の形式もサポートする
+            }
 
             return result;
         }

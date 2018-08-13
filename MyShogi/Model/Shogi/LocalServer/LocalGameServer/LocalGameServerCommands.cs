@@ -154,7 +154,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                         // ただし、再開局で開始局面以上に巻き戻すと、いまより持ち時間が減ってしまう可能性がある。
                         // 開始局面以上に巻き戻す場合は、再開時の時間にしてやる必要がある。
                         // しかし、中断局であるなら、遡れなければならない。難しい。
-                        
+
                         var nextTime = kifuManager.Tree.GetKifuMoveTimes();
                         PlayTimers.SetKifuMoveTimes(nextTime);
 
@@ -251,7 +251,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                         // 末尾の局面に移動するコマンドを叩いておく。
                         SetValueAndRaisePropertyChanged("KifuListSelectedIndex", kifuManager.KifuList.Count - 1);
-                        
+
                         // -- 棋譜上の名前をプレイヤー名に反映させる。
 
                         // GameSetting、原則immutableだが、まあいいや…。
@@ -268,6 +268,11 @@ namespace MyShogi.Model.Shogi.LocalServer
             });
         }
 
+        /// <summary>
+        /// 棋譜のファイルへの書き出しコマンド
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="type"></param>
         public void KifuWriteCommand(string path , Kifu.KifuFileType type)
         {
             AddCommand(
@@ -278,13 +283,42 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 try
                 {
+                    // プレイヤー名を棋譜上に反映させる。
+                    foreach (var c in All.Colors())
+                        kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
+
                     var content = kifuManager.ToString(type);
                     FileIO.WriteFile(path, content);
-                } catch
+                }
+                catch (System.Exception e)
                 {
-                    TheApp.app.MessageShow("棋譜ファイルの書き出しに失敗しました。" , MessageShowType.Error);
+                    TheApp.app.MessageShow($"棋譜ファイルの書き出しに失敗しました。\n{e}" , MessageShowType.Error);
                 }
             });
+        }
+
+        /// <summary>
+        /// 棋譜のクリップボードへの書き出しコマンド
+        /// </summary>
+        /// <param name="type"></param>
+        public void KifuWriteClipboardCommand(Kifu.KifuFileType type)
+        {
+            // Clipboard.SetText() を実行するスレッドは Single Thread Apartment モードに設定されていなければならない
+            //AddCommand(() => {
+            try
+            {
+                // プレイヤー名を棋譜上に反映させる。
+                foreach (var c in All.Colors())
+                    kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
+
+                var content = kifuManager.ToString(type);
+                System.Windows.Forms.Clipboard.SetText(content);
+            }
+            catch (System.Exception e)
+            {
+                TheApp.app.MessageShow($"棋譜の書き出しに失敗しました。\n{e}", MessageShowType.Error);
+            }
+            //});
         }
 
         /// <summary>
@@ -299,18 +333,42 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 try
                 {
-                    var sfen = Position.ToSfen();
-                    // 経路を消すためにsfen化して代入しなおして書き出す
-                    var kifu = new KifuManager();
-                    kifu.FromString($"sfen {sfen}");
-                    var content = kifu.ToString(type);
+                    // プレイヤー名を棋譜上に反映させる。
+                    foreach (var c in All.Colors())
+                        kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
+
+                    var content = kifuManager.ToPositionString(type);
                     FileIO.WriteFile(path, content);
                 }
-                catch
+                catch (System.Exception e)
                 {
-                    TheApp.app.MessageShow("棋譜ファイルの書き出しに失敗しました。" , MessageShowType.Error);
+                    TheApp.app.MessageShow($"棋譜ファイルの書き出しに失敗しました。\n{e}" , MessageShowType.Error);
                 }
             });
+        }
+
+        /// <summary>
+        /// 現在の局面のクリップボードへの書き出しコマンド
+        /// </summary>
+        /// <param name="type"></param>
+        public void PositionWriteClipboardCommand(Kifu.KifuFileType type)
+        {
+            // Clipboard.SetText() を実行するスレッドは Single Thread Apartment モードに設定されていなければならない
+            //AddCommand(() => {
+            try
+            {
+                // プレイヤー名を棋譜上に反映させる。
+                foreach (var c in All.Colors())
+                    kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
+
+                var content = kifuManager.ToPositionString(type);
+                System.Windows.Forms.Clipboard.SetText(content);
+            }
+            catch (System.Exception e)
+            {
+                TheApp.app.MessageShow($"局面の書き出しに失敗しました。\n{e}", MessageShowType.Error);
+            }
+            //});
         }
 
         /// <summary>
