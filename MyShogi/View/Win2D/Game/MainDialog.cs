@@ -455,6 +455,27 @@ namespace MyShogi.View.Win2D
             gameScreenControl1.ResizeKifuControl();
         }
 
+        /// <summary>
+        /// Ctrl+V による棋譜の貼り付け
+        /// </summary>
+        public void CopyFromClipboard()
+        {
+            if (gameScreenControl1.gameServer.GameMode == GameModeEnum.ConsiderationWithoutEngine)
+            {
+                if (gameScreenControl1.gameServer.KifuDirty)
+                {
+                    if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に棋譜を貼り付けますか？", MessageShowType.WarningOkCancel)
+                        != DialogResult.OK)
+                        return;
+                }
+
+                //クリップボードからテキスト取得
+                var text = Clipboard.GetText();
+                gameServer.KifuReadCommand(text);
+                ViewModel.LastFileName = null;
+            }
+        }
+
         // -- 以下、ToolStripのハンドラ
 
         /// <summary>
@@ -614,34 +635,6 @@ namespace MyShogi.View.Win2D
         private void toolStripButton13_Click(object sender, System.EventArgs e)
         {
             kifuControl.ViewModel.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に移動するはず */;
-        }
-
-        /// <summary>
-        /// キーイベント
-        /// KeyPreview == trueなのですべてのキーイベントはいったんここに来るる
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MainDialog_KeyDown(object sender, KeyEventArgs e)
-        {
-            // Ctrl+V による棋譜の貼り付け
-            if (gameScreenControl1.gameServer.GameMode == GameModeEnum.ConsiderationWithoutEngine)
-            {
-                if (e.KeyCode == Keys.V && e.Control == true)
-                {
-                    if (gameScreenControl1.gameServer.KifuDirty)
-                    {
-                        if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当に棋譜を貼り付けますか？", MessageShowType.WarningOkCancel)
-                            != DialogResult.OK)
-                            return;
-                    }
-
-                    //クリップボードからテキスト取得
-                    var text = Clipboard.GetText();
-                    gameServer.KifuReadCommand(text);
-                    ViewModel.LastFileName = null;
-                }
-            }
         }
 
         /// <summary>
@@ -813,6 +806,8 @@ namespace MyShogi.View.Win2D
                     {
                         var item = new ToolStripMenuItem();
                         item.Text = "棋譜を開く(&O)";
+                        item.ShortcutKeys = Keys.Control | Keys.O;
+                        item.ShowShortcutKeys = true;
                         item.Click += (sender, e) =>
                         {
                             using (var fd = new OpenFileDialog())
@@ -844,6 +839,8 @@ namespace MyShogi.View.Win2D
                     {
                         var item = new ToolStripMenuItem();
                         item.Text = "棋譜の上書き保存(&S)";
+                        item.ShortcutKeys = Keys.Control | Keys.S;
+                        item.ShowShortcutKeys = true;
                         item.Enabled = ViewModel.LastFileName != null; // 棋譜を読み込んだ時などにしか有効ではない。
                         item.Click += (sender, e) =>
                         {
@@ -866,6 +863,8 @@ namespace MyShogi.View.Win2D
                     {
                         var item = new ToolStripMenuItem();
                         item.Text = "棋譜を名前をつけて保存(&N)";
+                        item.ShortcutKeys = Keys.Control | Keys.S | Keys.Shift;
+                        item.ShowShortcutKeys = true;
                         item.Click += (sender, e) =>
                         {
                             using (var fd = new SaveFileDialog())
@@ -978,10 +977,13 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "クリップボードにコピー(&C)";
+                        item.Text = "クリップボードに棋譜/局面をコピー(&C)";
 
                         var itemk1 = new ToolStripMenuItem();
                         itemk1.Text = "棋譜KIF形式(&1)";
+                        itemk1.ShortcutKeys = Keys.Control | Keys.C;
+                        itemk1.ShowShortcutKeys = true;
+                        // このショートカットキーを設定すると対局中などにも書き出せてしまうが、書き出しはまあ問題ない。
                         itemk1.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.KIF); };
                         item.DropDownItems.Add(itemk1);
 
@@ -1013,7 +1015,7 @@ namespace MyShogi.View.Win2D
                         item.DropDownItems.Add(new ToolStripSeparator());
 
                         var itemp1 = new ToolStripMenuItem();
-                        itemp1.Text = "局面BOD形式(&A)";
+                        itemp1.Text = "局面KIF(BOD)形式(&A)";
                         itemp1.Click += (sender, e) => { gameServer.PositionWriteClipboardCommand(KifuFileType.KI2); };
                         item.DropDownItems.Add(itemp1);
 
@@ -1042,8 +1044,12 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "クリップボードからペースト(&P)";
-                        item.Click += (sender, e) => { gameServer.KifuReadCommand(System.Windows.Forms.Clipboard.GetText()); };
+                        item.Text = "クリップボードから棋譜/局面を貼り付け(&P)";
+                        // このショートカットキーを設定すると対局中などにも貼り付けが出来てしまうが、
+                        // GameModeを見て、対局中などには処理しないようにしてある。
+                        item.ShortcutKeys = Keys.Control | Keys.V;
+                        item.ShowShortcutKeys = true;
+                        item.Click += (sender, e) => { CopyFromClipboard(); };
                         item_file.DropDownItems.Add(item);
                     }
 
@@ -1068,6 +1074,8 @@ namespace MyShogi.View.Win2D
                     { // -- 通常対局
                         var item = new ToolStripMenuItem();
                         item.Text = "通常対局(&N)"; // NormalGame
+                        item.ShortcutKeys = Keys.Control | Keys.N; // NewGameのN
+                        item.ShowShortcutKeys = true;
                         item.Click += (sender, e) =>
                         {
                             using (var gameSettingDialog = new GameSettingDialog(this))
@@ -1541,6 +1549,8 @@ namespace MyShogi.View.Win2D
                     {   // -- 盤面編集の開始
                         var item = new ToolStripMenuItem();
                         item.Text = inTheBoardEdit ? "盤面編集の終了(&B)" : "盤面編集の開始(&B)"; // Board edit
+                        item.ShortcutKeys = Keys.Control | Keys.E; // boardEdit
+                        item.ShowShortcutKeys = true;
                         item.Click += (sender, e) => {
                             gameServer.ChangeGameModeCommand(
                                 inTheBoardEdit ?

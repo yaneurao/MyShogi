@@ -271,7 +271,6 @@
             this.Load += new System.EventHandler(this.MainDialog_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainDialog_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainDialog_DragEnter);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainDialog_KeyDown);
             this.Move += new System.EventHandler(this.MainDialog_Move);
             this.Resize += new System.EventHandler(this.MainDialog_Resize);
             this.toolStrip1.ResumeLayout(false);
