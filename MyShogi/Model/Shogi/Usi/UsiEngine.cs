@@ -102,7 +102,7 @@ namespace MyShogi.Model.Shogi.Usi
         public void Think(string usiPositionString , UsiThinkLimit limit , Color sideToMove)
         {
             if (IsMateSearch)
-                ThinkingBridge.Think($"position {usiPositionString}", $"go mate {limit.ToUsiString(sideToMove)}");
+                ThinkingBridge.Think($"position {usiPositionString}" , $"go mate {limit.ToUsiMateString(sideToMove)}");
             else
                 ThinkingBridge.Think($"position {usiPositionString}" , $"go {limit.ToUsiString(sideToMove)}");
         }
@@ -776,7 +776,12 @@ namespace MyShogi.Model.Shogi.Usi
                 // 手番側が王手をされているとき、詰将棋エンジンが実装されていない。
                 moves.Add(Move.MATE_ENGINE_NOT_IMPLEMENTED);
 
-            } else
+            } else if (scanner.PeekText("timeout"))
+            {
+                // 時間切れ
+                moves.Add(Move.MATE_TIMEOUT);
+            }
+            else
             {
                 // 詰みを発見した。
 

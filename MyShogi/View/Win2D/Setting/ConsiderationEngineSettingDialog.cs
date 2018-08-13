@@ -145,7 +145,7 @@ namespace MyShogi.View.Win2D.Setting
                    case ConsiderationEngineSettingDialogType.MateSetting:
                        Text = "詰将棋エンジン設定";
                        label3.Text = "詰検討で使う思考エンジン：";
-                       groupBox1.Enabled = false; // 時間設定できる機能はlockしとく。(詰将棋エンジン側が未対応なので)
+                       groupBox1.Enabled = true; // 詰将棋エンジン側、対応したので有効にしておく。
                        break;
                }
            });

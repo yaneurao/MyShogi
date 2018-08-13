@@ -28,8 +28,15 @@ namespace MyShogi.App
 
                 if (mainForm.InvokeRequired)
                 {
-                    var result = mainForm.BeginInvoke(new Func<DialogResult>(() => { return show(); }));
-                    return (DialogResult)mainForm.EndInvoke(result); // これで結果が返るまで待つはず..
+                    try
+                    {
+                        var result = mainForm.BeginInvoke(new Func<DialogResult>(() => { return show(); }));
+                        return (DialogResult)mainForm.EndInvoke(result); // これで結果が返るまで待つはず..
+                        // ここでウィンドウが破棄される可能性があるのでEndInvoke()が成功するとは限らない。
+                    } catch
+                    {
+                        return DialogResult.OK;
+                    }
                 }
                 else
                     return show();

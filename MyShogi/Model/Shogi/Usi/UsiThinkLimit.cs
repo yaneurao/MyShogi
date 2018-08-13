@@ -183,6 +183,23 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
+        /// この条件を元に、USIプロトコルで用いる"go mateコマンド"の"go mate"以降の文字列を構築する。
+        /// infinity or 6000のような時間[ms]を指定する。
+        ///
+        /// ここ、"go mate"が通常探索と同じ書式にしてあれば、こんな特殊化は不要なのだが…。
+        /// </summary>
+        /// <returns></returns>
+        public string ToUsiMateString(Color sideToMove)
+        {
+            if (LimitType == UsiThinkLimitEnum.Infinite)
+                return "infinite";
+
+            // 手番側の秒読み
+            var byoyomiTime = sideToMove == Color.BLACK ? ByoyomiTimeBlack : ByoyomiTimeWhite;
+            return byoyomiTime == null ? "1000" /* 0の指定はありえないような..*/ : byoyomiTime.TotalMilliseconds.ToString();
+        }
+
+        /// <summary>
         /// 制限の種類を取得または設定します。
         /// </summary>
         public UsiThinkLimitEnum LimitType { get;set; }

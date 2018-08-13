@@ -694,11 +694,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var ex = engine.Exception;
                     if (ex != null)
                     {
-                        TheApp.app.MessageShow($"エンジン側で例外が発生しました。\n例外 : { ex.Message }\nスタックトレース : { ex.StackTrace }",
-                            MessageShowType.Error);
-                        engine.Exception = null;
-                        engine.Disconnect(); // 切断しとかないと次のRead()でまた例外が発生しかねない。
+                        TheApp.app.MessageShow(ex); // これリカバーするの難しいので終了させる。
 
+                        engine.Disconnect(); // 切断しとかないと次のRead()でまた例外が発生しかねない。
                         Player(stm).SpecialMove = Move.INTERRUPT;
                     }
                 }
