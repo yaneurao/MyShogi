@@ -195,10 +195,13 @@ namespace MyShogi.App
                         );
                 }
 
-                config.Save();
+                config.Save(DeleteGlobalOption);
 
-                if (engine_configs != null)
-                    engine_configs.Save();
+                if (DeleteEngineOption)
+                    EngineConfigUtility.DeleteEngineConfig();
+                else
+                    if (engine_configs != null)
+                        engine_configs.Save();
 
                 soundManager.Dispose();
 
@@ -281,6 +284,16 @@ namespace MyShogi.App
         /// こういう方法に頼らざるを得ない。Formクラスの設計ミスであるように思う。
         /// </summary>
         public bool DesignMode { get { return config == null; } }
+
+        /// <summary>
+        /// 終了時にエンジンオプションの設定ファイルを消すフラグ
+        /// </summary>
+        public bool DeleteEngineOption { get; set; }
+
+        /// <summary>
+        /// 終了時にGlobalOptionのファイルを消すフラグ
+        /// </summary>
+        public bool DeleteGlobalOption { get; set; }
 
         /// <summary>
         /// singletonなinstance。それぞれのViewModelなどにアクセスしたければ、これ経由でアクセスする。

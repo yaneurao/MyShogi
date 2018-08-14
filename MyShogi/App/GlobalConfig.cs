@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.IO;
 using System.Runtime.Serialization;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
@@ -97,10 +98,15 @@ namespace MyShogi.App
 
         /// <summary>
         /// 設定ファイルに書き出し
+        ///
+        /// erase == trueなら、設定ファイルを削除する。
         /// </summary>
-        public void Save()
+        public void Save(bool erase = false)
         {
-            Serializer.Serialize(xmlFile, this);
+            if (!erase)
+                Serializer.Serialize(xmlFile, this);
+            else
+                try { File.Delete(xmlFile); } catch { }
         }
 
         /// <summary>

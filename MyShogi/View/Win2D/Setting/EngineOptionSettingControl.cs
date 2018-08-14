@@ -195,6 +195,7 @@ namespace MyShogi.View.Win2D.Setting
                 }
 
                 Control control = null;
+                var defaultText = usiOption.GetDefault();
 
                 switch (usiOption.OptionType)
                 {
@@ -204,6 +205,7 @@ namespace MyShogi.View.Win2D.Setting
                         binder.BindString(e, "Value", checkbox, valueChanged );
 
                         control = checkbox;
+                        defaultText = usiOption.DefaultBool ? "オン(true)" : "オフ(false)";
                         break;
 
                     case UsiOptionType.SpinBox:
@@ -214,7 +216,7 @@ namespace MyShogi.View.Win2D.Setting
                         num.TextAlign = HorizontalAlignment.Center;
 
                         binder.BindString(e , "Value", num , valueChanged);
-
+                        
                         control = num;
                         break;
 
@@ -245,9 +247,15 @@ namespace MyShogi.View.Win2D.Setting
                                 dic.Add(split[i * 2 + 0], split[i * 2 + 1]);
 
                             foreach (var s in usiOption.ComboList)
+                            {
                                 if (dic.ContainsKey(s))
                                     combobox.Items.Add(dic[s]);
- 
+
+                                // デフォルト値もdicを経由して表示名に変換しておいてやる。
+                                if (dic.ContainsKey(defaultText))
+                                    defaultText = dic[defaultText];
+                            }
+
                             binder.BindStringWithDic(e, "Value", combobox, valueChanged , dic);
                         }
 
@@ -267,7 +275,8 @@ namespace MyShogi.View.Win2D.Setting
                     var displayName = desc.DisplayName == null ? desc.Name : desc.DisplayName;
                     var description =
                         displayName + "の説明\r\n"+
-                        (desc.Description == null ? "説明文がありません。" : desc.Description);
+                        (desc.Description == null ? "説明文がありません。" : desc.Description) +
+                        $"\r\nデフォルト値 = {defaultText}";
 
                     var label1 = new Label();
                     label1.Font = new Font("ＭＳ ゴシック", 10);

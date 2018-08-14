@@ -1055,6 +1055,39 @@ namespace MyShogi.View.Win2D
 
                     item_file.DropDownItems.Add(new ToolStripSeparator());
 
+                    // -- 設定の初期化
+                    {
+                        var item_init = new ToolStripMenuItem();
+                        item_init.Text = "設定の初期化(&I)";
+                        item_file.DropDownItems.Add(item_init);
+
+                        {
+                            var item = new ToolStripMenuItem();
+                            item.Text = "各エンジン設定の初期化";
+                            item.Click += (sender, e) => {
+                                if (TheApp.app.MessageShow("すべてのエンジン設定を初期化しますか？「OK」を押すと初期化され、次回起動時に反映されます。",MessageShowType.ConfirmationOkCancel) == DialogResult.OK)
+                                {
+                                    TheApp.app.DeleteEngineOption = true;
+                                }
+                            };
+                            item_init.DropDownItems.Add(item);
+                        }
+
+                        {
+                            var item = new ToolStripMenuItem();
+                            item.Text = "各表示設定などの初期化";
+                            item.Click += (sender, e) => {
+                                if (TheApp.app.MessageShow("すべての表示設定・音声設定を初期化しますか？「OK」を押すと初期化され、次回起動時に反映されます。", MessageShowType.ConfirmationOkCancel) == DialogResult.OK)
+                                {
+                                    TheApp.app.DeleteGlobalOption = true;
+                                }
+                            };
+                            item_init.DropDownItems.Add(item);
+                        }
+                    }
+
+                    item_file.DropDownItems.Add(new ToolStripSeparator());
+
                     {
                         var item = new ToolStripMenuItem();
                         item.Text = "終了(&X)";
