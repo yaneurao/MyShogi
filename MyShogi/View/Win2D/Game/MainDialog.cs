@@ -862,7 +862,7 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "棋譜を名前をつけて保存(&N)";
+                        item.Text = "棋譜に名前をつけて保存(&N)";
                         item.ShortcutKeys = Keys.Control | Keys.S | Keys.Shift;
                         item.ShowShortcutKeys = true;
                         item.Click += (sender, e) =>
