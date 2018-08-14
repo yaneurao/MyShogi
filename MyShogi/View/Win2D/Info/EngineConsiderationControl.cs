@@ -448,6 +448,16 @@ namespace MyShogi.View.Win2D
                 int w2 = TheApp.app.config.ConsiderationColumnWidth[index];
                 listView1.Columns[index].Width = w2 == 0 ? w1 : w2; // w2が初期化直後の値なら、採用しない。
             }
+
+            // CPU同士の対局でEngineConsiderationControlが２つあるときに、もう片側にも通知する。
+            TheApp.app.config.ConsiderationColumnWidth.AddPropertyChangedHandler((args) =>
+            {
+                // 単純assignか。
+                if (args.IsAssign() && 0 <= args.NewStartIndex && args.NewStartIndex <= 5)
+                {
+                    listView1.Columns[args.NewStartIndex].Width = (int)args.NewItems[0];
+                }
+            });
         }
 
         /// <summary>

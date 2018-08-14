@@ -106,6 +106,15 @@ namespace MyShogi.Model.Common.ObjectModel
         /// Move,Remove,Replaceが生じた位置のindex
         /// </summary>
         public int OldStartIndex { get; }
+
+        /// <summary>
+        /// 単純な代入操作であるかを判定する。
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAssign()
+        {
+            return Action == NotifyCollectionChangedAction.Replace && NewItems.Count == 1 && OldItems.Count == 1;
+        }
     }
 
     /// <summary>
