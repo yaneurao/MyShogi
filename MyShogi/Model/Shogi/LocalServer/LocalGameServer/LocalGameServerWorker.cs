@@ -108,6 +108,16 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var gamePlayer = gameSetting.PlayerSetting(c);
                 var playerType = gamePlayer.IsHuman ? PlayerTypeEnum.Human : PlayerTypeEnum.UsiEngine;
                 Players[(int)c] = PlayerBuilder.Create(playerType);
+            }
+
+            // Players[]の生成が終わったので、必要ならば画面に「エンジン初期化中」の画像を描画する。
+            UpdateInitializing();
+
+            foreach (var c in All.Colors())
+            {
+                // これ書くの2度目だが、まあ、しゃーない。
+                var gamePlayer = gameSetting.PlayerSetting(c);
+                var playerType = gamePlayer.IsHuman ? PlayerTypeEnum.Human : PlayerTypeEnum.UsiEngine;
 
                 if (playerType == PlayerTypeEnum.UsiEngine)
                 {
