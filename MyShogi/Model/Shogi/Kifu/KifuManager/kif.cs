@@ -55,7 +55,9 @@ namespace MyShogi.Model.Shogi.Kifu
                     isBody = true;
                     if (bod.Count > 0)
                     {
-                        if (KifuHeader.header_dic.ContainsKey("手合割")) return "手合割と初期局面文字列が同時に指定されています。";
+                        // 柿木将棋IXでは、初期局面指定（詰将棋など）の時でも、KIF形式で書き出すと「手合割：平手」とヘッダ出力される。
+                        // その場合の手合割の意味が理解出来ないが、エラーを出さずに黙って初期局面図の方で上書きする。
+                        // if (KifuHeader.header_dic.ContainsKey("手合割")) return "手合割と初期局面文字列が同時に指定されています。";
                         Tree.rootSfen = Converter.KifExtensions.BodToSfen(bod.ToArray());
                         Tree.position.SetSfen(Tree.rootSfen);
                         Tree.rootBoardType = BoardType.Others;
