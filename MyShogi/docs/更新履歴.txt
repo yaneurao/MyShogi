@@ -6,6 +6,27 @@
 ■　2018/08/14
 
 
+- V1.01リリース
+  - eval : MyShogi201807260000Eval.zip
+  - 本体 : MyShogi201808140900v101.zip
+
+
+- プロジェクトをリリース用に必要フォルダだけコピーするbatファイル書いた。
+
+  project_copy.bat
+    mkdir C:\Users\yaneu\Desktop\MyShogi
+    xcopy *.* C:\Users\yaneu\Desktop\MyShogi /s/e/i /exclude:project_copy_exclude.txt
+
+  project_copy_exclude.txt
+    eval\
+    kif\
+    image_source\
+    project_copy.bat
+    project_copy_exclude.txt
+    MyShogi.engine.xml
+    MyShogi.setting.xml
+
+
 - クリップボードへのコピー、「局面BOD形式」を「局面KIF(BOD)形式」とrename。
 - 「クリップボードにコピー」を「クリップボードに棋譜/局面をコピー」とrename。
 - 「クリップボードからペースト」を「クリップボードから棋譜/局面を貼り付け」とrename。
