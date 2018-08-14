@@ -458,6 +458,12 @@ namespace MyShogi.App
         }
 
         /// <summary>
+        /// 検討ウィンドウの各Columnの幅(先後共通)
+        /// </summary>
+        [DataMember]
+        public NotifyCollection<int> ConsiderationColumnWidth { get; set; } = new NotifyCollection<int>(6);
+
+        /// <summary>
         /// 対局設定。
         /// 対局設定ダイアログとdata bindingして使う。
         /// </summary>

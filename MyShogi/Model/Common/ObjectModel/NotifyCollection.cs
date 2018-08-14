@@ -40,6 +40,8 @@ namespace MyShogi.Model.Common.ObjectModel
     /// </summary>
     public enum NotifyCollectionChangedAction
     {
+        // とりま、まだReplaceしか実装してない。
+
         Add,     // 一部追加
         Move,    // 移動
         Remove,  // 一部削除
@@ -64,7 +66,7 @@ namespace MyShogi.Model.Common.ObjectModel
         }
 
         /// <summary>
-        /// Replace、単一object用
+        /// Replace、単一object用 ≒ assign
         /// </summary>
         /// <param name="action"></param>
         public NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction action , object newObject , object oldObject , int index)
@@ -73,7 +75,7 @@ namespace MyShogi.Model.Common.ObjectModel
             Action = action;
             NewItems = new[] { newObject };
             OldItems = new[] { oldObject };
-            NewStartIndex = index; // このindexの要素が置き換わる
+            OldStartIndex = NewStartIndex = index; // このindexの要素が置き換わる
         }
 
         // -- Replace以外は未実装。あとで実装する(かも)。
@@ -116,7 +118,7 @@ namespace MyShogi.Model.Common.ObjectModel
 
         public NotifyCollection(int size)
         {
-            list = new List<T>(size);
+            list = new List<T>(new T[size]);
         }
 
         /// <summary>
@@ -154,12 +156,13 @@ namespace MyShogi.Model.Common.ObjectModel
             }
 
             if (raise)
+                // 単一オブジェクトの代入
                 RaisePropertyChanged(
                     new NotifyCollectionChangedEventArgs(
                         NotifyCollectionChangedAction.Replace,
-                        value,
-                        list[index],
-                        index
+                        value,       // new value
+                        list[index], // old value
+                        index        // index
                         )
                 );
         }
@@ -208,6 +211,19 @@ namespace MyShogi.Model.Common.ObjectModel
                     }
                     catch { }
             }
+
+            // 未実装
+#if false
+            // data bindされているならそれらのオブジェクトにも通知
+            // これは同じスレッドで通知して良い。
+            if (current.notifies != null)
+            {
+                foreach (var notify in current.notifies)
+                    // 無限再帰になるのを防ぐため、送信元を付与して呼び出す。
+                    if (notify != e.sender /* is original sender */)
+                        notify.SetValueAndRaisePropertyChanged(e2);
+            }
+#endif
         }
 
         public void AddPropertyChangedHandler(CollectionChangedEventHandler h, Control form = null)
@@ -219,6 +235,22 @@ namespace MyShogi.Model.Common.ObjectModel
                 current.form = form; // 上書きする
             }
         }
+
+
+        /// <summary>
+        /// プロパティが変更されたときに呼び出されるハンドラを削除する。
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="h"></param>
+        public void RemovePropertyChangedHandler(CollectionChangedEventHandler h)
+        {
+            lock (lockObject)
+            {
+                var current = propertyObject;
+                current.handler -= h;
+            }
+        }
+
 
         /// <summary>
         /// このフラグがfalseの時、SetValue()でプロパティ変更イベントが発生しなくなる。
@@ -266,4 +298,20 @@ namespace MyShogi.Model.Common.ObjectModel
         }
 
     }
+
+#if false
+
+    public void test()
+    {
+            var c = new NotifyCollection<int>(5);
+            c.AddPropertyChangedHandler((args) =>
+            {
+                // Replace , index = 2 / 2 , 3 / 3
+                Console.WriteLine($"{args.Action.ToString()} , index = {args.OldStartIndex} / {args.NewStartIndex} , {args.OldItems[0]} / {args.NewItems[0]}");
+            });
+            c[2] = 3;
+    }
+
+#endif
+
 }

@@ -374,8 +374,14 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void listView1_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
         {
-            //e.ColumnIndex
-            // あとで書く。
+            var index = e.ColumnIndex;
+            if (index < 0 || 5 < index)
+                return; // 範囲外？
+
+            // この設定、Globalに紐づけておく。
+            TheApp.app.config.ConsiderationColumnWidth[index] = listView1.Columns[index].Width;
+
+            UpdatePvWidth();
         }
 
         // -- privates
@@ -435,6 +441,13 @@ namespace MyShogi.View.Win2D
 
             //listView1.AutoResizeColumns( ColumnHeaderAutoResizeStyle.ColumnContent);
             // headerとcontentの文字長さを考慮して、横幅が自動調整されて水平スクロールバーで移動してくれるといいのだが、うまくいかない。よくわからない。
+
+            foreach(var index in All.Int(5))
+            {
+                int w1 = listView1.Columns[index].Width;
+                int w2 = TheApp.app.config.ConsiderationColumnWidth[index];
+                listView1.Columns[index].Width = w2 == 0 ? w1 : w2; // w2が初期化直後の値なら、採用しない。
+            }
         }
 
         /// <summary>
