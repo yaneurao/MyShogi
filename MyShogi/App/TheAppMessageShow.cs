@@ -67,10 +67,15 @@ namespace MyShogi.App
         }
 
         /// <summary>
-        /// App.ApplicationExit()が呼び出された時のフラグ
+        /// App.ApplicationExit()が呼び出されたあとであるかのフラグ
         /// </summary>
         public bool Exiting;
 
+        /// <summary>
+        /// メインのForm
+        /// これがないとMessageBox.Show()などで親を指定できなくて困る。
+        /// </summary>
+        private Form mainForm { get; set; }
 
         /// <summary>
         /// UI threadで実行したい時にこれを用いる。

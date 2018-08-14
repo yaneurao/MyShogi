@@ -11,7 +11,7 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             var file_name =
-                TheApp.app.config.CommercialVersion == 0 ?
+                TheApp.app.Config.CommercialVersion == 0 ?
                 "html/about_dialog_opensource_version.html" :
                 "html/about_dialog_commercial_version.html";
 

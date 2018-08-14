@@ -95,8 +95,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             var nextGameMode = GameModeEnum.InTheGame;
 
             // 音声:「よろしくお願いします。」
-            TheApp.app.soundManager.Stop(); // 再生中の読み上げをすべて停止
-            TheApp.app.soundManager.ReadOut(SoundEnum.Start);
+            TheApp.app.SoundManager.Stop(); // 再生中の読み上げをすべて停止
+            TheApp.app.SoundManager.ReadOut(SoundEnum.Start);
 
             // 初回の指し手で、「先手」「後手」と読み上げるためのフラグ
             sengo_read_out = new bool[2] { false, false };
@@ -166,7 +166,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 Disconnect();
 
                 // ゲームが終局したことを通知するために音声があったほうがよさげ。
-                TheApp.app.soundManager.ReadOut(SoundEnum.End);
+                TheApp.app.SoundManager.ReadOut(SoundEnum.End);
 
                 return;
             }
@@ -388,8 +388,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="stm">手番</param>
         private void PlayPieceSound(GameModeEnum gameMode , Square to , Color stm)
         {
-            if ((gameMode == GameModeEnum.InTheGame && TheApp.app.config.PieceSoundInTheGame != 0) ||
-                (gameMode.IsConsideration() && TheApp.app.config.PieceSoundOffTheGame != 0)
+            if ((gameMode == GameModeEnum.InTheGame && TheApp.app.Config.PieceSoundInTheGame != 0) ||
+                (gameMode.IsConsideration() && TheApp.app.Config.PieceSoundOffTheGame != 0)
                 )
             {
                 // 移動先の升の下に別の駒があるときは、駒がぶつかる音になる。
@@ -408,7 +408,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                                     e = SoundEnum.KOMA_C1;
                             }
 #endif
-                var soundManager = TheApp.app.soundManager;
+                var soundManager = TheApp.app.SoundManager;
                 soundManager.PlayPieceSound(e);
             }
         }
@@ -422,7 +422,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             var stm = Position.sideToMove;
             var stmPlayer = Player(stm);
 
-            var config = TheApp.app.config;
+            var config = TheApp.app.Config;
 
             // -- 指し手
 
@@ -502,7 +502,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // -- 音声の読み上げ
 
-                    var soundManager = TheApp.app.soundManager;
+                    var soundManager = TheApp.app.SoundManager;
 
                     var kif = kifuManager.KifuList[kifuManager.KifuList.Count - 1];
                     // special moveはMoveを直接渡して再生。
@@ -574,7 +574,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 手番が変わった時に特殊な局面に至っていないかのチェック
             if (GameMode == GameModeEnum.InTheGame)
             {
-                var misc = TheApp.app.config.GameSetting.MiscSettings;
+                var misc = TheApp.app.Config.GameSetting.MiscSettings;
                 Move m = kifuManager.Tree.IsNextNodeSpecialNode(isHuman , misc);
 
                 // 上で判定された特殊な指し手であるか？
@@ -586,7 +586,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     kifuManager.Tree.DoMove(m);
 
                     // 音声の読み上げ
-                    TheApp.app.soundManager.ReadOut(m);
+                    TheApp.app.SoundManager.ReadOut(m);
 
                     GameEnd();
                     return;
@@ -608,7 +608,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             if (GameMode == GameModeEnum.ConsiderationWithEngine)
                 // MultiPVは、GlobalConfigの設定を引き継ぐ
-                (stmPlayer as UsiEnginePlayer).Engine.MultiPV = TheApp.app.config.ConsiderationMultiPV;
+                (stmPlayer as UsiEnginePlayer).Engine.MultiPV = TheApp.app.Config.ConsiderationMultiPV;
             // それ以外のGameModeなら、USIのoption設定を引き継ぐので変更しない。
 
 
@@ -627,7 +627,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 case GameModeEnum.ConsiderationWithEngine:
                     {
-                        var setting = TheApp.app.config.ConsiderationEngineSetting;
+                        var setting = TheApp.app.Config.ConsiderationEngineSetting;
                         if (setting.Limitless)
                             limit = UsiThinkLimit.TimeLimitLess;
                         else // if (setting.TimeLimit)
@@ -637,7 +637,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 case GameModeEnum.ConsiderationWithMateEngine:
                     {
-                        var setting = TheApp.app.config.MateEngineSetting;
+                        var setting = TheApp.app.Config.MateEngineSetting;
                         if (setting.Limitless)
                             limit = UsiThinkLimit.TimeLimitLess;
                         else // if (setting.TimeLimit)
@@ -739,11 +739,11 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 対局中だったものが終了したのか？
             if (GameMode == GameModeEnum.InTheGame)
             {
-                if (TheApp.app.config.ReadOutCancelWhenGameEnd == 1)
-                    TheApp.app.soundManager.Stop();
+                if (TheApp.app.Config.ReadOutCancelWhenGameEnd == 1)
+                    TheApp.app.SoundManager.Stop();
 
                 // 音声:「ありがとうございました。またお願いします。」
-                TheApp.app.soundManager.ReadOut(SoundEnum.End);
+                TheApp.app.SoundManager.ReadOut(SoundEnum.End);
             }
 
             GameMode = GameModeEnum.ConsiderationWithoutEngine;
@@ -797,8 +797,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                 //var engineDefineFolderPath = "\\engine\\gpsfish"; // 開発テスト用
 
                 var engineDefineFolderPath =
-                    (nextGameMode == GameModeEnum.ConsiderationWithEngine)     ? TheApp.app.config.ConsiderationEngineSetting.EngineDefineFolderPath :
-                    (nextGameMode == GameModeEnum.ConsiderationWithMateEngine) ? TheApp.app.config.MateEngineSetting.EngineDefineFolderPath :
+                    (nextGameMode == GameModeEnum.ConsiderationWithEngine)     ? TheApp.app.Config.ConsiderationEngineSetting.EngineDefineFolderPath :
+                    (nextGameMode == GameModeEnum.ConsiderationWithMateEngine) ? TheApp.app.Config.MateEngineSetting.EngineDefineFolderPath :
                     null;
 
                 var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == engineDefineFolderPath);

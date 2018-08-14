@@ -110,7 +110,7 @@ namespace MyShogi.View.Win2D.Setting
                     var banner_file_name = engine_define.BannerFileName;
                     ImageLoader banner;
                     if (!System.IO.File.Exists(banner_file_name))
-                        banner = TheApp.app.imageManager.NoBannerImage;
+                        banner = TheApp.app.ImageManager.NoBannerImage;
                     else
                     {
                         banner = new ImageLoader();

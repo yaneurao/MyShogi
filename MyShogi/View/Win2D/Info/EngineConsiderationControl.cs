@@ -227,7 +227,7 @@ namespace MyShogi.View.Win2D
                 // 後手番の時に自分から見た評価値を表示する設定であるなら、評価値の表示を反転させる。
                 // ここで表示している値、保存していないので即時反映は無理だわ…。まあ、これは仕様ということで…。
                 var isWhite = position.sideToMove == Model.Shogi.Core.Color.WHITE;
-                if (isWhite && TheApp.app.config.NegateEvalWhenWhite)
+                if (isWhite && TheApp.app.Config.NegateEvalWhenWhite)
                 {
                     if (info.Eval != null)
                         info.Eval = info.Eval.negate();
@@ -379,7 +379,7 @@ namespace MyShogi.View.Win2D
                 return; // 範囲外？
 
             // この設定、Globalに紐づけておく。
-            TheApp.app.config.ConsiderationColumnWidth[index] = listView1.Columns[index].Width;
+            TheApp.app.Config.ConsiderationColumnWidth[index] = listView1.Columns[index].Width;
 
             UpdatePvWidth();
         }
@@ -445,12 +445,12 @@ namespace MyShogi.View.Win2D
             foreach(var index in All.Int(5))
             {
                 int w1 = listView1.Columns[index].Width;
-                int w2 = TheApp.app.config.ConsiderationColumnWidth[index];
+                int w2 = TheApp.app.Config.ConsiderationColumnWidth[index];
                 listView1.Columns[index].Width = w2 == 0 ? w1 : w2; // w2が初期化直後の値なら、採用しない。
             }
 
             // CPU同士の対局でEngineConsiderationControlが２つあるときに、もう片側にも通知する。
-            TheApp.app.config.ConsiderationColumnWidth.AddPropertyChangedHandler((args) =>
+            TheApp.app.Config.ConsiderationColumnWidth.AddPropertyChangedHandler((args) =>
             {
                 // 単純assignか。
                 if (args.IsAssign() && 0 <= args.NewStartIndex && args.NewStartIndex <= 5)
@@ -478,7 +478,7 @@ namespace MyShogi.View.Win2D
         private void InitNotifyObject()
         {
             // MultiPVの初期値
-            var multiPV = TheApp.app.config.ConsiderationMultiPV;
+            var multiPV = TheApp.app.Config.ConsiderationMultiPV;
             multiPV = Math.Max(multiPV , 1); // 1以上を保証する
             multiPV = Math.Min(multiPV, comboBox1.Items.Count); // comboBox1の項目数と同じまで。
             Notify.MultiPV = multiPV;

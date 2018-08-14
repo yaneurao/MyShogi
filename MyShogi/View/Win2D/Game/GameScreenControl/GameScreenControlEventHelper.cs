@@ -272,7 +272,7 @@ namespace MyShogi.View.Win2D
             var inTheGame = gameServer!= null && gameServer.InTheGame;
 
             // 棋譜ウィンドウの横幅の倍率
-            float w_rate = TheApp.app.config.KifuWindowWidthType * 0.25f;
+            float w_rate = TheApp.app.Config.KifuWindowWidthType * 0.25f;
             // 棋譜ウィンドウを横にどれだけ延ばすのか
             int w_offset = (int)(w_rate * 265);
 
@@ -1093,7 +1093,7 @@ namespace MyShogi.View.Win2D
                     // 小さい駒の表示倍率
                     var ratio = 0.6f;
 
-                    var config = TheApp.app.config;
+                    var config = TheApp.app.Config;
                     var size = PieceTableVersion == 0 ?
                         piece_img_size :
                         new Size((int)(piece_img_size.Width * ratio), (int)(piece_img_size.Height * ratio));

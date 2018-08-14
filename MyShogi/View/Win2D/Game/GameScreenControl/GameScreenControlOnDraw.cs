@@ -31,7 +31,7 @@ namespace MyShogi.View.Win2D
             // ここではDrawSprite()とDrawString()だけで描画を完結させてあるので複数Viewへの対応は(描画だけなら)容易。
 
             var app = TheApp.app;
-            var config = app.config;
+            var config = app.Config;
 
             // 描画する局面
             var pos = gameServer.Position; // MainDialogViewModel。掴んでいる駒などのViewの状態

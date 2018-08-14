@@ -45,7 +45,7 @@ namespace MyShogi.Model.Resource.Images
         /// </summary>
         public void UpdateBoardImage(PropertyChangedEventArgs args = null)
         {
-            var config = TheApp.app.config;
+            var config = TheApp.app.Config;
 
             var board = new ImageLoader();
             var tatami = new ImageLoader();
@@ -120,13 +120,13 @@ namespace MyShogi.Model.Resource.Images
         /// </summary>
         public void UpdatePieceImage(PropertyChangedEventArgs args = null)
         {
-            var config = TheApp.app.config;
+            var config = TheApp.app.Config;
             Load(ref PieceImage, $"piece_v{config.PieceImageVersion}_776_636.png");
         }
 
         public void UpdatePieceAttackImage(PropertyChangedEventArgs args = null)
         {
-            var config = TheApp.app.config;
+            var config = TheApp.app.Config;
             var version = config.PieceAttackImageVersion;
             if (version == 0)
                 PieceAttackImage.SetNullBitmap();
@@ -140,7 +140,7 @@ namespace MyShogi.Model.Resource.Images
         /// </summary>
         public void UpdatePieceMoveImage(PropertyChangedEventArgs args = null)
         {
-            var config = TheApp.app.config;
+            var config = TheApp.app.Config;
 
             // 駒の横・縦のサイズ[px]
             int x = 97;
@@ -238,7 +238,7 @@ namespace MyShogi.Model.Resource.Images
         /// </summary>
         public void UpdateBoardNumberImage(PropertyChangedEventArgs args = null)
         {
-            var config = TheApp.app.config;
+            var config = TheApp.app.Config;
             var version = config.BoardNumberImageVersion;
 
             // 0は非表示の意味

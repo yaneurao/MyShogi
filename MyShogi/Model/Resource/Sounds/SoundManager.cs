@@ -40,7 +40,7 @@ namespace MyShogi.Model.Resource.Sounds
         /// <param name=""></param>
         public void ReadOut(SoundEnum e)
         {
-            if (TheApp.app.config.KifuReadOut == 0)
+            if (TheApp.app.Config.KifuReadOut == 0)
                 return;
 
             if (!dic.ContainsKey(e))
@@ -80,7 +80,7 @@ namespace MyShogi.Model.Resource.Sounds
         /// </summary>
         public void PlayPieceSound(SoundEnum e)
         {
-            TheApp.app.soundManager.Play(e);
+            TheApp.app.SoundManager.Play(e);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace MyShogi.Model.Resource.Sounds
         public void ReadOut(string kif)
         {
             // オプションの反映
-            if (TheApp.app.config.KifuReadOut == 0)
+            if (TheApp.app.Config.KifuReadOut == 0)
                 return;
 
             // ">+ 16.☖３六飛行成　32秒"
@@ -231,7 +231,7 @@ namespace MyShogi.Model.Resource.Sounds
             Debug.Assert(m.IsSpecial());
 
             // オプションの反映
-            if (TheApp.app.config.KifuReadOut == 0)
+            if (TheApp.app.Config.KifuReadOut == 0)
                 return;
 
             switch (m)

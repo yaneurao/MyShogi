@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MyShogi.Model.Common.Utility;
@@ -164,5 +165,20 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private List<string> lastLogList;
 
+        /// <summary>
+        /// 選択行のコピペを実現する。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.C)
+            {
+                var sb = new StringBuilder();
+                foreach (string text in listBox1.SelectedItems)
+                    sb.AppendLine(text);
+                Clipboard.SetText(sb.ToString());
+            }
+        }
     }
 }

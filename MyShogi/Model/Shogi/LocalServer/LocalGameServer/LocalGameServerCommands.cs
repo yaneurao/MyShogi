@@ -70,7 +70,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 var stm = kifuManager.Position.sideToMove;
                 var stmPlayer = Player(stm);
-                var config = TheApp.app.config;
+                var config = TheApp.app.Config;
 
                 if (InTheGame)
                 {
@@ -513,7 +513,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             () =>
             {
                 // 保存しておく。(次回検討時用に)
-                var config = TheApp.app.config;
+                var config = TheApp.app.Config;
                 config.ConsiderationMultiPV = multiPv;
 
                 // エンジンによる検討モードでないなら受理しない。

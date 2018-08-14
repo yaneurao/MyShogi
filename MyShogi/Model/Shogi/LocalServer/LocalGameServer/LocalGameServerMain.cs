@@ -39,7 +39,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void Start()
         {
-            var config = TheApp.app.config;
+            var config = TheApp.app.Config;
 
             kifuManager.Tree.Bind("Position", this , DataBindWay.OneWay);
             kifuManager.Tree.Bind("KifuList", this , DataBindWay.OneWay);

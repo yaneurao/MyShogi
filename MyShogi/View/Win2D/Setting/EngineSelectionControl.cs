@@ -93,7 +93,7 @@ namespace MyShogi.View.Win2D
             if (!File.Exists(engineDefine.BannerFileName))
             {
                 // ファイルがないのでNO BANNERのbannerにする。
-                var banner = TheApp.app.imageManager.NoBannerImage;
+                var banner = TheApp.app.ImageManager.NoBannerImage;
                 banner_mini.Dispose();
                 banner_mini = banner.CreateAndCopy(w, h);
             }

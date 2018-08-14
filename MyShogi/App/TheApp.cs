@@ -10,7 +10,7 @@ using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.LocalServer;
 
 // とりま、Windows用
-// あとで他環境用を用意する
+// あとで他環境用を用意する(かも)
 using MyShogi.View.Win2D;
 
 namespace MyShogi.App
@@ -21,6 +21,7 @@ namespace MyShogi.App
     /// </summary>
     public partial class TheApp
     {
+        #region main
         /// <summary>
         /// ここが本アプリのエントリーポイント
         /// </summary>
@@ -72,31 +73,31 @@ namespace MyShogi.App
         {
             // -- global configの読み込み
 
-            config = GlobalConfig.CreateInstance();
+            Config = GlobalConfig.CreateInstance();
 
             // -- 各インスタンスの生成と、それぞれのbind作業
 
             // -- 画像の読み込み
 
             {
-                imageManager = new ImageManager();
-                imageManager.Update(); // ここでconfigに従い、画像が読み込まれる。
+                ImageManager = new ImageManager();
+                ImageManager.Update(); // ここでconfigに従い、画像が読み込まれる。
 
                 // GlobalConfigのプロパティ変更に対して、このimageManagerが呼び出されるようにbindしておく。
 
-                config.AddPropertyChangedHandler("BoardImageVersion", imageManager.UpdateBoardImage);
-                config.AddPropertyChangedHandler("TatamiImageVersion", imageManager.UpdateBoardImage);
-                config.AddPropertyChangedHandler("PieceTableImageVersion", imageManager.UpdateBoardImage);
+                Config.AddPropertyChangedHandler("BoardImageVersion", ImageManager.UpdateBoardImage);
+                Config.AddPropertyChangedHandler("TatamiImageVersion", ImageManager.UpdateBoardImage);
+                Config.AddPropertyChangedHandler("PieceTableImageVersion", ImageManager.UpdateBoardImage);
 
-                config.AddPropertyChangedHandler("PieceImageVersion", imageManager.UpdatePieceImage);
-                config.AddPropertyChangedHandler("PieceAttackImageVersion", imageManager.UpdatePieceAttackImage);
+                Config.AddPropertyChangedHandler("PieceImageVersion", ImageManager.UpdatePieceImage);
+                Config.AddPropertyChangedHandler("PieceAttackImageVersion", ImageManager.UpdatePieceAttackImage);
 
-                config.AddPropertyChangedHandler("LastMoveFromColorType", imageManager.UpdatePieceMoveImage);
-                config.AddPropertyChangedHandler("LastMoveToColorType", imageManager.UpdatePieceMoveImage);
-                config.AddPropertyChangedHandler("PickedMoveFromColorType", imageManager.UpdatePieceMoveImage);
-                config.AddPropertyChangedHandler("PickedMoveToColorType", imageManager.UpdatePieceMoveImage);
+                Config.AddPropertyChangedHandler("LastMoveFromColorType", ImageManager.UpdatePieceMoveImage);
+                Config.AddPropertyChangedHandler("LastMoveToColorType", ImageManager.UpdatePieceMoveImage);
+                Config.AddPropertyChangedHandler("PickedMoveFromColorType", ImageManager.UpdatePieceMoveImage);
+                Config.AddPropertyChangedHandler("PickedMoveToColorType", ImageManager.UpdatePieceMoveImage);
 
-                config.AddPropertyChangedHandler("BoardNumberImageVersion", imageManager.UpdateBoardNumberImage);
+                Config.AddPropertyChangedHandler("BoardNumberImageVersion", ImageManager.UpdateBoardNumberImage);
             }
 
             // -- メインの対局ウィンドゥ
@@ -111,33 +112,33 @@ namespace MyShogi.App
 
             // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
 
-            config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("PromotePieceColorType", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("PieceAttackImageVersion", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("LastMoveFromColorType", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("LastMoveToColorType", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("PieceSoundOffTheGame", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("KifuReadOut", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("NegateEvalWhenWhite", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("ConsiderationWindowFollowMainWindow", mainDialog.UpdateMenuItems, mainDialog);
-            config.AddPropertyChangedHandler("ReadOutCancelWhenGameEnd", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("PromotePieceColorType", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("PieceAttackImageVersion", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("LastMoveFromColorType", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("LastMoveToColorType", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("PieceSoundOffTheGame", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("KifuReadOut", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("NegateEvalWhenWhite", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("ConsiderationWindowFollowMainWindow", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("ReadOutCancelWhenGameEnd", mainDialog.UpdateMenuItems, mainDialog);
 
             // -- ロギング用のハンドラをセット
 
             var MemoryLoggingEnableHandler = new PropertyChangedEventHandler((args) =>
             {
-                if (config.MemoryLoggingEnable)
+                if (Config.MemoryLoggingEnable)
                     Log.log1 = new MemoryLog();
                 else
                 {
@@ -148,7 +149,7 @@ namespace MyShogi.App
             });
             var FileLoggingEnable = new PropertyChangedEventHandler((args) =>
             {
-                if (config.FileLoggingEnable)
+                if (Config.FileLoggingEnable)
                 {
                     var now = DateTime.Now;
                     Log.log2 = new FileLog($"log{now.ToString("yyyyMMddHHmm")}.txt");
@@ -161,10 +162,10 @@ namespace MyShogi.App
                 }
             });
 
-            config.AddPropertyChangedHandler("MemoryLoggingEnable", MemoryLoggingEnableHandler);
-            config.AddPropertyChangedHandler("FileLoggingEnable", FileLoggingEnable);
+            Config.AddPropertyChangedHandler("MemoryLoggingEnable", MemoryLoggingEnableHandler);
+            Config.AddPropertyChangedHandler("FileLoggingEnable", FileLoggingEnable);
 
-            config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl , mainDialog);
+            Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl , mainDialog);
 
             // 上のハンドラを呼び出して、必要ならばロギングを開始しておいてやる。
             MemoryLoggingEnableHandler(null);
@@ -174,38 +175,22 @@ namespace MyShogi.App
             gameServer.Start();
 
             // サウンド
-            soundManager = new SoundManager();
-            soundManager.Start();
+            SoundManager = new SoundManager();
+            SoundManager.Start();
 
             // 終了するときに設定ファイルに書き出すコード
             Application.ApplicationExit += new EventHandler((sender, e) =>
             {
-                // メインウィンドウと検討ウィンドウに関して、
-                // 終了時のウィンドウサイズを記憶しておき、次回起動時にこのサイズでウィンドウを生成する。
-                if (mainDialog.ClientSize.Width >= 100 && mainDialog.ClientSize.Height >= 100)
-                    config.MainDialogClientSize = mainDialog.ClientSize;
-                if (mainDialog.engineConsiderationDialog != null &&
-                    mainDialog.engineConsiderationDialog.Width >= 100 && mainDialog.engineConsiderationDialog.Height >= 100)
-                {
-                    config.ConsiderationDialogClientSize = mainDialog.engineConsiderationDialog.ClientSize;
-                    config.ConsiderationDialogClientLocation =
-                        new Point(
-                            mainDialog.engineConsiderationDialog.Location.X - mainDialog.Location.X,
-                            mainDialog.engineConsiderationDialog.Location.Y - mainDialog.Location.Y
-                        );
-                }
+                // メインウィンドウのサイズを保存
+                SaveMainDialogSize();
 
-                config.Save(DeleteGlobalOption);
+                // 設定ファイルの保存
+                SaveConfig();
 
-                if (DeleteEngineOption)
-                    EngineConfigUtility.DeleteEngineConfig();
-                else
-                    if (engine_configs != null)
-                        engine_configs.Save();
+                // サウンドマネージャーの停止
+                SoundManager.Dispose();
 
-                soundManager.Dispose();
-
-                // 起動しているGameServerすべてを終了させる必要がある。(エンジンを停止させるため)
+                // 起動しているGameServerすべてを明示的に終了させる必要がある。(そこにぶら下がっているエンジンを停止させるため)
                 if (gameServer != null)
                     gameServer.Dispose();
             });
@@ -214,6 +199,9 @@ namespace MyShogi.App
 
             Application.Run(mainDialog);
         }
+        #endregion
+
+        #region properties
 
         // -- それぞれのViewModel
         // 他のViewModelにアクションが必要な場合は、これを経由して通知などを行えば良い。
@@ -223,12 +211,12 @@ namespace MyShogi.App
         /// <summary>
         /// 画像の読み込み用。本GUIで用いる画像はすべてここから取得する。
         /// </summary>
-        public ImageManager imageManager { get; private set; }
+        public ImageManager ImageManager { get; private set; }
 
         /// <summary>
         /// GUIの全体設定
         /// </summary>
-        public GlobalConfig config { get; private set; }
+        public GlobalConfig Config { get; private set; }
 
         /// <summary>
         /// エンジン設定(最初のアクセスの時に読み込む。遅延読み込み。)
@@ -268,13 +256,7 @@ namespace MyShogi.App
         /// <summary>
         /// サウンドマネージャー
         /// </summary>
-        public SoundManager soundManager { get; private set; }
-
-        /// <summary>
-        /// メインのForm
-        /// これがないとMessageBox.Show()などで親を指定できなくて困る。
-        /// </summary>
-        public Form mainForm { get; private set; }
+        public SoundManager SoundManager { get; private set; }
 
         /// <summary>
         /// Visual Studioのデザインモードであるかの判定。
@@ -283,7 +265,7 @@ namespace MyShogi.App
         /// Form.DesignModeは、Formのコンストラクタでは未代入であるので使えない。
         /// こういう方法に頼らざるを得ない。Formクラスの設計ミスであるように思う。
         /// </summary>
-        public bool DesignMode { get { return config == null; } }
+        public bool DesignMode { get { return Config == null; } }
 
         /// <summary>
         /// 終了時にエンジンオプションの設定ファイルを消すフラグ
@@ -299,5 +281,55 @@ namespace MyShogi.App
         /// singletonなinstance。それぞれのViewModelなどにアクセスしたければ、これ経由でアクセスする。
         /// </summary>
         public static TheApp app = new TheApp();
+
+        #endregion
+
+        #region privates
+
+        /// <summary>
+        /// MainDialogのウィンドウサイズをGlobalConfigに代入する。(次回起動時に復元するため)
+        /// </summary>
+        private void SaveMainDialogSize()
+        {
+            // メインウィンドウと検討ウィンドウに関して、
+            // 終了時のウィンドウサイズを記憶しておき、次回起動時にこのサイズでウィンドウを生成する。
+
+            var mainDialog = mainForm as MainDialog;
+            if (mainDialog == null)
+                return;
+
+            if (mainDialog.ClientSize.Width >= 100 && mainForm.ClientSize.Height >= 100)
+                Config.MainDialogClientSize = mainForm.ClientSize;
+
+            if (mainDialog.engineConsiderationDialog != null &&
+                mainDialog.engineConsiderationDialog.Width >= 100 && mainDialog.engineConsiderationDialog.Height >= 100)
+            {
+                Config.ConsiderationDialogClientSize = mainDialog.engineConsiderationDialog.ClientSize;
+                Config.ConsiderationDialogClientLocation =
+                    new Point(
+                        mainDialog.engineConsiderationDialog.Location.X - mainForm.Location.X,
+                        mainDialog.engineConsiderationDialog.Location.Y - mainForm.Location.Y
+                    );
+            }
+        }
+
+        /// <summary>
+        /// 終了時に削除フラグが立っていなければ、このまま設定(GlobalConfigと各エンジンのオプション)を保存する。
+        /// 削除フラグが立っていれば設定ファイルを削除する。
+        /// </summary>
+        private void SaveConfig()
+        {
+            if (DeleteGlobalOption)
+                Config.Delete();
+            else
+                Config.Save();
+
+            if (DeleteEngineOption)
+                EngineConfigUtility.DeleteEngineConfig();
+            else
+                if (engine_configs != null)
+                engine_configs.Save();
+        }
+        #endregion
     }
 }

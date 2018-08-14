@@ -169,7 +169,7 @@ namespace MyShogi.View.Win2D
             UpdateButtonState(inTheGame);
 
             // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
-            var w_rate = 1.0f + TheApp.app.config.KifuWindowWidthType * 0.25f; // 横幅をどれだけ引き伸ばすのか
+            var w_rate = 1.0f + TheApp.app.Config.KifuWindowWidthType * 0.25f; // 横幅をどれだけ引き伸ばすのか
             var font_size = (float)(19.5 * scale * w_rate);
             var font_size2 = (float)(19.5 * scale); // button用のフォントサイズ
             /*

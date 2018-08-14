@@ -22,7 +22,7 @@ namespace MyShogi.Model.Resource.Images
         public static Sprite Board(int piece_table_version , bool piece_box)
         {
             var srcRect = new Rectangle(0, 0, board_img_width, board_img_height);
-            var image = TheApp.app.imageManager.BoardImage(piece_table_version,piece_box).image;
+            var image = TheApp.app.ImageManager.BoardImage(piece_table_version,piece_box).image;
 
             return new Sprite(image, srcRect);
         }
@@ -44,7 +44,7 @@ namespace MyShogi.Model.Resource.Images
 
             if (pc.PieceType()!= Shogi.Core.Piece.KING && pc.IsPromote())
             {
-                if (TheApp.app.config.PromotePieceColorType == 1)
+                if (TheApp.app.Config.PromotePieceColorType == 1)
                     // 赤い成駒にする。
                     // これは駒画像素材の4,5段目に書かれているのでオフセット値を加算する。
                     pc += (pc.PieceColor() == Shogi.Core.Color.BLACK) ? 3*8 /*3段下から*/ : 2*8 /* 2段下から*/; 
@@ -55,14 +55,14 @@ namespace MyShogi.Model.Resource.Images
                     ((int)pc / 8) * piece_img_height,
                     piece_img_width, piece_img_height);
 
-            var image = TheApp.app.imageManager.PieceImage.image;
+            var image = TheApp.app.ImageManager.PieceImage.image;
 
             var sprite = new Sprite(image, srcRect);
 
             // 移動マーカーが必要ならそれを連結スプライトにして返す。
-            if (TheApp.app.config.PieceAttackImageVersion != 0)
+            if (TheApp.app.Config.PieceAttackImageVersion != 0)
             {
-                var image2 = TheApp.app.imageManager.PieceAttackImage.image;
+                var image2 = TheApp.app.ImageManager.PieceAttackImage.image;
                 var sprite2 = new Sprite(image2, srcRect);
                 sprite.next = sprite2;
             }
@@ -81,7 +81,7 @@ namespace MyShogi.Model.Resource.Images
         public static Sprite PieceMove(PieceMoveEffect pe , Piece pc = Shogi.Core.Piece.NO_PIECE)
         {
             // 効果を「オフ」にしているならnull spriteを返してやる。
-            var config = TheApp.app.config;
+            var config = TheApp.app.Config;
             switch(pe)
             {
                 case PieceMoveEffect.To:
@@ -122,7 +122,7 @@ namespace MyShogi.Model.Resource.Images
             ((int)pe / 8) * piece_img_height,
             piece_img_width, piece_img_height);
 
-            var image = TheApp.app.imageManager.PieceMoveImage.image;
+            var image = TheApp.app.ImageManager.PieceMoveImage.image;
 
             return new Sprite(image, srcRect);
         }
@@ -138,7 +138,7 @@ namespace MyShogi.Model.Resource.Images
         {
             var srcRect = new Rectangle(48 * (count - 1), 0, 48, 48);
 
-            var image = TheApp.app.imageManager.HandNumberImage.image;
+            var image = TheApp.app.ImageManager.HandNumberImage.image;
 
             return new Sprite(image, srcRect);
         }
@@ -154,7 +154,7 @@ namespace MyShogi.Model.Resource.Images
         {
             var srcRect = new Rectangle(48 * (count - 1), 0, 48, 48);
 
-            var image = TheApp.app.imageManager.HandBoxNumberImage.image;
+            var image = TheApp.app.ImageManager.HandBoxNumberImage.image;
 
             return new Sprite(image, srcRect);
         }
@@ -166,7 +166,7 @@ namespace MyShogi.Model.Resource.Images
         /// <returns></returns>
         public static Sprite BoardNumberFile(bool reverse)
         {
-            var img = TheApp.app.imageManager;
+            var img = TheApp.app.ImageManager;
             var file_img = (!reverse) ? img.BoardNumberImageFile.image : img.BoardNumberImageRevFile.image;
             var srcRect = new Rectangle(0, 0, file_img.Width, file_img.Height); // 画像丸ごとなので大きさのことは知らん。
 
@@ -180,7 +180,7 @@ namespace MyShogi.Model.Resource.Images
         /// <returns></returns>
         public static Sprite BoardNumberRank(bool reverse)
         {
-            var img = TheApp.app.imageManager;
+            var img = TheApp.app.ImageManager;
             var rank_img = (!reverse) ? img.BoardNumberImageRank.image : img.BoardNumberImageRevRank.image;
             var srcRect = new Rectangle(0, 0, rank_img.Width, rank_img.Height); // 画像丸ごとなので大きさのことは知らん。
 
@@ -195,7 +195,7 @@ namespace MyShogi.Model.Resource.Images
         /// <returns></returns>
         public static Sprite PromoteDialog(PromoteDialogSelectionEnum select , Piece pc)
         {
-            var img = TheApp.app.imageManager;
+            var img = TheApp.app.ImageManager;
 
             // その素材にhoverされているときはx座標にこのオフセット値を加算する
             var hover_offset = promote_dialog_cancel_rect.Width;
@@ -265,10 +265,10 @@ namespace MyShogi.Model.Resource.Images
         public static Sprite TurnNormal()
         {
             // 非表示ならnull spriteを返す。
-            if (TheApp.app.config.TurnDisplay == 0)
+            if (TheApp.app.Config.TurnDisplay == 0)
                 return null;
 
-            var image = TheApp.app.imageManager.TurnNormalImage.image;
+            var image = TheApp.app.ImageManager.TurnNormalImage.image;
             var sprite = new Sprite(image);
             return sprite;
         }
@@ -280,7 +280,7 @@ namespace MyShogi.Model.Resource.Images
         public static Sprite TurnSlim(Shogi.Core.Color sideToMove,bool reverse)
         {
             // 非表示ならnull spriteを返す。
-            if (TheApp.app.config.TurnDisplay == 0)
+            if (TheApp.app.Config.TurnDisplay == 0)
                 return null;
 
             // 「後」　　　　「先」
@@ -288,7 +288,7 @@ namespace MyShogi.Model.Resource.Images
             // ・手番のないほうを薄暗い素材に。
             // ・reverseがtrueなら先後入れ替え。
 
-            var image = TheApp.app.imageManager.TurnSlimImage.image;
+            var image = TheApp.app.ImageManager.TurnSlimImage.image;
             int w = 60;
             var srcRect1 = new Rectangle(0, 0, w, w);                   // 後手素材
             var srcRect2 = new Rectangle(turn_slim_width - w, 0, w, w); // 先手素材
@@ -317,7 +317,7 @@ namespace MyShogi.Model.Resource.Images
         {
             // TurnSlim()と同様
 
-            var image = TheApp.app.imageManager.TurnSlimImage.image;
+            var image = TheApp.app.ImageManager.TurnSlimImage.image;
             int w = 60;
             int center = turn_slim_width / 2;
             int width = center - w; // 横幅
@@ -347,7 +347,7 @@ namespace MyShogi.Model.Resource.Images
         /// <returns></returns>
         public static Sprite EngineInit()
         {
-            var image = TheApp.app.imageManager.EngineInitImage.image;
+            var image = TheApp.app.ImageManager.EngineInitImage.image;
             return new Sprite(image);
         }
 

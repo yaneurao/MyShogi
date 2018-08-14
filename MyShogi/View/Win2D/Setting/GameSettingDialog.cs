@@ -82,7 +82,7 @@ namespace MyShogi.View.Win2D
         private void set_engine_define(Color c)
         {
             var playerSettings = new[] { playerSettingControl1, playerSettingControl2 };
-            var setting = TheApp.app.config.GameSetting;
+            var setting = TheApp.app.Config.GameSetting;
 
             var path = setting.PlayerSetting(c).EngineDefineFolderPath;
             playerSettings[(int)c].ViewModel.EngineDefineFolderPath = path;
@@ -95,7 +95,7 @@ namespace MyShogi.View.Win2D
         {
             SuspendLayout();
 
-            var setting = TheApp.app.config.GameSetting;
+            var setting = TheApp.app.Config.GameSetting;
 
             // -- プレイヤーごとの設定
             var playerSettings = new[] { playerSettingControl1, playerSettingControl2 };
@@ -195,7 +195,7 @@ namespace MyShogi.View.Win2D
                     if (preset < 0) // 前回未選択だと-1がありうるので0に補整してやる。
                     preset = 0;
 
-                    var setting = TheApp.app.config.GameSetting;
+                    var setting = TheApp.app.Config.GameSetting;
                     //setting.PlayerSetting(c).SelectedEnginePreset = preset;
                     // TwoWayでbindingしているのでこれで値変わるはずだが同じ番号が選ばれるとイベントが発生しなくて…。
                     setting.PlayerSetting(c).SetValueAndRaisePropertyChanged("SelectedEnginePreset", preset);
@@ -221,7 +221,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            var gameSetting = TheApp.app.config.GameSetting;
+            var gameSetting = TheApp.app.Config.GameSetting;
 
             //　対局条件の正当性をチェックする。
             var error = gameSetting.IsValid();
@@ -252,7 +252,7 @@ namespace MyShogi.View.Win2D
             // rebindすればいいような..
             
             UnbindSetting();
-            TheApp.app.config.GameSetting.SwapPlayer();
+            TheApp.app.Config.GameSetting.SwapPlayer();
             BindSetting();
         }
 

@@ -172,7 +172,7 @@ namespace MyShogi.View.Win2D.Setting
                 try
                 {
 
-                    var player = TheApp.app.config.GameSetting.PlayerSetting(vm.Color);
+                    var player = TheApp.app.Config.GameSetting.PlayerSetting(vm.Color);
 
                     var folderPath = (string)args.value;
                     var engine_define_ex = TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
@@ -201,7 +201,7 @@ namespace MyShogi.View.Win2D.Setting
                     var banner_file_name = engine_define.BannerFileName;
                     ImageLoader banner;
                     if (!System.IO.File.Exists(banner_file_name))
-                        banner = TheApp.app.imageManager.NoBannerImage;
+                        banner = TheApp.app.ImageManager.NoBannerImage;
                     else
                     {
                         banner = new ImageLoader();
@@ -222,7 +222,7 @@ namespace MyShogi.View.Win2D.Setting
 
                     // -- プリセットのコンボボックス
 
-                    var PlayerSetting = TheApp.app.config.GameSetting.PlayerSetting(vm.Color);
+                    var PlayerSetting = TheApp.app.Config.GameSetting.PlayerSetting(vm.Color);
 
                     // プリセットをコンボボックスに反映
                     // SuspendLayout()～ResumeLayout()中にやらないとイベントハンドラが呼び出されておかしいことになる。

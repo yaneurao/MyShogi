@@ -98,15 +98,20 @@ namespace MyShogi.App
 
         /// <summary>
         /// 設定ファイルに書き出し
-        ///
-        /// erase == trueなら、設定ファイルを削除する。
         /// </summary>
-        public void Save(bool erase = false)
+        public void Save()
         {
-            if (!erase)
-                Serializer.Serialize(xmlFile, this);
-            else
-                try { File.Delete(xmlFile); } catch { }
+            Serializer.Serialize(xmlFile, this);
+        }
+
+        /// <summary>
+        /// 設定ファイルの削除
+        ///
+        /// 例外は投げない。
+        /// </summary>
+        public void Delete()
+        {
+            try { File.Delete(xmlFile); } catch { }
         }
 
         /// <summary>
