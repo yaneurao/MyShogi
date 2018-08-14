@@ -458,6 +458,10 @@ namespace MyShogi.Model.Shogi.Kifu
         private string ToKifString()
         {
             var sb = new StringBuilder();
+
+            // Kifu for Windows V7 ( http://kakinoki.o.oo7.jp/Kifuw7.htm ) 向けのヘッダ、これが無いとUTF-8形式の棋譜と認識して貰えない
+            sb.AppendLine("#KIF version=2.0 encoding=UTF-8");
+
             switch (Tree.rootBoardType)
             {
                 case BoardType.NoHandicap:
