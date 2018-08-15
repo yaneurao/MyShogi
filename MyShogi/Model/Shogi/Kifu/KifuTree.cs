@@ -41,6 +41,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 初期化する。new KifuTree()した状態に戻る。
+        /// ただし、EnableKifuList == falseだと棋譜リストの初期化されないので、リセットしたいならResetKifuList()を明示的に呼び出す必要がある。
         /// </summary>
         public void Init()
         {
@@ -146,8 +147,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 if (EnableKifuList)
                 {
-                    KifuList = new List<string>();
-                    KifuList.Add("   === 開始局面 ===");
+                    ResetKifuList();
                     RaisePropertyChanged("KifuList", new List<string>(KifuList));
                 }
 
@@ -172,6 +172,15 @@ namespace MyShogi.Model.Shogi.Kifu
             }
         }
         private string rootSfen_;
+
+        /// <summary>
+        /// 棋譜リストの初期化。(イベントは発生しない)
+        /// </summary>
+        public void ResetKifuList()
+        {
+            KifuList = new List<string>();
+            KifuList.Add("   === 開始局面 ===");
+        }
 
         /// <summary>
         /// 棋譜が汚れたか。

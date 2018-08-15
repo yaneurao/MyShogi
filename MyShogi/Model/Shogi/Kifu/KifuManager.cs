@@ -110,6 +110,11 @@ namespace MyShogi.Model.Shogi.Kifu
         {
             KifuHeader.Init();
             Tree.Init();
+
+            // Tree.EnableKifuList == falseだと棋譜リストは初期化されない。
+            // 強制的に初期化したいので明示的にリセットする。
+            if (!EnableKifuList)
+                Tree.ResetKifuList();
         }
 
         /// <summary>
@@ -218,6 +223,10 @@ namespace MyShogi.Model.Shogi.Kifu
                 Tree.PropertyChangedEventEnable = false;
 
                 Init();
+
+                // 棋譜リストの更新をしないモードだと初期化されないので棋譜リストを明示的に初期化する。
+                if (!EnableKifuList)
+                    Tree.ResetKifuList();
 
                 var lines = content.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
 

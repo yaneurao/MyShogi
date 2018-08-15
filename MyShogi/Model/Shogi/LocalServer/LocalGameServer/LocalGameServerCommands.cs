@@ -438,6 +438,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 盤面編集中以外使用不可
                 if (InTheBoardEdit)
                 {
+
                     var error = kifuManager.FromString($"sfen {sfen}");
                     // sfenのparser経由で代入するのが楽ちん。
                     if (error != null)
