@@ -4,7 +4,6 @@ using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
-using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Player;
 
 namespace MyShogi.Model.Shogi.LocalServer
@@ -87,19 +86,20 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // 対局中でなく、盤面編集中でなければ自由に動かせる。
                     // 受理して、必要ならば分岐棋譜を生成して…。
 
-                    // これが合法手だとわかっているなら駒音を再生する。
-                    if (Position.IsLegal(m))
-                        PlayPieceSound(GameMode, m.To(), stm);
 
                     var misc = config.GameSetting.MiscSettings;
-                    kifuManager.Tree.DoMoveUI(m , misc);
+                    if (!kifuManager.Tree.DoMoveUI(m, misc))
+                        return;
+
+                    // DoMoveに成功したので駒音を再生する。
+                    PlayPieceSound(GameMode, m.To(), stm);
 
                     // 動かした結果、棋譜の選択行と異なる可能性があるので、棋譜ウィンドウの当該行をSelectしなおす。
                     UpdateKifuSelectedIndex();
 
                     // 再度、Thinkコマンドを叩く。
                     if (GameMode.IsConsiderationWithEngine())
-                       NotifyTurnChanged();
+                        NotifyTurnChanged();
                 }
             }
             );

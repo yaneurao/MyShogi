@@ -20,4 +20,23 @@
     - そうするとMyShogi.exeのあるフォルダにログ・ファイルが書き出されます。(ファイル名は現在時刻から生成される名前になります。)
   - 2. 終了したい時は、メニューの「情報」→「ロギング終了」を選びます。
 
+- デバッグウインドウ上で複数行を選択して、Ctrl+Cでクリップボードにコピーすることが出来ます。
 
+## エンジン定義ファイルの書き方
+
+- 1) MyShogi.exeの存在するフォルダ配下にある engine/ というフォルダのなかにフォルダを作成してそこに思考エンジンを配置します。
+- 2) 思考エンジンのフォルダのなかに"EngineDefine.xml"というファイル名のファイルを配置します。
+  - このフォーマットについてはMyShogi.Model.Shogi.EngineDefineにあるEngineDefineクラスを参考にしてください。(このクラスをserializerで書き出しているだけなので…)
+- 3) 思考エンジン本体は、
+  - Yaneuraou2018_kpp_kkpt_avx2.exe
+  - Yaneuraou2018_kpp_kkpt_sse42.exe
+  - Yaneuraou2018_kpp_kkpt_sse41.exe
+  - Yaneuraou2018_kpp_kkpt_sse2.exe
+  - Yaneuraou2018_kpp_kkpt_nosse.exe
+  のようなファイル名にします。(詳しくはEngineDefineクラスのところの説明を参考にすること)
+- 4) 評価関数ファイルは、MyShogi.exeの存在するフォルダ配下のeval/に配置したいので、例えば、やねうら王であれば、
+  "engine_options.txt"を用いて、このファイルに
+  >  option name EvalDir type string default ../../eval/yaneuraou2018_kppkkpt
+  >  option name EvalShare type check default true
+  >  option name BookDir type string default ../../book
+  のように書いて、EvalDirなどのデフォルト値を変更しておくと使い勝手が良いと思います。

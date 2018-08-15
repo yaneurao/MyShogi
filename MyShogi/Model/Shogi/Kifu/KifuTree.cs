@@ -838,41 +838,44 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 対局していないときにUI上の操作で駒を動かす。
+        ///
+        /// DoMove()に成功したならtrue。駒を動かせなかったならfalseが返る。
         /// </summary>
         /// <param name="m"></param>
-        public void DoMoveUI(Move m , MiscSettings misc)
+        public bool DoMoveUI(Move m , MiscSettings misc)
         {
-            if (position.IsLegal(m))
+            if (!position.IsLegal(m))
+                return false;
+
+            if (IsSpecialNode())
             {
-                if (IsSpecialNode())
-                {
-                    // current nodeは、special moveによって到達したnodeであった。
-                    // このことからlastMove() != nullが言える。
-                    var last = LastMove();
-                    var sm = last.nextMove;
-                    if (!(sm == Move.RESIGN || sm == Move.ILLEGAL_MOVE || sm == Move.INTERRUPT || sm == Move.TIME_UP))
-                        return;
-                    // Move.DRAWとかMAX_MOVES_DRAWとかは、削除しても再度このnodeに到達してしまうのでこのspecial moveの
-                    // nodeで動かすわけにはいかない。
+                // current nodeは、special moveによって到達したnodeであった。
+                // このことからlastMove() != nullが言える。
+                var last = LastMove();
+                var sm = last.nextMove;
+                if (!(sm == Move.RESIGN || sm == Move.ILLEGAL_MOVE || sm == Move.INTERRUPT || sm == Move.TIME_UP))
+                    return false;
 
-                    // 削除して問題なさげなので、このnodeを削除して、前の局面に戻れば良い。
-                    UndoMove();
+                // Move.DRAWとかMAX_MOVES_DRAWとかは、削除しても再度このnodeに到達してしまうのでこのspecial moveの
+                // nodeで動かすわけにはいかない。
 
-                    // この枝は、上記のRESIGNなどの枝なので、削除しておく。
-                    currentNode.moves.Remove(last);
-                }
-                else if (IsNextNodeSpecialNode(true, misc) != Move.NONE)
-                    return;
-                    // このnodeはspecial nodeではないが、すでに千日手成立局面などに到達しているのであれば、
-                    // この局面では何も出来ない。
+                // 削除して問題なさげなので、このnodeを削除して、前の局面に戻れば良い。
+                UndoMove();
+
+                // この枝は、上記のRESIGNなどの枝なので、削除しておく。
+                currentNode.moves.Remove(last);
             }
+            else if (IsNextNodeSpecialNode(true, misc) != Move.NONE)
+                return false;
+                // このnodeはspecial nodeではないが、すでに千日手成立局面などに到達しているのであれば、
+                // この局面では何も出来ない。
 
             var node_existed = currentNode.moves.Exists((x) => x.nextMove == m);
             // 現在の棋譜上の指し手なので棋譜ウィンドウの更新は不要である。
             if (node_existed && kifuWindowMoves[pliesFromRoot].nextMove == m)
             {
                 DoMove(m);
-                return;
+                return true;
             } 
 
             PropertyChangedEventEnable = false;
@@ -924,6 +927,8 @@ namespace MyShogi.Model.Shogi.Kifu
             RaisePropertyChanged("Position", position.Clone());
 
             KifuDirty = true; // 新しいnodeに到達したので棋譜は汚れた扱い。
+
+            return true;
         }
 
         /// <summary>

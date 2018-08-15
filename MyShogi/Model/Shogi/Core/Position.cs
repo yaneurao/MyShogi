@@ -1204,6 +1204,10 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public bool IsLegal(Move m)
         {
+            // SpeicalMoveが合法扱いされるとDoMoveできてしまって困るので弾いておく。
+            if (!m.IsOk())
+                return false;
+
             Color us = sideToMove;
             Square to = m.To(); // 移動先
 

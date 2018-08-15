@@ -21,15 +21,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// スレッドによって実行されていて、対局を管理している。
         /// pooling用のthread。少しダサいが、通知によるコールバックモデルでやるよりコードがシンプルになる。
         /// どのみち持ち時間の監視などを行わないといけないので、このようなworker threadは必要だと思う。
+        ///
+        /// ※　No Threadモードだとこのメソッドは実行されないので注意。
         /// </summary>
         private void thread_worker()
         {
             try
             {
-                // GameModeの初期値は、GameMode.NotInitなのでここで変更通知イベントが発生するはず…。
-                // →　ウィンドウ生成前なのでイベント発生しないっぽい。なんぞこれ…。
-                GameMode = GameModeEnum.ConsiderationWithoutEngine;
-
                 while (!workerStop)
                 {
                     // 各プレイヤーのプロセスの標準入出力に対する送受信の処理

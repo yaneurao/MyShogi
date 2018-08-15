@@ -142,7 +142,8 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
-        /// Move.IsOk()ではない指し手に対して棋譜ウィンドウで使うような文字列化を行う。
+        /// Move.IsOk()ではない指し手(Move.NONEも含む)に対して棋譜ウィンドウで使うような文字列化を行う。
+        /// 
         /// KIF2ではきちんと規定されていないのでこれらの特別な指し手は棋譜ウィンドウでの表示において、
         /// 自前で文字列化しなくてはならない。
         /// </summary>
@@ -240,9 +241,14 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// 指し手の移動元の升を返す。
+        ///
+        /// 指し手がIsOk()でなければSquare.NBが返る。
         /// </summary>
         public static Square From(this Move m)
         {
+            if (!m.IsOk())
+                return Square.NB;
+
             // 駒打ちに対するmove_from()の呼び出しは不正。
             Debug.Assert((Move.DROP.ToInt() & m.ToInt()) == 0);
 
@@ -251,11 +257,16 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// 指し手の移動先の升を返す。
+        /// 
+        /// 指し手がIsOk()でなければSquare.NBが返る。
         /// </summary>
         /// <param name="m"></param>
         /// <returns></returns>
         public static Square To(this Move m)
         {
+            if (!m.IsOk())
+                return Square.NB;
+
             return (Square)(m.ToInt() & 0x7f);
         }
 

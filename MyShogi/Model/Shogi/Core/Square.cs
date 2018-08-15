@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace MyShogi.Model.Shogi.Core
 {
@@ -94,11 +95,15 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// その升の属する筋を返す。
+        ///
+        /// Square.NBに対してはFile.NBが返る。
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
         public static File ToFile(this Square sq)
         {
+            Debug.Assert(sq.IsOkPlus1());
+
             return SquareToFile_[sq.ToInt()];
         }
 
@@ -121,11 +126,15 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// その升の属する段を返す。
+        ///
+        /// Square.NBに対してはRank.NBが返る。
         /// </summary>
         /// <param name="sq"></param>
         /// <returns></returns>
         public static Rank ToRank(this Square sq)
         {
+            Debug.Assert(sq.IsOkPlus1());
+
             return SquareToRank_[sq.ToInt()];
         }
 

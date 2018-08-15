@@ -65,6 +65,12 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 初期化が終わった。この時点では棋譜は汚れていない扱いとする。
             KifuDirty = false;
 
+            // GameModeの初期値は、GameMode.NotInitなのでここで変更通知イベントが発生するはず…。
+            // →　ウィンドウ生成前なのでイベント発生しないっぽい。なんぞこれ…。
+            // いずれにせよ、ミニ盤面の表示のためにNo Threadモードでこのクラスを動かすときにこの変数が初期化されていないと困るので
+            // この変数の値自体は変更しておく。
+            GameMode = GameModeEnum.ConsiderationWithoutEngine;
+
             // 対局監視スレッドを起動して回しておく。
             if (!NoThread)
                 new Thread(thread_worker).Start();
