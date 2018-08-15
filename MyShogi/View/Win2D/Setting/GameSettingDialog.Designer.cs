@@ -40,13 +40,13 @@
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.playerSettingControl2 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
             this.playerSettingControl1 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
             this.timeSettingControl2 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
@@ -167,7 +167,7 @@
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(203, 20);
+            this.numericUpDown2.Location = new System.Drawing.Point(224, 20);
             this.numericUpDown2.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -200,20 +200,38 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "その他の設定";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(288, 49);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(21, 14);
+            this.label3.TabIndex = 36;
+            this.label3.Text = "局";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(288, 23);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(21, 14);
+            this.label2.TabIndex = 35;
+            this.label2.Text = "手";
+            // 
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
             this.checkBox2.Location = new System.Drawing.Point(12, 46);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(115, 18);
+            this.checkBox2.Size = new System.Drawing.Size(205, 18);
             this.checkBox2.TabIndex = 33;
-            this.checkBox2.Text = "連続対局を行う";
-            this.toolTip1.SetToolTip(this.checkBox2, "連続対局を行います。\r\n対局結果一覧はメニューの「ウィンドウ」→「対局結果ウインドウ」を選ぶと確認できます。");
+            this.checkBox2.Text = "連続対局を行う(COM同士の時)";
+            this.toolTip1.SetToolTip(this.checkBox2, "プレイヤーがコンピュータ同士の対局であるとき、連続対局を行います。\r\n対局結果一覧はメニューの「ウィンドウ」→「対局結果ウインドウ」を選ぶと確認できます。");
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(203, 46);
+            this.numericUpDown1.Location = new System.Drawing.Point(224, 46);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -257,24 +275,6 @@
             this.comboBox1.Size = new System.Drawing.Size(138, 21);
             this.comboBox1.TabIndex = 31;
             this.toolTip1.SetToolTip(this.comboBox1, resources.GetString("comboBox1.ToolTip"));
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(267, 23);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(21, 14);
-            this.label2.TabIndex = 35;
-            this.label2.Text = "手";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(267, 49);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(21, 14);
-            this.label3.TabIndex = 36;
-            this.label3.Text = "局";
             // 
             // playerSettingControl2
             // 

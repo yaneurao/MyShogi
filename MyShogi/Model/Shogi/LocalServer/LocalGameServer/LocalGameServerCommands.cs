@@ -46,13 +46,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     }
 
                     // いったんリセット
-                    GameEnd();
-
-                    // 連続対局の回数をセット
-                    var misc = gameSetting.MiscSettings;
-                    ContinuousGame = misc.ContinuousGameEnable ? misc.ContinuousGame : 1;
-                    ContinuousGameCount = 0;
-
+                    Disconnect();
                     GameStart(gameSetting);
 
                     // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。

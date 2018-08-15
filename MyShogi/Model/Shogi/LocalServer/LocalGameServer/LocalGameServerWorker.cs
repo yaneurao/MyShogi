@@ -87,6 +87,15 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="gameSetting"></param>
         private void GameStart(GameSetting gameSetting)
         {
+            // -- 連続対局の回数をセット
+            var misc = gameSetting.MiscSettings;
+            // CPU同士の時のみ連続対局が有効である。
+            ContinuousGame =
+                gameSetting.PlayerSetting(Color.BLACK).IsCpu &&
+                gameSetting.PlayerSetting(Color.WHITE).IsCpu &&
+                misc.ContinuousGameEnable ? misc.ContinuousGame : 0;
+            ContinuousGameCount = 0;
+
             // 以下の初期化中に駒が動かされるの気持ち悪いのでユーザー操作を禁止しておく。
             CanUserMove = false;
             Initializing = true;
@@ -122,12 +131,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == gamePlayer.EngineDefineFolderPath);
                     if (engineDefineEx == null)
                     {
-                        TheApp.app.MessageShow("エンジンがありませんでした。" + gamePlayer.EngineDefineFolderPath , MessageShowType.Error);
+                        TheApp.app.MessageShow("エンジンがありませんでした。" + gamePlayer.EngineDefineFolderPath, MessageShowType.Error);
                         return;
                     }
                     var usiEnginePlayer = Players[(int)c] as UsiEnginePlayer;
                     var ponder = gamePlayer.Ponder;
-                    InitUsiEnginePlayer(c , usiEnginePlayer, engineDefineEx, gamePlayer.SelectedEnginePreset, nextGameMode , ponder);
+                    InitUsiEnginePlayer(c, usiEnginePlayer, engineDefineEx, gamePlayer.SelectedEnginePreset, nextGameMode, ponder);
                 }
             }
 
@@ -224,6 +233,88 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 検討モードならそれを停止させる必要があるが、それはGameModeのsetterがやってくれる。
             GameMode = nextGameMode;
+        }
+
+        /// <summary>
+        /// 連続対局の2局目以降である。
+        /// GameStart()をコピペして、プレイヤーの生成と、エンジンの初期化部分をはしょってある。
+        /// </summary>
+        public void GameRestart(GameSetting gameSetting)
+        {
+            var nextGameMode = GameModeEnum.InTheGame;
+
+            // 音声:「よろしくお願いします。」
+            TheApp.app.SoundManager.Stop(); // 再生中の読み上げをすべて停止
+            TheApp.app.SoundManager.ReadOut(SoundEnum.Start);
+
+            // 初回の指し手で、「先手」「後手」と読み上げるためのフラグ
+            sengo_read_out = new bool[2] { false, false };
+
+            // プレイヤーの生成
+            // →　生成されているはず
+            // エンジンの初期化も終わっているはず。
+
+            // 局面の設定
+            kifuManager.EnableKifuList = true;
+            if (gameSetting.BoardSetting.BoardTypeCurrent)
+            {
+                // TODO : 現在の局面からのスタート。初回に保存してあるべき。
+                kifuManager.Init();
+                kifuManager.InitBoard(gameSetting.BoardSetting.BoardType);
+            }
+            else // if (gameSetting.Board.BoardTypeEnable)
+            {
+                kifuManager.Init();
+                kifuManager.InitBoard(gameSetting.BoardSetting.BoardType);
+            }
+
+            // 本譜の手順に変更したので現在局面と棋譜ウィンドウのカーソルとを同期させておく。
+            UpdateKifuSelectedIndex();
+
+            // 現在の時間設定を、KifuManager.Treeに反映させておく(棋譜保存時にこれが書き出される)
+            kifuManager.Tree.KifuTimeSettings = gameSetting.KifuTimeSettings;
+
+            // 対局者氏名の設定
+            // 人間の時のみ有効。エンジンの時は、エンジン設定などから取得することにする。
+            foreach (var c in All.Colors())
+            {
+                var player = Player(c);
+                string name;
+                switch (player.PlayerType)
+                {
+                    case PlayerTypeEnum.Human:
+                        name = gameSetting.PlayerSetting(c).PlayerName;
+                        break;
+
+                    default:
+                        name = c.Pretty();
+                        break;
+                }
+
+                kifuManager.KifuHeader.SetPlayerName(c, name);
+            }
+
+            // 消費時間計算用
+            foreach (var c in All.Colors())
+            {
+                var pc = PlayTimer(c);
+                pc.KifuTimeSetting = GameSetting.KifuTimeSettings.Player(c);
+                pc.GameStart();
+                timeSettingStrings[(int)c] = pc.KifuTimeSetting.ToShortString();
+            }
+
+            // rootの持ち時間設定をここに反映させておかないと待ったでrootまで持ち時間が戻せない。
+            // 途中の局面からだとここではなく、現局面のところに書き出す必要がある。
+            kifuManager.Tree.SetKifuMoveTimes(PlayTimers.GetKifuMoveTimes());
+
+            // プレイヤー情報などを検討ダイアログに反映させる。
+            InitEngineConsiderationInfo(nextGameMode);
+
+            // 検討モードならそれを停止させる必要があるが、それはGameModeのsetterがやってくれる。
+            GameMode = nextGameMode;
+
+            // 新規対局で手番が変わった。
+            NotifyTurnChanged();
         }
 
         /// <summary>
@@ -751,22 +842,17 @@ namespace MyShogi.Model.Shogi.LocalServer
             foreach (var c in All.Colors())
                 PlayTimer(c).StopTimer();
 
-            // 棋譜ウィンドウ、勝手に書き換えられると困るのでこれでfixさせておく。
-            kifuManager.EnableKifuList = false;
-
             // TODO : この対局棋譜を保存しなければならない。
 
-
             // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
-            // (エンジンを入れ替えたりしないといけない)
-
             if (++ContinuousGameCount < ContinuousGame)
             {
-                // TODO : 先後(の設定)を入替えないといけない。
-
-                GameStart(GameSetting);
+                GameRestart(GameSetting);
                 return;
             }
+
+            // 棋譜ウィンドウ、勝手に書き換えられると困るのでこれでfixさせておく。
+            kifuManager.EnableKifuList = false;
 
             // 連続対局でないなら..
             Disconnect();

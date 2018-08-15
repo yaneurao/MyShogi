@@ -3,6 +3,15 @@
 ■　2018/08/15
 
 
+- 連続対局のための作業その2
+  - 連続対局はCOM同士の時に限定する。
+  - 対局ごとに先後入れ替えるのめっちゃむずい。ThinkReportの入替えも必要になる。あとでよく考える。
+- mateとupperbound/lowerboundの組み合わせでparse errorになっていたの修正。
+  USI Parse Error : 例外が発生しました。: info 文字列の解析に失敗 : info depth 7 seldepth 9 score mate -6 upperbound nodes 5383 nps 448583 time 12 pv 2g1h 4b3a
+  - mate -6とupperboundの組み合わせがparse errorっぽい。
+  - これ、WhaleWatcherもか。えびちゃんに報告しとく。
+
+
 - 連続対局のための作業その1
   - 対局設定ダイアログに連続対局のための設定追加。
     - 設定項目の終了時の保存/次回起動時の復元のコード追加。

@@ -721,39 +721,45 @@ namespace MyShogi.Model.Shogi.Usi
         /// <returns></returns>
         private EvalValueEx HandleInfoScore(Scanner scanner)
         {
-            var bound = ScoreBound.Exact;
+            EvalValue eval;
             switch (scanner.ParseText())
             {
                 case "cp":
                     var valueText = scanner.ParseText();
-
-                    // lowerbound/upperboundを取得
-                    var peek = scanner.PeekText(); // peekします
-                    if (peek == "upperbound")
-                    {
-                        bound = ScoreBound.Upper;
-                        scanner.ParseText();
-                    }
-                    else if (peek == "lowerbound")
-                    {
-                        bound = ScoreBound.Lower;
-                        scanner.ParseText();
-                    }
-
-                    // ここでエンジンによっては、"120↑"のような表現がありうる。
-                    // "upperbound","lowerbound"がサポートされていなかったころの名残。
-                    // ここではそれを許容しない。
-
-                    return new EvalValueEx((EvalValue)int.Parse(valueText) , bound);
+                    eval = (EvalValue)int.Parse(valueText);
+                    break;
 
                 case "mate":
-                    return new EvalValueEx( ParseMate(scanner.ParseText()) , bound);
+                    eval = ParseMate(scanner.ParseText());
+                    break;
 
                 default:
-                    break;
+                    return null;
             }
 
-            return null;
+            ScoreBound bound;
+
+            // lowerbound/upperboundを取得
+            // (この指定はmateに対しても起こりうる)
+
+            var peek = scanner.PeekText(); // peekします
+            if (peek == "upperbound")
+            {
+                bound = ScoreBound.Upper;
+                scanner.ParseText();
+            }
+            else if (peek == "lowerbound")
+            {
+                bound = ScoreBound.Lower;
+                scanner.ParseText();
+            } else
+                bound = ScoreBound.Exact;
+
+            // ここでエンジンによっては、"120↑"のような表現がありうる。
+            // "upperbound","lowerbound"がサポートされていなかったころの名残。
+            // ここではそれを許容しない。
+
+            return new EvalValueEx(eval,bound);
         }
 
         /// <summary>
