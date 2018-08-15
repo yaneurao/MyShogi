@@ -48,6 +48,25 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue("EnteringKingRule", value); }
         }
 
+        /// <summary>
+        /// 連続対局を有効にするのか
+        /// </summary>
+        [DataMember]
+        public bool ContinuousGameEnable
+        {
+            get { return GetValue<bool>("ContinuousGameEnable"); }
+            set { SetValue("ContinuousGameEnable", value); }
+        }
+
+        /// <summary>
+        /// 連続対局の回数。(ContinuousGameEnable == trueのときのみ有効)
+        /// </summary>
+        public int ContinuousGame
+        {
+            get { return GetValue<int>("ContinuousGame"); }
+            set { SetValue<int>("ContinuousGame", value); }
+        }
+
         // -- public members
 
         public MiscSettings()
@@ -55,6 +74,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             MaxMovesToDrawEnable = false;
             MaxMovesToDraw = 256;
             EnteringKingRule = 2; // デフォルトでは27点法
+
+            // デフォルトでは連続対局は無効
+            ContinuousGameEnable = false;
+            ContinuousGame = 100;
         }
 
         public MiscSettings Clone()

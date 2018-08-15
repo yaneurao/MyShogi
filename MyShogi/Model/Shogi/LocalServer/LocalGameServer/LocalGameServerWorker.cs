@@ -158,7 +158,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             UpdateKifuSelectedIndex();
 
             // エンジンに与えるHashSize,Threadsの計算
-            if (UsiEngineHashManager.CalcHashSize() != 0)
+            var firstOfContinuousGame = ContinuousGameCount == 0; // 連続対局の初回局である
+            if (UsiEngineHashManager.CalcHashSize(firstOfContinuousGame) != 0)
             {
                 // Hash足りなくてダイアログ出した時にキャンセルボタン押されとる
                 Disconnect();
@@ -753,8 +754,19 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 棋譜ウィンドウ、勝手に書き換えられると困るのでこれでfixさせておく。
             kifuManager.EnableKifuList = false;
 
+            // TODO : この対局棋譜を保存しなければならない。
+
+
             // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
             // (エンジンを入れ替えたりしないといけない)
+
+            if (++ContinuousGameCount < ContinuousGame)
+            {
+                // TODO : 先後(の設定)を入替えないといけない。
+
+                GameStart(GameSetting);
+                return;
+            }
 
             // 連続対局でないなら..
             Disconnect();

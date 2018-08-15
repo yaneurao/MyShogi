@@ -37,9 +37,12 @@ namespace MyShogi.Model.Shogi.Usi
         /// ・this.HashSize[2]にそれぞれのエンジンの適切なHashサイズを設定する。
         /// エンジンオプションに従う場合は、0が設定される。
         /// ・this.Threads[2]にそれぞれのエンジンの適切なThreads数を設定する。
+        ///
+        /// warningEnableが有効なとき、警告メッセージを有効にする。
+        /// (連続対局の2回目以降は、warningEnable == falseにすべき)
         /// </summary>
         /// <returns>キャンセルボタンを押したなら非0</returns>
-        public int CalcHashSize()
+        public int CalcHashSize(bool warningEnable = true)
         {
             // エンジンの数
             int numOfEngines = (EngineDefines[0] != null ? 1 : 0) + (EngineDefines[1] != null ? 1 : 0);
@@ -203,7 +206,7 @@ namespace MyShogi.Model.Shogi.Usi
                 if (!Environment.Is64BitOperatingSystem && Threads[c] >= 8)
                     error += $"{((Color)c).Pretty()}側のエンジンのスレッド数が{Threads[c]}に設定されていますが、8以上を設定するとOSが32bitの環境ではうまく動かない場合があります。";
 
-            if (error != null)
+            if (error != null && warningEnable)
             {
                 var result = TheApp.app.MessageShow(error, MessageShowType.WarningOkCancel);
                 if (result == DialogResult.Cancel)

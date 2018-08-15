@@ -138,13 +138,17 @@ namespace MyShogi.View.Win2D
             binder.Bind(misc, "MaxMovesToDrawEnable", checkBox4 , (v)=>
             {
                 misc.MaxMovesToDrawEnable = v;
-                numericUpDown11.Enabled = v;
+                numericUpDown2.Enabled = v;
             });
 
-            binder.Bind(misc , "MaxMovesToDraw" , numericUpDown11);
+            binder.Bind(misc , "MaxMovesToDraw" , numericUpDown2);
 
             // 入玉ルール設定
             binder.Bind(misc, "EnteringKingRule", comboBox1);
+
+            // 連続対局の設定
+            binder.Bind(misc, "ContinuousGameEnable", checkBox2);
+            binder.Bind(misc, "ContinuousGame", numericUpDown1);
 
             ResumeLayout();
         }

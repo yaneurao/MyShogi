@@ -293,6 +293,12 @@ namespace MyShogi.Model.Shogi.LocalServer
         public string PresetName(Color c) { return presetNames[(int)c]; }
         private string[] presetNames = new string[2];
 
+        /// <summary>
+        /// 連続対局のための変数
+        /// </summary>
+        private int ContinuousGame; // 連続対局の回数
+        private int ContinuousGameCount; // 連続対局の何回目であるか
+
         #endregion
 
         #region 依存性のあるプロパティの処理

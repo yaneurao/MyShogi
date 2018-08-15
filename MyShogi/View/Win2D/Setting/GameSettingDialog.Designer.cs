@@ -38,18 +38,23 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.button2 = new System.Windows.Forms.Button();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.numericUpDown11 = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.playerSettingControl2 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
             this.playerSettingControl1 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
             this.timeSettingControl2 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
             this.timeSettingControl1 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
             this.groupBox3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.groupBox6.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox3
@@ -117,7 +122,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(129, 445);
+            this.button1.Location = new System.Drawing.Point(129, 460);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(100, 27);
             this.button1.TabIndex = 19;
@@ -129,7 +134,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(399, 289);
+            this.checkBox1.Location = new System.Drawing.Point(399, 304);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(194, 18);
             this.checkBox1.TabIndex = 20;
@@ -139,7 +144,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(534, 445);
+            this.button2.Location = new System.Drawing.Point(534, 460);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(100, 27);
             this.button2.TabIndex = 29;
@@ -160,19 +165,19 @@
         "おいてやる必要があります。");
             this.checkBox4.UseVisualStyleBackColor = true;
             // 
-            // numericUpDown11
+            // numericUpDown2
             // 
-            this.numericUpDown11.Location = new System.Drawing.Point(203, 20);
-            this.numericUpDown11.Maximum = new decimal(new int[] {
+            this.numericUpDown2.Location = new System.Drawing.Point(203, 20);
+            this.numericUpDown2.Maximum = new decimal(new int[] {
             999999,
             0,
             0,
             0});
-            this.numericUpDown11.Name = "numericUpDown11";
-            this.numericUpDown11.Size = new System.Drawing.Size(60, 21);
-            this.numericUpDown11.TabIndex = 30;
-            this.numericUpDown11.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.numericUpDown11.Value = new decimal(new int[] {
+            this.numericUpDown2.Name = "numericUpDown2";
+            this.numericUpDown2.Size = new System.Drawing.Size(60, 21);
+            this.numericUpDown2.TabIndex = 30;
+            this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.numericUpDown2.Value = new decimal(new int[] {
             256,
             0,
             0,
@@ -180,21 +185,59 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.label3);
+            this.groupBox6.Controls.Add(this.label2);
+            this.groupBox6.Controls.Add(this.checkBox2);
+            this.groupBox6.Controls.Add(this.numericUpDown1);
             this.groupBox6.Controls.Add(this.label1);
             this.groupBox6.Controls.Add(this.comboBox1);
             this.groupBox6.Controls.Add(this.checkBox4);
-            this.groupBox6.Controls.Add(this.numericUpDown11);
+            this.groupBox6.Controls.Add(this.numericUpDown2);
             this.groupBox6.Location = new System.Drawing.Point(388, 177);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(374, 77);
+            this.groupBox6.Size = new System.Drawing.Size(374, 108);
             this.groupBox6.TabIndex = 31;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "その他の設定";
             // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(12, 46);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(115, 18);
+            this.checkBox2.TabIndex = 33;
+            this.checkBox2.Text = "連続対局を行う";
+            this.toolTip1.SetToolTip(this.checkBox2, "連続対局を行います。\r\n対局結果一覧はメニューの「ウィンドウ」→「対局結果ウインドウ」を選ぶと確認できます。");
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(203, 46);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(60, 21);
+            this.numericUpDown1.TabIndex = 34;
+            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 49);
+            this.label1.Location = new System.Drawing.Point(12, 76);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(68, 14);
             this.label1.TabIndex = 32;
@@ -209,11 +252,29 @@
             "24点法(CSAルール)",
             "27点法(CSAルール)",
             "トライルール"});
-            this.comboBox1.Location = new System.Drawing.Point(85, 46);
+            this.comboBox1.Location = new System.Drawing.Point(85, 73);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(138, 21);
             this.comboBox1.TabIndex = 31;
             this.toolTip1.SetToolTip(this.comboBox1, resources.GetString("comboBox1.ToolTip"));
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(267, 23);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(21, 14);
+            this.label2.TabIndex = 35;
+            this.label2.Text = "手";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(267, 49);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(21, 14);
+            this.label3.TabIndex = 36;
+            this.label3.Text = "局";
             // 
             // playerSettingControl2
             // 
@@ -233,7 +294,7 @@
             // 
             // timeSettingControl2
             // 
-            this.timeSettingControl2.Location = new System.Drawing.Point(389, 311);
+            this.timeSettingControl2.Location = new System.Drawing.Point(389, 326);
             this.timeSettingControl2.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.timeSettingControl2.Name = "timeSettingControl2";
             this.timeSettingControl2.Size = new System.Drawing.Size(379, 129);
@@ -241,7 +302,7 @@
             // 
             // timeSettingControl1
             // 
-            this.timeSettingControl1.Location = new System.Drawing.Point(6, 309);
+            this.timeSettingControl1.Location = new System.Drawing.Point(6, 324);
             this.timeSettingControl1.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.timeSettingControl1.Name = "timeSettingControl1";
             this.timeSettingControl1.Size = new System.Drawing.Size(381, 131);
@@ -251,7 +312,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(771, 478);
+            this.ClientSize = new System.Drawing.Size(771, 492);
             this.Controls.Add(this.playerSettingControl2);
             this.Controls.Add(this.playerSettingControl1);
             this.Controls.Add(this.timeSettingControl2);
@@ -270,9 +331,10 @@
             this.Text = "対局";
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown11)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -287,7 +349,7 @@
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.CheckBox checkBox4;
-        private System.Windows.Forms.NumericUpDown numericUpDown11;
+        private System.Windows.Forms.NumericUpDown numericUpDown2;
         private System.Windows.Forms.GroupBox groupBox6;
         private Setting.TimeSettingControl timeSettingControl1;
         private Setting.TimeSettingControl timeSettingControl2;
@@ -296,5 +358,9 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label2;
     }
 }

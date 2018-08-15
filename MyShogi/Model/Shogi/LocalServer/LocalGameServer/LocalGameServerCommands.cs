@@ -47,6 +47,12 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // いったんリセット
                     GameEnd();
+
+                    // 連続対局の回数をセット
+                    var misc = gameSetting.MiscSettings;
+                    ContinuousGame = misc.ContinuousGameEnable ? misc.ContinuousGame : 1;
+                    ContinuousGameCount = 0;
+
                     GameStart(gameSetting);
 
                     // エンジンの初期化が終わったタイミングで自動的にNotifyTurnChanged()が呼び出される。
@@ -181,6 +187,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // 中断の指し手
                     stmPlayer.SpecialMove = Move.INTERRUPT;
+
+                    // 連続対局の中止のためにカウンターを上限値にしておく。
+                    ContinuousGameCount = ContinuousGame;
                 }
             });
         }
