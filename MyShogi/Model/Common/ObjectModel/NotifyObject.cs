@@ -364,6 +364,19 @@ namespace MyShogi.Model.Common.ObjectModel
         }
 
         /// <summary>
+        /// プロパティが変更されたときに呼び出されるハンドラを名前を指定してすべて削除する。
+        /// </summary>
+        /// <param name="name"></param>
+        public void RemovePropertyChangedHandler(string name)
+        {
+            lock (lockObject)
+            {
+                var current = GetProperty(name);
+                current.handler = null;
+            }
+        }
+
+        /// <summary>
         /// DataBindする。別のNotifyObjectの同名のプロパティと紐づけられる。
         /// way : OneWay  片方向のbinding(thisのnameが変更されたときにnotify.nameに値がコピーされる。)
         /// way : TwoWay  双方向のbinding

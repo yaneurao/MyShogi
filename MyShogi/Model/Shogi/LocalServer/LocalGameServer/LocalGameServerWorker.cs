@@ -236,10 +236,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 連続対局の2局目以降である。
+        /// 連続対局の2局目以降の開始処理。
         /// GameStart()をコピペして、プレイヤーの生成と、エンジンの初期化部分をはしょってある。
+        /// ・先後プレイヤーの入替えの処理
+        /// ・先後の対局設定の入替えの処理
+        /// ・検討ウィンドウへのリダイレクトのしなおし(先後入れ替わるので)
         /// </summary>
-        public void GameRestart(GameSetting gameSetting)
+        public void GameRestart()
         {
             var nextGameMode = GameModeEnum.InTheGame;
 
@@ -253,6 +256,24 @@ namespace MyShogi.Model.Shogi.LocalServer
             // プレイヤーの生成
             // →　生成されているはず
             // エンジンの初期化も終わっているはず。
+
+            // プレイヤーの実体の先後入替え
+            Utility.Swap(ref Players[0], ref Players[1]);
+            Utility.Swap(ref EngineDefineExes[0], ref EngineDefineExes[1]);
+            Utility.Swap(ref presetNames[0], ref presetNames[1]);
+
+            // 対局の持ち時間設定などの先後入替
+            var gameSetting = GameSetting;
+            gameSetting.SwapPlayer();
+            GameSetting = gameSetting;
+
+            // 検討ウィンドウのリダイレクト、先後入れ替えるのでいったんリセット
+            foreach (var c in All.Colors())
+            {
+                var engine_player = Player(c) as UsiEnginePlayer;
+                engine_player.Engine.RemovePropertyChangedHandler("ThinkReport");
+            }
+            InitEngineConsiderationInfo(nextGameMode);
 
             // 局面の設定
             kifuManager.EnableKifuList = true;
@@ -847,7 +868,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
             if (++ContinuousGameCount < ContinuousGame)
             {
-                GameRestart(GameSetting);
+                GameRestart();
                 return;
             }
 
