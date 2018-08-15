@@ -130,6 +130,11 @@ namespace MyShogi.Model.Shogi.Converter.Svg
     public class Svg
     {
         /// <summary>
+        /// 全角を2、半角を1とした文字列の長さを返します
+        /// </summary>
+        int GetShiftJISLength(string stTarget) => System.Text.Encoding.GetEncoding("Shift_JIS").GetByteCount(stTarget);
+
+        /// <summary>
         /// svgのヘッダーとフッターを追加します
         /// </summary>
         void InsertSvg(Paragraph p) =>
@@ -208,7 +213,7 @@ namespace MyShogi.Model.Shogi.Converter.Svg
 
         Paragraph Draw(Position pos, KifuHeader kifuHeader)
         {
-            Color sideToView = Color.BLACK; // 後手なら盤面の出力を反転する
+            Color sideToView = Color.BLACK; // どちらの手番から見た盤面を出力するか
             int gamePly = pos.gamePly; // 手数が1以外なら直前の指し手を出力する
 
             const int boardTopMargin = 50;
@@ -244,7 +249,7 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             // 四角形を描きます
             Paragraph drawSquare(int x, int y, int size, int storockWidth = 1, string color = "#000000")
             {
-                var d = $"d =\"M {s(x)},{s(y)} h {s(size)} v {s(size)} h {s(-size)} z\"";
+                var d = $"d=\"M {s(x)},{s(y)} h {s(size)} v {s(size)} h {s(-size)} z\"";
                 var option = color == "#000000" ? "fill=\"none\" " : $"fill=\"{color}\" ";
                 option += $"stroke-width=\"{storockWidth}\" stroke=\"#000000\"";
                 return new Paragraph($"<path {d} {option} />");
@@ -313,10 +318,8 @@ namespace MyShogi.Model.Shogi.Converter.Svg
                     tempP.Concat(textEx(x, y, str, fontSize));
                     // 駒文字はフォントで出した方が簡単だけど……
                     Color prevSide = pos.sideToMove == Color.BLACK ? Color.WHITE : Color.BLACK;
-                    // おおよその長さを知る関数
-                    int LenB(string stTarget) => System.Text.Encoding.GetEncoding("Shift_JIS").GetByteCount(stTarget);
-                    var lenStr = LenB(str);
-                    var lenStr2 = LenB(str2);
+                    var lenStr = GetShiftJISLength(str);
+                    var lenStr2 = GetShiftJISLength(str2);
 
                     var px = x + (lenStr * fontSize / 4) - (lenStr2 * fontSize / 2) - fontSize / 2;
                     var py = y - fontSize;
@@ -342,7 +345,7 @@ namespace MyShogi.Model.Shogi.Converter.Svg
                 int offsetY = baseY + rank * blockSize;
                 int correct; // 駒はマス目の中央よりやや下に置く補正
 #if NeglectEdge
-            correct = (int)(pieceSize * 0.1);
+                correct = (int)(pieceSize * 0.1);
 #else
                 correct = (int)(pieceSize * 0.4); // IEでは縦のセンタリングが効かないのを無理矢理補正
 #endif
@@ -356,7 +359,6 @@ namespace MyShogi.Model.Shogi.Converter.Svg
                     tempP.InsertTag("g", "class=\"pieceb\"");
                 }
                 return tempP;
-
             }
 
             // 名前、持駒領域の描写
@@ -368,47 +370,42 @@ namespace MyShogi.Model.Shogi.Converter.Svg
                 var y = boardTop + boardTopMargin + fontSize / 2;
                 var offsetX = boardLeft + blockSize * 9 / 2;
                 var offsetY = boardTop + blockSize * 9 / 2;
-
                 var tempP = drawPentagon(x, y - fontSize * 5 / 4, isBlack);
 
-                // 縦書きのレンダリングがうんこだけど我慢してみる
+                // 縦書きで複数文字レンダリングするとブラウザによって挙動が異なるが我慢する
                 var handStr = "持駒";
-                var totalLength = name.Length + handStr.Length + hand.Length;
+                var totalLength = (GetShiftJISLength(name) + GetShiftJISLength(handStr) + GetShiftJISLength(hand)) / 2;
                 var renderSize = 0;
                 // 文字数に応じて適当にフォントサイズを変更する
-                if (totalLength <= 15)
+                if (totalLength <= 11)
                 {
                     renderSize = fontSize;
                 }
-                else if (totalLength <= 17)
+                else if (totalLength <= 13)
                 {
                     renderSize = (int)(fontSize * 0.9);
                 }
-                else if (totalLength <= 19)
+                else if (totalLength <= 15)
                 {
                     renderSize = (int)(fontSize * 0.8);
                 }
-                else if (totalLength <= 22)
-                {
-                    renderSize = (int)(fontSize * 0.7);
-                }
-                else if (totalLength <= 24)
-                {
-                    renderSize = (int)(fontSize * 0.65);
-                }
                 else
                 {
-                    renderSize = (int)(fontSize * 0.6);
+                    renderSize = (int)(fontSize * 0.75);
                 }
 
-                // 出力を簡潔にするため、フォントサイズがデフォルトのときはExじゃない方を呼ぶ
-                if (renderSize == fontSize)
-                {
-                    tempP.Concat(drawText(x, y, $"{name}　{handStr}　{hand}"));
-                }
-                else
+                if (totalLength <= 17)
                 {
                     tempP.Concat(drawTextEx(x, y, $"{name}　{handStr}　{hand}", renderSize));
+                }
+                else if (totalLength <= 19)
+                {
+                    tempP.Concat(drawTextEx(x, y, $"{name} {handStr} {hand}", renderSize));
+                }
+                else // 2段組みにする
+                {
+                    tempP.Concat(drawTextEx(x + renderSize / 2, y, $"{name}", renderSize));
+                    tempP.Concat(drawTextEx(x - renderSize / 2, y, $"{handStr}　{hand}", renderSize));
                 }
 
                 if (isReverse)
@@ -436,7 +433,6 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             }
 
             // 手駒の描写
-            // 先手、後手の表示も変更できたほうがいいかも
             Paragraph drawHands()
             {
                 Hand b = pos.Hand(Color.BLACK);
@@ -509,5 +505,4 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             return p.ToString();
         }
     }
-
 }
