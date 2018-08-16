@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using MyShogi.Model.Common.ObjectModel;
@@ -599,8 +600,11 @@ namespace MyShogi.Model.Shogi.Usi
                             break;
 
                         // リポート情報のみ更新
+                        // このtimeは無視して、server timeが入るべき。
                         case "time":
-                            info.ElapsedTime = TimeSpan.FromMilliseconds(scanner.ParseInt());
+                            //info.ElapsedTime = TimeSpan.FromMilliseconds(scanner.ParseInt());
+
+                            scanner.ParseText();
                             break;
 
                         case "multipv":
@@ -639,7 +643,13 @@ namespace MyShogi.Model.Shogi.Usi
 
                 // 次のThink()が呼び出されているなら、この読み筋は、無効化されなくてはならない。
                 if (!ThinkingBridge.IsStopping)
+                {
+                    // 思考時間はgoコマンドからの時間を用いる。
+                    // 思考エンジンから送られてきた値は採用しない。
+                    info.ElapsedTime = ThinkingBridge.ElapsedTime;
+
                     ThinkReport = info;
+                }
             } catch
             {
                 throw new UsiException("info 文字列の解析に失敗 : " + scanner.Text);
@@ -814,6 +824,7 @@ namespace MyShogi.Model.Shogi.Usi
                 {
                     Moves = moves,
                     Eval = eval,
+                    ElapsedTime = ThinkingBridge.ElapsedTime,
                 };
             }
 

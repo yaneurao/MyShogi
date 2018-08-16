@@ -1,4 +1,6 @@
-﻿using MyShogi.Model.Shogi.Core;
+﻿using System;
+using System.Diagnostics;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Usi
 {
@@ -103,7 +105,20 @@ namespace MyShogi.Model.Shogi.Usi
                 StopSent = false;
                 bestMove = Move.NONE;
                 ponderMove = Move.NONE;
+
+                // Stopwatchも回しておく。
+                think_timer.Reset();
+                think_timer.Start();
             }
+        }
+
+        /// <summary>
+        /// Think()を呼び出して思考が開始されてからの経過時間を返す。
+        /// </summary>
+        /// <returns></returns>
+        public TimeSpan ElapsedTime
+        {
+            get { return think_timer.Elapsed; }
         }
 
         /// <summary>
@@ -159,5 +174,6 @@ namespace MyShogi.Model.Shogi.Usi
         private Move bestMove;
         private Move ponderMove;
 
+        private Stopwatch think_timer = new Stopwatch();
     }
 }

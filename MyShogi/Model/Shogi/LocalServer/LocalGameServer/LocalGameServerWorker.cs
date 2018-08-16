@@ -88,6 +88,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         private void GameStart(GameSetting gameSetting)
         {
             // -- 連続対局の回数をセット
+
             var misc = gameSetting.MiscSettings;
             // CPU同士の時のみ連続対局が有効である。
             ContinuousGame =
@@ -99,6 +100,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 以下の初期化中に駒が動かされるの気持ち悪いのでユーザー操作を禁止しておく。
             CanUserMove = false;
             Initializing = true;
+
             var nextGameMode = GameModeEnum.InTheGame;
 
             // 音声:「よろしくお願いします。」
@@ -179,60 +181,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 return;
             }
 
-            // 現在の時間設定を、KifuManager.Treeに反映させておく(棋譜保存時にこれが書き出される)
-            kifuManager.Tree.KifuTimeSettings = gameSetting.KifuTimeSettings;
-
-            // 対局者氏名の設定
-            // 人間の時のみ有効。エンジンの時は、エンジン設定などから取得することにする。
-            foreach (var c in All.Colors())
-            {
-                var player = Player(c);
-                string name;
-                switch (player.PlayerType)
-                {
-                    case PlayerTypeEnum.Human:
-                        name = gameSetting.PlayerSetting(c).PlayerName;
-                        break;
-
-                    default:
-                        name = c.Pretty();
-                        break;
-                }
-
-                kifuManager.KifuHeader.SetPlayerName(c, name);
-            }
-
             // 持ち時間などの設定が必要なので、コピーしておく。
             GameSetting = gameSetting;
 
-            // 消費時間計算用
-            foreach (var c in All.Colors())
-            {
-                var pc = PlayTimer(c);
-                pc.KifuTimeSetting = GameSetting.KifuTimeSettings.Player(c);
-                pc.GameStart();
-                timeSettingStrings[(int)c] = pc.KifuTimeSetting.ToShortString();
-            }
-
-            // rootの持ち時間設定をここに反映させておかないと待ったでrootまで持ち時間が戻せない。
-            // 途中の局面からだとここではなく、現局面のところに書き出す必要がある。
-            kifuManager.Tree.SetKifuMoveTimes(PlayTimers.GetKifuMoveTimes());
-
-            // コンピュータ vs 人間である場合、人間側を手前にしてやる。
-            // 人間 vs 人間の場合も最初の手番側を手前にしてやる。
-            var stm = kifuManager.Position.sideToMove;
-            // 1. 手番側が人間である場合(非手番側が人間 or CPU)
-            if (gameSetting.PlayerSetting(stm).IsHuman)
-                BoardReverse = (stm == Color.WHITE);
-            // 2. 手番側がCPUで、非手番側が人間である場合。
-            else if (gameSetting.PlayerSetting(stm).IsCpu && gameSetting.PlayerSetting(stm.Not()).IsHuman)
-                BoardReverse = (stm == Color.BLACK);
-
-            // プレイヤー情報などを検討ダイアログに反映させる。
-            InitEngineConsiderationInfo(nextGameMode);
-
-            // 検討モードならそれを停止させる必要があるが、それはGameModeのsetterがやってくれる。
-            GameMode = nextGameMode;
+            // Restart処理との共通部分
+            GameStartInCommon(nextGameMode);
         }
 
         /// <summary>
@@ -273,7 +226,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var engine_player = Player(c) as UsiEnginePlayer;
                 engine_player.Engine.RemovePropertyChangedHandler("ThinkReport");
             }
-            InitEngineConsiderationInfo(nextGameMode);
 
             // 局面の設定
             kifuManager.EnableKifuList = true;
@@ -291,6 +243,19 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 本譜の手順に変更したので現在局面と棋譜ウィンドウのカーソルとを同期させておく。
             UpdateKifuSelectedIndex();
+
+            GameStartInCommon(nextGameMode);
+
+            // 新規対局で手番が変わった。
+            NotifyTurnChanged();
+        }
+
+        /// <summary>
+        /// GameStart()とGameRestart()の共通部分
+        /// </summary>
+        private void GameStartInCommon(GameModeEnum nextGameMode)
+        {
+            var gameSetting = GameSetting;
 
             // 現在の時間設定を、KifuManager.Treeに反映させておく(棋譜保存時にこれが書き出される)
             kifuManager.Tree.KifuTimeSettings = gameSetting.KifuTimeSettings;
@@ -328,14 +293,21 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 途中の局面からだとここではなく、現局面のところに書き出す必要がある。
             kifuManager.Tree.SetKifuMoveTimes(PlayTimers.GetKifuMoveTimes());
 
+            // コンピュータ vs 人間である場合、人間側を手前にしてやる。
+            // 人間 vs 人間の場合も最初の手番側を手前にしてやる。
+            var stm = kifuManager.Position.sideToMove;
+            // 1. 手番側が人間である場合(非手番側が人間 or CPU)
+            if (gameSetting.PlayerSetting(stm).IsHuman)
+                BoardReverse = (stm == Color.WHITE);
+            // 2. 手番側がCPUで、非手番側が人間である場合。
+            else if (gameSetting.PlayerSetting(stm).IsCpu && gameSetting.PlayerSetting(stm.Not()).IsHuman)
+                BoardReverse = (stm == Color.BLACK);
+
             // プレイヤー情報などを検討ダイアログに反映させる。
             InitEngineConsiderationInfo(nextGameMode);
 
             // 検討モードならそれを停止させる必要があるが、それはGameModeのsetterがやってくれる。
             GameMode = nextGameMode;
-
-            // 新規対局で手番が変わった。
-            NotifyTurnChanged();
         }
 
         /// <summary>

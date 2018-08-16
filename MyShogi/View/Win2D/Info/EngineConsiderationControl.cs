@@ -217,7 +217,7 @@ namespace MyShogi.View.Win2D
                 // 経過時間、1/10秒まで表示する。
                 // "info string"の文字列を表示する時は、info.Eval == nullでkifuStringにその表示すべき文字列が渡されてここに来るので注意。
 
-                var elpasedTimeString = info.ElapsedTime == null ? null : info.ElapsedTime.ToString("hh':'mm':'ss'.'f");
+                var elpasedTimeString = info.ElapsedTime == null ? null : info.ElapsedTime.ToString("hh':'mm':'ss'.'ff");
                 var ranking = info.MultiPvString == null ? "1" : info.MultiPvString;
 
                 var depthString = info.Eval == null ? null
