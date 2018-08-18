@@ -883,10 +883,22 @@ namespace MyShogi.Model.Shogi.Converter
                 }
                 bod.AppendLine();
             }
-            // TODO: 現在手数、直前の指し手出力
-            // pos.gamePly が private。直前の指し手を出力するには一旦undoMove()して出力すべきか？
-            //
-            // bod.AppendFormat("手数＝{0}  {1}  まで", pos.gamePly - 1, pos.State().lastMove).appendLine();
+            // 現在手数、直前の指し手出力
+            if (pos.gamePly > 1)
+            {
+                var lastPos = pos.Clone();
+                lastPos.UndoMove();
+                var st = lastPos.State();
+                var lastMove = st == null ? Move.NONE : st.lastMove;
+                if (lastMove == Move.NONE || lastMove.IsSpecial())
+                {
+                    bod.AppendLine($"手数＝{pos.gamePly - 1}");
+                }
+                else
+                {
+                    bod.AppendLine($"手数＝{pos.gamePly - 1}  {lastPos.ToKi2(lastMove)}  まで");
+                }
+            }
             // 後手番のみ追加行
             if (pos.sideToMove == Color.WHITE)
             {
