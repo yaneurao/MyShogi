@@ -3,6 +3,7 @@
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MyShogi.Model.Shogi.Kifu
 {
@@ -13,17 +14,44 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 棋譜ではなく図に近いので逆変換は出来ない。
         /// </summary>
         /// <returns></returns>
-        private string ToSvgString()
-        {
-            var svg = new Converter.Svg.Svg();
-            var result = svg.ToString(Position, KifuHeader);
-            return result;
-        }
+        private string ToSvgString() =>
+            new Converter.Svg.Svg().ToString(Position, KifuHeader);
     }
 }
 
 namespace MyShogi.Model.Shogi.Converter.Svg
 {
+    /// <summary>
+    /// 要素構築クラス
+    /// </summary>
+    public class Element
+    {
+        public string name;
+        public string content;
+        public Dictionary<string, string> attrs;
+        public Element(string name, string content = "", Dictionary<string, string> attrs = null)
+        {
+            this.name = name;
+            this.content = content;
+            this.attrs = attrs ?? new Dictionary<string, string>();
+        }
+        override public string ToString()
+        {
+            var attrsBuf = new List<string>();
+            foreach (var kvp in attrs)
+            {
+                if (!string.IsNullOrWhiteSpace(kvp.Value))
+                {
+                    attrsBuf.Add($"{kvp.Key}=\"{kvp.Value}\"");
+                }
+            }
+            return string.IsNullOrWhiteSpace(content) ?
+                $"<{name} {string.Join(" ", attrsBuf)}/>" :
+                $"<{name} {string.Join(" ", attrsBuf)}>{content}</{name}>";
+        }
+        public Paragraph ToParagraph() => new Paragraph(ToString());
+    }
+
     /// <summary>
     /// stringにインデント量を付与した構造体
     /// </summary>
@@ -125,88 +153,88 @@ namespace MyShogi.Model.Shogi.Converter.Svg
     }
 
     /// <summary>
-    /// Position(局面)の付随情報を格納する構造体
+    /// SVG描画
     /// </summary>
     public class Svg
     {
-        /// <summary>
-        /// 全角を2、半角を1とした文字列の長さを返します
-        /// </summary>
-        int GetShiftJISLength(string stTarget) => System.Text.Encoding.GetEncoding("Shift_JIS").GetByteCount(stTarget);
-
-        /// <summary>
-        /// svgのヘッダーとフッターを追加します
-        /// </summary>
-        void InsertSvg(Paragraph p) =>
-            p.InsertTag("svg", "xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" xml:lang=\"ja-JP\"");
-
         Paragraph MakeStyle()
         {
-            string[] MintyoList = {
-                "HiraMinProN-W5", "Hiragino Mincho ProN W5", "ヒラギノ明朝体5",
-                "HiraMinProN-W6", "Hiragino Mincho ProN W6", "ヒラギノ明朝 ProN W6",
-                "HiraMinPro-W6", "Hiragino Mincho Pro W6", "ヒラギノ明朝 Pro W6",
-                "IPAexMincho", "IPAex明朝",
-                "Kozuka Mincho Pr6N R", "小塚明朝 Pr6N R",
-                "Kozuka Mincho Pro M", "小塚明朝 Pro M",
-                "HG明朝E",
-                "MS Mincho", "ＭＳ 明朝",
+            string[] MinchoList = {
+                "游明朝", "Yu Mincho", "YuMincho",
+                "Noto Serif CJK JP Medium", "Source Han Serif JP Medium",
+                "Noto Serif CJK JP", "Source Han Serif JP",
+                "Hiragino Mincho ProN",
+                "Kozuka Mincho Pr6N", "Kozuka Mincho Pro",
+                "HGS明朝E", "HG明朝E",
                 "serif"
             };
             string[] GothicList = {
-                "HiraKakuProN-W5", "ヒラギノ角ゴ5",
-                "HiraKakuProN-W6", "ヒラギノ角ゴ ProN W6",
-                "HiraKakuPro-W6", "ヒラギノ角ゴ Pro W6",
-                "IPAexGothic", "IPAexゴシック",
-                "Kozuka Gothic Pr6N M", "小塚ゴシック Pr6N M",
-                "MS Gothic", "ＭＳ ゴシック",
+                "游ゴシック Medium", "Yu Gothic Medium", "YuGothicM", "Yu Gothic", "YuGothic",
+                "Noto Sans CJK JP Medium", "Source Han Sans JP Medium",
+                "Noto Sans CJK JP", "Source Han Sans JP",
+                "Hiragino Kaku Gothic ProN",
+                "Kozuka Gothic Pr6N", "Kozuka Gothic Pro",
                 "sans-serif"
             };
-            string exList(string[] strArray)
-            {
-                string t = "";
-                foreach (var str in strArray)
-                {
-                    t += $"'{str}', ";
-                }
-                t = t.Substring(0, t.Length - 2);
-                return $"font-family: {t};";
-            }
-            Paragraph Mintyo = new Paragraph(exList(MintyoList));
+            string exList(string[] strArray) => $"font-family: {string.Join(", ", strArray.Select(s => $"\"{s}\""))};";
+            Paragraph Mincho = new Paragraph(exList(MinchoList));
+            Mincho.Insert(".piece, .state, .hand, .board {", "}");
             Paragraph Gothic = new Paragraph(exList(GothicList));
+            Gothic.Insert(".pieceb {", "}");
             Paragraph PieceFontSize = new Paragraph("font-size: 50px;");
-            Paragraph HandFontSize = new Paragraph("font-size: 30px;");
-            Paragraph Base = new Paragraph();
-            Base.Concat("stroke: #000000;");
-            Base.Concat("text-anchor: middle;");
-            Paragraph PieceBold = new Paragraph();
-            PieceBold.Concat(Gothic);
-            PieceBold.Concat(PieceFontSize);
-            PieceBold.Concat(Base);
-            PieceBold.Insert(".pieceb {", "}");
-            Paragraph Piece = new Paragraph();
-            Piece.Concat(Mintyo);
-            Piece.Concat(PieceFontSize);
-            Piece.Concat(Base);
-            Piece.Insert(".piece {", "}");
-            Paragraph Info = new Paragraph();
-            Info.Concat(Mintyo);
-            Info.Concat(HandFontSize);
-            Info.Concat(Base);
-            Info.Insert(".info {", "}");
+            PieceFontSize.Insert(".piece, .pieceb {", "}");
+            Paragraph InfoFontSize = new Paragraph("font-size: 30px;");
+            InfoFontSize.Insert(".state, .hand {", "}");
+            Paragraph BoardFontSize = new Paragraph("font-size: 16px;");
+            BoardFontSize.Insert(".board {", "}");
+            Paragraph CenterText = new Paragraph("text-anchor: middle;");
+            CenterText.Insert(".piece, .pieceb, .state, .board {", "}");
             Paragraph Hand = new Paragraph();
-            Hand.Concat(Mintyo);
-            Hand.Concat(HandFontSize);
-            Hand.Concat("stroke: #000000;");
+            // SVG2, CSS Writing Modes Level 3 仕様案では "writing-mode: vertical-rl;" と変更される
+            // SVG1.1仕様での "writing-mode: tb-rl;" は非推奨となるが、互換性のため当面はサポートが残される見込み
+            // https://www.w3.org/TR/SVG11/text.html#WritingModeProperty
+            // https://www.w3.org/TR/SVG2/text.html#WritingModeProperty
+            // https://www.w3.org/TR/css-writing-modes-3/#block-flow
             Hand.Concat("-webkit-writing-mode: tb-rl;");
             Hand.Concat("-ms-writing-mode: tb-rl;");
             Hand.Concat("writing-mode: tb-rl;");
+            // 縦書きモードでは位置指定の基準線(baseline)は "central" が使われる
+            // 但し、IE11/Edge はそもそも dominant-baseline の指定や仕様を無視して
+            // 縦書きモードでも常に "dominant-baseline: alphabetic;" の動作をする？
+            // https://www.w3.org/TR/SVG11/text.html#DominantBaselineProperty
+            // https://www.w3.org/TR/SVG2/text.html#DominantBaselineProperty
+            // https://www.w3.org/TR/css-inline-3/#propdef-dominant-baseline
+            Hand.Concat("dominant-baseline: central;");
+            // https://www.w3.org/TR/css-inline-3/#propdef-alignment-baseline
+            Hand.Concat("alignment-baseline: central;");
+            // https://www.w3.org/TR/css-writing-modes-3/#propdef-text-orientation
+            Hand.Concat("text-orientation: mixed;");
             Hand.Insert(".hand {", "}");
+            Paragraph Text = new Paragraph();
+#if NeglectEdge
+            Text.Concat("dominant-baseline: central;");
+#endif
+            Text.Concat("stroke: none;");
+            Text.Concat("fill: black;");
+            Text.Insert("text {", "}");
+            Paragraph Path = new Paragraph();
+            Path.Concat("stroke: black;");
+            Path.Insert("path {", "}");
+            Paragraph Circle = new Paragraph();
+            Circle.Concat("stroke: none;");
+            Circle.Concat("fill: black;");
+            Circle.Insert("circle {", "}");
             Paragraph tempP = new Paragraph();
-            tempP.Concat(PieceBold);
-            tempP.Concat(Piece);
-            tempP.Concat(Info);
+            tempP.Concat(Mincho);
+            tempP.Concat(Gothic);
+            tempP.Concat(PieceFontSize);
+            tempP.Concat(InfoFontSize);
+            tempP.Concat(BoardFontSize);
+            tempP.Concat(CenterText);
             tempP.Concat(Hand);
+            tempP.Concat(Text);
+            tempP.Concat(Path);
+            tempP.Concat(Circle);
             tempP.Insert("<style>", "</style>");
             return tempP;
         }
@@ -216,90 +244,87 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             Color sideToView = Color.BLACK; // どちらの手番から見た盤面を出力するか
             int gamePly = pos.gamePly; // 手数が1以外なら直前の指し手を出力する
 
-            const int boardTopMargin = 50;
-            const int boardLeftMargin = 40;
-            const int boardRightMargin = 40;
-            // const int boardBottomMargin = 50;
-            const int boardBorder = 30; // 座標の表示領域
-            const int blockSize = 60; // マス目
+            const float boardTopMargin = 56;
+            const float boardLeftMargin = 56;
+            const float boardRightMargin = 56;
+            const float boardBottomMargin = 56;
+            const float boardBorder = 24; // 座標の表示領域
+            const float blockSize = 60; // マス目
                                         // const int boardSize = blockSize * 9 + boardBorder * 2;
-            const int starSize = 5;
-            const int pieceSize = 50;
-            const int fontSize = 30;
+            const float starSize = 5;
+            const float pieceSize = 50;
+            const float fontSize = 30;
+            const float boardFontSize = 16;
 
-            const int boardLeft = boardLeftMargin + boardBorder;
-            const int boardRight = boardLeftMargin + boardBorder + blockSize * 9;
-            const int boardTop = boardTopMargin + boardBorder;
-            // const int boardBottom = boardTopMargin + boardBorder + blockSize * 9;
+            const float boardLeft = boardLeftMargin + boardBorder;
+            const float boardRight = boardLeftMargin + boardBorder + blockSize * 9;
+            const float boardTop = boardTopMargin + boardBorder;
+            const float boardBottom = boardTopMargin + boardBorder + blockSize * 9;
 
-            string s(int i) => i.ToString();
+            const float svgWidth = boardRight + boardBorder + boardRightMargin;
+            const float svgHeight = boardBottom + boardBorder + boardBottomMargin;
 
-            // 直線の描写
-            Paragraph pathLineH(int x, int y, int h, string color = "#000000") =>
-                new Paragraph($"<path d=\"M {s(x)},{s(y)} h {s(h)}\" stroke=\"{color}\" />");
-            Paragraph pathLineV(int x, int y, int v, string color = "#000000") =>
-                new Paragraph($"<path d=\"M {s(x)},{s(y)} v {s(v)}\" stroke=\"{color}\" />");
+            // 直線群の描画
+            Paragraph drawLines(IEnumerable<string> pathes, float strokeWidth = 1) =>
+                new Element("path", "", new Dictionary<string, string>(){
+                    { "d", string.Join(" ", pathes) },
+                    { "stroke-width", float.IsNaN(strokeWidth) ? "" : $"{strokeWidth}" },
+                }).ToParagraph();
 
-            // 円の描写
-            string circle(int cx, int cy, int r, string fill) =>
-                $"<circle cx=\"{s(cx)}\" cy=\"{s(cy)}\" r=\"{s(r)}\" fill=\"{fill}\" />";
-            Paragraph drawCircle(int cx, int cy, int r, string fill = "#000000") =>
-                new Paragraph(circle(cx, cy, r, fill));
+            // 四角形の描画
+            Paragraph drawSquare(float x, float y, float size, float strokeWidth = 1, string fill = "none") =>
+                new Element("path", "", new Dictionary<string, string>(){
+                    { "d", $"M {x},{y} h {size} v {size} h {-size} z" },
+                    { "stroke-width", float.IsNaN(strokeWidth) ? "" : $"{strokeWidth}" },
+                    { "fill", fill },
+                }).ToParagraph();
 
-            // 四角形を描きます
-            Paragraph drawSquare(int x, int y, int size, int storockWidth = 1, string color = "#000000")
-            {
-                var d = $"d=\"M {s(x)},{s(y)} h {s(size)} v {s(size)} h {s(-size)} z\"";
-                var option = color == "#000000" ? "fill=\"none\" " : $"fill=\"{color}\" ";
-                option += $"stroke-width=\"{storockWidth}\" stroke=\"#000000\"";
-                return new Paragraph($"<path {d} {option} />");
-            }
+            // 円の描画
+            Paragraph drawCircle(float cx, float cy, float r) =>
+                new Element("circle", "", new Dictionary<string, string>(){
+                    { "cx", $"{cx}" },
+                    { "cy", $"{cy}" },
+                    { "r", $"{r}" },
+                }).ToParagraph();
 
-            // 駒形の五角形を描きます
+            // 駒形五角形の描画
             // x, yは図形の上端中央を表す
-            Paragraph drawPentagon(int x, int y, bool isBlack = true, string color = "#000000")
+            Paragraph drawPentagon(float x, float y, bool isBlack = true)
             {
-                var f = fontSize;
-                int x1 = x;
+                var x1 = x;
                 var y1 = y;
-                int x2 = x + (int)(f * 0.38);
-                var y2 = y + (int)(f * 0.2);
-                int x3 = x + (int)(f * 0.45);
-                var y3 = y + f;
-                int x4 = x - (int)(f * 0.45);
-                var y4 = y + f;
-                int x5 = x - (int)(f * 0.38);
-                var y5 = y + (int)(f * 0.2);
+                var x2 = x + fontSize * 0.37f;
+                var y2 = y + fontSize * 0.20f;
+                var x3 = x + fontSize * 0.46f;
+                var y3 = y + fontSize;
+                var x4 = x - fontSize * 0.46f;
+                var y4 = y + fontSize;
+                var x5 = x - fontSize * 0.37f;
+                var y5 = y + fontSize * 0.20f;
 
-                var d = $"d=\"M {s(x1)},{s(y1)} L {x2},{y2} {x3},{y3} {x4},{y4} {x5},{y5} z\"";
-                var fill = isBlack ? "" : "fill=\"none\"";
-                var option = $"{fill} stroke-width=\"1\" stroke=\"{color}\"";
-                return new Paragraph($"<path {d} {option} />");
+                // 座標を整数に丸めて出力する
+                return new Element("path", "", new Dictionary<string, string>(){
+                    { "d", $"M {x1:f0},{y1:f0} L {x2:f0},{y2:f0} {x3:f0},{y3:f0} {x4:f0},{y4:f0} {x5:f0},{y5:f0} z" },
+                    { "stroke-width", "1" },
+                    { "fill", isBlack ? "black" : "none" },
+                }).ToParagraph();
             }
 
-            // 文字の描写
-#if NeglectEdge
-        string text(int x, int y, int size, string t, string fill) =>
-            $"<text x=\"{s(x)}\" y=\"{s(y)}\" dominant-baseline=\"central\">{t}</text>";
-        string textEx(int x, int y, string t, int size) =>
-            $"<text x=\"{s(x)}\" y=\"{s(y)}\" font-size=\"{s(size)}\" dominant-baseline=\"central\">{t}</text>";
-#else
-            string text(int x, int y, string t) =>
-                $"<text x=\"{s(x)}\" y=\"{s(y)}\">{t}</text>";
-            string textEx(int x, int y, string t, int size) =>
-                $"<text x=\"{s(x)}\" y=\"{s(y)}\" font-size=\"{s(size)}\">{t}</text>";
-#endif
-            Paragraph drawText(int x, int y, string t) =>
-                new Paragraph(text(x, y, t));
-            Paragraph drawTextEx(int x, int y, string t, int size) =>
-                new Paragraph(textEx(x, y, t, size));
+            // 文字の描画
+            Element textElement(float x, float y, string t, float size = float.NaN) =>
+                new Element("text", t, new Dictionary<string, string>(){
+                    { "x", $"{x:f0}" },
+                    { "y", $"{y:f0}" },
+                    { "font-size", float.IsNaN(size) ? "" : $"{size}" },
+                });
+            Paragraph drawText(float x, float y, string t, float size = float.NaN) => textElement(x, y, t, size).ToParagraph();
 
-            // 直前の指し手情報の描写
+            // 直前の指し手情報の描画
             Paragraph drawState()
             {
                 var move = pos.State().lastMove;
                 var moveStr = "";
-                if (move != Move.NONE && move != Move.NULL && !move.IsSpecial())
+                if (move != Move.NONE && !move.IsSpecial())
                 {
                     var lastPos = pos.Clone();
                     lastPos.UndoMove();
@@ -308,142 +333,219 @@ namespace MyShogi.Model.Shogi.Converter.Svg
                 Paragraph tempP = new Paragraph();
                 if (gamePly == 1)
                 {}
-                else if (move != Move.NONE && move != Move.NULL && !move.IsSpecial())
+                else if (move != Move.NONE && !move.IsSpecial())
                 {
-                    var x = boardLeft + blockSize * 9 / 2;
-                    var y = fontSize + 10;
-                    var str1 = $"【図は{s(gamePly - 1)}手目 　";
+                    var x = boardLeft + blockSize * 4.5f;
+#if NeglectEdge
+                    var y = boardTopMargin * 0.5f;
+#else
+                    var y = boardTopMargin * 0.5f + fontSize * 0.5f;
+#endif
+                    var str1 = $"【図は{gamePly - 1}手目 　";
                     var str2 = $"{moveStr} まで】";
                     var str = $"{str1}{str2}";
-                    tempP.Concat(textEx(x, y, str, fontSize));
+                    tempP.Concat(drawText(x, y, str, fontSize));
                     // 駒文字はフォントで出した方が簡単だけど……
                     Color prevSide = pos.sideToMove == Color.BLACK ? Color.WHITE : Color.BLACK;
-                    var lenStr = GetShiftJISLength(str);
-                    var lenStr2 = GetShiftJISLength(str2);
+                    // おおよその長さ
+                    var lenStr = Converter.EastAsianWidth.legacyWidth(str);
+                    var lenStr2 = Converter.EastAsianWidth.legacyWidth(str2);
 
                     var px = x + (lenStr * fontSize / 4) - (lenStr2 * fontSize / 2) - fontSize / 2;
+#if NeglectEdge
+                    var py = y - fontSize / 2;
+#else
                     var py = y - fontSize;
+#endif
                     tempP.Concat(drawPentagon(px, py, prevSide == Color.BLACK));
                 }
                 else
                 {
-                    var x = boardLeft + blockSize * 9 / 2;
-                    var y = fontSize + 10;
-                    var str = $"【図は{s(gamePly - 1)}手目まで】";
-                    tempP.Concat(textEx(x, y, str, fontSize));
+                    var x = boardLeft + blockSize * 4.5f;
+                    var y = fontSize + 10f;
+                    var str = $"【図は{gamePly - 1}手目まで】";
+                    tempP.Concat(drawText(x, y, str, fontSize));
                 }
-                tempP.InsertTag("g", "class=\"info\"");
+                tempP.InsertTag("g", "class=\"state\"");
                 return tempP;
             }
 
-            // 駒の描写
+            // 駒の描画
             Paragraph drawPiece(int file, int rank, string t, bool isReverse = false, bool isBold = false)
             {
-                int baseX = boardRight + blockSize / 2;
-                int baseY = boardTop - blockSize / 2;
-                int offsetX = baseX - file * blockSize;
-                int offsetY = baseY + rank * blockSize;
-                int correct; // 駒はマス目の中央よりやや下に置く補正
+                float baseX = boardRight + blockSize / 2;
+                float baseY = boardTop - blockSize / 2;
+                float offsetX = baseX - file * blockSize;
+                float offsetY = baseY + rank * blockSize;
+                float correct; // 駒はマス目の中央よりやや下に置く補正
 #if NeglectEdge
-                correct = (int)(pieceSize * 0.1);
+                correct = pieceSize * 0f;
 #else
-                correct = (int)(pieceSize * 0.4); // IEでは縦のセンタリングが効かないのを無理矢理補正
+                correct = pieceSize * 0.4f; // IEでは縦のセンタリングが効かないのを無理矢理補正
 #endif
-                var tempP = drawText(offsetX, offsetY + correct, t);
+                var textElem = textElement(offsetX, offsetY + correct, t);
                 if (isReverse)
                 {
-                    tempP.InsertTag("g", $"transform=\"rotate(180,{offsetX},{offsetY})\"");
+                    textElem.attrs["transform"] = $"rotate(180,{offsetX},{offsetY})";
                 }
                 if (isBold)
                 {
-                    tempP.InsertTag("g", "class=\"pieceb\"");
+                    textElem.attrs["class"] = "pieceb";
                 }
-                return tempP;
+                return textElem.ToParagraph();
             }
 
-            // 名前、持駒領域の描写
+            // 名前、持駒領域の描画
             // とりあえず正位置でレンダリングして盤の中央で180回転させれば逆位置に行く
-            // IE11/Edgeでは縦書き文字の位置が半文字分ほどずれる
-            Paragraph drawHand(string hand, string name, bool isBlack, bool isReverse)
+            // 縦書きで複数文字レンダリングするとブラウザによって挙動が異なるが我慢する
+            // - IE11/Edgeでは縦書き文字の位置が半文字分ほどずれる
+            Paragraph drawHands()
             {
-                var x = boardRight + boardRightMargin;
+                var x = boardRight + boardBorder + boardRightMargin * 0.4f;
                 var y = boardTop + boardTopMargin + fontSize / 2;
-                var offsetX = boardLeft + blockSize * 9 / 2;
-                var offsetY = boardTop + blockSize * 9 / 2;
-                var tempP = drawPentagon(x, y - fontSize * 5 / 4, isBlack);
+                var offsetX = boardLeft + blockSize * 4.5f;
+                var offsetY = boardTop + blockSize * 4.5f;
 
-                // 縦書きで複数文字レンダリングするとブラウザによって挙動が異なるが我慢する
-                var handStr = "持駒";
-                var totalLength = (GetShiftJISLength(name) + GetShiftJISLength(handStr) + GetShiftJISLength(hand)) / 2;
-                var renderSize = 0;
-                // 文字数に応じて適当にフォントサイズを変更する
-                if (totalLength <= 11)
+                var playerName = new[]{
+                    kifuHeader.PlayerNameBlack,
+                    kifuHeader.PlayerNameWhite,
+                };
+                var playerNameLen = new[]{
+                    Converter.EastAsianWidth.legacyWidth(playerName[0]),
+                    Converter.EastAsianWidth.legacyWidth(playerName[1]),
+                };
+                var handBlack = pos.Hand(Color.BLACK);
+                var handWhite = pos.Hand(Color.WHITE);
+                var handStr = new[]{
+                    handBlack == Hand.ZERO ? "なし" : handBlack.Pretty2(),
+                    handWhite == Hand.ZERO ? "なし" : handWhite.Pretty2(),
+                };
+                var HandStrLen = new[]{
+                    Converter.EastAsianWidth.legacyWidth(handStr[0]),
+                    Converter.EastAsianWidth.legacyWidth(handStr[1]),
+                };
+#if NeglectEdge
+                var fixLength = 26;
+                var justifyLength = 22;
+#else
+                var fixLength = 24;
+#endif
+                var handFullMaxLen = System.Math.Max(playerNameLen[0] + HandStrLen[0], playerNameLen[1] + HandStrLen[1]);
+                var twoSided = 32 < handFullMaxLen;
+
+                var tempP = new Paragraph();
+
+                foreach (var c in All.Colors())
                 {
-                    renderSize = fontSize;
-                }
-                else if (totalLength <= 13)
-                {
-                    renderSize = (int)(fontSize * 0.9);
-                }
-                else if (totalLength <= 15)
-                {
-                    renderSize = (int)(fontSize * 0.8);
-                }
-                else
-                {
-                    renderSize = (int)(fontSize * 0.75);
+                    var cI = c.ToInt();
+                    var sideP = drawPentagon(x, y - fontSize * 1.3f, c == Color.BLACK);
+
+                    if (twoSided)
+                    {
+                        var hand1 = playerName[cI];
+                        var hand2 = $"持駒　{handStr[cI]}";
+                        var hand1Len = playerNameLen[cI];
+                        var hand2Len = HandStrLen[cI] + 6;
+                        // 文字数に応じて適当にフォントサイズを変更する
+                        var renderSize1 = System.Math.Min(fontSize / 1.5f, hand1Len <= fixLength ? fontSize : fontSize * fixLength / hand1Len);
+                        var renderSize2 = System.Math.Min(fontSize / 1.5f, hand2Len <= fixLength ? fontSize : fontSize * fixLength / hand2Len);
+                        var handSize = System.Math.Max(renderSize1, renderSize2);
+
+                        // 出力を簡潔にするため、フォントサイズがデフォルトのときはfont-sizeを省略する
+                        var hand1Elem = textElement(x + handSize * 0.6f, y, hand1, fontSize != renderSize1 ? renderSize1 : float.NaN);
+                        var hand2Elem = textElement(x - handSize * 0.6f, y, hand2, fontSize != renderSize2 ? renderSize2 : float.NaN);
+
+#if NeglectEdge
+                        // 両端揃え
+                        // textLength を設定すると IE / Edge で描画が崩壊する
+                        if (hand1Len > justifyLength)
+                        {
+                            hand1Elem.attrs["textLength"] = $"{boardBottom - y}";
+                            hand1Elem.attrs["lengthAdjust"] = "spacingAndGlyphs";
+                        }
+                        if (hand2Len > justifyLength)
+                        {
+                            hand2Elem.attrs["textLength"] = $"{boardBottom - y}";
+                            hand2Elem.attrs["lengthAdjust"] = "spacingAndGlyphs";
+                        }
+#endif
+
+                        sideP.Concat(hand1Elem.ToString());
+                        sideP.Concat(hand2Elem.ToString());
+                    }
+                    else
+                    {
+                        var handFull = $"{playerName[cI]}　持駒　{handStr[cI]}";
+                        // 1段組の時は両者のフォントサイズを揃える
+                        var handLen = handFullMaxLen + 8;
+                        // 出力を簡潔にするため、フォントサイズがデフォルトのときはfont-sizeを省略する
+                        var handElem = textElement(x, y, handFull, handLen > fixLength ? fontSize * fixLength / handLen : float.NaN);
+
+#if NeglectEdge
+                        // 両端揃え
+                        // textLength を設定すると IE / Edge で描画が崩壊する
+                        if (handLen > justifyLength)
+                        {
+                            handElem.attrs["textLength"] = $"{boardBottom - y}";
+                            handElem.attrs["lengthAdjust"] = "spacingAndGlyphs";
+                        }
+#endif
+
+                        sideP.Concat(handElem.ToString());
+                    }
+
+                    if (sideToView != c)
+                    {
+                        sideP.InsertTag("g", $"transform=\"rotate(180,{offsetX},{offsetY})\"");
+                    }
+
+                    tempP.Concat(sideP);
                 }
 
-                if (totalLength <= 17)
-                {
-                    tempP.Concat(drawTextEx(x, y, $"{name}　{handStr}　{hand}", renderSize));
-                }
-                else if (totalLength <= 19)
-                {
-                    tempP.Concat(drawTextEx(x, y, $"{name} {handStr} {hand}", renderSize));
-                }
-                else // 2段組みにする
-                {
-                    tempP.Concat(drawTextEx(x + renderSize / 2, y, $"{name}", renderSize));
-                    tempP.Concat(drawTextEx(x - renderSize / 2, y, $"{handStr}　{hand}", renderSize));
-                }
+                tempP.InsertTag("g", "class=\"hand\"");
 
-                if (isReverse)
-                {
-                    tempP.InsertTag("g", $"transform=\"rotate(180,{offsetX},{offsetY})\"");
-                }
                 return tempP;
             }
 
-            // 将棋盤の描写
-            // TODO: rank, fileの数字を描写する？
+            // 将棋盤の描画
             Paragraph drawBoard()
             {
                 var tempP = drawSquare(boardLeft, boardTop, blockSize * 9, 4);
+                var pathBuf = new List<string>();
                 for (int i = 1; i < 9; ++i)
                 {
-                    tempP.Concat(pathLineH(boardLeft, boardTop + blockSize * i, blockSize * 9));
-                    tempP.Concat(pathLineV(boardLeft + blockSize * i, boardTop, blockSize * 9));
+                    pathBuf.Add($"M {boardLeft},{boardTop + blockSize * i} h {blockSize * 9}");
+                    pathBuf.Add($"M {boardLeft + blockSize * i},{boardTop} v {blockSize * 9}");
                 }
+                tempP.Concat(drawLines(pathBuf));
                 tempP.Concat(drawCircle(boardLeft + blockSize * 3, boardTop + blockSize * 3, starSize));
                 tempP.Concat(drawCircle(boardLeft + blockSize * 3, boardTop + blockSize * 6, starSize));
                 tempP.Concat(drawCircle(boardLeft + blockSize * 6, boardTop + blockSize * 3, starSize));
                 tempP.Concat(drawCircle(boardLeft + blockSize * 6, boardTop + blockSize * 6, starSize));
+
+                string[] fileStr = { "９", "８", "７", "６", "５", "４", "３", "２", "１" };
+                string[] rankStr = { "一", "二", "三", "四", "五", "六", "七", "八", "九" };
+                for (var i = 0; i < 9; ++i)
+                {
+                    var xf = boardLeft + blockSize * (i + 0.5f);
+                    var xr = boardRight + boardBorder * 0.5f;
+#if NeglectEdge
+                    var yf = boardTopMargin + boardBorder * 0.5f;
+                    var yr = boardTop + blockSize * (i + 0.5f);
+#else
+                    var yf = boardTopMargin + boardBorder * 0.5f + boardFontSize * 0.4f;
+                    var yr = boardTop + blockSize * (i + 0.5f) + boardFontSize * 0.4f;
+#endif
+                    tempP.Concat(drawText(xf, yf, fileStr[i]));
+                    tempP.Concat(drawText(xr, yr, rankStr[i]));
+                }
+
+                tempP.InsertTag("g", "class=\"board\"");
+
                 return tempP;
             }
 
-            // 手駒の描写
-            Paragraph drawHands()
-            {
-                Hand b = pos.Hand(Color.BLACK);
-                Hand w = pos.Hand(Color.WHITE);
-                var tempP = drawHand(b == Hand.ZERO ? "なし" : b.Pretty2(), kifuHeader.PlayerNameBlack, true, sideToView == Color.WHITE);
-                tempP.Concat(drawHand(w == Hand.ZERO ? "なし" : w.Pretty2(), kifuHeader.PlayerNameWhite, false, sideToView == Color.BLACK));
-                tempP.InsertTag("g", "class=\"hand\"");
-                return tempP;
-            }
-
-            // 盤上の駒の描写
+            // 盤上の駒の描画
             Paragraph drawBoardPiece()
             {
                 var tempP = new Paragraph();
@@ -468,7 +570,7 @@ namespace MyShogi.Model.Shogi.Converter.Svg
                         bool isBold = gamePly != 1 && lastMove != Move.NONE && !lastMove.IsSpecial() && sq == pos.State().lastMove.To();
                         if (isBold)
                         {
-                            tempP.Concat(drawSquare(boardRight - file * blockSize, boardTop + (rank - 1) * blockSize, blockSize, 1, "#ffff80"));
+                            tempP.Concat(drawSquare(boardRight - file * blockSize, boardTop + (rank - 1) * blockSize, blockSize, float.NaN, "#ffff80"));
                         }
                         tempP.Concat(drawPiece(file, rank, piStr, isReverse, isBold));
                     }
@@ -483,14 +585,16 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             p.Concat(drawHands());
             p.Concat(drawBoardPiece());
             p.Concat(drawBoard());
+
+            // svgのヘッダーとフッターを追加
+            p.InsertTag("svg", $"xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" xml:lang=\"ja-JP\" viewBox=\"0 0 {svgWidth} {svgHeight}\" width=\"{svgWidth}\" height=\"{svgHeight}\"");
+
             return p;
         }
 
         public void Output(Position pos, KifuHeader kifuHeader)
         {
-            var p = Draw(pos, kifuHeader);
-            InsertSvg(p);
-            p.ToFile();
+            Draw(pos, kifuHeader).ToFile();
         }
 
         /// <summary>
@@ -498,11 +602,6 @@ namespace MyShogi.Model.Shogi.Converter.Svg
         /// </summary>
         /// <param name="pos"></param>
         /// <returns></returns>
-        public string ToString(Position pos, KifuHeader kifuHeader)
-        {
-            var p = Draw(pos, kifuHeader);
-            InsertSvg(p);
-            return p.ToString();
-        }
+        public string ToString(Position pos, KifuHeader kifuHeader) => Draw(pos, kifuHeader).ToString();
     }
 }
