@@ -26,6 +26,7 @@
 
         public static readonly string MATE_1 = "4k4/9/9/9/9/9/9/9/9 b 18p4l4n4s4g2b2r 1";
         public static readonly string MATE_2 = "4k4/9/9/9/9/9/9/9/4K4 b 18p4l4n4s4g2b2r 1";
+        public static readonly string MATE_3 = "4k4/9/9/9/9/9/9/9/4K4 b - 1";
 
         // あとで何か追加するかも。
     }

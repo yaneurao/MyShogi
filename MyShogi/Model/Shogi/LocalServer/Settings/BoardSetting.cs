@@ -14,7 +14,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 開始局面。
         /// BoardCurrentがtrueなら、この値は無視される。
-        /// この値がCurrent,Othersは許容しない。
+        /// ComboBoxにdata bindingするので、この値がCurrent,Othersは許容しない。
+        /// あくまで、平手～駒落ち(歩3枚 = HANDICAP_PAWN3)までの定数。
         /// </summary>
         [DataMember]
         public BoardType BoardType

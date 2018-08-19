@@ -1739,6 +1739,15 @@ namespace MyShogi.View.Win2D
                         item_boardedit.DropDownItems.Add(item);
                     }
 
+                    {
+                        // - 双玉で玉以外すべて駒箱に
+
+                        var item = new ToolStripMenuItem();
+                        item.Enabled = inTheBoardEdit;
+                        item.Text = "双玉で玉以外すべて駒箱に配置(&U)"; // dUal king
+                        item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Mate3.ToSfen()); };
+                        item_boardedit.DropDownItems.Add(item);
+                    }
                 }
 
                 var item_window = new ToolStripMenuItem();
