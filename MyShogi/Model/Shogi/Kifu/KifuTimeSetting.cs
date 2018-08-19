@@ -249,57 +249,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             return setting;
         }
-
-#if false
-        public KifuTimeSettingMin ToKifuTimeSettingMin()
-        {
-            return new KifuTimeSettingMin()
-            {
-                Hour = Hour,
-                Minute = Minute,
-                Second = Second,
-                Byoyomi = Byoyomi,
-                ByoyomiEnable = ByoyomiEnable,
-                IncTime = IncTime,
-                IncTimeEnable = IncTimeEnable,
-                IgnoreTime = IgnoreTime,
-                TimeLimitless = TimeLimitless,
-            };
-        }
-
-        public static KifuTimeSetting FromKifuTimeSettingMin(KifuTimeSettingMin min)
-        {
-            return new KifuTimeSetting()
-            {
-                Hour = min.Hour,
-                Minute = min.Minute,
-                Second = min.Second,
-                Byoyomi = min.Byoyomi,
-                ByoyomiEnable = min.ByoyomiEnable,
-                IncTime = min.IncTime,
-                IncTimeEnable = min.IncTimeEnable,
-                IgnoreTime = min.IgnoreTime,
-                TimeLimitless = min.TimeLimitless,
-            };
-        }
-#endif
     }
-
-#if false
-    [DataContract]
-    public class KifuTimeSettingMin
-    {
-        [DataMember] public int Hour;
-        [DataMember] public int Minute;
-        [DataMember] public int Second;
-        [DataMember] public int Byoyomi;
-        [DataMember] public bool ByoyomiEnable;
-        [DataMember] public int IncTime;
-        [DataMember] public bool IncTimeEnable;
-        [DataMember] public bool IgnoreTime;
-        [DataMember] public bool TimeLimitless;
-    }
-#endif
 
     /// <summary>
     /// 対局時間設定 先後の両方の分
@@ -415,34 +365,6 @@ namespace MyShogi.Model.Shogi.Kifu
             player.TimeLimitless = true;
             return new KifuTimeSettings(new KifuTimeSetting[2] { player, player } , true);
         }
-
-#if false
-        public KifuTimeSettingsMin ToKifuTimeSettingsMin()
-        {
-            return new KifuTimeSettingsMin()
-            {
-                Players = new KifuTimeSettingMin[2] { Players[0].ToKifuTimeSettingMin(), Players[1].ToKifuTimeSettingMin() },
-                WhiteEnable = WhiteEnable,
-            };
-        }
-
-        public static KifuTimeSettings FromKifuTimeSettingsMin(KifuTimeSettingsMin min)
-        {
-            return new KifuTimeSettings()
-            {
-                Players = new KifuTimeSetting[2] { KifuTimeSetting.FromKifuTimeSettingMin(min.Players[0]), KifuTimeSetting.FromKifuTimeSettingMin(min.Players[1]) },
-                WhiteEnable = min.WhiteEnable,
-            };
-        }
-#endif
     }
 
-#if false
-    [DataContract]
-    public class KifuTimeSettingsMin
-    {
-        [DataMember] public KifuTimeSettingMin[] Players;
-        [DataMember] public bool WhiteEnable;
-    }
-#endif
 }

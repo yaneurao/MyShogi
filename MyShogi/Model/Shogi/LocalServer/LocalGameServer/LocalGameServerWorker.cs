@@ -668,9 +668,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // speical moveでもDoMoveできることは保証されている。
                     kifuManager.Tree.DoMove(m);
 
-                    // 音声の読み上げ
-                    TheApp.app.SoundManager.ReadOut(m);
-
                     GameEnd();
                     return;
                 }

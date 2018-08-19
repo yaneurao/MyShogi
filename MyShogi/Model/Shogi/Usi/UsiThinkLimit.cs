@@ -135,6 +135,10 @@ namespace MyShogi.Model.Shogi.Usi
                 case UsiThinkLimitEnum.Time:
 
                     // RestTimeBlack,RestTimeWhiteがnullでありうる。
+
+                    // IncTimeBlackが有効なとき(nullではなく、TimeSpan.Zeroでもないとき)は、
+                    // 今回の思考時間として、RestTimeBlack + IncTimeBlackだけ使える。(という解釈)
+
                     var sb = new StringBuilder();
                     sb.Append("btime ");
                     sb.Append(RestTimeBlack == null ? "0" : RestTimeBlack.TotalMilliseconds.ToString());
@@ -214,6 +218,9 @@ namespace MyShogi.Model.Shogi.Usi
 
         /// <summary>
         /// 持ち時間の残り(先手)
+        ///
+        /// IncTimeBlackが有効なとき(nullではなく、TimeSpan.Zeroでもないとき)は、
+        /// 今回の思考時間として、RestTimeBlack + IncTimeBlackだけ使える。(という解釈)
         /// </summary>
         public TimeSpan RestTimeBlack
         {
@@ -252,6 +259,9 @@ namespace MyShogi.Model.Shogi.Usi
 
         /// <summary>
         /// 1手ごとの加算時間(先手)
+        ///
+        /// IncTimeBlackが有効なとき(nullではなく、TimeSpan.Zeroでもないとき)は、
+        /// 今回の思考時間として、RestTimeBlack + IncTimeBlackだけ使える。(という解釈)
         /// </summary>
         public TimeSpan IncTimeBlack
         {
