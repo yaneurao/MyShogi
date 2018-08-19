@@ -1839,6 +1839,86 @@ namespace MyShogi.View.Win2D
                         }
                     }
 
+                    item_window.DropDownItems.Add(new ToolStripSeparator());
+
+                    {
+                        // デバッグウィンドウ
+
+                        var item_ = new ToolStripMenuItem();
+                        item_.Text = "デバッグウィンドウ(&D)"; // Debug window
+
+                        item_window.DropDownItems.Add(item_);
+
+                        {
+                            {
+                                // メモリへのロギング
+
+                                var item1 = new ToolStripMenuItem();
+                                item1.Text = TheApp.app.Config.MemoryLoggingEnable ? "デバッグ終了(&B)" : "デバッグ開始(&B)"; // deBug
+                                item1.Checked = TheApp.app.Config.MemoryLoggingEnable;
+                                item1.ToolTipText = "思考エンジンとのやりとりを表示する機能です。";
+                                item1.Click += (sender, e) =>
+                                {
+                                    TheApp.app.Config.MemoryLoggingEnable ^= true;
+                                    if (!TheApp.app.Config.MemoryLoggingEnable && debugDialog != null)
+                                    {
+                                        debugDialog.Dispose(); // 終了させておく。
+                                        debugDialog = null;
+                                    }
+                                };
+                                item_.DropDownItems.Add(item1);
+                            }
+
+                            {
+                                // デバッグウィンドウ
+
+                                var item1 = new ToolStripMenuItem();
+                                item1.Text = "デバッグウィンドウの表示(&D)"; // Debug Window
+                                var enabled = TheApp.app.Config.MemoryLoggingEnable;
+                                item1.Enabled = enabled;
+                                if (!enabled)
+                                    item1.ToolTipText = "デバッグウィンドウを表示するためには「デバッグの開始」を行う必要があります。";
+                                item1.Click += (sender, e) =>
+                                {
+                                    if (debugDialog != null)
+                                    {
+                                        debugDialog.Dispose();
+                                        debugDialog = null;
+                                    }
+
+                                    var log = Log.log1;
+                                    if (log != null)
+                                    {
+                                        // セットされているはずなんだけどなぁ…。おかしいなぁ…。
+                                        debugDialog = new DebugWindow((MemoryLog)log);
+                                    }
+
+                                    if (debugDialog != null)
+                                    {
+                                        FormLocationUtility.CenteringToThisForm(debugDialog, this);
+                                        debugDialog.Show();
+                                    }
+                                };
+                                item_.DropDownItems.Add(item1);
+                            }
+
+                            {
+                                // ファイルへのロギング
+
+                                var item1 = new ToolStripMenuItem();
+                                var enabled = TheApp.app.Config.FileLoggingEnable;
+                                item1.Text = enabled ? "ファイルへのロギング終了(&L)" : "ファイルへのロギング開始(&L)"; // Logging
+                                item1.Checked = enabled;
+
+                                item1.Click += (sender, e) => { TheApp.app.Config.FileLoggingEnable ^= true; };
+                                item_.DropDownItems.Add(item1);
+                            }
+
+                            //item_.DropDownItems.Add(new ToolStripSeparator());
+
+                        }
+
+                    }
 
 #if false // マスターアップに間に合わなさそう。
                     { // ×ボタンで消していた形勢グラフウィンドウの復活
@@ -1866,84 +1946,6 @@ namespace MyShogi.View.Win2D
                     menu.Items.Add(item_others);
 
                     {
-                        // メモリへのロギング
-
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = TheApp.app.Config.MemoryLoggingEnable ? "デバッグ終了(&B)" : "デバッグ開始(&B)"; // deBug
-                        item1.Checked = TheApp.app.Config.MemoryLoggingEnable;
-                        item1.Click += (sender, e) =>
-                        {
-                            TheApp.app.Config.MemoryLoggingEnable ^= true;
-                            if (!TheApp.app.Config.MemoryLoggingEnable && debugDialog != null)
-                            {
-                                debugDialog.Dispose(); // 終了させておく。
-                                debugDialog = null;
-                            }
-                        };
-                        item_others.DropDownItems.Add(item1);
-                    }
-
-                    {
-                        // デバッグウィンドウ
-
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = "デバッグウィンドウ(&D)"; // Debug Window
-                        item1.Enabled = TheApp.app.Config.MemoryLoggingEnable;
-                        item1.Click += (sender, e) =>
-                        {
-                            if (debugDialog != null)
-                            {
-                                debugDialog.Dispose();
-                                debugDialog = null;
-                            }
-
-                            var log = Log.log1;
-                            if (log != null)
-                            {
-                                // セットされているはずなんだけどなぁ…。おかしいなぁ…。
-                                debugDialog = new DebugWindow((MemoryLog)log);
-                            }
-
-                            if (debugDialog != null)
-                            {
-                                FormLocationUtility.CenteringToThisForm(debugDialog , this);
-                                debugDialog.Show();
-                            }
-                        };
-                        item_others.DropDownItems.Add(item1);
-                    }
-
-                    {
-                        // ファイルへのロギング
-
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = TheApp.app.Config.FileLoggingEnable ? "ロギング終了(&L)" : "ロギング開始(&L)"; // Logging
-                        item1.Checked = TheApp.app.Config.FileLoggingEnable;
-                        item1.Click += (sender, e) => { TheApp.app.Config.FileLoggingEnable ^= true; };
-                        item_others.DropDownItems.Add(item1);
-                    }
-
-                    item_others.DropDownItems.Add(new ToolStripSeparator());
-
-                    {
-                        // システム情報ダイアログ
-
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = "システム情報(&S)"; // System Infomation
-                        item1.Click += (sender, e) =>
-                        {
-                            using (var cpuInfoDialog = new SystemInfo())
-                            {
-                                FormLocationUtility.CenteringToThisForm(cpuInfoDialog, this);
-                                cpuInfoDialog.ShowDialog(this);
-                            }
-                        };
-                        item_others.DropDownItems.Add(item1);
-                    }
-
-                    item_others.DropDownItems.Add(new ToolStripSeparator());
-
-                    {
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "よくある質問 (&F)"; // Faq
                         item1.Click += (sender, e) =>
@@ -1969,7 +1971,7 @@ namespace MyShogi.View.Win2D
                         item_others.DropDownItems.Add(item1);
                     }
 
-
+                    item_others.DropDownItems.Add(new ToolStripSeparator());
 
                     {
                         // aboutダイアログ
@@ -1986,6 +1988,24 @@ namespace MyShogi.View.Win2D
                         };
                         item_others.DropDownItems.Add(item1);
                     }
+
+                    {
+                        // システム情報ダイアログ
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "システム情報(&S)"; // System Infomation
+                        item1.Click += (sender, e) =>
+                        {
+                            using (var cpuInfoDialog = new SystemInfo())
+                            {
+                                FormLocationUtility.CenteringToThisForm(cpuInfoDialog, this);
+                                cpuInfoDialog.ShowDialog(this);
+                            }
+                        };
+                        item_others.DropDownItems.Add(item1);
+                    }
+
+                    item_others.DropDownItems.Add(new ToolStripSeparator());
 
                     {
                         var item1 = new ToolStripMenuItem();
