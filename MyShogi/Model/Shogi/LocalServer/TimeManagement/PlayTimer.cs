@@ -81,9 +81,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             var restTime = KifuMoveTime.RestTime;
 
-            // byoyomiありかも知れないのでいったんリセットする。
+            // byoyomiありかも知れないので残り時間がマイナスなのについては、いったんリセットする。
             if (restTime < TimeSpan.Zero)
                 restTime = TimeSpan.Zero;
+
+            // 秒加算
+            if (KifuTimeSetting.IncTimeEnable)
+                restTime += new TimeSpan(0, 0, KifuTimeSetting.IncTime);
 
             var k = KifuMoveTime;
             KifuMoveTime = new KifuMoveTime(k.ThinkingTime , k.RealThinkingTime , k.TotalTime , restTime);
@@ -120,12 +124,17 @@ namespace MyShogi.Model.Shogi.LocalServer
             if (restTime < TimeSpan.Zero)
                 restTime = TimeSpan.Zero;
 
+#if false
             // IncTimeの処理
             // TimeUpのときは、IncTimeによって残り時間が増えてしまうと、
             // 残り時間があるにも関わらずタイムアップになったように見えるといけないので
             // IncTimeしない。
             if (!timeUp && KifuTimeSetting.IncTimeEnable)
                 restTime += new TimeSpan(0,0,KifuTimeSetting.IncTime);
+
+            // →　TIME UP以外の問題が発生したときに、この処理は正しくない。
+            // ゆえに、自分の手番が来た瞬間にだけ加算するようにすべき。
+#endif
 
             // 実消費時間
             var realThinkingTime = RealThinkingTime();
@@ -136,6 +145,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 時間切れであるかの判定
+        /// 
+        /// inc time有効のときは、自分の手番が来て時間の加算が行われるまでの間、残り時間が0になっているので、
+        /// (エンジン初期化時に)そのタイミングでチェックしてしまうことを考慮して、0はtime upではないという解釈をする。
         /// </summary>
         /// <returns></returns>
         public bool IsTimeUp()
@@ -150,7 +162,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             if (KifuTimeSetting.ByoyomiEnable)
                 rest += new TimeSpan(0, 0, KifuTimeSetting.Byoyomi);
 
-            return (rest <= TimeSpan.Zero);
+            // 0はセーフ(IncTimeでは次の手番が来た瞬間に加算されるので)
+            return (rest < TimeSpan.Zero);
         }
 
         /// <summary>

@@ -186,6 +186,13 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // Restart処理との共通部分
             GameStartInCommon(nextGameMode);
+
+            // 新規対局で手番が変わった。
+            //NotifyTurnChanged();
+            // →　エンジンの初期化が現時点では終わっていない。
+            // 　ゆえに、UpdateInitializing()のなかで初期化が終わったタイミングでNotifyTurnChanged()を呼ぶ。
+            // それまではTimeUpの処理をしてはならない。
+
         }
 
         /// <summary>
@@ -776,8 +783,11 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 時間切れ判定(対局中かつ手番側のみ)
             var stm = Position.sideToMove;
-            if (GameMode == GameModeEnum.InTheGame && PlayTimer(stm).IsTimeUp())
+            if (GameMode == GameModeEnum.InTheGame && !Initializing && PlayTimer(stm).IsTimeUp())
                 Player(stm).SpecialMove = Move.TIME_UP;
+            // ここにエンジンの初期化が終わっているという条件も必要だが、初期化が終わっていないときは、
+            // 消費時間の計測用のタイマーは停止しており、また、残り時間が0になっているはずで、
+            // 0はtime upではないという解釈なのでtime upという判定にはならないはずではある。
 
             // エンジンで発生した例外の捕捉
             foreach(var c in All.Colors())

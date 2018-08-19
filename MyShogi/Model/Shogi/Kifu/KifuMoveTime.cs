@@ -88,9 +88,15 @@ namespace MyShogi.Model.Shogi.Kifu
             if (restTime < TimeSpan.Zero)
                 restTime = TimeSpan.Zero;
             else
-            // TimeUpではなさげなのでIncTimeする
+                // TimeUpではなさげなのでIncTimeする。
+                // 次に手番が回ってきたときに加算するのが本当は正しいのだが、
+                // そこで加算したあとの時刻を取得するのはわりと難しいので、手番の終わりでTIME_UPでないときに加算している。
                 if (setting.IncTimeEnable)
                     restTime += new TimeSpan(0,0,setting.IncTime);
+
+                // TimeUp以外の特殊な指し手に対して、この処理は正しくないが、これは棋譜絡みでしか使わないし、
+                // 棋譜上には残り時間書き出さないのが普通なので、とりま、問題ではない。
+                // LocalGameServerでは、ちゃんと残り時間を計算しよう…。
 
             // 引数で渡されたtotalTime_がnullなら、自前でトータル時間を計算する。
             var total = TotalTime + thinkingTime_;

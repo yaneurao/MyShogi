@@ -97,7 +97,6 @@ namespace MyShogi.Model.Shogi.Usi
         /// エンジンに思考させる。
         /// Thinkingの時に呼び出された場合、現在のThinkに対してstopを呼び出して、
         /// bestmoveが返ってきてから次のthinkを行う。
-        /// 現在の
         /// </summary>
         /// <param name="usiPositionString"></param>
         public void Think(string usiPositionString , UsiThinkLimit limit , Color sideToMove)
