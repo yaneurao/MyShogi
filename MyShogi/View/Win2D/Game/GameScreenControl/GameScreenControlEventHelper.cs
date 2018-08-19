@@ -934,12 +934,17 @@ namespace MyShogi.View.Win2D
         /// 盤面を編集する時に用いる。
         /// BoardEditCommand((raw_pos) => { raw_pos.board[(int)sq] = nextPc; });
         /// のように書くと、その内容の盤面の更新依頼をGameServerのほうに依頼する。
+        /// gamePlyは必ず1になる。
         /// </summary>
         /// <param name="func"></param>
         public void BoardEditCommand(Action<RawPosition> func)
         {
             var raw_pos = gameServer.Position.CreateRawPosition(); // Clone()
             func(raw_pos);
+
+            // 盤面編集をしたのでgamePly == 1に変更してやる。
+            raw_pos.gamePly = 1;
+
             var sfen = Position.SfenFromRawPosition(raw_pos);
             gameServer.SetSfenCommand(sfen);
         }
