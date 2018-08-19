@@ -977,6 +977,9 @@ namespace MyShogi.View.Win2D
             OnBoardRightClick(sq);
         }
 
+        // Drag処理、不評。単にD&Dの始点・終点の2点がクリックされたかのように扱うほうが適切であるようだ。
+
+#if false
         /// <summary>
         /// 盤面がドラッグされたときに呼び出されるハンドラ
         /// </summary>
@@ -1015,6 +1018,7 @@ namespace MyShogi.View.Win2D
             // デバッグ用にドラッグされた升の名前を出力する。
             //Console.WriteLine(sq1.Pretty() + '→' + sq2.Pretty());
         }
+#endif
 
         /// <summary>
         /// マウスが移動したときに呼び出されるハンドラ

@@ -37,6 +37,9 @@ namespace MyShogi.View.Win2D
             if (e.Button == MouseButtons.Left)
             {
                 mouseLastDown = e.Location;
+
+                // この時点でクリックイベントとして扱って良いのでは…。
+                OnClick(e.Location);
             }
             else if (e.Button == MouseButtons.Right)
             {
@@ -57,11 +60,17 @@ namespace MyShogi.View.Win2D
 
             if (e.Button == MouseButtons.Left)
             {
+#if false
                 // 移動がないので、これはクリックイベントとして扱う
                 if (mouseLastDown == p)
                     OnClick(p);
                 else
                     OnDrag(mouseLastDown, p);
+#endif
+
+                if (mouseLastDown != p)
+                    OnClick(p); // 2点クリックされたかのように扱う
+
             }
             else if (e.Button == MouseButtons.Left)
             {
