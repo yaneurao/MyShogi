@@ -13,7 +13,8 @@
         SFEN , // SFEN形式
         JKF  , // JKF形式
         JSON , // JSON形式
-        SVG  , // SVG形式
+
+        SVG  , // SVG形式(これは局面図の出力のためのもので、通常の棋譜ファイルとは異なる)
 
         UNKNOWN , // それ以外。不明な時に用いる。
     }

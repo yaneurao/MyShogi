@@ -48,35 +48,39 @@
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
             this.menuStrip.Padding = new System.Windows.Forms.Padding(10, 3, 0, 3);
-            this.menuStrip.Size = new System.Drawing.Size(604, 25);
+            this.menuStrip.Size = new System.Drawing.Size(604, 30);
             this.menuStrip.TabIndex = 1;
             this.menuStrip.Text = "menuStrip1";
             // 
             // LinearToolStripMenuItem
             // 
+            this.LinearToolStripMenuItem.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.LinearToolStripMenuItem.Name = "LinearToolStripMenuItem";
-            this.LinearToolStripMenuItem.Size = new System.Drawing.Size(55, 19);
+            this.LinearToolStripMenuItem.Size = new System.Drawing.Size(66, 24);
             this.LinearToolStripMenuItem.Text = "評価値";
             this.LinearToolStripMenuItem.Click += new System.EventHandler(this.LinearToolStripMenuItem_Click);
             // 
             // NonlinearToolStripMenuItem
             // 
+            this.NonlinearToolStripMenuItem.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.NonlinearToolStripMenuItem.Name = "NonlinearToolStripMenuItem";
-            this.NonlinearToolStripMenuItem.Size = new System.Drawing.Size(55, 19);
+            this.NonlinearToolStripMenuItem.Size = new System.Drawing.Size(66, 24);
             this.NonlinearToolStripMenuItem.Text = "広帯域";
             this.NonlinearToolStripMenuItem.Click += new System.EventHandler(this.NonlinearToolStripMenuItem_Click);
             // 
             // WinrateToolStripMenuItem
             // 
+            this.WinrateToolStripMenuItem.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.WinrateToolStripMenuItem.Name = "WinrateToolStripMenuItem";
-            this.WinrateToolStripMenuItem.Size = new System.Drawing.Size(43, 19);
+            this.WinrateToolStripMenuItem.Size = new System.Drawing.Size(51, 24);
             this.WinrateToolStripMenuItem.Text = "勝率";
             this.WinrateToolStripMenuItem.Click += new System.EventHandler(this.WinrateToolStripMenuItem_Click);
             // 
             // ReverseToolStripMenuItem
             // 
+            this.ReverseToolStripMenuItem.Font = new System.Drawing.Font("Yu Gothic UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.ReverseToolStripMenuItem.Name = "ReverseToolStripMenuItem";
-            this.ReverseToolStripMenuItem.Size = new System.Drawing.Size(43, 19);
+            this.ReverseToolStripMenuItem.Size = new System.Drawing.Size(51, 24);
             this.ReverseToolStripMenuItem.Text = "反転";
             this.ReverseToolStripMenuItem.Click += new System.EventHandler(this.ReverseToolStripMenuItem_Click);
             // 
@@ -84,10 +88,10 @@
             // 
             this.evalGraphControl.AutoScroll = true;
             this.evalGraphControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.evalGraphControl.Location = new System.Drawing.Point(0, 25);
+            this.evalGraphControl.Location = new System.Drawing.Point(0, 30);
             this.evalGraphControl.Margin = new System.Windows.Forms.Padding(0);
             this.evalGraphControl.Name = "evalGraphControl";
-            this.evalGraphControl.Size = new System.Drawing.Size(604, 352);
+            this.evalGraphControl.Size = new System.Drawing.Size(604, 347);
             this.evalGraphControl.TabIndex = 0;
             // 
             // EvalGraphDialog
@@ -97,6 +101,7 @@
             this.ClientSize = new System.Drawing.Size(604, 377);
             this.Controls.Add(this.evalGraphControl);
             this.Controls.Add(this.menuStrip);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MainMenuStrip = this.menuStrip;
             this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "EvalGraphDialog";
