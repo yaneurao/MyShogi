@@ -204,6 +204,34 @@ namespace MyShogi.App
         }
 
         /// <summary>
+        /// 棋譜ウィンドウに表示する棋譜の種類
+        ///
+        /// 0 : 標準(KI2形式) 「８八同金右」 ←　デフォルト
+        /// 1 : 簡易(KIF形式) 「88金(79)」
+        /// 2 : Chess式       「7i8h」
+        /// </summary>
+        [DataMember]
+        public int KifuWindowKifuVersion
+        {
+            get { return GetValue<int>("KifuWindowKifuVersion"); }
+            set { SetValue<int>("KifuWindowKifuVersion", value); }
+        }
+
+        /// <summary>
+        /// 検討ウィンドウの読み筋に表示する棋譜の種類
+        /// 
+        /// 0 : 標準(KI2形式) 「８八同金右」 ←　デフォルト
+        /// 1 : 簡易(KIF形式) 「88金(79)」
+        /// 2 : Chess式       「7i8h」
+        /// </summary>
+        [DataMember]
+        public int ConsiderationWindowKifuVersion
+        {
+            get { return GetValue<int>("ConsiderationWindowKifuVersion"); }
+            set { SetValue<int>("ConsiderationWindowKifuVersion", value); }
+        }
+
+        /// <summary>
         /// 最終手の駒の移動元の升の背景色
         /// 0 : なし
         /// 1 : 朱色
@@ -473,6 +501,8 @@ namespace MyShogi.App
         /// </summary>
         [DataMember]
         public NotifyCollection<int> ConsiderationColumnWidth { get; set; } = new NotifyCollection<int>(6);
+
+        /// ← 細かい設定は、ここに追加していく
 
         /// <summary>
         /// 対局設定。
