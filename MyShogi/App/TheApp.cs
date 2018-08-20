@@ -291,26 +291,6 @@ namespace MyShogi.App
         /// </summary>
         private void SaveMainDialogSize()
         {
-            // メインウィンドウと検討ウィンドウに関して、
-            // 終了時のウィンドウサイズを記憶しておき、次回起動時にこのサイズでウィンドウを生成する。
-
-            var mainDialog = mainForm as MainDialog;
-            if (mainDialog == null)
-                return;
-
-            if (mainDialog.ClientSize.Width >= 100 && mainForm.ClientSize.Height >= 100)
-                Config.MainDialogClientSize = mainForm.ClientSize;
-
-            if (mainDialog.engineConsiderationDialog != null &&
-                mainDialog.engineConsiderationDialog.Width >= 100 && mainDialog.engineConsiderationDialog.Height >= 100)
-            {
-                Config.ConsiderationDialogClientSize = mainDialog.engineConsiderationDialog.ClientSize;
-                Config.ConsiderationDialogClientLocation =
-                    new Point(
-                        mainDialog.engineConsiderationDialog.Location.X - mainForm.Location.X,
-                        mainDialog.engineConsiderationDialog.Location.Y - mainForm.Location.Y
-                    );
-            }
         }
 
         /// <summary>

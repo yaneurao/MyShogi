@@ -263,11 +263,13 @@ namespace MyShogi.View.Win2D
         public void MainDialog_Move(object sender, System.EventArgs e)
         {
             UpdateEngineConsiderationDialogLocation();
+            SaveWindowSizeAndPosition();
         }
 
         private void MainDialog_Resize(object sender, System.EventArgs e)
         {
             UpdateEngineConsiderationDialogLocation();
+            SaveWindowSizeAndPosition();
         }
 
         /// <summary>
@@ -343,12 +345,28 @@ namespace MyShogi.View.Win2D
 
             // 前回のスクリーンの表示位置を復元する。
             var desktopLocation = TheApp.app.Config.DesktopLocation;
+            bool reset = false; // 位置を初期化するのかのフラグ
+
             if (desktopLocation == null)
             {
+                reset = true;
+
+            } else {
+
+                // これが現在のいずれかの画面上であることを保証しなくてはならない。
+                foreach (var s in Screen.AllScreens)
+                    if (s.Bounds.Left <= desktopLocation.Value.X && desktopLocation.Value.X < s.Bounds.Right &&
+                        s.Bounds.Top <= desktopLocation.Value.Y && desktopLocation.Value.Y < s.Bounds.Bottom)
+                        goto Ok;
+                reset = true;
+            }
+
+            Ok:
+
+            if (reset)
                 // 表示される位置があまりデスクトップの下の方だとウィンドウが画面下にめり込んでしまうのでデスクトップに対してセンタリングする。
                 // →　検討ウィンドウの表示のことを考えて、少し上らへんにする。
                 desktopLocation = FormLocationUtility.DesktopLocation(this, 50, 25); // Desktopに対して左から50%(center),25%(上寄り)にする。
-            }
 
             DesktopLocation = desktopLocation.Value;
         }
@@ -428,6 +446,10 @@ namespace MyShogi.View.Win2D
 
                     UpdateMenuItems();
                 });
+
+                // MoveとResizeに応じて、それを記録しなければならない。
+                dialog.Move += (sender,args_) => SaveWindowSizeAndPosition();
+                dialog.Resize += (sender, args_) => SaveWindowSizeAndPosition();
 
                 engineConsiderationDialog = dialog;
                 // 何にせよ、インスタンスがなくては話にならないので生成だけしておく。
@@ -708,11 +730,49 @@ namespace MyShogi.View.Win2D
                     != DialogResult.OK)
                     e.Cancel = true;
             }
+        }
 
-            if (!e.Cancel)
+        /// <summary>
+        /// メインウインドウ、検討ウィンドウが移動、リサイズしたときに呼び出されるべきハンドラ。
+        /// それらの位置・サイズを保存する。
+        /// </summary>
+        private void SaveWindowSizeAndPosition()
+        {
+            // Windowが最小化されているときのことを考慮して、DesktopLocationではなくRestoreBoundsを用いるようにしようと思ったが、
+            // 最小化されていると2つ目のFormのRestoreBound、嘘の値になったままだ…。この時は保存しないでおこう。
+            // この理由から、終了時にだけ保存するのはNG。ResizeとMoveイベントに応じてこのメソッドを呼び出す必要がある。
+
+            var minimized = WindowState != FormWindowState.Normal; // 最小化、最大化時
+            if (minimized)
+                return;
+
+            if (first_tick) // Form生成前やろ。
+                return;
+
+            var config = TheApp.app.Config;
+
+            // メインウインドウの位置と大きさの保存
+            var location = /*minimized ? RestoreBounds.Location :*/ DesktopLocation;
+            var size = /*minimized ? RestoreBounds.Size :*/ ClientSize;
+
+            config.DesktopLocation = location;
+
+            if (size.Width >= 100 && size.Height >= 100)
+                config.MainDialogClientSize = size;
+
+            // 検討ウィンドウの位置と大きさの保存
+            if (engineConsiderationDialog != null && engineConsiderationDialog.Width >= 100 && engineConsiderationDialog.Height >= 100)
             {
-                // 終了することが確定したのでデスクトップ上の位置を保存しておく。
-                TheApp.app.Config.DesktopLocation = DesktopLocation;
+                var c_location = /* minimized ? engineConsiderationDialog.RestoreBounds.Location : */ engineConsiderationDialog.Location;
+                var c_size = /* minimized ? engineConsiderationDialog.RestoreBounds.Size : */ engineConsiderationDialog.ClientSize;
+
+                config.ConsiderationDialogClientSize = c_size;
+                // 検討ウィンドウの位置はメインウィンドウ相対で記録
+                config.ConsiderationDialogClientLocation =
+                    new Point(
+                        c_location.X - location.X,
+                        c_location.Y - location.Y
+                    );
             }
         }
 
