@@ -9,6 +9,26 @@ namespace MyShogi.Model.Shogi.Converter
     // KIF/KI2形式の文字列を取り扱うクラス群
 
     /// <summary>
+    /// 棋譜書式ベース
+    /// </summary>
+    public enum BaseFormat
+    {
+        /// <summary>
+        /// KIF/KI2形式
+        /// </summary>
+        KIF,
+        /// <summary>
+        /// CSA形式
+        /// </summary>
+        CSA,
+        /// <summary>
+        /// SFEN形式
+        /// </summary>
+        SFEN,
+        NB,
+    }
+
+    /// <summary>
     /// 手番を示す符号
     /// </summary>
     public enum ColorFormat
@@ -121,6 +141,7 @@ namespace MyShogi.Model.Shogi.Converter
     /// </summary>
     public interface IKifFormatterOptions
     {
+        BaseFormat basef { get; }
         ColorFormat color { get; }
         SquareFormat square { get; }
         SamePosFormat samepos { get; }
@@ -132,6 +153,7 @@ namespace MyShogi.Model.Shogi.Converter
     /// </summary>
     public class KifFormatterOptions : IKifFormatterOptions
     {
+        public BaseFormat basef { get; set; } = BaseFormat.KIF;
         public ColorFormat color { get; set; } = ColorFormat.NONE;
         public SquareFormat square { get; set; } = SquareFormat.FullWidthMix;
         public SamePosFormat samepos { get; set; } = SamePosFormat.KI2sp;
@@ -140,18 +162,21 @@ namespace MyShogi.Model.Shogi.Converter
         public KifFormatterOptions() {}
         public KifFormatterOptions(IKifFormatterOptions opt)
         {
+            basef = opt.basef;
             color = opt.color;
             square = opt.square;
             samepos = opt.samepos;
             fromsq = opt.fromsq;
         }
         public KifFormatterOptions(
+            BaseFormat _basef,
             ColorFormat _color,
             SquareFormat _square,
             SamePosFormat _samepos,
             FromSqFormat _fromsq
         )
         {
+            basef = _basef;
             color = _color;
             square = _square;
             samepos = _samepos;
@@ -164,6 +189,7 @@ namespace MyShogi.Model.Shogi.Converter
     /// </summary>
     public class KifFormatterImmutableOptions : IKifFormatterOptions
     {
+        public BaseFormat basef { get; }
         public ColorFormat color { get; }
         public SquareFormat square { get; }
         public SamePosFormat samepos { get; }
@@ -171,18 +197,21 @@ namespace MyShogi.Model.Shogi.Converter
 
         public KifFormatterImmutableOptions(IKifFormatterOptions opt)
         {
+            basef = opt.basef;
             color = opt.color;
             square = opt.square;
             samepos = opt.samepos;
             fromsq = opt.fromsq;
         }
         public KifFormatterImmutableOptions(
+            BaseFormat _basef,
             ColorFormat _color,
             SquareFormat _square,
             SamePosFormat _samepos,
             FromSqFormat _fromsq
         )
         {
+            basef = _basef;
             color = _color;
             square = _square;
             samepos = _samepos;
@@ -199,6 +228,7 @@ namespace MyShogi.Model.Shogi.Converter
         /// KIF(手番文字なし)
         /// </summary>
         public static KifFormatterImmutableOptions Kif { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.KIF,
             ColorFormat.NONE,
             SquareFormat.FullWidthMix,
             SamePosFormat.KIFsp,
@@ -209,6 +239,7 @@ namespace MyShogi.Model.Shogi.Converter
         /// KIF(▲△手番文字あり)
         /// </summary>
         public static KifFormatterImmutableOptions KifC { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.KIF,
             ColorFormat.KIF,
             SquareFormat.FullWidthMix,
             SamePosFormat.KIFsp,
@@ -219,6 +250,7 @@ namespace MyShogi.Model.Shogi.Converter
         /// KI2(手番文字なし)
         /// </summary>
         public static KifFormatterImmutableOptions Ki2 { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.KIF,
             ColorFormat.NONE,
             SquareFormat.FullWidthMix,
             SamePosFormat.KI2sp,
@@ -229,6 +261,7 @@ namespace MyShogi.Model.Shogi.Converter
         /// KI2(▲△手番文字あり)
         /// </summary>
         public static KifFormatterImmutableOptions Ki2C { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.KIF,
             ColorFormat.KIF,
             SquareFormat.FullWidthMix,
             SamePosFormat.KI2sp,
@@ -240,6 +273,7 @@ namespace MyShogi.Model.Shogi.Converter
         /// 例: 同２三銀右
         /// </summary>
         public static KifFormatterImmutableOptions Ki2Root { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.KIF,
             ColorFormat.NONE,
             SquareFormat.FullWidthMix,
             SamePosFormat.Verbose,
@@ -251,10 +285,33 @@ namespace MyShogi.Model.Shogi.Converter
         /// 例: ▲同２三銀右
         /// </summary>
         public static KifFormatterImmutableOptions Ki2CRoot { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.KIF,
             ColorFormat.KIF,
             SquareFormat.FullWidthMix,
             SamePosFormat.Verbose,
             FromSqFormat.KI2
+        );
+
+        /// <summary>
+        /// CSA形式
+        /// </summary>
+        public static KifFormatterImmutableOptions CSA { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.CSA,
+            ColorFormat.CSA,
+            SquareFormat.ASCII,
+            SamePosFormat.NONE,
+            FromSqFormat.NONE
+        );
+
+        /// <summary>
+        /// SFEN形式
+        /// </summary>
+        public static KifFormatterImmutableOptions SFEN { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.SFEN,
+            ColorFormat.NONE,
+            SquareFormat.ASCII,
+            SamePosFormat.NONE,
+            FromSqFormat.NONE
         );
 
         private static readonly string[] PIECE_KIF = {
@@ -336,6 +393,19 @@ namespace MyShogi.Model.Shogi.Converter
         public static string format(this IKifFormatterOptions opt, Position pos, Move move, Move lastMove)
         {
             StringBuilder kif = new StringBuilder();
+            switch (opt.basef)
+            {
+                case BaseFormat.KIF: break;
+                case BaseFormat.CSA:
+                    kif.Append(opt.format(pos.sideToMove));
+                    kif.Append(pos.ToCSA(move, false));
+                    return kif.ToString();
+                case BaseFormat.SFEN:
+                    kif.Append(opt.format(pos.sideToMove));
+                    kif.Append(move.ToUsi());
+                    return kif.ToString();
+                default: return "";
+            }
             // 特殊な指し手
             if (!move.IsOk())
             {
