@@ -532,6 +532,8 @@ namespace MyShogi.Model.Shogi.Usi
                 }
 
                 // 確定したので格納しておく。
+                // 消費時間、サーバー計測で格納しておいて、それを用いて時間の計算をすべきような気もする。
+                // (いまは、このbestmoveを取り出した時までの時間になっている)
                 ThinkingBridge.BestMoveReceived(move,ponder);
             }
             catch (UsiException ex)
@@ -823,7 +825,7 @@ namespace MyShogi.Model.Shogi.Usi
                 {
                     Moves = moves,
                     Eval = eval,
-                    ElapsedTime = ThinkingBridge.ElapsedTime,
+                    ElapsedTime = ThinkingBridge.ElapsedTime, // 消費時間はサーバー計測
                 };
             }
 

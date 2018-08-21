@@ -93,6 +93,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             KifuMoveTime = new KifuMoveTime(k.ThinkingTime , k.RealThinkingTime , k.TotalTime , restTime);
 
             StartTimer();
+            timeUp_ = false;
         }
 
         /// <summary>
@@ -106,7 +107,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 残り時間があるにも関わらずタイムアップになったように見えるといけないので
         /// IncTimeしない。
         /// </summary>
-        public void ChageToThemTurn(bool timeUp)
+        public void ChangeToThemTurn(bool timeUp)
         {
             StopTimer();
 
@@ -141,7 +142,10 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // KifuMoveTimeに反映するので、そこから取り出すべし。
             KifuMoveTime = new KifuMoveTime(thinkingTime, realThinkingTime , KifuMoveTime.TotalTime + thinkingTime, restTime);
+
+            timeUp_ = timeUp; // この情報を保存しておく。
         }
+        private bool timeUp_ = false;
 
         /// <summary>
         /// 時間切れであるかの判定
@@ -156,7 +160,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             if (KifuTimeSetting.IgnoreTime || KifuTimeSetting.TimeLimitless)
                 return false;
 
-            var rest = KifuMoveTime.RestTime - new TimeSpan(0, 0, (int)(ElapsedTime() / 1000));
+            // 「(ElapsedTime() / 1000)」は、計測秒であり、10秒秒読みのときは、「10」を読まれてはならず、
+            // 計測秒で10秒になった時点でtime upであるから、1秒多めに見積もらないといけない。
+            var rest = KifuMoveTime.RestTime - new TimeSpan(0, 0, (int)( ElapsedTime() / 1000) + 1);
 
             // ここに秒読み時間も加算して負かどうかを調べる
             if (KifuTimeSetting.ByoyomiEnable)
@@ -275,9 +281,13 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (rn < TimeSpan.Zero)
                     rn = TimeSpan.Zero;
 
+                // TimeUpになったときは、
+                // 3/3のような表示になって欲しいが、RestTimeの計算などがすでに終わっているために、これを行うのは結構難しい。
+                if (timeUp_)
+                    rn = new TimeSpan(0, 0, KifuTimeSetting.Byoyomi);
+
                 return $"{r.Hours:D2}:{r.Minutes:D2}:{r.Seconds:D2} {rn.TotalSeconds}/{KifuTimeSetting.Byoyomi}";
             }
-
         }
         
         // -- private members

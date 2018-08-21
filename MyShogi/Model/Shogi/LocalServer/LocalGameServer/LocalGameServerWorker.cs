@@ -530,7 +530,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             if (bestMove != Move.NONE)
             {
-                PlayTimer(stm).ChageToThemTurn(bestMove == Move.TIME_UP);
+                PlayTimer(stm).ChangeToThemTurn(bestMove == Move.TIME_UP);
 
                 stmPlayer.SpecialMove = Move.NONE; // クリア
 
