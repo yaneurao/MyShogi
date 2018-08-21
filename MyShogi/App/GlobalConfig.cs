@@ -19,7 +19,7 @@ namespace MyShogi.App
         /// 『将棋神やねうら王』(2018年8月末発売)のマスターアップ版[2018/08/06]は"1.0.0"
         /// 『将棋神やねうら王』のUpdate1は、"1.1.0"を予定。
         /// </summary>
-        public static readonly string MYSHOGI_VERSION_STRING = "1.0.4";
+        public static readonly string MYSHOGI_VERSION_STRING = "1.0.5";
 
 
         public GlobalConfig()
@@ -207,7 +207,7 @@ namespace MyShogi.App
         /// 棋譜ウィンドウに表示する棋譜の種類
         ///
         /// 0 : 標準(KI2形式) 「８八同金右」 ←　デフォルト
-        /// 1 : 簡易(CSA形式) 「88金(79)」
+        /// 1 : 簡易(KIF形式) 「88金(79)」
         /// 2 : Csa式        「7988KI」
         /// 3 : Chess式       「7i8h」
         /// </summary>
@@ -222,8 +222,9 @@ namespace MyShogi.App
         /// 検討ウィンドウの読み筋に表示する棋譜の種類
         ///
         /// 0 : 標準(KI2形式) 「８八同金右」 ←　デフォルト
-        /// 1 : 簡易(CSA形式) 「88金(79)」
-        /// 2 : Chess式       「7i8h」
+        /// 1 : 簡易(KIF形式) 「88金(79)」
+        /// 2 : Csa式        「7988KI」
+        /// 3 : Chess式       「7i8h」
         /// </summary>
         [DataMember]
         public int ConsiderationWindowKifuVersion

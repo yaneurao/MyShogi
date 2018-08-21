@@ -1292,7 +1292,7 @@ namespace MyShogi.View.Win2D
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
-                        item3.Text = "CSA形式「5867KI」(&C)";    // CSA形式
+                        item3.Text = "CSA(CSA形式)「5867KI」(&C)";    // CSA形式
                         item3.Checked = config.KifuWindowKifuVersion == 2;
                         item3.Click += (sender, e) => { if (config.KifuWindowKifuVersion != 2) { WarningRestart(); config.KifuWindowKifuVersion = 2; } };
                         item.DropDownItems.Add(item3);
@@ -1325,7 +1325,7 @@ namespace MyShogi.View.Win2D
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
-                        item3.Text = "CSA形式「5867KI」(&C)";    // CSA形式
+                        item3.Text = "CSA(CSA形式)「5867KI」(&C)";    // CSA形式
                         item3.Checked = config.ConsiderationWindowKifuVersion == 2;
                         item3.Click += (sender, e) => { if (config.ConsiderationWindowKifuVersion != 2) { WarningRestart(); config.ConsiderationWindowKifuVersion = 2; } };
                         item.DropDownItems.Add(item3);
