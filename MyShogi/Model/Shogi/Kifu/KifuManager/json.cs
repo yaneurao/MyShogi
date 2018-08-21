@@ -661,7 +661,7 @@ namespace MyShogi.Model.Shogi.Kifu
             return jkf.ToJson();
         }
 
-        private static KifFormatterImmutableOptions livejsonkifformat = new KifFormatterImmutableOptions(ColorFormat.NONE, SquareFormat.FullWidthMix, SamePosFormat.ZEROsp, FromSqFormat.KI2);
+        private static KifFormatterImmutableOptions livejsonkifformat = new KifFormatterImmutableOptions(BaseFormat.KIF , ColorFormat.NONE, SquareFormat.FullWidthMix, SamePosFormat.ZEROsp, FromSqFormat.KI2);
         private string ToJsonString()
         {
             // 平手以外の出力は現状対応しない

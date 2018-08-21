@@ -133,6 +133,9 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("ConsiderationWindowFollowMainWindow", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("ReadOutCancelWhenGameEnd", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("KifuWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("ConsiderationWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
+            
 
             // -- ロギング用のハンドラをセット
 

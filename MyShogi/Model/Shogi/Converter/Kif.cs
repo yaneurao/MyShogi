@@ -306,9 +306,20 @@ namespace MyShogi.Model.Shogi.Converter
         /// <summary>
         /// SFEN形式
         /// </summary>
-        public static KifFormatterImmutableOptions SFEN { get; } = new KifFormatterImmutableOptions(
+        public static KifFormatterImmutableOptions Sfen { get; } = new KifFormatterImmutableOptions(
             BaseFormat.SFEN,
             ColorFormat.NONE,
+            SquareFormat.ASCII,
+            SamePosFormat.NONE,
+            FromSqFormat.NONE
+        );
+
+        /// <summary>
+        /// SFEN形式で手番表記あり
+        /// </summary>
+        public static KifFormatterImmutableOptions SfenC { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.SFEN,
+            ColorFormat.KIF,
             SquareFormat.ASCII,
             SamePosFormat.NONE,
             FromSqFormat.NONE

@@ -10,6 +10,7 @@ using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.App;
+using System.Diagnostics;
 
 namespace MyShogi.View.Win2D
 {
@@ -85,10 +86,13 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public EngineConsiderationNotifyObject Notify = new EngineConsiderationNotifyObject();
 
+
         /// <summary>
         /// 生成する棋譜文字列のフォーマット
+        ///
+        /// これpublicにしているとVisual Studioのデザイナが勝手にデフォルト値を放り込むので困る。
         /// </summary>
-        public IKifFormatterOptions kifFormatter
+        private IKifFormatterOptions kifFormatter
         {
             get; set;
         }
@@ -465,6 +469,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void InitKifuFormatter()
         {
+            /*
             kifFormatter = new KifFormatterOptions
             {
                 color = ColorFormat.Piece,
@@ -473,6 +478,16 @@ namespace MyShogi.View.Win2D
                 //fromsq = FromSqFormat.Verbose,
                 fromsq = FromSqFormat.KI2, // 移動元を入れると棋譜ウィンドウには入り切らないので省略する。
             };
+            */
+
+            var kifu_version = TheApp.app.Config.ConsiderationWindowKifuVersion;
+            switch (kifu_version)
+            {
+                case 0: kifFormatter = KifFormatter.Ki2C; break;
+                case 1: kifFormatter = KifFormatter.KifC; break;
+                case 2: kifFormatter = KifFormatter.SfenC; break;
+                default: Debug.Assert(false); break;
+            }
         }
 
         private void InitNotifyObject()
@@ -525,7 +540,7 @@ namespace MyShogi.View.Win2D
             // 例えば、連続王手の千日手による反則勝ちが単に「千日手」となってしまってはまずいので。
             // (『Kifu for Windoiws』ではそうなってしまう..)
             return m.IsOk() ? kifFormatter.format(p, m) :
-                (p.sideToMove == Model.Shogi.Core.Color.BLACK ? "☗":"☖") + m.SpecialMoveToKif();
+                kifFormatter.format(p.sideToMove) + m.SpecialMoveToKif();
         }
 
         /// <summary>

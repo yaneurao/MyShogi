@@ -317,23 +317,36 @@ namespace MyShogi.Model.Shogi.LocalServer
                 {
                     // 状態がtrueからfalseに変わった
                     // 両方の対局準備ができたということなので対局スタート
+                    // ただし、人間同士の対局だと一瞬で初期化が終わるため、まだGameModeの変更が完了していない可能性がある。
                     NotifyTurnChanged();
                 }
                 Initializing = init; // 前回の値を代入しておく。
             }
 
             // EngineInitializingプロパティの更新
-            {
-                var engineInit = false;
-                foreach (var c in All.Colors())
-                {
-                    var player = Player((Color)c);
-                    engineInit |= player.PlayerType == PlayerTypeEnum.UsiEngine && player.Initializing;
-                }
-                SetValue<bool>("EngineInitializing", engineInit);
-            }
+            UpdateEngineInitializing();
         }
+
+        /// <summary>
+        /// エンジンの初期化中であることを通知するためのメソッド。GameStart()内からのみ呼び出される。
+        ///
+        /// Players[]の生成が終わったあと、必要ならば画面に「エンジン初期化中」の画像を描画する。
+        /// UpdateInitializing()を呼び出すと人間同士の対局のときに早いタイミングでNotifyTurnChanged()を呼び出してしまうので駄目。
+        /// NotifyTurnChanged()はGameModeの変更後に呼び出されて欲しい。
+        /// </summary>
+        private void UpdateEngineInitializing()
+        {
+            var engineInit = false;
+            foreach (var c in All.Colors())
+            {
+                var player = Player((Color)c);
+                engineInit |= player.PlayerType == PlayerTypeEnum.UsiEngine && player.Initializing;
+            }
+            SetValue<bool>("EngineInitializing", engineInit);
+        }
+
         private bool Initializing = false;
+
 
         /// <summary>
         /// 棋譜ウィンドウの選択行を変更する。

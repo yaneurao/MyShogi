@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Converter;
@@ -25,6 +26,20 @@ namespace MyShogi.Model.Shogi.Kifu
         public KifuTree()
         {
             EnableKifuList = true;
+            EnableUsiMoveList = true;
+
+            InitKifuFormatter();
+
+            position = new Position();
+            Init();
+        }
+
+        /// <summary>
+        /// 棋譜の表示形式。現在のGlobalOptionの値を反映させる。
+        /// </summary>
+        private void InitKifuFormatter()
+        {
+            /*
             kifFormatter = new KifFormatterOptions
             {
                 color = ColorFormat.Piece,
@@ -33,10 +48,16 @@ namespace MyShogi.Model.Shogi.Kifu
                 //fromsq = FromSqFormat.Verbose,
                 fromsq = FromSqFormat.KI2, // 移動元を入れると棋譜ウィンドウには入り切らないので省略する。
             };
-            EnableUsiMoveList = true;
+            */
 
-            position = new Position();
-            Init();
+            var kifu_version = TheApp.app.Config.KifuWindowKifuVersion;
+            switch(kifu_version)
+            {
+                case 0: kifFormatter = KifFormatter.Ki2C; break;
+                case 1: kifFormatter = KifFormatter.KifC; break;
+                case 2: kifFormatter = KifFormatter.SfenC; break;
+                default: Debug.Assert(false);  break;
+            }
         }
 
         /// <summary>
@@ -222,6 +243,16 @@ namespace MyShogi.Model.Shogi.Kifu
         public List<string> KifuList
         {
             get; set;
+        }
+
+        /// <summary>
+        /// 最後に棋譜リストに追加された文字列をKI2形式で取得する。
+        /// special moveは対象外。
+        ///
+        /// </summary>
+        public string LastKifuString
+        {
+            get; private set;
         }
 
         /// <summary>
@@ -973,7 +1004,8 @@ namespace MyShogi.Model.Shogi.Kifu
             // 特殊な指し手は、KIF2フォーマットではきちんと変換できないので自前で変換する。
             // 例えば、連続王手の千日手による反則勝ちが単に「千日手」となってしまってはまずいので。
             // (『Kifu for Windoiws』ではそうなってしまう..)
-            return m.IsOk() ? kifFormatter.format(p, m) : m.SpecialMoveToKif().Left(6);
+            return m.IsOk() ? kifFormatter.format(p, m) :
+                kifFormatter.format(p.sideToMove) + m.SpecialMoveToKif().Left(6);
         }
 
         /// <summary>
@@ -1041,9 +1073,31 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 KifuList.Add(text);
                 RaisePropertyChanged("KifuListAdded", text /*末尾が変更になった。変更になった行を送る。*/);
+
+                // -- この内容をLastKifuStringに反映させる。
+
+                // special moveは除外
+                if (m.IsOk())
+                {
+                    var kifu_version = TheApp.app.Config.KifuWindowKifuVersion;
+                    switch (kifu_version)
+                    {
+                        // 同じ形式なので棋譜ウィンドウに表示しているものをそのまま代入しておけば良い。
+                        case 0: LastKifuString = move_text; break;
+
+                        case 1:
+                        case 2:
+                            LastKifuString = KifFormatter.Ki2C.format(position, m);
+                            break;
+
+                        default:
+                            Debug.Assert(false);break;
+                    }
+                }
+
             }
 
-            if (EnableUsiMoveList)
+                if (EnableUsiMoveList)
             {
                 // special moveは、USIとしては規定されていない指し手になるのでここでは出力しない。
                 // ("position"コマンドで送信してしまいかねないので)

@@ -111,14 +111,10 @@ namespace MyShogi.Model.Resource.Sounds
             if (TheApp.app.Config.KifuReadOut == 0)
                 return;
 
-            // ">+ 16.☖３六飛行成　32秒"
-            // みたいなフォーマットなので"."までまず読み飛ばす。
+            // KIF2形式。"☗３六飛行成" みたいなフォーマット
 
-            var index = kif.IndexOf('.');
-            if (index == -1)
-                return; // そんな阿呆な..
+            var index = 0;
 
-            ++index;
             // 次の1文字を得る
             char next()
             {

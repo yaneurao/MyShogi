@@ -854,6 +854,9 @@ namespace MyShogi.View.Win2D
                 // 盤面反転
                 var boardReverse = gameServer == null ? false : gameServer.BoardReverse;
 
+                // 再起動するように警告表示
+                void WarningRestart() { TheApp.app.MessageShow("この変更が反映するのは次回起動時です。",MessageShowType.Confirmation ); };
+
                 var item_file = new ToolStripMenuItem();
                 item_file.Text = "ファイル(&F)";
                 menu.Items.Add(item_file);
@@ -1257,14 +1260,68 @@ namespace MyShogi.View.Win2D
 
                         var item2 = new ToolStripMenuItem();
                         item2.Text = "標準(&N)"; // Normal
-                        item2.Checked = TheApp.app.Config.BoardNumberImageVersion == 1;
+                        item2.Checked = config.BoardNumberImageVersion == 1;
                         item2.Click += (sender, e) => { config.BoardNumberImageVersion = 1; };
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
                         item3.Text = "Chess式(&C)"; // Chess
-                        item3.Checked = TheApp.app.Config.BoardNumberImageVersion == 2;
+                        item3.Checked = config.BoardNumberImageVersion == 2;
                         item3.Click += (sender, e) => { config.BoardNumberImageVersion = 2; };
+                        item.DropDownItems.Add(item3);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
+                    {
+                        // -- 棋譜ウィンドウの棋譜の形式
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "棋譜ウィンドウの棋譜の表示形式(&K)"; // Kifu
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "標準(KIF2形式)「６七金右」(&K)"; // Kif
+                        item1.Checked = config.KifuWindowKifuVersion == 0;
+                        item1.Click += (sender, e) => { if (config.KifuWindowKifuVersion != 0) { WarningRestart(); config.KifuWindowKifuVersion = 0; } };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "簡易(KIF形式)「６七金(58)」(&I)"; // kif形式
+                        item2.Checked = config.KifuWindowKifuVersion == 1;
+                        item2.Click += (sender, e) => { if (config.KifuWindowKifuVersion != 1) { WarningRestart(); config.KifuWindowKifuVersion = 1; } };
+                        item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "Chess式(SFEN形式)「5h6g」(&S)";    // Sfen形式
+                        item3.Checked = config.KifuWindowKifuVersion == 2;
+                        item3.Click += (sender, e) => { if (config.KifuWindowKifuVersion != 2) { WarningRestart(); config.KifuWindowKifuVersion = 2; } };
+                        item.DropDownItems.Add(item3);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
+                    {
+                        // -- 棋譜ウィンドウの棋譜の形式
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "検討ウィンドウの棋譜の表示形式(&K)"; // Kifu
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "標準(KIF2形式)「６七金右」(&K)"; // Kif
+                        item1.Checked = config.ConsiderationWindowKifuVersion == 0;
+                        item1.Click += (sender, e) => { if (config.ConsiderationWindowKifuVersion != 0) { WarningRestart(); config.ConsiderationWindowKifuVersion = 0; } };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "簡易(KIF形式)「６七金(58)」(&I)"; // kif形式 
+                        item2.Checked = config.ConsiderationWindowKifuVersion == 1;
+                        item2.Click += (sender, e) => { if (config.ConsiderationWindowKifuVersion != 1) { WarningRestart(); config.ConsiderationWindowKifuVersion = 1; } };
+                        item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "Chess式(SFEN形式)「5h6g」(&S)";    // Sfen形式
+                        item3.Checked = config.ConsiderationWindowKifuVersion == 2;
+                        item3.Click += (sender, e) => { if (config.ConsiderationWindowKifuVersion != 2) { WarningRestart(); config.ConsiderationWindowKifuVersion = 2; } };
                         item.DropDownItems.Add(item3);
 
                         item_display.DropDownItems.Add(item);
@@ -1323,13 +1380,13 @@ namespace MyShogi.View.Win2D
 
                         var item2 = new ToolStripMenuItem();
                         item2.Text = "二文字駒(&2)"; // 2文字
-                        item2.Checked = TheApp.app.Config.PieceImageVersion == 1;
+                        item2.Checked = config.PieceImageVersion == 1;
                         item2.Click += (sender, e) => { config.PieceImageVersion = 1; };
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
                         item3.Text = "英文字駒(&A)"; // Alphabet
-                        item3.Checked = TheApp.app.Config.PieceImageVersion == 3;
+                        item3.Checked = config.PieceImageVersion == 3;
                         item3.Click += (sender, e) => { config.PieceImageVersion = 3; };
                         item.DropDownItems.Add(item3);
 
@@ -1349,7 +1406,7 @@ namespace MyShogi.View.Win2D
 
                         var item2 = new ToolStripMenuItem();
                         item2.Text = "赤(&R)"; // Red
-                        item2.Checked = TheApp.app.Config.PromotePieceColorType == 1;
+                        item2.Checked = config.PromotePieceColorType == 1;
                         item2.Click += (sender, e) => { config.PromotePieceColorType = 1; };
                         item.DropDownItems.Add(item2);
 
@@ -1375,20 +1432,20 @@ namespace MyShogi.View.Win2D
 
                         var item2 = new ToolStripMenuItem();
                         item2.Text = "青色(&B)"; // Blue
-                        item2.Checked = TheApp.app.Config.LastMoveFromColorType == 2;
+                        item2.Checked = config.LastMoveFromColorType == 2;
                         item2.Click += (sender, e) => { config.LastMoveFromColorType = 2; };
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
                         item3.Text = "緑色(&G)"; // Green
-                        item3.Checked = TheApp.app.Config.LastMoveFromColorType == 3;
+                        item3.Checked = config.LastMoveFromColorType == 3;
                         item3.Click += (sender, e) => { config.LastMoveFromColorType = 3; };
                         item.DropDownItems.Add(item3);
 
 #if false
                         var item4 = new ToolStripMenuItem();
                         item4.Text = "駒の影のみ(&S)"; // Shadow
-                        item4.Checked = TheApp.app.config.LastMoveFromColorType == 4;
+                        item4.Checked = config.LastMoveFromColorType == 4;
                         item4.Click += (sender, e) => { config.LastMoveFromColorType = 4; };
                         item.DropDownItems.Add(item4);
 #endif
@@ -1413,13 +1470,13 @@ namespace MyShogi.View.Win2D
 
                         var item2 = new ToolStripMenuItem();
                         item2.Text = "青色(&B)"; // Blue
-                        item2.Checked = TheApp.app.Config.LastMoveToColorType == 2;
+                        item2.Checked = config.LastMoveToColorType == 2;
                         item2.Click += (sender, e) => { config.LastMoveToColorType = 2; };
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
                         item3.Text = "緑色(&G)"; // Green
-                        item3.Checked = TheApp.app.Config.LastMoveToColorType == 3;
+                        item3.Checked = config.LastMoveToColorType == 3;
                         item3.Click += (sender, e) => { config.LastMoveToColorType = 3; };
                         item.DropDownItems.Add(item3);
 
@@ -1443,13 +1500,13 @@ namespace MyShogi.View.Win2D
 
                         var item2 = new ToolStripMenuItem();
                         item2.Text = "青色(&B)"; // Blue
-                        item2.Checked = TheApp.app.Config.PickedMoveFromColorType == 2;
+                        item2.Checked = config.PickedMoveFromColorType == 2;
                         item2.Click += (sender, e) => { config.PickedMoveFromColorType = 2; };
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
                         item3.Text = "緑色(&G)"; // Green
-                        item3.Checked = TheApp.app.Config.PickedMoveFromColorType == 3;
+                        item3.Checked = config.PickedMoveFromColorType == 3;
                         item3.Click += (sender, e) => { config.PickedMoveFromColorType = 3; };
                         item.DropDownItems.Add(item3);
 
@@ -1474,32 +1531,32 @@ namespace MyShogi.View.Win2D
 
                         var item2 = new ToolStripMenuItem();
                         item2.Text = "移動できない升を暗くする(&2)"; // dark 2
-                        item2.Checked = TheApp.app.Config.PickedMoveToColorType == 2;
+                        item2.Checked = config.PickedMoveToColorType == 2;
                         item2.Click += (sender, e) => { config.PickedMoveToColorType = 2; };
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
                         item3.Text = "移動できない升をかなり暗くする(&3)"; // dark 3
-                        item3.Checked = TheApp.app.Config.PickedMoveToColorType == 3;
+                        item3.Checked = config.PickedMoveToColorType == 3;
                         item3.Click += (sender, e) => { config.PickedMoveToColorType = 3; };
                         item.DropDownItems.Add(item3);
 
                         var item4 = new ToolStripMenuItem();
                         item4.Text = "移動できる升を少し明るくする(&4)"; // dark 4
-                        item4.Checked = TheApp.app.Config.PickedMoveToColorType == 4;
+                        item4.Checked = config.PickedMoveToColorType == 4;
                         item4.Click += (sender, e) => { config.PickedMoveToColorType = 4; };
                         item.DropDownItems.Add(item4);
 
                         var item5 = new ToolStripMenuItem();
                         item5.Text = "移動できる升を明るくする(&5)"; // dark 5
-                        item5.Checked = TheApp.app.Config.PickedMoveToColorType == 5;
+                        item5.Checked = config.PickedMoveToColorType == 5;
                         item5.Click += (sender, e) => { config.PickedMoveToColorType = 5; };
                         item.DropDownItems.Add(item5);
 
 #if false
                         var item6 = new ToolStripMenuItem();
                         item6.Text = "駒の影のみ(&6)"; // dark 6
-                        item6.Checked = TheApp.app.config.PickedMoveToColorType == 6;
+                        item6.Checked = config.PickedMoveToColorType == 6;
                         item6.Click += (sender, e) => { config.PickedMoveToColorType = 6; };
                         item.DropDownItems.Add(item6);
 #endif
@@ -1540,7 +1597,7 @@ namespace MyShogi.View.Win2D
 
                         var item2 = new ToolStripMenuItem();
                         item2.Text = "あり(&E)"; // Visible
-                        item2.Checked = TheApp.app.Config.TurnDisplay == 1;
+                        item2.Checked = config.TurnDisplay == 1;
                         item2.Click += (sender, e) => { config.TurnDisplay = 1; };
                         item.DropDownItems.Add(item2);
 
@@ -1578,8 +1635,8 @@ namespace MyShogi.View.Win2D
                     {
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "対局時の駒音(&P)"; // Piece sound
-                        item1.Checked = TheApp.app.Config.PieceSoundInTheGame == 1;
-                        item1.Click += (sender, e) => { TheApp.app.Config.PieceSoundInTheGame ^= 1 /* 0,1反転 */; };
+                        item1.Checked = config.PieceSoundInTheGame == 1;
+                        item1.Click += (sender, e) => { config.PieceSoundInTheGame ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
 
@@ -1588,8 +1645,8 @@ namespace MyShogi.View.Win2D
                     {
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "王手などの駒音を衝撃音に(&C)"; // Check sound
-                        item1.Checked = TheApp.app.config.CrashPieceSoundInTheGame == 1;
-                        item1.Click += (sender, e) => { TheApp.app.config.CrashPieceSoundInTheGame ^= 1 /* 0,1反転 */; };
+                        item1.Checked = config.CrashPieceSoundInTheGame == 1;
+                        item1.Click += (sender, e) => { config.CrashPieceSoundInTheGame ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
 #endif
@@ -1597,8 +1654,8 @@ namespace MyShogi.View.Win2D
                     {
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "検討時の駒音(&Q)"; // Piece soundのPの(アルファベット的に)次の文字。
-                        item1.Checked = TheApp.app.Config.PieceSoundOffTheGame == 1;
-                        item1.Click += (sender, e) => { TheApp.app.Config.PieceSoundOffTheGame ^= 1 /* 0,1反転 */; };
+                        item1.Checked = config.PieceSoundOffTheGame == 1;
+                        item1.Click += (sender, e) => { config.PieceSoundOffTheGame ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
 
@@ -1606,27 +1663,27 @@ namespace MyShogi.View.Win2D
                     {
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "対局時の棋譜読み上げ(&R)"; // Read out
-                        item1.Checked = TheApp.app.Config.KifuReadOut == 1;
-                        item1.Enabled = TheApp.app.Config.CommercialVersion != 0; // 商用版のみ選択可
-                        item1.Click += (sender, e) => { TheApp.app.Config.KifuReadOut ^= 1 /* 0,1反転 */; };
+                        item1.Checked = config.KifuReadOut == 1;
+                        item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
+                        item1.Click += (sender, e) => { config.KifuReadOut ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
 
                     {
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "「先手」「後手」を毎回読み上げる(&E)"; // Everytime
-                        item1.Checked = TheApp.app.Config.ReadOutSenteGoteEverytime == 1;
-                        item1.Enabled = TheApp.app.Config.CommercialVersion != 0; // 商用版のみ選択可
-                        item1.Click += (sender, e) => { TheApp.app.Config.ReadOutSenteGoteEverytime ^= 1 /* 0,1反転 */; };
+                        item1.Checked = config.ReadOutSenteGoteEverytime == 1;
+                        item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
+                        item1.Click += (sender, e) => { config.ReadOutSenteGoteEverytime ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
 
                     {
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "終局時に以降の音声読み上げをキャンセルする。(&C)"; // Cancel
-                        item1.Checked = TheApp.app.Config.ReadOutCancelWhenGameEnd == 1;
-                        item1.Enabled = TheApp.app.Config.CommercialVersion != 0; // 商用版のみ選択可
-                        item1.Click += (sender, e) => { TheApp.app.Config.ReadOutCancelWhenGameEnd ^= 1 /* 0,1反転 */; };
+                        item1.Checked = config.ReadOutCancelWhenGameEnd == 1;
+                        item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
+                        item1.Click += (sender, e) => { config.ReadOutCancelWhenGameEnd ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
 
@@ -1914,13 +1971,13 @@ namespace MyShogi.View.Win2D
                                 // メモリへのロギング
 
                                 var item1 = new ToolStripMenuItem();
-                                item1.Text = TheApp.app.Config.MemoryLoggingEnable ? "デバッグ終了(&B)" : "デバッグ開始(&B)"; // deBug
-                                item1.Checked = TheApp.app.Config.MemoryLoggingEnable;
+                                item1.Text = config.MemoryLoggingEnable ? "デバッグ終了(&B)" : "デバッグ開始(&B)"; // deBug
+                                item1.Checked = config.MemoryLoggingEnable;
                                 item1.ToolTipText = "思考エンジンとのやりとりを表示する機能です。";
                                 item1.Click += (sender, e) =>
                                 {
-                                    TheApp.app.Config.MemoryLoggingEnable ^= true;
-                                    if (!TheApp.app.Config.MemoryLoggingEnable && debugDialog != null)
+                                    config.MemoryLoggingEnable ^= true;
+                                    if (!config.MemoryLoggingEnable && debugDialog != null)
                                     {
                                         debugDialog.Dispose(); // 終了させておく。
                                         debugDialog = null;
@@ -1934,7 +1991,7 @@ namespace MyShogi.View.Win2D
 
                                 var item1 = new ToolStripMenuItem();
                                 item1.Text = "デバッグウィンドウの表示(&D)"; // Debug Window
-                                var enabled = TheApp.app.Config.MemoryLoggingEnable;
+                                var enabled = config.MemoryLoggingEnable;
                                 item1.Enabled = enabled;
                                 if (!enabled)
                                     item1.ToolTipText = "デバッグウィンドウを表示するためには「デバッグの開始」を行う必要があります。";
@@ -1966,11 +2023,11 @@ namespace MyShogi.View.Win2D
                                 // ファイルへのロギング
 
                                 var item1 = new ToolStripMenuItem();
-                                var enabled = TheApp.app.Config.FileLoggingEnable;
+                                var enabled = config.FileLoggingEnable;
                                 item1.Text = enabled ? "ファイルへのロギング終了(&L)" : "ファイルへのロギング開始(&L)"; // Logging
                                 item1.Checked = enabled;
 
-                                item1.Click += (sender, e) => { TheApp.app.Config.FileLoggingEnable ^= true; };
+                                item1.Click += (sender, e) => { config.FileLoggingEnable ^= true; };
                                 item_.DropDownItems.Add(item1);
                             }
 

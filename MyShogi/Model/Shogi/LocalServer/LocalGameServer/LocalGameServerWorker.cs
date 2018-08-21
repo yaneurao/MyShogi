@@ -120,7 +120,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             // Players[]の生成が終わったので、必要ならば画面に「エンジン初期化中」の画像を描画する。
-            UpdateInitializing();
+            UpdateEngineInitializing();
 
             foreach (var c in All.Colors())
             {
@@ -594,7 +594,6 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     var soundManager = TheApp.app.SoundManager;
 
-                    var kif = kifuManager.KifuList[kifuManager.KifuList.Count - 1];
                     // special moveはMoveを直接渡して再生。
                     if (bestMove.IsSpecial())
                         soundManager.ReadOut(bestMove);
@@ -619,6 +618,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                         }
 
                         // 棋譜文字列をそのまま頑張って読み上げる。
+                        // ただし、棋譜ウィンドウの表示形式を変更できるので…。
+
+                        var kif = kifuManager.Tree.LastKifuString;
                         soundManager.ReadOut(kif);
                     }
 
