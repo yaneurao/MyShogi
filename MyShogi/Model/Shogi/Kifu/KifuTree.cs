@@ -53,9 +53,10 @@ namespace MyShogi.Model.Shogi.Kifu
             var kifu_version = TheApp.app.Config.KifuWindowKifuVersion;
             switch(kifu_version)
             {
-                case 0: kifFormatter = KifFormatter.Ki2C; break;
-                case 1: kifFormatter = KifFormatter.KifC; break;
-                case 2: kifFormatter = KifFormatter.SfenC; break;
+                case 0: kifFormatter = KifFormatter.Ki2CP; break;
+                case 1: kifFormatter = KifFormatter.KifCP; break;
+                case 2: kifFormatter = KifFormatter.CsaCP; break;
+                case 3: kifFormatter = KifFormatter.SfenCP; break;
                 default: Debug.Assert(false);  break;
             }
         }
@@ -324,7 +325,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 棋譜上で、本譜の手順から最初に分岐した行
         /// (この行以降は、インデントを入れたり、棋譜の文字の色を変えたりして表現すると良いと思う)
         /// ※ この値は0を取らない。(開始局面の手前で分岐することはないため)
-        /// 
+        ///
         /// -1 : 分岐した行がない
         /// </summary>
         public int KifuBranch { get; set; }
@@ -819,7 +820,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// special nodeに突入するnodeなのか。
         /// special nodeに到達するのであれば、その指し手(specail move)を返す。
-        /// 
+        ///
         /// isHuman == trueの場合、人間プレイヤーなので入玉宣言が出来る状況ならば自動的に入玉宣言を行う。
         /// </summary>
         /// <returns></returns>
@@ -916,7 +917,7 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 DoMove(m);
                 return true;
-            } 
+            }
 
             PropertyChangedEventEnable = false;
 
@@ -1087,6 +1088,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
                         case 1:
                         case 2:
+                        case 3:
                             LastKifuString = KifFormatter.Ki2C.format(position, m);
                             break;
 

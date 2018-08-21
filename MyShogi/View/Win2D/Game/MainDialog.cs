@@ -1280,22 +1280,28 @@ namespace MyShogi.View.Win2D
                         item.Text = "棋譜ウィンドウの棋譜の表示形式(&K)"; // Kifu
 
                         var item1 = new ToolStripMenuItem();
-                        item1.Text = "標準(KIF2形式)「６七金右」(&K)"; // Kif
+                        item1.Text = "標準(KI2形式)「６七金右」(&K)"; // KI2形式
                         item1.Checked = config.KifuWindowKifuVersion == 0;
                         item1.Click += (sender, e) => { if (config.KifuWindowKifuVersion != 0) { WarningRestart(); config.KifuWindowKifuVersion = 0; } };
                         item.DropDownItems.Add(item1);
 
                         var item2 = new ToolStripMenuItem();
-                        item2.Text = "簡易(KIF形式)「６七金(58)」(&I)"; // kif形式
+                        item2.Text = "簡易(KIF形式)「６七金(58)」(&I)"; // KIF形式
                         item2.Checked = config.KifuWindowKifuVersion == 1;
                         item2.Click += (sender, e) => { if (config.KifuWindowKifuVersion != 1) { WarningRestart(); config.KifuWindowKifuVersion = 1; } };
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
-                        item3.Text = "Chess式(SFEN形式)「5h6g」(&S)";    // Sfen形式
+                        item3.Text = "CSA形式「5867KI」(&C)";    // CSA形式
                         item3.Checked = config.KifuWindowKifuVersion == 2;
                         item3.Click += (sender, e) => { if (config.KifuWindowKifuVersion != 2) { WarningRestart(); config.KifuWindowKifuVersion = 2; } };
                         item.DropDownItems.Add(item3);
+
+                        var item4 = new ToolStripMenuItem();
+                        item4.Text = "Chess式(SFEN形式)「5h6g」(&S)";    // SFEN形式
+                        item4.Checked = config.KifuWindowKifuVersion == 3;
+                        item4.Click += (sender, e) => { if (config.KifuWindowKifuVersion != 3) { WarningRestart(); config.KifuWindowKifuVersion = 3; } };
+                        item.DropDownItems.Add(item4);
 
                         item_display.DropDownItems.Add(item);
                     }
@@ -1307,22 +1313,28 @@ namespace MyShogi.View.Win2D
                         item.Text = "検討ウィンドウの棋譜の表示形式(&K)"; // Kifu
 
                         var item1 = new ToolStripMenuItem();
-                        item1.Text = "標準(KIF2形式)「６七金右」(&K)"; // Kif
+                        item1.Text = "標準(KI2形式)「６七金右」(&K)"; // KI2形式
                         item1.Checked = config.ConsiderationWindowKifuVersion == 0;
                         item1.Click += (sender, e) => { if (config.ConsiderationWindowKifuVersion != 0) { WarningRestart(); config.ConsiderationWindowKifuVersion = 0; } };
                         item.DropDownItems.Add(item1);
 
                         var item2 = new ToolStripMenuItem();
-                        item2.Text = "簡易(KIF形式)「６七金(58)」(&I)"; // kif形式 
+                        item2.Text = "簡易(KIF形式)「６七金(58)」(&I)"; // KIF形式
                         item2.Checked = config.ConsiderationWindowKifuVersion == 1;
                         item2.Click += (sender, e) => { if (config.ConsiderationWindowKifuVersion != 1) { WarningRestart(); config.ConsiderationWindowKifuVersion = 1; } };
                         item.DropDownItems.Add(item2);
 
                         var item3 = new ToolStripMenuItem();
-                        item3.Text = "Chess式(SFEN形式)「5h6g」(&S)";    // Sfen形式
+                        item3.Text = "CSA形式「5867KI」(&C)";    // CSA形式
                         item3.Checked = config.ConsiderationWindowKifuVersion == 2;
                         item3.Click += (sender, e) => { if (config.ConsiderationWindowKifuVersion != 2) { WarningRestart(); config.ConsiderationWindowKifuVersion = 2; } };
                         item.DropDownItems.Add(item3);
+
+                        var item4 = new ToolStripMenuItem();
+                        item4.Text = "Chess式(SFEN形式)「5h6g」(&S)";    // SFEN形式
+                        item4.Checked = config.ConsiderationWindowKifuVersion == 3;
+                        item4.Click += (sender, e) => { if (config.ConsiderationWindowKifuVersion != 3) { WarningRestart(); config.ConsiderationWindowKifuVersion = 3; } };
+                        item.DropDownItems.Add(item4);
 
                         item_display.DropDownItems.Add(item);
                     }

@@ -247,6 +247,17 @@ namespace MyShogi.Model.Shogi.Converter
         );
 
         /// <summary>
+        /// KIF(☗☖手番文字あり)
+        /// </summary>
+        public static KifFormatterImmutableOptions KifCP { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.KIF,
+            ColorFormat.Piece,
+            SquareFormat.FullWidthMix,
+            SamePosFormat.KIFsp,
+            FromSqFormat.KIF
+        );
+
+        /// <summary>
         /// KI2(手番文字なし)
         /// </summary>
         public static KifFormatterImmutableOptions Ki2 { get; } = new KifFormatterImmutableOptions(
@@ -263,6 +274,17 @@ namespace MyShogi.Model.Shogi.Converter
         public static KifFormatterImmutableOptions Ki2C { get; } = new KifFormatterImmutableOptions(
             BaseFormat.KIF,
             ColorFormat.KIF,
+            SquareFormat.FullWidthMix,
+            SamePosFormat.KI2sp,
+            FromSqFormat.KI2
+        );
+
+        /// <summary>
+        /// KI2(☗☖手番文字あり)
+        /// </summary>
+        public static KifFormatterImmutableOptions Ki2CP { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.KIF,
+            ColorFormat.Piece,
             SquareFormat.FullWidthMix,
             SamePosFormat.KI2sp,
             FromSqFormat.KI2
@@ -293,9 +315,9 @@ namespace MyShogi.Model.Shogi.Converter
         );
 
         /// <summary>
-        /// CSA形式
+        /// CSA形式(+-手番文字あり)
         /// </summary>
-        public static KifFormatterImmutableOptions CSA { get; } = new KifFormatterImmutableOptions(
+        public static KifFormatterImmutableOptions Csa { get; } = new KifFormatterImmutableOptions(
             BaseFormat.CSA,
             ColorFormat.CSA,
             SquareFormat.ASCII,
@@ -304,7 +326,29 @@ namespace MyShogi.Model.Shogi.Converter
         );
 
         /// <summary>
-        /// SFEN形式
+        /// CSA形式(▲△手番文字あり)
+        /// </summary>
+        public static KifFormatterImmutableOptions CsaC { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.CSA,
+            ColorFormat.KIF,
+            SquareFormat.ASCII,
+            SamePosFormat.NONE,
+            FromSqFormat.NONE
+        );
+
+        /// <summary>
+        /// CSA形式(☗☖手番文字あり)
+        /// </summary>
+        public static KifFormatterImmutableOptions CsaCP { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.CSA,
+            ColorFormat.Piece,
+            SquareFormat.ASCII,
+            SamePosFormat.NONE,
+            FromSqFormat.NONE
+        );
+
+        /// <summary>
+        /// SFEN形式(手番文字なし)
         /// </summary>
         public static KifFormatterImmutableOptions Sfen { get; } = new KifFormatterImmutableOptions(
             BaseFormat.SFEN,
@@ -315,11 +359,22 @@ namespace MyShogi.Model.Shogi.Converter
         );
 
         /// <summary>
-        /// SFEN形式で手番表記あり
+        /// SFEN形式(▲△手番文字あり)
         /// </summary>
         public static KifFormatterImmutableOptions SfenC { get; } = new KifFormatterImmutableOptions(
             BaseFormat.SFEN,
             ColorFormat.KIF,
+            SquareFormat.ASCII,
+            SamePosFormat.NONE,
+            FromSqFormat.NONE
+        );
+
+        /// <summary>
+        /// SFEN形式(☗☖手番文字あり)
+        /// </summary>
+        public static KifFormatterImmutableOptions SfenCP { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.SFEN,
+            ColorFormat.Piece,
             SquareFormat.ASCII,
             SamePosFormat.NONE,
             FromSqFormat.NONE

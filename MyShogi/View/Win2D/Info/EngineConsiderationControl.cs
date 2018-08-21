@@ -23,7 +23,7 @@ namespace MyShogi.View.Win2D
         public EngineConsiderationControl()
         {
             InitializeComponent();
-            
+
             if (!TheApp.app.DesignMode)
             {
                 InitListView();
@@ -120,7 +120,7 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// [UI Thread] : エンジン名を設定/取得する。
-        /// 
+        ///
         /// このコントロールの左上のテキストボックスに反映される。
         /// setterでは、ヘッダー情報、PVのクリアも行う。
         /// </summary>
@@ -133,9 +133,9 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// Rankingで並び替えるかどうかのフラグ
         /// RankingとはUSIの"info multipv X pv ..."のXのところの値。何番目の候補手であるか。
-        /// 
+        ///
         /// 検討モードの時はtrue。「着順」/「R順」ボタンを押すとtrue/false切り替わる。
-        /// 
+        ///
         /// [UI Thread] : setter
         /// </summary>
         public bool SortRanking {
@@ -483,9 +483,10 @@ namespace MyShogi.View.Win2D
             var kifu_version = TheApp.app.Config.ConsiderationWindowKifuVersion;
             switch (kifu_version)
             {
-                case 0: kifFormatter = KifFormatter.Ki2C; break;
-                case 1: kifFormatter = KifFormatter.KifC; break;
-                case 2: kifFormatter = KifFormatter.SfenC; break;
+                case 0: kifFormatter = KifFormatter.Ki2CP; break;
+                case 1: kifFormatter = KifFormatter.KifCP; break;
+                case 2: kifFormatter = KifFormatter.CsaCP; break;
+                case 3: kifFormatter = KifFormatter.SfenCP; break;
                 default: Debug.Assert(false); break;
             }
         }
@@ -552,7 +553,7 @@ namespace MyShogi.View.Win2D
         {
             // .NET FrameworkのTextBox、右端にスペースをpaddingしていて、TextAlignをcenterに設定してもそのスペースを
             // わざわざ除去してからセンタリングするので(余計なお世話)、TextAlignをLeftに設定して、自前でpaddingする。
-            
+
             // MS UI Gothicは等幅ではないのでスペースでpaddingするとずれる。
             // TextBoxのフォントは、MS ゴシックに設定する。
 
