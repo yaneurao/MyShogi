@@ -382,8 +382,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 // -- 詰将棋エンジン
 
                 // このnamesにあるもの以外、descriptionから削除してしまう。
-                var names = new[] { "AutoHash","Hash_" ,"AutoThread_","Threads_","MultiPV","WriteDebugLog","NetworkDelay","NetworkDelay2", "MinimumThinkingTime",
-                    "SlowMover","DepthLimit","NodesLimit","Contempt","ContemptFromBlack","EvalDir","MorePreciseMatePV"};
+                var names = new[] { "AutoHash_","Hash_" ,"AutoThread_","Threads","MultiPV","WriteDebugLog","NetworkDelay","NetworkDelay2", "MinimumThinkingTime",
+                    "SlowMover","DepthLimit","NodesLimit","Contempt","ContemptFromBlack","EvalDir","MorePreciseMatePV","MaxMovesToDraw"};
 
                 // このnamesHideにあるものは隠す。
                 var namesHide = new[] { "SlowMover", "Comtempt", "ContemptFromBlack" , "EvalDir"};
@@ -391,7 +391,11 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 var descriptions = new List<EngineOptionDescription>();
                 foreach (var d in default_descriptions)
                 {
-                    if (names.Contains(d.Name) )
+                    // この見出し不要
+                    if (d.DisplayName == "定跡設定" || d.DisplayName == "評価関数の設定")
+                        continue;
+
+                    if (names.Contains(d.Name) || d.Name == null /* 見出し項目なので入れておく */)
                     {
                         if (namesHide.Contains(d.Name))
                             d.Hide = true;
@@ -407,7 +411,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "ただし、この項目をオンにしても攻め方(詰ます側)が最短手順の詰みになる手順を選択するとは限りません。",
                         "option name MorePreciseMatePv type check default true");
 
-                     descriptions.Add(d);
+                    // 「読み筋の表示」の直後に挿入
+                    var index = descriptions.FindIndex((x) => x.DisplayName == "読み筋の表示") + 1;
+                    descriptions.Insert(index , d);
                 }
 
                 var engine_define = new EngineDefine()
