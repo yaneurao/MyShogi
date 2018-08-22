@@ -135,21 +135,14 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("ReadOutCancelWhenGameEnd", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("KifuWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("ConsiderationWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
-            
+            Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl, mainDialog);
+
 
             // -- ロギング用のハンドラをセット
 
-            var MemoryLoggingEnableHandler = new PropertyChangedEventHandler((args) =>
-            {
-                if (Config.MemoryLoggingEnable)
-                    Log.log1 = new MemoryLog();
-                else
-                {
-                    if (Log.log1 != null)
-                        Log.log1.Dispose();
-                    Log.log1 = null;
-                }
-            });
+            // メモリ上でのロギング
+            Log.log1 = new MemoryLog();
+
             var FileLoggingEnable = new PropertyChangedEventHandler((args) =>
             {
                 if (Config.FileLoggingEnable)
@@ -165,14 +158,11 @@ namespace MyShogi.App
                 }
             });
 
-            Config.AddPropertyChangedHandler("MemoryLoggingEnable", MemoryLoggingEnableHandler);
             Config.AddPropertyChangedHandler("FileLoggingEnable", FileLoggingEnable);
 
-            Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl , mainDialog);
-
             // 上のハンドラを呼び出して、必要ならばロギングを開始しておいてやる。
-            MemoryLoggingEnableHandler(null);
             FileLoggingEnable(null);
+
 
             // 初期化が終わったのでgameServerの起動を行う。
             gameServer.Start();

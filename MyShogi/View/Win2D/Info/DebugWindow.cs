@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -10,6 +11,10 @@ namespace MyShogi.View.Win2D
 {
     public partial class DebugWindow : Form
     {
+        /// <summary>
+        /// デバッグ用に思考エンジンとやりとりしているログを画面上に表示するためのダイアログ。
+        /// </summary>
+        /// <param name="log"></param>
         public DebugWindow(MemoryLog log)
         {
             InitializeComponent();
@@ -23,15 +28,13 @@ namespace MyShogi.View.Win2D
                     ListAdded(sender);
             });
 
-            log.ListAdded += ListAdded_;
-            FormClosed += (sender, args) => { log.ListAdded -= ListAdded_; };
+            log.AddHandler(ListAdded_ , ref log_list);
+            FormClosed += (sender, args) => { log.RemoveHandler(ListAdded_); };
 
-            memoryLog = log;
-
-            UpdateListBox(log.LogList);
+            UpdateListBox();
         }
 
-        private MemoryLog memoryLog;
+        private List<string> log_list;
 
         /// <summary>
         /// [UI thread] : Form.ClientSizeChanged , Load イベントに対するハンドラ。
@@ -79,12 +82,10 @@ namespace MyShogi.View.Win2D
         /// [UI thread] : Logが追加された時の描画ハンドラ
         /// </summary>
         /// <param name="sender"></param>
-        private void ListAdded(object sender)
+        private void ListAdded(string lastLine)
         {
-            lastLogList = sender as List<string>;
-            var lastLine = lastLogList[lastLogList.Count - 1]; // 今回追加になった行
-
             // 最後の行だけ追加されたはずであるから、その部分だけを差分更新してやる。
+            log_list.Add(lastLine);
 
             var filter = textBox1.Text;
             string appendLine = null;
@@ -120,17 +121,15 @@ namespace MyShogi.View.Win2D
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             // 条件が変わったので再描画する。
-            UpdateListBox(lastLogList);
+            UpdateListBox();
         }
 
         /// <summary>
         /// [UI thread] : 現在のテキストボックスの内容に従ってListBoxにlogを反映させる。
         /// </summary>
-        private void UpdateListBox(List<string> log_list)
+        private void UpdateListBox()
         {
-            if (log_list == null)
-                return;
-            lastLogList = log_list;
+            Debug.Assert(log_list != null);
 
             // listBox1に表示する内容まとめて生成して、まとめてセットする。
             List<string> list;
@@ -159,11 +158,6 @@ namespace MyShogi.View.Win2D
             listBox1.TopIndex = listBox1.Items.Count - 1;
             listBox1.EndUpdate();
         }
-
-        /// <summary>
-        /// 最後に渡されたUpdateListBoxの引数
-        /// </summary>
-        private List<string> lastLogList;
 
         /// <summary>
         /// 選択行のコピペを実現する。

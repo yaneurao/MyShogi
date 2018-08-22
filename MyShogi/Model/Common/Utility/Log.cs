@@ -82,7 +82,8 @@ namespace MyShogi.Model.Common.Utility
         }
     }
 
-    public delegate void ListAddedEventHandler(object sender);
+    /// LogListが1行追加になった時に呼び出されるイベントハンドラの型
+    public delegate void ListAddedEventHandler(string sender);
 
     /// <summary>
     /// メモリ上に記録するタイプのログ
@@ -93,20 +94,38 @@ namespace MyShogi.Model.Common.Utility
         {
             var f_log = LogHelpper.Format(logType, log , pipe_id);
 
-            List<string> c = null;
             lock (lock_object)
             {
                 LogList.Add(f_log);
-
-                if (ListAdded != null)
-                    c = new List<string>(LogList); // clone
             }
 
             // イベントハンドラが設定されていればcallbackしたいが、lock解除してからでないとdead lockになる。
-            // かと言って、LogListはmutableだし…。仕方ないのでClone()しといてそれ渡す。オーバーヘッドすごすぎ…。
-            // まあ、ロギングしていない時は、オーバーヘッドなしと考えられるので、これはこれでいいや…。
+
             if (ListAdded != null)
-                ListAdded(c);
+                ListAdded(f_log);
+        }
+
+        /// <summary>
+        /// Listが1行追加されたときに呼び出されるハンドラをセットして、
+        /// その時点でのlistをコピーして取得する。
+        /// </summary>
+        /// <param name="h"></param>
+        /// <param name="list"></param>
+        public void AddHandler(ListAddedEventHandler h , ref List<string> list)
+        {
+            lock (lock_object)
+            {
+                ListAdded += h;
+                list = new List<string>(LogList); // その時点のlistをCloneして返す
+            }
+        }
+
+        public void RemoveHandler(ListAddedEventHandler h)
+        {
+            lock(lock_object)
+            {
+                ListAdded -= h;
+            }
         }
 
         public void Dispose() { }
@@ -114,13 +133,16 @@ namespace MyShogi.Model.Common.Utility
         /// <summary>
         /// 書き出されたログ
         /// </summary>
-        public List<string> LogList { get; private set; } = new List<string>();
+        private List<string> LogList { get; set; } = new List<string>();
 
         /// <summary>
-        /// LogListが変更になった時のイベントハンドラ
+        /// LogListが1行追加になった時に呼び出されるイベントハンドラ
         /// </summary>
-        public ListAddedEventHandler ListAdded;
+        private ListAddedEventHandler ListAdded;
 
+        /// <summary>
+        /// ListAdded , LogListを変更するときにlockされるべきlock用のobject。
+        /// </summary>
         private object lock_object = new object();
     }
 

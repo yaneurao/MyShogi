@@ -1974,39 +1974,18 @@ namespace MyShogi.View.Win2D
                         // デバッグウィンドウ
 
                         var item_ = new ToolStripMenuItem();
-                        item_.Text = "デバッグウィンドウ(&D)"; // Debug window
+                        item_.Text = "デバッグ用のログ(&D)"; // Debug window
 
                         item_window.DropDownItems.Add(item_);
 
                         {
-                            {
-                                // メモリへのロギング
-
-                                var item1 = new ToolStripMenuItem();
-                                item1.Text = config.MemoryLoggingEnable ? "デバッグ終了(&B)" : "デバッグ開始(&B)"; // deBug
-                                item1.Checked = config.MemoryLoggingEnable;
-                                item1.ToolTipText = "思考エンジンとのやりとりを表示する機能です。";
-                                item1.Click += (sender, e) =>
-                                {
-                                    config.MemoryLoggingEnable ^= true;
-                                    if (!config.MemoryLoggingEnable && debugDialog != null)
-                                    {
-                                        debugDialog.Dispose(); // 終了させておく。
-                                        debugDialog = null;
-                                    }
-                                };
-                                item_.DropDownItems.Add(item1);
-                            }
+                            // デバッグ
 
                             {
                                 // デバッグウィンドウ
 
                                 var item1 = new ToolStripMenuItem();
                                 item1.Text = "デバッグウィンドウの表示(&D)"; // Debug Window
-                                var enabled = config.MemoryLoggingEnable;
-                                item1.Enabled = enabled;
-                                if (!enabled)
-                                    item1.ToolTipText = "デバッグウィンドウを表示するためには「デバッグの開始」を行う必要があります。";
                                 item1.Click += (sender, e) =>
                                 {
                                     if (debugDialog != null)
