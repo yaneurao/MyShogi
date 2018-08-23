@@ -213,6 +213,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             );
 
             Initializing = true;
+            // Players[]の生成が終わっているので、画面に「エンジン初期化中」の画像を描画する。
+            // (エンジンの再初期化には時間がほとんど必要ないため一瞬で終わるだろうが…)
+            UpdateEngineInitializing();
 
             var nextGameMode = GameModeEnum.InTheGame;
 
@@ -265,6 +268,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             UpdateKifuSelectedIndex();
 
             GameStartInCommon(nextGameMode);
+
+            // NotifyTurnChanged();
+            // →　GameStart()と同じ理由により、これはここで呼び出してはならない。
         }
 
         /// <summary>

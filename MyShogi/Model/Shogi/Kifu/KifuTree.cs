@@ -616,10 +616,14 @@ namespace MyShogi.Model.Shogi.Kifu
             PropertyChangedEventEnable = false;
             int branch = KifuBranch;
 
-            // pliesFromRoot == branch -1 のnodeにさかのぼって本譜の手順を選択してKifuListを更新する。
+            // pliesFromRoot == branch -1 のnode(ここに分岐がある)に
+            // さかのぼって本譜の手順を選択してKifuListを更新する。
 
             while (pliesFromRoot >= branch)
                 UndoMove();
+
+            // ただし、画面に表示すべきはpliesFromRoot == branchのnodeであるから、このあと、
+            // DoMove()して、 (その回数 - 1 )回だけ UndoMove()を行う。
 
             // 現在行以降のKifuList、KifuMovesを削除
             ClearKifuForward();
@@ -636,7 +640,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 DoMove(move);
             }
             EnableKifuList = false; // 棋譜リストの更新が終わったので棋譜Windowをフリーズ
-            for (; ply > 0; --ply)
+            for (; ply > 1; --ply) // DoMoveした回数 - 1回だけ回る。
                 UndoMove();
 
             PropertyChangedEventEnable = true;
