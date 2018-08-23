@@ -30,10 +30,19 @@ namespace MyShogi.View.Win2D
 
             log.AddHandler(ListAdded_ , ref log_list);
             FormClosed += (sender, args) => { log.RemoveHandler(ListAdded_); };
+            memory_log = log;
 
             UpdateListBox();
         }
 
+        /// <summary>
+        /// コンストラクタの引数で渡された出力先のログクラス
+        /// </summary>
+        private MemoryLog memory_log;
+
+        /// <summary>
+        /// 保持しているログの内容。
+        /// </summary>
         private List<string> log_list;
 
         /// <summary>
@@ -61,17 +70,20 @@ namespace MyShogi.View.Win2D
 
             // -- textBox1
 
-            // TextBoxの高さは変更しない。横幅をいっぱいにして縦方向は下にくっつける。
+            // TextBoxの高さは変更しない。横幅をボタンにつかない範囲でいっぱいにして縦方向は下にくっつける。
             var t_loc = textBox1.Location;
             var t_height = textBox1.Size.Height;
+            var b_size = button1.Size;
 
             textBox1.Location = new Point(t_loc.X, h - t_height - 3);
-            textBox1.Size = new Size(w - t_loc.X - 3, t_height);
+            textBox1.Size = new Size(w - t_loc.X - 3 - b_size.Width , t_height);
+
+            button1.Location = new Point(w - b_size.Width, h - t_height - 3);
 
             // -- label1
 
             var l_loc = label1.Location;
-            label1.Location = new Point(l_loc.X, h - t_height - 3);
+            label1.Location = new Point(l_loc.X, h - t_height - 3 + 2);
 
             // -- listBox1
 
@@ -173,6 +185,18 @@ namespace MyShogi.View.Win2D
                     sb.AppendLine(text);
                 Clipboard.SetText(sb.ToString());
             }
+        }
+
+        /// <summary>
+        /// ログのクリア
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            memory_log.Clear();
+            log_list.Clear();
+            UpdateListBox();
         }
     }
 }

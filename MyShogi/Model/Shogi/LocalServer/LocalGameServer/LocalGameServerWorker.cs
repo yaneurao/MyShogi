@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using MyShogi.App;
 using MyShogi.Model.Common.Utility;
@@ -91,6 +92,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             var misc = gameSetting.MiscSettings;
             // CPU同士の時のみ連続対局が有効である。
+
             ContinuousGame =
                 gameSetting.PlayerSetting(Color.BLACK).IsCpu &&
                 gameSetting.PlayerSetting(Color.WHITE).IsCpu &&
@@ -204,6 +206,12 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void GameRestart()
         {
+            // 両方がエンジンでなければおかしい。
+            Debug.Assert(
+                Players[0].PlayerType == PlayerTypeEnum.UsiEngine &&
+                Players[1].PlayerType == PlayerTypeEnum.UsiEngine
+            );
+
             var nextGameMode = GameModeEnum.InTheGame;
 
             // 音声:「よろしくお願いします。」
@@ -825,6 +833,8 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// ゲームの終了処理
+        ///
+        /// ※　連続対局がセットされているときは、このメソッドのなかでGameRestart()が呼び出されて連続対局になる。
         /// </summary>
         private void GameEnd()
         {
@@ -875,6 +885,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                 Players[c].Dispose();
                 Players[c] = new NullPlayer();
             }
+
+            // 連続対局のためのカウンターをリセットする。
+            ContinuousGame = ContinuousGameCount = 0;
         }
 
         /// <summary>

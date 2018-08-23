@@ -128,6 +128,15 @@ namespace MyShogi.Model.Common.Utility
             }
         }
 
+        /// <summary>
+        /// ログの内容をクリアする。
+        /// </summary>
+        public void Clear()
+        {
+            lock (lock_object)
+                LogList.Clear();
+        }
+
         public void Dispose() { }
 
         /// <summary>

@@ -294,7 +294,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 連続対局のための変数
         /// </summary>
-        private int ContinuousGame; // 連続対局の回数
+        private int ContinuousGame;      // この回数だけ連続対局を行う。
         private int ContinuousGameCount; // 連続対局の何回目であるか
 
         #endregion
