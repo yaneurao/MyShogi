@@ -1277,7 +1277,7 @@ namespace MyShogi.View.Win2D
                         // -- 棋譜ウィンドウの棋譜の形式
 
                         var item = new ToolStripMenuItem();
-                        item.Text = "棋譜ウィンドウの棋譜の表示形式(&K)"; // Kifu
+                        item.Text = "棋譜ウィンドウの棋譜の表示形式(&D)"; // kifu Display
 
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "標準(KI2形式)「６七金右」(&K)"; // KI2形式
@@ -1310,7 +1310,7 @@ namespace MyShogi.View.Win2D
                         // -- 棋譜ウィンドウの棋譜の形式
 
                         var item = new ToolStripMenuItem();
-                        item.Text = "検討ウィンドウの棋譜の表示形式(&K)"; // Kifu
+                        item.Text = "検討ウィンドウの棋譜の表示形式(&E)"; // &Dの次だから&E .. consideration 
 
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "標準(KI2形式)「６七金右」(&K)"; // KI2形式
@@ -1408,7 +1408,7 @@ namespace MyShogi.View.Win2D
                     { // -- 成駒の画像の選択メニュー
 
                         var item = new ToolStripMenuItem();
-                        item.Text = "成駒の色(&R)"; // pRomote piece
+                        item.Text = "成駒の色(&O)"; // promote piece
 
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "黒(&B)"; // Black
@@ -1428,7 +1428,7 @@ namespace MyShogi.View.Win2D
                     // -- 最終手のエフェクト
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "最終手の移動元(&F)"; // From
+                        item.Text = "最終手の移動元(&I)"; // 空きがない I,J ,K ,Lにしとく .. From
 
                         var item0 = new ToolStripMenuItem();
                         item0.Text = "なし(&N)"; // None
@@ -1466,7 +1466,7 @@ namespace MyShogi.View.Win2D
                     }
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "最終手の移動先(&O)"; // tO
+                        item.Text = "最終手の移動先(&J)"; // .. to
 
                         var item0 = new ToolStripMenuItem();
                         item0.Text = "なし(&N)"; // None
@@ -1496,7 +1496,7 @@ namespace MyShogi.View.Win2D
                     }
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "駒を掴んだ時の移動元(&I)"; // pIcked from
+                        item.Text = "駒を掴んだ時の移動元(&K)"; // picked from
 
                         var item0 = new ToolStripMenuItem();
                         item0.Text = "なし(&N)"; // None
@@ -1527,7 +1527,7 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "駒を掴んだ時の移動候補(&C)"; // piCked to
+                        item.Text = "駒を掴んだ時の移動候補(&L)"; // .. picked to
 
                         var item0 = new ToolStripMenuItem();
                         item0.Text = "エフェクトなし(&N)"; // None

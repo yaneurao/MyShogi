@@ -32,6 +32,11 @@
         /// </summary>
         InTheGame,
 
+        /// <summary>
+        /// ゲーム終了。
+        /// </summary>
+        GameOver,
+
         // -- 以下、エラー状態
 
         /// <summary>

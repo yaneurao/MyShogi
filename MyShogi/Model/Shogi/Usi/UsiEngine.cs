@@ -289,6 +289,8 @@ namespace MyShogi.Model.Shogi.Usi
                     // "readyok"が来たのでusinewgameを送信して、対局の局面を送信できるようにしておく。
                     SendCommand("usinewgame");
                     break;
+
+                // これ以外の変化に対する応答は必要ない。
             }
         }
 
@@ -414,6 +416,24 @@ namespace MyShogi.Model.Shogi.Usi
             // 応答を待つ必要はない。どんどん流し込む。
             foreach (var command in list)
                 SendCommand(command);
+        }
+
+        /// <summary>
+        /// 終局のメッセージをエンジン側に送信する
+        /// </summary>
+        /// <param name="move"></param>
+        public void SendGameOver(MoveGameResult result)
+        {
+            SendCommand("gameover " + result.ToUsi());
+            ChangeState(UsiEngineState.GameOver);
+        }
+
+        /// <summary>
+        /// SendGameOver()のあと、再度ゲームをスタートする。
+        /// </summary>
+        public void SendIsReady()
+        {
+            ChangeState(UsiEngineState.UsiOk);
         }
 
         /// <summary>

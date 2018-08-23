@@ -298,6 +298,38 @@ namespace MyShogi.Model.Shogi.Core
         }
     }
 
+    public static class MoveGameResultExtensions
+    {
+        /// <summary>
+        /// MoveGameResultをUSIプロトコルの"gameover"で用いる文字列として返す
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static string ToUsi(this MoveGameResult result)
+        {
+            switch (result)
+            {
+                case MoveGameResult.DRAW: return "draw";
+                case MoveGameResult.WIN: return "win";
+                case MoveGameResult.LOSE: return "lose";
+                default: return "unknown";
+            }
+        }
+
+        /// <summary>
+        /// 勝ちと負けを反転させて返す。
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static MoveGameResult Not(this MoveGameResult result)
+        {
+            return
+                result == MoveGameResult.WIN  ? MoveGameResult.LOSE :
+                result == MoveGameResult.LOSE ? MoveGameResult.WIN  :
+                result;
+        }
+    }
+
     /// <summary>
     /// Model.Shogi用のヘルパークラス
     /// </summary>

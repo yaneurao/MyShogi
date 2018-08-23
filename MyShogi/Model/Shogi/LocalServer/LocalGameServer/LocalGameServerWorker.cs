@@ -212,6 +212,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                 Players[1].PlayerType == PlayerTypeEnum.UsiEngine
             );
 
+            Initializing = true;
+
             var nextGameMode = GameModeEnum.InTheGame;
 
             // 音声:「よろしくお願いします。」
@@ -240,6 +242,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 var engine_player = Player(c) as UsiEnginePlayer;
                 engine_player.Engine.RemovePropertyChangedHandler("ThinkReport");
+
+                // エンジンに対して再度、"isready"を送信して…。
+                engine_player.SendIsReady();
             }
 
             // 局面の設定
@@ -260,9 +265,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             UpdateKifuSelectedIndex();
 
             GameStartInCommon(nextGameMode);
-
-            // 新規対局で手番が変わった。
-            NotifyTurnChanged();
         }
 
         /// <summary>
@@ -637,10 +639,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // -- 次のPlayerに、自分のturnであることを通知してやる。
 
                 if (!specialMove)
+                    // 相手番になったので諸々通知。
                     NotifyTurnChanged();
                 else
                     // 特殊な指し手だったので、これにてゲーム終了
-                    GameEnd();
+                    GameEnd(bestMove);
             }
 
             return;
@@ -653,7 +656,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             kifuManager.Tree.AddNodeComment(m, stmPlayer.BestMove.ToUsi() /* String あとでなおす*/ /* 元のテキスト */);
             kifuManager.Tree.DoMove(m);
 
-            GameEnd(); // これにてゲーム終了。
+            GameEnd(m); // これにてゲーム終了。
         }
 
         /// <summary>
@@ -685,7 +688,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // speical moveでもDoMoveできることは保証されている。
                     kifuManager.Tree.DoMove(m);
 
-                    GameEnd();
+                    GameEnd(m);
                     return;
                 }
             }
@@ -836,7 +839,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         ///
         /// ※　連続対局がセットされているときは、このメソッドのなかでGameRestart()が呼び出されて連続対局になる。
         /// </summary>
-        private void GameEnd()
+        private void GameEnd(Move lastMove)
         {
             // 対局中だったものが終了したのか？
             if (GameMode == GameModeEnum.InTheGame)
@@ -846,6 +849,16 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 // 音声:「ありがとうございました。またお願いします。」
                 TheApp.app.SoundManager.ReadOut(SoundEnum.End);
+
+                // --- 終局時にエンジンに対して"gameover win"などを送信するための処理
+
+                var stm = Position.sideToMove;
+                foreach (var c in All.Colors())
+                    if (Player(c).PlayerType == PlayerTypeEnum.UsiEngine)
+                    {
+                        var result = lastMove.GameResult();
+                        (Player(c) as UsiEnginePlayer).SendGameOver(c == stm ? result : result.Not());
+                    }
             }
 
             GameMode = GameModeEnum.ConsiderationWithoutEngine;

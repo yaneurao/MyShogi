@@ -120,6 +120,23 @@ namespace MyShogi.Model.Shogi.Player
             Engine.MoveNow();
         }
 
+        /// <summary>
+        /// "gameover"文字列をエンジン側に送信する。
+        /// </summary>
+        /// <param name="result"></param>
+        public void SendGameOver(MoveGameResult result)
+        {
+            Engine.SendGameOver(result);
+        }
+
+        /// <summary>
+        /// SendGameOver()のあと、"isready"を送信して"readyok"を待つ。(連続対局時用)
+        /// </summary>
+        public void SendIsReady()
+        {
+            Engine.SendIsReady();
+        }
+
         // -- private member
 
         /// <summary>
