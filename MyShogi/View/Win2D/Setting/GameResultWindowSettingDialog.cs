@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
+using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.View.Win2D.Setting
 {
@@ -17,10 +19,27 @@ namespace MyShogi.View.Win2D.Setting
         public GameResultWindowSettingDialog()
         {
             InitializeComponent();
+
+            // TheApp.app.config.GameResultSettingを、このFormのControlたちとデータバインドしておく。
+            BindSetting();
+
+            Disposed += OnDisposed;
         }
+
 
         // comboBox1に格納されているのがサポートしている保存する棋譜の形式。
         // これは、KifuTypeのKifuFileTypeのKIF～JSONまで。SVGとUNKNOWN以外。
 
+        private void BindSetting()
+        {
+
+        }
+
+        private void OnDisposed(object sender, EventArgs e)
+        {
+            binder.UnbindAll();
+        }
+
+        private ControlBinder binder = new ControlBinder();
     }
 }

@@ -39,9 +39,10 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -75,7 +76,7 @@
             this.label2.Size = new System.Drawing.Size(95, 15);
             this.label2.TabIndex = 2;
             this.label2.Text = "保存先フォルダ";
-            this.toolTip1.SetToolTip(this.label2, "保存先フォルダには、棋譜ファイルと対局情報を書いたCSVファイルが保存されます。");
+            this.toolTip1.SetToolTip(this.label2, "棋譜ファイルの自動保存先のフォルダです。\r\n保存先フォルダには、棋譜ファイルと対局情報を書いたCSVファイルが自動的に保存されます。");
             // 
             // textBox1
             // 
@@ -83,7 +84,6 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(339, 19);
             this.textBox1.TabIndex = 3;
-            this.toolTip1.SetToolTip(this.textBox1, "保存先フォルダには、棋譜ファイルと対局情報を書いたCSVファイルが保存されます。");
             // 
             // button1
             // 
@@ -105,7 +105,8 @@
             this.label4.Size = new System.Drawing.Size(82, 15);
             this.label4.TabIndex = 2;
             this.label4.Text = "保存数上限";
-            this.toolTip1.SetToolTip(this.label4, "保存する棋譜の");
+            this.toolTip1.SetToolTip(this.label4, "これより増えると古い棋譜ファイルから自動的に削除されます。\r\n(棋譜ファイルが削除されるタイミングは、対局結果一覧ウィンドウを表示したときです。)\r\n\r\nまた、こ" +
+        "の値を0に設定しておくと削除されません。(すべて残り続けます)");
             // 
             // comboBox1
             // 
@@ -134,14 +135,15 @@
             this.label3.Size = new System.Drawing.Size(97, 15);
             this.label3.TabIndex = 6;
             this.label3.Text = "棋譜保存形式";
+            this.toolTip1.SetToolTip(this.label3, "棋譜ファイルを保存するときのファイル形式です。\r\nKIF形式がお勧めです。\r\n");
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.numericUpDown1);
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.textBox2);
             this.groupBox1.Controls.Add(this.comboBox1);
             this.groupBox1.Controls.Add(this.textBox1);
             this.groupBox1.Controls.Add(this.button1);
@@ -151,28 +153,30 @@
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(118, 49);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(121, 19);
-            this.textBox2.TabIndex = 3;
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label5.Location = new System.Drawing.Point(245, 51);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(253, 15);
+            this.label5.Size = new System.Drawing.Size(263, 15);
             this.label5.TabIndex = 7;
-            this.label5.Text = "これより増えると古い棋譜から削除されます";
+            this.label5.Text = "これより増えると古い棋譜から削除されます。";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.numericUpDown1.Location = new System.Drawing.Point(118, 45);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(120, 22);
+            this.numericUpDown1.TabIndex = 8;
+            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // GameResultWindowSettingDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(552, 196);
+            this.ClientSize = new System.Drawing.Size(549, 194);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label1);
@@ -183,6 +187,7 @@
             this.Text = "対局結果ウィンドウ設定ダイアログ";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -200,7 +205,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.NumericUpDown numericUpDown1;
     }
 }

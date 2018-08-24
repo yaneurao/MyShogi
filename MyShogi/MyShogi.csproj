@@ -84,7 +84,8 @@
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineConfig.cs" />
-    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\ContinuousGame.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\structs\ContinuousGame.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\structs\GameResultSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\ConsiderationEngineSetting.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngineHashManager.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EnginePreset.cs" />
@@ -109,7 +110,7 @@
     <Compile Include="Model\Shogi\Kifu\KifuManager\sfen.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuMoveTime.cs" />
     <Compile Include="Model\Shogi\Usi\UsiThinkReportMessage.cs" />
-    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\GameModeEnum.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\structs\GameModeEnum.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerCommands.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerPrivates.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\LocalGameServerProperties.cs" />

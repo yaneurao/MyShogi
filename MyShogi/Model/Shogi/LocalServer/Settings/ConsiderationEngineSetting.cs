@@ -11,6 +11,11 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// </summary>
     public class ConsiderationEngineSetting : NotifyObject
     {
+        public ConsiderationEngineSetting()
+        {
+            Limitless = true;
+        }
+
         /// <summary>
         /// エンジン名
         /// </summary>
@@ -63,9 +68,5 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         // その他、node制限なども入れるかも..
 
-        public ConsiderationEngineSetting()
-        {
-            Limitless = true;
-        }
     }
 }
