@@ -253,7 +253,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// [UI thread] : リストが変更されたときに呼び出されるハンドラ
+        /// [UI thread] : リストが(丸ごと)変更されたときに呼び出されるハンドラ
         /// </summary>
         private void KifuListChanged(PropertyChangedEventArgs args)
         {
@@ -264,15 +264,6 @@ namespace MyShogi.View.Win2D
             var list = args.value as List<string>;
 
             int start = 0;
-            /*
-            int start;
-            if (args.start == -1)
-                start = 0; // 丸ごと更新された
-            else
-                start = args.start; // 部分更新された
-            */
-
-            // endの指定は無視される。
 
             var listbox = listBox1;
             listbox.BeginUpdate();
@@ -312,8 +303,9 @@ namespace MyShogi.View.Win2D
             while (listbox.Items.Count > list.Count)
                 listbox.Items.RemoveAt(listbox.Items.Count - 1); // RemoveLast
 
-
             // カーソルを異なる項目が最初に見つかったところに置いておく。
+            // 「本譜」に戻る、「次分岐」などではこの処理がなされているべき。
+            // そうしないと棋譜を書き換えた時点で自動的に末尾までスクロールしてしまう。
             listbox.SelectedIndex = j;
 
             listbox.EndUpdate();
@@ -321,6 +313,9 @@ namespace MyShogi.View.Win2D
             ViewModel.KifuListCount = listBox1.Items.Count;
 
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+            // ここでカーソル行の変更通知イベントが発生する？念の為再代入しておく。
+            listbox.SelectedIndex = j;
+
             UpdateButtonState();
         }
 

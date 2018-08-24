@@ -765,6 +765,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 現在のnodeを本譜の手順に変更する。
+        ///
+        /// 棋譜ウィンドウのカーソル位置は変更しないので呼び出し元で面倒見るべき。
         /// </summary>
         public void MakeCurrentNodeMainBranch()
         {
@@ -792,7 +794,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             EnableKifuList = e;
             PropertyChangedEventEnable = true;
-            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("KifuList", new List<string>(KifuList)); // 棋譜ウィンドウのカーソル位置変わりうる。
         }
 
         /// <summary>
