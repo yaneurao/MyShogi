@@ -159,7 +159,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 kifuManager.Tree.ClearForward();
 
                 // 分岐棋譜かも知れないので、現在のものを本譜の手順にする。
-                kifuManager.Tree.MakeCurrentNodeMainBranch();
+                kifuManager.Tree.MakeCurrentNodeMainBranch(); // View側の都合により選択行が移動してしまう可能性がある。
             }
             else // if (gameSetting.Board.BoardTypeEnable)
             {
@@ -168,7 +168,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             // 本譜の手順に変更したので現在局面と棋譜ウィンドウのカーソルとを同期させておく。
-            UpdateKifuSelectedIndex();
+            UpdateKifuSelectedIndex(int.MaxValue /* 末尾に移動 */);
 
             // エンジンに与えるHashSize,Threadsの計算
             var firstOfContinuousGame = ContinuousGameCount == 0; // 連続対局の初回局である
