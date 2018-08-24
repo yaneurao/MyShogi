@@ -351,6 +351,53 @@ namespace MyShogi.Model.Resource.Images
             return new Sprite(image);
         }
 
+        #region Game Effects (対局に関する画面効果)
+
+        /// <summary>
+        /// 対局開始時に表示する「対局開始」
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite GameStart()
+        {
+            var image = TheApp.app.ImageManager.GameStartImage.image;
+            var rect = new Rectangle(0, 0, 762, 230);
+            return new Sprite(image, rect);
+        }
+
+        /// <summary>
+        /// 対局終了時に表示する「対局終了」
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite GameEnd()
+        {
+            var image = TheApp.app.ImageManager.GameStartImage.image;
+            var rect = new Rectangle(0, 230, 762, 230);
+            return new Sprite(image, rect);
+        }
+
+        /// <summary>
+        /// 対局開始時に表示する「先手」
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite GameBlack()
+        {
+            var image = TheApp.app.ImageManager.GameBlackImage.image;
+            return new Sprite(image);
+        }
+
+        /// <summary>
+        /// 対局開始時に表示する「後手」
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite GameWhite()
+        {
+            var image = TheApp.app.ImageManager.GameWhiteImage.image;
+            return new Sprite(image);
+        }
+
+        #endregion
+
+
         /// <summary>
         /// a,bの入れ替え
         /// </summary>

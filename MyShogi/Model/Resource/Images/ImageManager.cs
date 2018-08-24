@@ -295,11 +295,22 @@ namespace MyShogi.Model.Resource.Images
             // いまは素材が少ないのでさほど問題とはなっていないが、素材が増えてきて、
             // 起動が遅くなるのは嫌なので…。
 
-            // エンジンの初期化時の描画
+            // -- エンジンの初期化時の描画
+
             Load(ref EngineInitImage, "engine_init.png" , true);
 
-            // エンジン選択時のNO BANNER
+            // -- エンジン選択時のNO BANNER
+
             Load(ref NoBannerImage, "no_banner.png", true);
+
+            // -- 対局に関する画面効果
+
+            Load(ref GameStartImage, "game_effect" + Sep + "game_start_v1.png", true);
+            Load(ref GameBlackImage, "game_effect" + Sep + "game_black_v1.png", true);
+            Load(ref GameWhiteImage, "game_effect" + Sep + "game_white_v1.png", true);
+            Load(ref GameWinImage,   "game_effect" + Sep + "game_win_v1.png"  , true);
+            Load(ref GameLoseImage,  "game_effect" + Sep + "game_lose_v1.png" , true);
+            Load(ref GameDrawImage,  "game_effect" + Sep + "game_draw_v1.png" , true);
         }
 
         /// <summary>
@@ -315,6 +326,14 @@ namespace MyShogi.Model.Resource.Images
             img.Release();
             img.Load(Path.Combine(ImageFolder,name) , lazy);
         }
+
+        /// <summary>
+        /// フォルダの区切り文字列
+        ///
+        /// Linux環境などで動かすためには、フォルダの区切り文字列の手打ちは避けたほうが無難なので
+        /// これを用いる。
+        /// </summary>
+        private static readonly char Sep = Path.DirectorySeparatorChar;
 
         /// <summary>
         /// 盤面 + 畳を合成したRGB(RGBAではない)画像
@@ -403,5 +422,41 @@ namespace MyShogi.Model.Resource.Images
         /// エンジンのバナーなし
         /// </summary>
         public ImageLoader NoBannerImage = new ImageLoader();
+
+        #region GameEffects
+        /// <summary>
+        /// 対局開始/終了/再開
+        /// </summary>
+        public ImageLoader GameStartImage = new ImageLoader();
+
+        /// <summary>
+        /// 対局開始時の先手の文字列
+        /// </summary>
+        public ImageLoader GameBlackImage = new ImageLoader();
+
+        /// <summary>
+        /// 対局開始時の先手の文字列
+        /// </summary>
+        public ImageLoader GameWhiteImage = new ImageLoader();
+
+        /// <summary>
+        /// 終局時の勝利画像
+        /// (プレイヤーの片側のみが人間であるとき)
+        /// </summary>
+        public ImageLoader GameWinImage = new ImageLoader();
+
+        /// <summary>
+        /// 終局時の敗北画像
+        /// (プレイヤーの片側のみが人間であるとき)
+        /// </summary>
+        public ImageLoader GameLoseImage = new ImageLoader();
+
+        /// <summary>
+        /// 終局時の引き分け画像
+        /// (プレイヤーの片側のみが人間であるとき)
+        /// </summary>
+        public ImageLoader GameDrawImage = new ImageLoader();
+
+        #endregion
     }
 }
