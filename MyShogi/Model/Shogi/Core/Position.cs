@@ -116,7 +116,11 @@ namespace MyShogi.Model.Shogi.Core
         private Square[] kingSquare = new Square[Color.NB.ToInt()];
 
         /// <summary>
-        /// 初期局面からの手数(初期局面 == 1)
+        /// (平手などの)初期局面からの手数(初期局面 == 1)
+        ///
+        /// "position sfen xxx [gamePly] moves ..."のような形で渡される可能性があるので、
+        /// gamePly > 1だからと言って、UndoMove()できるとは限らないことに注意。
+        /// 
         /// </summary>
         public int gamePly { get; private set; } = 1;
 
@@ -207,7 +211,7 @@ namespace MyShogi.Model.Shogi.Core
         /// <returns></returns>
         public ref Piece PieceOn(Square sq)
         {
-            Debug.Assert(sq.IsOk());
+            Debug.Assert(sq.IsOkPlus1());
             return ref board[sq.ToInt()];
         }
 
@@ -947,10 +951,13 @@ namespace MyShogi.Model.Shogi.Core
             //    盤面の更新処理
             // ----------------------
 
+            Debug.Assert(m.IsOk());
+
             // 移動先の升
             Square to = m.To();
-            if (!to.IsOk())
-                throw new PositionException("DoMoveでtoが範囲外");
+            Debug.Assert(to.IsOk());
+            // DoMove()を呼ぶ前にMoveの正当性は何らかチェックするはずなのでそれがなされていないならコードの誤りであるから
+            // 例外を投げるのではなくassertで停止すべき。
 
             // StateInfoの更新
             var newSt = new StateInfo
@@ -970,7 +977,10 @@ namespace MyShogi.Model.Shogi.Core
                 // 盤上にその駒を置く。
                 Piece pt = m.DroppedPiece();
                 if (pt < Piece.PAWN || Piece.GOLD < pt || Hand(us).Count(pt) == 0)
+                {
+                    Debug.Assert(false);
                     throw new PositionException("Position.DoMove()で持っていない手駒" + pt.Pretty2() + "を打とうとした");
+                }
 
                 Piece pc = Util.MakePiece(us, pt);
                 Hand(us).Sub(pt);
@@ -1008,7 +1018,10 @@ namespace MyShogi.Model.Shogi.Core
                     // 自分の手駒になる
                     Piece pr = to_pc.RawPieceType();
                     if (!(Piece.PAWN <= pr && pr <= Piece.GOLD))
+                    {
+                        Debug.Assert(false);
                         throw new PositionException("Position.DoMove()で取れない駒を取った(玉取り？)");
+                    }
 
                     // 取る駒のPieceNoを盤上に反映させておく
                     PieceNo pn2 = PieceNoOn(to);
@@ -1066,8 +1079,11 @@ namespace MyShogi.Model.Shogi.Core
             var us = sideToMove.Not();
             var m = st.lastMove;
 
-           var to = m.To();
-            //ASSERT_LV2(is_ok(to));
+            Debug.Assert(m.IsOk());
+
+            var to = m.To();
+            Debug.Assert(to.IsOk());
+            // 盤外(Square.NB)への移動はありえないのでIsOkPlus1()ではなくIsOk()で良い。
 
             // --- 移動後の駒
 
@@ -1097,7 +1113,7 @@ namespace MyShogi.Model.Shogi.Core
                 // --- 通常の指し手
 
                 var from = m.From();
-                //ASSERT_LV2(is_ok(from));
+                Debug.Assert(from.IsOk());
 
                 // toの場所にあった駒番号
                 var pn = PieceNoOn(to);
