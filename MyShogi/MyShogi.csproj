@@ -84,6 +84,7 @@
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineConfig.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\ContinuousGame.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\ConsiderationEngineSetting.cs" />
     <Compile Include="Model\Shogi\Usi\UsiEngineHashManager.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EnginePreset.cs" />

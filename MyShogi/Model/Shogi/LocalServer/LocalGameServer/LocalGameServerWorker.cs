@@ -93,11 +93,11 @@ namespace MyShogi.Model.Shogi.LocalServer
             var misc = gameSetting.MiscSettings;
             // CPU同士の時のみ連続対局が有効である。
 
-            ContinuousGame =
+            continuousGame.SetPlayLimit(
                 gameSetting.PlayerSetting(Color.BLACK).IsCpu &&
                 gameSetting.PlayerSetting(Color.WHITE).IsCpu &&
-                misc.ContinuousGameEnable ? misc.ContinuousGame : 0;
-            ContinuousGameCount = 0;
+                misc.ContinuousGameEnable ? misc.ContinuousGame : 0
+                );
 
             // 以下の初期化中に駒が動かされるの気持ち悪いのでユーザー操作を禁止しておく。
             CanUserMove = false;
@@ -160,6 +160,10 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 // 分岐棋譜かも知れないので、現在のものを本譜の手順にする。
                 kifuManager.Tree.MakeCurrentNodeMainBranch(); // View側の都合により選択行が移動してしまう可能性がある。
+
+                // 連続対局が設定されているなら、現在の局面を棋譜文字列として保存しておく。
+                if (continuousGame.IsContinuousGameSet())
+                    continuousGame.Kif = kifuManager.ToString(KifuFileType.KIF);
             }
             else // if (gameSetting.Board.BoardTypeEnable)
             {
@@ -171,7 +175,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             UpdateKifuSelectedIndex(int.MaxValue /* 末尾に移動 */);
 
             // エンジンに与えるHashSize,Threadsの計算
-            var firstOfContinuousGame = ContinuousGameCount == 0; // 連続対局の初回局である
+            var firstOfContinuousGame = continuousGame.PlayCount == 0; // 連続対局の初回局である
             if (UsiEngineHashManager.CalcHashSize(firstOfContinuousGame) != 0)
             {
                 // Hash足りなくてダイアログ出した時にキャンセルボタン押されとる
@@ -233,7 +237,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // プレイヤーの実体の先後入替え
             Utility.Swap(ref Players[0], ref Players[1]);
             Utility.Swap(ref EngineDefineExes[0], ref EngineDefineExes[1]);
-            Utility.Swap(ref presetNames[0], ref presetNames[1]);
+            Utility.Swap(ref continuousGame.presetNames[0], ref continuousGame.presetNames[1]);
 
             // 対局の持ち時間設定などの先後入替
             var gameSetting = GameSetting;
@@ -254,9 +258,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             kifuManager.EnableKifuList = true;
             if (gameSetting.BoardSetting.BoardTypeCurrent)
             {
-                // TODO : 現在の局面からのスタート。初回に保存してあるべき。
-                kifuManager.Init();
-                kifuManager.InitBoard(gameSetting.BoardSetting.BoardType);
+                // 「現在の局面」からのリスタート。KIF形式の文字列経由で復元する。
+                kifuManager.FromString(continuousGame.Kif);
             }
             else // if (gameSetting.Board.BoardTypeEnable)
             {
@@ -265,7 +268,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             // 本譜の手順に変更したので現在局面と棋譜ウィンドウのカーソルとを同期させておく。
-            UpdateKifuSelectedIndex();
+            UpdateKifuSelectedIndex(int.MaxValue);
 
             GameStartInCommon(nextGameMode);
 
@@ -344,7 +347,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             EngineDefineExes[(int)c] = engineDefineEx; // ここに保存しておく。
             var presets = engineDefineEx.EngineDefine.Presets;
 
-            presetNames[(int)c] = (selectedPresetIndex < presets.Count) ?
+            continuousGame.presetNames[(int)c] = (selectedPresetIndex < presets.Count) ?
                 presets[selectedPresetIndex].Name :
                 null;
 
@@ -436,7 +439,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var num_ = num; // copy for capturing
 
                     var engineName = GetEngineDefine(c).EngineDefine.DisplayName;
-                    var engineName2 = PresetName(c) == null ? engineName : $"{engineName} {PresetName(c)}";
+                    var engineName2 = continuousGame.PresetName(c) == null ? engineName : $"{engineName} { continuousGame.PresetName(c)}";
                     var playerName = (nextGameMode.IsConsiderationWithEngine() || DisplayName(c) == engineName) ?
                         // 検討時には、エンジンの名前をそのまま表示。
                           engineName2 :
@@ -876,7 +879,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // TODO : この対局棋譜を保存しなければならない。
 
             // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
-            if (++ContinuousGameCount < ContinuousGame)
+            continuousGame.IncPlayCount();
+            if (continuousGame.MustRestart())
             {
                 GameRestart();
                 return;
@@ -906,7 +910,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             // 連続対局のためのカウンターをリセットする。
-            ContinuousGame = ContinuousGameCount = 0;
+            continuousGame.ResetCounter();
         }
 
         /// <summary>

@@ -182,8 +182,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // 中断の指し手
                     stmPlayer.SpecialMove = Move.INTERRUPT;
 
-                    // 連続対局の中止のためにカウンターを上限値にしておく。
-                    ContinuousGameCount = ContinuousGame;
+                    // 連続対局の中止のためにカウンターをリセットしておく。
+                    continuousGame.ResetCounter();
                 }
             });
         }
@@ -192,7 +192,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 棋譜の選択行が変更になった。
         /// 対局中でなければ、現在局面をその棋譜の局面に変更する。
         ///
-        /// このメソッドを直接呼び出さずに、this.KifuListSelectedIndexのsetterを使うこと。
+        /// このメソッドを直接呼び出さずに、this.KifuListSelectedIndexのsetterか、UpdateKifuSelectedIndex()を用いること。
         /// </summary>
         private void KifuListSelectedIndexChangedCommand(PropertyChangedEventArgs args)
         {
@@ -253,7 +253,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                         UpdateTimeString();
 
                         // 末尾の局面に移動するコマンドを叩いておく。
-                        SetValueAndRaisePropertyChanged("KifuListSelectedIndex", kifuManager.KifuList.Count - 1);
+                        UpdateKifuSelectedIndex(int.MaxValue);
 
                         // -- 棋譜上の名前をプレイヤー名に反映させる。
 
@@ -500,7 +500,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     TheApp.app.MessageShow(error, MessageShowType.Error);
                 else
                 {
-                    SetValueAndRaisePropertyChanged("KifuListSelectedIndex", ply); // rootの局面からply手進める
+                    // rootの局面からply手進める
+                    UpdateKifuSelectedIndex(ply);
                 }
 
             }

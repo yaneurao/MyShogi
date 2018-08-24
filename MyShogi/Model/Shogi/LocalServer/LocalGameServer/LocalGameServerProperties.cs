@@ -228,6 +228,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 棋譜読み込み時など、こちら側の要請により、棋譜ウィンドウを指定行に移動させる
         /// この値をdatabindによって棋譜ControlのViewModel.KifuListSelectedIndexに紐づけておくこと。
+        ///
+        /// 必ず変更通知イベントを発生させたいなら、このsetterを用いずに、UpdateKifuSelectedIndex()のほうを用いること。
         /// </summary>
         public int KifuListSelectedIndex
         {
@@ -284,18 +286,9 @@ namespace MyShogi.Model.Shogi.LocalServer
         private EngineDefineEx[] EngineDefineExes = new EngineDefineEx[2];
 
         /// <summary>
-        /// 通常対局のときにエンジンの選択しているPreset名。
+        /// 連続対局のための情報に関する構造体
         /// </summary>
-        /// <param name="c"></param>
-        /// <returns></returns>
-        public string PresetName(Color c) { return presetNames[(int)c]; }
-        private string[] presetNames = new string[2];
-
-        /// <summary>
-        /// 連続対局のための変数
-        /// </summary>
-        private int ContinuousGame;      // この回数だけ連続対局を行う。
-        private int ContinuousGameCount; // 連続対局の何回目であるか
+        private ContinuousGame continuousGame = new ContinuousGame();
 
         #endregion
 
@@ -351,13 +344,15 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 棋譜ウィンドウの選択行を変更する。
         /// ply を指定しなければ(-1のとき)、現在のkifuManager.Treeに同期させる。
+        ///
+        /// KifuListSelectedIndexの変更イベントを必ず発生させるので、使い勝手が良い。
         /// </summary>
         private void UpdateKifuSelectedIndex(int ply = -1)
         {
             if (ply == -1)
                 ply = kifuManager.Tree.pliesFromRoot;
 
-            KifuListSelectedIndex = ply;
+            SetValueAndRaisePropertyChanged("KifuListSelectedIndex", ply);
         }
 
         /// <summary>
