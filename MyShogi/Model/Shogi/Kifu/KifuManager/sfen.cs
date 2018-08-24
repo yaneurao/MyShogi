@@ -45,8 +45,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 {
                     scanner.ParseText();
 
-                    Tree.rootSfen = Position.SFEN_HIRATE;
                     Tree.position.SetSfen(Tree.rootSfen);
+                    Tree.rootSfen = Position.SFEN_HIRATE;
                     Tree.rootBoardType = BoardType.NoHandicap;
                 }
 
@@ -61,8 +61,9 @@ namespace MyShogi.Model.Shogi.Kifu
                     sfen_pos.Add(scanner.ParseText());
                 }
 
-                Tree.rootSfen = string.Join(" ", sfen_pos.ToArray());
-                Tree.position.SetSfen(Tree.rootSfen);
+                var sfen_ = string.Join(" ", sfen_pos.ToArray());
+                Tree.position.SetSfen(sfen_);
+                Tree.rootSfen = sfen_;
                 Tree.rootBoardType = BoardType.Others;
 
                 // "moves"以降の文字列をUSIの指し手と解釈しながら、局面を進める。

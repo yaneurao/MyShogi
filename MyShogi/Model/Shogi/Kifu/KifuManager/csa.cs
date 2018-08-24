@@ -173,8 +173,8 @@ namespace MyShogi.Model.Shogi.Kifu
                             // 1回目は局面の先後とみなす
                             headFlag = false;
                             posLines.Add(subline);
-                            Tree.rootSfen = CsaExtensions.CsaToSfen(posLines.ToArray());
                             Tree.position.SetSfen(Tree.rootSfen);
+                            Tree.rootSfen = CsaExtensions.CsaToSfen(posLines.ToArray());
                             continue;
                         }
                         // 2回目以降は指し手とみなす

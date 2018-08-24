@@ -309,6 +309,10 @@ namespace MyShogi.View.Win2D
 
             if (gameServer.EngineInitializing)
                 DrawSprite(engine_init_pos, SPRITE.EngineInit());
+
+            // -- animator (この上位に位置する)の描画
+
+            animatorManager.OnDraw();
         }
     }
 }

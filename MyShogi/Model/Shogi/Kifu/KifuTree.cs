@@ -86,9 +86,6 @@ namespace MyShogi.Model.Shogi.Kifu
             kifuWindowMoves = new List<KifuMove>();
             KifuTimeSettings = KifuTimeSettings.TimeLimitless;
             KifuBranch = -1;
-
-            // mutableなオブジェクトのraiseは、raiseする側でClone()してimmutableにしておかないと駄目。
-            RaisePropertyChanged("Position", position.Clone());
         }
 
         // -------------------------------------------------------------------------
@@ -155,6 +152,10 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// rootの局面図。sfen形式で。
+        ///
+        /// 注意 : 
+        /// 　このsetterでposition.Clone()してイベントが生起するので、
+        /// 　rootSfenに代入する前にPosition.SetSfen()をするなど、Clone()されても大丈夫な状態になっていることを考慮すること。
         /// </summary>
         public string rootSfen
         {

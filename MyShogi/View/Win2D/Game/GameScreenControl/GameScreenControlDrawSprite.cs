@@ -152,6 +152,5 @@ namespace MyShogi.View.Win2D
             public int align;
 
         }
-
     }
 }

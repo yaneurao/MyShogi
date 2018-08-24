@@ -41,15 +41,6 @@ namespace MyShogi.Model.Resource.Images
         #region public members
 
         /// <summary>
-        /// SprietAnimatorをlistに追加する。
-        /// </summary>
-        /// <param name="animator"></param>
-        public void AddSpriteAnimator(IAnimator animator)
-        {
-            list.Add(new Animator(animator , GetFrame() ));
-        }
-
-        /// <summary>
         /// 描画を行う。AddSpriteAnimatorしておいたlistに対して、順番にOnDraw()を呼び出す。
         /// </summary>
         public void OnDraw()
@@ -61,6 +52,37 @@ namespace MyShogi.Model.Resource.Images
 
             // disposeフラグが立っているものを除外する。
             list.RemoveAll(e => e.disposed);
+        }
+
+        /// <summary>
+        /// IAnimator派生クラスをlistに追加する。
+        /// </summary>
+        /// <param name="animator"></param>
+        public void AddAnimator(IAnimator animator)
+        {
+            list.Add(new Animator(animator, GetFrame()));
+        }
+
+        /// <summary>
+        /// 保持しているすべてのlistをクリアする。
+        /// </summary>
+        public void ClearAnimator()
+        {
+            list.Clear();
+        }
+
+        #endregion
+
+        #region properties
+
+        /// <summary>
+        /// listにAnimatorがぶら下がっているか。
+        /// (ぶら下がっていなければ描画を省略できるので)
+        /// </summary>
+        /// <returns></returns>
+        public bool Empty()
+        {
+            return list.Count == 0;
         }
 
         #endregion

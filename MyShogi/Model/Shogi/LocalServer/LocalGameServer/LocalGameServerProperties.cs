@@ -13,7 +13,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         #region public properties
 
         /// <summary>
-        /// 局面。これはimmutableなので、メインウインドウの対局画面にdata bindする。
+        /// 局面。これはimmutableであることが保証されているので、メインウインドウの対局画面にdata bindする。
         /// </summary>
         public Position Position
         {
