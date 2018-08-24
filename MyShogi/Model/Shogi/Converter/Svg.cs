@@ -322,7 +322,8 @@ namespace MyShogi.Model.Shogi.Converter.Svg
             // 直前の指し手情報の描画
             Paragraph drawState()
             {
-                var move = pos.State().lastMove;
+                var st = pos.State();
+                var move = st == null ? Move.NONE : st.lastMove;
                 var moveStr = "";
                 if (move != Move.NONE && !move.IsSpecial())
                 {

@@ -1022,9 +1022,7 @@ namespace MyShogi.Model.Shogi.Converter
             // 現在手数、直前の指し手出力
             if (pos.gamePly > 1)
             {
-                var lastPos = pos.Clone();
-                lastPos.UndoMove();
-                var st = lastPos.State();
+                var st = pos.State();
                 var lastMove = st == null ? Move.NONE : st.lastMove;
                 if (lastMove == Move.NONE || lastMove.IsSpecial())
                 {
@@ -1032,6 +1030,8 @@ namespace MyShogi.Model.Shogi.Converter
                 }
                 else
                 {
+                    var lastPos = pos.Clone();
+                    lastPos.UndoMove();
                     bod.AppendLine($"手数＝{pos.gamePly - 1}  {lastPos.ToKi2(lastMove)}  まで");
                 }
             }
