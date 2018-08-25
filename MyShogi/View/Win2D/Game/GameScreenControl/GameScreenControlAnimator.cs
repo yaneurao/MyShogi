@@ -42,7 +42,7 @@ namespace MyShogi.View.Win2D
                     // 「後手」
                     DrawSprite(game_white_pos, white);
 
-                }, false , 2000
+                }, false , 0 , 2000
             ));
         }
 
@@ -58,25 +58,17 @@ namespace MyShogi.View.Win2D
             var sprite = SPRITE.GameResult((MoveGameResult)args.value);
             if (sprite != null)
             {
+                // 1秒後以降に表示する。(すぐに表示されるとちょっと邪魔)
                 animatorManager.AddAnimator(new Animator(
-                    elapsed =>
-                    {
-                        // 1秒後以降に表示する。(すぐに表示されるとちょっと邪魔)
-                        if (elapsed >= 1000)
-                            DrawSprite(game_result_pos, sprite);
-                    }, true, 3500
+                    elapsed => { DrawSprite(game_result_pos, sprite); }, false, 1000, 3500
                 ));
             }
             else
             {
                 // 「対局終了」の素材を表示する。
+                // 1秒後以降に表示する。(すぐに表示されるとちょっと邪魔)
                 animatorManager.AddAnimator(new Animator(
-                    elapsed =>
-                    {
-                        // 1秒後以降に表示する。(すぐに表示されるとちょっと邪魔)
-                        if (elapsed >= 1000)
-                            DrawSprite(game_start_pos, SPRITE.GameEnd());
-                    }, true, 3500
+                    elapsed => { DrawSprite(game_start_pos, SPRITE.GameEnd()); }, false, 1000, 3500
                 ));
             }
 

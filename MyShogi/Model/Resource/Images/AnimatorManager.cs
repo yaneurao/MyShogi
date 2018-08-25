@@ -24,26 +24,38 @@ namespace MyShogi.Model.Resource.Images
         bool Animate { get; set; }
 
         /// <summary>
-        /// 生存時間。elapsed_msがこれを上回ると自動的に解体される。
+        /// 生存開始時刻。これを上回ると生存を開始してOnDraw()を呼び出す。
         /// </summary>
-        long LifeTime { get; set; }
+        long StartTime { get; set; }
+
+        /// <summary>
+        /// 生存終了時刻。elapsed_msがこれを上回ると自動的に解体される。
+        /// </summary>
+        long EndTime { get; set; }
     }
 
     /// <summary>
     /// 汎用Animator。
+    ///
+    /// 実際の使用例がGameScreenControlAnimator.csにあるので、
+    /// そちらを参考にすること。
     /// </summary>
     public class Animator : IAnimator
     {
         /// <summary>
         /// 引数で渡したmyOnDrawを、OnDraw()のなかで呼び出してくれる。
         /// </summary>
-        /// <param name="myOnDraw_"></param>
-        public Animator(OnDrawDelegate myOnDraw_ , bool animated_ , long lifeTime )
+        /// <param name="myOnDraw_">描画用のdelegate</param>
+        /// <param name="animated_">これをtrueにすると毎フレーム描画される。(動きのあるものを表現するときに使う)</param>
+        /// <param name="startTime">表示を開始する時刻</param>
+        /// <param name="endTime">表示を終了する時刻(この時刻になると、自動的に解体される)</param>
+        public Animator(OnDrawDelegate myOnDraw_ , bool animated_ , long startTime , long endTime )
         {
             Debug.Assert(myOnDraw_ != null);
             myOnDraw = myOnDraw_;
             Animate = animated_;
-            LifeTime = lifeTime;
+            StartTime = startTime;
+            EndTime = endTime;
         }
 
         public delegate void OnDrawDelegate(long frame);
@@ -54,7 +66,8 @@ namespace MyShogi.Model.Resource.Images
         }
 
         public bool Animate { get; set; }
-        public long LifeTime { get; set; }
+        public long StartTime { get; set; }
+        public long EndTime { get; set; }
 
         /// <summary>
         /// これを設定すると、OnDraw()のときにこれが呼び出される。
@@ -89,9 +102,14 @@ namespace MyShogi.Model.Resource.Images
             {
                 // 経過時間[ms]
                 var elapsed_ms = frame - a.start_frame;
-                var alive = elapsed_ms < a.animator.LifeTime;
-                if (alive)
+                // 開始しているのか
+                var started = a.animator.StartTime <= elapsed_ms;
+                var alive = elapsed_ms < a.animator.EndTime;
+                if (started && alive)
+                {
                     a.animator.OnDraw(elapsed_ms);
+                    a.first = false;
+                }
                 // aliveでないものはこのフレームで描画せずに除外される。
                 a.disposed = !alive;
             }
@@ -132,8 +150,12 @@ namespace MyShogi.Model.Resource.Images
                 foreach (var a in list)
                 {
                     var elapsed_ms = frame - a.start_frame;
-                    var alive = elapsed_ms < a.animator.LifeTime;
-                    dirty |= a.animator.Animate || !alive /* これ、次フレームで消滅するのでdirtyであるべき */;
+                    var started = a.animator.StartTime <= elapsed_ms;
+                    var alive = elapsed_ms < a.animator.EndTime;
+                    dirty |=
+                        a.animator.Animate  || // 動かさないといけないので毎フレーム呼び出される。
+                        (started && a.first) || // 描画開始時刻をすぎているのに未描画のAnimatorが存在する。
+                        !alive /* これ、次フレームで消滅するのでdirtyであるべき */;
                 }
 
                 return dirty;
@@ -154,6 +176,7 @@ namespace MyShogi.Model.Resource.Images
                 animator = animator_;
                 start_frame = start_frame_;
                 disposed = false;
+                first = true;
             }
 
             /// <summary>
@@ -162,10 +185,16 @@ namespace MyShogi.Model.Resource.Images
             public IAnimator animator;
 
             /// <summary>
-            /// このクラスが生成されたときのframe数。
+            /// このクラスが生成されたときの。
             /// ここからの経過時間がOnDraw()のときに渡される。
             /// </summary>
             public long start_frame;
+
+            /// <summary>
+            /// まだ一度もOnDraw()を呼び出していないときのフラグ。
+            /// animator.StartTimeを上回った時に描画される。
+            /// </summary>
+            public bool first;
 
             /// <summary>
             /// 次回に削除されるためのフラグ

@@ -335,8 +335,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     NotifyTurnChanged();
 
-                    // 「対局開始」の画面素材を表示するためのイベントを発生させる
-                    RaisePropertyChanged("GameStartEvent");
+                    if (GameMode == GameModeEnum.InTheGame)
+                        // 「対局開始」の画面素材を表示するためのイベントを発生させる
+                        RaisePropertyChanged("GameStartEvent");
                 }
                 Initializing = init; // 前回の値を代入しておく。
             }
