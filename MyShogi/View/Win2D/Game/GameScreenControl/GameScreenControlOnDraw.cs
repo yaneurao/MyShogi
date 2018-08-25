@@ -47,6 +47,7 @@ namespace MyShogi.View.Win2D
             SpriteEx picked_sprite = null;
 
             // 盤面を反転させて描画するかどうか
+            // このメソッドが呼び出されている最中にこの値が変化しうるので、このメソッド内では、ここで取得したものを一貫して使う必要がある。
             var reverse = gameServer.BoardReverse;
 
             // -- 盤面の描画
@@ -72,7 +73,7 @@ namespace MyShogi.View.Win2D
                 for (Square sq = Square.ZERO; sq < Square.NB; ++sq)
                 {
                     var pc = pos.PieceOn(sq);
-                    var dest = PieceLocation((SquareHand)sq);
+                    var dest = PieceLocation((SquareHand)sq , reverse);
 
                     // ダイアログが出ている時や、駒を掴んでいるときは最終手のエフェクトがあると紛らわしいので消す。
                     if (state.state == GameScreenControlViewStateEnum.Normal)
@@ -149,7 +150,7 @@ namespace MyShogi.View.Win2D
                         {
                             // この駒の描画されるべき位置を求めるためにSquareHand型に変換する。
                             var piece = Util.ToHandPiece(c, pc);
-                            var dest = PieceLocation(piece);
+                            var dest = PieceLocation(piece , reverse);
 
                             // 物理画面で後手側の駒台への描画であるか(駒を180度回転さて描画しないといけない)
                             var is_white_in_display = (c == SColor.WHITE) ^ reverse;
@@ -195,7 +196,7 @@ namespace MyShogi.View.Win2D
                         int count = pos.PieceBoxCount(pt);
                         if (count > 0)
                         {
-                            var dest = PieceLocation(Util.ToPieceBoxPiece(pt));
+                            var dest = PieceLocation(Util.ToPieceBoxPiece(pt) , reverse);
                             var sprite = SPRITE.Piece(pt);
 
                             var piece = Util.ToPieceBoxPiece(pt);

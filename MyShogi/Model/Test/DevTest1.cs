@@ -354,13 +354,13 @@ namespace MyShogi.Model.Test
                 pos.SetSfen("lnsg1gsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSG1GSNL b - 1");
                 Console.WriteLine(pos.IsValid());
 
-                // 片玉
+                // 単玉
                 pos.SetSfen("lnsg1gsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1");
                 Console.WriteLine(pos.IsValid());
 
-                // 片玉(詰将棋時) これは合法
+                // 単玉(詰将棋時) これは合法
                 pos.SetSfen("lnsg1gsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1");
-                Console.WriteLine("詰将棋片玉 : "+pos.IsValid(true));
+                Console.WriteLine("詰将棋単玉 : " + pos.IsValid(true));
 
                 // 先手玉が2枚
                 pos.SetSfen("lnsgKgsnl/9/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1");

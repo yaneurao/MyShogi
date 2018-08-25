@@ -152,7 +152,7 @@ namespace MyShogi.Model.Shogi.Core
         /// <summary>
         /// 駒落ちであるかのフラグ
         /// 盤面を初期化した時に、駒箱に駒があれば駒落ちと判定。
-        /// (片玉は駒落ちとして扱わない)
+        /// (単玉は駒落ちとして扱わない)
         /// </summary>
         public bool Handicapped;
 
@@ -741,7 +741,7 @@ namespace MyShogi.Model.Shogi.Core
         /// sfen文字列でこのクラスを初期化する
         ///
         /// 読み込みに失敗した場合、SfenException例外が投げられる。
-        /// ・2歩、行き場のない駒の配置、非手番側への王手、片玉、先手玉が2枚などのチェックはあえて行っていない。
+        /// ・2歩、行き場のない駒の配置、非手番側への王手、単玉、先手玉が2枚などのチェックはあえて行っていない。
         /// ・銀が5枚は不正。銀3枚(1枚は駒箱)は合法。
         /// ・玉は手駒に出来ない。
         /// </summary>
@@ -931,7 +931,7 @@ namespace MyShogi.Model.Shogi.Core
                         h.Sub(pt, count);
                     }
 
-                // 駒箱に駒があるので駒落ちの局面である。(片玉の場合は駒落ちとして扱わない)
+                // 駒箱に駒があるので駒落ちの局面である。(単玉の場合は駒落ちとして扱わない)
                 Handicapped = h != 0;
 
                 // 駒箱の駒
@@ -1656,12 +1656,12 @@ namespace MyShogi.Model.Shogi.Core
         /// ・二歩
         /// ・行き場のない駒
         /// ・非手番側への王手がかかっている
-        /// ・同じ手番側の玉が2枚ある。もしくは、3枚以上の玉がある。(引数のfor_mateがtrueのときは詰将棋用なので片玉は可)
+        /// ・同じ手番側の玉が2枚ある。もしくは、3枚以上の玉がある。(引数のfor_mateがtrueのときは詰将棋用なので単玉は可)
         /// 次の項目はチェックしない
         /// ・千日手の成立
         /// ・駒が足りない(銀が3枚など)
         /// </summary>
-        /// <param name="for_mate">詰将棋用であるか。trueであれば片玉は可。</param>
+        /// <param name="for_mate">詰将棋用であるか。trueであれば単玉は可。</param>
         /// <returns>合法であったならnull。非合法であったなら、その内容が文字列として返る。</returns>
         public string IsValid(bool for_mate = false)
         {
@@ -1702,7 +1702,7 @@ namespace MyShogi.Model.Shogi.Core
                     return $"非手番側である{them.Pretty()}に王手がかかっています。";
             }
 
-            // 4.片玉など
+            // 4.単玉など
             {
                 var king_bb = Pieces(Piece.HDK) & ~(Pieces(Piece.BISHOP_HORSE) | Pieces(Piece.ROOK_DRAGON));
                 int k = king_bb.PopCount();

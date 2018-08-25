@@ -349,13 +349,13 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// sqの描画する場所を得る。
-        /// Config.BoardReverseも反映されている。
+        /// reverse : 盤面を180度回転するのかのフラグ
         /// </summary>
         /// <param name="sq"></param>
+        /// <param name="reverse"></param>
         /// <returns></returns>
-        private Point PieceLocation(SquareHand sq)
+        private Point PieceLocation(SquareHand sq , bool reverse)
         {
-            var reverse = gameServer.BoardReverse;
             Point dest;
 
             if (sq.IsBoardPiece())
@@ -445,12 +445,13 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// c側の駒台の領域を返す。
+        /// 
+        /// reverse : 盤面を180度回転するのかのフラグ
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        private Rectangle HandTableRectangle(ShogiCore.Color c)
+        private Rectangle HandTableRectangle(ShogiCore.Color c , bool reverse)
         {
-            var reverse = gameServer.BoardReverse;
             if (reverse)
                 c = c.Not();
 
@@ -574,6 +575,7 @@ namespace MyShogi.View.Win2D
         public void move_piece(SquareHand from, SquareHand to)
         {
             var state = viewState;
+            var reverse = gameServer.BoardReverse;
 
             // デバッグ用に表示する。
             //Console.WriteLine(from.Pretty() + "→" + to.Pretty());
@@ -629,7 +631,7 @@ namespace MyShogi.View.Win2D
                 // あと、棋譜ウィンドウもこの手前に描画できないので
                 // ここも避ける必要がある。
 
-                var dest = PieceLocation(to);
+                var dest = PieceLocation(to , reverse);
                 if (dest.Y >= board_img_size.Height * 0.8) // 画面の下らへんである..
                     dest += new Size(-130 + 95 / 2, -200);
                 else
@@ -1057,6 +1059,8 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// 盤面座標系から、それを表現するSquareHand型に変換する。
+        /// 
+        /// reverse : 盤面を180度回転するのかのフラグ
         /// </summary>
         /// <param name="p"></param>
         /// <returns></returns>
@@ -1090,13 +1094,13 @@ namespace MyShogi.View.Win2D
                     {
                         var sq = Util.ToHandPiece(c, pc);
                         // 細長駒台があるのでわりと面倒。何も考えずに描画位置で判定する。
-                        if (new Rectangle(PieceLocation(sq), piece_img_size).Contains(p))
+                        if (new Rectangle(PieceLocation(sq , reverse), piece_img_size).Contains(p))
                             return sq;
                     }
 
                     // それ以外の駒台の位置である判定も必要。
                     // これを一番最後にしないと、この領域の部分領域が判定できなくなってしまう。
-                    if (HandTableRectangle(c).Contains(p))
+                    if (HandTableRectangle(c , reverse ).Contains(p))
                         return Util.ToHandPiece(c, Piece.NO_PIECE);
                 }
 
@@ -1115,7 +1119,7 @@ namespace MyShogi.View.Win2D
                     for (var pc = Piece.PAWN; pc <= Piece.KING; ++pc)
                     {
                         var sq = Util.ToPieceBoxPiece(pc);
-                        if (new Rectangle(PieceLocation(sq), size).Contains(p))
+                        if (new Rectangle(PieceLocation(sq , reverse), size).Contains(p))
                             return sq;
                     }
 
