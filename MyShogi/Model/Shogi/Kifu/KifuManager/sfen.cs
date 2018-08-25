@@ -45,7 +45,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 {
                     scanner.ParseText();
 
-                    Tree.position.SetSfen(Tree.rootSfen);
+                    Tree.position.SetSfen(Position.SFEN_HIRATE);
                     Tree.rootSfen = Position.SFEN_HIRATE;
                     Tree.rootBoardType = BoardType.NoHandicap;
                 }
