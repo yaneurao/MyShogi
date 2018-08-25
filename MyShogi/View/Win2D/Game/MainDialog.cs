@@ -410,6 +410,12 @@ namespace MyShogi.View.Win2D
 
             if (engineConsiderationDialog == null)
             {
+                // 結局検討ダイアログ使わないなら、無視して帰る。(子ダイアログ作ってすぐ消すと画面ちらつくので)
+                if ((message.type == UsiEngineReportMessageType.NumberOfInstance && message.number == 0) ||
+                    (message.type == UsiEngineReportMessageType.SetGameMode)
+                    )
+                    return;
+
                 var dialog = new EngineConsiderationDialog();
                 dialog.Init(gameServer.BoardReverse /* これ引き継ぐ。以降は知らん。*/);
                 // ウィンドウ幅を合わせておく。
