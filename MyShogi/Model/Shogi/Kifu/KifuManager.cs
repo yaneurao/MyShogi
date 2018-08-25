@@ -366,7 +366,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     break;
 
                 case KifuFileType.SVG:
-                    result = ToSvgString();
+                    // SVG形式は局面出力のみで棋譜には対応しないが、一応書いておく
+                    result = ToSvgPositionString();
                     break;
 
                 // ToDo : 他の形式もサポートする
@@ -393,13 +394,17 @@ namespace MyShogi.Model.Shogi.Kifu
             string result = string.Empty;
             switch(kt)
             {
+                // 局面出力の専用ルーチンを使用
+                case KifuFileType.KIF:
+                case KifuFileType.KI2:
+                    result = ToKifPositionString(kt);
+                    break;
                 case KifuFileType.SVG:
-                    // SVG形式は専用ルーチンを使用
-                    result = ToSvgString();
+                    result = ToSvgPositionString();
                     break;
 
+                // 局面出力を用意していないものは、棋譜書き出しルーチンを流用して出力する
                 default:
-                    // SVG形式以外は、棋譜書き出しルーチンを流用して出力する
                     var kifu = new KifuManager();
                     // 経路を消すためにsfen化して代入しなおして書き出す
                     kifu.FromString($"sfen {Position.ToSfen()}");

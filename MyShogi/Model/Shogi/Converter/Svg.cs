@@ -14,7 +14,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// 棋譜ではなく図に近いので逆変換は出来ない。
         /// </summary>
         /// <returns></returns>
-        private string ToSvgString() =>
+        private string ToSvgPositionString() =>
             new Converter.Svg.Svg().ToString(Position, KifuHeader);
     }
 }

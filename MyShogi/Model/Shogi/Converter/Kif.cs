@@ -1032,7 +1032,7 @@ namespace MyShogi.Model.Shogi.Converter
                 {
                     var lastPos = pos.Clone();
                     lastPos.UndoMove();
-                    bod.AppendLine($"手数＝{pos.gamePly - 1}  {lastPos.ToKi2(lastMove)}  まで");
+                    bod.AppendLine($"手数＝{pos.gamePly - 1}  {lastPos.ToKi2C(lastMove)}  まで");
                 }
             }
             // 後手番のみ追加行

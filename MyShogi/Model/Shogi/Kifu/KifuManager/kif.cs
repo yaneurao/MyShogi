@@ -464,6 +464,7 @@ namespace MyShogi.Model.Shogi.Kifu
             // Kifu for Windows V7 ( http://kakinoki.o.oo7.jp/Kifuw7.htm ) 向けのヘッダ、これが無いとUTF-8形式の棋譜と認識して貰えない
             sb.AppendLine("#KIF version=2.0 encoding=UTF-8");
 
+            // 手合割 / 局面図
             switch (Tree.rootBoardType)
             {
                 case BoardType.NoHandicap:
@@ -512,6 +513,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     sb.AppendLine(Tree.position.ToBod().TrimEnd('\r', '\n'));
                     break;
             }
+
+            // 先手対局者名
             if (KifuHeader.header_dic.ContainsKey("先手"))
                 sb.AppendLine($"先手：{KifuHeader.PlayerNameBlack}");
             else if (KifuHeader.header_dic.ContainsKey("下手"))
@@ -526,6 +529,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     sb.AppendLine($"下手：{KifuHeader.PlayerNameBlack}");
                     break;
             }
+
+            // 後手対局者名
             if (KifuHeader.header_dic.ContainsKey("後手"))
                 sb.AppendLine($"後手：{KifuHeader.PlayerNameWhite}");
             else if (KifuHeader.header_dic.ContainsKey("上手"))
@@ -540,6 +545,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     sb.AppendLine($"上手：{KifuHeader.PlayerNameWhite}");
                     break;
             }
+
+            // その他ヘッダ
             foreach (var key in KifuHeader.header_dic.Keys)
             {
                 switch (key)
@@ -732,6 +739,11 @@ namespace MyShogi.Model.Shogi.Kifu
         private string ToKi2String()
         {
             var sb = new StringBuilder();
+
+            // Kifu for Windows V7 ( http://kakinoki.o.oo7.jp/Kifuw7.htm ) 向けのヘッダ、これが無いとUTF-8形式の棋譜と認識して貰えない
+            sb.AppendLine("#KI2 version=2.0 encoding=UTF-8");
+
+            // 手合割 / 局面図
             switch (Tree.rootBoardType)
             {
                 case BoardType.NoHandicap:
@@ -780,6 +792,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     sb.AppendLine(Tree.position.ToBod().TrimEnd('\r', '\n'));
                     break;
             }
+
+            // 先手対局者名
             if (KifuHeader.header_dic.ContainsKey("先手"))
                 sb.AppendLine($"先手：{KifuHeader.PlayerNameBlack}");
             else if (KifuHeader.header_dic.ContainsKey("下手"))
@@ -794,6 +808,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     sb.AppendLine($"下手：{KifuHeader.PlayerNameBlack}");
                     break;
             }
+
+            // 後手対局者名
             if (KifuHeader.header_dic.ContainsKey("後手"))
                 sb.AppendLine($"後手：{KifuHeader.PlayerNameWhite}");
             else if (KifuHeader.header_dic.ContainsKey("上手"))
@@ -808,6 +824,8 @@ namespace MyShogi.Model.Shogi.Kifu
                     sb.AppendLine($"上手：{KifuHeader.PlayerNameWhite}");
                     break;
             }
+
+            // その他ヘッダ
             foreach (var key in KifuHeader.header_dic.Keys)
             {
                 switch (key)
@@ -949,5 +967,79 @@ namespace MyShogi.Model.Shogi.Kifu
             }
             return sb.ToString();
         }
+
+        /// <summary>
+        /// </summary>
+        /// <returns></returns>
+        private string ToKifPositionString(KifuFileType kt = KifuFileType.KIF)
+        {
+            var sb = new StringBuilder();
+
+            // Kifu for Windows V7 ( http://kakinoki.o.oo7.jp/Kifuw7.htm ) 向けのヘッダ、これが無いとUTF-8形式の棋譜と認識して貰えない
+            switch (kt)
+            {
+                case KifuFileType.KIF:
+                    sb.AppendLine("#KIF version=2.0 encoding=UTF-8");
+                    break;
+                case KifuFileType.KI2:
+                    sb.AppendLine("#KI2 version=2.0 encoding=UTF-8");
+                    break;
+            }
+
+            // 局面出力
+            sb.AppendLine(Tree.position.ToBod().TrimEnd('\r', '\n'));
+
+            // 先手対局者名
+            if (KifuHeader.header_dic.ContainsKey("先手"))
+                sb.AppendLine($"先手：{KifuHeader.PlayerNameBlack}");
+            else if (KifuHeader.header_dic.ContainsKey("下手"))
+                sb.AppendLine($"下手：{KifuHeader.PlayerNameBlack}");
+            else switch (Tree.rootBoardType)
+            {
+                case BoardType.NoHandicap:
+                case BoardType.Others:
+                    sb.AppendLine($"先手：{KifuHeader.PlayerNameBlack}");
+                    break;
+                default:
+                    sb.AppendLine($"下手：{KifuHeader.PlayerNameBlack}");
+                    break;
+            }
+
+            // 後手対局者名
+            if (KifuHeader.header_dic.ContainsKey("後手"))
+                sb.AppendLine($"後手：{KifuHeader.PlayerNameWhite}");
+            else if (KifuHeader.header_dic.ContainsKey("上手"))
+                sb.AppendLine($"上手：{KifuHeader.PlayerNameWhite}");
+            else switch (Tree.rootBoardType)
+            {
+                case BoardType.NoHandicap:
+                case BoardType.Others:
+                    sb.AppendLine($"後手：{KifuHeader.PlayerNameWhite}");
+                    break;
+                default:
+                    sb.AppendLine($"上手：{KifuHeader.PlayerNameWhite}");
+                    break;
+            }
+
+            // その他ヘッダ情報
+            foreach (var key in KifuHeader.header_dic.Keys)
+            {
+                switch (key)
+                {
+                    case "先手":
+                    case "後手":
+                    case "上手":
+                    case "下手":
+                    case "手合割":
+                        break;
+                    default:
+                        sb.AppendLine($"{key}：{KifuHeader.header_dic[key]}");
+                        break;
+                }
+            }
+
+            return sb.ToString();
+        }
+
     }
 }
