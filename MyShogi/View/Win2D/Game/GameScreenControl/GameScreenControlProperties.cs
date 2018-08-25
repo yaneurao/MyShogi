@@ -47,7 +47,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public bool Dirty
         {
-            get { return dirty; }
+            get { return dirty || animatorManager.Dirty /* animatorが生きてる */; }
             private set
             {
                 // Thread生成なしにLocalGameServerを動作させているなら、即座に画面描画すべき。(これ用にタイマーも回ってないので)

@@ -198,7 +198,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             // →　エンジンの初期化が現時点では終わっていない。
             // 　ゆえに、UpdateInitializing()のなかで初期化が終わったタイミングでNotifyTurnChanged()を呼ぶ。
             // それまではTimeUpの処理をしてはならない。
-
         }
 
         /// <summary>
@@ -868,6 +867,25 @@ namespace MyShogi.Model.Shogi.LocalServer
                         var result = lastMove.GameResult();
                         (Player(c) as UsiEnginePlayer).SendGameOver(c == stm ? result : result.Not());
                     }
+
+                // --- 終了時の「対局終了」の表示
+
+                // 「対局開始」の画面素材を表示するためのイベント
+                var game_result = MoveGameResult.UNKNOWN;
+                // 片側だけが人間であるなら、人間にとって勝ちなのか負けなのかを返してやる。
+                var human_vs_cpu =
+                    Player(Color.BLACK).PlayerType == PlayerTypeEnum.Human ^
+                    Player(Color.WHITE).PlayerType == PlayerTypeEnum.Human;
+                if (human_vs_cpu)
+                {
+                    game_result = lastMove.GameResult(); // 手番側から見た勝敗
+                    // 手番側が人間でないなら勝敗を反転させてやる。
+                    if (Player(Position.sideToMove).PlayerType != PlayerTypeEnum.Human)
+                        game_result = game_result.Not();
+                }
+
+                RaisePropertyChanged("GameEndEvent" , game_result);
+
             }
 
             GameMode = GameModeEnum.ConsiderationWithoutEngine;

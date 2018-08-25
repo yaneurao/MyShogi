@@ -280,6 +280,28 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// ゲームが開始された時に飛んでくる仮想イベント。
+        /// 対局開始のAnimatorを表示するなどすると良いと思う。
+        /// </summary>
+        public object GameStartEvent
+        {
+            get { return GetValue<object>("GameStartEvent"); }
+        }
+
+        /// <summary>
+        /// 終局時に飛んでくる仮想イベント。
+        /// 対局終了のAnimatorを表示すると良いと思う。
+        ///
+        /// この値は、人間 vs CPUのとき、人間側から見て、どちらが勝利したかを表現している。
+        /// 人間 vs 人間のときや、CPU vs CPUのときは、MoveGameResult.Unknownが入っている。
+        /// </summary>
+        public MoveGameResult GameEndEvent
+        {
+            get { return GetValue<MoveGameResult>("GameEndEvent"); }
+        }
+
+
+        /// <summary>
         /// 各PlayerのEngineDefine
         /// </summary>
         public EngineDefineEx GetEngineDefine(Color c) { return EngineDefineExes[(int)c]; }
@@ -310,8 +332,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 {
                     // 状態がtrueからfalseに変わった
                     // 両方の対局準備ができたということなので対局スタート
-                    // ただし、人間同士の対局だと一瞬で初期化が終わるため、まだGameModeの変更が完了していない可能性がある。
+
                     NotifyTurnChanged();
+
+                    // 「対局開始」の画面素材を表示するためのイベントを発生させる
+                    RaisePropertyChanged("GameStartEvent");
                 }
                 Initializing = init; // 前回の値を代入しておく。
             }

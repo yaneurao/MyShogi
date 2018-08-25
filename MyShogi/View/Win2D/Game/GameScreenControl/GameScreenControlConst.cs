@@ -234,5 +234,21 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private static readonly Point engine_init_pos = new Point(534 + 230, 53 + 360);
 
+        /// <summary>
+        /// 対局開始・対局終了の表示位置(センタリング)
+        /// </summary>
+        private static readonly Point game_start_pos = new Point((board_img_size.Width - 762) / 2, (board_img_size.Height - 230)/2);
+
+        /// <summary>
+        /// 対局終了時の勝ち・負け・引き分けの表示位置
+        /// </summary>
+        private static readonly Point game_result_pos = new Point((board_img_size.Width - 636) / 2, (board_img_size.Height - 582) / 2);
+
+        /// <summary>
+        /// 対局開始時の「先手」「後手」の表示位置
+        /// </summary>
+        private static readonly Point game_black_pos = new Point((board_img_size.Width - 464) / 2, (board_img_size.Height - 230) / 2 + 230 - 15/*微調整*/);
+        private static readonly Point game_white_pos = new Point((board_img_size.Width - 464) / 2, (board_img_size.Height - 230) / 2 - 75  - 15/*微調整*/);
+
     }
 }

@@ -13,15 +13,53 @@ namespace MyShogi.Model.Resource.Images
         /// <summary>
         /// 描画が要求されたときに呼び出される。
         ///
-        /// frame : 生成後(AnimatorManager.AddSpriteAnimatorから)、何フレーム目であるか。
-        /// 
-        /// 60fpsだと仮定して、経過時間が何フレーム目の描画であるかが代入される。
-        /// 例) 生成されてから1秒経過していれば60が入ってくる。
-        ///
-        /// 返し値としてtrueを返すと次回、このクラスは、AnimatorManager.listから除外される。
+        /// elapsed_ms : 生成後(AnimatorManager.AddSpriteAnimatorから)、何ms経過しているか。
         /// </summary>
-        /// <param name="frame"></param>
-        bool OnDraw(long frame);
+        /// <param name="elapsed_ms"></param>
+        void OnDraw(long elapsed_ms);
+
+        /// <summary>
+        /// 動きがあるのか。(なければ1フレ描画するだけで、あとは解体時に描画すれば良い。)
+        /// </summary>
+        bool Animate { get; set; }
+
+        /// <summary>
+        /// 生存時間。elapsed_msがこれを上回ると自動的に解体される。
+        /// </summary>
+        long LifeTime { get; set; }
+    }
+
+    /// <summary>
+    /// 汎用Animator。
+    /// </summary>
+    public class Animator : IAnimator
+    {
+        /// <summary>
+        /// 引数で渡したmyOnDrawを、OnDraw()のなかで呼び出してくれる。
+        /// </summary>
+        /// <param name="myOnDraw_"></param>
+        public Animator(OnDrawDelegate myOnDraw_ , bool animated_ , long lifeTime )
+        {
+            Debug.Assert(myOnDraw_ != null);
+            myOnDraw = myOnDraw_;
+            Animate = animated_;
+            LifeTime = lifeTime;
+        }
+
+        public delegate void OnDrawDelegate(long frame);
+
+        public void OnDraw(long elapsed_ms)
+        {
+            myOnDraw(elapsed_ms);
+        }
+
+        public bool Animate { get; set; }
+        public long LifeTime { get; set; }
+
+        /// <summary>
+        /// これを設定すると、OnDraw()のときにこれが呼び出される。
+        /// </summary>
+        private OnDrawDelegate myOnDraw;
     }
 
     /// <summary>
@@ -48,7 +86,15 @@ namespace MyShogi.Model.Resource.Images
             var frame = GetFrame();
 
             foreach (var a in list)
-                a.disposed = a.animator.OnDraw(frame - a.start_frame /* 経過フレーム数 */ );
+            {
+                // 経過時間[ms]
+                var elapsed_ms = frame - a.start_frame;
+                var alive = elapsed_ms < a.animator.LifeTime;
+                if (alive)
+                    a.animator.OnDraw(elapsed_ms);
+                // aliveでないものはこのフレームで描画せずに除外される。
+                a.disposed = !alive;
+            }
 
             // disposeフラグが立っているものを除外する。
             list.RemoveAll(e => e.disposed);
@@ -76,13 +122,22 @@ namespace MyShogi.Model.Resource.Images
         #region properties
 
         /// <summary>
-        /// listにAnimatorがぶら下がっているか。
-        /// (ぶら下がっていなければ描画を省略できるので)
+        /// 描画すべきであるかのフラグ
         /// </summary>
         /// <returns></returns>
-        public bool Empty()
-        {
-            return list.Count == 0;
+        public bool Dirty { get
+            {
+                var frame = GetFrame();
+                var dirty = false;
+                foreach (var a in list)
+                {
+                    var elapsed_ms = frame - a.start_frame;
+                    var alive = elapsed_ms < a.animator.LifeTime;
+                    dirty |= a.animator.Animate || !alive /* これ、次フレームで消滅するのでdirtyであるべき */;
+                }
+
+                return dirty;
+            }
         }
 
         #endregion
@@ -120,12 +175,12 @@ namespace MyShogi.Model.Resource.Images
         }
 
         /// <summary>
-        /// このクラスが生成されてから何フレームが経過したかを返す。
+        /// このクラスが生成されてから何msが経過したかを返す。
         /// </summary>
         /// <returns></returns>
         private long GetFrame()
         {
-            return stopwatch.ElapsedMilliseconds * 60 / 1000;
+            return stopwatch.ElapsedMilliseconds;
         }
 
         /// <summary>

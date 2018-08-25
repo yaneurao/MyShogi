@@ -70,6 +70,11 @@ namespace MyShogi.View.Win2D
             kifuControl1.ViewModel.AddPropertyChangedHandler("MainBranchButtonClicked", gameServer.MainBranchButtonCommand);
             kifuControl1.ViewModel.AddPropertyChangedHandler("NextBranchButtonClicked", gameServer.NextBranchButtonCommand);
             kifuControl1.ViewModel.AddPropertyChangedHandler("EraseBranchButtonClicked", gameServer.EraseBranchButtonCommand);
+
+            // Game Effects
+
+            gameServer.AddPropertyChangedHandler("GameStartEvent", GameStartEventHandler);
+            gameServer.AddPropertyChangedHandler("GameEndEvent"  , GameEndEventHandler);
         }
 
         /// <summary>

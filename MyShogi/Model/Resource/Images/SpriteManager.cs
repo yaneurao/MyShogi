@@ -375,6 +375,18 @@ namespace MyShogi.Model.Resource.Images
             return new Sprite(image, rect);
         }
 
+        public static Sprite GameResult(MoveGameResult result)
+        {
+            var imageManager = TheApp.app.ImageManager;
+            switch (result)
+            {
+                case MoveGameResult.WIN:  return new Sprite(imageManager.GameWinImage.image);
+                case MoveGameResult.LOSE: return new Sprite(imageManager.GameLoseImage.image);
+                case MoveGameResult.DRAW: return new Sprite(imageManager.GameDrawImage.image);
+                default: return null;
+            }
+        }
+
         /// <summary>
         /// 対局開始時に表示する「先手」
         /// </summary>
