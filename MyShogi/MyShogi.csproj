@@ -60,6 +60,8 @@
     <Compile Include="Model\Common\ObjectModel\NotifyCollection.cs" />
     <Compile Include="Model\Common\Process\RemoteService.cs" />
     <Compile Include="Model\Common\Utility\CpuId.cs" />
+    <Compile Include="Model\Common\Utility\CsvParser.cs" />
+    <Compile Include="Model\Common\Utility\CsvTable.cs" />
     <Compile Include="Model\Common\Utility\Encode.cs" />
     <Compile Include="Model\Common\Utility\EscapeFileName.cs" />
     <Compile Include="Model\Common\Utility\FileIO.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Model\Shogi\Core\EvalValue.cs" />
     <Compile Include="Model\Shogi\Core\Sfens.cs" />
     <Compile Include="Model\Shogi\EngineDefine\EngineConfig.cs" />
+    <Compile Include="Model\Shogi\LocalServer\LocalGameServer\GameResult\GameResultTable.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\Structs\ContinuousGame.cs" />
     <Compile Include="Model\Shogi\LocalServer\LocalGameServer\Structs\GameResultSetting.cs" />
     <Compile Include="Model\Shogi\LocalServer\Settings\ConsiderationEngineSetting.cs" />

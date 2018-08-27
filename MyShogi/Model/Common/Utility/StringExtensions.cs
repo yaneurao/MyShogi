@@ -44,6 +44,28 @@ namespace MyShogi.Model.Common.Utility
             return s.Substring(s.Length - m , m);
         }
 
+        /// <summary>
+        /// n文字目以降をm文字切り出す。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static string Mid(this string s , int n , int m)
+        {
+            if (s == null)
+                return null;
+
+            // 切り出し始める箇所がsの長さを超えている
+            if (s.Length < n)
+                return string.Empty;
+
+            // 切り出す文字数が多すぎてsの末尾を超えている
+            if (s.Length < n + m)
+                return s.Substring(n);
+
+            return s.Substring(n,m);
+        }
+
 
         /// <summary>
         /// string.Left()と同じだが、全角スペースは2文字分として扱ってLeftする。
