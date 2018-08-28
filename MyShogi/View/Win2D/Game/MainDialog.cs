@@ -833,8 +833,13 @@ namespace MyShogi.View.Win2D
                 menu.SuspendLayout();
 
                 // 前回設定されたメニューを除去する
+                // 古いほうのmenu、removeしないと駄目
                 if (old_menu != null)
+                {
                     Controls.Remove(old_menu);
+                    old_menu.Dispose();
+                    old_menu = null;
+                }
 
                 // -- LocalGameServerの各フラグ。
                 // ただし、初期化時にgameServer == nullで呼び出されることがあるのでnull checkが必要。
@@ -2200,7 +2205,7 @@ namespace MyShogi.View.Win2D
                 Controls.Add(menu);
                 // フォームのメインメニューとする
                 MainMenuStrip = menu;
-                old_menu = menu;
+                old_menu = menu; // 次回解放するので記憶しておかないと駄目。
 
                 // レイアウトロジックを再開する
                 menu.ResumeLayout(false);
@@ -2213,6 +2218,9 @@ namespace MyShogi.View.Win2D
             gameScreenControl1.ForceRedraw();
         }
 
+        /// <summary>
+        /// 前回のメニュー項目。
+        /// </summary>
         private MenuStrip old_menu { get; set; } = null;
 
         #endregion

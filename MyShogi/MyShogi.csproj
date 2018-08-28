@@ -201,7 +201,9 @@
     <Compile Include="App\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="View\Win2D\Common\FontBuilder.cs" />
+    <Compile Include="View\Win2D\Common\FontUtility.cs" />
     <Compile Include="View\Win2D\Common\FormLocationUtility.cs" />
+    <Compile Include="View\Win2D\Common\GdiResourceWatcher.cs" />
     <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlAnimator.cs">
       <SubType>UserControl</SubType>
     </Compile>

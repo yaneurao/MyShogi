@@ -26,7 +26,7 @@ namespace MyShogi.App
         /// </summary>
         public void Run()
         {
-#if true // is beta
+#if true
 
             // -- リリース時
             try

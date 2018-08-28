@@ -43,9 +43,11 @@ namespace MyShogi.Model.Resource.Images
                 image = new Bitmap(64, 64 , PixelFormat.Format24bppRgb);
                 using (var g = Graphics.FromImage(image))
                 {
-                    var pen = new Pen(Color.Red,5);
-                    g.DrawLine(pen, new Point(0, 0), new Point(63, 63));
-                    g.DrawLine(pen, new Point(63, 0), new Point(0, 63));
+                    using (var pen = new Pen(Color.Red,5))
+                    {
+                        g.DrawLine(pen, new Point(0, 0), new Point(63, 63));
+                        g.DrawLine(pen, new Point(63, 0), new Point(0, 63));
+                    }
                 }
             }
         }

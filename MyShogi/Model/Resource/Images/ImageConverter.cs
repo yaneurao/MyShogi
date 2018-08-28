@@ -158,17 +158,15 @@ namespace MyShogi.Model.Resource.Images
 
             {
                 // 左上の塗りつぶし配置
-                var g = Graphics.FromImage(bmp);
-                var b = new SolidBrush(Color.FromArgb((int)(255*0.3f),0,0,0));
-                g.FillRectangle(b, 0,0 , x ,y);
+                using (var g = Graphics.FromImage(bmp))
+                using (var b = new SolidBrush(Color.FromArgb((int)(255 * 0.3f), 0, 0, 0)))
+                {
+                    g.FillRectangle(b, 0, 0, x, y);
+                    // Piece.WHITEのところに最終手の着手を意味する画像を生成
 
-                // Piece.WHITEのところに最終手の着手を意味する画像を生成
-
-                //b = new SolidBrush(Color.FromArgb((int)(255 * 0.45), 0xff, 0x7f, 0x50));
-                //g.FillRectangle(b, 0 + 0, y * 2 + 0, x , y );
- 
-                b.Dispose();
-                g.Dispose();
+                    //b = new SolidBrush(Color.FromArgb((int)(255 * 0.45), 0xff, 0x7f, 0x50));
+                    //g.FillRectangle(b, 0 + 0, y * 2 + 0, x , y );
+                }
             }
 
             // (97*8 , 106 * 6)= (776,636)
@@ -260,11 +258,11 @@ namespace MyShogi.Model.Resource.Images
         private static void Fill(Image bmp , int a_ , int r_, int g_, int b_)
         {
             // 左上の塗りつぶし配置
-            var g = Graphics.FromImage(bmp);
-            var b = new SolidBrush(Color.FromArgb(a_, r_, g_, b_));
-            g.FillRectangle(b, 0, 0, bmp.Width, bmp.Height);
-            b.Dispose();
-            g.Dispose();
+            using (var g = Graphics.FromImage(bmp))
+            using (var b = new SolidBrush(Color.FromArgb(a_, r_, g_, b_)))
+            {
+                g.FillRectangle(b, 0, 0, bmp.Width, bmp.Height);
+            }
 
         }
     }

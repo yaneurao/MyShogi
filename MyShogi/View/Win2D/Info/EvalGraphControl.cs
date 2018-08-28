@@ -141,9 +141,10 @@ namespace MyShogi.View.Win2D
                 RectangleF bounds;
                 using (var path = new System.Drawing.Drawing2D.GraphicsPath())
                 {
+                    using (var font = new FontFamily(con.fontFamilyName))
                     path.AddString(
                         "+9999",
-                        new FontFamily(con.fontFamilyName),
+                        font,
                         (int)FontStyle.Regular,
                         scoreFontSize,
                         new PointF(0f, 0f),

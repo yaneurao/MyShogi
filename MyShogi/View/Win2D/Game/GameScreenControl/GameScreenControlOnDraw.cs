@@ -315,6 +315,11 @@ namespace MyShogi.View.Win2D
             // -- animator (この上位に位置する)の描画
 
             animatorManager.OnDraw();
+
+            // リソースリークを調べる(デバッグ時)
+#if false
+            GdiResourceWatcher.DisplayMemory();
+#endif
         }
     }
 }

@@ -205,13 +205,13 @@ namespace MyShogi.View.Win2D
             last_font_size = font_size;
 
             var font = new Font("MS Gothic", font_size, FontStyle.Regular, GraphicsUnit.Pixel);
-            listBox1.Font = font;
+            FontUtility.SetFont( listBox1 , font);
 
             // buttonのFontSizeあまり変更すると高さが足りなくなるので横幅の比率変更は反映させない。
             var font2 = new Font("MS Gothic", font_size2, FontStyle.Regular, GraphicsUnit.Pixel);
-            button1.Font = font2;
-            button2.Font = font2;
-            button3.Font = font2;
+            FontUtility.SetFont(button1 , font2);
+            FontUtility.SetFont(button2 , font2);
+            FontUtility.SetFont(button3 , font2);
         }
 
         private float last_font_size = 0;

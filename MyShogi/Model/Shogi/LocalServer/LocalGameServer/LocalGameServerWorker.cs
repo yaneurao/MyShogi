@@ -29,8 +29,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             try
             {
+                var sw = new Stopwatch();
                 while (!workerStop)
                 {
+                    // 時間を計測する。
+                    sw.Reset();
+                    sw.Start();
+
                     // 各プレイヤーのプロセスの標準入出力に対する送受信の処理
                     foreach (var player in Players)
                     {
@@ -46,8 +51,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // 時間消費のチェック。時間切れのチェック。
                     CheckTime();
 
-                    // 10msごとに各種処理を行う。
-                    Thread.Sleep(10);
+                    // ここでGC掃除
+                    //GC.Collect();
+
+                    // (最大で)10msのSleep。
+                    var sleep_ms = (int)Math.Max(0, 10 - sw.ElapsedMilliseconds);
+                    Thread.Sleep(sleep_ms);
                 }
             } catch (Exception ex)
             {
@@ -1007,6 +1016,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // エンジンに与えるHashSize,Threadsの計算
                 if (UsiEngineHashManager.CalcHashSize() != 0)
                     // Hash足りなくてダイアログ出した時にキャンセルボタン押されとる
+                    // すぐ下でcatchされるので心配いらない。
                     throw new Exception("");
 
                 // 検討ウィンドウへの読み筋などのリダイレクトを設定
