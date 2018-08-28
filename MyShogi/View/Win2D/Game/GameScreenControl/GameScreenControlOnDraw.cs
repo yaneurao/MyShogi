@@ -181,6 +181,7 @@ namespace MyShogi.View.Win2D
                 }
 
                 // -- 駒箱の駒の描画(盤面編集時のみ)
+                if (gameServer.InTheBoardEdit)
                 {
 
                     // 通常の駒台 0 , 細長い駒台なら1

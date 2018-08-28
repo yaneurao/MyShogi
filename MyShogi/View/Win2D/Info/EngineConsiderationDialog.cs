@@ -70,11 +70,16 @@ namespace MyShogi.View.Win2D
                     Visible = message.number != 0;
                     SetEngineInstanceNumber(message.number);
 
+
+#if false
                     // このメッセージに対して、継ぎ盤の局面を初期化したほうが良いのでは…。
                     miniShogiBoard1.BoardData = new MiniShogiBoardData()
                     {
                         rootSfen = BoardType.NoHandicap.ToSfen()
                     };
+                    // →　このメッセージの直後にrootSfenが来るはずだから、それに応じて初期化するようにする
+#endif
+                    must_init_miniboard = true;
 
                     break;
 
@@ -95,6 +100,16 @@ namespace MyShogi.View.Win2D
                 case UsiEngineReportMessageType.SetRootSfen:
                     var sfen = message.data as string;
                     ConsiderationInstance(message.number).RootSfen = sfen;
+
+                    // まだミニ盤面の初期化がなされていないならば。
+                    if (must_init_miniboard)
+                    {
+                        miniShogiBoard1.BoardData = new MiniShogiBoardData()
+                        {
+                            rootSfen = sfen
+                        };
+                        must_init_miniboard = false;
+                    }
                     break;
 
                 case UsiEngineReportMessageType.UsiThinkReport:
@@ -377,6 +392,10 @@ namespace MyShogi.View.Win2D
             miniShogiBoard1.Location = new Point(0, y);
         }
 
+        /// <summary>
+        /// 次回のrootSfenが送られてきたときにその局面でミニ盤面を初期化しないといけないフラグ
+        /// </summary>
+        private bool must_init_miniboard = false;
 
         // -- test code
 
