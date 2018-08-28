@@ -660,6 +660,8 @@ namespace MyShogi.View.Win2D
             var pos = gameServer.Position;
 
             // 何にせよ、移動、もしくは交換をする。
+            // →　交換をする実装、不評なので、将棋所・ShogiGUIに倣い、手駒に移動させる。
+
             var from_pc = pos.PieceOn(from);
             var from_pt = from_pc.PieceType();
             var from_pr = from_pc.RawPieceType();
@@ -672,6 +674,7 @@ namespace MyShogi.View.Win2D
                 {
                     // -- 盤上と盤上の駒
 
+#if false // 2駒交換する実装 →　不評なので手駒に移動させることに変更。
                     // fromとtoの升の駒を交換する。
                     // fromに駒があることは確定している。toに駒があろうがなかろうが良い。
                     BoardEditCommand(raw =>
@@ -679,6 +682,20 @@ namespace MyShogi.View.Win2D
                         raw.board[(int)from] = to_pc;
                         raw.board[(int)to] = from_pc;
                     });
+#endif
+
+#if true // toのほうが手駒に移動する実装
+                    BoardEditCommand(raw =>
+                    {
+                        raw.board[(int)from] = Piece.NO_PIECE;
+                        raw.board[(int)to] = from_pc;
+                        if (to_pr != Piece.NO_PIECE && to_pr != Piece.KING)
+                        {
+                            // 移動元の駒のcolorの手駒に移動させる。玉は、(欠落するので)勝手に駒箱に移動する。
+                            raw.hands[(int)from_pc.PieceColor()].Add(to_pr);
+                        }
+                    });
+#endif
                 }
                 else if (from.IsHandPiece())
                 {
@@ -686,15 +703,30 @@ namespace MyShogi.View.Win2D
 
                     BoardEditCommand(raw =>
                     {
+#if false // 駒箱に移動する実装　→　不評なので手駒になるように変更
                         raw.hands[(int)from.PieceColor()].Sub(from_pt);
                         raw.board[(int)to] = from_pc;
                         // このtoの位置にもし駒があったとしたら、それは駒箱に移動する。
                         // (その駒が欠落するので..)
+#endif
+
+#if true // toのほうが手駒に移動する実装
+                        raw.hands[(int)from.PieceColor()].Sub(from_pt);
+                        raw.board[(int)to] = from_pc;
+
+                        if (to_pr != Piece.NO_PIECE && to_pr != Piece.KING)
+                        {
+                            // 移動元の駒のcolorの手駒に移動させる。玉は、(欠落するので)勝手に駒箱に移動する。
+                            raw.hands[(int)from.PieceColor()].Add(to_pr);
+                        }
+#endif
+
                     });
                 }
                 else if (from.IsPieceBoxPiece())
                 {
                     // -- 駒箱の駒を盤面に
+                    // toにあった駒は駒箱に戻ってくるが、これは仕方がない。
 
                     BoardEditCommand(raw => raw.board[(int)to] = from_pc);
                 }
@@ -919,7 +951,7 @@ namespace MyShogi.View.Win2D
                     var pc = pos.PieceOn(sq);
                     var rp = pc.RawPieceType();
 
-                    // 玉であっても裏返せる。
+                    // 玉であっても手番変更は出来るのでNO_PIECE以外であれば処理対象。
                     if (pc != Piece.NO_PIECE)
                     {
                         Piece nextPc;
