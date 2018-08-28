@@ -32,14 +32,17 @@ namespace MyShogi.View.Win2D
                     // 「対局開始」
                     DrawSprite(game_start_pos , SPRITE.GameStart());
 
-                    var black = SPRITE.GameBlack();
-                    var white = SPRITE.GameWhite();
+                    var handicapped = (bool)args.value;
+
+                    var black = handicapped ? SPRITE.GameShitate() : SPRITE.GameBlack();
+                    var white = handicapped ? SPRITE.GameUwate()   : SPRITE.GameWhite();
+
                     if (gameServer.BoardReverse)
                         Utility.Swap(ref black , ref white);
 
-                    // 「先手」
+                    // 「先手」/「下手」
                     DrawSprite(game_black_pos, black);
-                    // 「後手」
+                    // 「後手」/「上手」
                     DrawSprite(game_white_pos, white);
 
                 }, false , 0 , 2000

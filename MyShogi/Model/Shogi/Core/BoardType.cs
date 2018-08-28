@@ -95,7 +95,7 @@ namespace MyShogi.Model.Shogi.Core
         /// 歩三枚
         /// </summary>
         //[LabelDescription(Label = "歩三枚")]
-        HANDICAP_PAWN3,
+        HandicapPawn3,
 
         /// <summary>
         /// 詰将棋用の局面
@@ -181,6 +181,16 @@ namespace MyShogi.Model.Shogi.Core
         public static Int32 ToInt(this BoardType boardType)
         {
             return (Int32)boardType;
+        }
+
+        /// <summary>
+        /// 駒落ちであるかを判定して返す。
+        /// </summary>
+        /// <param name="boardType"></param>
+        /// <returns></returns>
+        public static bool IsHandicapped(this BoardType boardType)
+        {
+            return !(boardType == BoardType.NoHandicap || boardType == BoardType.Current);
         }
 
         /// <summary>

@@ -1852,7 +1852,7 @@ namespace MyShogi.View.Win2D
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "歩三枚(&E)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HANDICAP_PAWN3.ToSfen()); };
+                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapPawn3.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
 

@@ -393,8 +393,10 @@ namespace MyShogi.Model.Resource.Images
         /// <returns></returns>
         public static Sprite GameBlack()
         {
-            var image = TheApp.app.ImageManager.GameBlackImage.image;
-            return new Sprite(image);
+            var image = TheApp.app.ImageManager.GameBlackWhiteImage.image;
+            var h = image.Height / 4; // 縦に4つ並んでいるので
+            var rect = new Rectangle(0, h, image.Width, h);
+            return new Sprite(image,rect);
         }
 
         /// <summary>
@@ -403,8 +405,34 @@ namespace MyShogi.Model.Resource.Images
         /// <returns></returns>
         public static Sprite GameWhite()
         {
-            var image = TheApp.app.ImageManager.GameWhiteImage.image;
-            return new Sprite(image);
+            var image = TheApp.app.ImageManager.GameBlackWhiteImage.image;
+            var h = image.Height / 4; // 縦に4つ並んでいるので
+            var rect = new Rectangle(0, 0, image.Width, h);
+            return new Sprite(image, rect);
+        }
+
+        /// <summary>
+        /// 対局開始時に表示する「上手」
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite GameUwate()
+        {
+            var image = TheApp.app.ImageManager.GameBlackWhiteImage.image;
+            var h = image.Height / 4; // 縦に4つ並んでいるので
+            var rect = new Rectangle(0, h*2 , image.Width, h);
+            return new Sprite(image, rect);
+        }
+
+        /// <summary>
+        /// 対局開始時に表示する「下手」
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite GameShitate()
+        {
+            var image = TheApp.app.ImageManager.GameBlackWhiteImage.image;
+            var h = image.Height / 4; // 縦に4つ並んでいるので
+            var rect = new Rectangle(0, h * 3, image.Width, h);
+            return new Sprite(image, rect);
         }
 
         #endregion

@@ -306,11 +306,10 @@ namespace MyShogi.Model.Resource.Images
             // -- 対局に関する画面効果
 
             Load(ref GameStartImage, "game_effect" + Sep + "game_start_v1.png", true);
-            Load(ref GameBlackImage, "game_effect" + Sep + "game_black_v1.png", true);
-            Load(ref GameWhiteImage, "game_effect" + Sep + "game_white_v1.png", true);
             Load(ref GameWinImage,   "game_effect" + Sep + "game_win_v1.png"  , true);
             Load(ref GameLoseImage,  "game_effect" + Sep + "game_lose_v1.png" , true);
             Load(ref GameDrawImage,  "game_effect" + Sep + "game_draw_v1.png" , true);
+            Load(ref GameBlackWhiteImage, "game_effect" + Sep + "game_black_white_v1.png", true);
         }
 
         /// <summary>
@@ -430,14 +429,9 @@ namespace MyShogi.Model.Resource.Images
         public ImageLoader GameStartImage = new ImageLoader();
 
         /// <summary>
-        /// 対局開始時の先手の文字列
+        /// 対局開始時の「先手」「後手」「上手」「下手」の文字列
         /// </summary>
-        public ImageLoader GameBlackImage = new ImageLoader();
-
-        /// <summary>
-        /// 対局開始時の先手の文字列
-        /// </summary>
-        public ImageLoader GameWhiteImage = new ImageLoader();
+        public ImageLoader GameBlackWhiteImage = new ImageLoader();
 
         /// <summary>
         /// 終局時の勝利画像

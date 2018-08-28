@@ -336,8 +336,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                     NotifyTurnChanged();
 
                     if (GameMode == GameModeEnum.InTheGame)
+                    {
+                        var handicapped = kifuManager.Tree.rootBoardType.IsHandicapped();
                         // 「対局開始」の画面素材を表示するためのイベントを発生させる
-                        RaisePropertyChanged("GameStartEvent");
+                        RaisePropertyChanged("GameStartEvent", handicapped);
+                    }
                 }
                 Initializing = init; // 前回の値を代入しておく。
             }
