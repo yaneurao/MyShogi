@@ -51,6 +51,7 @@
             this.playerSettingControl1 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
             this.timeSettingControl2 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
             this.timeSettingControl1 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.groupBox6.SuspendLayout();
@@ -122,7 +123,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(129, 460);
+            this.button1.Location = new System.Drawing.Point(129, 487);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(100, 27);
             this.button1.TabIndex = 19;
@@ -134,7 +135,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(399, 304);
+            this.checkBox1.Location = new System.Drawing.Point(399, 331);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(205, 19);
             this.checkBox1.TabIndex = 20;
@@ -144,7 +145,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(534, 460);
+            this.button2.Location = new System.Drawing.Point(534, 487);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(100, 27);
             this.button2.TabIndex = 29;
@@ -187,6 +188,7 @@
             // 
             this.groupBox6.Controls.Add(this.label3);
             this.groupBox6.Controls.Add(this.label2);
+            this.groupBox6.Controls.Add(this.checkBox3);
             this.groupBox6.Controls.Add(this.checkBox2);
             this.groupBox6.Controls.Add(this.numericUpDown1);
             this.groupBox6.Controls.Add(this.label1);
@@ -195,7 +197,7 @@
             this.groupBox6.Controls.Add(this.numericUpDown2);
             this.groupBox6.Location = new System.Drawing.Point(388, 190);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(374, 108);
+            this.groupBox6.Size = new System.Drawing.Size(374, 136);
             this.groupBox6.TabIndex = 31;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "その他の設定";
@@ -255,7 +257,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 76);
+            this.label1.Location = new System.Drawing.Point(12, 104);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(73, 15);
             this.label1.TabIndex = 32;
@@ -270,7 +272,7 @@
             "24点法(CSAルール)",
             "27点法(CSAルール)",
             "トライルール"});
-            this.comboBox1.Location = new System.Drawing.Point(85, 73);
+            this.comboBox1.Location = new System.Drawing.Point(91, 101);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(138, 23);
             this.comboBox1.TabIndex = 31;
@@ -297,7 +299,7 @@
             // timeSettingControl2
             // 
             this.timeSettingControl2.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.timeSettingControl2.Location = new System.Drawing.Point(389, 326);
+            this.timeSettingControl2.Location = new System.Drawing.Point(389, 353);
             this.timeSettingControl2.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.timeSettingControl2.Name = "timeSettingControl2";
             this.timeSettingControl2.Size = new System.Drawing.Size(379, 129);
@@ -306,17 +308,27 @@
             // timeSettingControl1
             // 
             this.timeSettingControl1.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.timeSettingControl1.Location = new System.Drawing.Point(6, 324);
+            this.timeSettingControl1.Location = new System.Drawing.Point(6, 351);
             this.timeSettingControl1.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.timeSettingControl1.Name = "timeSettingControl1";
             this.timeSettingControl1.Size = new System.Drawing.Size(381, 131);
             this.timeSettingControl1.TabIndex = 32;
             // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(32, 72);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(251, 19);
+            this.checkBox3.TabIndex = 33;
+            this.checkBox3.Text = "連続対局のときに手番を入れ替えない";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            // 
             // GameSettingDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(771, 492);
+            this.ClientSize = new System.Drawing.Size(771, 520);
             this.Controls.Add(this.playerSettingControl2);
             this.Controls.Add(this.playerSettingControl1);
             this.Controls.Add(this.timeSettingControl2);
@@ -366,5 +378,6 @@
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox checkBox3;
     }
 }

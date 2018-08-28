@@ -179,11 +179,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var stm = kifuManager.Position.sideToMove;
                     var stmPlayer = Player(stm);
 
-                    // 中断の指し手
-                    stmPlayer.SpecialMove = Move.INTERRUPT;
-
                     // 連続対局の中止のためにカウンターをリセットしておく。
                     continuousGame.ResetCounter();
+
+                    // 中断の指し手
+                    stmPlayer.SpecialMove = Move.INTERRUPT;
                 }
             });
         }

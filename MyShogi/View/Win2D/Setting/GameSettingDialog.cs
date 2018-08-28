@@ -149,6 +149,7 @@ namespace MyShogi.View.Win2D
             // 連続対局の設定
             binder.Bind(misc, "ContinuousGameEnable", checkBox2);
             binder.Bind(misc, "ContinuousGame", numericUpDown1);
+            binder.Bind(misc, "ContinuousGameNoSwapPlayer", checkBox3);
 
             ResumeLayout();
         }

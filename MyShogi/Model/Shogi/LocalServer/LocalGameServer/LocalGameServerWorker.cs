@@ -98,6 +98,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                 gameSetting.PlayerSetting(Color.WHITE).IsCpu &&
                 misc.ContinuousGameEnable ? misc.ContinuousGame : 0
                 );
+            // 連続対局時にはプレイヤー入れ替えで壊す可能性があるので保存しておく。
+            continuousGame.GameSetting = GameSetting.Clone();
 
             // 以下の初期化中に駒が動かされるの気持ち悪いのでユーザー操作を禁止しておく。
             CanUserMove = false;
@@ -233,15 +235,19 @@ namespace MyShogi.Model.Shogi.LocalServer
             // →　生成されているはず
             // エンジンの初期化も終わっているはず。
 
-            // プレイヤーの実体の先後入替え
-            Utility.Swap(ref Players[0], ref Players[1]);
-            Utility.Swap(ref EngineDefineExes[0], ref EngineDefineExes[1]);
-            Utility.Swap(ref continuousGame.presetNames[0], ref continuousGame.presetNames[1]);
-
             // 対局の持ち時間設定などの先後入替
+            // (対局設定ダイアログで「連続対局のときに先後入れ替えない」にチェックが入っていなければ)
             var gameSetting = GameSetting;
-            gameSetting.SwapPlayer();
-            GameSetting = gameSetting;
+            if (!gameSetting.MiscSettings.ContinuousGameNoSwapPlayer)
+            {
+                // プレイヤーの実体の先後入替え
+                Utility.Swap(ref Players[0], ref Players[1]);
+                Utility.Swap(ref EngineDefineExes[0], ref EngineDefineExes[1]);
+                Utility.Swap(ref continuousGame.presetNames[0], ref continuousGame.presetNames[1]);
+
+                gameSetting.SwapPlayer();
+                GameSetting = gameSetting;
+            }
 
             // 検討ウィンドウのリダイレクト、先後入れ替えるのでいったんリセット
             foreach (var c in All.Colors())
@@ -915,7 +921,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// エンジンなどの切断処理
+        /// エンジンなどの切断処理。
+        /// 簡単な終了処理を兼ねている。
         /// </summary>
         private void Disconnect()
         {
@@ -929,6 +936,12 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 連続対局のためのカウンターをリセットする。
             continuousGame.ResetCounter();
+
+            if (continuousGame.GameSetting != null)
+            {
+                GameSetting = continuousGame.GameSetting; // プレイヤーの入れ替えで破壊している可能性があるので復元する。
+                continuousGame.GameSetting = null;
+            }
         }
 
         /// <summary>

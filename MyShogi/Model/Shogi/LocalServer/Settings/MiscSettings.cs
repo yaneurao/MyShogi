@@ -67,6 +67,15 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue<int>("ContinuousGame", value); }
         }
 
+        /// <summary>
+        /// 「連続対局のときに手番を入れ替えない」
+        /// </summary>
+        public bool ContinuousGameNoSwapPlayer
+        {
+            get { return GetValue<bool>("ContinuousGameNoSwapPlayer"); }
+            set { SetValue<bool>("ContinuousGameNoSwapPlayer", value); }
+        }
+
         // -- public members
 
         public MiscSettings()

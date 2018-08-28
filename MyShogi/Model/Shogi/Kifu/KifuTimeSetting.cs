@@ -265,6 +265,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 後手の対局時間設定を先手とは別に設定する。
+        /// 対局設定の「後手の時間設定を個別にする」のチェックボックスに連動している。
         /// </summary>
         [DataMember]
         public bool WhiteEnable
@@ -321,11 +322,14 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// 先手と後手のプレイヤーを入れ替える
+        /// 先手と後手のプレイヤーを入れ替える。
+        /// ただし、WhiteEnable(「後手の時間設定を個別にする」)のときだけ。
+        /// そうでないときは入れ替えるべきではない。
         /// </summary>
         public void SwapPlayer()
         {
-            Utility.Swap(ref Players[0], ref Players[1]);
+            if (WhiteEnable)
+                Utility.Swap(ref Players[0], ref Players[1]);
         }
 
         // -- properties

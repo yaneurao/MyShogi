@@ -78,5 +78,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public string PresetName(Color c) { return presetNames[(int)c]; }
         public string[] presetNames = new string[2];
+
+        /// <summary>
+        /// 連続対局開始前のゲーム設定を保存しておく。(プレイヤーの交換などを行うため)
+        /// </summary>
+        public GameSetting GameSetting;
     }
 }
