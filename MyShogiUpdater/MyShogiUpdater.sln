@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyShogiUpdater", "MyShogiUpdater.csproj", "{938B3402-44F3-4F63-A0CC-C3C5A12F51EA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{938B3402-44F3-4F63-A0CC-C3C5A12F51EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{938B3402-44F3-4F63-A0CC-C3C5A12F51EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{938B3402-44F3-4F63-A0CC-C3C5A12F51EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{938B3402-44F3-4F63-A0CC-C3C5A12F51EA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3647B3F3-F92F-4D26-8CEA-4C9D801480F5}
+	EndGlobalSection
+EndGlobal
