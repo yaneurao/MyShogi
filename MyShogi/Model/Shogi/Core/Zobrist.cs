@@ -70,7 +70,7 @@ namespace MyShogi.Model.Shogi.Core
             foreach (var c in All.IntColors())
                 for (Piece pr = Piece.ZERO + 1; pr < Piece.HAND_NB; ++pr)
                     {
-                        var r0 = rng.Rand();
+                        var r0 = rng.Rand() & ~1UL;
                         var r1 = rng.Rand();
                         var r2 = rng.Rand();
                         var r3 = rng.Rand();

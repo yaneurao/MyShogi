@@ -1411,6 +1411,18 @@ namespace MyShogi.Model.Shogi.Core
         {
             // 現在の局面と同じhash keyを持つ局面が4回あれば、それは千日手局面であると判定する。
 
+#if false
+            // Debug用にこの局面に至るまでのHash値をすべて表示させてみる
+            {
+                var s = st;
+                for(int i = 0; s != null ;++i)
+                {
+                    Console.WriteLine($"gamePly = {gamePly-i} → {s.key.Pretty()}");
+                    s = s.previous;
+                }
+            }
+#endif
+
             // n回st.previousを辿るlocal method
             StateInfo prev(StateInfo si, int n)
             {
