@@ -176,7 +176,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public string DefaultKifuFileName()
         {
-            return $"{DisplayNameWithPreset(Color.BLACK)}_{DisplayNameWithPreset(Color.WHITE)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+            var name = $"{DisplayNameWithPreset(Color.BLACK)}_{DisplayNameWithPreset(Color.WHITE)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+            // プレイヤー名としてファイルに使えない文字列が含まれている可能性があるのでここでescapeする。
+            name = Utility.EscapeFileName(name);
+            return name;
         }
 
         /// <summary>

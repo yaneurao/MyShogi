@@ -13,6 +13,8 @@ namespace MyShogi.Model.Shogi.Data
     {
         /// <summary>
         /// ファイルからGameResultTableを読み込む。
+        ///
+        /// // 解釈できなかった行はnullになっている。
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>

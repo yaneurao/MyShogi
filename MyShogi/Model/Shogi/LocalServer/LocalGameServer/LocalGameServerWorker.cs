@@ -110,7 +110,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 misc.ContinuousGameEnable ? misc.ContinuousGame : 0
                 );
             // 連続対局時にはプレイヤー入れ替えで壊す可能性があるので保存しておく。
-            continuousGame.GameSetting = GameSetting.Clone();
+            continuousGame.GameSetting = gameSetting.Clone();
 
             // 以下の初期化中に駒が動かされるの気持ち悪いのでユーザー操作を禁止しておく。
             CanUserMove = false;
@@ -915,7 +915,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 PlayTimer(c).StopTimer();
 
             // 棋譜の自動保存
-            AutomaticSaveKifu( lastMove , stm , gamePly );
+            AutomaticSaveKifu( lastMove );
 
             // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
             continuousGame.IncPlayCount();
@@ -1054,7 +1054,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 棋譜の自動保存処理
         /// </summary>
-        private void AutomaticSaveKifu(Move lastMove, Color lastColor , int gamePly)
+        private void AutomaticSaveKifu(Move lastMove)
         {
             // この対局棋譜を保存しなければならないなら保存する。
             var setting = TheApp.app.Config.GameResultSetting;
@@ -1083,8 +1083,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 EndTime = continuousGame.EndTime,
                 KifuFileName = filename,
                 LastMove = lastMove,
-                LastColor = lastColor,
-                GamePly = gamePly - 1 /* 31手目で詰まされている場合、棋譜の手数としては30手であるため。 */,
+                LastColor = Position.sideToMove,
+                GamePly = Position.gamePly - 1 /* 31手目で詰まされている場合、棋譜の手数としては30手であるため。 */,
+                BoardType = kifuManager.Tree.rootBoardType,
+                TimeSettingString = $"先手:{TimeSettingString(Color.BLACK)},後手:{TimeSettingString(Color.WHITE)}",
                 Comment = null,
             };
             table.AppendLine(csv_path, result);

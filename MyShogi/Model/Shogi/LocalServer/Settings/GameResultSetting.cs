@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Kifu;
 
 namespace MyShogi.Model.Shogi.LocalServer

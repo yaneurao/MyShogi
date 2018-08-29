@@ -49,6 +49,16 @@ namespace MyShogi.Model.Shogi.Data
         public int GamePly;
 
         /// <summary>
+        /// 開始局面の種類(手合割などの表現用)
+        /// </summary>
+        public BoardType BoardType;
+
+        /// <summary>
+        /// 先後の持ち時間設定を文字列化したもの。
+        /// </summary>
+        public string TimeSettingString;
+
+        /// <summary>
         /// コメント行用のコメント。
         ///
         /// コメント行では、
@@ -74,6 +84,10 @@ namespace MyShogi.Model.Shogi.Data
 
             list.Add(KifuFileName);
             list.Add(GamePly.ToString());
+
+            list.Add(BoardType.ToString());
+            list.Add(TimeSettingString);
+
             list.Add(Comment);
 
             return list;
@@ -87,7 +101,7 @@ namespace MyShogi.Model.Shogi.Data
         public static GameResultData FromLine(List<string> list)
         {
             // データ壊れてない？おかしすぎ。この行をskipすべき。
-            if (list.Count < 9)
+            if (list.Count < 11)
                 return null;
 
             try
@@ -101,11 +115,13 @@ namespace MyShogi.Model.Shogi.Data
                 result.LastColor = Util.FromUsiColor(list[5].FirstChar());
                 result.KifuFileName = list[6];
                 result.GamePly = int.Parse(list[7]);
-                result.Comment = list[8];
+                result.BoardType = Util.FromBoardTypeString(list[8]);
+                result.TimeSettingString = list[9];
+                result.Comment = list[10];
 
                 return result;
 
-            } catch (Exception ex)
+            } catch
             {
                 return null;
             }

@@ -204,4 +204,18 @@ namespace MyShogi.Model.Shogi.Core
             Sfens.HANDICAP_6 , Sfens.HANDICAP_8 , Sfens.HANDICAP_10 , Sfens.HANDICAP_PAWN3 , Sfens.MATE_1 , Sfens.MATE_2, Sfens.MATE_3,
         };
     }
+
+    public static partial class Util
+    {
+        /// <summary>
+        /// 文字列化されたBoardTypeから、元のBoardTypeを復元する。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static BoardType FromBoardTypeString(string s)
+        {
+            // あまり使いたくないが、enumからreflectionで取り出している。
+            return (BoardType)Enum.ToObject(typeof(BoardType), s);
+        }
+    }
 }

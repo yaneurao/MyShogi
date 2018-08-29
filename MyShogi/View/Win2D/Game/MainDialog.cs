@@ -954,7 +954,8 @@ namespace MyShogi.View.Win2D
                                 // デフォルトでは、先手名 + 後手名 + YYYYMMDDhhmmss.kif
                                 // 柿木やkifu for Windowsがこの形式らしい。
                                 var default_filename = $"{gameServer.DefaultKifuFileName()}.KIF";
-                                fd.FileName = Utility.EscapeFileName(default_filename);
+                                fd.FileName = default_filename;
+                                // これでescapeされているし、ダイアログが使えないファイル名は返さないから、以降のescapeは不要。
 
                                 // ダイアログを表示する
                                 if (fd.ShowDialog() == DialogResult.OK)

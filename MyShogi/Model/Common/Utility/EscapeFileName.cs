@@ -7,6 +7,8 @@ namespace MyShogi.Model.Common.Utility
     {
         /// <summary>
         /// ファイル名として使えない文字列をescapeして返す。
+        ///
+        /// Pathに対して使うと "c:/.."の":"がescapeされてしまい、保存できなくなってしまうので注意。
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
@@ -36,6 +38,17 @@ namespace MyShogi.Model.Common.Utility
                     sb.Append('_'); // escape
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// filenameのほうをescapeしてからPath.Combine()を行う。
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        public static string PathCombine(string path , string filename)
+        {
+            return Path.Combine(path, EscapeFileName(filename));
         }
     }
 }

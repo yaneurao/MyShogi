@@ -387,8 +387,7 @@ namespace MyShogi.Model.Common.Utility
         /// </summary>
         public void AppendLine(string path, IEnumerable<string> line)
         {
-            using (var fs = new FileStream(path , FileMode.Append))
-            using (var writer = new StreamWriter(fs , Encode))
+            using (var writer = new StreamWriter(path , true , Encode))
             {
                 WriteLine(writer, line);
                 writer.WriteLine();
