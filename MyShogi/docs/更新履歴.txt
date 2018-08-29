@@ -4,6 +4,15 @@
 ■　2018/08/30
 
 
+- CsvTable、部分ViewとKeyValueの機能削除して、単純化する。
+- GameResultData追加。
+- GameResultSettingをLocalGameServer.Settingに移動。
+
+
+- 盤面編集で移動元と移動先が同じだと手駒が増える。(masaさん)
+  - 前回仕様を変更したときの修正忘れでした。修正しました。
+
+
 - Updater、アップデート内容の書かれたファイルは、"V100toV108_info.txt"のようにして、これをアップデートするsourceフォルダに配置することに変更。
 
 

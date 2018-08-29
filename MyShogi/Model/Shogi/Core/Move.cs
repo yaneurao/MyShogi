@@ -453,6 +453,33 @@ namespace MyShogi.Model.Shogi.Core
 
             return sb.ToString();
         }
+
+        /// <summary>
+        /// 通常の指し手ならUSIの指し手文字列に変換する。
+        /// special moveなら、enum値を文字列化して返す。
+        /// </summary>
+        /// <param name="move"></param>
+        /// <returns></returns>
+        public static string MoveToString(this Move move)
+        {
+            if (move.IsOk())
+                return move.ToUsi();
+
+            // あまり使いたくないが、enumのToString()を呼び出している。
+            return move.ToString();
+        }
+
+        /// <summary>
+        /// 文字列から指し手を生成して返す。
+        /// sは、special moveのはず。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static Move MoveFromString(this string s)
+        {
+            // あまり使いたくないが、enumからreflectionで取り出している。
+            return (Move)Enum.ToObject(typeof(Move), s);
+        }
     }
 
 }

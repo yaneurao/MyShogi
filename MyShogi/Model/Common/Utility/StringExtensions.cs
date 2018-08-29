@@ -157,6 +157,17 @@ namespace MyShogi.Model.Common.Utility
             return $"{s}{new string(' ',System.Math.Max(n - len, 0))}{t}";
         }
 
+        /// <summary>
+        /// 先頭の1文字を返す。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static char FirstChar(this string s)
+        {
+            if (s == null || s.Length == 0)
+                return (char)0;
 
+            return s[0];
+        }
     }
 }

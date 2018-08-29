@@ -257,22 +257,110 @@ namespace MyShogi.Model.Common.Utility
 
             // Encoding指定しないとutf-8でないとうまくいかない。
             // 英数字しか使ってなかったからutf-8扱いで、たまたまうまく動いてたのか…。
+
             var text = File.ReadAllText(path, Encode);
             return Parse(text);
         }
-
-        // 書き込みも作る。
 
         /// <summary>
         /// csvファイルの書き出し。例外いろいろ飛んでくる。
         /// </summary>
         /// <param name="path"></param>
         /// <param name="csv"></param>
-        public void WriteFile(string path, List<List<string>> csv)
+        public void WriteFile(string path, IEnumerable<IEnumerable<string>> csv)
         {
             using (var writer = new StreamWriter(path, false, Encode))
             {
                 Write(writer, csv);
+            }
+        }
+
+        /// <summary>
+        /// writerに対して1行書き出される。
+        /// </summary>
+        /// <param name="writer"></param>
+        /// <param name="line"></param>
+        /// <param name="firstLine"></param>
+        public void WriteLine(TextWriter writer , IEnumerable<string> line , bool firstLine = false)
+        {
+            // 1行目であるか
+            var firstCell = firstLine;
+
+            // カラム番号
+            var col_no = 0;
+
+            foreach (var e in line)
+            {
+                var elm = e;
+
+                //	Excelのバグへの対処。
+                //	1行1列のセルの値が”ID”だとSYLK形式だと誤認識される。
+                bool needToQuote = firstCell && elm == "ID";
+                firstCell = false;
+
+                // セパレータ記号かquote記号が含まれていれば全体をescapeする必要がある。
+                foreach (var sep in element_separators)
+                {
+                    if (elm.Contains(sep))
+                    {
+                        needToQuote = true;
+                        goto Skip;
+                    }
+                }
+                foreach (var quote in quote_strings)
+                {
+                    if (elm.Contains(quote))
+                    {
+                        needToQuote = true;
+                        goto Skip;
+                    }
+                }
+
+                foreach (var sep in line_separators)
+                {
+                    if (elm.Contains(sep))
+                    {
+                        needToQuote = true;
+
+                        // セル内改行なので LF(\n)のみに変更したほうがいい。
+                        // Excelではそうなっているらしい。
+                        // これによってCsvParserとしての汎用性を損ねるのかどうかはよくわからない。
+
+                        elm = elm.Replace("\r\n", "\n");
+
+                        goto Skip;
+                    }
+                }
+
+                Skip:
+                ;
+
+                if (needToQuote)
+                {
+                    // 第一セパレータ記号でquoteするので、もしそれが含まれていればescapeする必要がある。
+                    if (!quote_strings.Any())
+                    {
+                        // 新たに独自の例外を作るほどではないのでそのままExceptionを投げておく。
+                        throw new Exception("quote記号が設定されていないのでquote出来ない。");
+                    }
+                    var quote = quote_strings.First();
+
+                    // quote記号をescapeして、両端をquote記号で囲む。
+                    elm = quote + elm.Replace(quote, quote + quote) + quote;
+                }
+
+                if (col_no > 0)
+                {
+                    if (!element_separators.Any())
+                    {
+                        // 新たに独自の例外を作るほどではないのでそのままExceptionを投げておく。
+                        throw new Exception("セパレータ記号が設定されていないので2列目を出力出来ない。");
+                    }
+                    writer.Write(element_separators.First()); // separator記号で区切る。
+                }
+                ++col_no;
+
+                writer.Write(elm);
             }
         }
 
@@ -283,83 +371,25 @@ namespace MyShogi.Model.Common.Utility
         /// </summary>
         /// <param name="writer"></param>
         /// <param name="csv"></param>
-        public void Write(TextWriter writer, List<List<string>> csv)
+        public void Write(TextWriter writer, IEnumerable<IEnumerable<string>> csv)
         {
-            var firstCell = true;
+            var i = 0;
             foreach (var line in csv)
             {
-                for (int i = 0; i < line.Count; ++i)
-                {
-                    var elm = line[i];
+                WriteLine(writer, line , i++ == 0);
+            }
+        }
 
-                    //	Excelのバグへの対処。
-                    //	1行1列のセルの値が”ID”だとSYLK形式だと誤認識される。
-                    bool needToQuote = firstCell && elm == "ID";
-                    firstCell = false;
-
-                    // セパレータ記号かquote記号が含まれていれば全体をescapeする必要がある。
-                    foreach (var sep in element_separators)
-                    {
-                        if (elm.Contains(sep))
-                        {
-                            needToQuote = true;
-                            goto Skip;
-                        }
-                    }
-                    foreach (var quote in quote_strings)
-                    {
-                        if (elm.Contains(quote))
-                        {
-                            needToQuote = true;
-                            goto Skip;
-                        }
-                    }
-
-                    foreach (var sep in line_separators)
-                    {
-                        if (elm.Contains(sep))
-                        {
-                            needToQuote = true;
-
-                            // セル内改行なので LF(\n)のみに変更したほうがいい。
-                            // Excelではそうなっているらしい。
-                            // これによってCsvParserとしての汎用性を損ねるのかどうかはよくわからない。
-
-                            elm = elm.Replace("\r\n", "\n");
-
-                            goto Skip;
-                        }
-                    }
-
-                    Skip:
-                    ;
-
-                    if (needToQuote)
-                    {
-                        // 第一セパレータ記号でquoteするので、もしそれが含まれていればescapeする必要がある。
-                        if (!quote_strings.Any())
-                        {
-                            // 新たに独自の例外を作るほどではないのでそのままExceptionを投げておく。
-                            throw new Exception("quote記号が設定されていないのでquote出来ない。");
-                        }
-                        var quote = quote_strings.First();
-
-                        // quote記号をescapeして、両端をquote記号で囲む。
-                        elm = quote + elm.Replace(quote, quote + quote) + quote;
-                    }
-
-                    if (i != 0)
-                    {
-                        if (!element_separators.Any())
-                        {
-                            // 新たに独自の例外を作るほどではないのでそのままExceptionを投げておく。
-                            throw new Exception("セパレータ記号が設定されていないので2列目を出力出来ない。");
-                        }
-                        writer.Write(element_separators.First()); // separator記号で区切る。
-                    }
-
-                    writer.Write(elm);
-                }
+        /// <summary>
+        /// CSVファイルに1行追加する。
+        /// CSVファイルを読み込まずに何も考えずに1行appendする。
+        /// </summary>
+        public void AppendLine(string path, IEnumerable<string> line)
+        {
+            using (var fs = new FileStream(path , FileMode.Append))
+            using (var writer = new StreamWriter(fs , Encode))
+            {
+                WriteLine(writer, line);
                 writer.WriteLine();
             }
         }
