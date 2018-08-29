@@ -26,6 +26,13 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // デフォルトでは "Documents/YaneuraOuKifu" を保存先に設定しておく。
             KifuSaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) , "YaneuraOuKifu");
+
+            try
+            {
+                if (!Directory.Exists(KifuSaveFolder))
+                    Directory.CreateDirectory(KifuSaveFolder);
+            }
+            catch { }
         }
 
         /// <summary>

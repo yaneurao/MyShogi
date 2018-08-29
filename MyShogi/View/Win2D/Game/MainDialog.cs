@@ -1929,11 +1929,9 @@ namespace MyShogi.View.Win2D
                             item_.DropDownItems.Add(item);
                         }
 
-
                     }
 
                     { // -- 棋譜ウィンドウ
-
 
                         var item_ = new ToolStripMenuItem();
                         item_.Text = "棋譜ウィンドウ(&K)"; // Kifu window
@@ -1977,6 +1975,41 @@ namespace MyShogi.View.Win2D
                                 item.DropDownItems.Add(item5);
                             }
                         }
+                    }
+
+                    item_window.DropDownItems.Add(new ToolStripSeparator());
+
+                    { // -- 対局結果一覧ウィンドウ
+
+                        var item_ = new ToolStripMenuItem();
+                        item_.Text = "対局結果一覧(&R)"; // game Result
+                        item_.Click += (sender, e) =>
+                        {
+                            using (var dialog = new GameResultDialog())
+                            {
+                                FormLocationUtility.CenteringToThisForm(dialog, this);
+                                dialog.ShowDialog(this);
+                            }
+                        };
+
+                        item_window.DropDownItems.Add(item_);
+                    }
+
+
+                    { // -- 対局結果一覧ウィンドウ
+
+                        var item_ = new ToolStripMenuItem();
+                        item_.Text = "対局結果の保存設定(&S)"; // アルファベット的にRの次
+                        item_.Click += (sender, e) =>
+                        {
+                            using (var dialog = new GameResultWindowSettingDialog())
+                            {
+                                FormLocationUtility.CenteringToThisForm(dialog, this);
+                                dialog.ShowDialog(this);
+                            }
+                        };
+
+                        item_window.DropDownItems.Add(item_);
                     }
 
                     item_window.DropDownItems.Add(new ToolStripSeparator());

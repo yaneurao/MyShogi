@@ -39,9 +39,6 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void Start()
         {
-            var table = new GameResultTable();
-            table.Test();
-
             var config = TheApp.app.Config;
 
             kifuManager.Tree.Bind("Position", this , DataBindWay.OneWay);

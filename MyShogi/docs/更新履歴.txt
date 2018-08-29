@@ -4,6 +4,13 @@
 ■　2018/08/30
 
 
+- メニューに「ウィンドウ」→「対局結果一覧」その1
+  - これ、まだ作業中。
+- メニューに「ウィンドウ」→「対局結果の自動保存設定」追加。
+  - 設定項目を終了時に保存/起動時に反映するようにした。
+- GameResultDialog作成。
+
+
 - CsvTable、部分ViewとKeyValueの機能削除して、単純化する。
 - GameResultData追加。
 - GameResultSettingをLocalGameServer.Settingに移動。
