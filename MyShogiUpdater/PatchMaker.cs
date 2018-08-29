@@ -76,15 +76,22 @@ namespace MyShogiUpdater
         /// </summary>
         /// <param name="source"></param>
         /// <param name="target"></param>
-        public static void FolderCopy(string sourcePath , string targetPath , Action<string> copyed_file)
+        public static void FolderCopy(string sourcePath , string targetPath , string excludeFile , Action<string> copyed_file)
         {
             sourcePath = Path.GetFullPath(sourcePath);
             // target側はfull pathで取得できているはず。
+
+            excludeFile = Path.GetFileName(excludeFile);
 
             var sources = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
             foreach(var s in sources)
             {
                 var relative_source_path = s.Substring(sourcePath.Length + 1 /* PathSeparator.Length */);
+
+                // 除外ファイルであるか
+                if (relative_source_path == excludeFile)
+                    continue;
+
                 var target = Path.Combine(targetPath, relative_source_path);
 
                 var dir = Path.GetDirectoryName(target);

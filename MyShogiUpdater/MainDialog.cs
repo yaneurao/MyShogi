@@ -75,7 +75,7 @@ namespace MyShogiUpdater
 
             Invoke(new Action(() => { richTextBox2.Text += $"\r\nCopy \"{ViewModel.SourceFolder}\" to \"{ViewModel.InstallFolder}\""; }));
 
-            PatchMaker.FolderCopy(ViewModel.SourceFolder, ViewModel.InstallFolder, (filename) => {
+            PatchMaker.FolderCopy(ViewModel.SourceFolder, ViewModel.InstallFolder, ViewModel.UpdateTextFile /*このファイル除外*/ , (filename) => {
                 Invoke(new Action(() => {
                     richTextBox2.Text += "\r\n" + filename;
                     try

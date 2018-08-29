@@ -55,7 +55,7 @@ namespace MyShogiUpdater
                     // メインのダイアログの表示
 
                     model.ProductName = "『将棋神 やねうら王』";
-                    model.UpdateTextFile = "text/Update1.txt";
+                    model.UpdateTextFile = Path.Combine(UpdateSourcePath , $"{UpdateSourcePath}_info.txt");
                     var program_files = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
                     model.InstallFolder = Path.Combine(program_files, "YaneuraOu2018");
                     model.SourceFolder = UpdateSourcePath;
