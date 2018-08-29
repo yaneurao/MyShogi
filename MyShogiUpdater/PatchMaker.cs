@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace MyShogiUpdater
 {
@@ -12,13 +13,15 @@ namespace MyShogiUpdater
         ///
         /// 使用例)
         /// V100とV108との差分を生成する。
-        /// PatchMaker.MakePatch("V100", "V108","V100toV108");
+        ///   PatchMaker.MakePatch("V100", "V108");
+        /// "V100toV108"というフォルダが生成される。
         /// </summary>
         /// <param name="sourcePath1">1つ目のフォルダ</param>
         /// <param name="sourcePath2">2つ目のフォルダ</param>
-        /// <param name="patchPath">コピー先のフォルダ</param>
-        public static void MakePatch(string sourcePath1 , string sourcePath2, string patchPath)
+        public static void MakePatch(string sourcePath1 , string sourcePath2)
         {
+            var patchPath = $"{sourcePath1}to{sourcePath2}";
+
             sourcePath1 = Path.GetFullPath(sourcePath1);
             sourcePath2 = Path.GetFullPath(sourcePath2);
             patchPath = Path.GetFullPath(patchPath);
@@ -31,9 +34,9 @@ namespace MyShogiUpdater
                 // このファイル、source1にあるのか？
 
                 // 相対Pathに変換
-                var relative_targe2 = target2.Substring(sourcePath2.Length + 1 /* PathSeparator.Length */);
-                var target1 = Path.Combine(sourcePath1, relative_targe2);
-                var target3 = Path.Combine(patchPath, relative_targe2);
+                var relative_target2 = target2.Substring(sourcePath2.Length + 1 /* PathSeparator.Length */);
+                var target1 = Path.Combine(sourcePath1, relative_target2);
+                var target3 = Path.Combine(patchPath, relative_target2);
 
                 // 同一であるかのフラグ。これがfalseならファイルをコピーする。
                 bool the_same = true;
@@ -67,5 +70,34 @@ namespace MyShogiUpdater
 
             Console.WriteLine("done!");
         }
+
+        /// <summary>
+        /// sourceフォルダにあるファイル群をすべてtargetフォルダに上書きコピーする。
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        public static void FolderCopy(string sourcePath , string targetPath , Action<string> copyed_file)
+        {
+            sourcePath = Path.GetFullPath(sourcePath);
+            // target側はfull pathで取得できているはず。
+
+            var sources = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
+            foreach(var s in sources)
+            {
+                var relative_source_path = s.Substring(sourcePath.Length + 1 /* PathSeparator.Length */);
+                var target = Path.Combine(targetPath, relative_source_path);
+
+                var dir = Path.GetDirectoryName(target);
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                File.Copy(s, target, true);
+
+                copyed_file(target); // コピーされたファイル。
+            }
+
+            copyed_file("Updateが完了しました!");
+        }
+
     }
 }
