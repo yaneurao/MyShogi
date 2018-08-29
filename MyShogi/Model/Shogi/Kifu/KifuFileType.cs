@@ -22,7 +22,9 @@
     public static class KifuFileTypeExtensions
     {
         /// <summary>
-        /// 拡張子で使う文字列に変換する
+        /// 拡張子で使う文字列に変換する。
+        /// 返す文字列には、"."も含まれる。
+        /// 例) ".kif"
         /// </summary>
         /// <returns></returns>
         public static string ToExtensions(this KifuFileType type)
@@ -45,7 +47,7 @@
 
         /// <summary>
         /// 拡張子文字列を渡して、そのKifuFileTypeを返す。
-        /// 末尾しか見ていないので拡張子ではなく、file pathでも良いる
+        /// 末尾しか見ていないので拡張子ではなく、file pathでも良い。
         /// </summary>
         /// <param name="extension"></param>
         public static KifuFileType StringToKifuFileType(string extentions)

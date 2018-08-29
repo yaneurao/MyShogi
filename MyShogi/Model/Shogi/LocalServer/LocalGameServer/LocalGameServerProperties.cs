@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MyShogi.App;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
@@ -57,7 +58,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var error = Position.IsValid(next == GameModeEnum.ConsiderationWithMateEngine);
                     if (error != null)
                     {
-                        TheApp.app.MessageShow(error , MessageShowType.Error);
+                        TheApp.app.MessageShow(error, MessageShowType.Error);
                         return;
                     }
                 }
@@ -78,7 +79,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 // 依存プロパティの更新
                 SetValue<bool>("InTheGame", next == GameModeEnum.InTheGame);
-                SetValue<bool>("InTheBoardEdit" , next == GameModeEnum.InTheBoardEdit);
+                SetValue<bool>("InTheBoardEdit", next == GameModeEnum.InTheBoardEdit);
             }
         }
 
@@ -106,7 +107,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public bool CanUserMove
         {
-            get { return canUserMove && EnableUserMove;}
+            get { return canUserMove && EnableUserMove; }
             private set { canUserMove = value; }
         }
         private bool canUserMove; // ↑からしかアクセスしない
@@ -150,6 +151,32 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 対局ダイアログの設定を活かす
             return GameSetting.PlayerSetting(c).PlayerName;
+        }
+
+        /// <summary>
+        /// 思考エンジンのpreset名も含めた名前を返す。
+        /// 文字数制限はない。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public string DisplayNameWithPreset(Color c)
+        {
+            var name = DisplayName(c);
+            // CPUのときはPreset名も取得する。
+            var preset = continuousGame.PresetName(c);
+            if (preset != null)
+            name += $"({preset})";
+            return name;
+        }
+
+        /// <summary>
+        /// 棋譜をファイルに名前をつけて保存するときのデフォルトファイル名。
+        /// 拡張子は含まず。
+        /// </summary>
+        /// <returns></returns>
+        public string DefaultKifuFileName()
+        {
+            return $"{DisplayNameWithPreset(Color.BLACK)}_{DisplayNameWithPreset(Color.WHITE)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}";
         }
 
         /// <summary>
@@ -340,6 +367,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                         var handicapped = kifuManager.Tree.rootBoardType.IsHandicapped();
                         // 「対局開始」の画面素材を表示するためのイベントを発生させる
                         RaisePropertyChanged("GameStartEvent", handicapped);
+
+                        continuousGame.StartTime = DateTime.Now;
                     }
                 }
                 Initializing = init; // 前回の値を代入しておく。

@@ -291,7 +291,8 @@ namespace MyShogi.Model.Common.Utility
 
             foreach (var e in line)
             {
-                var elm = e;
+                // e == nullだとContains()などが使えないのでstring.Emptyに差し替えておく。
+                var elm = e == null ? string.Empty : e;
 
                 //	Excelのバグへの対処。
                 //	1行1列のセルの値が”ID”だとSYLK形式だと誤認識される。

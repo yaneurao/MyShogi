@@ -75,5 +75,14 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue("KifuSaveFolder", value); }
         }
 
+        /// <summary>
+        /// csvファイルの保存pathを返す。
+        /// これは棋譜保存フォルダに"game_result.csv"というファイル名で存在するものとする。
+        /// </summary>
+        /// <returns></returns>
+        public string CsvFilePath()
+        {
+            return Path.Combine(KifuSaveFolder, "game_result.csv");
+        }
     }
 }

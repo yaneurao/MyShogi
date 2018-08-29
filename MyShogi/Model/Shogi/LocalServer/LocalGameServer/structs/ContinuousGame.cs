@@ -1,4 +1,5 @@
 ﻿using MyShogi.Model.Shogi.Core;
+using System;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -73,11 +74,22 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 通常対局のときにエンジンの選択しているPreset名。
+        /// エンジンでなければ、nullが返る。
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
         public string PresetName(Color c) { return presetNames[(int)c]; }
         public string[] presetNames = new string[2];
+
+        /// <summary>
+        /// 今回の対局の開始時刻
+        /// </summary>
+        public DateTime StartTime;
+
+        /// <summary>
+        /// 今回の対局の終了時刻
+        /// </summary>
+        public DateTime EndTime;
 
         /// <summary>
         /// 連続対局開始前のゲーム設定を保存しておく。(プレイヤーの交換などを行うため)

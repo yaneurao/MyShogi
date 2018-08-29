@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using MyShogi.App;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Player;
@@ -864,6 +866,9 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private void GameEnd(Move lastMove)
         {
+            var stm = Position.sideToMove;
+            var gamePly = Position.gamePly;
+
             // 対局中だったものが終了したのか？
             if (GameMode == GameModeEnum.InTheGame)
             {
@@ -875,7 +880,6 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 // --- 終局時にエンジンに対して"gameover win"などを送信するための処理
 
-                var stm = Position.sideToMove;
                 foreach (var c in All.Colors())
                     if (Player(c).PlayerType == PlayerTypeEnum.UsiEngine)
                     {
@@ -895,7 +899,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 {
                     game_result = lastMove.GameResult(); // 手番側から見た勝敗
                     // 手番側が人間でないなら勝敗を反転させてやる。
-                    if (Player(Position.sideToMove).PlayerType != PlayerTypeEnum.Human)
+                    if (Player(stm).PlayerType != PlayerTypeEnum.Human)
                         game_result = game_result.Not();
                 }
 
@@ -904,12 +908,14 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             GameMode = GameModeEnum.ConsiderationWithoutEngine;
+            continuousGame.EndTime = DateTime.Now;
 
             // 時間消費、停止
             foreach (var c in All.Colors())
                 PlayTimer(c).StopTimer();
 
-            // TODO : この対局棋譜を保存しなければならない。
+            // 棋譜の自動保存
+            AutomaticSaveKifu( lastMove , stm , gamePly );
 
             // 連続対局が設定されている時はDisconnect()はせずに、ここで次の対局のスタートを行う。
             continuousGame.IncPlayCount();
@@ -1043,6 +1049,45 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             // disconnect the consideration engine
             Disconnect();
+        }
+
+        /// <summary>
+        /// 棋譜の自動保存処理
+        /// </summary>
+        private void AutomaticSaveKifu(Move lastMove, Color lastColor , int gamePly)
+        {
+            // この対局棋譜を保存しなければならないなら保存する。
+            var setting = TheApp.app.Config.GameResultSetting;
+            if (!setting.AutomaticSaveKifu)
+                return;
+
+            // 1) 棋譜ファイルを保存する。
+
+            // プレイヤー名を棋譜上に反映させる。
+            foreach (var c in All.Colors())
+                kifuManager.KifuHeader.SetPlayerName(c, DisplayNameWithPreset(c));
+
+            var kifu = kifuManager.ToString(setting.KifuFileType);
+            var filename = $"{DefaultKifuFileName()}{setting.KifuFileType.ToExtensions()}";
+            var filePath = Path.Combine(setting.KifuSaveFolder, filename);
+            FileIO.WriteFile(filePath, kifu);
+
+            // 2) csvファイルに情報をappendする。
+
+            var table = new GameResultTable();
+            var csv_path = setting.CsvFilePath();
+            var result = new GameResultData()
+            {
+                PlayerNames = new[] { DisplayNameWithPreset(Color.BLACK), DisplayNameWithPreset(Color.WHITE) },
+                StartTime = continuousGame.StartTime,
+                EndTime = continuousGame.EndTime,
+                KifuFileName = filename,
+                LastMove = lastMove,
+                LastColor = lastColor,
+                GamePly = gamePly - 1 /* 31手目で詰まされている場合、棋譜の手数としては30手であるため。 */,
+                Comment = null,
+            };
+            table.AppendLine(csv_path, result);
         }
 
         #endregion

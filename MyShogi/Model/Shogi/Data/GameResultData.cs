@@ -34,7 +34,7 @@ namespace MyShogi.Model.Shogi.Data
         /// <summary>
         /// 終局時の手番(Resultから勝敗を判定するのに用いる)
         /// </summary>
-        public Color LastSide;
+        public Color LastColor;
 
         /// <summary>
         /// 棋譜ファイル名
@@ -42,6 +42,11 @@ namespace MyShogi.Model.Shogi.Data
         /// ここにフォルダ名は含まれていないものとする。
         /// </summary>
         public string KifuFileName;
+
+        /// <summary>
+        /// 手数
+        /// </summary>
+        public int GamePly;
 
         /// <summary>
         /// コメント行用のコメント。
@@ -65,9 +70,10 @@ namespace MyShogi.Model.Shogi.Data
 
             /* EnumのToString()あまり使いたくないけど、intにcastすると定義変えたときに困るので…。*/
             list.Add(LastMove.MoveToString());
-            list.Add(LastSide.ToUsi());
+            list.Add(LastColor.ToUsi());
 
             list.Add(KifuFileName);
+            list.Add(GamePly.ToString());
             list.Add(Comment);
 
             return list;
@@ -81,20 +87,28 @@ namespace MyShogi.Model.Shogi.Data
         public static GameResultData FromLine(List<string> list)
         {
             // データ壊れてない？おかしすぎ。この行をskipすべき。
-            if (list.Count < 8)
+            if (list.Count < 9)
                 return null;
 
-            var result = new GameResultData();
-            result.PlayerNames[0] = list[0];
-            result.PlayerNames[1] = list[1];
-            result.StartTime = DateTime.Parse(list[2]);
-            result.EndTime = DateTime.Parse(list[3]);
-            result.LastMove = Util.MoveFromString(list[4]);
-            result.LastSide = Util.FromUsiColor(list[5].FirstChar());
-            result.KifuFileName = list[6];
-            result.Comment = list[7];
+            try
+            {
+                var result = new GameResultData();
+                result.PlayerNames[0] = list[0];
+                result.PlayerNames[1] = list[1];
+                result.StartTime = DateTime.Parse(list[2]);
+                result.EndTime = DateTime.Parse(list[3]);
+                result.LastMove = Util.MoveFromString(list[4]);
+                result.LastColor = Util.FromUsiColor(list[5].FirstChar());
+                result.KifuFileName = list[6];
+                result.GamePly = int.Parse(list[7]);
+                result.Comment = list[8];
 
-            return result;
+                return result;
+
+            } catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 

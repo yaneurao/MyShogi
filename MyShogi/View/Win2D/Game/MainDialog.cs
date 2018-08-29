@@ -953,7 +953,7 @@ namespace MyShogi.View.Win2D
                                 fd.Title = "棋譜を保存するファイル形式を選択してください";
                                 // デフォルトでは、先手名 + 後手名 + YYYYMMDDhhmmss.kif
                                 // 柿木やkifu for Windowsがこの形式らしい。
-                                var default_filename = $"{gameServer.DisplayName(SCore.Color.BLACK)}_{gameServer.DisplayName(SCore.Color.WHITE)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}.KIF";
+                                var default_filename = $"{gameServer.DefaultKifuFileName()}.KIF";
                                 fd.FileName = Utility.EscapeFileName(default_filename);
 
                                 // ダイアログを表示する
