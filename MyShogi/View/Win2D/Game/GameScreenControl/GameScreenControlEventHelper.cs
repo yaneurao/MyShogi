@@ -668,7 +668,13 @@ namespace MyShogi.View.Win2D
             var to_pc = pos.PieceOn(to);
             var to_pr = to_pc.RawPieceType();
 
-            if (to.IsBoardPiece())
+            // 移動元と移動先が同じなら何もする必要はない。
+            if (from == to)
+            {
+                // このケースを除外しておかないと、toの駒を手駒に移動させる処理などで
+                // from == toだと手駒が増えることになる。
+            }
+            else if (to.IsBoardPiece())
             {
                 if (from.IsBoardPiece())
                 {
