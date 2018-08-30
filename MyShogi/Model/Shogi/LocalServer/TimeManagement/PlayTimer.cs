@@ -44,6 +44,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             Stopwatch.Reset();
             startTime = endTime = 0;
+            freezeTimeString = null;
         }
 
         /// <summary>
@@ -179,6 +180,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             startTime = Stopwatch.ElapsedMilliseconds;
             Stopwatch.Start();
+            freezeTimeString = null; // タイマーが動いている間は、この文字列を用いない。
         }
 
         /// <summary>
@@ -186,8 +188,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void StopTimer()
         {
-            if (Stopwatch.IsRunning)
+            if (Stopwatch.IsRunning /* 動いていないものを停止させていないはずなんだけど… */)
+            {
+                freezeTimeString = DisplayShortString(); // タイマーを停止させるので、この瞬間の表示文字列を保存しておく。
                 Stopwatch.Stop();
+            }
             endTime = Stopwatch.ElapsedMilliseconds;
 
             // ここで時間切れであるかどうかは、呼び出し元でIsTimeUp()で判定すべき。
@@ -259,6 +264,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <returns></returns>
         public string DisplayShortString()
         {
+            // 時間切れになったときなどの文字列
+            if (freezeTimeString != null)
+                return freezeTimeString;
+
             // 消費時間が減っていくのが目障りな人向けの設定
             if (KifuTimeSetting.TimeLimitless)
                 return "無制限";
@@ -281,16 +290,22 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (rn < TimeSpan.Zero)
                     rn = TimeSpan.Zero;
 
-                // TimeUpになったときは、
-                // 3/3のような表示になって欲しいが、RestTimeの計算などがすでに終わっているために、これを行うのは結構難しい。
-                if (timeUp_)
-                    rn = new TimeSpan(0, 0, KifuTimeSetting.Byoyomi);
+                //// TimeUpになったときは、
+                //// 3/3のような表示になって欲しいが、RestTimeの計算などがすでに終わっているために、これを行うのは結構難しい。
+                //if (timeUp_)
+                //    rn = new TimeSpan(0, 0, KifuTimeSetting.Byoyomi);
 
                 return $"{r.Hours:D2}:{r.Minutes:D2}:{r.Seconds:D2} {rn.TotalSeconds}/{KifuTimeSetting.Byoyomi}";
             }
         }
-        
+
         // -- private members
+
+        /// <summary>
+        /// 時間切れになったときなど、タイマーを停止させたときの表示用の文字列。
+        /// タイマーを停止させて初期化してしまうため、停止させたときの文字列を復元するのが難しいので、この文字列を用いる。
+        /// </summary>
+        private string freezeTimeString;
 
         /// <summary>
         /// 前回StartTimer()を呼び出した時刻

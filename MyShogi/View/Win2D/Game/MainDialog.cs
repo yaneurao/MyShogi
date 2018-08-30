@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
@@ -1989,6 +1990,19 @@ namespace MyShogi.View.Win2D
                             using (var dialog = new GameResultDialog())
                             {
                                 FormLocationUtility.CenteringToThisForm(dialog, this);
+                                dialog.ViewModel.AddPropertyChangedHandler("KifuClicked", (args_) =>
+                                {
+                                    var filename = (string)args_.value;
+                                    // このファイルを読み込む。
+                                    var path = Path.Combine(TheApp.app.Config.GameResultSetting.KifuSaveFolder, filename);
+                                    try
+                                    {
+                                        var kifu_string = FileIO.ReadText(path);
+                                        gameServer.KifuReadCommand(kifu_string);
+                                    } catch {
+                                        TheApp.app.MessageShow("棋譜ファイルが読み込めませんでした。", MessageShowType.Error);
+                                    }
+                                });
                                 dialog.ShowDialog(this);
                             }
                         };

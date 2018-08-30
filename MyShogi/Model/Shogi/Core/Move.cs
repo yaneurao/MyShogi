@@ -215,6 +215,23 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// 先手から見た勝敗文字列を返す。
+        /// </summary>
+        /// <param name=""></param>
+        /// <returns></returns>
+        public static string Pretty(this MoveGameResult result)
+        {
+            switch (result)
+            {
+                case MoveGameResult.WIN: return "先手勝ち";
+                case MoveGameResult.LOSE: return "後手勝ち";
+                case MoveGameResult.DRAW: return "引き分け";
+                case MoveGameResult.UNKNOWN: return ""; // 中断などで勝敗がついていない。
+                default: return "";
+            }
+        }
+
+        /// <summary>
         /// 指し手をUSI形式の文字列にする。
         ///
         /// 特殊な指し手は、Move.RESIGN , Move.WIN , Move.NULLしかサポートしていない。
@@ -478,7 +495,7 @@ namespace MyShogi.Model.Shogi.Core
         public static Move MoveFromString(this string s)
         {
             // あまり使いたくないが、enumからreflectionで取り出している。
-            return (Move)Enum.ToObject(typeof(Move), s);
+            return (Move)Enum.Parse(typeof(Move), s);
         }
     }
 

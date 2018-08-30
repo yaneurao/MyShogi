@@ -193,6 +193,13 @@ namespace MyShogi.Model.Shogi.Core
             return !(boardType == BoardType.NoHandicap || boardType == BoardType.Current);
         }
 
+        public static string Pretty(this BoardType boardType)
+        {
+            if (PRETTY_TABLE.Length <= (int)boardType)
+                return "任意局面";
+            return PRETTY_TABLE[(int)boardType];
+        }
+
         /// <summary>
         /// 平手、駒落ちなどのsfen文字列をひとまとめにした配列。BoardTypeのenumと対応する。
         /// </summary>
@@ -202,6 +209,12 @@ namespace MyShogi.Model.Shogi.Core
             Sfens.HANDICAP_HISYA , Sfens.HANDICAP_HISYA_KYO ,
             Sfens.HANDICAP_2 , Sfens.HANDICAP_3 , Sfens.HANDICAP_4 , Sfens.HANDICAP_5 , Sfens.HANDICAP_LEFT_5 ,
             Sfens.HANDICAP_6 , Sfens.HANDICAP_8 , Sfens.HANDICAP_10 , Sfens.HANDICAP_PAWN3 , Sfens.MATE_1 , Sfens.MATE_2, Sfens.MATE_3,
+        };
+
+        private static readonly string[] PRETTY_TABLE =
+        {
+            "平手","香落ち","右香落ち","角落ち","飛車落ち","飛香落ち","二枚落ち","三枚落ち","四枚落ち","五枚落ち",
+            "左五枚落ち","六枚落ち","八枚落ち","十枚落ち","歩三枚"
         };
     }
 
@@ -215,7 +228,7 @@ namespace MyShogi.Model.Shogi.Core
         public static BoardType FromBoardTypeString(string s)
         {
             // あまり使いたくないが、enumからreflectionで取り出している。
-            return (BoardType)Enum.ToObject(typeof(BoardType), s);
+            return (BoardType)Enum.Parse(typeof(BoardType), s);
         }
     }
 }
