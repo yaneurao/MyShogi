@@ -81,12 +81,18 @@ namespace MyShogi.View.Win2D
             special_move.Width = 100;
             special_move.TextAlign = HorizontalAlignment.Center;
 
+            var time_setting = new ColumnHeader();
+            time_setting.Text = "持ち時間";
+            time_setting.Width = 150;
+            time_setting.TextAlign = HorizontalAlignment.Center;
+
             var kifu_filename = new ColumnHeader();
             kifu_filename.Text = "ファイル名";
             kifu_filename.Width = 400;
             kifu_filename.TextAlign = HorizontalAlignment.Left;
 
-            var header = new[] { startTime, player_name_black, player_name_white , board_type , game_ply , game_result , special_move , kifu_filename };
+            var header = new[] { startTime, player_name_black, player_name_white , board_type ,
+                game_ply , game_result , special_move , time_setting , kifu_filename };
 
             listView1.Columns.AddRange(header);
         }
@@ -103,15 +109,31 @@ namespace MyShogi.View.Win2D
                 if (result == null)
                     continue;
 
-                var game_result = result.LastMove.GameResult();
-                if (result.LastColor == SCore.Color.WHITE) // 後手から見た結果なので反転させる。
-                    game_result = game_result.Not();
-                var game_result_string = game_result.Pretty();
-                var special_move_string = result.LastMove.SpecialMoveToKif();
+                string[] list;
+                try
+                {
+                    if (!string.IsNullOrEmpty(result.Comment))
+                    {
+                        // コメント行なら、とりあえず対局日時のところに表示しておく。
+                        list = new[] { result.Comment };
+                    }
+                    else
+                    {
+                        var game_result = result.LastMove.GameResult();
+                        if (result.LastColor == SCore.Color.WHITE) // 後手から見た結果なので反転させる。
+                            game_result = game_result.Not();
+                        var game_result_string = game_result.Pretty();
+                        var special_move_string = result.LastMove.SpecialMoveToKif();
 
-                var list = new[] { result.StartTime.ToString(), result.PlayerNames[0], result.PlayerNames[1] ,
-                    result.BoardType.Pretty() , result.GamePly.ToString() , game_result_string , special_move_string  , result.KifuFileName ,
-                };
+                        list = new[] { result.StartTime.ToString(), result.PlayerNames[0], result.PlayerNames[1] ,
+                            result.BoardType.Pretty() , result.GamePly.ToString() , game_result_string ,
+                            special_move_string  , result.TimeSettingString , result.KifuFileName ,
+                        };
+                    }
+                } catch (Exception ex)
+                {
+                    list = new[] { $"行の解析に失敗しました。{ex.Message}" };
+                }
                 var item = new ListViewItem(list);
                 items.Add(item);
             }

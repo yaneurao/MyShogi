@@ -16,7 +16,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         public void SetPlayLimit(int playLimit)
         {
             PlayCount = 0;
-            PlayLimit = playLimit;
+            PlayLimit = PlayLimit2 = playLimit;
+            WinCount = LoseCount = DrawCount = 0;
         }
 
         /// <summary>
@@ -53,6 +54,15 @@ namespace MyShogi.Model.Shogi.LocalServer
         public bool IsContinuousGameSet()
         {
             return PlayLimit > 1;
+        }
+
+        /// <summary>
+        /// これが最終局であるか。
+        /// </summary>
+        /// <returns></returns>
+        public bool IsLastGame()
+        {
+            return PlayCount + 1 >= PlayLimit;
         }
 
         /// <summary>
@@ -95,5 +105,78 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 連続対局開始前のゲーム設定を保存しておく。(プレイヤーの交換などを行うため)
         /// </summary>
         public GameSetting GameSetting;
+
+        /// <summary>
+        /// 先手から見て、勝ち、負け、引き分けの回数
+        /// </summary>
+
+        public int WinCount;
+        public int LoseCount;
+        public int DrawCount;
+
+        /// <summary>
+        /// 対局結果から、勝敗カウンターを加算する。
+        /// </summary>
+        /// <param name="lastMove"></param>
+        /// <param name="lastColor"></param>
+        public void IncResult(Move lastMove,Color lastColor)
+        {
+            var result = lastMove.GameResult();
+
+            // 先手から見た勝敗に変換する
+            if (lastColor == Color.WHITE)
+                result = result.Not();
+
+            switch(result)
+            {
+                case MoveGameResult.WIN: ++WinCount; break;
+                case MoveGameResult.DRAW:++DrawCount;break;
+                case MoveGameResult.LOSE:++LoseCount;break;
+
+                // それ以外は引き分け扱いにしておく。(トータルカウントを計算するときに狂ってしまうため)
+                default: ++DrawCount; break;
+            }
+        }
+
+        /// <summary>
+        /// 連続対局中の文字列
+        /// </summary>
+        public string GetGamePlayingString()
+        {
+            if (PlayLimit2 > 1)
+            {
+                // 対局こなした回数
+                // 1局目が "1/100"のように表示されて欲しいので TotalCountに+1 しておく。
+                var TotalCount = Math.Min(WinCount + LoseCount + DrawCount + 1 , PlayLimit2);
+
+                return $"【連続対局】({TotalCount}/{PlayLimit2}) : {GetRatingString()}";
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 勝敗数とレーティング文字列
+        /// </summary>
+        /// <returns></returns>
+        public string GetRatingString()
+        {
+            // 勝ちと負けの回数(引き分けを除外)
+            var total = WinCount + LoseCount;
+
+            if (total != 0)
+            {
+                var win_rate = WinCount / (float)total;
+                var rating = -400 * Math.Log(1 / win_rate - 1, 10);
+
+                return $"{WinCount}-{ LoseCount }-{ DrawCount} ({100*win_rate:f1}% R{rating:f1})";
+            }
+            return $"{WinCount}-{ LoseCount }-{ DrawCount}";
+        }
+
+        /// <summary>
+        /// 終了するときにPlayLimitをリセットしてしまうので保存しておく。
+        /// </summary>
+        public int PlayLimit2;
+
     }
 }

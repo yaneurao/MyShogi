@@ -340,7 +340,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 連続対局のための情報に関する構造体
         /// </summary>
-        private ContinuousGame continuousGame = new ContinuousGame();
+        public ContinuousGame continuousGame = new ContinuousGame();
 
         #endregion
 

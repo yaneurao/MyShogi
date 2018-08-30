@@ -250,5 +250,9 @@ namespace MyShogi.View.Win2D
         private static readonly Point game_black_pos = new Point((board_img_size.Width - 464) / 2, (board_img_size.Height - 230) / 2 + 230 + 20/*微調整*/);
         private static readonly Point game_white_pos = new Point((board_img_size.Width - 464) / 2, (board_img_size.Height - 230) / 2 - 75  + 20/*微調整*/);
 
+        /// <summary>
+        /// 連続対局のメッセージ(センタリングして表示)
+        /// </summary>
+        private static readonly Point continuos_game_pos = new Point(board_img_size.Width / 2 , 3);
     }
 }

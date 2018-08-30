@@ -316,6 +316,14 @@ namespace MyShogi.View.Win2D
 
             animatorManager.OnDraw();
 
+            // -- 連続対局中のメッセージ
+            {
+                var cont = gameServer==null ? null : gameServer.continuousGame.GetGamePlayingString();
+                if (cont != null)
+                    // 赤文字でセンタリングして表示
+                    DrawString(continuos_game_pos, cont , 22 , new DrawStringOption(Brushes.Red , 1));
+            }
+
             // リソースリークを調べる(デバッグ時)
 #if false
             GdiResourceWatcher.DisplayMemory();

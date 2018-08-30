@@ -1061,7 +1061,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             if (!setting.AutomaticSaveKifu)
                 return;
 
-            // 1) 棋譜ファイルを保存する。
+            var lastColor = Position.sideToMove;
+
+            // 1) 勝敗のカウンターを加算
+
+            continuousGame.IncResult(lastMove, lastColor);
+
+            // 2) 棋譜ファイルを保存する。
 
             // プレイヤー名を棋譜上に反映させる。
             foreach (var c in All.Colors())
@@ -1072,7 +1078,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             var filePath = Path.Combine(setting.KifuSaveFolder, filename);
             FileIO.WriteFile(filePath, kifu);
 
-            // 2) csvファイルに情報をappendする。
+            // 3) csvファイルに情報をappendする。
 
             var table = new GameResultTable();
             var csv_path = setting.CsvFilePath();
@@ -1083,13 +1089,23 @@ namespace MyShogi.Model.Shogi.LocalServer
                 EndTime = continuousGame.EndTime,
                 KifuFileName = filename,
                 LastMove = lastMove,
-                LastColor = Position.sideToMove,
+                LastColor = lastColor,
                 GamePly = Position.gamePly - 1 /* 31手目で詰まされている場合、棋譜の手数としては30手であるため。 */,
                 BoardType = kifuManager.Tree.rootBoardType,
                 TimeSettingString = $"先手:{TimeSettingString(Color.BLACK)},後手:{TimeSettingString(Color.WHITE)}",
                 Comment = null,
             };
             table.AppendLine(csv_path, result);
+
+            if (continuousGame.IsLastGame())
+            {
+                // これが連続対局の最終局であったのなら、結果を書き出す。
+                result = new GameResultData()
+                {
+                    Comment = continuousGame.GetGamePlayingString()
+                };
+                table.AppendLine(csv_path, result);
+            }
         }
 
         #endregion
