@@ -72,14 +72,9 @@ namespace MyShogi.View.Win2D
                     OnClick(p); // 2点クリックされたかのように扱う
 
             }
-            else if (e.Button == MouseButtons.Left)
+            else if (e.Button == MouseButtons.Right)
             {
-                // ToDo: 右クリックイベント動作の再確認
-                // e.Button == MouseButtons.Left を2回チェックしているため、このブロックは未達コードになっている。
-                // MouseDownイベントでOnRightClickを呼び出しているのでそれで十分なのか？
-
                 // 右クリックによるドラッグは操作として存在しない。
-                OnRightClick(p);
             }
 
             mouseLastDown = new Point(-1, -1); // また意味のない地点を指すようにしておく

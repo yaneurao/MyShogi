@@ -146,6 +146,16 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        // focusが失われていたのでHideSelection==falseにしているにも関わらず
+        // 選択行の背景色が元に戻ってしまっている。(ListViewが糞仕様である)
+        // そこでボタンハンドラなどで終了時に再度focusを戻してやる必要がある。
+        /// </summary>
+        private void SelectListView()
+        {
+            listView1.Select();
+        }
+
+        /// <summary>
         /// 対局結果の保存設定
         /// </summary>
         /// <param name="sender"></param>
@@ -157,6 +167,7 @@ namespace MyShogi.View.Win2D
                 FormLocationUtility.CenteringToThisForm(dialog, this);
                 dialog.ShowDialog(this);
             }
+            SelectListView();
         }
 
         /// <summary>
@@ -206,6 +217,8 @@ namespace MyShogi.View.Win2D
                     TheApp.app.MessageShow("この棋譜ファイルが見当たりません。", MessageShowType.Warning);
                 }
             }
+
+            SelectListView();
         }
 
         /// <summary>
@@ -253,6 +266,8 @@ namespace MyShogi.View.Win2D
                 //Console.WriteLine(filename);
             }
             catch { }
+
+            SelectListView();
         }
 
         private void GameResultDialog_Resize(object sender, System.EventArgs e)

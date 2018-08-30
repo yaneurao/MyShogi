@@ -156,6 +156,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 思考エンジンのpreset名も含めた名前を返す。
         /// 文字数制限はない。
+        ///
+        /// 棋譜ファイルのファイル名や対局結果一覧に用いるのは良いが、棋譜ファイルの対局者名を
+        /// これにしてしまうと読み込んだときに対局設定ダイアログの対局者名が「tanuki- 2018(二段)」のように
+        /// なってしまうのでまずい。
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>

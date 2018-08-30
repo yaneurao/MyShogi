@@ -1074,7 +1074,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // プレイヤー名を棋譜上に反映させる。
             foreach (var c in All.Colors())
-                kifuManager.KifuHeader.SetPlayerName(c, DisplayNameWithPreset(c));
+                kifuManager.KifuHeader.SetPlayerName(c, /* DisplayNameWithPreset(c) */ DisplayName(c) );
 
             var kifu = kifuManager.ToString(setting.KifuFileType);
             var filename = $"{continuousGame.GetKifuSubfolder()}{DefaultKifuFileName()}{setting.KifuFileType.ToExtensions()}";

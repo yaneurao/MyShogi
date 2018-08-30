@@ -49,9 +49,9 @@ namespace MyShogi.Model.Common.Utility
                 result = (T)serializer.ReadObject(xr);
                 xr.Close();
             }
-            catch (Exception ex)
+            catch /* (Exception ex) */
             {
-                Console.WriteLine(ex.Message);
+                //Console.WriteLine(ex.Message);
                 result = default(T);
             }
 

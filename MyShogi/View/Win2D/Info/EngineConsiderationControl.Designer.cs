@@ -148,6 +148,7 @@
             // 
             this.listView1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.listView1.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(0, 92);
             this.listView1.Margin = new System.Windows.Forms.Padding(2);
             this.listView1.MultiSelect = false;

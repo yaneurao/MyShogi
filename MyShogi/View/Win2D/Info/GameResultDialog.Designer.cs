@@ -38,6 +38,7 @@
             // listView1
             // 
             this.listView1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(0, 0);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
