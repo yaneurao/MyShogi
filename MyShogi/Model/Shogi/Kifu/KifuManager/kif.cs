@@ -59,9 +59,7 @@ namespace MyShogi.Model.Shogi.Kifu
                         // その場合の手合割の意味が理解出来ないが、エラーを出さずに黙って初期局面図の方で上書きする。
                         // if (KifuHeader.header_dic.ContainsKey("手合割")) return "手合割と初期局面文字列が同時に指定されています。";
                         var sfen = Converter.KifExtensions.BodToSfen(bod.ToArray());
-                        Tree.position.SetSfen(sfen);
-                        Tree.rootSfen = sfen;
-                        Tree.rootBoardType = BoardType.Others;
+                        Tree.SetRootSfen(sfen);
                     }
                     if (KifuHeader.header_dic.ContainsKey("持ち時間"))
                     {
@@ -204,13 +202,7 @@ namespace MyShogi.Model.Shogi.Kifu
                                 KifuHeader.header_dic.Add(headerKey, headerValue);
 
                                 // 局面を指定されたBoardTypeで初期化する。
-                                void SetTree(BoardType bt)
-                                {
-                                    var sfen = bt.ToSfen() ?? Tree.rootSfen;
-                                    Tree.position.SetSfen(sfen);
-                                    Tree.rootSfen = sfen;
-                                    Tree.rootBoardType = bt;
-                                }
+                                void SetTree(BoardType bt) { Tree.SetRootBoardType(bt); }
                                 switch (headerValue)
                                 {
                                     case "平手": SetTree(BoardType.NoHandicap); goto nextline;
@@ -229,7 +221,7 @@ namespace MyShogi.Model.Shogi.Kifu
                                     case "十枚落ち": SetTree(BoardType.Handicap10); goto nextline;
 
                                     default:
-                                        Tree.rootBoardType = BoardType.Others;
+                                        // このときlazyHead()で設定される。
                                         break;
                                 }
                                 goto nextline;

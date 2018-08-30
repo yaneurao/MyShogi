@@ -44,10 +44,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 else if (scanner.PeekText("startpos"))
                 {
                     scanner.ParseText();
-
-                    Tree.position.SetSfen(Position.SFEN_HIRATE);
-                    Tree.rootSfen = Position.SFEN_HIRATE;
-                    Tree.rootBoardType = BoardType.NoHandicap;
+                    Tree.SetRootBoardType(BoardType.NoHandicap);
                 }
 
                 // "sfen ... moves ..."形式かな..
@@ -62,9 +59,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 }
 
                 var sfen_ = string.Join(" ", sfen_pos.ToArray());
-                Tree.position.SetSfen(sfen_);
-                Tree.rootSfen = sfen_;
-                Tree.rootBoardType = BoardType.Others;
+                Tree.SetRootSfen(sfen_);
 
                 // "moves"以降の文字列をUSIの指し手と解釈しながら、局面を進める。
                 if (scanner.PeekText() == "moves")

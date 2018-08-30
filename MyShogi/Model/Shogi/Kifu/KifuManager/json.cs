@@ -50,13 +50,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 }
 
                 // Treeに局面をセットする
-                void SetTree(BoardType bt)
-                {
-                    var sfen = bt.ToSfen();
-                    Tree.position.SetSfen(sfen);
-                    Tree.rootSfen = sfen;
-                    Tree.rootBoardType = bt;
-                }
+                void SetTree(BoardType bt) { Tree.SetRootBoardType(bt); }
 
                 if (jsonObj.initial != null)
                 {
@@ -78,7 +72,6 @@ namespace MyShogi.Model.Shogi.Kifu
                         case "10": SetTree(BoardType.Handicap10); break;
 
                         case "OTHER":
-                            Tree.rootBoardType = BoardType.Others;
                             if (jsonObj.initial.data == null)
                                 return "初期局面が指定されていません";
                             var color = jsonObj.initial.data.color == 0 ? Color.BLACK : Color.WHITE;
@@ -150,8 +143,7 @@ namespace MyShogi.Model.Shogi.Kifu
                                 }
                             }
                             var sfen = Position.SfenFromRawdata(board, hands, color, 1);
-                            Tree.position.SetSfen(sfen);
-                            Tree.rootSfen = sfen;
+                            Tree.SetRootSfen(sfen);
                             break;
                         default:
                             return "初期局面が不明です";

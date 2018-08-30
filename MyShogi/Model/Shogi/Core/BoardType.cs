@@ -136,7 +136,7 @@ namespace MyShogi.Model.Shogi.Core
     /// <summary>
     /// BoardTypeに対するextension methods
     /// </summary>
-    public static class BoardTypeExtension
+    public static class BoardTypeExtensions
     {
         /// <summary>
         /// BoardType型が正当な値の範囲であるかをテストする
@@ -183,8 +183,11 @@ namespace MyShogi.Model.Shogi.Core
             return (Int32)boardType;
         }
 
+#if false
         /// <summary>
         /// 駒落ちであるかを判定して返す。
+        /// →　この設計よくない。BoardType.Othersが駒落ちの局面である可能性がある。
+        /// 　　position.Handicappedを用いるべき。
         /// </summary>
         /// <param name="boardType"></param>
         /// <returns></returns>
@@ -192,6 +195,7 @@ namespace MyShogi.Model.Shogi.Core
         {
             return !(boardType == BoardType.NoHandicap || boardType == BoardType.Current);
         }
+#endif
 
         public static string Pretty(this BoardType boardType)
         {
@@ -229,6 +233,21 @@ namespace MyShogi.Model.Shogi.Core
         {
             // あまり使いたくないが、enumからreflectionで取り出している。
             return (BoardType)Enum.Parse(typeof(BoardType), s);
+        }
+
+        /// <summary>
+        /// sfen文字列がどのBoardTypeであるか判定する。
+        /// 判定できなかったときは、BoardType.Others
+        /// </summary>
+        /// <param name="sfen"></param>
+        /// <returns></returns>
+        public static BoardType BoardTypeFromSfen(string sfen)
+        {
+            for (var boardType = BoardType.ZERO; boardType < BoardType.Others; ++boardType)
+                if (boardType.ToSfen() == sfen)
+                    return boardType;
+
+            return BoardType.Others;
         }
     }
 }

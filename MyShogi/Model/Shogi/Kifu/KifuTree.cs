@@ -67,14 +67,11 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public void Init()
         {
-            position.InitBoard();
-
             // root nodeを作る
             currentNode = rootNode = new KifuNode(null);
             pliesFromRoot = 0;
 
-            rootBoardType = BoardType.NoHandicap;
-            rootSfen = Position.SFEN_HIRATE;
+            SetRootBoardType(BoardType.NoHandicap);
 
             // rootSfenのsetterで初期化されているのでここではKifuList、UsiMoveListの初期化はしない
             //KifuList = new List<string>();
@@ -131,20 +128,6 @@ namespace MyShogi.Model.Shogi.Kifu
         public int pliesFromRoot { get; private set; }
 
         /// <summary>
-        /// rootの局面の局面タイプ
-        /// 任意局面の場合は、BoardType.Others
-        /// </summary>
-        public BoardType rootBoardType
-        {
-            get { return rootBoardType_; }
-            set {
-                // KifuHeaderもrootBoardTypeを持っているので、そちらにも反映させなくてはならない。
-                rootBoardType_ = KifuHeader.rootBoardType = value;
-            }
-        }
-        private BoardType rootBoardType_;
-
-        /// <summary>
         /// 棋譜ファイルからの入出力絡み
         /// 対局者氏名などもここから取り出す。
         /// </summary>
@@ -160,7 +143,7 @@ namespace MyShogi.Model.Shogi.Kifu
         public string rootSfen
         {
             get { return rootSfen_; }
-            set
+            private set
             {
                 // これが設定されたときに局面リストを更新しなければならない。
                 rootSfen_ = value;
@@ -195,6 +178,59 @@ namespace MyShogi.Model.Shogi.Kifu
             }
         }
         private string rootSfen_;
+
+        /// <summary>
+        /// rootの局面の局面タイプ
+        /// 任意局面の場合は、BoardType.OthersかBoardType.OthersHandicap(駒落ちのとき)
+        /// </summary>
+        public BoardType rootBoardType
+        {
+            get { return rootBoardType_; }
+            private set
+            {
+                // KifuHeaderもrootBoardTypeを持っているので、そちらにも反映させなくてはならない。
+                rootBoardType_ = KifuHeader.rootBoardType = value;
+            }
+        }
+        private BoardType rootBoardType_;
+
+        /// <summary>
+        /// rootのsfenを設定する。root nodeの初期化には必ずこのメソッドかSetRootBoardTypeを用いること。
+        ///
+        /// rootBoardTypeは自動的に設定される。
+        /// position.SetSfen()も自動的に呼び出される。
+        /// 
+        /// BoardTypeがわかっているならSetRootBoardType()を呼び出したほうが
+        /// (sfen文字列からBoardTypeを判定するコストがかからなくて)良い。
+        /// </summary>
+        /// <param name="sfen"></param>
+        public void SetRootSfen(string sfen)
+        {
+            position.SetSfen(sfen);
+            rootBoardType = Util.BoardTypeFromSfen(sfen);
+
+            // このsetterでイベントが生起するので、position.SetSfen()のあとで代入しないといけない。
+            rootSfen = sfen;
+        }
+
+        /// <summary>
+        /// rootのsfenを設定する。
+        /// 
+        /// position.SetSfen()したときは、
+        /// このメソッドがSetRootSfen()かのどちらかを呼び出すこと。
+        /// </summary>
+        /// <param name="boardType"></param>
+        public void SetRootBoardType(BoardType boardType)
+        {
+            Debug.Assert(boardType < BoardType.Others);
+
+            var sfen = boardType.ToSfen();
+            position.SetSfen(sfen);
+            rootBoardType = boardType;
+
+            // このsetterでイベントが生起するので、position.SetSfen()のあとで代入しないといけない。
+            rootSfen = sfen;
+        }
 
         /// <summary>
         /// 棋譜リストの初期化。(イベントは発生しない)

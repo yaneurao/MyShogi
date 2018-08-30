@@ -164,13 +164,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="boardType"></param>
         public void InitBoard(BoardType boardType)
         {
-            var sfen = boardType.ToSfen();
-
-            Tree.position.SetSfen(sfen);
-            Tree.rootBoardType = boardType;
-
-            // rootSfenを更新したときにイベント通知が起きるので、これを最後にしている。
-            Tree.rootSfen = sfen;
+            Tree.SetRootBoardType(boardType);
         }
 
         /// <summary>

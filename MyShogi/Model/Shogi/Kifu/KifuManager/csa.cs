@@ -174,8 +174,7 @@ namespace MyShogi.Model.Shogi.Kifu
                             headFlag = false;
                             posLines.Add(subline);
                             var sfen = CsaExtensions.CsaToSfen(posLines.ToArray());
-                            Tree.position.SetSfen(sfen);
-                            Tree.rootSfen = sfen;
+                            Tree.SetRootSfen(sfen);
                             continue;
                         }
                         // 2回目以降は指し手とみなす

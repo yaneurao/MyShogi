@@ -53,9 +53,7 @@ namespace MyShogi.Model.Shogi.Kifu
                                 // 将棋所で出力したPSNファイルはここに必ず"SFEN"が来るはず。平手の局面であっても…。
                                 // 互換性のためにも、こうなっているべきだろう。
 
-                                Tree.position.SetSfen(body);
-                                Tree.rootSfen = body;
-                                Tree.rootBoardType = BoardType.Others;
+                                Tree.SetRootSfen(body);
                                 break;
 
                             case "blacktimesetting":
