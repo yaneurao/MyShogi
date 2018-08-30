@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -159,11 +160,87 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 棋譜保存フォルダを開く
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var path = TheApp.app.Config.GameResultSetting.KifuSaveFolder;
+            if (!Directory.Exists(path))
+            {
+                TheApp.app.MessageShow("棋譜保存フォルダが存在しません。\r\n棋譜の保存設定を確認してください。", MessageShowType.Warning);
+                return;
+            }
+
+            var indices = listView1.SelectedIndices;
+            if (indices.Count == 0)
+            {
+                // どの行も選択されていないのでフォルダを開く
+                Process.Start(path);
+
+            }
+            else
+            {
+
+                try
+                {
+                    // このファイルが選択されている状態でexplorerを開く
+                    var sub_items = listView1.Items[indices[0]].SubItems;
+                    var filename = sub_items.Count >= 9 ? sub_items[8].Text : null;
+                    if (string.IsNullOrEmpty(filename))
+                    {
+                        Process.Start(path);
+                    }
+                    else
+                    {
+                        var filepath = Path.Combine(path, filename);
+                        if (!System.IO.File.Exists(filepath))
+                            throw new Exception("ファイルが見つかりません。" + filepath);
+
+                        Process.Start("explorer.exe", $"/select,\"{filepath}\"");
+                    }
+                }
+                catch
+                {
+                    TheApp.app.MessageShow("この棋譜ファイルが見当たりません。", MessageShowType.Warning);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 対局結果一覧のクリア
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (TheApp.app.MessageShow("対局結果一覧をクリアしますか？(棋譜ファイルは保存先フォルダから削除されません)",
+                MessageShowType.ConfirmationOkCancel) == DialogResult.Cancel)
+                return;
+
+            try
+            {
+                var setting = TheApp.app.Config.GameResultSetting;
+                System.IO.File.Delete(setting.CsvFilePath());
+
+                listView1.Items.Clear();
+
+            }
+            catch (Exception ex)
+            {
+                TheApp.app.MessageShow("対局結果一覧のファイル削除に失敗しました。\r\n" + ex.Message,
+                    MessageShowType.Confirmation);
+                return;
+            }
+        }
+
+        /// <summary>
         /// 対局棋譜の読み込み
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void button2_Click(object sender, System.EventArgs e)
+        private void button4_Click(object sender, System.EventArgs e)
         {
             var indices = listView1.SelectedIndices;
             if (indices.Count == 0)
@@ -171,7 +248,7 @@ namespace MyShogi.View.Win2D
 
             try
             {
-                var filename = listView1.Items[indices[0]].SubItems[7].Text;
+                var filename = listView1.Items[indices[0]].SubItems[8].Text;
                 ViewModel.RaisePropertyChanged("KifuClicked", filename);
                 //Console.WriteLine(filename);
             }
@@ -183,9 +260,11 @@ namespace MyShogi.View.Win2D
             var h = button1.Height;
             var y = ClientSize.Height - h;
             button1.Location = new Point(button1.Location.X , y );
-            var w2 = button2.Width;
-            button2.Location = new Point(ClientSize.Width - w2 - 3 , y );
+            button2.Location = new Point(button2.Location.X, y);
             button3.Location = new Point(button3.Location.X, y);
+
+            var w2 = button4.Width;
+            button4.Location = new Point(ClientSize.Width - w2 - 3, y);
 
             listView1.Size = new Size(ClientSize.Width, ClientSize.Height - h - 3);
         }
@@ -194,24 +273,9 @@ namespace MyShogi.View.Win2D
         {
             var indices = listView1.SelectedIndices;
             // 1つでも選択されていれば棋譜読み込みボタンを有効に。
-            button2.Enabled = indices.Count > 0;
+            button4.Enabled = indices.Count > 0
+                && listView1.Items[indices[0]].SubItems.Count >= 9;
         }
 
-        /// <summary>
-        /// 棋譜保存フォルダを開く
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button3_Click(object sender, EventArgs e)
-        {
-            var path = TheApp.app.Config.GameResultSetting.KifuSaveFolder;
-            if (!Directory.Exists(path))
-            {
-                TheApp.app.MessageShow("棋譜保存フォルダが存在しません。\r\n棋譜の保存設定を確認してください。",MessageShowType.Warning);
-                return;
-            }
-
-            System.Diagnostics.Process.Start(path);
-        }
     }
 }

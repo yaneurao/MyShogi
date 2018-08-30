@@ -61,12 +61,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// これが最終局であるか。
+        /// これが連続対局の最終局であるか。
         /// </summary>
         /// <returns></returns>
         public bool IsLastGame()
         {
-            return PlayCount + 1 >= PlayLimit;
+            return PlayLimit > 1 /* 連続対局 */
+                && PlayCount + 1 >= PlayLimit; /* 最終局 */
         }
 
         /// <summary>
