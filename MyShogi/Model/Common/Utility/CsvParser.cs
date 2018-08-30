@@ -387,7 +387,9 @@ namespace MyShogi.Model.Common.Utility
         /// </summary>
         public void AppendLine(string path, IEnumerable<string> line)
         {
-            using (var writer = new StreamWriter(path , true , Encode))
+            // このファイル、排他でopenしておかないと複数のプロセスから書き込まれると困る。
+            using (var stream = new FileStream(path, FileMode.Append , FileAccess.Write , FileShare.None /* 排他 */))
+            using (var writer = new StreamWriter(stream , Encode))
             {
                 WriteLine(writer, line);
                 writer.WriteLine();

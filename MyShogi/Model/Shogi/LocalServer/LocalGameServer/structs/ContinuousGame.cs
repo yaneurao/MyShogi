@@ -1,4 +1,5 @@
-﻿using MyShogi.Model.Shogi.Core;
+﻿using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Core;
 using System;
 
 namespace MyShogi.Model.Shogi.LocalServer
@@ -18,6 +19,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             PlayCount = 0;
             PlayLimit = PlayLimit2 = playLimit;
             WinCount = LoseCount = DrawCount = 0;
+            Swapped = false;
+            presetNames = new string[2];
+            presetNames2 = new string[2];
         }
 
         /// <summary>
@@ -89,7 +93,25 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="c"></param>
         /// <returns></returns>
         public string PresetName(Color c) { return presetNames[(int)c]; }
-        public string[] presetNames = new string[2];
+        private string[] presetNames = new string[2];
+
+        /// <summary>
+        /// Preset名の設定(1局目の対局開始前に呼び出される)
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="presetName"></param>
+        public void SetPresetName(Color c , string presetName)
+        {
+            presetNames[(int)c] = presetNames2[(int)c] = presetName;
+        }
+
+        /// <summary>
+        /// 先後のプリセット名の入れ替え。
+        /// </summary>
+        public void SwapPresetName()
+        {
+            Utility.Swap(ref presetNames[0], ref presetNames[1]);
+        }
 
         /// <summary>
         /// 今回の対局の開始時刻
@@ -107,12 +129,17 @@ namespace MyShogi.Model.Shogi.LocalServer
         public GameSetting GameSetting;
 
         /// <summary>
-        /// 先手から見て、勝ち、負け、引き分けの回数
+        /// (1局目の対局の)先手から見て、勝ち、負け、引き分けの回数
         /// </summary>
 
         public int WinCount;
         public int LoseCount;
         public int DrawCount;
+
+        /// <summary>
+        /// 本局が元の手番から先後を入れ替えての対局中であるか。
+        /// </summary>
+        public bool Swapped;
 
         /// <summary>
         /// 対局結果から、勝敗カウンターを加算する。
@@ -125,6 +152,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 先手から見た勝敗に変換する
             if (lastColor == Color.WHITE)
+                result = result.Not();
+            // 先後入れ替えての対局中であるなら、逆手番側の勝ちとしなければならない。
+            if (Swapped)
                 result = result.Not();
 
             switch(result)
@@ -168,15 +198,40 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var win_rate = WinCount / (float)total;
                 var rating = -400 * Math.Log(1 / win_rate - 1, 10);
 
-                return $"{WinCount}-{ LoseCount }-{ DrawCount} ({100*win_rate:f1}% R{rating:f1})";
+                return $"{WinCount}-{LoseCount}-{DrawCount} ({100*win_rate:f1}% R{rating:f1})";
             }
-            return $"{WinCount}-{ LoseCount }-{ DrawCount}";
+            return $"{WinCount}-{LoseCount}-{DrawCount}";
+        }
+
+        /// <summary>
+        /// 対局結果の文字列を取得。(連続対局ウィンドウに出力)
+        /// </summary>
+        /// <returns></returns>
+        public string GetGameResultString()
+        {
+            return $"{GetGamePlayingString()} : {PlayerName(Color.BLACK)} vs {PlayerName(Color.WHITE)}";
         }
 
         /// <summary>
         /// 終了するときにPlayLimitをリセットしてしまうので保存しておく。
         /// </summary>
-        public int PlayLimit2;
+        private int PlayLimit2;
 
+        /// <summary>
+        /// 対局開始時のpreset名
+        /// </summary>
+        private string[] presetNames2 = new string[2];
+
+        /// <summary>
+        /// 1局目開始時のプレイヤー名。プリセットつき。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        private string PlayerName(Color c)
+        {
+            var playerName = GameSetting.PlayerSetting(c).PlayerName;
+            var preset = presetNames2[(int)c];
+            return (preset == null) ? playerName : $"{playerName}({preset})";
+        }
     }
 }

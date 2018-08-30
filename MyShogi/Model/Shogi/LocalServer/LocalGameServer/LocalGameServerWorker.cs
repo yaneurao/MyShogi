@@ -254,10 +254,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // プレイヤーの実体の先後入替え
                 Utility.Swap(ref Players[0], ref Players[1]);
                 Utility.Swap(ref EngineDefineExes[0], ref EngineDefineExes[1]);
-                Utility.Swap(ref continuousGame.presetNames[0], ref continuousGame.presetNames[1]);
-
+                continuousGame.SwapPresetName();
+                
                 gameSetting.SwapPlayer();
                 GameSetting = gameSetting;
+
+                continuousGame.Swapped ^= true; // 先後入れ替えていることを明示
             }
 
             // 検討ウィンドウのリダイレクト、先後入れ替えるのでいったんリセット
@@ -363,9 +365,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             EngineDefineExes[(int)c] = engineDefineEx; // ここに保存しておく。
             var presets = engineDefineEx.EngineDefine.Presets;
 
-            continuousGame.presetNames[(int)c] = (selectedPresetIndex < presets.Count) ?
+            continuousGame.SetPresetName(c ,
+                (selectedPresetIndex < presets.Count) ?
                 presets[selectedPresetIndex].Name :
-                null;
+                null);
 
             var engine_config = TheApp.app.EngineConfigs;
             EngineConfig config = null;
@@ -1102,7 +1105,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // これが連続対局の最終局であったのなら、結果を書き出す。
                 result = new GameResultData()
                 {
-                    Comment = continuousGame.GetGamePlayingString()
+                    Comment = continuousGame.GetGameResultString()
                 };
                 table.AppendLine(csv_path, result);
             }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.View.Win2D.Common;
@@ -179,9 +181,11 @@ namespace MyShogi.View.Win2D
         private void GameResultDialog_Resize(object sender, System.EventArgs e)
         {
             var h = button1.Height;
-            button1.Location = new Point(3                         , ClientSize.Height - h );
+            var y = ClientSize.Height - h;
+            button1.Location = new Point(button1.Location.X , y );
             var w2 = button2.Width;
-            button2.Location = new Point(ClientSize.Width - w2 - 3 , ClientSize.Height - h );
+            button2.Location = new Point(ClientSize.Width - w2 - 3 , y );
+            button3.Location = new Point(button3.Location.X, y);
 
             listView1.Size = new Size(ClientSize.Width, ClientSize.Height - h - 3);
         }
@@ -191,6 +195,23 @@ namespace MyShogi.View.Win2D
             var indices = listView1.SelectedIndices;
             // 1つでも選択されていれば棋譜読み込みボタンを有効に。
             button2.Enabled = indices.Count > 0;
+        }
+
+        /// <summary>
+        /// 棋譜保存フォルダを開く
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var path = TheApp.app.Config.GameResultSetting.KifuSaveFolder;
+            if (!Directory.Exists(path))
+            {
+                TheApp.app.MessageShow("棋譜保存フォルダが存在しません。\r\n棋譜の保存設定を確認してください。",MessageShowType.Warning);
+                return;
+            }
+
+            System.Diagnostics.Process.Start(path);
         }
     }
 }
