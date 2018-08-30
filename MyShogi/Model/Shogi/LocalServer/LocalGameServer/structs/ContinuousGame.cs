@@ -1,6 +1,8 @@
-﻿using MyShogi.Model.Common.Utility;
+﻿using MyShogi.App;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using System;
+using System.IO;
 
 namespace MyShogi.Model.Shogi.LocalServer
 {
@@ -9,8 +11,11 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// </summary>
     public class ContinuousGame
     {
+        #region publics
+
         /// <summary>
-        /// 繰り返す回数を設定する。
+        /// 繰り返す回数を設定する。その他、変数一式初期化する。
+        /// 連続対局の1局目が始まるときに1回だけ呼び出される。
         /// </summary>
         /// <param name="playCount"></param>
         /// <param name="playLimit"></param>
@@ -22,6 +27,11 @@ namespace MyShogi.Model.Shogi.LocalServer
             Swapped = false;
             presetNames = new string[2];
             presetNames2 = new string[2];
+
+            // subfolderを作る設定になっているなら、それを取得する。
+            kifuSubfolder = TheApp.app.Config.GameResultSetting.CreateSubfolderOnContinuousGame ?
+                DateTime.Now.ToString("yyyyMMddHHmmss") + Path.DirectorySeparatorChar :
+                null;
         }
 
         /// <summary>
@@ -214,6 +224,19 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 棋譜ファイルを保存するsubfolder。
+        /// subfolderに保存しない設定であれば、nullが返る。
+        /// </summary>
+        /// <returns></returns>
+        public string GetKifuSubfolder()
+        {
+            return kifuSubfolder;
+        }
+        #endregion
+
+        #region privates
+
+        /// <summary>
         /// 終了するときにPlayLimitをリセットしてしまうので保存しておく。
         /// </summary>
         private int PlayLimit2;
@@ -234,5 +257,12 @@ namespace MyShogi.Model.Shogi.LocalServer
             var preset = presetNames2[(int)c];
             return (preset == null) ? playerName : $"{playerName}({preset})";
         }
+
+        /// <summary>
+        /// 棋譜ファイルを保存するsubfolder。
+        /// </summary>
+        private string kifuSubfolder;
+
+        #endregion
     }
 }

@@ -37,8 +37,8 @@ namespace MyShogi.View.Win2D.Setting
             var setting = TheApp.app.Config.GameResultSetting;
 
             binder.Bind(setting, "AutomaticSaveKifu", checkBox1);
+            binder.Bind(setting, "CreateSubfolderOnContinuousGame", checkBox2);
             binder.Bind(setting, "KifuFileType"     , comboBox1);
-            binder.Bind(setting, "KifuFileLimit"    , numericUpDown1);
             binder.Bind(setting, "KifuSaveFolder"   , textBox1);
         }
 

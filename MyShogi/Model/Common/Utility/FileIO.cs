@@ -42,6 +42,11 @@ namespace MyShogi.Model.Common.Utility
             if (encoding == null)
                 encoding = new UTF8Encoding(true);
 
+            // フォルダが存在することを確認する。なければ新たに作成する。
+            var folder = Path.GetDirectoryName(path);
+            if (!Directory.Exists(folder))
+                Directory.CreateDirectory(folder);
+
             using (var sw = new StreamWriter(path , false , encoding))
             {
                 sw.Write(content);

@@ -21,12 +21,11 @@ namespace MyShogi.Model.Shogi.LocalServer
             // デフォルトではKIF形式
             KifuFileType = KifuFileType.KIF;
 
-            // 棋譜の保存上限1000に設定しておく。
-            // 対局結果ウィンドウでこのindexを丸読みするので、あまり大きくしたくないところである。
-            KifuFileLimit = 1000;
-
             // デフォルトでは "Documents/YaneuraOuKifu" を保存先に設定しておく。
             KifuSaveFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) , "YaneuraOuKifu");
+
+            // デフォルトでは、サブフォルダを作成する。
+            CreateSubfolderOnContinuousGame = true;
 
             try
             {
@@ -46,25 +45,21 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 連続対局のときに自動的にサブフォルダを作成する。
+        /// </summary>
+        public bool CreateSubfolderOnContinuousGame
+        {
+            get { return GetValue<bool>("CreateSubfolderOnContinuousGame"); }
+            set { SetValue("CreateSubfolderOnContinuousGame", value); }
+        }
+
+        /// <summary>
         /// 保存する棋譜のファイル形式
         /// </summary>
         public KifuFileType KifuFileType
         {
             get { return GetValue<KifuFileType>("KifuFileType"); }
             set { SetValue("KifuFileType", value); }
-        }
-
-        /// <summary>
-        /// 棋譜ファイルを保存する上限
-        ///
-        /// 棋譜ファイルは、対局結果ウィンドウを開いたときに、この上限数を上回っている分が自動的に削除される。
-        /// 
-        /// 0 = 制限なし
-        /// </summary>
-        public int KifuFileLimit
-        {
-            get { return GetValue<int>("KifuFileLimit"); }
-            set { SetValue("KifuFileLimit", value); }
         }
 
         /// <summary>

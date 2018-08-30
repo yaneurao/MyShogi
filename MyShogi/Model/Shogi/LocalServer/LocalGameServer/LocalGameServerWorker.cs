@@ -1077,7 +1077,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 kifuManager.KifuHeader.SetPlayerName(c, DisplayNameWithPreset(c));
 
             var kifu = kifuManager.ToString(setting.KifuFileType);
-            var filename = $"{DefaultKifuFileName()}{setting.KifuFileType.ToExtensions()}";
+            var filename = $"{continuousGame.GetKifuSubfolder()}{DefaultKifuFileName()}{setting.KifuFileType.ToExtensions()}";
             var filePath = Path.Combine(setting.KifuSaveFolder, filename);
             FileIO.WriteFile(filePath, kifu);
 
