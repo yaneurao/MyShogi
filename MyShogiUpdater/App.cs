@@ -21,7 +21,7 @@ namespace MyShogiUpdater
         /// <summary>
         /// Update用のソースフォルダ
         /// </summary>
-        public string UpdateSourcePath = "V100toV108";
+        public string UpdateSourcePath = "V100toV110";
         //public string UpdateSourcePath = "V100toV120";
 #endif 
 
@@ -33,7 +33,7 @@ namespace MyShogiUpdater
         /// </summary>
         public bool MakePatchEnable = false;
         public string PatchSource1 = "V100";
-        public string PatchSource2 = "V108";
+        public string PatchSource2 = "V110";
 
         /// <summary>
         /// アプリのエントリーポイント
