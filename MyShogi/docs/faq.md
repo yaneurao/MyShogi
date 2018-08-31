@@ -15,7 +15,7 @@
 ### サウンドが再生されない時
 
 
-- 効果音などのサウンドの再生には、MediaPlayerという技術を使っています。そのため、Windows Media Playerが使えない環境だとサウンドが正常に再生されないようです。
+- 駒音、読み上げなどの効果音のサウンドの再生には、MediaPlayerという技術を使っています。そのため、Windows Media Playerが使えない環境だとサウンドが正常に再生されないようです。
 - Windows Media PlayerはWindows7/8/8.1/10には標準でインストールされているのですが、何かの拍子に使えなくなることがあるようです。
     - 参考記事 : [Windows 10：Windows Media Player がなくなった？](http://snow-white.cocolog-nifty.com/first/2017/12/windows-10windo.html)
 
