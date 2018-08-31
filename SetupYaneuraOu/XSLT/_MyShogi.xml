@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ProjectOutput Name="MyShogi" ProjectDirVar="$(var.MyShogi.ProjectDir)" TargetDirVar="$(var.MyShogi.TargetDir)" SharedFileId="_F47F1FFE_6DB9_4CD7_A1CD_5FC1198EE17C">
+<ProjectOutput Name="MyShogi" ProjectDirVar="$(var.MyShogi.ProjectDir)" TargetDirVar="$(var.MyShogi.TargetDir)" SharedFileId="_F963405A_1B8C_47CE_9A2A_F14F2DC18CAE">
   <Binaries>
     <DiskId>1</DiskId>
     <Compressed />

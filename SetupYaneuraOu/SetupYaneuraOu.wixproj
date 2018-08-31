@@ -38,21 +38,21 @@
     <Content Include="XSLT\_MyShogi.xml" />
   </ItemGroup>
   <ItemGroup>
+    <WixExtension Include="WixNetFxExtension">
+      <HintPath>$(WixExtDir)\WixNetFxExtension.dll</HintPath>
+      <Name>WixNetFxExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\MyShogi\MyShogi.csproj">
       <Name>MyShogi</Name>
       <Project>{A821BFE7-A6FF-40A2-B214-11EE3F37F159}</Project>
       <Private>True</Private>
       <DoNotHarvest>
       </DoNotHarvest>
-      <RefProjectOutputGroups>Binaries;Symbols;Sources</RefProjectOutputGroups>
+      <RefProjectOutputGroups>Binaries;Symbols</RefProjectOutputGroups>
       <RefTargetDir>INSTALLDIR</RefTargetDir>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WixExtension Include="WixNetFxExtension">
-      <HintPath>$(WixExtDir)\WixNetFxExtension.dll</HintPath>
-      <Name>WixNetFxExtension</Name>
-    </WixExtension>
   </ItemGroup>
   <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />

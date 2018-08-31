@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <PatchCreation
+    Id="4F8936FE-06D2-464A-806C-25D293609051"
+    AllowProductCodeMismatches="yes"
+    CleanWorkingFolder="yes"
+    OutputPath="patch.pcp"
+    WholeFilesOnly="yes"
+    Codepage="932"
+    >
+
+    <PatchInformation
+      Description="将棋神やねうら王 Update 1.1.0"
+      Comments="将棋神やねうら王 Update 1.1.0"
+      Manufacturer="Mynavi Publishing Corporation / MyShogi Project"
+      />
+
+    <PatchMetadata
+      AllowRemoval="yes"
+      Description="将棋神やねうら王 Update 1.1.0"
+      ManufacturerName="Mynavi Publishing Corporation / MyShogi Project"
+      TargetProductName="SetupYaneuraOu"
+      MoreInfoURL="https://github.com/yaneurao/MyShogi/"
+      Classification="Update"
+      DisplayName="将棋神やねうら王 Update 1.1.0"
+      />
+
+    <Family DiskId="5000"
+      MediaSrcProp="Sample"
+      Name="Sample"
+      SequenceStart="5000"
+      >
+      <UpgradeImage
+        SourceFile="C:\git\MyShogi\SetupYaneuraOu\bin\Debug\YaneuraOu.msi"
+        Id="YaneuraOuUp"
+        >
+        <TargetImage
+          SourceFile="C:\git\MyShogi\SetupYaneuraOu\bin\DebugSetupYaneuraOuBase_180828\YaneuraOu.msi"
+          Order="2"
+          Id="YaneuraOuTg"
+          IgnoreMissingFiles="no"
+          />
+      </UpgradeImage>
+    </Family>
+
+    <PatchSequence
+      PatchFamily="SamplePatchFamily"
+      Sequence="1.0.0.0"
+      Supersede="yes"
+      />
+
+    <TargetProductCode Id="*"/>
+
+    <PatchProperty Name="MinimumRequiredMsiVersion" Value="300" />
+    <PatchProperty Name="ApiPatchingOptionFlags" Value="0x00100000" />
+    <PatchProperty Name="ApiPatchingSymbolFlags" Value="0x00000000" />
+    <PatchProperty Name="CommandLine" Value="REINSTALLMODE=omus REINSTALL=ALL" />
+
+  </PatchCreation>
+</Wix>
