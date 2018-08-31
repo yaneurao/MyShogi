@@ -114,7 +114,9 @@ namespace MyShogi.View.Win2D
 
             using (var font = new Font("MSPゴシック", size, GraphicsUnit.Pixel))
             {
-                var brush = option != null ? option.brush : Brushes.Black;
+                var brush = option == null ? Brushes.Black : option.brush;
+                var brush2 = option == null ? null : option.brush2;
+
                 var sf = new StringFormat();
                 sf.LineAlignment = StringAlignment.Near;
                 var align = option != null ? option.align : 0;
@@ -129,6 +131,14 @@ namespace MyShogi.View.Win2D
                     // 右寄せ
                     case 2: sf.Alignment = StringAlignment.Far; break;
                 }
+
+                // brush2が指定されているのでこれを先に描画
+                if (brush2 != null)
+                {
+                    var dstPoint2 = new Point(dstPoint.X + 1, dstPoint.Y + 1);
+                    graphics.DrawString(mes, font, brush2, Affine(dstPoint2), sf);
+                }
+
                 graphics.DrawString(mes, font, brush, Affine(dstPoint), sf);
             }
         }
@@ -144,8 +154,19 @@ namespace MyShogi.View.Win2D
                 align = align_;
             }
 
+            public DrawStringOption(Brush brush_, Brush brush2_ , int align_)
+            {
+                brush = brush_;
+                brush2 = brush2_;
+                align = align_;
+            }
+
             // テキストの色
             public Brush brush;
+
+            // テキストの色その2(これが指定されていれば、座標を(+1,+1)したところにこの色で描画してからbrushのほうで描画する。)
+            // 影つき文字のような効果が得られる。
+            public Brush brush2;
 
             // テキストの描画位置
             // 0 = 左寄せ , 1 = 中央 , 2 右寄せ

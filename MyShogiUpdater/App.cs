@@ -21,7 +21,7 @@ namespace MyShogiUpdater
         /// <summary>
         /// Update用のソースフォルダ
         /// </summary>
-        public string UpdateSourcePath = "V100toV110";
+        public string UpdateSourcePath = "V100toV110"; // Update1
         //public string UpdateSourcePath = "V100toV120";
 #endif 
 

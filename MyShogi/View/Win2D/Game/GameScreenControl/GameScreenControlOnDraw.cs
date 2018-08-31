@@ -320,8 +320,15 @@ namespace MyShogi.View.Win2D
             {
                 var cont = gameServer==null ? null : gameServer.continuousGame.GetGamePlayingString();
                 if (cont != null)
+                {
                     // 赤文字でセンタリングして表示
-                    DrawString(continuos_game_pos, cont , 22 , new DrawStringOption(Brushes.Red , 1));
+                    //DrawString(continuos_game_pos, cont, 22, new DrawStringOption(Brushes.Red, Brushes.Black /* 影つき */ , 1));
+
+                    // →　人によっては、これは、やや見づらいらしい。
+
+                    // 青文字でセンタリングして表示
+                    DrawString(continuos_game_pos, cont, 22, new DrawStringOption(Brushes.Blue, Brushes.White /* 影つき */ , 1));
+                }
             }
 
             // リソースリークを調べる(デバッグ時)

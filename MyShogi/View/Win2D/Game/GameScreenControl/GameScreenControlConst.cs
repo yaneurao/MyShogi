@@ -254,5 +254,6 @@ namespace MyShogi.View.Win2D
         /// 連続対局のメッセージ(センタリングして表示)
         /// </summary>
         private static readonly Point continuos_game_pos = new Point(board_img_size.Width / 2 , 3);
+        private static readonly Point continuos_game_pos2 = new Point(board_img_size.Width / 2 + 1, 3 +1);
     }
 }

@@ -958,7 +958,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             if (continuousGame.GameSetting != null)
             {
                 GameSetting = continuousGame.GameSetting; // プレイヤーの入れ替えで破壊している可能性があるので復元する。
-                continuousGame.GameSetting = null;
+                //continuousGame.GameSetting = null; // これ次のGameStartまで残ってないと対局者名の表示などで困る。
             }
         }
 

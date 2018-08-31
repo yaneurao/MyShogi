@@ -190,7 +190,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 1局目が "1/100"のように表示されて欲しいので TotalCountに+1 しておく。
                 var TotalCount = Math.Min(WinCount + LoseCount + DrawCount + 1 , PlayLimit2);
 
-                return $"【連続対局】({TotalCount}/{PlayLimit2}) : {GetRatingString()}";
+                //return $"【連続対局】({TotalCount}/{PlayLimit2}) : {GetRatingString()}\r\n{PlayerName(Color.BLACK)} vs {PlayerName(Color.WHITE)}";
+                return $"【連続対局】 {PlayerName(Color.BLACK)} vs {PlayerName(Color.WHITE)} ({TotalCount}/{PlayLimit2}) : {GetRatingString()}";
             }
             return null;
         }

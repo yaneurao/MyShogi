@@ -2106,10 +2106,10 @@ namespace MyShogi.View.Win2D
 #endif
                 }
 
-                // 「情報」
+                // 「ヘルプ」
                 {
                     var item_others = new ToolStripMenuItem();
-                    item_others.Text = "情報(&I)"; // Infomation
+                    item_others.Text = "ヘルプ(&H)"; // Help
                     menu.Items.Add(item_others);
 
                     {
