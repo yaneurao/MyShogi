@@ -42,14 +42,14 @@
             this.listView1.Location = new System.Drawing.Point(0, 0);
             this.listView1.MultiSelect = false;
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(984, 413);
+            this.listView1.Size = new System.Drawing.Size(702, 74);
             this.listView1.TabIndex = 0;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(0, 419);
+            this.button1.Location = new System.Drawing.Point(0, 106);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(158, 28);
             this.button1.TabIndex = 1;
@@ -60,7 +60,7 @@
             // button4
             // 
             this.button4.Enabled = false;
-            this.button4.Location = new System.Drawing.Point(805, 419);
+            this.button4.Location = new System.Drawing.Point(516, 106);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(177, 28);
             this.button4.TabIndex = 4;
@@ -70,7 +70,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(164, 419);
+            this.button2.Location = new System.Drawing.Point(164, 106);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(158, 28);
             this.button2.TabIndex = 2;
@@ -80,7 +80,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(328, 419);
+            this.button3.Location = new System.Drawing.Point(328, 106);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(158, 28);
             this.button3.TabIndex = 3;
@@ -92,7 +92,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(984, 450);
+            this.ClientSize = new System.Drawing.Size(702, 138);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -102,6 +102,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "GameResultDialog";
             this.Text = "対局結果一覧";
+            this.Load += new System.EventHandler(this.GameResultDialog_Load);
             this.Resize += new System.EventHandler(this.GameResultDialog_Resize);
             this.ResumeLayout(false);
 

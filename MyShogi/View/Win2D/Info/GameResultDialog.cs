@@ -278,10 +278,10 @@ namespace MyShogi.View.Win2D
             button2.Location = new Point(button2.Location.X, y);
             button3.Location = new Point(button3.Location.X, y);
 
-            var w2 = button4.Width;
-            button4.Location = new Point(ClientSize.Width - w2 - 3, y);
+            var w4 = button4.Width;
+            button4.Location = new Point(ClientSize.Width - w4 - 3, y);
 
-            listView1.Size = new Size(ClientSize.Width, ClientSize.Height - h - 3);
+            listView1.Size = new Size(ClientSize.Width, y - 3);
         }
 
         private void listView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -292,5 +292,11 @@ namespace MyShogi.View.Win2D
                 && listView1.Items[indices[0]].SubItems.Count >= 9;
         }
 
+        private void GameResultDialog_Load(object sender, EventArgs e)
+        {
+            // ボタン基準でリサイズ
+            var w1 = button1.Width;
+            ClientSize = new Size(w1 * 6, w1 * 4);
+        }
     }
 }

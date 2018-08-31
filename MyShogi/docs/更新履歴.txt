@@ -3,6 +3,10 @@
 ■　2018/08/31
 
 
+- Setup: Update1 (#49) (Mizarさんのプルリク)
+  - Update1フルインストーラ版の設定になります。
+
+
 - V1.1.0リリース。
   - eval : MyShogi201807260000Eval.zip
   - 本体 : MyShogi201808310900V110.zip
