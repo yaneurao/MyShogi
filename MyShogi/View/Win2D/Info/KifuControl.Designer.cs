@@ -91,6 +91,7 @@
             this.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.Name = "KifuControl";
             this.Size = new System.Drawing.Size(180, 144);
+            this.SizeChanged += new System.EventHandler(this.KifuControl_SizeChanged);
             this.ResumeLayout(false);
 
         }

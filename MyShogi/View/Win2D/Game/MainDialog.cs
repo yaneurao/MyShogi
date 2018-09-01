@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
@@ -86,6 +85,11 @@ namespace MyShogi.View.Win2D
         /// 現状、GameScreenControlは一つしかインスタンスを生成していないので、それがactiveである。
         /// </summary>
         public KifuControl kifuControl { get { return gameScreenControl1.kifuControl; } }
+
+        /// <summary>
+        /// 棋譜ウインドウをフローティングモードで使っているとき用。
+        /// </summary>
+        public DockWindow kifuDockWindow { get; set; } = new DockWindow();
 
         // -- メニューが生成しうるダイアログ
 
@@ -1993,7 +1997,7 @@ namespace MyShogi.View.Win2D
 
                         { // 横幅
                             var item = new ToolStripMenuItem();
-                            item.Text = "横幅(&W)"; // Width
+                            item.Text = "非フロート時の横幅(&W)"; // Width
                             item_.DropDownItems.Add(item);
 
                             {
@@ -2027,6 +2031,20 @@ namespace MyShogi.View.Win2D
                                 item5.Click += (sender, e) => { config.KifuWindowWidthType = 4; };
                                 item.DropDownItems.Add(item5);
                             }
+                        }
+
+                        { // フローティング
+                            var item = new ToolStripMenuItem();
+                            item.Text = "フロート(&F)"; // Floating window mode
+                            item.Click += (sender, e) => {
+                                // あとでフロート解除のコードをちゃんと書く。
+                                kifuControl.ViewModel.FloatingWindowMode = true;
+                                kifuDockWindow.ViewModel.Caption = "棋譜ウインドウ";
+                                gameScreenControl1.Controls.Remove(kifuControl);
+                                kifuDockWindow.AddControl(kifuControl);
+                                kifuDockWindow.Show(this);
+                            };
+                            item_.DropDownItems.Add(item);
                         }
                     }
 

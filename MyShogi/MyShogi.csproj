@@ -224,6 +224,12 @@
     <Compile Include="View\Win2D\Info\DebugWindow.Designer.cs">
       <DependentUpon>DebugWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\Info\DockWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Info\DockWindow.Designer.cs">
+      <DependentUpon>DockWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\Info\EngineConsiderationControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -381,6 +387,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Info\DebugWindow.resx">
       <DependentUpon>DebugWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Info\DockWindow.resx">
+      <DependentUpon>DockWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Info\EngineConsiderationControl.resx">
       <DependentUpon>EngineConsiderationControl.cs</DependentUpon>

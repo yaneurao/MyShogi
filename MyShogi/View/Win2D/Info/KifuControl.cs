@@ -63,6 +63,16 @@ namespace MyShogi.View.Win2D
             /// </summary>
             public object EraseBranchButtonClicked;
 
+            /// <summary>
+            /// この棋譜コントロールをフロートモードで用いる。
+            /// 
+            /// ※　他のFormにdockして用いるモードです。
+            /// </summary>
+            public bool FloatingWindowMode
+            {
+                get { return GetValue<bool>("FloatingWindowMode"); }
+                set { SetValue<bool>("FloatingWindowMode", value); }
+            }
         }
 
         public KifuControlViewModel ViewModel = new KifuControlViewModel();
@@ -129,6 +139,11 @@ namespace MyShogi.View.Win2D
 
             // 全体の8%の高さのボタンを用意。
             int bh = inTheGame ? 0 : Height * 8 / 100;
+
+            // フローティングモードなら23固定。
+            if (ViewModel.FloatingWindowMode)
+                bh = 23;
+
             int x = Width / 3;
             int y = Height - bh;
 
@@ -155,6 +170,11 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 最後にOnResize()を呼び出された時のinTheGameの値
+        /// </summary>
+        private bool lastInTheGame;
+
+        /// <summary>
         /// [UI thread] : 親ウインドウがリサイズされた時にそれに収まるようにこのコントロール内の文字の大きさを調整する。
         /// 
         /// inTheGame == trueのときはゲーム中なので「本譜」ボタンと「次分岐」ボタンを表示しない。
@@ -164,6 +184,10 @@ namespace MyShogi.View.Win2D
         {
             // 最小化したのかな？
             if (Width == 0 || Height == 0 || listBox1.ClientSize.Width == 0)
+                return;
+
+            lastInTheGame = inTheGame;
+            if (ViewModel.FloatingWindowMode)
                 return;
 
             UpdateButtonState(inTheGame);
@@ -404,6 +428,29 @@ namespace MyShogi.View.Win2D
         private void button3_Click(object sender, EventArgs e)
         {
             ViewModel.RaisePropertyChanged("EraseBranchButtonClicked");
+        }
+
+        /// <summary>
+        /// リサイズ。
+        /// 非フローティングモードなら、このメッセージは無視する。
+        /// フローティングモードなら自律的にサイズを変更。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void KifuControl_SizeChanged(object sender, EventArgs e)
+        {
+            if (ViewModel.FloatingWindowMode)
+            {
+                var font = new Font("MS Gothic", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+                FontUtility.SetFont(listBox1, font);
+
+                var font2 = new Font("MS Gothic", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+                FontUtility.SetFont(button1, font2);
+                FontUtility.SetFont(button2, font2);
+                FontUtility.SetFont(button3, font2);
+
+                UpdateButtonState(lastInTheGame);
+            }
         }
 
 
