@@ -64,7 +64,7 @@
 
 - (動作保証の対象外ですが)出来ます。
 - 終了するときに設定を書き出すのですが、この部分の排他はしていないので全く同じタイミングで本ソフトを終了させると設定ファイルが壊れる可能性はあります。
-  - 
+  -
 - 思考エンジンへのHash用のメモリの割り当ては自動割り当てになっていると最初に対局を開始した本ソフトの思考エンジンにたくさんメモリが割り当てられるので、
   Hashサイズは固定して、同じサイズだけ割り当てるような運用にしたほうが公平だとは思います。
 
@@ -140,6 +140,9 @@
 - 将棋神やねうら王 の動作には、 .NET Framework 4.6.1 以降のインストールが必要です。
   - Windows 10 November Update version 1511 以降では .NET Framework 4.6.1 以降がプリインストールされていますが、
   - Windows 7 SP1, Windows 8.1, Windows 10 version 1507 では .NET Framework 4.6.1 以降のインストールが必要な場合があります。
+  - Windows 8.1 では .NET Framework 4.6.1 のインストール前に、 [Windows 8.1 Update (KB2919355)](https://support.microsoft.com/ja-jp/help/2919355/windows-rt-8-1-windows-8-1-and-windows-server-2012-r2-update-april-201) を適用することが必須となります。未適用の方は、お手数ですが先に以下を参照して適用をお願いします。
+    - [Windows 8.1 Update (KB 2919355) をインストールする](https://support.microsoft.com/ja-jp/help/15356/windows-8-install-update-kb-2919355)
+    - [Windows RT 8.1、Windows 8.1、および Windows Server 2012 R2 の更新プログラム: 2014 年 4 月](https://support.microsoft.com/ja-jp/help/2919355/windows-rt-8-1-windows-8-1-and-windows-server-2012-r2-update-april-201)
 - 以下の2つのインストーラを同梱していますので、これらの名前のファイルを先に実行してインストールしてください。日本語言語パックのインストールだけでは .NET Framework の本体はインストールされません。
   - NDP461-KB3102436-x86-x64-AllOS-ENU.exe : .NET Framework 4.6.1 オフラインインストーラ
   - NDP461-KB3102436-x86-x64-AllOS-JPN.exe : .NET Framework 4.6.1 日本語言語パック オフラインインストーラ
@@ -204,7 +207,7 @@
   - 各組み合わせ100局ずつ。総当たり戦。レーティングは将棋倶楽部24相当。
   tanuki-2018-9dan: R3306 (+22/-14)
   Qhapaq2018-9dan: R3252 (+11/-15)
-  Yomita2018-9dan: R3193 (+13/-17) 
+  Yomita2018-9dan: R3193 (+13/-17)
   Yaneuraou2018-9dan: R3150 (+0/-0)
   tanuki-sdt5-9dan: R3127 (+17/-19)
 
