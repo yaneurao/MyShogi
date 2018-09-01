@@ -1,5 +1,15 @@
 ﻿
 
+■　2018/09/02
+
+
+- 棋譜を書き出した時に「棋譜が保存されていません」のメッセージが出る。(tooroさん)
+  - KifuWriteCommand()でKifuDirty = falseに。
+
+
+- FAQ: Windows 8.1 Update について追記。 (#50) (Mizarさんのプルリク)
+
+
 ■　2018/09/01
 
 

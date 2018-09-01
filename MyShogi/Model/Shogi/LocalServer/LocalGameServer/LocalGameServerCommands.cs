@@ -266,6 +266,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // 棋譜が綺麗になった扱いにする。(この棋譜はファイルなどに丸ごと保存されているはずであるから)
                     KifuDirty = false;
+
                     // 駒を持ち上げていたりしたらそれをリセットする必要があるので。
                     RaisePropertyChanged("TurnChanged");
                 }
@@ -293,6 +294,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     var content = kifuManager.ToString(type);
                     FileIO.WriteFile(path, content);
+
+                    // 棋譜が綺麗になった扱いにする。
+                    KifuDirty = false;
                 }
                 catch (System.Exception e)
                 {

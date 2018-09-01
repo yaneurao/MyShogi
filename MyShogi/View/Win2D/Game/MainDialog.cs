@@ -790,23 +790,33 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 棋譜ファイルを読み込む。
         /// </summary>
-        /// <param name="filename"></param>
-        private void ReadKifuFile(string filename)
+        /// <param name="path"></param>
+        private void ReadKifuFile(string path)
         {
             try
             {
-                var kifu_text = FileIO.ReadText(filename);
+                var kifu_text = FileIO.ReadText(path);
                 gameServer.KifuReadCommand(kifu_text);
-                ViewModel.LastFileName = filename; // 最後に開いたファイルを記録しておく。
+                ViewModel.LastFileName = path; // 最後に開いたファイルを記録しておく。
 
                 // このファイルを用いたのでMRUFに記録しておく。
-                if (TheApp.app.Config.MRUF.UseFile(filename))
-                    UpdateMenuItems();
+                UseKifuFile(path);
             }
             catch
             {
                 TheApp.app.MessageShow("ファイル読み込みエラー", MessageShowType.Error);
             }
+        }
+
+        /// <summary>
+        /// 棋譜ファイルを使った時に呼び出されるべきハンドラ。
+        /// MRUFを更新する。
+        /// </summary>
+        private void UseKifuFile(string path)
+        {
+            // このファイルを用いたのでMRUFに記録しておく。
+            if (TheApp.app.Config.MRUF.UseFile(path))
+                UpdateMenuItems();
         }
 
         /// <summary>
@@ -927,18 +937,15 @@ namespace MyShogi.View.Win2D
                         item.Enabled = ViewModel.LastFileName != null; // 棋譜を読み込んだ時などにしか有効ではない。
                         item.Click += (sender, e) =>
                         {
-                            try
-                            {
-                                // 「開く」もしくは「名前をつけて保存無したファイルに上書きする。
-                                // 「局面の保存」は棋譜ではないのでこれは無視する。
-                                // ファイル形式は、拡張子から自動判別する。
-                                gameServer.KifuWriteCommand(ViewModel.LastFileName,
-                                    KifuFileTypeExtensions.StringToKifuFileType(ViewModel.LastFileName));
-                            }
-                            catch
-                            {
-                                TheApp.app.MessageShow("ファイル書き出しエラー" , MessageShowType.Error);
-                            }
+                            var path = ViewModel.LastFileName;
+
+                            // 「開く」もしくは「名前をつけて保存無したファイルに上書きする。
+                            // 「局面の保存」は棋譜ではないのでこれは無視する。
+                            // ファイル形式は、拡張子から自動判別する。
+                            gameServer.KifuWriteCommand(path, KifuFileTypeExtensions.StringToKifuFileType(path));
+
+                            //UseKifuFile(path);
+                            // 上書き保存の直前にこのファイルを開いていて、そのときにMRUFに記録されているはず。
                         };
                         item_file.DropDownItems.Add(item);
                     }
@@ -969,7 +976,7 @@ namespace MyShogi.View.Win2D
                                 // ダイアログを表示する
                                 if (fd.ShowDialog() == DialogResult.OK)
                                 {
-                                    var filename = fd.FileName;
+                                    var path = fd.FileName;
                                     try
                                     {
                                         KifuFileType kifuType;
@@ -984,20 +991,15 @@ namespace MyShogi.View.Win2D
 
                                             // ファイル名から自動判別すべき
                                             default:
-                                                kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
+                                                kifuType = KifuFileTypeExtensions.StringToKifuFileType(path);
                                                 if (kifuType == KifuFileType.UNKNOWN)
                                                     kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
                                                 break;
                                         }
 
-                                        gameServer.KifuWriteCommand(filename, kifuType);
-                                        ViewModel.LastFileName = filename; // 最後に保存したファイルを記録しておく。
-
-                                        // このファイルを用いたのでMRUFに記録しておく。
-                                        if (TheApp.app.Config.MRUF.UseFile(filename))
-                                            UpdateMenuItems();
-
-                                        gameServer.KifuDirty = false; // 棋譜綺麗になった。
+                                        gameServer.KifuWriteCommand(path, kifuType);
+                                        ViewModel.LastFileName = path; // 最後に保存したファイルを記録しておく。
+                                        UseKifuFile(path);
                                     }
                                     catch
                                     {
@@ -1028,7 +1030,7 @@ namespace MyShogi.View.Win2D
                                 // ダイアログを表示する
                                 if (fd.ShowDialog() == DialogResult.OK)
                                 {
-                                    var filename = fd.FileName;
+                                    var path = fd.FileName;
                                     try
                                     {
                                         KifuFileType kifuType;
@@ -1044,17 +1046,16 @@ namespace MyShogi.View.Win2D
 
                                             // ファイル名から自動判別すべき
                                             default:
-                                                kifuType = KifuFileTypeExtensions.StringToKifuFileType(filename);
+                                                kifuType = KifuFileTypeExtensions.StringToKifuFileType(path);
                                                 if (kifuType == KifuFileType.UNKNOWN)
                                                     kifuType = KifuFileType.KIF; // わからんからKIF形式でいいや。
                                                 break;
                                         }
 
-                                        gameServer.PositionWriteCommand(filename, kifuType);
+                                        gameServer.PositionWriteCommand(path, kifuType);
 
                                         // このファイルを用いたのでMRUFに記録しておく。
-                                        if (TheApp.app.Config.MRUF.UseFile(filename))
-                                            UpdateMenuItems();
+                                        UseKifuFile(path);
                                     }
                                     catch
                                     {

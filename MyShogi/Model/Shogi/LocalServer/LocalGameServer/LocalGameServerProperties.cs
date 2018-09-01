@@ -334,7 +334,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             get { return GetValue<MoveGameResult>("GameEndEvent"); }
         }
 
-
         /// <summary>
         /// 各PlayerのEngineDefine
         /// </summary>
