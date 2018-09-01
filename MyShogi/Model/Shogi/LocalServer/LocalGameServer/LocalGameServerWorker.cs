@@ -364,11 +364,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             EngineDefineExes[(int)c] = engineDefineEx; // ここに保存しておく。
             var presets = engineDefineEx.EngineDefine.Presets;
+            // 選択されているpreset
+            var preset = (selectedPresetIndex < presets.Count) ? presets[selectedPresetIndex] : null;
 
-            continuousGame.SetPresetName(c ,
-                (selectedPresetIndex < presets.Count) ?
-                presets[selectedPresetIndex].Name :
-                null);
+            continuousGame.SetPresetName(c, preset == null ? null : preset.Name);
 
             var engine_config = TheApp.app.EngineConfigs;
             EngineConfig config = null;
@@ -387,7 +386,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
 
             // Hash、Threadsのマネージメントのために代入しておく。
-            UsiEngineHashManager.SetValue(c, engineDefineEx , config, ponder);
+            UsiEngineHashManager.SetValue(c, engineDefineEx , config , preset , ponder);
             
             var engine = usiEnginePlayer.Engine;
             var engineDefine = engineDefineEx.EngineDefine;

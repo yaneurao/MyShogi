@@ -25,6 +25,7 @@ namespace MyShogi.Model.Shogi.Usi
         {
             EngineDefines = new EngineDefineEx[2];      /*  { null, null }    */
             EngineConfigs = new EngineConfig[2];        /*  { null, null }    */
+            EnginePresets = new EnginePreset[2];        /*  { null, null }    */
             Ponders = new bool[2];                      /*  { false , false } */
             HashSize = new long[2];                     /*  { 0, 0 }          */
             Threads = new int[2];                       /*  { 0, 0 }          */
@@ -80,9 +81,11 @@ namespace MyShogi.Model.Shogi.Usi
                 var commonSetting = config.CommonOptions;
                 // 個別設定
                 var indSetting = config.IndivisualEnginesOptions.Find(x => x.FolderPath == engineDefineEx.FolderPath);
+                // エンジンプリセット
+                var preset = EnginePresets[c].Options;
 
                 // option名を指定して、エンジン共通設定・個別設定を反映させた結果のValueを得る関数。
-                string GetOptionValue(string name) { return config.GetOptionValue(name, commonSetting, indSetting, null); };
+                string GetOptionValue(string name) { return config.GetOptionValue(name, commonSetting, indSetting, preset ); };
 
                 autoHash[c] = GetOptionValue("AutoHash_") == "true";
                 autoHashPercentage[c] = int.Parse(GetOptionValue("AutoHashPercentage_"));
@@ -223,10 +226,11 @@ namespace MyShogi.Model.Shogi.Usi
         /// <summary>
         /// 各メンバーの値を設定する。CalcValue()の前に呼び出して設定しないといけない。
         /// </summary>
-        public void SetValue(Color c , EngineDefineEx engineDefineEx , EngineConfig config , bool ponder)
+        public void SetValue(Color c , EngineDefineEx engineDefineEx , EngineConfig config , EnginePreset preset , bool ponder)
         {
             EngineDefines[(int)c] = engineDefineEx;
             EngineConfigs[(int)c] = config;
+            EnginePresets[(int)c] = preset;
             Ponders[(int)c] = ponder;
         }
 
@@ -253,6 +257,11 @@ namespace MyShogi.Model.Shogi.Usi
         /// EngineConfigの先後分。
         /// </summary>
         private EngineConfig[] EngineConfigs;
+
+        /// <summary>
+        /// EnginePresetの先後分。
+        /// </summary>
+        private EnginePreset[] EnginePresets;
 
         /// <summary>
         /// Ponderが有効なのか。先後分。

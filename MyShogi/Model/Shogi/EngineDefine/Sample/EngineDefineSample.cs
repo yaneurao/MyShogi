@@ -49,8 +49,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                   Excelの式で言うと　=1000*EXP((537-SQRT(537^2+4*26.13*(975-A1)))/(2*26.13))
 
-                        3200	315754 
-                        3000	144832 
+                        4600  32565907 // 16段
+                        4400  16537349 // 15段
+                        4200   8397860 // 14段
+                        4000   4264532 // 13段
+                        3800   2165579 // 12段 // ここまで使う
+                        3600   1099707 // 11段
+                        3400    558444 // 10段
+                        3200	315754→283584
+                        3000	144832→144007 
                         2800	73475 
                         2600	39959 
                         2400	22885 
@@ -73,115 +80,156 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 // 8段 = R3000
                 // 9段は将棋倶楽部24では存在しない(?) 初段からはR200ごとの増加なので、おそらくR3200。
 
+                // 10段、11段、12段は、自動スレッドでのスレッド割り当て。
+                // 理由1. node数が多いので、スレッド数が増えてもそこまで強さがバラけないと思われるため
+                // 理由2. node数が多いので2スレッドで探索すると時間がかかるため
+
+                new EnginePreset( "十二段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","true"), // 自動スレッドでのスレッド割り当て
+                        new EngineOption("NodesLimit","2165579"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPv","1"),
+                }),
+                new EnginePreset( "十一段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","true"), // 自動スレッドでのスレッド割り当て
+                        new EngineOption("NodesLimit","1099707"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPv","1"),
+                }),
+                new EnginePreset( "十段" , new EngineOption[] {
+                        new EngineOption("AutoThread","true"), // 自動スレッドでのスレッド割り当て
+                        new EngineOption("NodesLimit","558444"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPv","1"),
+                }),
                 new EnginePreset( "九段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","315754"),
+                        new EngineOption("NodesLimit","283584"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("八段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","144832"),
+                        new EngineOption("NodesLimit","144007"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("七段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","73475"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("六段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","39959"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("五段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","22885"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("四段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","13648"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("三段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","8410"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("二段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","5325"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("初段" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","3450"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("１級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","2799"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("２級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","2281"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("３級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","1867"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("４級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","1534"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("５級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","1266"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("６級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","1048"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("７級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","870"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("８級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","726"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("９級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","607"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset("10級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","509"),
                         new EngineOption("DepthLimit","0"),
