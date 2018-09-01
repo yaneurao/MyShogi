@@ -87,7 +87,7 @@ namespace MyShogi.Model.Common.Data
                 return path; // あかん。どうなっとんねん。
 
             // drive letter
-            var drive = path.Substring(0, i);
+            var drive = path.Substring(0, i +1 /* "\"まで含めて */);
 
             var j = path.LastIndexOf(sep);
             if (j < 2)
