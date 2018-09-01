@@ -219,7 +219,8 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 棋譜の読み込みコマンド
+        /// 棋譜(string型)の読み込みコマンド
+        /// ファイルから読み込むには、MainMenu.ReadKifuFile()のようなメソッドを用いること。
         /// </summary>
         /// <param name="kifuText"></param>
         public void KifuReadCommand(string kifuText)

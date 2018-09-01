@@ -8,6 +8,7 @@ using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.Usi;
+using MyShogi.View.Win2D.Common;
 
 namespace MyShogi.View.Win2D.Setting
 {

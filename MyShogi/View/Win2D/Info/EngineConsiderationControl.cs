@@ -388,7 +388,9 @@ namespace MyShogi.View.Win2D
                 return; // 範囲外？
 
             // この設定、Globalに紐づけておく。
-            TheApp.app.Config.ConsiderationColumnWidth[index] = listView1.Columns[index].Width;
+            // 変更された値が0なら1として保存する。(0 は、初期化されてないときの値を意味するため)
+            var w = listView1.Columns[index].Width;
+            TheApp.app.Config.ConsiderationColumnWidth[index] = w == 0 ? 1 : w;
 
             UpdatePvWidth();
         }
@@ -456,6 +458,7 @@ namespace MyShogi.View.Win2D
                 int w1 = listView1.Columns[index].Width;
                 int w2 = TheApp.app.Config.ConsiderationColumnWidth[index];
                 listView1.Columns[index].Width = w2 == 0 ? w1 : w2; // w2が初期化直後の値なら、採用しない。
+                // これだと幅を0にすると保存されなくなってしまうのか…。そうか…。保存するときに1にしておくべきなのか…。
             }
 
             // CPU同士の対局でEngineConsiderationControlが２つあるときに、もう片側にも通知する。

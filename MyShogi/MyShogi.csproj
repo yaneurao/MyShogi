@@ -56,6 +56,7 @@
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
     <Compile Include="App\TheAppMessageShow.cs" />
+    <Compile Include="Model\Common\Data\MostRecentUsedFiles.cs" />
     <Compile Include="Model\Common\ObjectModel\ControlBinder.cs" />
     <Compile Include="Model\Common\ObjectModel\NotifyCollection.cs" />
     <Compile Include="Model\Common\Process\RemoteService.cs" />
@@ -74,7 +75,7 @@
     <Compile Include="Model\Common\Utility\StringExtensions.cs" />
     <Compile Include="Model\Common\Utility\Svg.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
-    <Compile Include="Model\Common\Utility\ToolTipHelper.cs" />
+    <Compile Include="View\Win2D\Common\ToolTipHelper.cs" />
     <Compile Include="Model\Common\Win32\Win32API.cs" />
     <Compile Include="Model\Resource\Images\AnimatorManager.cs" />
     <Compile Include="Model\Resource\Images\SpriteEx.cs" />

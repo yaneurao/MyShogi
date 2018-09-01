@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
+using MyShogi.Model.Common.Data;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.LocalServer;
@@ -493,6 +494,12 @@ namespace MyShogi.App
         [DataMember]
         public NotifyCollection<int> ConsiderationColumnWidth { get; set; } = new NotifyCollection<int>(6);
 
+        /// <summary>
+        /// 最近使ったファイル(自動保存されているものは除く)
+        /// </summary>
+        [DataMember]
+        public MostRecentUsedFiles MRUF { get; set; } = new MostRecentUsedFiles();
+        
         /// ← 細かい設定は、ここに追加していく
 
         /// <summary>

@@ -715,7 +715,7 @@ namespace MyShogi.View.Win2D
                     return;
             }
 
-            ReadKifFile(file);
+            ReadKifuFile(file);
         }
 
         /// <summary>
@@ -787,13 +787,21 @@ namespace MyShogi.View.Win2D
 
         #region update menu
 
-        private void ReadKifFile(string filename)
+        /// <summary>
+        /// 棋譜ファイルを読み込む。
+        /// </summary>
+        /// <param name="filename"></param>
+        private void ReadKifuFile(string filename)
         {
             try
             {
                 var kifu_text = FileIO.ReadText(filename);
                 gameServer.KifuReadCommand(kifu_text);
                 ViewModel.LastFileName = filename; // 最後に開いたファイルを記録しておく。
+
+                // このファイルを用いたのでMRUFに記録しておく。
+                if (TheApp.app.Config.MRUF.UseFile(filename))
+                    UpdateMenuItems();
             }
             catch
             {
@@ -905,7 +913,7 @@ namespace MyShogi.View.Win2D
 
                                 // ダイアログを表示する
                                 if (fd.ShowDialog() == DialogResult.OK)
-                                    ReadKifFile(fd.FileName);
+                                    ReadKifuFile(fd.FileName);
                             }
                         };
                         item_file.DropDownItems.Add(item);
@@ -984,6 +992,11 @@ namespace MyShogi.View.Win2D
 
                                         gameServer.KifuWriteCommand(filename, kifuType);
                                         ViewModel.LastFileName = filename; // 最後に保存したファイルを記録しておく。
+
+                                        // このファイルを用いたのでMRUFに記録しておく。
+                                        if (TheApp.app.Config.MRUF.UseFile(filename))
+                                            UpdateMenuItems();
+
                                         gameServer.KifuDirty = false; // 棋譜綺麗になった。
                                     }
                                     catch
@@ -1038,6 +1051,10 @@ namespace MyShogi.View.Win2D
                                         }
 
                                         gameServer.PositionWriteCommand(filename, kifuType);
+
+                                        // このファイルを用いたのでMRUFに記録しておく。
+                                        if (TheApp.app.Config.MRUF.UseFile(filename))
+                                            UpdateMenuItems();
                                     }
                                     catch
                                     {
@@ -1171,6 +1188,39 @@ namespace MyShogi.View.Win2D
                         item_file.DropDownItems.Add(item);
                     }
 
+                    // MRUF : 最近使ったファイル
+
+                    {
+                        var mruf = TheApp.app.Config.MRUF;
+                        ToolStripMenuItem sub_item = null;
+                        for (int i = 0; i < mruf.Files.Count; ++i)
+                        {
+                            var display_name = mruf.GetDisplayFileName(i);
+                            if (display_name == null)
+                                break;
+
+                            if (i == 0)
+                                item_file.DropDownItems.Add(new ToolStripSeparator());
+                            else if (i == 3)
+                            {
+                                sub_item = new ToolStripMenuItem();
+                                sub_item.Text = "ファイルヒストリーのつづき(&R)";
+                                item_file.DropDownItems.Add(sub_item);
+                            }
+
+                            {
+                                var item = new ToolStripMenuItem();
+                                item.Text = display_name;
+                                var kifu_file_path = mruf.Files[i];
+                                item.Click += (sender, e) => { ReadKifuFile(kifu_file_path); };
+                                if (i < 3)
+                                    item_file.DropDownItems.Add(item);
+                                else
+                                    sub_item.DropDownItems.Add(item);
+                            }
+
+                        }
+                    }
                 }
 
                 var item_playgame = new ToolStripMenuItem();
@@ -1997,8 +2047,7 @@ namespace MyShogi.View.Win2D
                                     var path = Path.Combine(TheApp.app.Config.GameResultSetting.KifuSaveFolder, filename);
                                     try
                                     {
-                                        var kifu_string = FileIO.ReadText(path);
-                                        gameServer.KifuReadCommand(kifu_string);
+                                        ReadKifuFile(path);
                                     } catch {
                                         TheApp.app.MessageShow("棋譜ファイルが読み込めませんでした。", MessageShowType.Error);
                                     }

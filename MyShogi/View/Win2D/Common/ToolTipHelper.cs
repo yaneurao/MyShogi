@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.View.Win2D.Common
 {
     /// <summary>
     /// 標準のTooltipはEnableがfalseのものに対して反応しない。これを拡張する。
