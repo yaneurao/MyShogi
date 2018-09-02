@@ -2,6 +2,15 @@
 // 棋譜ウインドウに総消費時間の表示
 
 
+■　2018/09/03
+
+
+- ImageLoaderで遅延読み込みを指定しているときに画像がないと無限再帰になるバグ修正。
+  - (Update1のUpdaterで画像コピーに失敗したらこの現象が起きてた)
+- PlayerSettingControlで読み込んだ画像、明示的に解放していなかったの修正。
+- EngineConsiderationDialogSettingでControlBinderのUnbindAll()とImageLoaderのDipose()呼び出していなかったの修正。
+
+
 ■　2018/09/02
 
 

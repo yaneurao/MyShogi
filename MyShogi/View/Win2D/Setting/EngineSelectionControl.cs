@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
@@ -20,6 +21,8 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             ViewModel.AddPropertyChangedHandler("EngineDefine", EngineDefineChanged , Parent);
+
+            Disposed += OnDispose;
         }
 
         public class EngineSelectionViewModel : NotifyObject
@@ -149,6 +152,12 @@ namespace MyShogi.View.Win2D
             }
 
             ViewModel.RaisePropertyChanged("ButtonClicked");
+        }
+
+        private void OnDispose(object sender , EventArgs e)
+        {
+            // 画像リソースの解放
+            banner_mini.Dispose();
         }
 
         /// <summary>

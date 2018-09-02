@@ -2033,6 +2033,7 @@ namespace MyShogi.View.Win2D
                             }
                         }
 
+#if false // 作業中
                         { // フローティング
                             var item = new ToolStripMenuItem();
                             item.Text = "フロート(&F)"; // Floating window mode
@@ -2046,6 +2047,7 @@ namespace MyShogi.View.Win2D
                             };
                             item_.DropDownItems.Add(item);
                         }
+#endif
                     }
 
                     item_window.DropDownItems.Add(new ToolStripSeparator());
@@ -2339,7 +2341,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private MenuStrip old_menu { get; set; } = null;
 
-        #endregion
+#endregion
 
 
     }

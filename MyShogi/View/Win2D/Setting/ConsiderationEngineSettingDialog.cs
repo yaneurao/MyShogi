@@ -108,6 +108,7 @@ namespace MyShogi.View.Win2D.Setting
                     // バナーファイルの設定
                     // ファイルがないならNO BANNERの画像。
                     var banner_file_name = engine_define.BannerFileName;
+
                     ImageLoader banner;
                     if (!System.IO.File.Exists(banner_file_name))
                         banner = TheApp.app.ImageManager.NoBannerImage;
@@ -116,9 +117,11 @@ namespace MyShogi.View.Win2D.Setting
                         banner = new ImageLoader();
                         banner.Load(engine_define.BannerFileName);
                     }
+
                     if (banner_mini != null)
                         banner_mini.Dispose();
                     banner_mini = banner.CreateAndCopy(w, h);
+                    banner.Dispose();
 
                     pictureBox1.Image = banner_mini.image;
                 }
@@ -292,6 +295,13 @@ namespace MyShogi.View.Win2D.Setting
             Close();
         }
 
+        private void ConsiderationEngineSettingDialog_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // リソースの解放
+            binder.UnbindAll();
+            banner_mini.Dispose();
+        }
+
         #endregion
 
         #region private members
@@ -301,6 +311,5 @@ namespace MyShogi.View.Win2D.Setting
         private ConsiderationEngineSetting Setting;
 
         #endregion
-
     }
 }

@@ -11,7 +11,7 @@ namespace MyShogi.Model.Common.ObjectModel
     ///  binder.bind(notifyObject , "HogeMessage" , textBox1 , DataBindWay.TwoWay);
     /// のように使う。
     /// </summary>
-    public class ControlBinder
+    public class ControlBinder : IDisposable
     {
         /// <summary>
         /// Bindしたものをすべて解除する。
@@ -45,6 +45,14 @@ namespace MyShogi.Model.Common.ObjectModel
                 }
             }
             list.Clear();
+        }
+
+        /// <summary>
+        /// 内部的にUnbindAll()を呼び出している。
+        /// </summary>
+        public void Dispose()
+        {
+            UnbindAll();
         }
 
         /// <summary>

@@ -212,6 +212,7 @@
             this.MinimizeBox = false;
             this.Name = "ConsiderationEngineSettingDialog";
             this.Text = "検討エンジン設定";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.ConsiderationEngineSettingDialog_FormClosed);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();

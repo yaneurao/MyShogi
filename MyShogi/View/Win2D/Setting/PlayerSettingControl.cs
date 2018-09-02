@@ -414,6 +414,9 @@ namespace MyShogi.View.Win2D.Setting
         {
             // data-bindしていたものすべてを解除する。
             binder.UnbindAll();
+
+            // 読み込んでいた画像リソースの解放
+            banner_mini.Dispose();
         }
 
         // -- privates

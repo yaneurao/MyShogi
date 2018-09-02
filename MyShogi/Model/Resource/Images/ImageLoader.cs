@@ -40,8 +40,10 @@ namespace MyShogi.Model.Resource.Images
                 // デザインパターンで言うところのNullObjectみたいなものである。
                 // (ファイル名も描画しておくと存在しないファイルのファイル名がわかっていいかも)
 
-                image = new Bitmap(64, 64 , PixelFormat.Format24bppRgb);
-                using (var g = Graphics.FromImage(image))
+                var image_tmp = new Bitmap(64, 64 , PixelFormat.Format24bppRgb);
+                // FromImage(image)とすると、imageのgetterが呼び出されて困る。(遅延読み込みの処理がある)
+                // ゆえに、代わりの変数を用いる必要がある。
+                using (var g = Graphics.FromImage(image_tmp))
                 {
                     using (var pen = new Pen(Color.Red,5))
                     {
@@ -49,6 +51,7 @@ namespace MyShogi.Model.Resource.Images
                         g.DrawLine(pen, new Point(63, 0), new Point(0, 63));
                     }
                 }
+                image = image_tmp;
             }
         }
 
