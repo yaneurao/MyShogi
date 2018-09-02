@@ -76,34 +76,76 @@ namespace MyShogiUpdater
         /// </summary>
         /// <param name="source"></param>
         /// <param name="target"></param>
-        public static void FolderCopy(string sourcePath , string targetPath , string excludeFile , Action<string> copyed_file)
+        public static void FolderCopy(string sourcePath , string targetPath , string excludeFile , Action<string> progress_message)
         {
-            sourcePath = Path.GetFullPath(sourcePath);
-            // target側はfull pathで取得できているはず。
-
-            excludeFile = Path.GetFileName(excludeFile);
-
-            var sources = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
-            foreach(var s in sources)
+            try
             {
-                var relative_source_path = s.Substring(sourcePath.Length + 1 /* PathSeparator.Length */);
 
-                // 除外ファイルであるか
-                if (relative_source_path == excludeFile)
-                    continue;
+                sourcePath = Path.GetFullPath(sourcePath);
+                // target側はfull pathで取得できているはず。
 
-                var target = Path.Combine(targetPath, relative_source_path);
+                excludeFile = Path.GetFileName(excludeFile);
 
-                var dir = Path.GetDirectoryName(target);
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
+                var sources = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
+                foreach (var s in sources)
+                {
+                    var relative_source_path = s.Substring(sourcePath.Length + 1 /* PathSeparator.Length */);
 
-                File.Copy(s, target, true);
+                    // 除外ファイルであるか
+                    if (relative_source_path == excludeFile)
+                        continue;
 
-                copyed_file(target); // コピーされたファイル。
+                    var target = Path.Combine(targetPath, relative_source_path);
+
+                    var dir = Path.GetDirectoryName(target);
+                    if (!Directory.Exists(dir))
+                        Directory.CreateDirectory(dir);
+
+                    File.Copy(s, target, true);
+
+                    progress_message(target); // コピーされたファイル。
+                }
+
+                progress_message("ファイルコピーが完了しました。これより、ファイルの整合性のチェックを行います。");
+
+                // コピーされたファイルが破損していないかなどのチェック
+
+                foreach (var s in sources)
+                {
+                    var relative_source_path = s.Substring(sourcePath.Length + 1 /* PathSeparator.Length */);
+                    if (relative_source_path == excludeFile)
+                        continue;
+
+                    var target = Path.Combine(targetPath, relative_source_path);
+
+                    try
+                    {
+                        // 元のファイルとバイナリレベルで同一か確認する。
+
+                        if (!File.Exists(target))
+                            throw new Exception($"コピー先からファイル消えています。ファイル名 = {target}");
+
+                        var bin1 = File.ReadAllBytes(s);
+                        var bin2 = File.ReadAllBytes(target);
+
+                        if (!bin1.SequenceEqual(bin2))
+                        {
+                            throw new Exception($"コピー先のファイルの内容がコピー元と一致しません。ファイル名 = {target}");
+                        }
+                    } catch (Exception ex)
+                    {
+                        progress_message($"{ex.Message}\r\nファイルのコピーに失敗しています。ファイル名 = {target}\r\nアップデートを中断しました。アンチウイルスソフトにファイルコピーがブロックされている可能性があります。");
+                        return;
+                    }
+                }
+                progress_message("ファイルの整合性に問題はありませんでした。");
+
+                progress_message("アップデートが完了しました。");
+
+            } catch (Exception ex)
+            {
+                progress_message($"アップデートに失敗しました。アンチウイルスソフトにファイルコピーがブロックされている可能性があります。\r\n{ ex.Message }\r\n{ ex.StackTrace }");
             }
-
-            copyed_file("Updateが完了しました!");
         }
 
     }

@@ -76,21 +76,31 @@ namespace MyShogiUpdater
             Invoke(new Action(() => { richTextBox2.Text += $"\r\nCopy \"{ViewModel.SourceFolder}\" to \"{ViewModel.InstallFolder}\""; }));
 
             PatchMaker.FolderCopy(ViewModel.SourceFolder, ViewModel.InstallFolder, ViewModel.UpdateTextFile /*このファイル除外*/ , (filename) => {
-                Invoke(new Action(() => {
-                    richTextBox2.Text += "\r\n" + filename;
-                    try
-                    {
-                        var start = richTextBox2.Text.Length; // 末尾を選択しておく。
-                        richTextBox2.SelectionStart = start;
-                        richTextBox2.ScrollToCaret();
-                    } catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }
-                }));
+                OutputProgressMessage(filename);
             });
 
             Invoke(new Action(() => { button1.Enabled = true; }));
+        }
+
+        /// <summary>
+        /// 進捗表示用のテキストボックスにメッセージを表示する。
+        /// </summary>
+        /// <param name="message"></param>
+        private void OutputProgressMessage(string message)
+        {
+            Invoke(new Action(() => {
+                richTextBox2.Text += "\r\n" + message;
+                try
+                {
+                    var start = richTextBox2.Text.Length; // 末尾を選択しておく。
+                    richTextBox2.SelectionStart = start;
+                    richTextBox2.ScrollToCaret();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }));
         }
 
         /// <summary>
