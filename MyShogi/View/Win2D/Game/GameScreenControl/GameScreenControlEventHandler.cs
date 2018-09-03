@@ -69,8 +69,9 @@ namespace MyShogi.View.Win2D
 #endif
 
                 if (mouseLastDown != p)
-                    OnClick(p); // 2点クリックされたかのように扱う
-
+                {
+                    OnClick(p , true); // 2点クリックされたかのように扱う
+                }
             }
             else if (e.Button == MouseButtons.Right)
             {

@@ -995,17 +995,34 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 最後にクリックされた升(ドラッグ動作である場合は、起点)
+        /// </summary>
+        private SquareHand lastClickedSq = SquareHand.NB;
+
+        /// <summary>
         /// [UI thread] : 盤面がクリックされたときに呼び出されるハンドラ
         /// </summary>
         /// <param name="p"></param>
-        public void OnClick(Point p)
+        public void OnClick(Point p , bool dragged = false)
         {
             /// 座標系を、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)にする。
             p = InverseAffine(p);
 
             // 盤面(手駒を含む)のどこの升がクリックされたのかを調べる
             SquareHand sq = BoardAxisToSquare(p);
-            OnBoardClick(sq);
+
+            if (lastClickedSq == sq && dragged)
+            {
+                // クリックするときにマウスが微小に動き、ドラッグ動作になっているだけだと思われるので、
+                // このクリックを無効化する。
+
+            } else
+            {
+                OnBoardClick(sq);
+            }
+
+            if (!dragged)
+                lastClickedSq = sq;
 
             // デバッグ用にクリックされた升の名前を出力する。
             //Console.WriteLine(sq.Pretty());
