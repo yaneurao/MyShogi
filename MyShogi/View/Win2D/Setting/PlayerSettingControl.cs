@@ -199,17 +199,23 @@ namespace MyShogi.View.Win2D.Setting
                     // バナーファイルの設定
                     // ファイルがないならNO BANNERの画像。
                     var banner_file_name = engine_define.BannerFileName;
-                    ImageLoader banner;
+
+                    // 一つ前のがあるなら解放
+                    banner_mini.Dispose();
                     if (!System.IO.File.Exists(banner_file_name))
-                        banner = TheApp.app.ImageManager.NoBannerImage;
+                    {
+                        var banner = TheApp.app.ImageManager.NoBannerImage;
+                        banner_mini = banner.CreateAndCopy(w, h);
+                        // これはImageManagerからもらったやつなので解放してはならない。
+                    }
                     else
                     {
-                        banner = new ImageLoader();
-                        banner.Load(engine_define.BannerFileName);
+                        using (var banner = new ImageLoader())
+                        {
+                            banner.Load(engine_define.BannerFileName);
+                            banner_mini = banner.CreateAndCopy(w, h);
+                        }
                     }
-                    if (banner_mini != null)
-                        banner_mini.Dispose();
-                    banner_mini = banner.CreateAndCopy(w, h);
 
                     pictureBox1.Image = banner_mini.image;
 
@@ -421,7 +427,7 @@ namespace MyShogi.View.Win2D.Setting
 
         // -- privates
 
-        private ImageLoader banner_mini;
+        private ImageLoader banner_mini = new ImageLoader();
 
         private ControlBinder binder = new ControlBinder();
 

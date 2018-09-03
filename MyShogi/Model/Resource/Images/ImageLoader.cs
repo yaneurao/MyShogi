@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 
 namespace MyShogi.Model.Resource.Images
@@ -7,7 +8,7 @@ namespace MyShogi.Model.Resource.Images
     /// 画像を動的に読み込んだりするクラス。1つの画像のみを管理する。
     /// Windows用。他の環境であれば、このクラスを差し替える。
     /// </summary>
-    public class ImageLoader
+    public class ImageLoader : IDisposable
     {
         /// <summary>
         /// ファイル名のファイル(画像)を読み込む。
@@ -133,6 +134,9 @@ namespace MyShogi.Model.Resource.Images
         /// <summary>
         /// 読み込んでいる画像を開放する。
         /// 内部的にRelease()を呼び出す。
+        ///
+        /// ImageManagerから使うときは、解放はImageManagerに任せるべき。
+        /// さもなくば、using(..)で用いるなど、自力で解放まで面倒を見ること。
         /// </summary>
         public void Dispose()
         {
