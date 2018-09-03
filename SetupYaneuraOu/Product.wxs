@@ -340,8 +340,8 @@
       <ComponentRef Id="comp_78C0A9A1_BB90_4DA3_818C_7D8EF36CDBAA" />
       <ComponentGroupRef Id="MyShogi.Binaries" />
       <ComponentGroupRef Id="MyShogi.Symbols" />
-      <ComponentRef Id="comp_2238EFC9_1CE7_4238_9602_2A72EC860A30" />
-      <ComponentRef Id="comp_F29D0171_C12C_4C77_A89F_82B72D98D2BF" />
+      <ComponentRef Id="comp_125D9843_3693_4B34_BC46_2318D595BF06" />
+      <ComponentRef Id="comp_1565C0AE_CD7C_4AE5_8135_E27EA93FED95" />
     </Feature>
     <InstallUISequence>
       <Custom Action="ERRCA_UIANDADVERTISED" Sequence="5"><![CDATA[ProductState=1]]></Custom>
@@ -655,18 +655,6 @@
   </Product>
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="DesktopFolder">
-        <Component Id="comp_2238EFC9_1CE7_4238_9602_2A72EC860A30" Guid="1A47E8C6-4AFF-4EF2-BCF8-921553C948E0" Permanent="no" SharedDllRefCount="no" Transitive="no">
-          <Shortcut Id="_4C36491B_3184_4F79_8430_941909EB7AC1" Directory="DesktopFolder" Name="将棋神やねうら王" Show="normal" Target="[TARGETDIR]MyShogi.exe" WorkingDirectory="DesktopFolder" Icon="_15A6C8D5F2B3" />
-          <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]\Installer" Name="comp_2238EFC9_1CE7_4238_9602_2A72EC860A30" Type="string" Value="User's Desktop directory" KeyPath="yes" />
-        </Component>
-      </Directory>
-      <Directory Id="StartMenuFolder">
-        <Component Id="comp_F29D0171_C12C_4C77_A89F_82B72D98D2BF" Guid="A8B83BD4-8844-44B9-9BC3-95E4E5EDE294" Permanent="no" SharedDllRefCount="no" Transitive="no">
-          <Shortcut Id="_428AFAD1_5C2C_442E_AAD6_0BC6C1304795" Directory="StartMenuFolder" Name="将棋神やねうら王" Show="normal" Target="[TARGETDIR]MyShogi.exe" WorkingDirectory="StartMenuFolder" Icon="_15A6C8D5F2B3" />
-          <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]\Installer" Name="comp_F29D0171_C12C_4C77_A89F_82B72D98D2BF" Type="string" Value="User's Start Menu directory" KeyPath="yes" />
-        </Component>
-      </Directory>
       <Directory Id="dir_E4477D25_6F66_4243_A1AB_32D0F776FB7F" Name="book">
         <Component Id="comp_5ABAF33B_0069_44B6_8E2A_C554BCE59529" Guid="1505F4BD-D55D-4A7E-A4AC-089F774547F7" Permanent="no" SharedDllRefCount="no" Transitive="no">
           <File Id="_C51874AD_90BE_461B_8093_A3C55FB3E781" DiskId="1" Hidden="no" ReadOnly="no" TrueType="no" System="no" Vital="yes" Name="standard_book.db" Source="..\MyShogi\bin\Debug\book\standard_book.db" KeyPath="yes" />
@@ -1676,6 +1664,18 @@
       </Directory>
       <Directory Id="MyShogi.Binaries" />
       <Directory Id="MyShogi.Symbols" />
+      <Directory Id="StartMenuFolder">
+        <Component Id="comp_1565C0AE_CD7C_4AE5_8135_E27EA93FED95" Guid="D2F1EFDD-48D9-4E66-870E-F945528D7ED0" Permanent="no" SharedDllRefCount="no" Transitive="no">
+          <Shortcut Id="_C188359D_D683_4654_BDF0_7F1057F4B072" Directory="StartMenuFolder" Name="将棋神やねうら王" Show="normal" Target="[TARGETDIR]MyShogi.exe" WorkingDirectory="TARGETDIR" Icon="_15A6C8D5F2B3" />
+          <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]\Installer" Name="comp_1565C0AE_CD7C_4AE5_8135_E27EA93FED95" Type="string" Value="User's Start Menu directory" KeyPath="yes" />
+        </Component>
+      </Directory>
+      <Directory Id="DesktopFolder">
+        <Component Id="comp_125D9843_3693_4B34_BC46_2318D595BF06" Guid="45039856-0B26-4E2C-B2D9-A4F807B50369" Permanent="no" SharedDllRefCount="no" Transitive="no">
+          <Shortcut Id="_208C35E3_F6C6_4200_B98F_8CCA8F3F1FEA" Directory="DesktopFolder" Name="将棋神やねうら王" Show="normal" Target="[TARGETDIR]MyShogi.exe" WorkingDirectory="TARGETDIR" Icon="_15A6C8D5F2B3" />
+          <RegistryValue Root="HKCU" Key="Software\[Manufacturer]\[ProductName]\Installer" Name="comp_125D9843_3693_4B34_BC46_2318D595BF06" Type="string" Value="User's Desktop directory" KeyPath="yes" />
+        </Component>
+      </Directory>
     </Directory>
   </Fragment>
   <Fragment>
