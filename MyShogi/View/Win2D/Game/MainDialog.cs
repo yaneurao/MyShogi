@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
@@ -220,6 +221,43 @@ namespace MyShogi.View.Win2D
 
         #endregion
 
+        #region privates
+
+        /// <summary>
+        /// コマンドラインで何か指示されていたら、それを行う。
+        ///
+        /// コマンドの例
+        ///   -f [棋譜ファイル名] : 棋譜ファイルの読み込み予約(fileのf)
+        /// </summary>
+        private void CommandLineCheck()
+        {
+            var parser = new CommandLineParser();
+
+            while (true)
+            {
+                var token = parser.GetText();
+                if (token == null)
+                    break;
+
+                switch (token.ToLower())
+                {
+                    // "-f"はそのあとに続くファイルを読み込むためのコマンド。
+                    case "-f":
+                        if (parser.PeekText() == null)
+                            TheApp.app.MessageShow("コマンドライン引数の-fの次にファイル名が指定されていません。", MessageShowType.Error);
+                        else
+                            ReadKifuFile(parser.GetText());
+                        break;
+
+                    default:
+                        TheApp.app.MessageShow("コマンドライン引数に解釈できない文字列がありました。", MessageShowType.Error);
+                        break;
+                }
+            }
+        }
+
+        #endregion
+
         #region event handlers
 
         // -- 以下、Windows Messageのイベントハンドラ
@@ -246,6 +284,9 @@ namespace MyShogi.View.Win2D
 
                 // メニューもGameServerが初期化されているタイミングで更新できていなかったのでupdate
                 UpdateMenuItems();
+
+                // コマンドラインでファイルの読み込みが予約されていればそれを実行する。
+                CommandLineCheck();
             }
 
             // 自分が保有しているScreenがdirtyになっていることを検知したら、Invalidateを呼び出す。
@@ -808,7 +849,7 @@ namespace MyShogi.View.Win2D
             }
             catch
             {
-                TheApp.app.MessageShow("ファイル読み込みエラー", MessageShowType.Error);
+                TheApp.app.MessageShow($"ファイル読み込みエラー。ファイル {path} の読み込みに失敗しました。", MessageShowType.Error);
             }
         }
 

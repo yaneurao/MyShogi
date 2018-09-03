@@ -10,7 +10,7 @@ namespace MyShogi
         /// アプリケーションのメイン エントリ ポイントです。
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             // モデルの初期化一式
             Model.Shogi.Core.Initializer.Init();

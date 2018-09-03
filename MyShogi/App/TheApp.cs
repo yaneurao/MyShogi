@@ -44,7 +44,7 @@ namespace MyShogi.App
             // 開発時に例外がここでcatchされてしまうとデバッグがしにくいので
             // 開発時にはこちらを使う。(といいかも)
             DevTest();
-            Main();
+            Main(args);
 #endif
         }
 
@@ -186,7 +186,7 @@ namespace MyShogi.App
                 if (gameServer != null)
                     gameServer.Dispose();
             });
-
+            
             // -- メインダイアログを生成して、アプリの開始
 
             Application.Run(mainDialog);
