@@ -134,7 +134,7 @@ namespace MyShogiUpdater
                         }
                     } catch (Exception ex)
                     {
-                        progress_message($"{ex.Message}\r\nファイルのコピーに失敗しています。ファイル名 = {target}\r\nアップデートを中断しました。アンチウイルスソフトにファイルコピーがブロックされている可能性があります。");
+                        progress_message($"{ex.Message}\r\nファイルのコピーに失敗しています。ファイル名 = {target}\r\nアップデートを中断しました。セキュリティソフト等にファイルコピーがブロックされている可能性があります。");
                         return;
                     }
                 }
@@ -144,7 +144,7 @@ namespace MyShogiUpdater
 
             } catch (Exception ex)
             {
-                progress_message($"アップデートに失敗しました。アンチウイルスソフトにファイルコピーがブロックされている可能性があります。\r\n{ ex.Message }\r\n{ ex.StackTrace }");
+                progress_message($"アップデートに失敗しました。セキュリティソフト等にファイルコピーがブロックされている可能性があります。\r\n{ ex.Message }\r\n{ ex.StackTrace }");
             }
         }
 
