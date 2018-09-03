@@ -210,9 +210,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var win_rate = WinCount / (float)total;
                 var rating = -400 * Math.Log(1 / win_rate - 1, 10);
 
-                return $"{WinCount}-{LoseCount}-{DrawCount} ({100*win_rate:f1}% R{rating:f1})";
+                return $"{WinCount}-{DrawCount}-{LoseCount} ({100*win_rate:f1}% R{rating:f1})";
             }
-            return $"{WinCount}-{LoseCount}-{DrawCount}";
+            return $"{WinCount}-{DrawCount}-{LoseCount}";
         }
 
         /// <summary>
