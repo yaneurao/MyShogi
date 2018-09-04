@@ -501,7 +501,17 @@ namespace MyShogi.App
         /// </summary>
         [DataMember]
         public MostRecentUsedFiles MRUF { get; set; } = new MostRecentUsedFiles();
-        
+
+        /// <summary>
+        /// 棋譜ウインドウはフローティングモードであるのか。
+        /// </summary>
+        [DataMember]
+        public bool KifuWindowFloating
+        {
+            get { return GetValue<bool>("KifuWindowFloating"); }
+            set { SetValue<bool>("KifuWindowFloating", value); }
+        }
+
         /// ← 細かい設定は、ここに追加していく
 
         /// <summary>

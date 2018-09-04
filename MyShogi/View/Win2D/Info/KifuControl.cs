@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
@@ -73,6 +74,16 @@ namespace MyShogi.View.Win2D
                 get { return GetValue<bool>("FloatingWindowMode"); }
                 set { SetValue<bool>("FloatingWindowMode", value); }
             }
+
+            /// <summary>
+            /// LocalGameServer.InTheGameModeが変更されたときに呼び出されるハンドラ
+            /// 「本譜」ボタン、「次分岐」ボタンなどを非表示/表示を切り替える。
+            /// </summary>
+            public bool InTheGame
+            {
+                get { return GetValue<bool>("InTheGame"); }
+                set { SetValue<bool>("InTheGame", value); }
+            }
         }
 
         public KifuControlViewModel ViewModel = new KifuControlViewModel();
@@ -87,6 +98,7 @@ namespace MyShogi.View.Win2D
             ViewModel.AddPropertyChangedHandler("KifuList", KifuListChanged, parent);
             ViewModel.AddPropertyChangedHandler("KifuListAdded", KifuListAdded, parent);
             ViewModel.AddPropertyChangedHandler("KifuListRemoved", KifuListRemoved, parent);
+            ViewModel.AddPropertyChangedHandler("InTheGame", InTheGameChanged , parent);
         }
 
         ///// <summary>
@@ -119,13 +131,17 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// [UI thread] : 内部状態が変わったのでボタンの有効、無効を更新するためのハンドラ。
+        /// 
+        /// ViewModel.InTheGameが変更になった時に呼び出される。
         /// </summary>
         /// <param name="inTheGame"></param>
-        public void UpdateButtonState(bool inTheGame)
+        private void UpdateButtonLocation()
         {
             // 最小化したのかな？
             if (Width == 0 || Height == 0 || listBox1.ClientSize.Width == 0)
                 return;
+
+            var inTheGame = ViewModel.InTheGame;
 
             // 非表示だったものを表示したのであれば、これによって棋譜が隠れてしまう可能性があるので注意。
             var needScroll = !button1.Visible && !inTheGame;
@@ -170,27 +186,32 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 最後にOnResize()を呼び出された時のinTheGameの値
+        /// ViewModel.InTheGameの値が変更になったときに呼び出されるハンドラ
         /// </summary>
-        private bool lastInTheGame;
+        /// <param name="args"></param>
+        private void InTheGameChanged(PropertyChangedEventArgs args)
+        {
+            UpdateButtonState();
+        }
 
         /// <summary>
         /// [UI thread] : 親ウインドウがリサイズされた時にそれに収まるようにこのコントロール内の文字の大きさを調整する。
+        /// (MainWindowに埋め込んでいるときに、リサイズに対して呼び出される)
         /// 
         /// inTheGame == trueのときはゲーム中なので「本譜」ボタンと「次分岐」ボタンを表示しない。
         /// </summary>
         /// <param name="scale"></param>
-        public void OnResize(double scale, bool inTheGame)
+        public void OnResize(double scale)
         {
+            // MainWindowに埋め込んでいないなら呼び出してはならない。
+            Debug.Assert(!ViewModel.FloatingWindowMode);
+
             // 最小化したのかな？
             if (Width == 0 || Height == 0 || listBox1.ClientSize.Width == 0)
                 return;
 
-            lastInTheGame = inTheGame;
-            if (ViewModel.FloatingWindowMode)
-                return;
-
-            UpdateButtonState(inTheGame);
+            // リサイズしたので連動してボタンの位置が変わる。
+            UpdateButtonLocation();
 
             // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
             var w_rate = 1.0f + TheApp.app.Config.KifuWindowWidthType * 0.25f; // 横幅をどれだけ引き伸ばすのか
@@ -449,7 +470,7 @@ namespace MyShogi.View.Win2D
                 FontUtility.SetFont(button2, font2);
                 FontUtility.SetFont(button3, font2);
 
-                UpdateButtonState(lastInTheGame);
+                UpdateButtonLocation();
             }
         }
 

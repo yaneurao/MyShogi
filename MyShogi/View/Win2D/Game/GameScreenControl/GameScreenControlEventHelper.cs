@@ -175,7 +175,7 @@ namespace MyShogi.View.Win2D
         public void InTheGameChanged(PropertyChangedEventArgs args)
         {
             TurnChanged(args);
-            kifuControl.UpdateButtonState((bool)args.value /* == inTheGame */); // 棋譜ボタンが変化するかもなので
+            kifuControl.ViewModel.RaisePropertyChanged("InTheGame", args); // 棋譜ボタンが変化するかもなので
 
             // Tooltipの◁▷本譜ボタンの状態更新
             UpdateTooltipButtons2();
@@ -273,24 +273,20 @@ namespace MyShogi.View.Win2D
         public void ResizeKifuControl()
         {
             var kifu = kifuControl;
+            if (!kifu.ViewModel.FloatingWindowMode)
+            {
+                // 棋譜ウィンドウの横幅の倍率
+                float w_rate = TheApp.app.Config.KifuWindowWidthType * 0.25f;
+                // 棋譜ウィンドウを横にどれだけ延ばすのか
+                int w_offset = (int)(w_rate * 265);
 
-            var inTheGame = gameServer!= null && gameServer.InTheGame;
+                var point = new Point(229 - w_offset , 600);
+                kifu.Location = Affine(point);
 
-            // 棋譜ウィンドウの横幅の倍率
-            float w_rate = TheApp.app.Config.KifuWindowWidthType * 0.25f;
-            // 棋譜ウィンドウを横にどれだけ延ばすのか
-            int w_offset = (int)(w_rate * 265);
-
-            var point = new Point(229 - w_offset , 600);
-            kifu.Location = Affine(point);
-
-            var size = new Size( 265 + w_offset , 423);
-            kifu.Size = AffineScale(size);
-
-            kifu.OnResize(AffineMatrix.Scale.X, inTheGame);
-
-            // kifuControl内の文字サイズも変更しないといけない。
-            // あとで考える。
+                var size = new Size(265 + w_offset, 423);
+                kifu.Size = AffineScale(size);
+                kifu.OnResize(AffineMatrix.Scale.X);
+            }
 
             // 駒台が縦長のモードのときは、このコントロールは非表示にする。
             // (何か別の方法で描画する)
@@ -1014,13 +1010,14 @@ namespace MyShogi.View.Win2D
             if (lastClickedSq == sq && dragged)
             {
                 // クリックするときにマウスが微小に動き、ドラッグ動作になっているだけだと思われるので、
-                // このクリックを無効化する。
+                // 操作性の観点から、このクリックはすべて無効化されるべき。
 
             } else
             {
                 OnBoardClick(sq);
             }
 
+            // クリックの起点なので升を記録しておく。
             if (!dragged)
                 lastClickedSq = sq;
 

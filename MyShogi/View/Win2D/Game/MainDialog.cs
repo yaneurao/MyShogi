@@ -69,7 +69,17 @@ namespace MyShogi.View.Win2D
             // -- ViewModelのハンドラの設定
 
             ViewModel.AddPropertyChangedHandler("LastFileName", (_) => UpdateMenuItems() );
-        }
+
+            // -- それ以外のハンドラの設定
+
+            var config = TheApp.app.Config;
+            config.AddPropertyChangedHandler("KifuWindowFloating", UpdateKifuWindowFloating );
+
+            // 棋譜ウインドウのfloating状態を起動時に復元する。
+            //config.RaisePropertyChanged("KifuWindowFloating", config.KifuWindowFloating);
+            // →　このタイミングで行うと、メインウインドウより先に棋譜ウインドウが出て気分が悪い。first_tickの処理で行うようにする。
+
+　        }
 
         #endregion
 
@@ -219,6 +229,31 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        /// <summary>
+        /// 棋譜ウインドウをfloating modeにする/戻す
+        ///
+        /// TheApp.app.Config.KifuWindowFloatingの値を反映する。
+        /// </summary>
+        private void UpdateKifuWindowFloating(PropertyChangedEventArgs args)
+        {
+            var floating = (bool)args.value;
+            kifuControl.ViewModel.FloatingWindowMode = floating;
+            if (floating)
+            {
+                kifuDockWindow.ViewModel.Caption = "棋譜ウインドウ";
+                gameScreenControl1.Controls.Remove(kifuControl);
+                kifuDockWindow.AddControl(kifuControl);
+                kifuDockWindow.Show(this);
+            }
+            else
+            {
+                kifuDockWindow.RemoveControl();
+                kifuDockWindow.Visible = false;
+                gameScreenControl1.Controls.Add(kifuControl);
+                gameScreenControl1.ResizeKifuControl(); // フォームに埋めたあとリサイズする。
+            }
+        }
+
         #endregion
 
         #region privates
@@ -287,6 +322,10 @@ namespace MyShogi.View.Win2D
 
                 // コマンドラインでファイルの読み込みが予約されていればそれを実行する。
                 CommandLineCheck();
+
+                // 棋譜ウインドウのfloating状態を起動時に復元する。
+                var config = TheApp.app.Config;
+                config.RaisePropertyChanged("KifuWindowFloating", config.KifuWindowFloating);
             }
 
             // 自分が保有しているScreenがdirtyになっていることを検知したら、Invalidateを呼び出す。
@@ -2074,21 +2113,14 @@ namespace MyShogi.View.Win2D
                             }
                         }
 
-#if false // 作業中
                         { // フローティング
                             var item = new ToolStripMenuItem();
                             item.Text = "フロート(&F)"; // Floating window mode
-                            item.Click += (sender, e) => {
-                                // あとでフロート解除のコードをちゃんと書く。
-                                kifuControl.ViewModel.FloatingWindowMode = true;
-                                kifuDockWindow.ViewModel.Caption = "棋譜ウインドウ";
-                                gameScreenControl1.Controls.Remove(kifuControl);
-                                kifuDockWindow.AddControl(kifuControl);
-                                kifuDockWindow.Show(this);
-                            };
+                            item.Checked = config.KifuWindowFloating;
+                            item.Click += (sender, e) => { config.KifuWindowFloating ^= true; };
                             item_.DropDownItems.Add(item);
                         }
-#endif
+
                     }
 
                     item_window.DropDownItems.Add(new ToolStripSeparator());
