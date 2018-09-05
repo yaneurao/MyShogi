@@ -136,7 +136,8 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("ConsiderationWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl, mainDialog);
-            Config.AddPropertyChangedHandler("KifuWindowFloating", mainDialog.UpdateMenuItems, mainDialog);
+
+            Config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
             
             // -- ロギング用のハンドラをセット
 

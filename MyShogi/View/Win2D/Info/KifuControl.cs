@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Tool;
 
 namespace MyShogi.View.Win2D
 {
@@ -65,14 +66,12 @@ namespace MyShogi.View.Win2D
             public object EraseBranchButtonClicked;
 
             /// <summary>
-            /// この棋譜コントロールをフロートモードで用いる。
-            /// 
-            /// ※　他のFormにdockして用いるモードです。
+            /// フローティングモードなのかなどを表す。
             /// </summary>
-            public bool FloatingWindowMode
+            public DockState DockState
             {
-                get { return GetValue<bool>("FloatingWindowMode"); }
-                set { SetValue<bool>("FloatingWindowMode", value); }
+                get { return GetValue<DockState>("DockState"); }
+                set { SetValue<DockState>("DockState", value); }
             }
 
             /// <summary>
@@ -157,7 +156,7 @@ namespace MyShogi.View.Win2D
             int bh = inTheGame ? 0 : Height * 8 / 100;
 
             // フローティングモードなら23固定。
-            if (ViewModel.FloatingWindowMode)
+            if (ViewModel.DockState != DockState.InTheMainWindow)
                 bh = 23;
 
             int x = Width / 3;
@@ -204,7 +203,7 @@ namespace MyShogi.View.Win2D
         public void OnResize(double scale)
         {
             // MainWindowに埋め込んでいないなら呼び出してはならない。
-            Debug.Assert(!ViewModel.FloatingWindowMode);
+            Debug.Assert(ViewModel.DockState == DockState.InTheMainWindow);
 
             // 最小化したのかな？
             if (Width == 0 || Height == 0 || listBox1.ClientSize.Width == 0)
@@ -460,7 +459,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void KifuControl_SizeChanged(object sender, EventArgs e)
         {
-            if (ViewModel.FloatingWindowMode)
+            if (ViewModel.DockState != DockState.InTheMainWindow)
             {
                 var font = new Font("MS Gothic", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
                 FontUtility.SetFont(listBox1, font);

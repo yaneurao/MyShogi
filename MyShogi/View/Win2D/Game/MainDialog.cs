@@ -74,7 +74,7 @@ namespace MyShogi.View.Win2D
             // -- それ以外のハンドラの設定
 
             var config = TheApp.app.Config;
-            config.AddPropertyChangedHandler("KifuWindowFloating", UpdateKifuWindowFloating );
+            config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", UpdateKifuWindowDockState );
 
             // 棋譜ウインドウのfloating状態を起動時に復元する。
             //config.RaisePropertyChanged("KifuWindowFloating", config.KifuWindowFloating);
@@ -232,14 +232,12 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// 棋譜ウインドウをfloating modeにする/戻す
-        ///
-        /// TheApp.app.Config.KifuWindowFloatingの値を反映する。
         /// </summary>
-        private void UpdateKifuWindowFloating(PropertyChangedEventArgs args)
+        private void UpdateKifuWindowDockState(PropertyChangedEventArgs args)
         {
-            var floating = (bool)args.value;
-            kifuControl.ViewModel.FloatingWindowMode = floating;
-            if (floating)
+            var dockState = (DockState)args.value;
+            kifuControl.ViewModel.DockState = dockState;
+            if (dockState != DockState.InTheMainWindow )
             {
                 kifuDockWindow.ViewModel.Caption = "棋譜ウインドウ";
                 gameScreenControl1.Controls.Remove(kifuControl);
@@ -326,7 +324,7 @@ namespace MyShogi.View.Win2D
 
                 // 棋譜ウインドウのfloating状態を起動時に復元する。
                 var config = TheApp.app.Config;
-                config.RaisePropertyChanged("KifuWindowFloating", config.KifuWindowFloating);
+                config.KifuWindowDockManager.RaisePropertyChanged("DockState", config.KifuWindowDockManager.DockState);
             }
 
             // 自分が保有しているScreenがdirtyになっていることを検知したら、Invalidateを呼び出す。
@@ -2115,12 +2113,36 @@ namespace MyShogi.View.Win2D
                             }
                         }
 
-                        { // フローティング
+                        { // フローティングの状態
                             var item = new ToolStripMenuItem();
-                            item.Text = "フロート(&F)"; // Floating window mode
-                            item.Checked = config.KifuWindowFloating;
-                            item.Click += (sender, e) => { config.KifuWindowFloating ^= true; };
+                            item.Text = "表示位置(&F)"; // Floating window mode
                             item_.DropDownItems.Add(item);
+
+                            {
+                                var item1 = new ToolStripMenuItem();
+                                item1.Text = "メインウインドウに埋め込む(EmbeddedMode)";
+                                item1.Checked = config.KifuWindowDockManager.DockState == DockState.InTheMainWindow;
+                                item1.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.InTheMainWindow; };
+                                item.DropDownItems.Add(item1);
+
+                                var item2 = new ToolStripMenuItem();
+                                item2.Text = "メインウインドウから浮かせ、相対位置を常に保つ(DockMode)";
+                                item2.Checked = config.KifuWindowDockManager.DockState == DockState.DockedToMainWindow;
+                                item2.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.DockedToMainWindow; };
+                                item.DropDownItems.Add(item2);
+
+                                var item3 = new ToolStripMenuItem();
+                                item3.Text = "メインウインドウから浮かせ、メインウインドウの左に配置する(FollowMode)";
+                                item3.Checked = config.KifuWindowDockManager.DockState == DockState.FollowToMainWindow;
+                                item3.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.FollowToMainWindow; };
+                                item.DropDownItems.Add(item3);
+
+                                var item4 = new ToolStripMenuItem();
+                                item4.Text = "メインウインドウから浮かせ、自由に配置する(FloatingMode)";
+                                item4.Checked = config.KifuWindowDockManager.DockState == DockState.FloatingMode;
+                                item4.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.FloatingMode; };
+                                item.DropDownItems.Add(item4);
+                            }
                         }
 
                     }

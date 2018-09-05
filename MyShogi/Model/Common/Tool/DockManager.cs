@@ -63,10 +63,10 @@ namespace MyShogi.Model.Common.Tool
         /// Dock状態
         /// </summary>
         [DataMember]
-        public DockState State
+        public DockState DockState
         {
-            get { return GetValue<DockState>("State"); }
-            set { SetValue("State", value); }
+            get { return GetValue<DockState>("DockState"); }
+            set { SetValue("DockState", value); }
         }
 
     }

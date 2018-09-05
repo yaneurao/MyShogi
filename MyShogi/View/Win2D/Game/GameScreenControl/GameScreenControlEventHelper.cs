@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Tool;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.LocalServer;
@@ -273,7 +274,7 @@ namespace MyShogi.View.Win2D
         public void ResizeKifuControl()
         {
             var kifu = kifuControl;
-            if (!kifu.ViewModel.FloatingWindowMode)
+            if (kifu.ViewModel.DockState == DockState.InTheMainWindow)
             {
                 // 棋譜ウィンドウの横幅の倍率
                 float w_rate = TheApp.app.Config.KifuWindowWidthType * 0.25f;
