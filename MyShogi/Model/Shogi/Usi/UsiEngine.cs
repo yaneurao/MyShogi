@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
-using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Common.String;
+using MyShogi.Model.Common.Tool;
 using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Usi

@@ -11,6 +11,7 @@ using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.App;
 using System.Diagnostics;
+using MyShogi.Model.Common.Extensions;
 
 namespace MyShogi.View.Win2D
 {

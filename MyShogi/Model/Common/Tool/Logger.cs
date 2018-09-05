@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.Model.Common.Tool
 {
     /// <summary>
     /// ログを出力するときに、その出力される情報の種別

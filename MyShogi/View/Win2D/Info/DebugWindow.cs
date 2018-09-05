@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Common.Tool;
 
 namespace MyShogi.View.Win2D
 {

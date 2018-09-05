@@ -1,6 +1,6 @@
-﻿using MyShogi.Model.Common.Utility;
-using System;
+﻿using System;
 using System.Diagnostics;
+using MyShogi.Model.Common.Tool;
 
 namespace MyShogi.Model.Common.Process
 {

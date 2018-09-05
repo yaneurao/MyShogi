@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using MyShogi.App;
+using MyShogi.Model.Common.String;
 using MyShogi.Model.Common.Utility;
 
 namespace MyShogi.Model.Shogi.Data

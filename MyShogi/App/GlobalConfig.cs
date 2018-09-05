@@ -1,10 +1,10 @@
 ﻿using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
-using MyShogi.Model.Common.Data;
+using MyShogi.Model.Common.String;
 using MyShogi.Model.Common.ObjectModel;
-using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.LocalServer;
+using MyShogi.Model.Common.Tool;
 
 namespace MyShogi.App
 {

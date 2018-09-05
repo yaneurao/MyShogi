@@ -1,7 +1,7 @@
 ﻿using System.Xml;
 using System.Runtime.Serialization;
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.Model.Common.String
 {
     /// <summary>
     /// ファイルにSerialize/ファイルからDeserializeするヘルパークラス

@@ -1,12 +1,14 @@
 ﻿// IEや Edgeを無視する
 // #define NeglectEdge
-using System;
 using System.Collections.Generic;
 using MyShogi.Model.Shogi.Core;
 
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.Model.Shogi.Converter
 {
+
+    // SVG形式で出力のために必要なクラス群
+
     /// <summary>
     /// stringにインデント量を付与した構造体
     /// </summary>
@@ -110,7 +112,7 @@ namespace MyShogi.Model.Common.Utility
     /// <summary>
     /// Position(局面)の付随情報を格納する構造体
     /// </summary>
-    public class Svg
+    public class SvgUtility
     {
         /// <summary>
         /// svgのヘッダーとフッターを追加します

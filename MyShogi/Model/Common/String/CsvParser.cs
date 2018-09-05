@@ -4,8 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using MyShogi.Model.Common.Extensions;
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.Model.Common.String
 {
     /// <summary>
     /// CSVなどをparseするクラス。

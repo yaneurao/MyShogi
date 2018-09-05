@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
 using System.Collections.Generic;
-using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.Model.Common.String;
 
 namespace MyShogi.Model.Shogi.Kifu
 {

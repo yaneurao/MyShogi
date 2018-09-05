@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Tool;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Resource.Sounds;

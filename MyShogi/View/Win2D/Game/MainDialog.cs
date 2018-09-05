@@ -1,9 +1,10 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.String;
+using MyShogi.Model.Common.Tool;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
@@ -1278,7 +1279,8 @@ namespace MyShogi.View.Win2D
                     {
                         var mruf = TheApp.app.Config.MRUF;
                         ToolStripMenuItem sub_item = null;
-                        for (int i = 0; i < mruf.Files.Count; ++i)
+                        var count = mruf.Files == null ? 0 : mruf.Files.Count;
+                        for (int i = 0; i < count ; ++i)
                         {
                             var display_name = mruf.GetDisplayFileName(i);
                             if (display_name == null)

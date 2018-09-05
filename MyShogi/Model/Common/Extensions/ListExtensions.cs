@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.Model.Common.Extensions
 {
     /// <summary>
     /// generic classのListのextension methods

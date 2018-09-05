@@ -2,6 +2,20 @@
 // 棋譜ウインドウに総消費時間の表示
 
 
+■　2018/09/05
+
+
+- 棋譜ウインドウや検討ウインドウのフローティングを管理するためのクラスを用意。
+  - DockManager.cs
+  - Model.Common.Utilityにあったファイル整理
+    単発で(使いたいときに1度呼び出すだけで)使うものは、Common.Utility
+    長いライフタイムで使うものは、Common.Tool
+    文字列を処理する関係は、Common.String
+    拡張メソッド関連は、Common.Extensions
+    に移動させる。
+  - MostRecentUsedFilesにnull check追加。
+
+
 ■　2018/09/04
 
 

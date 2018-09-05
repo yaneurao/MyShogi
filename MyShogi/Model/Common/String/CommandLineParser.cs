@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.Model.Common.String
 {
     /// <summary>
     /// コマンドラインの解析用ヘルパ

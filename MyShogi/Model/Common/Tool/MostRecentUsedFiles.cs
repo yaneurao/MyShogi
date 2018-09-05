@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace MyShogi.Model.Common.Data
+namespace MyShogi.Model.Common.Tool
 {
     /// <summary>
     /// 最近使ったファイルの管理用
@@ -22,7 +22,7 @@ namespace MyShogi.Model.Common.Data
         /// <param name="file_num"></param>
         public MostRecentUsedFiles()
         {
-            Files = new List<string>(file_num);
+            NullCheckFiles();
         }
 
         /// <summary>
@@ -36,6 +36,8 @@ namespace MyShogi.Model.Common.Data
         /// <param name="path"></param>
         public bool UseFile(string path)
         {
+            NullCheckFiles();
+
             var index = Files.FindIndex(_ => _ == path);
             if (index == 0)
                 return false; // 先頭にあるから挿入も並び替え不要
@@ -67,6 +69,8 @@ namespace MyShogi.Model.Common.Data
         /// <returns></returns>
         public string GetDisplayFileName(int index)
         {
+            NullCheckFiles();
+
             if (Files.Count <= index)
                 return null;
 
@@ -108,5 +112,14 @@ namespace MyShogi.Model.Common.Data
         /// </summary>
         [DataMember]
         public List<string> Files;
+
+        /// <summary>
+        /// Deserializeしたときにnullが突っ込まれるパターンがあるのでList使うの注意。
+        /// </summary>
+        private void NullCheckFiles()
+        {
+            if (Files == null)
+                Files = new List<string>(file_num);
+        }
     }
 }

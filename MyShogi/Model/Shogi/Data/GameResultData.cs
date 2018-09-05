@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MyShogi.Model.Common.Extensions;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 

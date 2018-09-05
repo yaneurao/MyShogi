@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
+using MyShogi.Model.Common.String;
 using MyShogi.Model.Common.Utility;
 
 namespace MyShogi.Model.Shogi.EngineDefine

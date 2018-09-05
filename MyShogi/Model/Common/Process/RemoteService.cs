@@ -1,4 +1,5 @@
-﻿using MyShogi.Model.Common.Utility;
+﻿using MyShogi.Model.Common.Tool;
+using MyShogi.Model.Common.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;

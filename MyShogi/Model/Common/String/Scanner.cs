@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.Model.Common.String
 {
     /// <summary>
     /// 解析失敗時に投げられる例外です。

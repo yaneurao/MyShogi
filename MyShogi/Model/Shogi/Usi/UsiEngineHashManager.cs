@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common;
+using MyShogi.Model.Common.Tool;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;

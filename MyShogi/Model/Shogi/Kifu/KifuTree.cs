@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using MyShogi.App;
+using MyShogi.Model.Common.Extensions;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Converter;

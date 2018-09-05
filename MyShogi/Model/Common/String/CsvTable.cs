@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.Model.Common.String
 {
     /// <summary>
     /// Csvファイルのメモリ上の実体

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Common.String;
 
 namespace MyShogi.Model.Shogi.Usi
 {
