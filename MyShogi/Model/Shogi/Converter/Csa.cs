@@ -266,7 +266,10 @@ namespace MyShogi.Model.Shogi.Converter
                     }
                     continue;
                 }
-                Match bMatch = bRegex.Match(line);
+                // 初期局面の行末の空白を削ってCSA形式棋譜を出力してしまう悪いツールが存在するので、一律に末尾に半角空白を加えてからパースを行う
+                // 「」
+                // 悪い例: 棋譜ウォーズ管理ツール ver0.21 (2018/09/04) http://blackduckn.s602.xrea.com/kifudownloader.html
+                Match bMatch = bRegex.Match(line + " ");
                 if (bMatch.Success)
                 {
                     Rank r = (Rank)(bMatch.Groups[0].Value[1] - '1');

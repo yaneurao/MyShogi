@@ -78,9 +78,24 @@ namespace MyShogi.Model.Shogi.Kifu
                     break;
                 }
                 // マルチステートメント検出
-                string[] sublines = line.Split(',');
-                foreach (var subline in sublines)
+                var sublineend = 0;
+                for (var sublinepos = 0; sublinepos < line.Length; sublinepos = sublineend + 1)
                 {
+                    sublineend = line.IndexOf(',', sublinepos);
+                    if (sublineend < 0) sublineend = line.Length;
+                    var subline = line.Substring(sublinepos, sublineend - sublinepos);
+                    // 空白
+                    if (string.IsNullOrWhiteSpace(subline))
+                    {
+                        continue;
+                    }
+                    // コメント文
+                    if (subline.StartsWith("'"))
+                    {
+                        // マルチステートメントでコメント文が存在する場合は、","で区切らず行末まで取り込む
+                        Tree.currentNode.comment += line.Substring(sublinepos + 1).TrimEnd('\r', '\n') + "\n";
+                        break;
+                    }
                     if (subline.StartsWith("$"))
                     {
                         // 棋譜ヘッダ
