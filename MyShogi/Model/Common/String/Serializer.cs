@@ -11,12 +11,25 @@ namespace MyShogi.Model.Common.String
     /// ただし、DataContractをつけると型に厳しくなるのでNotifyObject派生クラスがシリアライズできなくなる。
     /// DataContractをつけるメリットはList型,Dictionary型などが使えることだが、単なる配列しか使っていないならば
     /// つけなくとも問題ない。
+    ///
+    /// .NETのDataContractSerializer()を用いているのだが、これが仕様的に、とても使いにくい。
+    /// 自作したほうがいいように思う。
     /// </summary>
     public static class Serializer
     {
         /// <summary>
         /// ファイルにオブジェクトをSerializeする。
         /// DataContractSerializerを用いる。
+        /// 
+        /// 注意点)
+        /// ・配列を用いるクラスにはDataMember属性が必要。配列を用いないならDataMember属性は実は不要。(あっても良い)
+        /// ・クラスのほうにDataMember属性をつけるか、使用するときにその変数に対してDataMember属性をつけるか、どちらでも効果は同じ。
+        /// ・ int[] a = new {1,2,3} のようにしてあるとき、一度目のdeserializeではこの要素が存在しないので{1,2,3}を持つ配列になるが、
+        /// 　これをserializeしたのちに、a = new { 2,3 } のように書き換えて、そのあとdeserializeしてもa = { 1,2,3 }になるので注意。
+        /// 
+        /// ・Listクラスを用いるクラスにはDataContract属性が必要。
+        /// ・このとき、OnDeserialize()を用意して、そのなかでnew List()をしてlistの確保が必要。(Deserializeされたときに
+        ///   コレクションがなければnullになりうるので)　このOnDeserialize()は、自前で呼び出す必要がある。
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="filename"></param>

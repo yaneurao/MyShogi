@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Diagnostics;
 
 namespace MyShogi.Model.Common.Tool
 {
@@ -17,15 +18,6 @@ namespace MyShogi.Model.Common.Tool
         const int file_num = 40;
 
         /// <summary>
-        /// file_num : このクラスが保持するファイルの数
-        /// </summary>
-        /// <param name="file_num"></param>
-        public MostRecentUsedFiles()
-        {
-            NullCheckFiles();
-        }
-
-        /// <summary>
         /// このファイルを使ったので、保持しているFilesを並び替える。
         /// Files[0]に来る。
         /// 
@@ -36,7 +28,7 @@ namespace MyShogi.Model.Common.Tool
         /// <param name="path"></param>
         public bool UseFile(string path)
         {
-            NullCheckFiles();
+            Debug.Assert(Files != null);
 
             var index = Files.FindIndex(_ => _ == path);
             if (index == 0)
@@ -69,7 +61,7 @@ namespace MyShogi.Model.Common.Tool
         /// <returns></returns>
         public string GetDisplayFileName(int index)
         {
-            NullCheckFiles();
+            Debug.Assert(Files != null);
 
             if (Files.Count <= index)
                 return null;
@@ -107,19 +99,22 @@ namespace MyShogi.Model.Common.Tool
         }
 
         /// <summary>
-        /// 保存されているファイル
-        /// (未使用だとnullがありうる)
-        /// </summary>
-        [DataMember]
-        public List<string> Files;
-
-        /// <summary>
         /// Deserializeしたときにnullが突っ込まれるパターンがあるのでList使うの注意。
+        /// Deserializeしたときにこのメソッドを呼び出すこと。
         /// </summary>
-        private void NullCheckFiles()
+        public void OnDeserialize()
         {
             if (Files == null)
                 Files = new List<string>(file_num);
         }
+
+        /// <summary>
+        /// 保存されているファイル
+        ///
+        /// DeserializeしたときにOnLoad()を呼び出すことを強制してあるので、nullにはならない。
+        /// </summary>
+        [DataMember]
+        public List<string> Files;
+
     }
 }

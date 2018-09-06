@@ -276,22 +276,45 @@ namespace MyShogi.View.Win2D
             var kifu = kifuControl;
             if (kifu.ViewModel.DockState == DockState.InTheMainWindow)
             {
-                // 棋譜ウィンドウの横幅の倍率
-                float w_rate = TheApp.app.Config.KifuWindowWidthType * 0.25f;
-                // 棋譜ウィンドウを横にどれだけ延ばすのか
-                int w_offset = (int)(w_rate * 265);
-
-                var point = new Point(229 - w_offset , 600);
-                kifu.Location = Affine(point);
-
-                var size = new Size(265 + w_offset, 423);
-                kifu.Size = AffineScale(size);
+                kifu.Size = CalcKifuWindowSize();
+                kifu.Location = CalcKifuWindowLocation();
                 kifu.OnResize(AffineMatrix.Scale.X);
             }
 
             // 駒台が縦長のモードのときは、このコントロールは非表示にする。
             // (何か別の方法で描画する)
             UpdateKifuControlVisibility();
+        }
+
+        /// <summary>
+        /// 棋譜ウインドウの表示サイズを計算して返す。
+        /// </summary>
+        /// <returns></returns>
+        public Size CalcKifuWindowSize()
+        {
+            // 棋譜ウィンドウの横幅の倍率
+            float w_rate = TheApp.app.Config.KifuWindowWidthType * 0.25f;
+            // 棋譜ウィンドウを横にどれだけ延ばすのか
+            int w_offset = (int)(w_rate * 265);
+
+            var size = new Size(265 + w_offset, 423);
+            return AffineScale(size);
+        }
+
+        /// <summary>
+        /// 棋譜ウインドウの位置を計算して返す。
+        /// </summary>
+        /// <returns></returns>
+        public Point CalcKifuWindowLocation()
+        {
+            // 棋譜ウィンドウの横幅の倍率
+            float w_rate = TheApp.app.Config.KifuWindowWidthType * 0.25f;
+            // 棋譜ウィンドウを横にどれだけ延ばすのか
+            int w_offset = (int)(w_rate * 265);
+
+            var point = new Point(229 - w_offset, 600);
+            var kifu = kifuControl;
+            return Affine(point);
         }
 
         /// <summary>

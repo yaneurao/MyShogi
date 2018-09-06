@@ -96,7 +96,15 @@ namespace MyShogi.App
             }
 
             // -- その他
+
             // GloablConfigに持たせてはいるが、実際は、デシリアライズされたものを使用しないフラグ群。
+
+            // List<T>が空の状態でDeserializeすると何かの条件でnullが突っ込まれたりするのでそれに対処。
+            // List<T>をメンバーとして持つクラスにはOnDeserialize()を用意して、これを呼び出すことを強制する。
+
+            {
+                MRUF.OnDeserialize();
+            }
 
         }
 

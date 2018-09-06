@@ -41,10 +41,13 @@ namespace MyShogi.View.Win2D
         /// <param name="control"></param>
         public void AddControl(Control control)
         {
-            ViewModel.Control = control;
-            Controls.Add(control);
-            oldDockStyle = control.Dock;
-            control.Dock = DockStyle.Fill;
+            if (ViewModel.Control != control)
+            {
+                ViewModel.Control = control;
+                Controls.Add(control);
+                oldDockStyle = control.Dock;
+                control.Dock = DockStyle.Fill;
+            }
         }
 
         /// <summary>
