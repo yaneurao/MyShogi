@@ -870,6 +870,7 @@ namespace MyShogi.View.Win2D
                     e.Cancel = true;
             }
 
+#if false
             // main windowにぶら下げているwindowは存在しないので、本当はこの処理は不要。
             // (main windowが×ボタンで閉じられるときには他のformのFormClosingは呼び出されないため)
             // また、Application.Exit()すると、何故かすべてのformのFormClosingイベントが呼び出されるので、
@@ -878,8 +879,9 @@ namespace MyShogi.View.Win2D
             if (!e.Cancel)
             {
                 // 閉じるのをcancelしないことが確定したので、これにて終了する。
-                TheApp.app.ApplicationExit();
+                TheApp.app.Exiting = true;
             }
+#endif
 
         }
 
