@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Tool;
 
@@ -45,6 +46,11 @@ namespace MyShogi.View.Win2D
             /// これは、AddControl()のときに渡された引数の値がセットされる。
             /// </summary>
             public Form MainForm { get; set; }
+
+            /// <summary>
+            /// Menuを更新して欲しいときに発生する仮想イベント。
+            /// </summary>
+            //public object MenuUpdated { get; set; }
         }
 
         public DockWindowViewModel ViewModel = new DockWindowViewModel();
@@ -54,7 +60,7 @@ namespace MyShogi.View.Win2D
         /// このWindowの上に乗っけるControlを設定する。
         /// </summary>
         /// <param name="control"></param>
-        public void AddControl(Control control , Form mainForm, DockManager dockManager)
+        public void AddControl(Control control, Form mainForm, DockManager dockManager)
         {
             if (ViewModel.Control != control)
             {
@@ -112,6 +118,21 @@ namespace MyShogi.View.Win2D
         private void DockWindow_Move(object sender, System.EventArgs e)
         {
             SaveWindowLocation();
+        }
+
+        private void DockWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!TheApp.app.Exiting)
+            {
+                // cancelして非表示にして隠しておく。
+                e.Cancel = true;
+                Visible = false;
+
+                // 「棋譜ウインドウ」の再表示がメニュー上で選べるようになっていて欲しいので、
+                // メニューの再描画を要求する。
+
+                ViewModel.RaisePropertyChanged("MenuUpdated");
+            }
         }
     }
 }

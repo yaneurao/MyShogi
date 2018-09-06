@@ -138,7 +138,7 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl, mainDialog);
 
             Config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
-            
+
             // -- ロギング用のハンドラをセット
 
             // メモリ上でのロギング

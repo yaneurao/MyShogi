@@ -69,18 +69,23 @@ namespace MyShogi.View.Win2D
 
             // -- ViewModelのハンドラの設定
 
-            ViewModel.AddPropertyChangedHandler("LastFileName", (_) => UpdateMenuItems() );
+            ViewModel.AddPropertyChangedHandler("LastFileName", _ => UpdateMenuItems() );
 
             // -- それ以外のハンドラの設定
 
             var config = TheApp.app.Config;
+            kifuDockWindow = new DockWindow();
+            kifuDockWindow.TopMost = true; // Ownerを設定してしまうと、main windowを×で閉じたときに先にこのFormClosingが呼び出されてしまう。
+            kifuDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
+
             config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", UpdateKifuWindowDockState );
+            config.KifuWindowDockManager.AddPropertyChangedHandler("DockPosition", UpdateKifuWindowDockState);
 
             // 棋譜ウインドウのfloating状態を起動時に復元する。
             //config.RaisePropertyChanged("KifuWindowFloating", config.KifuWindowFloating);
             // →　このタイミングで行うと、メインウインドウより先に棋譜ウインドウが出て気分が悪い。first_tickの処理で行うようにする。
 
-　        }
+        }
 
         #endregion
 
@@ -101,7 +106,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 棋譜ウインドウをフローティングモードで使っているとき用。
         /// </summary>
-        public DockWindow kifuDockWindow { get; set; } = new DockWindow();
+        public DockWindow kifuDockWindow { get; set; }
 
         // -- メニューが生成しうるダイアログ
 
@@ -248,8 +253,9 @@ namespace MyShogi.View.Win2D
                 if (!gameScreenControl1.Controls.Contains(kifuControl))
                     gameScreenControl1.Controls.Add(kifuControl);
                 gameScreenControl1.ResizeKifuControl(); // フォームに埋めたあとリサイズする。
-            } else
-            {
+
+            } else {
+
                 kifuDockWindow.ViewModel.Caption = "棋譜ウインドウ";
                 if (gameScreenControl1.Controls.Contains(kifuControl))
                     gameScreenControl1.Controls.Remove(kifuControl);
@@ -269,15 +275,20 @@ namespace MyShogi.View.Win2D
                     dockManager.LocationOnFloating = pos;
                 }
                     
-                dockManager.InitDockWindowLocation(this,kifuDockWindow,DockPosition.Right);
+                dockManager.InitDockWindowLocation(this,kifuDockWindow);
 
                 if (!kifuDockWindow.Visible)
-                    kifuDockWindow.Show(this);
+                {
+                    kifuControl.Visible = true; // 細長い駒台モードのため非表示にしていたかも知れないので。
+                    kifuDockWindow.Show( /* this */);
+                    // DockWindowは検討ウインドウ同様にFormClosingでe.Cancel = trueにする動作なので、
+                    // ここでmain windowにぶら下げるとmain windowのFormClosingに対して、そちらが先に呼び出されておかしいことになる。
+                }
             }
         }
 
         #endregion
-
+        
         #region privates
 
         /// <summary>
@@ -405,7 +416,7 @@ namespace MyShogi.View.Win2D
             // 棋譜ウインドウも。
             {
                 var dockManager = TheApp.app.Config.KifuWindowDockManager;
-                dockManager.UpdateDockWindowLocation(this, kifuDockWindow , DockPosition.Right);
+                dockManager.UpdateDockWindowLocation(this, kifuDockWindow);
             }
 
         }
@@ -858,6 +869,18 @@ namespace MyShogi.View.Win2D
                     != DialogResult.OK)
                     e.Cancel = true;
             }
+
+            // main windowにぶら下げているwindowは存在しないので、本当はこの処理は不要。
+            // (main windowが×ボタンで閉じられるときには他のformのFormClosingは呼び出されないため)
+            // また、Application.Exit()すると、何故かすべてのformのFormClosingイベントが呼び出されるので、
+            // その回避のためにTheApp.app.Exitingフラグを見てFormClosingのcancelをするかどうか決定する必要があるため、
+            // TheApp.app.Exiting自体は必要。
+            if (!e.Cancel)
+            {
+                // 閉じるのをcancelしないことが確定したので、これにて終了する。
+                TheApp.app.ApplicationExit();
+            }
+
         }
 
         /// <summary>
@@ -904,9 +927,9 @@ namespace MyShogi.View.Win2D
             }
         }
 
-        #endregion
+#endregion
 
-        #region update menu
+#region update menu
 
         /// <summary>
         /// 棋譜ファイルを読み込む。
@@ -2112,33 +2135,63 @@ namespace MyShogi.View.Win2D
 
                         item_window.DropDownItems.Add(item_);
 
+                        {
+                            var item = new ToolStripMenuItem();
+                            item.Text = "再表示(&V)"; // visible // 
+                            item.ShortcutKeys = Keys.Control | Keys.K; // KifuWindow
+                            item.Enabled = !kifuDockWindow.Visible && kifuDockWindow.ViewModel.Control != null;
+                            item.Click += (sender, e) => { kifuDockWindow.Visible = true; };
+                            item_.DropDownItems.Add(item);
+                        }
+
+
                         { // フローティングの状態
                             var item = new ToolStripMenuItem();
                             item.Text = "表示位置(&F)"; // Floating window mode
                             item_.DropDownItems.Add(item);
 
                             {
+                                var dock = config.KifuWindowDockManager;
+
                                 var item1 = new ToolStripMenuItem();
                                 item1.Text = "メインウインドウに埋め込む(EmbeddedMode)";
-                                item1.Checked = config.KifuWindowDockManager.DockState == DockState.InTheMainWindow;
+                                item1.Checked = dock.DockState == DockState.InTheMainWindow;
                                 item1.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.InTheMainWindow; };
                                 item.DropDownItems.Add(item1);
 
                                 var item2 = new ToolStripMenuItem();
-                                item2.Text = "メインウインドウから浮かせ、相対位置を常に保つ(DockMode)";
-                                item2.Checked = config.KifuWindowDockManager.DockState == DockState.DockedToMainWindow;
-                                item2.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.DockedToMainWindow; };
+                                item2.Text = "メインウインドウから浮かせ、相対位置を常に保つ(FollowMode)";
+                                item2.Checked = dock.DockState == DockState.FollowToMainWindow;
+                                item2.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.FollowToMainWindow; };
                                 item.DropDownItems.Add(item2);
 
-                                var item3 = new ToolStripMenuItem();
-                                item3.Text = "メインウインドウから浮かせ、メインウインドウの右側に配置する(FollowMode)";
-                                item3.Checked = config.KifuWindowDockManager.DockState == DockState.FollowToMainWindow;
-                                item3.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.FollowToMainWindow; };
-                                item.DropDownItems.Add(item3);
+                                var item3a = new ToolStripMenuItem();
+                                item3a.Text = "メインウインドウから浮かせ、メインウインドウの上側に配置する(DockMode)";
+                                item3a.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Top;
+                                item3a.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow , DockPosition.Top); };
+                                item.DropDownItems.Add(item3a);
+
+                                var item3b = new ToolStripMenuItem();
+                                item3b.Text = "メインウインドウから浮かせ、メインウインドウの左側に配置する(DockMode)";
+                                item3b.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Left;
+                                item3b.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow , DockPosition.Left); };
+                                item.DropDownItems.Add(item3b);
+
+                                var item3c = new ToolStripMenuItem();
+                                item3c.Text = "メインウインドウから浮かせ、メインウインドウの右側に配置する(DockMode)";
+                                item3c.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Right;
+                                item3c.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow , DockPosition.Right); };
+                                item.DropDownItems.Add(item3c);
+
+                                var item3d = new ToolStripMenuItem();
+                                item3d.Text = "メインウインドウから浮かせ、メインウインドウの下側に配置する(DockMode)";
+                                item3d.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Bottom;
+                                item3d.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow , DockPosition.Bottom); };
+                                item.DropDownItems.Add(item3d);
 
                                 var item4 = new ToolStripMenuItem();
                                 item4.Text = "メインウインドウから浮かせ、自由に配置する(FloatingMode)";
-                                item4.Checked = config.KifuWindowDockManager.DockState == DockState.FloatingMode;
+                                item4.Checked = dock.DockState == DockState.FloatingMode;
                                 item4.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.FloatingMode; };
                                 item.DropDownItems.Add(item4);
                             }

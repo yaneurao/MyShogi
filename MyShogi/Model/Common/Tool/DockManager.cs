@@ -18,13 +18,13 @@ namespace MyShogi.Model.Common.Tool
         /// <summary>
         /// MainWindowと相対位置を保って移動される状態
         /// </summary>
-        DockedToMainWindow,
+        FollowToMainWindow,
 
         /// <summary>
         /// MainWindowの所定の相対位置に追随する。
         /// このときLocationは無視される。
         /// </summary>
-        FollowToMainWindow,
+        DockedToMainWindow,
 
         /// <summary>
         /// MainWindowとは関係のない独立したウインドウ
@@ -84,12 +84,43 @@ namespace MyShogi.Model.Common.Tool
         }
 
         /// <summary>
+        /// DockState == DockedToMainWindowのときにどこにdockするか。
+        /// </summary>
+        [DataMember]
+        public DockPosition DockPosition
+        {
+            get { return GetValue<DockPosition>("DockPosition"); }
+            set { SetValue("DockPosition", value); }
+        }
+
+        /// <summary>
+        /// DockStateとDockPositionとを一括して設定する。
+        /// 変更イベントは一度しか発生しない。
+        /// stateかpositionに変更があった場合は、DockStateの変更イベントが発生する。
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="position"></param>
+        public void SetState(DockState state , DockPosition position)
+        {
+            var raise = DockState != state || DockPosition != position;
+
+            PropertyChangedEventEnable = false;
+
+            DockState = state;
+            DockPosition = position;
+
+            PropertyChangedEventEnable = true;
+            if (raise)
+                RaisePropertyChanged("DockState", state);
+        }
+
+        /// <summary>
         /// 現在のDockStateに基づき、dockWindowの位置とサイズを決定して反映させる。
         /// </summary>
         /// <param name="mainWindow"></param>
         /// <param name="dockWindow"></param>
         /// <param name="pos"></param>
-        public void InitDockWindowLocation(Form mainWindow,Form dockWindow , DockPosition dockPos)
+        public void InitDockWindowLocation(Form mainWindow,Form dockWindow)
         {
             dockWindow.Size = this.Size;
 
@@ -101,7 +132,7 @@ namespace MyShogi.Model.Common.Tool
 
                 case DockState.DockedToMainWindow:
                 case DockState.FollowToMainWindow:
-                    UpdateDockWindowLocation(mainWindow, dockWindow, dockPos);
+                    UpdateDockWindowLocation(mainWindow, dockWindow);
                     break;
             }
         }
@@ -112,18 +143,18 @@ namespace MyShogi.Model.Common.Tool
         /// <param name="mainWindow"></param>
         /// <param name="dockWindow"></param>
         /// <param name="dockPos"></param>
-        public void UpdateDockWindowLocation(Form mainWindow,Form dockWindow , DockPosition dockPos)
+        public void UpdateDockWindowLocation(Form mainWindow,Form dockWindow)
         {
             switch (this.DockState)
             {
-                case DockState.DockedToMainWindow:
+                case DockState.FollowToMainWindow:
                     dockWindow.Location = new Point(
                         this.LocationOnDocked.X + mainWindow.Location.X,
                         this.LocationOnDocked.Y + mainWindow.Location.Y);
                     break;
 
-                case DockState.FollowToMainWindow:
-                    switch (dockPos)
+                case DockState.DockedToMainWindow:
+                    switch (DockPosition)
                     {
                         case DockPosition.Top:
                             dockWindow.Location = new Point(mainWindow.Location.X                   , mainWindow.Location.Y - dockWindow.Height); break;
@@ -157,8 +188,8 @@ namespace MyShogi.Model.Common.Tool
             switch (this.DockState)
             {
                 case DockState.FloatingMode      : LocationOnFloating = dockWindow.Location; break;
-                case DockState.FollowToMainWindow: /* 記録の必要なし */ ; break;
-                case DockState.DockedToMainWindow: LocationOnDocked = new Point(
+                case DockState.DockedToMainWindow: /* 記録の必要なし */ ; break;
+                case DockState.FollowToMainWindow: LocationOnDocked = new Point(
                     dockWindow.Location.X - mainWindow.Location.X,
                     dockWindow.Location.Y - mainWindow.Location.Y
                     ); break;

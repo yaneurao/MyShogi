@@ -139,12 +139,18 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void UpdateKifuControlVisibility(PropertyChangedEventArgs args = null)
         {
-            if (kifuControl!=null)
+            if (kifuControl != null)
+            {
+                // メインウインドウの埋め込まれているときしかkifuControlのvisiblityを操作しない。
+                if (TheApp.app.Config.KifuWindowDockManager.DockState != DockState.InTheMainWindow)
+                    return;
+
                 kifuControl.Visible =
                     gameServer != null
                     && !gameServer.InTheBoardEdit /*盤面編集中は非表示*/
                     && PieceTableVersion == 0 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */
                 ;
+            }
         }
 
 

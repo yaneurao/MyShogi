@@ -69,7 +69,7 @@ namespace MyShogi.App
         /// <summary>
         /// App.ApplicationExit()が呼び出されたあとであるかのフラグ
         /// </summary>
-        public bool Exiting;
+        public bool Exiting { get; private set; }
 
         /// <summary>
         /// メインのForm
