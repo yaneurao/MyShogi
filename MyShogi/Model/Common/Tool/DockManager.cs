@@ -126,11 +126,11 @@ namespace MyShogi.Model.Common.Tool
                     switch (dockPos)
                     {
                         case DockPosition.Top:
-                            dockWindow.Location = new Point(mainWindow.Location.X, mainWindow.Location.Y - dockWindow.Height); break;
+                            dockWindow.Location = new Point(mainWindow.Location.X                   , mainWindow.Location.Y - dockWindow.Height); break;
                         case DockPosition.Left:
                             dockWindow.Location = new Point(mainWindow.Location.X - dockWindow.Width, mainWindow.Location.Y); break;
                         case DockPosition.Bottom:
-                            dockWindow.Location = new Point(mainWindow.Location.X, mainWindow.Location.Y + mainWindow.Height); break;
+                            dockWindow.Location = new Point(mainWindow.Location.X                   , mainWindow.Location.Y + mainWindow.Height); break;
                         case DockPosition.Right:
                             dockWindow.Location = new Point(mainWindow.Location.X + mainWindow.Width, mainWindow.Location.Y); break;
                     }
@@ -138,5 +138,31 @@ namespace MyShogi.Model.Common.Tool
             }
         }
 
+        /// <summary>
+        /// DockWindowの位置、サイズが変更になったのでそれを記録しておく。
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="size"></param>
+        public void SaveWindowLocation(Form mainWindow , Form dockWindow)
+        {
+            var minimized = mainWindow.WindowState != FormWindowState.Normal; // 最小化、最大化時
+            if (minimized)
+                return;
+
+            var minimized2 = dockWindow.WindowState != FormWindowState.Normal; // 最小化、最大化時
+            if (minimized2 || !dockWindow.Visible /* 非表示のときの値は用いない*/)
+                return;
+
+            Size = dockWindow.Size; // いずれにせよサイズはそのまま保存
+            switch (this.DockState)
+            {
+                case DockState.FloatingMode      : LocationOnFloating = dockWindow.Location; break;
+                case DockState.FollowToMainWindow: /* 記録の必要なし */ ; break;
+                case DockState.DockedToMainWindow: LocationOnDocked = new Point(
+                    dockWindow.Location.X - mainWindow.Location.X,
+                    dockWindow.Location.Y - mainWindow.Location.Y
+                    ); break;
+            }
+        }
     }
 }

@@ -38,6 +38,8 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "DockWindow";
             this.Text = "DockWindow";
+            this.Move += new System.EventHandler(this.DockWindow_Move);
+            this.Resize += new System.EventHandler(this.DockWindow_Resize);
             this.ResumeLayout(false);
 
         }

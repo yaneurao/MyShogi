@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Tool;
 
 namespace MyShogi.View.Win2D
 {
@@ -30,6 +31,20 @@ namespace MyShogi.View.Win2D
                 get { return GetValue<string>("Caption"); }
                 set { SetValue("Caption", value); }
             }
+
+            /// <summary>
+            /// DockManager。
+            /// このFormのresizeとmoveに対して、位置とサイズをここに記録する。
+            /// これは、AddControl()のときに渡された引数の値がセットされる。
+            /// </summary>
+            public DockManager DockManager { get; set; }
+
+            /// <summary>
+            /// このDockWindowを移動させたときにMainForm相対で位置を計算しないといけないことがあるため、
+            /// 追随するMainFormがセットされていなくてはならない。
+            /// これは、AddControl()のときに渡された引数の値がセットされる。
+            /// </summary>
+            public Form MainForm { get; set; }
         }
 
         public DockWindowViewModel ViewModel = new DockWindowViewModel();
@@ -39,7 +54,7 @@ namespace MyShogi.View.Win2D
         /// このWindowの上に乗っけるControlを設定する。
         /// </summary>
         /// <param name="control"></param>
-        public void AddControl(Control control)
+        public void AddControl(Control control , Form mainForm, DockManager dockManager)
         {
             if (ViewModel.Control != control)
             {
@@ -47,6 +62,8 @@ namespace MyShogi.View.Win2D
                 Controls.Add(control);
                 oldDockStyle = control.Dock;
                 control.Dock = DockStyle.Fill;
+                ViewModel.DockManager = dockManager;
+                ViewModel.MainForm = mainForm;
             }
         }
 
@@ -61,6 +78,8 @@ namespace MyShogi.View.Win2D
                 ViewModel.Control = null;
                 control.Dock = oldDockStyle;
                 Controls.Remove(control);
+                ViewModel.DockManager = null;
+                ViewModel.MainForm = null;
             }
         }
 
@@ -75,5 +94,24 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private DockStyle oldDockStyle;
 
+        /// <summary>
+        /// ウインドウの位置・サイズが変更になったので、DockManagerで管理しているLocationなどを更新する。
+        /// </summary>
+        private void SaveWindowLocation()
+        {
+            var dockManager = ViewModel.DockManager;
+            if (dockManager != null)
+                dockManager.SaveWindowLocation(ViewModel.MainForm, this);
+        }
+
+        private void DockWindow_Resize(object sender, System.EventArgs e)
+        {
+            SaveWindowLocation();
+        }
+
+        private void DockWindow_Move(object sender, System.EventArgs e)
+        {
+            SaveWindowLocation();
+        }
     }
 }

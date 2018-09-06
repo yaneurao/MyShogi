@@ -237,6 +237,10 @@ namespace MyShogi.View.Win2D
         {
             var dockState = (DockState)args.value;
             kifuControl.ViewModel.DockState = dockState;
+
+            var dockManager = TheApp.app.Config.KifuWindowDockManager;
+            dockManager.DockState = dockState; // 次回起動時のためにここに保存しておく。
+
             if (dockState == DockState.InTheMainWindow)
             {
                 kifuDockWindow.RemoveControl();
@@ -249,12 +253,10 @@ namespace MyShogi.View.Win2D
                 kifuDockWindow.ViewModel.Caption = "棋譜ウインドウ";
                 if (gameScreenControl1.Controls.Contains(kifuControl))
                     gameScreenControl1.Controls.Remove(kifuControl);
-                kifuDockWindow.AddControl(kifuControl);
-                if (!kifuDockWindow.Visible)
-                    kifuDockWindow.Show(this);
+
+                kifuDockWindow.AddControl(kifuControl, this, dockManager);
 
                 // デフォルト位置とサイズにする。
-                var dockManager = TheApp.app.Config.KifuWindowDockManager;
                 if (dockManager.Size.IsEmpty)
                 {
                     // メインウインドウに埋め込み時の棋譜ウインドウのサイズをデフォルトとしておいてやる。
@@ -268,6 +270,9 @@ namespace MyShogi.View.Win2D
                 }
                     
                 dockManager.InitDockWindowLocation(this,kifuDockWindow,DockPosition.Right);
+
+                if (!kifuDockWindow.Visible)
+                    kifuDockWindow.Show(this);
             }
         }
 
@@ -343,6 +348,9 @@ namespace MyShogi.View.Win2D
                 // 棋譜ウインドウのfloating状態を起動時に復元する。
                 var config = TheApp.app.Config;
                 config.KifuWindowDockManager.RaisePropertyChanged("DockState", config.KifuWindowDockManager.DockState);
+
+                // メインウインドウが表示されるまで、棋譜ウインドウの座標設定などを抑制していたのでここでメインウインドウ相対で移動させてやる。
+                UpdateDockedWindowLocation();
             }
 
             // 自分が保有しているScreenがdirtyになっていることを検知したら、Invalidateを呼び出す。
@@ -379,6 +387,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void UpdateDockedWindowLocation()
         {
+            // まだメインウインドウが表示される前なので他のウインドウをいまのメインウインドウの位置を基準として移動させるとまずいことになる。
+            if (first_tick)
+                return;
+
             // 検討ウインドウ
             if (TheApp.app.Config.ConsiderationWindowFollowMainWindow)
             {
