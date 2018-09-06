@@ -13,7 +13,6 @@
 - デバッグ機能の使い方などは、[開発者向け機能](dev_manual.md)をご覧ください。
 - バグ、要望等は、
   - [『将棋神やねうら王』Update2までの遊戯施設 / やねうら王ブログ](http://yaneuraou.yaneu.com/2018/09/06/%E3%80%8E%E5%B0%86%E6%A3%8B%E7%A5%9E%E3%82%84%E3%81%AD%E3%81%86%E3%82%89%E7%8E%8B%E3%80%8Fupdate2%E3%81%BE%E3%81%A7%E3%81%AE%E9%81%8A%E6%88%AF%E6%96%BD%E8%A8%AD/)
-  - [バグ・要望等　総合受付 / MyShogi - GitHub](https://github.com/yaneurao/MyShogi/issues/33)、
   にどうぞ。
 
 
