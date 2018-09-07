@@ -6,6 +6,9 @@
 ■　2018/09/07
 
 
+- CreateDirectory、Updaterのほうも同様の修正を適用する。
+
+
 - 棋譜の自動保存に失敗したときに例外を捕捉するようにした。
 - .NETのCreateDirectory()、セキュリティ的なbugがあるので自作すべき。
   - cf. Directory.CreateDirectory() method bug fixed

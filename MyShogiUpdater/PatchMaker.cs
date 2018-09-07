@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyShogiUpdater.Utility;
+using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -97,9 +98,7 @@ namespace MyShogiUpdater
 
                     var target = Path.Combine(targetPath, relative_source_path);
 
-                    var dir = Path.GetDirectoryName(target);
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
+                    FileIO.CreateDirectory(target);
 
                     File.Copy(s, target, true);
 

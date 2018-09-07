@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Utility\FileIO.cs" />
     <Compile Include="MainDialog.cs">
       <SubType>Form</SubType>
     </Compile>
