@@ -122,19 +122,25 @@ namespace MyShogi.Model.Common.Tool
         /// <param name="pos"></param>
         public void InitDockWindowLocation(Form mainWindow,Form dockWindow)
         {
-            dockWindow.Size = this.Size;
-
+            Point? location = null;
             switch (this.DockState)
             {
                 case DockState.FloatingMode:
-                    dockWindow.Location = this.LocationOnFloating; /* これScreenがなくなってると画面外の可能性が.. */
+                    location = this.LocationOnFloating; /* これScreenがなくなってると画面外の可能性が.. */
                     break;
 
                 case DockState.DockedToMainWindow:
                 case DockState.FollowToMainWindow:
-                    UpdateDockWindowLocation(mainWindow, dockWindow);
+                    location = CalcDockWindowLocation(mainWindow);
                     break;
             }
+
+            if (location == null)
+                return;
+
+            // Sizeに突っ込むと、その瞬間resizeイベントが発生して、そのときのlocationが記録されてしまう。
+            dockWindow.Size = this.Size;
+            dockWindow.Location = location.Value;
         }
 
         /// <summary>
@@ -143,30 +149,44 @@ namespace MyShogi.Model.Common.Tool
         /// <param name="mainWindow"></param>
         /// <param name="dockWindow"></param>
         /// <param name="dockPos"></param>
-        public void UpdateDockWindowLocation(Form mainWindow,Form dockWindow)
+        public void UpdateDockWindowLocation(Form mainWindow, Form dockWindow)
+        {
+            var location = CalcDockWindowLocation(mainWindow);
+            if (location != null)
+                dockWindow.Location = location.Value;
+        }
+
+        /// <summary>
+        /// メインウインドウの位置・サイズが変更になったときにそれに応じて、dockされているWindowの位置を計算する。
+        /// </summary>
+        /// <param name="mainWindow"></param>
+        /// <param name="dockWindow"></param>
+        /// <param name="dockPos"></param>
+        public Point? CalcDockWindowLocation(Form mainWindow)
         {
             switch (this.DockState)
             {
                 case DockState.FollowToMainWindow:
-                    dockWindow.Location = new Point(
+                    return new Point(
                         this.LocationOnDocked.X + mainWindow.Location.X,
                         this.LocationOnDocked.Y + mainWindow.Location.Y);
-                    break;
 
                 case DockState.DockedToMainWindow:
                     switch (DockPosition)
                     {
+                        // dockWindowの値ではなく、このクラスが保持している値に基づいて計算しないといけない。
                         case DockPosition.Top:
-                            dockWindow.Location = new Point(mainWindow.Location.X                   , mainWindow.Location.Y - dockWindow.Height); break;
+                            return new Point(mainWindow.Location.X                           , mainWindow.Location.Y - /*dockWindow.*/ Size.Height);
                         case DockPosition.Left:
-                            dockWindow.Location = new Point(mainWindow.Location.X - dockWindow.Width, mainWindow.Location.Y); break;
+                            return new Point(mainWindow.Location.X - /*dockWindow*/Size.Width, mainWindow.Location.Y);
                         case DockPosition.Bottom:
-                            dockWindow.Location = new Point(mainWindow.Location.X                   , mainWindow.Location.Y + mainWindow.Height); break;
+                            return new Point(mainWindow.Location.X                           , mainWindow.Location.Y + mainWindow.Height);
                         case DockPosition.Right:
-                            dockWindow.Location = new Point(mainWindow.Location.X + mainWindow.Width, mainWindow.Location.Y); break;
+                            return new Point(mainWindow.Location.X + mainWindow.Width        , mainWindow.Location.Y);
                     }
                     break;
             }
+            return null;
         }
 
         /// <summary>
@@ -176,7 +196,8 @@ namespace MyShogi.Model.Common.Tool
         /// <param name="size"></param>
         public void SaveWindowLocation(Form mainWindow , Form dockWindow)
         {
-            var minimized = mainWindow.WindowState != FormWindowState.Normal; // 最小化、最大化時
+            // 最小化、最大化時
+            var minimized = mainWindow.WindowState != FormWindowState.Normal;
             if (minimized)
                 return;
 

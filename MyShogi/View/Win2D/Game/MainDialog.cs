@@ -259,21 +259,18 @@ namespace MyShogi.View.Win2D
             } else {
 
                 kifuDockWindow = new DockWindow();
+                kifuDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
+                kifuDockWindow.Owner = this;
+
                 //kifuDockWindow.TopMost = true; // Ownerを設定してしまうと、main windowを×で閉じたときに先にこのFormClosingが呼び出されてしまう。
                 // →　かと言ってTopMostは、ファイルダイアログを開くときなど常に最前面に出てくるので罪が重い。
                 // MainWindowのOnMoveなどに対してだけ前面に持ってきてはどうか。
                 // →　resize,move,…、イベントを捕捉するだけでは、漏れがあるようで棋譜ウインドウが前面に来ない瞬間がある。
                 // 結論的には、OwnerをMainWindowにして、Close()のキャンセル処理はしないようにする。
-                kifuDockWindow.Owner = this;
-
-                kifuDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
-
 
                 kifuDockWindow.ViewModel.Caption = "棋譜ウインドウ";
                 if (gameScreenControl1.Controls.Contains(kifuControl))
                     gameScreenControl1.Controls.Remove(kifuControl);
-
-                kifuDockWindow.AddControl(kifuControl, this, dockManager);
 
                 // デフォルト位置とサイズにする。
                 if (dockManager.Size.IsEmpty)
@@ -287,18 +284,15 @@ namespace MyShogi.View.Win2D
                     dockManager.LocationOnDocked = new Point(pos.X - this.Location.X, pos.Y - this.Location.Y);
                     dockManager.LocationOnFloating = pos;
                 }
-                    
-                if (!kifuDockWindow.Visible)
-                {
-                    kifuControl.Visible = true; // 細長い駒台モードのため非表示にしていたかも知れないので。
-                    kifuDockWindow.Show( /* this */);
-                    // DockWindowは検討ウインドウ同様にFormClosingでe.Cancel = trueにする動作なので、
-                    // ここでmain windowにぶら下げるとmain windowのFormClosingに対して、そちらが先に呼び出されておかしいことになる。
-                }
 
+                kifuDockWindow.Show();
+
+                // Showで表示とサイズが確定してからdockManagerを設定しないと、
+                // Showのときの位置とサイズがdockManagerに記録されてしまう。
+                kifuControl.Visible = true; // 細長い駒台モードのため非表示にしていたかも知れないので。
+
+                kifuDockWindow.AddControl(kifuControl, this, dockManager);
                 dockManager.InitDockWindowLocation(this, kifuDockWindow);
-
-                UpdateMenuItems();
             }
         }
 

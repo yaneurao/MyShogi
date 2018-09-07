@@ -50,7 +50,7 @@ namespace MyShogi.View.Win2D
             /// <summary>
             /// Menuを更新して欲しいときに発生する仮想イベント。
             /// </summary>
-            //public object MenuUpdated { get; set; }
+            public object MenuUpdated { get; set; }
         }
 
         public DockWindowViewModel ViewModel = new DockWindowViewModel();
@@ -142,6 +142,8 @@ namespace MyShogi.View.Win2D
                 // Dispose()が呼ばれるとたまらないのでremoveしておく。(親側で解体すべき)
                 Controls.Remove(ViewModel.Control);
                 ViewModel.Control = null;
+
+                Visible = false; // これにしてから、Menuの更新をすれば、メニューの棋譜ウインドウの「再表示」が有効になる。
                 ViewModel.RaisePropertyChanged("MenuUpdated");
             }
         }
