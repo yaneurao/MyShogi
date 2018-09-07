@@ -29,8 +29,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             try
             {
-                if (!Directory.Exists(KifuSaveFolder))
-                    Directory.CreateDirectory(KifuSaveFolder);
+                FileIO.CreateDirectory(KifuSaveFolder);
             }
             catch { }
         }

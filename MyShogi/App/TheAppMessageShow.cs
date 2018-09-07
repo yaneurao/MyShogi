@@ -49,11 +49,18 @@ namespace MyShogi.App
         /// 例外をダイアログで表示する用。
         /// </summary>
         /// <param name="ex"></param>
-        public void MessageShow(Exception ex)
+        public void MessageShow(Exception ex , bool exit = true)
         {
-            MessageShow("例外が発生しましたので終了します。\r\n例外内容 : " + ex.Message + "\r\nスタックトレース : \r\n" + ex.StackTrace,
-                MessageShowType.Error);
-            ApplicationExit();
+            if (exit)
+            {
+                MessageShow("例外が発生しましたので終了します。\r\n例外内容 : " + ex.Message + "\r\nスタックトレース : \r\n" + ex.StackTrace,
+                    MessageShowType.Error);
+                ApplicationExit();
+            } else
+            {
+                MessageShow("例外が発生しました。\r\n例外内容 : " + ex.Message + "\r\nスタックトレース : \r\n" + ex.StackTrace,
+                    MessageShowType.Error);
+            }
         }
 
         public void ApplicationExit()

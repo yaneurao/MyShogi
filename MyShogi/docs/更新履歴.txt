@@ -3,10 +3,20 @@
 // 棋譜ウインドウに総消費時間の表示
 
 
+■　2018/09/07
+
+
+- 棋譜の自動保存に失敗したときに例外を捕捉するようにした。
+- .NETのCreateDirectory()、セキュリティ的なbugがあるので自作すべき。
+  - cf. Directory.CreateDirectory() method bug fixed
+    https://www.codeproject.com/Articles/10160/Directory-CreateDirectory-method-bug-fixed
+  - Scriptingを使う実装は移植性下がりそうで嫌だな…。これはやめとく。
+
+
 ■　2018/09/06
 
 
-- V1.1.3で対局中に閉じるときなど、警告ダイアログが2回出るようになっていたの修正。
+- V1.1.4で対局中に閉じるときなど、警告ダイアログが2回出るようになっていたの修正。
 
 
 - やねうら王エンジンのほう、修正が色々あったのでV4.83にバージョンナンバーを上げる。

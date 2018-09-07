@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 
 namespace MyShogi.Model.Common.Utility
@@ -43,14 +44,40 @@ namespace MyShogi.Model.Common.Utility
                 encoding = new UTF8Encoding(true);
 
             // フォルダが存在することを確認する。なければ新たに作成する。
-            var folder = Path.GetDirectoryName(path);
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
+            CreateDirectory(path);
 
             using (var sw = new StreamWriter(path , false , encoding))
             {
                 sw.Write(content);
             }
+        }
+
+        /// <summary>
+        /// ファイルのpathを指定し、その親フォルダが存在しなければ作成する。
+        /// </summary>
+        /// <param name="file_path"></param>
+        public static void CreateDirectory(string file_path)
+        {
+            var folder = Path.GetDirectoryName(file_path);
+            if (Directory.Exists(folder))
+                return;
+
+            try
+            {
+                Directory.CreateDirectory(folder);
+            } catch
+            {
+                throw new Exception($"フォルダの作成に失敗しました。\r\nフォルダ名 = {folder}");
+            }
+
+            /*
+                .NETのCreateDirectory()、セキュリティ的なbugがあるので自作すべきかも知れない。
+         
+               cf.Directory.CreateDirectory() method bug fixed
+               https://www.codeproject.com/Articles/10160/Directory-CreateDirectory-method-bug-fixed
+
+                Scriptingを使う実装は移植性下がりそうで嫌だな…。これはやめとく。
+             */
         }
     }
 }

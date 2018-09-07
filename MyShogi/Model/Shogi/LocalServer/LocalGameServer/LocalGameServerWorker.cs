@@ -1058,55 +1058,63 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private void AutomaticSaveKifu(Move lastMove)
         {
-            // この対局棋譜を保存しなければならないなら保存する。
-            var setting = TheApp.app.Config.GameResultSetting;
-            if (!setting.AutomaticSaveKifu)
-                return;
-
-            var lastColor = Position.sideToMove;
-
-            // 1) 勝敗のカウンターを加算
-
-            continuousGame.IncResult(lastMove, lastColor);
-
-            // 2) 棋譜ファイルを保存する。
-
-            // プレイヤー名を棋譜上に反映させる。
-            foreach (var c in All.Colors())
-                kifuManager.KifuHeader.SetPlayerName(c, /* DisplayNameWithPreset(c) */ DisplayName(c) );
-
-            var kifu = kifuManager.ToString(setting.KifuFileType);
-            var filename = $"{continuousGame.GetKifuSubfolder()}{DefaultKifuFileName()}{setting.KifuFileType.ToExtensions()}";
-            var filePath = Path.Combine(setting.KifuSaveFolder, filename);
-            FileIO.WriteFile(filePath, kifu);
-
-            // 3) csvファイルに情報をappendする。
-
-            var table = new GameResultTable();
-            var csv_path = setting.CsvFilePath();
-            var result = new GameResultData()
+            try
             {
-                PlayerNames = new[] { DisplayNameWithPreset(Color.BLACK), DisplayNameWithPreset(Color.WHITE) },
-                StartTime = continuousGame.StartTime,
-                EndTime = continuousGame.EndTime,
-                KifuFileName = filename,
-                LastMove = lastMove,
-                LastColor = lastColor,
-                GamePly = Position.gamePly - 1 /* 31手目で詰まされている場合、棋譜の手数としては30手であるため。 */,
-                BoardType = kifuManager.Tree.rootBoardType,
-                TimeSettingString = $"先手:{TimeSettingString(Color.BLACK)},後手:{TimeSettingString(Color.WHITE)}",
-                Comment = null,
-            };
-            table.AppendLine(csv_path, result);
+                // この対局棋譜を保存しなければならないなら保存する。
+                var setting = TheApp.app.Config.GameResultSetting;
+                if (!setting.AutomaticSaveKifu)
+                    return;
 
-            if (continuousGame.IsLastGame())
-            {
-                // これが連続対局の最終局であったのなら、結果を書き出す。
-                result = new GameResultData()
+                var lastColor = Position.sideToMove;
+
+                // 1) 勝敗のカウンターを加算
+
+                continuousGame.IncResult(lastMove, lastColor);
+
+                // 2) 棋譜ファイルを保存する。
+
+                // プレイヤー名を棋譜上に反映させる。
+                foreach (var c in All.Colors())
+                    kifuManager.KifuHeader.SetPlayerName(c, /* DisplayNameWithPreset(c) */ DisplayName(c));
+
+                var kifu = kifuManager.ToString(setting.KifuFileType);
+                var filename = $"{continuousGame.GetKifuSubfolder()}{DefaultKifuFileName()}{setting.KifuFileType.ToExtensions()}";
+                var filePath = Path.Combine(setting.KifuSaveFolder, filename);
+
+                FileIO.WriteFile(filePath, kifu);
+
+                // 3) csvファイルに情報をappendする。
+
+                var table = new GameResultTable();
+                var csv_path = setting.CsvFilePath();
+                var result = new GameResultData()
                 {
-                    Comment = continuousGame.GetGameResultString()
+                    PlayerNames = new[] { DisplayNameWithPreset(Color.BLACK), DisplayNameWithPreset(Color.WHITE) },
+                    StartTime = continuousGame.StartTime,
+                    EndTime = continuousGame.EndTime,
+                    KifuFileName = filename,
+                    LastMove = lastMove,
+                    LastColor = lastColor,
+                    GamePly = Position.gamePly - 1 /* 31手目で詰まされている場合、棋譜の手数としては30手であるため。 */,
+                    BoardType = kifuManager.Tree.rootBoardType,
+                    TimeSettingString = $"先手:{TimeSettingString(Color.BLACK)},後手:{TimeSettingString(Color.WHITE)}",
+                    Comment = null,
                 };
                 table.AppendLine(csv_path, result);
+
+                if (continuousGame.IsLastGame())
+                {
+                    // これが連続対局の最終局であったのなら、結果を書き出す。
+                    result = new GameResultData()
+                    {
+                        Comment = continuousGame.GetGameResultString()
+                    };
+                    table.AppendLine(csv_path, result);
+                }
+            } catch (Exception ex)
+            {
+                // ファイルの書き出しに失敗などで例外が出て落ちるのはちょっと格好が悪いので捕捉しておく。
+                TheApp.app.MessageShow(ex, false);
             }
         }
 
