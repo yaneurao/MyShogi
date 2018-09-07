@@ -137,6 +137,8 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <summary>
         /// 対局中の「待った」用のUndo
         /// 棋譜から、現局面への指し手を削除してのUndo
+        ///
+        /// 削除したならtrueが返る。
         /// </summary>
         public bool UndoMoveInTheGame()
         {
@@ -151,9 +153,21 @@ namespace MyShogi.Model.Shogi.Kifu
 
             Tree.UndoMove();
 
-            Tree.Remove(node); // この枝を削除しておく。
+            //Tree.Remove(node); // この枝を削除しておく。
+            // → 全部の枝を削除すべきでは..。枝が残ったままで棋譜の表示だけ消えているのは不整合なのでは。
+            Tree.RemoveNextNode();
 
             return true;
+        }
+
+        /// <summary>
+        /// 末尾の指し手に移動する
+        /// </summary>
+        public void GotoLastMove()
+        {
+            // 本譜の手順を選んでいけば末尾まで行けることが保証されている。
+            while (Tree.currentNode.moves.Count != 0)
+                Tree.DoMove(Tree.currentNode.moves[0].nextMove);
         }
 
         // -- 以下、棋譜処理
@@ -261,9 +275,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 Tree.RewindToRoot();
 
-                // moves[0]を選択していけば本譜の手順の末尾に行けることは保証されている。
-                while (Tree.currentNode.moves.Count != 0)
-                    Tree.DoMove(Tree.currentNode.moves[0].nextMove);
+                GotoLastMove();
 
                 // イベントの一時抑制を解除して、更新通知を送る。
                 Tree.PropertyChangedEventEnable = e;

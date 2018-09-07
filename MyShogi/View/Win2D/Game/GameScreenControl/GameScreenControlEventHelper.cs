@@ -68,9 +68,10 @@ namespace MyShogi.View.Win2D
             // initialize kifu control
             kifuControl1.InitViewModel(Parent as Form);
 
-            kifuControl1.ViewModel.AddPropertyChangedHandler("MainBranchButtonClicked", gameServer.MainBranchButtonCommand);
-            kifuControl1.ViewModel.AddPropertyChangedHandler("NextBranchButtonClicked", gameServer.NextBranchButtonCommand);
+            kifuControl1.ViewModel.AddPropertyChangedHandler("MainBranchButtonClicked" , gameServer.MainBranchButtonCommand);
+            kifuControl1.ViewModel.AddPropertyChangedHandler("NextBranchButtonClicked" , gameServer.NextBranchButtonCommand);
             kifuControl1.ViewModel.AddPropertyChangedHandler("EraseBranchButtonClicked", gameServer.EraseBranchButtonCommand);
+            kifuControl1.ViewModel.AddPropertyChangedHandler("RemoveLastMoveClicked"   , gameServer.RemoveLastMoveButtonCommand);
 
             // Game Effects
 

@@ -489,6 +489,10 @@ namespace MyShogi.Model.Shogi.Kifu
         /// <param name="comment"></param>
         public void AddNodeMoveTime(Move move) => AddNodeMoveTime(move, DateTime.Now);
 
+#if false
+        // これ使わないのでコメントアウトしておく。
+        // RemoveNextNode()のように、KifuBranchの更新が必要だと思う。
+
         /// <summary>
         /// currentNode(現在のnode)から、moveの指し手以降の枝を削除する
         /// </summary>
@@ -506,6 +510,21 @@ namespace MyShogi.Model.Shogi.Kifu
         public void Remove(KifuNode nextNode)
         {
             currentNode.moves.RemoveAll((x) => x.nextNode == nextNode);
+        }
+#endif
+
+        /// <summary>
+        /// currentNodeから、次のnodeをすべて削除する。
+        /// 対局時の待ったや、検討時に一手削除する用。
+        /// </summary>
+        public void RemoveNextNode()
+        {
+            currentNode.moves.Clear();
+
+            // この結果、KifuBranchより遡るなら、本譜の手順に戻っているわけで、分岐表現をしてはならない。
+
+            if (pliesFromRoot < KifuBranch)
+                KifuBranch = -1;
         }
 
         /// <summary>

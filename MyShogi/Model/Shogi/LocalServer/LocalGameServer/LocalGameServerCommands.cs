@@ -435,6 +435,28 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 棋譜の1手削除ボタン
+        /// </summary>
+        public void RemoveLastMoveButtonCommand(PropertyChangedEventArgs args)
+        {
+            AddCommand(
+            () =>
+            {
+                // 対局中は使用不可
+                if (GameMode.IsConsideration())
+                {
+                    // 末尾に移動して…
+                    kifuManager.GotoLastMove();
+
+                    // 1手戻る
+                    kifuManager.EnableKifuList = true;
+                    kifuManager.UndoMoveInTheGame();
+                    kifuManager.EnableKifuList = false;
+                }
+            });
+        }
+
+        /// <summary>
         /// 編集した盤面を代入する
         /// 盤面編集用。
         /// </summary>

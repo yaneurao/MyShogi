@@ -66,6 +66,11 @@ namespace MyShogi.View.Win2D
             public object EraseBranchButtonClicked;
 
             /// <summary>
+            /// 最後の指し手を削除する。
+            /// </summary>
+            public object RemoveLastMoveClicked;
+
+            /// <summary>
             /// フローティングモードなのかなどを表す。
             /// </summary>
             public DockState DockState
@@ -149,6 +154,7 @@ namespace MyShogi.View.Win2D
             button1.Visible = !inTheGame;
             button2.Visible = !inTheGame;
             button3.Visible = !inTheGame;
+            button4.Visible = !inTheGame;
 
             // -- ボタンなどのリサイズ
 
@@ -159,7 +165,7 @@ namespace MyShogi.View.Win2D
             if (ViewModel.DockState != DockState.InTheMainWindow)
                 bh = 23;
 
-            int x = Width / 3;
+            int x = Width / 4;
             int y = Height - bh;
 
             listBox1.Location = new Point(0, 0);
@@ -173,6 +179,8 @@ namespace MyShogi.View.Win2D
                 button2.Size = new Size(x, bh);
                 button3.Location = new Point(x * 2, y);
                 button3.Size = new Size(x, bh);
+                button4.Location = new Point(x * 3, y);
+                button4.Size = new Size(x, bh);
             }
 
             if (needScroll)
@@ -256,6 +264,7 @@ namespace MyShogi.View.Win2D
             FontUtility.SetFont(button1 , font2);
             FontUtility.SetFont(button2 , font2);
             FontUtility.SetFont(button3 , font2);
+            FontUtility.SetFont(button4 , font2);
         }
 
         private float last_font_size = 0;
@@ -277,6 +286,9 @@ namespace MyShogi.View.Win2D
             ViewModel.KifuListCount = listBox1.Items.Count;
 
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+
+            // item数が変化したはずなので、「消一手」ボタンを更新する。
+            UpdateButtonState2();
         }
 
         /// <summary>
@@ -294,6 +306,12 @@ namespace MyShogi.View.Win2D
             ViewModel.KifuListCount = listBox1.Items.Count;
 
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+
+            // 1手戻った結果、「次分岐」があるかも知れないのでそのボタン状態を更新する。
+            UpdateButtonState();
+
+            // item数が変化したはずなので、「消一手」ボタンを更新する。
+            UpdateButtonState2();
         }
 
         /// <summary>
@@ -361,6 +379,9 @@ namespace MyShogi.View.Win2D
             listbox.SelectedIndex = j;
 
             UpdateButtonState();
+
+            // item数が変化したはずなので、「消一手」ボタンを更新する。
+            UpdateButtonState2();
         }
 
 
@@ -421,6 +442,15 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 「消一手」ボタンの有効/無効を切り替える。
+        /// </summary>
+        private void UpdateButtonState2()
+        {
+            // Items[0] == "開始局面"なので、そこ以降に指し手があればundo出来るのではないかと。(special moveであろうと)
+            button4.Enabled = listBox1.Items.Count > 1;
+        }
+
+        /// <summary>
         /// 本譜ボタン
         /// </summary>
         /// <param name="sender"></param>
@@ -451,6 +481,16 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 消す1手ボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button4_Click(object sender, EventArgs e)
+        {
+            ViewModel.RaisePropertyChanged("RemoveLastMoveClicked");
+        }
+
+        /// <summary>
         /// リサイズ。
         /// 非フローティングモードなら、このメッセージは無視する。
         /// フローティングモードなら自律的にサイズを変更。
@@ -468,6 +508,7 @@ namespace MyShogi.View.Win2D
                 FontUtility.SetFont(button1, font2);
                 FontUtility.SetFont(button2, font2);
                 FontUtility.SetFont(button3, font2);
+                FontUtility.SetFont(button4, font2);
 
                 UpdateButtonLocation();
             }
