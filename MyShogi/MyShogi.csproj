@@ -52,6 +52,9 @@
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>YaneuraOu.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
@@ -474,6 +477,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="YaneuraOu.ico" />
     <None Include="docs\WIP.md" />
     <Content Include="docs\更新履歴.txt" />
     <Content Include="docs\解説.txt" />

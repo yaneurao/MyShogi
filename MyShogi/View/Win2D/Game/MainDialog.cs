@@ -415,6 +415,13 @@ namespace MyShogi.View.Win2D
 
             // 棋譜ウインドウも。
             {
+                // メインウインドウの最小化、最大化に応じて棋譜ウインドウの表示/非表示を切り替える。
+                if (WindowState == FormWindowState.Minimized)
+                    kifuDockWindow.Visible = false;
+                else
+                    if (kifuDockWindow.ViewModel.Control != null) /* 有効なcontrolを持っているときのみ */
+                    kifuDockWindow.Visible = true;
+
                 var dockManager = TheApp.app.Config.KifuWindowDockManager;
                 dockManager.UpdateDockWindowLocation(this, kifuDockWindow);
             }
