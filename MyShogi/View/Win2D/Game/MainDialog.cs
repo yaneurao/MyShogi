@@ -285,14 +285,14 @@ namespace MyShogi.View.Win2D
                     dockManager.LocationOnFloating = pos;
                 }
 
-                kifuDockWindow.Show();
-
                 // Showで表示とサイズが確定してからdockManagerを設定しないと、
                 // Showのときの位置とサイズがdockManagerに記録されてしまう。
                 kifuControl.Visible = true; // 細長い駒台モードのため非表示にしていたかも知れないので。
 
                 kifuDockWindow.AddControl(kifuControl, this, dockManager);
                 dockManager.InitDockWindowLocation(this, kifuDockWindow);
+
+                kifuDockWindow.Show();
             }
         }
 

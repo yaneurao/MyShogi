@@ -116,6 +116,8 @@ namespace MyShogi.Model.Common.Tool
 
         /// <summary>
         /// 現在のDockStateに基づき、dockWindowの位置とサイズを決定して反映させる。
+        ///
+        /// dockWindow.Show()の前に呼び出されるものとする。
         /// </summary>
         /// <param name="mainWindow"></param>
         /// <param name="dockWindow"></param>
@@ -141,6 +143,7 @@ namespace MyShogi.Model.Common.Tool
             // Sizeに突っ込むと、その瞬間resizeイベントが発生して、そのときのlocationが記録されてしまう。
             dockWindow.Size = this.Size;
             dockWindow.Location = location.Value;
+            dockWindow.StartPosition = FormStartPosition.Manual; // Show()の前に設定された内容が反映されるように。
         }
 
         /// <summary>
