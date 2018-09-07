@@ -122,6 +122,7 @@ namespace MyShogi.View.Win2D
 
         private void DockWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
+#if false
             if (!TheApp.app.Exiting)
             {
                 // cancelして非表示にして隠しておく。
@@ -131,6 +132,16 @@ namespace MyShogi.View.Win2D
                 // 「棋譜ウインドウ」の再表示がメニュー上で選べるようになっていて欲しいので、
                 // メニューの再描画を要求する。
 
+                ViewModel.RaisePropertyChanged("MenuUpdated");
+            }
+#endif
+            // →　Ownerを設定する場合において、closeをCancelするのは筋が良くない。
+
+            if (ViewModel.Control != null)
+            {
+                // Dispose()が呼ばれるとたまらないのでremoveしておく。(親側で解体すべき)
+                Controls.Remove(ViewModel.Control);
+                ViewModel.Control = null;
                 ViewModel.RaisePropertyChanged("MenuUpdated");
             }
         }

@@ -74,9 +74,6 @@ namespace MyShogi.View.Win2D
             // -- それ以外のハンドラの設定
 
             var config = TheApp.app.Config;
-            kifuDockWindow = new DockWindow();
-            kifuDockWindow.TopMost = true; // Ownerを設定してしまうと、main windowを×で閉じたときに先にこのFormClosingが呼び出されてしまう。
-            kifuDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
 
             config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", UpdateKifuWindowDockState );
             config.KifuWindowDockManager.AddPropertyChangedHandler("DockPosition", UpdateKifuWindowDockState);
@@ -246,15 +243,31 @@ namespace MyShogi.View.Win2D
             var dockManager = TheApp.app.Config.KifuWindowDockManager;
             dockManager.DockState = dockState; // 次回起動時のためにここに保存しておく。
 
-            if (dockState == DockState.InTheMainWindow)
+            if (kifuDockWindow != null)
             {
                 kifuDockWindow.RemoveControl();
-                kifuDockWindow.Visible = false;
+                kifuDockWindow.Dispose();
+                kifuDockWindow = null;
+            }
+
+            if (dockState == DockState.InTheMainWindow)
+            {
                 if (!gameScreenControl1.Controls.Contains(kifuControl))
                     gameScreenControl1.Controls.Add(kifuControl);
                 gameScreenControl1.ResizeKifuControl(); // フォームに埋めたあとリサイズする。
 
             } else {
+
+                kifuDockWindow = new DockWindow();
+                //kifuDockWindow.TopMost = true; // Ownerを設定してしまうと、main windowを×で閉じたときに先にこのFormClosingが呼び出されてしまう。
+                // →　かと言ってTopMostは、ファイルダイアログを開くときなど常に最前面に出てくるので罪が重い。
+                // MainWindowのOnMoveなどに対してだけ前面に持ってきてはどうか。
+                // →　resize,move,…、イベントを捕捉するだけでは、漏れがあるようで棋譜ウインドウが前面に来ない瞬間がある。
+                // 結論的には、OwnerをMainWindowにして、Close()のキャンセル処理はしないようにする。
+                kifuDockWindow.Owner = this;
+
+                kifuDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
+
 
                 kifuDockWindow.ViewModel.Caption = "棋譜ウインドウ";
                 if (gameScreenControl1.Controls.Contains(kifuControl))
@@ -275,8 +288,6 @@ namespace MyShogi.View.Win2D
                     dockManager.LocationOnFloating = pos;
                 }
                     
-                dockManager.InitDockWindowLocation(this,kifuDockWindow);
-
                 if (!kifuDockWindow.Visible)
                 {
                     kifuControl.Visible = true; // 細長い駒台モードのため非表示にしていたかも知れないので。
@@ -284,6 +295,10 @@ namespace MyShogi.View.Win2D
                     // DockWindowは検討ウインドウ同様にFormClosingでe.Cancel = trueにする動作なので、
                     // ここでmain windowにぶら下げるとmain windowのFormClosingに対して、そちらが先に呼び出されておかしいことになる。
                 }
+
+                dockManager.InitDockWindowLocation(this, kifuDockWindow);
+
+                UpdateMenuItems();
             }
         }
 
@@ -383,11 +398,15 @@ namespace MyShogi.View.Win2D
 
         public void MainDialog_Move(object sender, System.EventArgs e)
         {
-            UpdateDockedWindowLocation();
-            SaveWindowSizeAndPosition();
+            SizeOrLocationChanged();
         }
 
         private void MainDialog_Resize(object sender, System.EventArgs e)
+        {
+            SizeOrLocationChanged();
+        }
+
+        private void SizeOrLocationChanged()
         {
             UpdateDockedWindowLocation();
             SaveWindowSizeAndPosition();
@@ -415,15 +434,25 @@ namespace MyShogi.View.Win2D
 
             // 棋譜ウインドウも。
             {
-                // メインウインドウの最小化、最大化に応じて棋譜ウインドウの表示/非表示を切り替える。
-                if (WindowState == FormWindowState.Minimized)
-                    kifuDockWindow.Visible = false;
-                else
-                    if (kifuDockWindow.ViewModel.Control != null) /* 有効なcontrolを持っているときのみ */
-                    kifuDockWindow.Visible = true;
+                if (kifuDockWindow != null)
+                {
+                    // メインウインドウの最小化、最大化に応じて棋譜ウインドウの表示/非表示を切り替える。
+                    if (WindowState == FormWindowState.Minimized)
+                        kifuDockWindow.Visible = false;
+                    else
+                    {
+                        // 最小化状態ではない。(MainWindowが表示されていることが保証されている)
 
-                var dockManager = TheApp.app.Config.KifuWindowDockManager;
-                dockManager.UpdateDockWindowLocation(this, kifuDockWindow);
+                        if (kifuDockWindow.ViewModel.Control != null) /* 有効なcontrolを持っているときのみ */
+                        {
+                            kifuDockWindow.Visible = true;
+                            kifuDockWindow.Activate(); // 前面に持ってくる。
+                        }
+                    }
+
+                    var dockManager = TheApp.app.Config.KifuWindowDockManager;
+                    dockManager.UpdateDockWindowLocation(this, kifuDockWindow);
+                }
             }
 
         }
@@ -2144,12 +2173,15 @@ namespace MyShogi.View.Win2D
 
                         item_window.DropDownItems.Add(item_);
 
+                        var dock = config.KifuWindowDockManager;
+
                         {
                             var item = new ToolStripMenuItem();
                             item.Text = "再表示(&V)"; // visible // 
                             item.ShortcutKeys = Keys.Control | Keys.K; // KifuWindow
-                            item.Enabled = !kifuDockWindow.Visible && kifuDockWindow.ViewModel.Control != null;
-                            item.Click += (sender, e) => { kifuDockWindow.Visible = true; };
+                            item.Enabled = kifuDockWindow == null ? false :
+                                (!kifuDockWindow.Visible /* 解体されてる */ && dock.DockState != DockState.InTheMainWindow);
+                            item.Click += (sender, e) => { dock.RaisePropertyChanged("DockState", dock.DockState); };
                             item_.DropDownItems.Add(item);
                         }
 
@@ -2160,7 +2192,6 @@ namespace MyShogi.View.Win2D
                             item_.DropDownItems.Add(item);
 
                             {
-                                var dock = config.KifuWindowDockManager;
 
                                 var item1 = new ToolStripMenuItem();
                                 item1.Text = "メインウインドウに埋め込む(EmbeddedMode)";
@@ -2537,8 +2568,8 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private MenuStrip old_menu { get; set; } = null;
 
-#endregion
 
+        #endregion
 
     }
 }
