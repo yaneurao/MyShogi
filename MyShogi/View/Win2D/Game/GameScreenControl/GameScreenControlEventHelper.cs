@@ -183,7 +183,7 @@ namespace MyShogi.View.Win2D
         public void InTheGameChanged(PropertyChangedEventArgs args)
         {
             TurnChanged(args);
-            kifuControl.ViewModel.RaisePropertyChanged("InTheGame", args); // 棋譜ボタンが変化するかもなので
+            kifuControl.ViewModel.SetValueAndRaisePropertyChanged("InTheGame", args.value); // 棋譜ボタンが変化するかもなので
 
             // Tooltipの◁▷本譜ボタンの状態更新
             UpdateTooltipButtons2();

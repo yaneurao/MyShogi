@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 // WPFで使うNotifyObjectっぽい何か。
@@ -163,8 +164,11 @@ namespace MyShogi.Model.Common.ObjectModel
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <param name="value"></param>
-        public void SetValueAndRaisePropertyChanged<T>(string name, T value)
+        public void SetValueAndRaisePropertyChanged<T>(string name, T value) // where (T != PropertyChangedEventArgs)
         {
+            // 間違えてPropertyChangedEventArgs突っ込んで呼び出していないか？
+            Debug.Assert(!(value is PropertyChangedEventArgs));
+
             if (lockObject == null)
                 return;
 

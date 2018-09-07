@@ -156,16 +156,25 @@ namespace MyShogi.View.Win2D
             button3.Visible = !inTheGame;
             button4.Visible = !inTheGame;
 
+            // フォントサイズ変更ボタンが有効か
+            // 「+」「-」ボタンは、メインウインドウに埋め込んでいないときのみ
+            var font_button_enable = !inTheGame && ViewModel.DockState != DockState.InTheMainWindow;
+
+            button5.Visible = font_button_enable;
+            button6.Visible = font_button_enable;
+
             // -- ボタンなどのリサイズ
 
-            // 全体の8%の高さのボタンを用意。
-            int bh = inTheGame ? 0 : Height * 8 / 100;
+            // ボタン高さ
 
+            // メインウインドウに埋め込んでいるなら 全体の8%
             // フローティングモードなら23固定。
-            if (ViewModel.DockState != DockState.InTheMainWindow)
-                bh = 23;
+            // 対局中は非表示。
+            int bh = inTheGame ? 0 :
+                (ViewModel.DockState == DockState.InTheMainWindow) ? Height * 8 / 100 :
+                23;
 
-            int x = Width / 4;
+            int x = font_button_enable ? Width / 5 : Width / 4;
             int y = Height - bh;
 
             listBox1.Location = new Point(0, 0);
@@ -181,6 +190,11 @@ namespace MyShogi.View.Win2D
                 button3.Size = new Size(x, bh);
                 button4.Location = new Point(x * 3, y);
                 button4.Size = new Size(x, bh);
+
+                button5.Location = new Point(x * 4, y);
+                button5.Size = new Size(x/2, bh);
+                button6.Location = new Point((int)(x * 4.5), y);
+                button6.Size = new Size(x/2, bh);
             }
 
             if (needScroll)
@@ -198,7 +212,9 @@ namespace MyShogi.View.Win2D
         /// <param name="args"></param>
         private void InTheGameChanged(PropertyChangedEventArgs args)
         {
+            UpdateButtonLocation();
             UpdateButtonState();
+            UpdateButtonState2();
         }
 
         /// <summary>
@@ -265,6 +281,8 @@ namespace MyShogi.View.Win2D
             FontUtility.SetFont(button2 , font2);
             FontUtility.SetFont(button3 , font2);
             FontUtility.SetFont(button4 , font2);
+            FontUtility.SetFont(button5 , font2);
+            FontUtility.SetFont(button6 , font2);
         }
 
         private float last_font_size = 0;
@@ -501,16 +519,77 @@ namespace MyShogi.View.Win2D
         {
             if (ViewModel.DockState != DockState.InTheMainWindow)
             {
-                var font = new Font("MS Gothic", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+                var fontsize = TheApp.app.Config.KifuWindowFontSize;
+                if (fontsize == 0)
+                    fontsize = 11.25f;
+                else if (fontsize < MIN_FONT_SIZE)
+                    fontsize = 5f;
+                else if (fontsize > MAX_FONT_SIZE)
+                    fontsize = 30f;
+                TheApp.app.Config.KifuWindowFontSize = fontsize; // writeback
+
+                var font = new Font("MS Gothic", fontsize , FontStyle.Regular, GraphicsUnit.Point);
                 FontUtility.SetFont(listBox1, font);
 
                 var font2 = new Font("MS Gothic", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+
                 FontUtility.SetFont(button1, font2);
                 FontUtility.SetFont(button2, font2);
                 FontUtility.SetFont(button3, font2);
                 FontUtility.SetFont(button4, font2);
+                FontUtility.SetFont(button5, font2);
+                FontUtility.SetFont(button6, font2);
 
                 UpdateButtonLocation();
+            }
+        }
+
+        /// <summary>
+        /// ListBoxの文字フォントサイズの最大、最小。
+        /// </summary>
+        private const float MAX_FONT_SIZE = 30f;
+        private const float MIN_FONT_SIZE = 5f;
+
+        /// <summary>
+        /// 「+」「-」ボタンのEnableを更新する。
+        /// </summary>
+        private void UpdateButtonEnable()
+        {
+            button5.Enabled = TheApp.app.Config.KifuWindowFontSize < MAX_FONT_SIZE;
+            button6.Enabled = TheApp.app.Config.KifuWindowFontSize > MIN_FONT_SIZE;
+        }
+
+        /// <summary>
+        /// 文字を大きくする「+」ボタン
+        ///
+        /// ウインドウ時のみ有効。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (TheApp.app.Config.KifuWindowFontSize < MAX_FONT_SIZE)
+            {
+                TheApp.app.Config.KifuWindowFontSize++;
+                KifuControl_SizeChanged(sender, e);
+                UpdateButtonEnable();
+            }
+        }
+
+        /// <summary>
+        /// 文字を小さくする「-」ボタン
+        /// 
+        /// ウインドウ時のみ有効。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (TheApp.app.Config.KifuWindowFontSize > MIN_FONT_SIZE)
+            {
+                TheApp.app.Config.KifuWindowFontSize--;
+                KifuControl_SizeChanged(sender, e);
+                UpdateButtonEnable();
             }
         }
 

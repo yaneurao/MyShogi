@@ -35,6 +35,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listBox1
@@ -46,7 +48,7 @@
             this.listBox1.Location = new System.Drawing.Point(8, 6);
             this.listBox1.Margin = new System.Windows.Forms.Padding(0);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(218, 96);
+            this.listBox1.Size = new System.Drawing.Size(297, 96);
             this.listBox1.TabIndex = 0;
             this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
@@ -98,10 +100,36 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(228, 103);
+            this.button5.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(23, 26);
+            this.button5.TabIndex = 3;
+            this.button5.Text = "＋";
+            this.toolTip1.SetToolTip(this.button5, "文字を少し大きくします。");
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(253, 103);
+            this.button6.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(23, 26);
+            this.button6.TabIndex = 3;
+            this.button6.Text = "－";
+            this.toolTip1.SetToolTip(this.button6, "文字を小さくします。");
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
             // KifuControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.button6);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -109,7 +137,7 @@
             this.Controls.Add(this.listBox1);
             this.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.Name = "KifuControl";
-            this.Size = new System.Drawing.Size(251, 144);
+            this.Size = new System.Drawing.Size(316, 144);
             this.SizeChanged += new System.EventHandler(this.KifuControl_SizeChanged);
             this.ResumeLayout(false);
 
@@ -123,5 +151,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
     }
 }
