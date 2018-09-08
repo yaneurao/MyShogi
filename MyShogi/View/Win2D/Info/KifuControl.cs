@@ -37,6 +37,15 @@ namespace MyShogi.View.Win2D
             }
 
             /// <summary>
+            /// KifuListSelectedIndexの値を変更して、イベントを発生させない。
+            /// </summary>
+            /// <param name="i"></param>
+            public void SetKifuListSelectedIndex(int i)
+            {
+                SetValueAndNotRaise("KifuListSelectedIndex", i);
+            }
+
+            /// <summary>
             /// 棋譜リストの項目の数。KifuListSelectedIndexをこれより進めるべきではない。
             /// </summary>
             public int KifuListCount;
@@ -301,6 +310,7 @@ namespace MyShogi.View.Win2D
 
             listBox1.Items.Add(line);
             listBox1.SelectedIndex = listBox1.Items.Count-1; // last
+            ViewModel.SetKifuListSelectedIndex(listBox1.Items.Count - 1);
             ViewModel.KifuListCount = listBox1.Items.Count;
 
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
@@ -321,6 +331,7 @@ namespace MyShogi.View.Win2D
 
             listBox1.Items.RemoveAt(listBox1.Items.Count - 1);
             listBox1.SelectedIndex = listBox1.Items.Count - 1; // last
+            ViewModel.SetKifuListSelectedIndex(listBox1.Items.Count - 1);
             ViewModel.KifuListCount = listBox1.Items.Count;
 
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
@@ -387,6 +398,7 @@ namespace MyShogi.View.Win2D
             // 「本譜」に戻る、「次分岐」などではこの処理がなされているべき。
             // そうしないと棋譜を書き換えた時点で自動的に末尾までスクロールしてしまう。
             listbox.SelectedIndex = j;
+            ViewModel.SetKifuListSelectedIndex(j);
 
             listbox.EndUpdate();
 

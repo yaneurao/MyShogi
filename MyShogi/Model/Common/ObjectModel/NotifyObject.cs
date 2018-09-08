@@ -133,6 +133,25 @@ namespace MyShogi.Model.Common.ObjectModel
         }
 
         /// <summary>
+        /// イベントを生起しないSetValue()相当の何か。
+        /// 極稀に使うので用意してある。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        public void SetValueAndNotRaise<T>(string name , T value)
+        {
+            lock (lockObject)
+            {
+                var current = GetProperty(name);
+                if (!GenericEquals(current.obj, value))
+                {
+                    current.obj = value;
+                }
+            }
+        }
+
+        /// <summary>
         /// propertyのsetterを実装するときに使う。
         /// 値が変わった時に変更通知が来るようになる。
         /// </summary>
