@@ -28,6 +28,8 @@ namespace MyShogi.App
 
         public GlobalConfig()
         {
+            // -- 表示設定
+
             BoardImageVersion = 1;
             TatamiImageVersion = 1;
             PieceImageVersion = 1;
@@ -39,15 +41,25 @@ namespace MyShogi.App
             PickedMoveToColorType = 4;
             PromotePieceColorType = 0;
             TurnDisplay = 1;
+
+            // -- 駒音
+
             PieceSoundInTheGame = 1;
             PieceSoundOffTheGame = 1;
             //CrashPieceSoundInTheGame = 1;
+
+            // -- 読み上げ
+
             KifuReadOut = 1;
             ReadOutSenteGoteEverytime = 1;
+            ReadOutCancelWhenGameEnd = 1;
+            ReadOutByoyomi = 1;
+
+            // -- 検討設定
+
             //EngineConsiderationWindowEnableWhenVsHuman = true;
             ConsiderationMultiPV = 5;
             ConsiderationWindowFollowMainWindow = true;
-            ReadOutCancelWhenGameEnd = 1;
         }
 
         /// <summary>
@@ -93,6 +105,9 @@ namespace MyShogi.App
             {
                 // 棋譜の読み上げ(音声素材がないため)
                 KifuReadOut = 0;
+
+                // 秒の読み上げ
+                ReadOutByoyomi = 0;
             }
 
             // -- その他
@@ -392,6 +407,20 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("ReadOutCancelWhenGameEnd"); }
             set { SetValue<int>("ReadOutCancelWhenGameEnd", value); }
+        }
+
+        /// <summary>
+        /// 秒読みの有無
+        /// ※　ただし、対局設定で1手X秒の指定があるときのみ。
+        ///
+        /// 0 : なし
+        /// 1 : あり(デフォルト)
+        /// </summary>
+        [DataMember]
+        public int ReadOutByoyomi
+        {
+            get { return GetValue<int>("ReadOutByoyomi"); }
+            set { SetValue<int>("ReadOutByoyomi", value); }
         }
 
         /// <summary>

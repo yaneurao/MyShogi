@@ -15,6 +15,9 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             InitViewModel();
+
+            // タスクバーでは非表示。
+            ShowInTaskbar = false;
         }
 
         public class DockWindowViewModel : NotifyObject

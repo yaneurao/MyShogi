@@ -430,20 +430,6 @@ namespace MyShogi.View.Win2D
             {
                 if (kifuDockWindow != null)
                 {
-                    // メインウインドウの最小化、最大化に応じて棋譜ウインドウの表示/非表示を切り替える。
-                    if (WindowState == FormWindowState.Minimized)
-                        kifuDockWindow.Visible = false;
-                    else
-                    {
-                        // 最小化状態ではない。(MainWindowが表示されていることが保証されている)
-
-                        if (kifuDockWindow.ViewModel.Control != null) /* 有効なcontrolを持っているときのみ */
-                        {
-                            kifuDockWindow.Visible = true;
-                            kifuDockWindow.Activate(); // 前面に持ってくる。
-                        }
-                    }
-
                     var dockManager = TheApp.app.Config.KifuWindowDockManager;
                     dockManager.UpdateDockWindowLocation(this, kifuDockWindow);
                 }
@@ -580,6 +566,7 @@ namespace MyShogi.View.Win2D
                     return;
 
                 var dialog = new EngineConsiderationDialog();
+                dialog.ShowInTaskbar = false; // タスクバー収納時は非表示
                 dialog.Init(gameServer.BoardReverse /* これ引き継ぐ。以降は知らん。*/);
                 // ウィンドウ幅を合わせておく。
 
