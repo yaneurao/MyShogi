@@ -216,15 +216,17 @@ namespace MyShogi.Model.Shogi.Core
 
         /// <summary>
         /// 先手から見た勝敗文字列を返す。
+        ///
+        /// 駒落ちのときは、出力する文字列を「先手」「後手」から、「上手」「下手」に変更する。
         /// </summary>
         /// <param name=""></param>
         /// <returns></returns>
-        public static string Pretty(this MoveGameResult result)
+        public static string Pretty(this MoveGameResult result , bool handicapped)
         {
             switch (result)
             {
-                case MoveGameResult.WIN: return "先手勝ち";
-                case MoveGameResult.LOSE: return "後手勝ち";
+                case MoveGameResult.WIN: return handicapped ? "下手勝ち":"先手勝ち";
+                case MoveGameResult.LOSE: return handicapped ? "上手勝ち":"後手勝ち";
                 case MoveGameResult.DRAW: return "引き分け";
                 case MoveGameResult.UNKNOWN: return ""; // 中断などで勝敗がついていない。
                 default: return "";

@@ -125,7 +125,7 @@ namespace MyShogi.View.Win2D
                         var game_result = result.LastMove.GameResult();
                         if (result.LastColor == SCore.Color.WHITE) // 後手から見た結果なので反転させる。
                             game_result = game_result.Not();
-                        var game_result_string = game_result.Pretty();
+                        var game_result_string = game_result.Pretty(result.Handicapped);
                         var special_move_string = result.LastMove.SpecialMoveToKif();
 
                         list = new[] { result.StartTime.ToString(), result.PlayerNames[0], result.PlayerNames[1] ,

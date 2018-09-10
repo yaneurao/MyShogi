@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using MyShogi.Model.Common.Extensions;
-using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Data
@@ -60,6 +59,11 @@ namespace MyShogi.Model.Shogi.Data
         public string TimeSettingString;
 
         /// <summary>
+        /// 駒落ち戦であるか。
+        /// </summary>
+        public bool Handicapped;
+
+        /// <summary>
         /// コメント行用のコメント。
         ///
         /// コメント行では、
@@ -88,8 +92,13 @@ namespace MyShogi.Model.Shogi.Data
 
             list.Add(BoardType.ToString());
             list.Add(TimeSettingString);
-
             list.Add(Comment);
+
+            // 後方互換性を維持するために、追加が必要になったときは、
+            // ここの末尾に追加していく。
+
+            // これあとから追加した。(V1.16)
+            list.Add(Handicapped.ToString());
 
             return list;
         }
@@ -119,6 +128,11 @@ namespace MyShogi.Model.Shogi.Data
                 result.BoardType = Util.FromBoardTypeString(list[8]);
                 result.TimeSettingString = list[9];
                 result.Comment = list[10];
+
+                // あとから追加になったfieldは以前は存在していなかったものなので慎重に読み込む。
+
+                if (list.Count < 12 || !bool.TryParse(list[11], out result.Handicapped))
+                    result.Handicapped = false;
 
                 return result;
 

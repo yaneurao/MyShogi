@@ -1087,6 +1087,11 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 var table = new GameResultTable();
                 var csv_path = setting.CsvFilePath();
+                var handicapped = Position.Handicapped;
+                var timeSettingStrings = !handicapped ?
+                    $"先手:{TimeSettingString(Color.BLACK)},後手:{TimeSettingString(Color.WHITE)}" :
+                    $"下手:{TimeSettingString(Color.BLACK)},上手:{TimeSettingString(Color.WHITE)}";
+
                 var result = new GameResultData()
                 {
                     PlayerNames = new[] { DisplayNameWithPreset(Color.BLACK), DisplayNameWithPreset(Color.WHITE) },
@@ -1097,10 +1102,13 @@ namespace MyShogi.Model.Shogi.LocalServer
                     LastColor = lastColor,
                     GamePly = Position.gamePly - 1 /* 31手目で詰まされている場合、棋譜の手数としては30手であるため。 */,
                     BoardType = kifuManager.Tree.rootBoardType,
-                    TimeSettingString = $"先手:{TimeSettingString(Color.BLACK)},後手:{TimeSettingString(Color.WHITE)}",
+                    TimeSettingString = timeSettingStrings,
+                    Handicapped = handicapped,
                     Comment = null,
                 };
                 table.AppendLine(csv_path, result);
+
+                // 連続対局の最終局であるなら、連続対局のトータルの結果を出力する。
 
                 if (continuousGame.IsLastGame())
                 {
