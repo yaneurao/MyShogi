@@ -200,6 +200,29 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// ShortDisplayName()と同等だが、
+        /// 先頭に手番文字列が付与された形で表示名を返す。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public string ShortDisplayNameWithTurn(Color c)
+        {
+            string turn = null; ;
+            switch(TheApp.app.Config.DisplayNameTurnVersion)
+            {
+                case 0: break;
+                case 1: turn = c == Color.BLACK ? "☗" : "☖"; break;
+                case 2: turn = c == Color.BLACK ? "▲" : "△"; break;
+                
+                // 他のものは考え中
+                default: break;
+            }
+
+            var name = $"{turn}{DisplayName(c)}";
+            return name.LeftUnicode(16); // 半角換算で16文字まで
+        }
+
+        /// <summary>
         /// c側のプレイヤー
         /// 
         /// エンジンを用いた検討モードの時、

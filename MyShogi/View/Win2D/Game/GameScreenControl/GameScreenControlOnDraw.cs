@@ -240,14 +240,14 @@ namespace MyShogi.View.Win2D
                     {
                         // 通常状態の駒台表示
                         case 0:
-                            DrawString(name_plate_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK), 28);
-                            DrawString(name_plate_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE), 28);
+                            DrawString(name_plate_name[0], gameServer.ShortDisplayNameWithTurn(reverse ? SColor.WHITE : SColor.BLACK), 26);
+                            DrawString(name_plate_name[1], gameServer.ShortDisplayNameWithTurn(reverse ? SColor.BLACK : SColor.WHITE), 26);
                             break;
                         // 細長い状態の駒台表示
                         case 1:
                             DrawSprite(turn_slim_pos, SPRITE.NamePlateSlim(pos.sideToMove, reverse));
-                            DrawString(name_plate_slim_name[0], gameServer.ShortDisplayName(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.White, 2));
-                            DrawString(name_plate_slim_name[1], gameServer.ShortDisplayName(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.White, 0));
+                            DrawString(name_plate_slim_name[0], gameServer.ShortDisplayNameWithTurn(reverse ? SColor.WHITE : SColor.BLACK), 26, new DrawStringOption(Brushes.White, 2));
+                            DrawString(name_plate_slim_name[1], gameServer.ShortDisplayNameWithTurn(reverse ? SColor.BLACK : SColor.WHITE), 26, new DrawStringOption(Brushes.White, 0));
                             break;
                     }
                 }

@@ -41,6 +41,7 @@ namespace MyShogi.App
             PickedMoveToColorType = 4;
             PromotePieceColorType = 0;
             TurnDisplay = 1;
+            DisplayNameTurnVersion = 1;
 
             // -- 駒音
 
@@ -259,6 +260,21 @@ namespace MyShogi.App
             get { return GetValue<int>("ConsiderationWindowKifuVersion"); }
             set { SetValue<int>("ConsiderationWindowKifuVersion", value); }
         }
+
+        /// <summary>
+        /// 対局者の表示名(メインウインドウ上)の先頭に手番を意味する文字を付与するか。
+        ///
+        /// 0 : しない
+        /// 1 : する 「☗」「☖」←デフォルト
+        /// 2 : する 「▲」「△」
+        /// </summary>
+        [DataMember]
+        public int DisplayNameTurnVersion
+        {
+            get { return GetValue<int>("DisplayNameTurnVersion"); }
+            set { SetValue<int>("DisplayNameTurnVersion", value); }
+        }
+
 
         /// <summary>
         /// 最終手の駒の移動元の升の背景色

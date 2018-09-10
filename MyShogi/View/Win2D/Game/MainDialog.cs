@@ -1834,7 +1834,7 @@ namespace MyShogi.View.Win2D
                     { // -- 手番プレートの表示
 
                         var item = new ToolStripMenuItem();
-                        item.Text = "手番表示(&T)"; // Turn
+                        item.Text = "対局者名の右に手番マークの表示(&T)"; // Turn
 
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "なし(&N)"; // None
@@ -1847,6 +1847,33 @@ namespace MyShogi.View.Win2D
                         item2.Checked = config.TurnDisplay == 1;
                         item2.Click += (sender, e) => { config.TurnDisplay = 1; };
                         item.DropDownItems.Add(item2);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
+                    // 
+                    { // -- 検討ウィンドウで思考エンジンが後手番のときに評価値を反転させるか(自分から見た評価値にするか)
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "対局者名の先頭の手番記号(&U)"; // tUrn // アルファベット的にTの次でU
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "なし(&N)"; // None
+                        item1.Checked = config.DisplayNameTurnVersion == 0;
+                        item1.Click += (sender, e) => { config.DisplayNameTurnVersion = 0; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "先手「☗」・後手「☖」(&1)";
+                        item2.Checked = config.DisplayNameTurnVersion == 1;
+                        item2.Click += (sender, e) => { config.DisplayNameTurnVersion = 1; };
+                        item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "先手「▲」・後手「△」(&2)";
+                        item3.Checked = config.DisplayNameTurnVersion == 2;
+                        item3.Click += (sender, e) => { config.DisplayNameTurnVersion = 2; };
+                        item.DropDownItems.Add(item3);
 
                         item_display.DropDownItems.Add(item);
                     }
@@ -1870,7 +1897,6 @@ namespace MyShogi.View.Win2D
 
                         item_display.DropDownItems.Add(item);
                     }
-
                 }
 
                 // 「音声」
