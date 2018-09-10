@@ -3,6 +3,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Collections.Generic;
+using System.Diagnostics;
+using Draw = System.Drawing;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
@@ -10,7 +12,6 @@ using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.App;
-using System.Diagnostics;
 using MyShogi.Model.Common.Extensions;
 
 namespace MyShogi.View.Win2D
@@ -323,10 +324,10 @@ namespace MyShogi.View.Win2D
         {
             UpdateHeader(new UsiThinkReport()
             {
-                PonderMove = "",
-                NodesString = "",
-                NpsString = "",
-                HashPercentage = 0,
+                PonderMove = null,
+                NodesString = null,
+                NpsString = null,
+                HashPercentageString = null,
             });
         }
 
@@ -585,7 +586,11 @@ namespace MyShogi.View.Win2D
                 textBox4.Text = $" NPS : { info.NpsString.PadLeftUnicode(12) }";
 
             if (info.HashPercentageString != null)
+            {
                 textBox5.Text = $"HASH使用率 : { info.HashPercentageString.PadLeftUnicode(6) }";
+                // 50%以上なら赤文字にして、HASHが足りないことをアピール。
+                textBox5.ForeColor = info.HashPercentage < 50 ? Draw.Color.Black : Draw.Color.Red;
+            }
         }
 
         /// <summary>

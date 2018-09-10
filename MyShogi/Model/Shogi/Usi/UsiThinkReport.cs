@@ -85,7 +85,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// <summary>
         /// ハッシュ使用率
         /// </summary>
-        public string HashPercentageString { get; private set; }
+        public string HashPercentageString;
         public float HashPercentage {
             set { hashPercentage_ = value; HashPercentageString = string.Format("{0:F1}", value) + '%'; }
             get { return hashPercentage_; }
