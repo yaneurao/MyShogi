@@ -160,6 +160,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     var firstChar = line[0];
                     // 無効行
                     if (firstChar == '#') continue;
+                    if (firstChar == '&') continue; // Kifu for Windows "しおり"機能
                     // 棋譜コメント文
                     if (firstChar == '*')
                     {
