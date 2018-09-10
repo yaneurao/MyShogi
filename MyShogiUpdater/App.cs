@@ -100,6 +100,11 @@ namespace MyShogiUpdater
                     model.AutoInstall = true;
                 }
             }
+            if (!File.Exists(model.UpdateTextFile))
+            {
+                MessageBox.Show("アップデート用のデータが見つかりません。\r\nダウンロードしたzipファイルは、展開してからMyShogiUpdater.exeを実行してください。");
+                return;
+            }
 
             mainForm.Init();
             Application.Run(mainForm);
