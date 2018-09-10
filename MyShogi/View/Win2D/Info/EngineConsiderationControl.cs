@@ -326,7 +326,7 @@ namespace MyShogi.View.Win2D
                 PonderMove = "",
                 NodesString = "",
                 NpsString = "",
-                HashPercentageString = "",
+                HashPercentage = 0,
             });
         }
 
