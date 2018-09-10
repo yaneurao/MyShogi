@@ -144,31 +144,48 @@ namespace MyShogiUpdater
             {
                 button1.Enabled = false;
 
-                // 管理者で実行されているならそのまま実行するだけ。
+                // 管理者として実行されているのか？
+                var isAdmin = PatchMaker.IsAdministrator();
+
+                // AutoInstallが予約されている。
                 if (ViewModel.AutoInstall)
                 {
+                    if (isAdmin)
+                    {
+                        workerThread = new Thread(worker);
+                        workerThread.Start();
+                    } else
+                    {
+                        //「ユーザーアカウント制御」ダイアログでキャンセルされたなどによって起動できなかった時
+                        MessageBox.Show("管理者になれませんでした。UACの設定を確認してください。");
+                    }
+
+                } else if (isAdmin)
+                {
+                    // このまま実行できる。
                     workerThread = new Thread(worker);
                     workerThread.Start();
-                    return;
                 }
+                else {
 
-                //管理者として自分自身を起動する
-                var psi = new System.Diagnostics.ProcessStartInfo();
-                psi.UseShellExecute = true;
-                psi.FileName = Application.ExecutablePath;
-                psi.Verb = "runas"; // 管理者
-                psi.Arguments = $"FolderCopy \"{targetFolder}\"";
-                // このコマンドを実行してもらう。
-                try
-                {
-                    //起動する
-                    var process = System.Diagnostics.Process.Start(psi);
-                    Application.Exit(); // このプロセスは終了させる。
-                }
-                catch (System.ComponentModel.Win32Exception ex)
-                {
-                    //「ユーザーアカウント制御」ダイアログでキャンセルされたなどによって起動できなかった時
-                    MessageBox.Show("起動しませんでした: " + ex.Message);
+                    //管理者として自分自身を起動する
+                    var psi = new System.Diagnostics.ProcessStartInfo();
+                    psi.UseShellExecute = true;
+                    psi.FileName = Application.ExecutablePath;
+                    psi.Verb = "runas"; // 管理者
+                    psi.Arguments = $"FolderCopy \"{targetFolder}\"";
+                    // このコマンドを実行してもらう。
+                    try
+                    {
+                        //起動する
+                        var process = System.Diagnostics.Process.Start(psi);
+                        Application.Exit(); // このプロセスは終了させる。
+                    }
+                    catch (System.ComponentModel.Win32Exception ex)
+                    {
+                        //「ユーザーアカウント制御」ダイアログでキャンセルされたなどによって起動できなかった時
+                        MessageBox.Show("起動しませんでした: " + ex.Message);
+                    }
                 }
 
                 //PatchMaker.FolderCopy(ViewModel.SourceFolder, targetFolder);
