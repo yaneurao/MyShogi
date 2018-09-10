@@ -42,6 +42,7 @@
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
@@ -51,11 +52,14 @@
             this.playerSettingControl1 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
             this.timeSettingControl2 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
             this.timeSettingControl1 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox3
@@ -220,6 +224,16 @@
             this.label2.TabIndex = 35;
             this.label2.Text = "手";
             // 
+            // checkBox3
+            // 
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(32, 72);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(251, 19);
+            this.checkBox3.TabIndex = 33;
+            this.checkBox3.Text = "連続対局のときに手番を入れ替えない";
+            this.checkBox3.UseVisualStyleBackColor = true;
+            // 
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
@@ -314,21 +328,52 @@
             this.timeSettingControl1.Size = new System.Drawing.Size(381, 131);
             this.timeSettingControl1.TabIndex = 32;
             // 
-            // checkBox3
+            // label4
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(32, 72);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(251, 19);
-            this.checkBox3.TabIndex = 33;
-            this.checkBox3.Text = "連続対局のときに手番を入れ替えない";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(320, 277);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 15);
+            this.label4.TabIndex = 38;
+            this.label4.Text = "[ms]";
+            // 
+            // numericUpDown3
+            // 
+            this.numericUpDown3.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Location = new System.Drawing.Point(249, 274);
+            this.numericUpDown3.Maximum = new decimal(new int[] {
+            9999999,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Name = "numericUpDown3";
+            this.numericUpDown3.Size = new System.Drawing.Size(69, 22);
+            this.numericUpDown3.TabIndex = 37;
+            this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 277);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(230, 15);
+            this.label5.TabIndex = 38;
+            this.label5.Text = "コンピューターは1手に必ずこれだけ使う";
+            this.toolTip1.SetToolTip(this.label5, "コンピューターは1手に必ずこれだけ使います。\r\n(思考が終わっていても指すのを待機します)\r\n単位は[ms]なので1秒を指定したいなら「1000」と入力してくださ" +
+        "い。");
             // 
             // GameSettingDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(771, 520);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.numericUpDown3);
             this.Controls.Add(this.playerSettingControl2);
             this.Controls.Add(this.playerSettingControl1);
             this.Controls.Add(this.timeSettingControl2);
@@ -351,6 +396,7 @@
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -379,5 +425,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox checkBox3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.NumericUpDown numericUpDown3;
+        private System.Windows.Forms.Label label5;
     }
 }

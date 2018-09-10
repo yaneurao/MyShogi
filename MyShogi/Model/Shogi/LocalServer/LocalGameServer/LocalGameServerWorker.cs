@@ -561,8 +561,17 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
             else
             {
+                // 対局設定ダイアログの「コンピューターは1手に必ずこれだけ使う」が設定されていれば、
+                // その時間になるまでbest moveを無視する。
+                var stmBestMove = stmPlayer.BestMove;
+                if (stmBestMove != Move.NONE
+                    && stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine
+                    && PlayTimer(stm).ElapsedTime() < GameSetting.MiscSettings.BestMoveIgnoreTimeForEngine
+                    )
+                    stmBestMove = Move.NONE;
+
                 // TIME_UPなどのSpecialMoveが積まれているなら、そちらを優先して解釈する。
-                bestMove = stmPlayer.SpecialMove != Move.NONE ? stmPlayer.SpecialMove : stmPlayer.BestMove;
+                bestMove = stmPlayer.SpecialMove != Move.NONE ? stmPlayer.SpecialMove : stmBestMove;
             }
 
             if (bestMove != Move.NONE)

@@ -76,6 +76,24 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue<bool>("ContinuousGameNoSwapPlayer", value); }
         }
 
+        /// <summary>
+        /// 動機)
+        /// コンピューター側、指し手が速すぎて追いかけられないので、1手に必ず1秒使うようなモードが欲しい。
+        /// 
+        /// 解決法)
+        /// コンピューターが返したbest moveに対して、x[ms] になるまでGUI側が指し手を無視する機能を用意することにした。
+        /// 対局設定ダイアログの「コンピューターは1手に必ずこれだけ使う」
+        ///
+        /// そのパラメーターがこの変数。
+        /// 単位は[ms]。0なら効果なし。負の値は許容しない。
+        /// </summary>
+        public int BestMoveIgnoreTimeForEngine
+        {
+            get { return GetValue<int>("BestMoveIgnoreTimeForEngine"); }
+            set { SetValue<int>("BestMoveIgnoreTimeForEngine", value); }
+        }
+
+
         // -- public members
 
         public MiscSettings()
@@ -87,6 +105,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // デフォルトでは連続対局は無効
             ContinuousGameEnable = false;
             ContinuousGame = 100;
+
+            BestMoveIgnoreTimeForEngine = 0;
         }
 
         public MiscSettings Clone()
