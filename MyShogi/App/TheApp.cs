@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Tool;
@@ -71,6 +72,18 @@ namespace MyShogi.App
         /// </summary>
         private void Main()
         {
+            // -- working directoryの変更
+
+            // 拡張子関連付けやショートカットなどで他のフォルダがworking directoryに設定されていることがある。
+            {
+                try
+                {
+                    var dirpath = System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Environment.GetCommandLineArgs()[0]));
+                    Directory.SetCurrentDirectory(dirpath);
+                } catch { }
+            }
+
+
             // -- global configの読み込み
 
             Config = GlobalConfig.CreateInstance();

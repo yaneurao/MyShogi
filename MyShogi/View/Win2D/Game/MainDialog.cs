@@ -309,6 +309,7 @@ namespace MyShogi.View.Win2D
         private void CommandLineCheck()
         {
             var parser = new CommandLineParser();
+            var firstToken = true;
 
             while (true)
             {
@@ -327,9 +328,16 @@ namespace MyShogi.View.Win2D
                         break;
 
                     default:
-                        TheApp.app.MessageShow("コマンドライン引数に解釈できない文字列がありました。", MessageShowType.Error);
+                        // 一つ目のtokenとして直接ファイル名が指定されている可能性がある。
+                        // この処理は拡張子関連付けのために必要。
+                        if (firstToken)
+                            ReadKifuFile(token);
+                        else
+                            TheApp.app.MessageShow("コマンドライン引数に解釈できない文字列がありました。", MessageShowType.Error);
                         break;
                 }
+
+                firstToken = false;
             }
         }
 
