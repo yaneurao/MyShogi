@@ -256,7 +256,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     return FromPsnString(lines, KifuFileType.PSN2);
 
                 // CSA形式なのか？
-                if (line.StartsWith("V2") || line.StartsWith("N+")) // 将棋所だと"V2.2"など書いてあるはず。バージョンなしでも許容する。
+                if (line.StartsWith("V2") || line.StartsWith("N+") || line.StartsWith("'") || line.StartsWith("+") || line.StartsWith("-")) // 将棋所だと"V2.2"など書いてあるはず。バージョンなしでも許容する。
                     return FromCsaString(lines, KifuFileType.CSA);
 
                 // JSON形式なのか？
@@ -264,7 +264,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     return FromJsonString(content, KifuFileType.JSON);
 
                 // KIF/KI2形式なのか？
-                if (line.StartsWith("#") || line.IndexOf("：") > 0 || line.StartsWith("後手の持駒") || line.IndexOf("▲") > 0 || line.IndexOf("△") > 0)
+                if (line.StartsWith("#") || line.IndexOf("：") > 0 || line.StartsWith("先手") || line.StartsWith("後手") || line.IndexOf("▲") > 0 || line.IndexOf("△") > 0)
                     return FromKifString(lines, KifuFileType.KIF);
 
                 return "棋譜の形式が判別できませんでした。";

@@ -7,6 +7,18 @@ namespace MyShogi.Model.Shogi.Converter
 {
     // CSA形式の文字列を取り扱うクラス群
 
+    // CSA標準棋譜ファイル形式 第3版 1997年 8月25日
+    // http://www2.computer-shogi.org/wcsc11/record.html
+
+    // CSA標準棋譜ファイル形式 第4版 2002年11月15日 V2
+    // http://www2.computer-shogi.org/protocol/record_v2.html
+
+    // CSA標準棋譜ファイル形式 第5版 2005年 9月10日 V2.1
+    // http://www2.computer-shogi.org/protocol/record_v21.html
+
+    // CSA標準棋譜ファイル形式 第6版 2008年 1月12日 V2.2
+    // http://www2.computer-shogi.org/protocol/record_v22.html
+
     /// <summary>
     /// csa形式の入出力
     /// </summary>
@@ -186,10 +198,59 @@ namespace MyShogi.Model.Shogi.Converter
             Color turn = Color.BLACK;
             int ply = 1;
 
+            // 盤面省略検出フラグ
+            var ellipsis = true;
+
             // 盤面一括
             Regex bRegex = new Regex(@"^P[1-9](?: \* |[+-](?:FU|KY|KE|GI|KI|KA|HI|OU|TO|NY|NK|NG|UM|RY)){9}");
             // 駒個別
             Regex hRegex = new Regex(@"^P[+-]((?:[0-9][0-9](?:FU|KY|KE|GI|KI|KA|HI|OU|TO|NY|NK|NG|UM|RY))+)");
+
+            void SetPI()
+            {
+                // 平手初期配置
+                for (int i = 0; i < 81; ++i) board[i] = Piece.NO_PIECE;
+                board[Square.SQ_11.ToInt()] = Piece.W_LANCE;
+                board[Square.SQ_21.ToInt()] = Piece.W_KNIGHT;
+                board[Square.SQ_31.ToInt()] = Piece.W_SILVER;
+                board[Square.SQ_41.ToInt()] = Piece.W_GOLD;
+                board[Square.SQ_51.ToInt()] = Piece.W_KING;
+                board[Square.SQ_61.ToInt()] = Piece.W_GOLD;
+                board[Square.SQ_71.ToInt()] = Piece.W_SILVER;
+                board[Square.SQ_81.ToInt()] = Piece.W_KNIGHT;
+                board[Square.SQ_91.ToInt()] = Piece.W_LANCE;
+                board[Square.SQ_22.ToInt()] = Piece.W_BISHOP;
+                board[Square.SQ_82.ToInt()] = Piece.W_ROOK;
+                board[Square.SQ_13.ToInt()] = Piece.W_PAWN;
+                board[Square.SQ_23.ToInt()] = Piece.W_PAWN;
+                board[Square.SQ_33.ToInt()] = Piece.W_PAWN;
+                board[Square.SQ_43.ToInt()] = Piece.W_PAWN;
+                board[Square.SQ_53.ToInt()] = Piece.W_PAWN;
+                board[Square.SQ_63.ToInt()] = Piece.W_PAWN;
+                board[Square.SQ_73.ToInt()] = Piece.W_PAWN;
+                board[Square.SQ_83.ToInt()] = Piece.W_PAWN;
+                board[Square.SQ_93.ToInt()] = Piece.W_PAWN;
+                board[Square.SQ_17.ToInt()] = Piece.B_PAWN;
+                board[Square.SQ_27.ToInt()] = Piece.B_PAWN;
+                board[Square.SQ_37.ToInt()] = Piece.B_PAWN;
+                board[Square.SQ_47.ToInt()] = Piece.B_PAWN;
+                board[Square.SQ_57.ToInt()] = Piece.B_PAWN;
+                board[Square.SQ_67.ToInt()] = Piece.B_PAWN;
+                board[Square.SQ_77.ToInt()] = Piece.B_PAWN;
+                board[Square.SQ_87.ToInt()] = Piece.B_PAWN;
+                board[Square.SQ_97.ToInt()] = Piece.B_PAWN;
+                board[Square.SQ_28.ToInt()] = Piece.B_ROOK;
+                board[Square.SQ_88.ToInt()] = Piece.B_BISHOP;
+                board[Square.SQ_19.ToInt()] = Piece.B_LANCE;
+                board[Square.SQ_29.ToInt()] = Piece.B_KNIGHT;
+                board[Square.SQ_39.ToInt()] = Piece.B_SILVER;
+                board[Square.SQ_49.ToInt()] = Piece.B_GOLD;
+                board[Square.SQ_59.ToInt()] = Piece.B_KING;
+                board[Square.SQ_69.ToInt()] = Piece.B_GOLD;
+                board[Square.SQ_79.ToInt()] = Piece.B_SILVER;
+                board[Square.SQ_89.ToInt()] = Piece.B_KNIGHT;
+                board[Square.SQ_99.ToInt()] = Piece.B_LANCE;
+            }
 
             foreach (var line in csa)
             {
@@ -207,50 +268,12 @@ namespace MyShogi.Model.Shogi.Converter
                 {
                     continue;
                 }
+                ellipsis = false;
                 if (line.StartsWith("PI"))
                 {
                     // 平手初期配置
-                    for (int i = 0; i < 81; ++i) board[i] = Piece.NO_PIECE;
-                    board[Square.SQ_11.ToInt()] = Piece.W_LANCE;
-                    board[Square.SQ_21.ToInt()] = Piece.W_KNIGHT;
-                    board[Square.SQ_31.ToInt()] = Piece.W_SILVER;
-                    board[Square.SQ_41.ToInt()] = Piece.W_GOLD;
-                    board[Square.SQ_51.ToInt()] = Piece.W_KING;
-                    board[Square.SQ_61.ToInt()] = Piece.W_GOLD;
-                    board[Square.SQ_71.ToInt()] = Piece.W_SILVER;
-                    board[Square.SQ_81.ToInt()] = Piece.W_KNIGHT;
-                    board[Square.SQ_91.ToInt()] = Piece.W_LANCE;
-                    board[Square.SQ_22.ToInt()] = Piece.W_BISHOP;
-                    board[Square.SQ_82.ToInt()] = Piece.W_ROOK;
-                    board[Square.SQ_13.ToInt()] = Piece.W_PAWN;
-                    board[Square.SQ_23.ToInt()] = Piece.W_PAWN;
-                    board[Square.SQ_33.ToInt()] = Piece.W_PAWN;
-                    board[Square.SQ_43.ToInt()] = Piece.W_PAWN;
-                    board[Square.SQ_53.ToInt()] = Piece.W_PAWN;
-                    board[Square.SQ_63.ToInt()] = Piece.W_PAWN;
-                    board[Square.SQ_73.ToInt()] = Piece.W_PAWN;
-                    board[Square.SQ_83.ToInt()] = Piece.W_PAWN;
-                    board[Square.SQ_93.ToInt()] = Piece.W_PAWN;
-                    board[Square.SQ_17.ToInt()] = Piece.B_PAWN;
-                    board[Square.SQ_27.ToInt()] = Piece.B_PAWN;
-                    board[Square.SQ_37.ToInt()] = Piece.B_PAWN;
-                    board[Square.SQ_47.ToInt()] = Piece.B_PAWN;
-                    board[Square.SQ_57.ToInt()] = Piece.B_PAWN;
-                    board[Square.SQ_67.ToInt()] = Piece.B_PAWN;
-                    board[Square.SQ_77.ToInt()] = Piece.B_PAWN;
-                    board[Square.SQ_87.ToInt()] = Piece.B_PAWN;
-                    board[Square.SQ_97.ToInt()] = Piece.B_PAWN;
-                    board[Square.SQ_28.ToInt()] = Piece.B_ROOK;
-                    board[Square.SQ_88.ToInt()] = Piece.B_BISHOP;
-                    board[Square.SQ_19.ToInt()] = Piece.B_LANCE;
-                    board[Square.SQ_29.ToInt()] = Piece.B_KNIGHT;
-                    board[Square.SQ_39.ToInt()] = Piece.B_SILVER;
-                    board[Square.SQ_49.ToInt()] = Piece.B_GOLD;
-                    board[Square.SQ_59.ToInt()] = Piece.B_KING;
-                    board[Square.SQ_69.ToInt()] = Piece.B_GOLD;
-                    board[Square.SQ_79.ToInt()] = Piece.B_SILVER;
-                    board[Square.SQ_89.ToInt()] = Piece.B_KNIGHT;
-                    board[Square.SQ_99.ToInt()] = Piece.B_LANCE;
+                    SetPI();
+
                     // 駒落ちの検出
                     foreach (Match match in new Regex(@"^([1-9][1-9])(FU|KY|KE|GI|KI|KA|HI|OU)").Matches(line)
                     )
@@ -267,7 +290,7 @@ namespace MyShogi.Model.Shogi.Converter
                     continue;
                 }
                 // 初期局面の行末の空白を削ってCSA形式棋譜を出力してしまう悪いツールが存在するので、一律に末尾に半角空白を加えてからパースを行う
-                // 「」
+                // 「1枡3文字で9枡分記述しないといけない」とされているので、最後の枡だけ2文字にするのは良くない。
                 // 悪い例: 棋譜ウォーズ管理ツール ver0.21 (2018/09/04) http://blackduckn.s602.xrea.com/kifudownloader.html
                 Match bMatch = bRegex.Match(line + " ");
                 if (bMatch.Success)
@@ -328,6 +351,15 @@ namespace MyShogi.Model.Shogi.Converter
                     continue;
                 }
             }
+
+            // 盤面情報が省略されている場合は、盤面が平手であると設定する
+            if (ellipsis)
+            {
+                // V2より前のCSA形式(第3版 1997年 8月25日)では、盤面が省略されている場合がある
+                // http://www2.computer-shogi.org/wcsc11/record.html
+                SetPI();
+            }
+
             return Position.SfenFromRawdata(board, hand, turn, ply);
         }
         private static Piece FromCsaPiece(string s)

@@ -8,7 +8,16 @@ using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Kifu
 {
-    // CSA標準棋譜ファイル形式 V2.2
+    // CSA標準棋譜ファイル形式 第3版 1997年 8月25日
+    // http://www2.computer-shogi.org/wcsc11/record.html
+
+    // CSA標準棋譜ファイル形式 第4版 2002年11月15日 V2
+    // http://www2.computer-shogi.org/protocol/record_v2.html
+
+    // CSA標準棋譜ファイル形式 第5版 2005年 9月10日 V2.1
+    // http://www2.computer-shogi.org/protocol/record_v21.html
+
+    // CSA標準棋譜ファイル形式 第6版 2008年 1月12日 V2.2
     // http://www2.computer-shogi.org/protocol/record_v22.html
 
     /// <summary>
@@ -185,12 +194,23 @@ namespace MyShogi.Model.Shogi.Kifu
                     {
                         if (headFlag)
                         {
-                            // 1回目は局面の先後とみなす
-                            headFlag = false;
-                            posLines.Add(subline);
-                            var sfen = CsaExtensions.CsaToSfen(posLines.ToArray());
-                            Tree.SetRootSfen(sfen);
-                            continue;
+                            Match match = new Regex(@"^([+-])([0-9][0-9][1-9][1-9])(FU|KY|KE|GI|KI|KA|HI|OU|TO|NY|NK|NG|UM|RY)").Match(subline);
+                            if (match.Success)
+                            {
+                                headFlag = false;
+                                // 指し手の指定だった場合は、盤面を設定して指し手の解釈に移る
+                                var sfen = CsaExtensions.CsaToSfen(posLines.ToArray());
+                                Tree.SetRootSfen(sfen);
+                            }
+                            else
+                            {
+                                // 1回目は局面の先後とみなす
+                                headFlag = false;
+                                posLines.Add(subline);
+                                var sfen = CsaExtensions.CsaToSfen(posLines.ToArray());
+                                Tree.SetRootSfen(sfen);
+                                continue;
+                            }
                         }
                         // 2回目以降は指し手とみなす
                         // 消費時間の情報がまだないが、取り敢えず追加
@@ -198,11 +218,10 @@ namespace MyShogi.Model.Shogi.Kifu
                         Tree.AddNode(move, times.Clone());
                         lastKifuMove = Tree.currentNode.moves.FirstOrDefault((x) => x.nextMove == move);
                         // 特殊な指し手や不正な指し手ならDoMove()しない
-                        if (move.IsSpecial() || !Tree.position.IsLegal(move))
+                        if (move != Move.NONE && !move.IsSpecial() && Tree.position.IsLegal(move))
                         {
-                            continue;
+                            Tree.DoMove(move);
                         }
-                        Tree.DoMove(move);
                         continue;
                     }
                     if (subline.StartsWith("T"))
