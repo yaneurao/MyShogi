@@ -1047,6 +1047,34 @@ namespace MyShogi.Model.Shogi.Kifu
             }
         }
 
+        /// <summary>
+        /// 棋譜の本譜以外の分岐をすべて削除する
+        /// </summary>
+        public void ClearSubKifuTree()
+        {
+            // PropertyChangedEventEnableをいじらずに更新をするので棋譜も自動的に更新されるはず…。
+
+            var oldEnableKifuList = EnableKifuList;
+            EnableKifuList = true;
+
+            // 局面をrootに移動
+            RewindToRoot();
+            KifuBranch = -1;
+
+            while (currentNode.moves.Count != 0)
+            {
+                // 最初のもの以外全部削除
+                if (currentNode.moves.Count > 1)
+                    currentNode.moves.RemoveRange(1,currentNode.moves.Count - 1);
+
+                // 本譜の手順
+                var nextMove = currentNode.moves[0];
+                DoMove(nextMove);
+            }
+
+            EnableKifuList = oldEnableKifuList;
+        }
+
         // -- 以下 private members
 
         /// <summary>

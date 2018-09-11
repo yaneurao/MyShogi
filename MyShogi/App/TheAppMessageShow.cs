@@ -23,6 +23,11 @@ namespace MyShogi.App
             {
                 var show = new Func<DialogResult>(() =>
                 {
+                    // これセンタリングしたいのだが、メッセージフックしないと不可能。
+                    // cf.
+                    //   オーナーウィンドウの中央にメッセージボックスを表示する (C#プログラミング)
+                    //   https://www.ipentec.com/document/csharp-show-message-box-in-center-of-owner-window
+
                     return MessageBox.Show(mainForm, text, caption, buttons , icon );
                 });
 

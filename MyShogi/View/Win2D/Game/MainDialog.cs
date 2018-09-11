@@ -1320,6 +1320,21 @@ namespace MyShogi.View.Win2D
 
                     item_file.DropDownItems.Add(new ToolStripSeparator());
 
+                    {
+                        var item = new ToolStripMenuItem();
+                        item.Text = "本譜以外の分岐をクリアする(&R)"; // cleaR
+                        item.Click += (sender, e) => {
+                            if (TheApp.app.MessageShow("この操作により現在の棋譜上の本譜以外の分岐は削除されます。",
+                                MessageShowType.WarningOkCancel) == DialogResult.OK)
+                            {
+                                gameServer.ClearSubKifuTreeCommand();
+                            }
+                        };
+                        item_file.DropDownItems.Add(item);
+                    }
+
+                    item_file.DropDownItems.Add(new ToolStripSeparator());
+
                     // -- 設定の初期化
                     {
                         var item_init = new ToolStripMenuItem();

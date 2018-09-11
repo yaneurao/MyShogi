@@ -381,9 +381,24 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 本譜以外の分岐をクリアするコマンド
+        /// </summary>
+        public void ClearSubKifuTreeCommand()
+        {
+            AddCommand(() =>
+            {
+                // 対局中は使用不可
+                if (GameMode.IsConsideration())
+                {
+                    kifuManager.Tree.ClearSubKifuTree();
+                }
+            });
+        }
+
+        /// <summary>
         /// 本譜の手順に戻るボタン
         /// </summary>
-        public void MainBranchButtonCommand(PropertyChangedEventArgs args)
+            public void MainBranchButtonCommand(PropertyChangedEventArgs args)
         {
             AddCommand(
             () =>
