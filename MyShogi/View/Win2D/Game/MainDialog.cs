@@ -1320,21 +1320,6 @@ namespace MyShogi.View.Win2D
 
                     item_file.DropDownItems.Add(new ToolStripSeparator());
 
-                    {
-                        var item = new ToolStripMenuItem();
-                        item.Text = "本譜以外の分岐をクリアする(&R)"; // cleaR
-                        item.Click += (sender, e) => {
-                            if (TheApp.app.MessageShow("この操作により現在の棋譜上の本譜以外の分岐は削除されます。",
-                                MessageShowType.WarningOkCancel) == DialogResult.OK)
-                            {
-                                gameServer.ClearSubKifuTreeCommand();
-                            }
-                        };
-                        item_file.DropDownItems.Add(item);
-                    }
-
-                    item_file.DropDownItems.Add(new ToolStripSeparator());
-
                     // -- 設定の初期化
                     {
                         var item_init = new ToolStripMenuItem();
@@ -2154,6 +2139,29 @@ namespace MyShogi.View.Win2D
                         item_boardedit.DropDownItems.Add(item);
                     }
                 }
+
+                // -- 「棋譜編集」
+
+                var kifu_edit = new ToolStripMenuItem();
+                kifu_edit.Text = "棋譜編集(&K)"; // Kifu edit
+                kifu_edit.Enabled = !inTheGame;
+                menu.Items.Add(kifu_edit);
+
+                // -- 「棋譜編集」配下のメニュー
+                {
+                    var item = new ToolStripMenuItem();
+                    item.Text = "本譜以外の分岐をクリアする(&C)"; // Clear
+                    item.Click += (sender, e) => {
+                        if (TheApp.app.MessageShow("この操作により現在の棋譜上の本譜以外の分岐は削除されます。",
+                            MessageShowType.WarningOkCancel) == DialogResult.OK)
+                        {
+                            gameServer.ClearSubKifuTreeCommand();
+                        }
+                    };
+                    kifu_edit.DropDownItems.Add(item);
+                }
+
+                // -- 「ウインドウ」
 
                 var item_window = new ToolStripMenuItem();
                 item_window.Text = "ウインドウ(&W)"; // Window

@@ -248,7 +248,7 @@ namespace MyShogi.View.Win2D
             // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
             var w_rate = 1.0f + TheApp.app.Config.KifuWindowWidthType * 0.25f; // 横幅をどれだけ引き伸ばすのか
             var font_size = (float)(19.5 * scale * w_rate);
-            var font_size2 = (float)(19.5 * scale); // button用のフォントサイズ
+            var font_size2 = (float)(16 * scale); // button用のフォントサイズ
             /*
                 // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ
                 // fontを小さく表示してやる。

@@ -100,7 +100,12 @@ namespace MyShogi.Model.Resource.Images
                             g.DrawImage(piece_box[piece_table_version].image, rect, rect, GraphicsUnit.Pixel);
                     }
 
-                    BoardImages[piece_table_version + (piece_box_exist ? 2 : 0)] = img;
+                    var id = piece_table_version + (piece_box_exist ? 2 : 0);
+
+                    // 前回に合成したものは解放しておく。
+                    if (BoardImages[id] != null)
+                        BoardImages[id].Dispose();
+                    BoardImages[id] = img;
                 }
             }
 

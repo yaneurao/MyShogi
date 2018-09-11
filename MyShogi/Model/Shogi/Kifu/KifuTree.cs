@@ -531,10 +531,16 @@ namespace MyShogi.Model.Shogi.Kifu
         /// rootまで局面を巻き戻す。
         /// そのときのKifuMoveをListにして返す。
         /// このKifuMoveを逆順で適用(DoMove)していくと元の局面になる。
+        ///
+        /// Undo()していくときに棋譜のRemoveはしないので(途中のnodeからかも知れないので)注意すること。
+        /// このメソッドはKifuListには影響を与えない。
         /// </summary>
         /// <returns></returns>
         public List<KifuMove> RewindToRoot()
         {
+            //var e = EnableKifuList;
+            //EnableKifuList = false;
+
             var moves = new List<KifuMove>();
 
             while (rootNode != currentNode)
@@ -544,6 +550,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 moves.Add(currentNode.moves.Find((x) => x.nextNode == c));
             }
 
+            //EnableKifuList = e;
             return moves;
         }
 
@@ -822,7 +829,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// 現在のnodeを本譜の手順に変更する。
-        ///
+        /// 現在のnodeが末尾のnodeでなければならない。
+        /// 
         /// 棋譜ウィンドウのカーソル位置は変更しないので呼び出し元で面倒見るべき。
         /// </summary>
         public void MakeCurrentNodeMainBranch()
@@ -1048,17 +1056,24 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
-        /// 棋譜の本譜以外の分岐をすべて削除する
+        /// 棋譜の本譜以外の分岐をすべて削除する。
+        ///
+        /// 呼び出し元で
+        /// UpdateKifuSelectedIndex();
+        /// を呼んで、現在のnodeに棋譜ウインドウの選択行を移動させておかないといけない。
         /// </summary>
         public void ClearSubKifuTree()
         {
-            // PropertyChangedEventEnableをいじらずに更新をするので棋譜も自動的に更新されるはず…。
-
             var oldEnableKifuList = EnableKifuList;
-            EnableKifuList = true;
+            PropertyChangedEventEnable = false;
 
             // 局面をrootに移動
             RewindToRoot();
+
+            // 棋譜、とりまクリア
+            ClearKifuForward();
+
+            EnableKifuList = true;
             KifuBranch = -1;
 
             while (currentNode.moves.Count != 0)
@@ -1073,6 +1088,10 @@ namespace MyShogi.Model.Shogi.Kifu
             }
 
             EnableKifuList = oldEnableKifuList;
+            PropertyChangedEventEnable = true;
+
+            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("Position", position.Clone());
         }
 
         // -- 以下 private members

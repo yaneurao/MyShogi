@@ -391,6 +391,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (GameMode.IsConsideration())
                 {
                     kifuManager.Tree.ClearSubKifuTree();
+                    UpdateKifuSelectedIndex();
                 }
             });
         }
