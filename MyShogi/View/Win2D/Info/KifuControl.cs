@@ -354,12 +354,14 @@ namespace MyShogi.View.Win2D
 
             var list = args.value as List<string>;
 
-            int start = 0;
-
             var listbox = listBox1;
             listbox.BeginUpdate();
 
+            var selectedIndex = listbox.SelectedIndex;
+
+#if false
             int j = -1;
+            int start = 0;
 
             // 値の違う場所のみ書き換える
             // 値の違うところを探す
@@ -407,6 +409,26 @@ namespace MyShogi.View.Win2D
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
             // ここでカーソル行の変更通知イベントが発生する？念の為再代入しておく。
             listbox.SelectedIndex = j;
+#endif
+
+            // 差分更新だけして、List.Items.Add()とRemove()ではDCが解放されず、リソースリークになるっぽい。
+            // これはWindowsのListBoxの出来が悪いからだと思うが…。
+            // これだと連続対局においてDCが枯渇してしまう。
+
+#if true // 何も考えずに丸ごと書き換えるコード
+            listbox.Items.Clear();
+            listbox.Items.AddRange(list.ToArray());
+            ViewModel.KifuListCount = listBox1.Items.Count;
+            listbox.EndUpdate();
+            listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
+
+            // 元の選択行、もしくは末尾選択
+            // 非選択は良くないので、-1なら0に補正するコードも追加。
+            selectedIndex = Math.Max(selectedIndex, 0);
+            selectedIndex = Math.Min(selectedIndex, listbox.Items.Count - 1);
+
+            listbox.SelectedIndex = selectedIndex;
+#endif
 
             UpdateButtonState();
 

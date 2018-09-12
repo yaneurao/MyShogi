@@ -793,6 +793,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     type = UsiEngineReportMessageType.SetRootSfen,
                     number = NumberOfEngine == 1  ? 0 : (int)stm, // CPU1つなら1番目の窓、CPU2つならColorに相当する窓に
                     data = Position.ToSfen(),
+                    // ここ、せめて前の局面からのsfenを渡さないと、
+                    // PVの1手目に同金みたいな表現が出来なくなってしまう。
                 };
             }
 

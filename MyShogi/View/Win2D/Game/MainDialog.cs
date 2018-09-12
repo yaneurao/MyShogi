@@ -2232,43 +2232,43 @@ namespace MyShogi.View.Win2D
                             {
 
                                 var item1 = new ToolStripMenuItem();
-                                item1.Text = "メインウインドウに埋め込む(EmbeddedMode)";
+                                item1.Text = "メインウインドウに埋め込む(&0)(EmbeddedMode)";
                                 item1.Checked = dock.DockState == DockState.InTheMainWindow;
                                 item1.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.InTheMainWindow; };
                                 item.DropDownItems.Add(item1);
 
                                 var item2 = new ToolStripMenuItem();
-                                item2.Text = "メインウインドウから浮かせ、相対位置を常に保つ(FollowMode)";
+                                item2.Text = "メインウインドウから浮かせ、相対位置を常に保つ(&1)(FollowMode)";
                                 item2.Checked = dock.DockState == DockState.FollowToMainWindow;
                                 item2.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.FollowToMainWindow; };
                                 item.DropDownItems.Add(item2);
 
                                 var item3a = new ToolStripMenuItem();
-                                item3a.Text = "メインウインドウから浮かせ、メインウインドウの上側に配置する(DockMode)";
+                                item3a.Text = "メインウインドウから浮かせ、メインウインドウの上側に配置する(&2)(DockMode)";
                                 item3a.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Top;
                                 item3a.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow , DockPosition.Top); };
                                 item.DropDownItems.Add(item3a);
 
                                 var item3b = new ToolStripMenuItem();
-                                item3b.Text = "メインウインドウから浮かせ、メインウインドウの左側に配置する(DockMode)";
+                                item3b.Text = "メインウインドウから浮かせ、メインウインドウの左側に配置する(&3)(DockMode)";
                                 item3b.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Left;
                                 item3b.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow , DockPosition.Left); };
                                 item.DropDownItems.Add(item3b);
 
                                 var item3c = new ToolStripMenuItem();
-                                item3c.Text = "メインウインドウから浮かせ、メインウインドウの右側に配置する(DockMode)";
+                                item3c.Text = "メインウインドウから浮かせ、メインウインドウの右側に配置する(&4)(DockMode)";
                                 item3c.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Right;
                                 item3c.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow , DockPosition.Right); };
                                 item.DropDownItems.Add(item3c);
 
                                 var item3d = new ToolStripMenuItem();
-                                item3d.Text = "メインウインドウから浮かせ、メインウインドウの下側に配置する(DockMode)";
+                                item3d.Text = "メインウインドウから浮かせ、メインウインドウの下側に配置する(&5)(DockMode)";
                                 item3d.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Bottom;
                                 item3d.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow , DockPosition.Bottom); };
                                 item.DropDownItems.Add(item3d);
 
                                 var item4 = new ToolStripMenuItem();
-                                item4.Text = "メインウインドウから浮かせ、自由に配置する(FloatingMode)";
+                                item4.Text = "メインウインドウから浮かせ、自由に配置する(&6)(FloatingMode)";
                                 item4.Checked = dock.DockState == DockState.FloatingMode;
                                 item4.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.FloatingMode; };
                                 item.DropDownItems.Add(item4);

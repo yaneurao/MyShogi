@@ -117,6 +117,7 @@ namespace MyShogi.View.Win2D
                 if (root_sfen != null)
                     position.SetSfen(value);
                 ClearItems();
+                ClearHeader(); // HASH使用率なども初期化されるべき
             }
         }
 
@@ -618,7 +619,9 @@ namespace MyShogi.View.Win2D
 
             foreach(var e in list)
             {
-                e.Location = new Point(x, y);
+                // コントロールの種類により座標の補正
+                var offset = (e is Button || e is ComboBox) ? -2 : 0;
+                e.Location = new Point(x, y + offset);
                 x += e.Size.Width + 4;
             }
 
