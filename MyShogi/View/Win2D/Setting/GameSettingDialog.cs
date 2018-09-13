@@ -152,6 +152,7 @@ namespace MyShogi.View.Win2D
             binder.Bind(misc, "ContinuousGameNoSwapPlayer", checkBox3);
 
             // 「コンピューターは1手に必ずこれだけ使う」
+            binder.Bind(misc, "EnableBestMoveIgnoreTimeForEngine", checkBox5);
             binder.Bind(misc, "BestMoveIgnoreTimeForEngine", numericUpDown3);
 
             ResumeLayout();

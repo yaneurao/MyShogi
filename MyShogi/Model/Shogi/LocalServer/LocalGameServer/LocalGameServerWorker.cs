@@ -567,6 +567,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 if (stmBestMove != Move.NONE
                     && GameMode == GameModeEnum.InTheGame /* 通常対局中 */
                     && stmPlayer.PlayerType == PlayerTypeEnum.UsiEngine
+                    && GameSetting.MiscSettings.EnableBestMoveIgnoreTimeForEngine
                     && PlayTimer(stm).ElapsedTime() < GameSetting.MiscSettings.BestMoveIgnoreTimeForEngine
                     )
                     stmBestMove = Move.NONE;

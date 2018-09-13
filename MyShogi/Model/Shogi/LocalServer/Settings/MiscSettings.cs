@@ -77,6 +77,15 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// BestMoveIgnoreTimeForEngineの有効/無効の設定。
+        /// </summary>
+        public bool EnableBestMoveIgnoreTimeForEngine
+        {
+            get { return GetValue<bool>("EnableBestMoveIgnoreTimeForEngine"); }
+            set { SetValue<bool>("EnableBestMoveIgnoreTimeForEngine", value); }
+        }
+
+        /// <summary>
         /// 動機)
         /// コンピューター側、指し手が速すぎて追いかけられないので、1手に必ず1秒使うようなモードが欲しい。
         /// 
@@ -106,6 +115,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             ContinuousGameEnable = false;
             ContinuousGame = 100;
 
+            EnableBestMoveIgnoreTimeForEngine = true;
             BestMoveIgnoreTimeForEngine = 0;
         }
 

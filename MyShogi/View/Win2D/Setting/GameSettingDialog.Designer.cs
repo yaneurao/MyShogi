@@ -48,13 +48,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.label4 = new System.Windows.Forms.Label();
+            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.playerSettingControl2 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
             this.playerSettingControl1 = new MyShogi.View.Win2D.Setting.PlayerSettingControl();
             this.timeSettingControl2 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
             this.timeSettingControl1 = new MyShogi.View.Win2D.Setting.TimeSettingControl();
-            this.label4 = new System.Windows.Forms.Label();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.groupBox6.SuspendLayout();
@@ -292,6 +292,45 @@
             this.comboBox1.TabIndex = 31;
             this.toolTip1.SetToolTip(this.comboBox1, resources.GetString("comboBox1.ToolTip"));
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(343, 277);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 15);
+            this.label4.TabIndex = 38;
+            this.label4.Text = "[ms]";
+            // 
+            // numericUpDown3
+            // 
+            this.numericUpDown3.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Location = new System.Drawing.Point(272, 274);
+            this.numericUpDown3.Maximum = new decimal(new int[] {
+            9999999,
+            0,
+            0,
+            0});
+            this.numericUpDown3.Name = "numericUpDown3";
+            this.numericUpDown3.Size = new System.Drawing.Size(69, 22);
+            this.numericUpDown3.TabIndex = 37;
+            this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.Location = new System.Drawing.Point(17, 276);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.Size = new System.Drawing.Size(249, 19);
+            this.checkBox5.TabIndex = 39;
+            this.checkBox5.Text = "コンピューターは1手に必ずこれだけ使う";
+            this.toolTip1.SetToolTip(this.checkBox5, "コンピューターは1手に必ずこれだけ使います。\r\n(思考が終わっていても指すのを待機します)\r\n単位は[ms]なので1秒を指定したいなら「1000」と入力してくださ" +
+        "い。");
+            this.checkBox5.UseVisualStyleBackColor = true;
+            // 
             // playerSettingControl2
             // 
             this.playerSettingControl2.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
@@ -328,50 +367,12 @@
             this.timeSettingControl1.Size = new System.Drawing.Size(381, 131);
             this.timeSettingControl1.TabIndex = 32;
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(320, 277);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 15);
-            this.label4.TabIndex = 38;
-            this.label4.Text = "[ms]";
-            // 
-            // numericUpDown3
-            // 
-            this.numericUpDown3.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
-            this.numericUpDown3.Location = new System.Drawing.Point(249, 274);
-            this.numericUpDown3.Maximum = new decimal(new int[] {
-            9999999,
-            0,
-            0,
-            0});
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(69, 22);
-            this.numericUpDown3.TabIndex = 37;
-            this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 277);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(230, 15);
-            this.label5.TabIndex = 38;
-            this.label5.Text = "コンピューターは1手に必ずこれだけ使う";
-            this.toolTip1.SetToolTip(this.label5, "コンピューターは1手に必ずこれだけ使います。\r\n(思考が終わっていても指すのを待機します)\r\n単位は[ms]なので1秒を指定したいなら「1000」と入力してくださ" +
-        "い。");
-            // 
             // GameSettingDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(771, 520);
-            this.Controls.Add(this.label5);
+            this.Controls.Add(this.checkBox5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.numericUpDown3);
             this.Controls.Add(this.playerSettingControl2);
@@ -427,6 +428,6 @@
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown numericUpDown3;
-        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox checkBox5;
     }
 }
