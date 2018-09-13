@@ -394,8 +394,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     if (GameMode == GameModeEnum.InTheGame)
                     {
-                        var handicapped = kifuManager.Tree.position.Handicapped;
                         // 「対局開始」の画面素材を表示するためのイベントを発生させる
+
+                        var handicapped = kifuManager.Tree.position.Handicapped;                        
                         RaisePropertyChanged("GameStartEvent", handicapped);
 
                         continuousGame.StartTime = DateTime.Now;

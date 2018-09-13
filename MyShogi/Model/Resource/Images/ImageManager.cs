@@ -311,6 +311,8 @@ namespace MyShogi.Model.Resource.Images
             // -- 対局に関する画面効果
 
             Load(ref GameStartImage, "game_effect" + Sep + "game_start_v1.png", true);
+            Load(ref GameInterruptImage, "game_effect" + Sep + "game_interrupt_v1.png", true);
+            
             Load(ref GameWinImage,   "game_effect" + Sep + "game_win_v1.png"  , true);
             Load(ref GameLoseImage,  "game_effect" + Sep + "game_lose_v1.png" , true);
             Load(ref GameDrawImage,  "game_effect" + Sep + "game_draw_v1.png" , true);
@@ -429,9 +431,14 @@ namespace MyShogi.Model.Resource.Images
 
         #region GameEffects
         /// <summary>
-        /// 対局開始/終了/再開
+        /// 対局開始/終了
         /// </summary>
         public ImageLoader GameStartImage = new ImageLoader();
+
+        /// <summary>
+        /// 対局中断/再開
+        /// </summary>
+        public ImageLoader GameInterruptImage = new ImageLoader();
 
         /// <summary>
         /// 対局開始時の「先手」「後手」「上手」「下手」の文字列

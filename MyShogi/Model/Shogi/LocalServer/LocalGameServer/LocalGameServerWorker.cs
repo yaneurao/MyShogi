@@ -916,6 +916,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                     if (Player(stm).PlayerType != PlayerTypeEnum.Human)
                         game_result = game_result.Not();
                 }
+                // 中断だけ別の画面素材を用意してあるので、この判定は特別に行う。
+                if (lastMove == Move.INTERRUPT)
+                    game_result = MoveGameResult.INTERRUPT;
 
                 RaisePropertyChanged("GameEndEvent" , game_result);
 

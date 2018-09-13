@@ -360,7 +360,7 @@ namespace MyShogi.Model.Resource.Images
         public static Sprite GameStart()
         {
             var image = TheApp.app.ImageManager.GameStartImage.image;
-            var rect = new Rectangle(0, 0, 762, 230);
+            var rect = new Rectangle(0, 0, 762, 223);
             return new Sprite(image, rect);
         }
 
@@ -371,10 +371,39 @@ namespace MyShogi.Model.Resource.Images
         public static Sprite GameEnd()
         {
             var image = TheApp.app.ImageManager.GameStartImage.image;
-            var rect = new Rectangle(0, 230, 762, 230);
+            var rect = new Rectangle(0, 223, 762, 223);
             return new Sprite(image, rect);
         }
 
+        /// <summary>
+        /// 対局開始時に表示する「対局中断」
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite GameInterrupt()
+        {
+            var image = TheApp.app.ImageManager.GameInterruptImage.image;
+            var rect = new Rectangle(0, 0, 762, 223);
+            return new Sprite(image, rect);
+        }
+
+        /// <summary>
+        /// 対局終了時に表示する「対局再開」
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite GameRestart()
+        {
+            var image = TheApp.app.ImageManager.GameInterruptImage.image;
+            var rect = new Rectangle(0, 223, 762, 223);
+            return new Sprite(image, rect);
+        }
+
+        /// <summary>
+        /// 対局結果のSpriteを取得。
+        ///
+        /// result == WIN / LOSE / DRAWのいずれかであること。
+        /// </summary>
+        /// <param name="result"></param>
+        /// <returns></returns>
         public static Sprite GameResult(MoveGameResult result)
         {
             var imageManager = TheApp.app.ImageManager;

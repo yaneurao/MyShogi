@@ -57,7 +57,11 @@ namespace MyShogi.Model.Shogi.Core
         WIN,  // 勝ち
         LOSE, // 負け
         DRAW, // 引き分け
-        UNKNOWN, // 分類不可のもの
+        UNKNOWN,   // 分類不可のもの
+
+        // ---
+
+        INTERRUPT, // LocalGameServerのイベントで使う用。(GameResult()などではこれを返さない)
     }
 
     /// <summary>
@@ -103,6 +107,7 @@ namespace MyShogi.Model.Shogi.Core
         /// mは specail moveでなければならない。
         /// 
         /// 連続自己対局の時に結果の勝敗を判定する時などに用いる。
+        /// m == INTERRUPTでもMoveGameResult.INTERRUPTではなくUNKNOWNが返るので注意。
         /// </summary>
         /// <param name="m"></param>
         /// <returns></returns>

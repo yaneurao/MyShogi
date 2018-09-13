@@ -29,8 +29,14 @@ namespace MyShogi.View.Win2D
 
             animatorManager.AddAnimator(new Animator(
                 elapsed => {
-                    // 「対局開始」
-                    DrawSprite(game_start_pos , SPRITE.GameStart());
+
+                    // 中断局など特定局面からの開始でかつ連続対局ではないならこれは再開局扱い。
+                    var restart = gameServer.GameSetting.BoardSetting.BoardTypeCurrent
+                        && !gameServer.continuousGame.IsContinuousGameSet();
+
+                    // 「対局開始」もしくは「対局再開」
+                    var sprite = restart ? SPRITE.GameRestart() : SPRITE.GameStart();
+                    DrawSprite(game_start_pos , sprite );
 
                     var handicapped = (bool)args.value;
 
@@ -58,22 +64,18 @@ namespace MyShogi.View.Win2D
             animatorManager.ClearAnimator(); // 他のanimatorをすべて削除
 
             // 対局結果から、「勝ち」「負け」「引き分け」のいずれかを表示する。
-            var sprite = SPRITE.GameResult((MoveGameResult)args.value);
-            if (sprite != null)
-            {
-                // 1秒後以降に表示する。(すぐに表示されるとちょっと邪魔)
-                animatorManager.AddAnimator(new Animator(
-                    elapsed => { DrawSprite(game_result_pos, sprite); }, false, 1000, 3500
-                ));
-            }
-            else
-            {
-                // 「対局終了」の素材を表示する。
-                // 1秒後以降に表示する。(すぐに表示されるとちょっと邪魔)
-                animatorManager.AddAnimator(new Animator(
-                    elapsed => { DrawSprite(game_start_pos, SPRITE.GameEnd()); }, false, 1000, 3500
-                ));
-            }
+            var result = (MoveGameResult)args.value;
+            var win_lose_draw = result == MoveGameResult.WIN || result == MoveGameResult.LOSE || result == MoveGameResult.DRAW;
+            var sprite = win_lose_draw ? SPRITE.GameResult(result):
+                result == MoveGameResult.UNKNOWN ? SPRITE.GameEnd():
+                result == MoveGameResult.INTERRUPT ? SPRITE.GameInterrupt():
+                null;
+            var pos = win_lose_draw ? game_result_pos : game_start_pos;
+
+            // 1秒後以降に表示する。(すぐに表示されるとちょっと邪魔)
+            animatorManager.AddAnimator(new Animator(
+                elapsed => { DrawSprite(pos, sprite); }, false, 1000, 3500
+            ));
 
         }
         #endregion
