@@ -3,6 +3,7 @@ using MyShogi.Model.Common.ObjectModel;
 using SPRITE = MyShogi.Model.Resource.Images.SpriteManager;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
+using MyShogi.App;
 
 namespace MyShogi.View.Win2D
 {
@@ -24,6 +25,11 @@ namespace MyShogi.View.Win2D
         private void GameStartEventHandler(PropertyChangedEventArgs args)
         {
             animatorManager.ClearAnimator(); // 他のanimatorをすべて削除
+
+            // エフェクト無効なら、やらない。
+            var enable = TheApp.app.Config.EnableGameEffect != 0;
+            if (!enable)
+                return;
 
             // これだけでアニメーションできる。便利すぎ。
 
@@ -62,6 +68,11 @@ namespace MyShogi.View.Win2D
         private void GameEndEventHandler(PropertyChangedEventArgs args)
         {
             animatorManager.ClearAnimator(); // 他のanimatorをすべて削除
+
+            // エフェクト無効なら、やらない。
+            var enable = TheApp.app.Config.EnableGameEffect != 0;
+            if (!enable)
+                return;
 
             // 対局結果から、「勝ち」「負け」「引き分け」のいずれかを表示する。
             var result = (MoveGameResult)args.value;

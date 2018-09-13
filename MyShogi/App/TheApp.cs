@@ -150,6 +150,7 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl, mainDialog);
             Config.AddPropertyChangedHandler("DisplayNameTurnVersion", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("EnableGameEffect", mainDialog.UpdateMenuItems, mainDialog);
 
             Config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
 

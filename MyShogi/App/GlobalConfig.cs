@@ -55,6 +55,10 @@ namespace MyShogi.App
             ReadOutCancelWhenGameEnd = 1;
             ReadOutByoyomi = 1;
 
+            // -- 対局エフェクト
+
+            EnableGameEffect = 1;
+
             // -- 検討設定
 
             //EngineConsiderationWindowEnableWhenVsHuman = true;
@@ -160,6 +164,7 @@ namespace MyShogi.App
         /// </summary>
         public int CommercialVersion { get; private set; }
 
+        #region Display Setting
 
         /// <summary>
         /// 盤画像のバージョン
@@ -347,6 +352,73 @@ namespace MyShogi.App
             set { SetValue<int>("TurnDisplay", value); }
         }
 
+#if false
+        /// <summary>
+        /// 人間と対局中にコンピュータの読み筋ウィンドウを表示するか。
+        /// デフォルト = true
+        ///
+        /// COM vs COM の時　→　自動的に表示
+        /// 人間 vs 人間の時 →　自動的に非表示
+        /// COM vs 人間の時　→　この設定に依存
+        ///
+        /// 検討モードの時　→　自動的に表示
+        /// </summary>
+        [DataMember]
+        public bool EngineConsiderationWindowEnableWhenVsHuman
+        {
+            get { return GetValue<bool>("EngineConsiderationWindowEnableWhenVsHuman"); }
+            set { SetValue<bool>("EngineConsiderationWindowEnableWhenVsHuman", value); }
+        }
+#endif
+
+        /// <summary>
+        /// 検討ウィンドウで思考エンジンが後手番のときに評価値を反転させるか(先手から見た評価値にするか)のフラグ
+        /// デフォルト : false
+        /// </summary>
+        [DataMember]
+        public bool NegateEvalWhenWhite
+        {
+            get { return GetValue<bool>("NegateEvalWhenWhite"); }
+            set { SetValue<bool>("NegateEvalWhenWhite", value); }
+        }
+
+        /// <summary>
+        /// 棋譜ウィンドウの横幅
+        /// 0 = 100%
+        /// 1 = 125%
+        /// 2 = 150%
+        /// 3 = 175%
+        /// 4 = 200%
+        /// </summary>
+        [DataMember]
+        public int KifuWindowWidthType
+        {
+            get { return GetValue<int>("KifuWindowWidthType"); }
+            set { SetValue<int>("KifuWindowWidthType", value); }
+        }
+
+        /// <summary>
+        /// 棋譜ウインドウの、ウインドウ時のフォントサイズ。
+        /// </summary>
+        [DataMember]
+        public float KifuWindowFontSize { get; set; } = 11F;
+
+        /// <summary>
+        /// 対局中のエフェクト
+        ///
+        /// 0 : なし
+        /// 1 : あり (デフォルト)
+        /// </summary>
+        [DataMember]
+        public int EnableGameEffect
+        {
+            get { return GetValue<int>("EnableGameEffect"); }
+            set { SetValue<int>("EnableGameEffect", value); }
+        }
+
+        #endregion
+
+        #region Sound Setting
 
         /// <summary>
         /// 対局時の駒音
@@ -438,6 +510,10 @@ namespace MyShogi.App
             set { SetValue<int>("ReadOutByoyomi", value); }
         }
 
+        #endregion
+
+        #region Debug Setting
+
         /// <summary>
         /// ファイルロギング
         /// false : なし(デフォルト)
@@ -450,24 +526,9 @@ namespace MyShogi.App
             set { SetValue<bool>("FileLoggingEnable", value); }
         }
 
-#if false
-        /// <summary>
-        /// 人間と対局中にコンピュータの読み筋ウィンドウを表示するか。
-        /// デフォルト = true
-        ///
-        /// COM vs COM の時　→　自動的に表示
-        /// 人間 vs 人間の時 →　自動的に非表示
-        /// COM vs 人間の時　→　この設定に依存
-        ///
-        /// 検討モードの時　→　自動的に表示
-        /// </summary>
-        [DataMember]
-        public bool EngineConsiderationWindowEnableWhenVsHuman
-        {
-            get { return GetValue<bool>("EngineConsiderationWindowEnableWhenVsHuman"); }
-            set { SetValue<bool>("EngineConsiderationWindowEnableWhenVsHuman", value); }
-        }
-#endif
+        #endregion
+
+        #region Window Location Settings
 
         /// <summary>
         /// メインウィンドウのサイズ。
@@ -498,14 +559,6 @@ namespace MyShogi.App
         public Point ConsiderationDialogClientLocation { get; set; }
 
         /// <summary>
-        /// 検討時の候補手(MultiPV)の数。
-        /// デフォルト : 5
-        /// </summary>
-        [DataMember]
-        public int ConsiderationMultiPV { get; set; }
-
-
-        /// <summary>
         /// 検討ウィンドウがメインウインドウを追随するか
         /// デフォルト : true
         /// </summary>
@@ -515,38 +568,6 @@ namespace MyShogi.App
             get { return GetValue<bool>("ConsiderationWindowFollowMainWindow"); }
             set { SetValue<bool>("ConsiderationWindowFollowMainWindow", value); }
         }
-
-        /// <summary>
-        /// 検討ウィンドウで思考エンジンが後手番のときに評価値を反転させるか(先手から見た評価値にするか)のフラグ
-        /// デフォルト : false
-        /// </summary>
-        [DataMember]
-        public bool NegateEvalWhenWhite
-        {
-            get { return GetValue<bool>("NegateEvalWhenWhite"); }
-            set { SetValue<bool>("NegateEvalWhenWhite",value); }
-        }
-
-        /// <summary>
-        /// 棋譜ウィンドウの横幅
-        /// 0 = 100%
-        /// 1 = 125%
-        /// 2 = 150%
-        /// 3 = 175%
-        /// 4 = 200%
-        /// </summary>
-        [DataMember]
-        public int KifuWindowWidthType
-        {
-            get { return GetValue<int>("KifuWindowWidthType"); }
-            set { SetValue<int>("KifuWindowWidthType", value); }
-        }
-
-        /// <summary>
-        /// 棋譜ウインドウの、ウインドウ時のフォントサイズ。
-        /// </summary>
-        [DataMember]
-        public float KifuWindowFontSize { get; set; } = 11F;
 
         /// <summary>
         /// 棋譜ウインドウはフローティングモードであるのかなどを管理する構造体。
@@ -560,13 +581,32 @@ namespace MyShogi.App
         [DataMember]
         public NotifyCollection<int> ConsiderationColumnWidth { get; set; } = new NotifyCollection<int>(6);
 
+        #endregion
+
+        #region Consideration Setting
+
+        /// <summary>
+        /// 検討時の候補手(MultiPV)の数。
+        /// デフォルト : 5
+        /// </summary>
+        [DataMember]
+        public int ConsiderationMultiPV { get; set; }
+
+        #endregion
+
+        #region MRUF
+
         /// <summary>
         /// 最近使ったファイル(自動保存されているものは除く)
         /// </summary>
         [DataMember]
         public MostRecentUsedFiles MRUF { get; set; } = new MostRecentUsedFiles();
 
+        #endregion
+
         /// ← 細かい設定は、ここに追加していく
+
+        #region Misc Settings
 
         /// <summary>
         /// 対局設定。
@@ -595,5 +635,7 @@ namespace MyShogi.App
         /// </summary>
         [DataMember]
         public GameResultSetting GameResultSetting { get; set; } = new GameResultSetting();
+
+        #endregion
     }
 }

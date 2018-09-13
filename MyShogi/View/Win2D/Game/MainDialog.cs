@@ -1897,6 +1897,27 @@ namespace MyShogi.View.Win2D
 
                         item_display.DropDownItems.Add(item);
                     }
+
+                    { // -- 「対局エフェクト」
+
+                        var item = new ToolStripMenuItem();
+                        item.Text = "対局エフェクト(&E)"; // game Effect
+
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "なし(&D)"; // Disable
+                        item1.Checked = config.EnableGameEffect == 0;
+                        item1.Click += (sender, e) => { config.EnableGameEffect = 0; };
+                        item.DropDownItems.Add(item1);
+
+                        var item2 = new ToolStripMenuItem();
+                        item2.Text = "あり(&E)"; // Enable
+                        item2.Checked = config.EnableGameEffect == 1;
+                        item2.Click += (sender, e) => { config.EnableGameEffect = 1; };
+                        item.DropDownItems.Add(item2);
+
+                        item_display.DropDownItems.Add(item);
+                    }
+
                 }
 
                 // 「音声」
