@@ -10,20 +10,31 @@ namespace MyShogi.View.Win2D
     {
         // -- 各種定数
 
-        // 盤面素材の画像サイズ
+        /// <summary>
+        /// 盤面素材の画像サイズ
+        /// </summary>
         public static readonly Size board_img_size = new Size(1920, 1080);
 
-        // 駒台縦長レイアウトの画面サイズ
-        public static readonly Size board_vert_size = new Size(1200, 1080);
+        /// <summary>
+        /// 駒台縦長レイアウトの画面サイズ
+        /// 限界まで削って、縦長のときになるべく大きく盤面が表示されたほうが嬉しい。
+        /// </summary>
+        public static readonly Size board_vert_size = new Size(1200 - 70, 1080);
 
-        // 盤面素材における、駒を配置する升の左上。
+        /// <summary>
+        /// 盤面素材における、駒を配置する升の左上。
+        /// </summary>
         public static readonly Point board_location = new Point(524, 53);
 
-        // 駒素材の画像サイズ(駒1つ分)
-        // これが横に8つ、縦に4つ、計32個並んでいる。
+        /// <summary>
+        /// 駒素材の画像サイズ(駒1つ分)
+        /// これが横に8つ、縦に4つ、計32個並んでいる。
+        /// </summary>
         public static readonly Size piece_img_size = new Size(97, 106);
 
-        // 駒台の手駒の表示順
+        /// <summary>
+        /// 駒台の手駒の表示順
+        /// </summary>
         private static readonly Piece[] hand_piece_list = {
             Piece.ROOK,
             Piece.BISHOP,
