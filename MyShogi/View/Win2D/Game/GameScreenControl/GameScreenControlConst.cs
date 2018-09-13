@@ -13,6 +13,9 @@ namespace MyShogi.View.Win2D
         // 盤面素材の画像サイズ
         public static readonly Size board_img_size = new Size(1920, 1080);
 
+        // 駒台縦長レイアウトの画面サイズ
+        public static readonly Size board_vert_size = new Size(1200, 1080);
+
         // 盤面素材における、駒を配置する升の左上。
         public static readonly Point board_location = new Point(524, 53);
 
@@ -45,7 +48,7 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// 駒台の手駒の表示場所(駒台を左上とする)
-        /// 
+        ///
         /// 順番は、Piece.PAWNからPieceの定数の順になっているので注意。
         /// </summary>
         private static readonly Point[,] hand_piece_pos =
@@ -200,7 +203,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 対局時間の表示
         /// 細長い駒台用
-        /// 
+        ///
         /// 表示する場所がなさげ..
         /// </summary>
         private static readonly Point[] time_setting_slim_pos =

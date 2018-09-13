@@ -329,13 +329,9 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void FitToClientSize()
         {
-            // 縦(h)を基準に横方向のクリップ位置を決める
-            // 1920 * 1080が望まれる比率
-            int w2 = Height * 1920 / 1080;
-
             // ちらつかずにウインドウのaspect ratioを保つのは.NET Frameworkの範疇では不可能。
             // ClientSizeをResizeイベント中に変更するのは安全ではない。
-            // cf. 
+            // cf.
             //   https://qiita.com/yu_ka1984/items/b4a3ce9ed7750bd67b86
             // →　あきらめる
 
@@ -354,8 +350,8 @@ namespace MyShogi.View.Win2D
             }
 #endif
 
-            var scale = (double)Height / board_img_size.Height;
-            AffineMatrix.SetMatrix(scale, scale, (Width - w2) / 2, 0 /* Top (Formの場合)*/);
+            var scale = Math.Min((float)Height / board_img_size.Height, (float)Width / board_vert_size.Width);
+            AffineMatrix.SetMatrix(scale, scale, (int)(Width - board_img_size.Width * scale) / 2, 0 /* Top (Formの場合)*/);
 
             //  縦長の画面なら駒台を縦長にする。
 
@@ -472,7 +468,7 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// c側の駒台の領域を返す。
-        /// 
+        ///
         /// reverse : 盤面を180度回転するのかのフラグ
         /// </summary>
         /// <param name="c"></param>
@@ -1142,7 +1138,7 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// 盤面座標系から、それを表現するSquareHand型に変換する。
-        /// 
+        ///
         /// reverse : 盤面を180度回転するのかのフラグ
         /// </summary>
         /// <param name="p"></param>
