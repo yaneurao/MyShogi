@@ -1957,15 +1957,15 @@ namespace MyShogi.View.Win2D
                     {
                         var item1 = new ToolStripMenuItem();
                         item1.Text = "対局時の棋譜読み上げ(&R)"; // Read out
-                        item1.Checked = config.KifuReadOut == 1;
+                        item1.Checked = config.ReadOutKifu == 1;
                         item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
-                        item1.Click += (sender, e) => { config.KifuReadOut ^= 1 /* 0,1反転 */; };
+                        item1.Click += (sender, e) => { config.ReadOutKifu ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
 
                     {
                         var item1 = new ToolStripMenuItem();
-                        item1.Text = "「先手」「後手」を毎回読み上げる(&E)"; // Everytime
+                        item1.Text = "棋譜読み上げの時、「先手」「後手」を毎回読み上げる(&E)"; // Everytime
                         item1.Checked = config.ReadOutSenteGoteEverytime == 1;
                         item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
                         item1.Click += (sender, e) => { config.ReadOutSenteGoteEverytime ^= 1 /* 0,1反転 */; };
@@ -1978,6 +1978,15 @@ namespace MyShogi.View.Win2D
                         item1.Checked = config.ReadOutCancelWhenGameEnd == 1;
                         item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
                         item1.Click += (sender, e) => { config.ReadOutCancelWhenGameEnd ^= 1 /* 0,1反転 */; };
+                        item_sounds.DropDownItems.Add(item1);
+                    }
+
+                    {
+                        var item1 = new ToolStripMenuItem();
+                        item1.Text = "秒読みの読み上げを行う(人間側のみ) (&B)"; // Byoyomi
+                        item1.Checked = config.ReadOutByoyomi == 1;
+                        item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
+                        item1.Click += (sender, e) => { config.ReadOutByoyomi ^= 1 /* 0,1反転 */; };
                         item_sounds.DropDownItems.Add(item1);
                     }
 

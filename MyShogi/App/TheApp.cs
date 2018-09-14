@@ -123,7 +123,9 @@ namespace MyShogi.App
             var gameServer = new LocalGameServer();
             mainDialog.Init(gameServer);
 
-            // 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
+            // -- 盤・駒が変更されたときにMainDialogのメニューの内容を修正しないといけないので更新がかかるようにしておく。
+
+            // 表示設定
 
             Config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems, mainDialog);
@@ -136,21 +138,30 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("PieceSoundOffTheGame", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("KifuReadOut", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("NegateEvalWhenWhite", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("ConsiderationWindowFollowMainWindow", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("ReadOutCancelWhenGameEnd", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("KifuWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("ConsiderationWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl, mainDialog);
             Config.AddPropertyChangedHandler("DisplayNameTurnVersion", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("EnableGameEffect", mainDialog.UpdateMenuItems, mainDialog);
+
+            // 音声
+
+            Config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("PieceSoundOffTheGame", mainDialog.UpdateMenuItems, mainDialog);
+
+            // 読み上げ
+
+            Config.AddPropertyChangedHandler("ReadOutKifu", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("ReadOutCancelWhenGameEnd", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("ReadOutByoyomi", mainDialog.UpdateMenuItems, mainDialog);
+
+            // Window
 
             Config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
 

@@ -299,6 +299,25 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
         }
 
+        /// <summary>
+        /// 現在、画面に表示すべき秒のところ
+        /// </summary>
+        /// <returns></returns>
+        public int DisplayByoyomi()
+        {
+            if (freezeTimeString != null)
+                return 0; // 不明
+            if (!KifuTimeSetting.ByoyomiEnable || KifuTimeSetting.Byoyomi == 0)
+                return 0; // 秒読み有効ではない。
+
+            var elapsed = RoundDownTime(ElapsedTime());
+            var r = KifuMoveTime.RestTime - new TimeSpan(0, 0, elapsed);
+            var rn = -r;
+            if (rn < TimeSpan.Zero)
+                rn = TimeSpan.Zero;
+            return (int)rn.TotalSeconds;
+        }
+
         // -- private members
 
         /// <summary>

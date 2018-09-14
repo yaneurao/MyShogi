@@ -50,7 +50,7 @@ namespace MyShogi.App
 
             // -- 読み上げ
 
-            KifuReadOut = 1;
+            ReadOutKifu = 1;
             ReadOutSenteGoteEverytime = 1;
             ReadOutCancelWhenGameEnd = 1;
             ReadOutByoyomi = 1;
@@ -108,7 +108,7 @@ namespace MyShogi.App
             if (CommercialVersion == 0)
             {
                 // 棋譜の読み上げ(音声素材がないため)
-                KifuReadOut = 0;
+                ReadOutKifu = 0;
 
                 // 秒の読み上げ
                 ReadOutByoyomi = 0;
@@ -466,10 +466,10 @@ namespace MyShogi.App
         /// 1 : あり(デフォルト) : 商用版のみ素材あり。
         /// </summary>
         [DataMember]
-        public int KifuReadOut
+        public int ReadOutKifu
         {
-            get { return GetValue<int>("KifuReadOut"); }
-            set { SetValue<int>("KifuReadOut", value); }
+            get { return GetValue<int>("ReadOutKifu"); }
+            set { SetValue<int>("ReadOutKifu", value); }
         }
 
         /// <summary>
@@ -499,6 +499,7 @@ namespace MyShogi.App
         /// <summary>
         /// 秒読みの有無
         /// ※　ただし、対局設定で1手X秒の指定があるときのみ。
+        /// また、人間側プレイヤーの時のみ。
         ///
         /// 0 : なし
         /// 1 : あり(デフォルト)

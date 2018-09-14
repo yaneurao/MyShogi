@@ -40,7 +40,7 @@ namespace MyShogi.Model.Resource.Sounds
         /// <param name=""></param>
         public void ReadOut(SoundEnum e)
         {
-            if (TheApp.app.Config.KifuReadOut == 0)
+            if (TheApp.app.Config.ReadOutKifu == 0)
                 return;
 
             if (!dic.ContainsKey(e))
@@ -108,7 +108,7 @@ namespace MyShogi.Model.Resource.Sounds
         public void ReadOut(string kif)
         {
             // オプションの反映
-            if (TheApp.app.Config.KifuReadOut == 0)
+            if (TheApp.app.Config.ReadOutKifu == 0)
                 return;
 
             // KIF2形式。"☗３六飛行成" みたいなフォーマット
@@ -227,7 +227,7 @@ namespace MyShogi.Model.Resource.Sounds
             Debug.Assert(m.IsSpecial());
 
             // オプションの反映
-            if (TheApp.app.Config.KifuReadOut == 0)
+            if (TheApp.app.Config.ReadOutKifu == 0)
                 return;
 
             switch (m)

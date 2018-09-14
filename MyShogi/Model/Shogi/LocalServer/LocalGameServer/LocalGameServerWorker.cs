@@ -738,6 +738,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             stmPlayer.CanMove = true;
             stmPlayer.SpecialMove = Move.NONE;
+            LastCheckedByoyomiReadOut = 0;
 
             // BestMove,PonderMoveは、Think()以降、正常に更新されることは、Playerクラス側で保証されているので、
             // ここではそれらの初期化は行わない。
@@ -821,6 +822,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // 値が変わっていなくとも変更通知を送りたいので自力でハンドラを呼び出す。
             RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
+
         }
 
         /// <summary>
@@ -835,6 +837,17 @@ namespace MyShogi.Model.Shogi.LocalServer
             UpdateTimeString();
 
             // 時間切れ判定(対局中かつ手番側のみ)
+            CheckTimeUp();
+
+            // 秒の読み上げ処理
+            CheckByoyomiReadOut();
+        }
+
+        /// <summary>
+        /// 時間切れの判定(手番側のみ)
+        /// </summary>
+        private void CheckTimeUp()
+        {
             var stm = Position.sideToMove;
             if (GameMode == GameModeEnum.InTheGame && !Initializing && PlayTimer(stm).IsTimeUp())
                 Player(stm).SpecialMove = Move.TIME_UP;
@@ -843,7 +856,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 0はtime upではないという解釈なのでtime upという判定にはならないはずではある。
 
             // エンジンで発生した例外の捕捉
-            foreach(var c in All.Colors())
+            foreach (var c in All.Colors())
             {
                 if (Player(c).PlayerType == PlayerTypeEnum.UsiEngine)
                 {
@@ -857,6 +870,55 @@ namespace MyShogi.Model.Shogi.LocalServer
                         Player(stm).SpecialMove = Move.INTERRUPT;
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// 秒の読み上げ処理
+        /// </summary>
+        private void CheckByoyomiReadOut()
+        {
+            var stm = Position.sideToMove;
+            var stmPlayer = Player(stm);
+
+            if (GameMode == GameModeEnum.InTheGame /* 通常対局中 */
+                && TheApp.app.Config.ReadOutByoyomi == 1
+                && stmPlayer.PlayerType == PlayerTypeEnum.Human
+                && GameSetting.KifuTimeSettings.Player(stm).ByoyomiEnable
+             )
+            {
+                // 現在の秒読みの秒(これが表示されているはず)
+                var now_second = PlayTimer(stm).DisplayByoyomi();
+
+                // 前回このメソッドでチェックを行った秒から変化していないならreturn
+                if (now_second == 0 || now_second == LastCheckedByoyomiReadOut)
+                    return;
+
+                // 秒読み設定(この秒になったら時間切れ)
+                var byoyomi = GameSetting.KifuTimeSettings.Player(stm).Byoyomi;
+
+                if (now_second >= byoyomi)
+                {
+                    // 時間切れであるから構わない
+                }
+                else if ((now_second % 10) == 0)
+                {
+                    // 1の位が0であるから10秒単位の数字の読み上げが必要である。
+                    if (now_second <= 50)
+                        TheApp.app.SoundManager.Play(SoundEnum.BYOYOMI_10BYO + (now_second / 10) - 1);
+                    // 60秒以上の時はどうするのか知らん。素材ないし…。
+
+                }
+                // 30秒設定なら20秒以降、1,2,3,…の読み上げが必要。
+                // 60秒設定なら50秒以降、1,2,3,…の読み上げが必要。
+                else if (now_second / 10 == byoyomi / 10 - 1)
+                {
+                    // 1秒単位の読み上げが必要である。
+                    TheApp.app.SoundManager.Play(SoundEnum.BYOYOMI_1 + (now_second % 10) - 1);
+                }
+
+                // この秒までは読み上げのチェックを行った
+                LastCheckedByoyomiReadOut = now_second;
             }
         }
 

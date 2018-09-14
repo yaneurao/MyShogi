@@ -347,6 +347,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// 秒読みの読み上げたをどこまでチェックしたか。
+        /// </summary>
+        public int LastCheckedByoyomiReadOut;
+
+        /// <summary>
         /// ゲームが開始された時に飛んでくる仮想イベント。
         /// 対局開始のAnimatorを表示するなどすると良いと思う。
         /// </summary>

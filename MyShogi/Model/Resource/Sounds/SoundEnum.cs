@@ -55,14 +55,27 @@ namespace MyShogi.Model.Resource.Sounds
         // 「持将棋」「千日手」「詰み」「時間切れ」
         Jisyougi , Sennichite , Tsumi, Jikangire ,
 
+        // -- 秒読み
 
+        BYOYOMI_10BYO,
+        BYOYOMI_20BYO,
+        BYOYOMI_30BYO,
+        BYOYOMI_40BYO,
+        BYOYOMI_50BYO,
+
+        BYOYOMI_1, BYOYOMI_2, BYOYOMI_3, BYOYOMI_4, BYOYOMI_5,
+        BYOYOMI_6, BYOYOMI_7, BYOYOMI_8, BYOYOMI_9,
 
         // -- 種類ごとの開始～終了の定数
 
         KOMA_START = KOMA_S1,
         KOMA_END = KOMA_C1,
+
         READ_OUT_START = SQ_11, // 読み上げの音声の開始
         READ_OUT_END = Jikangire,
+
+        BYOYOMI_START = BYOYOMI_10BYO, // 秒読み音声の開始
+        BYOYOMI_END = BYOYOMI_9,
     }
 
     /// <summary>
@@ -81,13 +94,23 @@ namespace MyShogi.Model.Resource.Sounds
         }
 
         /// <summary>
+        /// 秒読みの音声であるか。
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        public static bool IsByoyomi(this SoundEnum e)
+        {
+            return SoundEnum.BYOYOMI_START <= e && e <= SoundEnum.BYOYOMI_END;
+        }
+
+        /// <summary>
         /// 対応する音声ファイル名を返す。
         /// </summary>
         /// <param name="e"></param>
         /// <returns></returns>
         public static string FileNameOf(SoundEnum e)
         {
-            if (SoundEnum.KOMA_START <= e && e <= SoundEnum.KOMA_END)
+            if (e.IsKoma())
                 return KomaFileNameOf(e);
 
             if (SoundEnum.SQ_11 <= e && e <= SoundEnum.SQ_99)
@@ -96,6 +119,9 @@ namespace MyShogi.Model.Resource.Sounds
             if (SoundEnum.PiecePAWN <= e && e <= SoundEnum.PieceLast)
                 return FileNameOf((Piece)(e - SoundEnum.PiecePAWN + (int)Piece.PAWN));
 
+            if (e.IsByoyomi())
+                return ByoyomiFileNameOf(e);
+            
             // それ以外なので特別なもののはず..
             return SpecialFileNameOf(e);
         }
@@ -158,6 +184,34 @@ namespace MyShogi.Model.Resource.Sounds
         }
 
         /// <summary>
+        /// SoundEnumの秒読みに対応するファイル名を返す
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private static string ByoyomiFileNameOf(SoundEnum e)
+        {
+            switch (e)
+            {
+                case SoundEnum.BYOYOMI_10BYO: return "10byou.wav";
+                case SoundEnum.BYOYOMI_20BYO: return "20byou.wav";
+                case SoundEnum.BYOYOMI_30BYO: return "30byou.wav";
+                case SoundEnum.BYOYOMI_40BYO: return "40byou.wav";
+                case SoundEnum.BYOYOMI_50BYO: return "50byou.wav";
+                case SoundEnum.BYOYOMI_1: return "01.wav";
+                case SoundEnum.BYOYOMI_2: return "02.wav";
+                case SoundEnum.BYOYOMI_3: return "03.wav";
+                case SoundEnum.BYOYOMI_4: return "04.wav";
+                case SoundEnum.BYOYOMI_5: return "05.wav";
+                case SoundEnum.BYOYOMI_6: return "06.wav";
+                case SoundEnum.BYOYOMI_7: return "07.wav";
+                case SoundEnum.BYOYOMI_8: return "08.wav";
+                case SoundEnum.BYOYOMI_9: return "09.wav";
+
+                default: return "";
+            }
+        }
+
+        /// <summary>
         /// SoundEnumの特別なものに対応するファイル名を返す
         /// </summary>
         /// <param name="e"></param>
@@ -196,5 +250,6 @@ namespace MyShogi.Model.Resource.Sounds
                 default: return "";
             }
         }
+
     }
 }
