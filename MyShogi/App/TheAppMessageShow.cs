@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using MyShogi.Model.Common.Utility;
+using MyShogi.View.Win2D;
+using MyShogi.View.Win2D.Common;
 
 namespace MyShogi.App
 {
@@ -23,12 +25,24 @@ namespace MyShogi.App
             {
                 var show = new Func<DialogResult>(() =>
                 {
-                    // これセンタリングしたいのだが、メッセージフックしないと不可能。
-                    // cf.
-                    //   オーナーウィンドウの中央にメッセージボックスを表示する (C#プログラミング)
-                    //   https://www.ipentec.com/document/csharp-show-message-box-in-center-of-owner-window
-
-                    return MessageBox.Show(mainForm, text, caption, buttons , icon );
+                    if (type == MessageShowType.Error)
+                    {
+                        using (var dialog = new ExceptionDialog())
+                        {
+                            dialog.SetMessage(text);
+                            FormLocationUtility.CenteringToThisForm(dialog, mainForm);
+                            dialog.ShowDialog();
+                        }
+                        return DialogResult.OK;
+                    }
+                    else
+                    {
+                        // これセンタリングしたいのだが、メッセージフックしないと不可能。
+                        // cf.
+                        //   オーナーウィンドウの中央にメッセージボックスを表示する (C#プログラミング)
+                        //   https://www.ipentec.com/document/csharp-show-message-box-in-center-of-owner-window
+                        return MessageBox.Show(mainForm, text, caption, buttons, icon);
+                    }
                 });
 
                 if (mainForm.InvokeRequired)
