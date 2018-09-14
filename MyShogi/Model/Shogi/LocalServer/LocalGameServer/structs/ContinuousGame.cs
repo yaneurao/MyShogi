@@ -32,6 +32,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             kifuSubfolder = TheApp.app.Config.GameResultSetting.CreateSubfolderOnContinuousGame ?
                 DateTime.Now.ToString("yyyyMMddHHmmss") + Path.DirectorySeparatorChar :
                 null;
+
+            // このタイミングでそれ以外のメンバーもクリア
+            LastMove = Move.NONE;
+            Handicapped = false;
         }
 
         /// <summary>
@@ -153,12 +157,21 @@ namespace MyShogi.Model.Shogi.LocalServer
         public bool Swapped;
 
         /// <summary>
+        /// 駒落ちでの対局なのか
+        /// </summary>
+        public bool Handicapped;
+
+        /// <summary>
         /// 対局結果から、勝敗カウンターを加算する。
+        /// また、このときのlastMove,lastColorを保存しておく。(直後に取り出して使うことが出来る)
         /// </summary>
         /// <param name="lastMove"></param>
         /// <param name="lastColor"></param>
         public void IncResult(Move lastMove,Color lastColor)
         {
+            LastMove = lastMove;
+            LastColor = lastColor;
+
             var result = lastMove.GameResult();
 
             // 先手から見た勝敗に変換する
@@ -168,7 +181,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             if (Swapped)
                 result = result.Not();
 
-            switch(result)
+            LastGameResult = result;
+
+            switch (result)
             {
                 case MoveGameResult.WIN: ++WinCount; break;
                 case MoveGameResult.DRAW:++DrawCount;break;
@@ -233,6 +248,27 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             return kifuSubfolder;
         }
+
+        /// <summary>
+        /// 直前の試合の結果文字列。(IncResult()したときの情報に基づく)
+        /// </summary>
+        /// <returns></returns>
+        public string GetGameResultStringForLastGame()
+        {
+            // セットされていない？
+            if (LastMove == Move.NONE)
+                return null;
+
+            switch (LastGameResult)
+            {
+                case MoveGameResult.WIN: return Handicapped ? "下手勝ち" : "先手勝ち";
+                case MoveGameResult.LOSE: return Handicapped ? "上手勝ち" : "後手勝ち";
+                case MoveGameResult.DRAW: return "引き分け";
+                case MoveGameResult.UNKNOWN: return LastMove.SpecialMoveToKif();
+                default: return null;
+            }
+        }
+
         #endregion
 
         #region privates
@@ -263,6 +299,14 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 棋譜ファイルを保存するsubfolder。
         /// </summary>
         private string kifuSubfolder;
+
+        /// <summary>
+        /// IncResult()されたときに引数を保存しておいたもの。
+        /// ここから直前のゲームの勝敗がわかる。
+        /// </summary>
+        private Move LastMove;
+        private Color LastColor;
+        private MoveGameResult LastGameResult; // 先手から見た勝敗
 
         #endregion
     }

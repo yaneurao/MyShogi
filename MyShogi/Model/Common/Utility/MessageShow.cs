@@ -13,10 +13,11 @@ namespace MyShogi.Model.Common.Utility
         InformationOkCancel, // 通知でOkとCancelがあるタイプのダイアログ。
         Warning,             // 警告
         WarningOkCancel,     // 警告でOkとCancelがあるタイプのダイアログ
-        Error,              // エラー
+        Error,               // エラー
         ErrorOkCancel,       // エラーでOkとCancelがあるタイプのダイアログ
         Confirmation,        // 確認
         ConfirmationOkCancel,// 確認でOkとCancelがあるタイプのダイアログ
+        Exception,           // 例外
     }
 
     public static class MessageShowTypeExtension
@@ -42,6 +43,9 @@ namespace MyShogi.Model.Common.Utility
                 case MessageShowType.Confirmation:
                 case MessageShowType.ConfirmationOkCancel:
                     return "確認";
+                case MessageShowType.Exception:
+                    return "例外";
+
                 default: return "";
             }
         }
@@ -63,6 +67,7 @@ namespace MyShogi.Model.Common.Utility
                     return MessageBoxIcon.Exclamation;
                 case MessageShowType.Error:
                 case MessageShowType.ErrorOkCancel:
+                case MessageShowType.Exception:
                     return MessageBoxIcon.Hand;
                 case MessageShowType.Confirmation:
                 case MessageShowType.ConfirmationOkCancel:
@@ -78,6 +83,7 @@ namespace MyShogi.Model.Common.Utility
                 case MessageShowType.Information:
                 case MessageShowType.Warning:
                 case MessageShowType.Error:
+                case MessageShowType.Exception:
                 case MessageShowType.Confirmation:
                     return MessageBoxButtons.OK;
 

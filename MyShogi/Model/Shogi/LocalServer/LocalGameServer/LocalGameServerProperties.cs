@@ -176,12 +176,21 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 棋譜をファイルに名前をつけて保存するときのデフォルトファイル名。
+        /// 対局者名 + 手合割 + 対局結果 + 日付
+        /// 
         /// 拡張子は含まず。
         /// </summary>
         /// <returns></returns>
         public string DefaultKifuFileName()
         {
-            var name = $"{DisplayNameWithPreset(Color.BLACK)}_{DisplayNameWithPreset(Color.WHITE)}_{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+            // 手合割
+            var board_type = GameSetting.BoardSetting.BoardType;
+            var board_type_string = board_type == BoardType.Current ? null /* 任意局面。これはファイル名に含めない */ : $"_{board_type.Pretty()}";
+
+            // 対局の結果
+            var game_result_string = continuousGame == null ? null : $"_{continuousGame.GetGameResultStringForLastGame()}";
+
+            var name = $"{DisplayNameWithPreset(Color.BLACK)}_{DisplayNameWithPreset(Color.WHITE)}{board_type_string}{game_result_string}_{DateTime.Now.ToString("yyyyMMddHHmmss")}";
             // プレイヤー名としてファイルに使えない文字列が含まれている可能性があるのでここでescapeする。
             name = Utility.EscapeFileName(name);
             return name;
@@ -396,7 +405,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     {
                         // 「対局開始」の画面素材を表示するためのイベントを発生させる
 
-                        var handicapped = kifuManager.Tree.position.Handicapped;                        
+                        var handicapped = kifuManager.Tree.position.Handicapped;
+                        continuousGame.Handicapped = handicapped;
                         RaisePropertyChanged("GameStartEvent", handicapped);
 
                         continuousGame.StartTime = DateTime.Now;

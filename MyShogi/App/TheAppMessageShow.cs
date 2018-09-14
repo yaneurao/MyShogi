@@ -20,48 +20,60 @@ namespace MyShogi.App
             var caption = type.Pretty();
             var icon = type.ToIcon();
             var buttons = type.ToButtons();
-            
+
+            var show = new Func<Form,DialogResult>((parent) =>
+            {
+                if (type == MessageShowType.Exception)
+                {
+                    // 例外のときだけ、コピペできるように専用のDialogを出す。
+                    using (var dialog = new ExceptionDialog())
+                    {
+                        dialog.SetMessage(text);
+                        // 専用のダイアログなのでメインウインドウに対してセンタリングも楽ちん
+                        if (parent != null)
+                            FormLocationUtility.CenteringToThisForm(dialog, parent);
+                        dialog.ShowDialog();
+                    }
+                    return DialogResult.OK;
+                }
+                else
+                {
+                    // これセンタリングしたいのだが、メッセージフックしないと不可能。
+                    // cf.
+                    //   オーナーウィンドウの中央にメッセージボックスを表示する (C#プログラミング)
+                    //   https://www.ipentec.com/document/csharp-show-message-box-in-center-of-owner-window
+
+                    if (parent != null)
+                        return MessageBox.Show(parent, text, caption, buttons, icon);
+                    else
+                        return MessageBox.Show(text, caption, buttons, icon);
+                }
+            });
+
             if (mainForm != null && mainForm.IsHandleCreated && !mainForm.IsDisposed)
             {
-                var show = new Func<DialogResult>(() =>
-                {
-                    if (type == MessageShowType.Error)
-                    {
-                        using (var dialog = new ExceptionDialog())
-                        {
-                            dialog.SetMessage(text);
-                            FormLocationUtility.CenteringToThisForm(dialog, mainForm);
-                            dialog.ShowDialog();
-                        }
-                        return DialogResult.OK;
-                    }
-                    else
-                    {
-                        // これセンタリングしたいのだが、メッセージフックしないと不可能。
-                        // cf.
-                        //   オーナーウィンドウの中央にメッセージボックスを表示する (C#プログラミング)
-                        //   https://www.ipentec.com/document/csharp-show-message-box-in-center-of-owner-window
-                        return MessageBox.Show(mainForm, text, caption, buttons, icon);
-                    }
-                });
-
                 if (mainForm.InvokeRequired)
                 {
                     try
                     {
-                        var result = mainForm.BeginInvoke(new Func<DialogResult>(() => { return show(); }));
+                        var result = mainForm.BeginInvoke(new Func<DialogResult>(() => { return show(mainForm); }));
                         return (DialogResult)mainForm.EndInvoke(result); // これで結果が返るまで待つはず..
                         // ここでウィンドウが破棄される可能性があるのでEndInvoke()が成功するとは限らない。
-                    } catch
+                    }
+                    catch
                     {
                         return DialogResult.OK;
                     }
                 }
                 else
-                    return show();
+                    return show(mainForm);
             }
             else
-                return MessageBox.Show(text, caption, buttons , icon );
+            {
+                // メインウインドウ、解体後。
+                return show(null);
+            }
+
         }
 
         /// <summary>
@@ -73,12 +85,12 @@ namespace MyShogi.App
             if (exit)
             {
                 MessageShow("例外が発生しましたので終了します。\r\n例外内容 : " + ex.Message + "\r\nスタックトレース : \r\n" + ex.StackTrace,
-                    MessageShowType.Error);
+                    MessageShowType.Exception);
                 ApplicationExit();
             } else
             {
                 MessageShow("例外が発生しました。\r\n例外内容 : " + ex.Message + "\r\nスタックトレース : \r\n" + ex.StackTrace,
-                    MessageShowType.Error);
+                    MessageShowType.Exception);
             }
         }
 
