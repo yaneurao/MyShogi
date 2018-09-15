@@ -25,7 +25,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         /// <param name="name"></param>
         /// <param name="enable"></param>
-        public delegate void SetButtonHandler(ToolStripButtonEnum name, bool enable);
+        public delegate void SetButtonHandler(MainDialogToolStripButtonEnum name, bool enable);
 
         /// <summary>
         /// ToolStripのボタンの変更delegate

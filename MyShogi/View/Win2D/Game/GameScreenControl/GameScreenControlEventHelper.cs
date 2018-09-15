@@ -109,7 +109,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// Settingで渡されたSetButtonのハンドラを呼び出す。
         /// </summary>
-        public void SetButton(ToolStripButtonEnum name, bool enable)
+        public void SetButton(MainDialogToolStripButtonEnum name, bool enable)
         {
             if (Setting != null && Setting.SetButton != null)
                 Setting.SetButton(name, enable);
@@ -222,17 +222,17 @@ namespace MyShogi.View.Win2D
 
             // この時、エンジン側の手番であるなら、メインウインドウのメニューの「急」ボタンをenableにしなければならない。
             var engineTurn = gameServer.EngineTurn && inTheGame;
-            SetButton(ToolStripButtonEnum.MOVE_NOW, engineTurn);
+            SetButton(MainDialogToolStripButtonEnum.MOVE_NOW, engineTurn);
 
             // この時、対局中でかつ、人間側の手番で、エンジン初期化中でなければ、
             // メインウインドウのメニューの「投」「待」ボタンをenableにしなければならない。
             var humanTurn = gameServer.InTheGame && gameServer.CanUserMove && !gameServer.EngineInitializing;
-            SetButton(ToolStripButtonEnum.RESIGN, humanTurn);
-            SetButton(ToolStripButtonEnum.UNDO_MOVE, humanTurn);
+            SetButton(MainDialogToolStripButtonEnum.RESIGN, humanTurn);
+            SetButton(MainDialogToolStripButtonEnum.UNDO_MOVE, humanTurn);
 
             // 「中」ボタンは、エンジン同士の対局時にも中断できるようにするため、対局中であればいつでも中断できる。
             var canInterrupt = !gameServer.EngineInitializing && gameServer.InTheGame;
-            SetButton(ToolStripButtonEnum.INTERRUPT, canInterrupt);
+            SetButton(MainDialogToolStripButtonEnum.INTERRUPT, canInterrupt);
         }
 
         /// <summary>
@@ -241,9 +241,9 @@ namespace MyShogi.View.Win2D
         private void UpdateTooltipButtons2()
         {
             var consideration = gameServer.GameMode.IsConsideration();
-            SetButton(ToolStripButtonEnum.REWIND, consideration);
-            SetButton(ToolStripButtonEnum.FORWARD, consideration);
-            SetButton(ToolStripButtonEnum.MAIN_BRANCH, consideration);
+            SetButton(MainDialogToolStripButtonEnum.REWIND, consideration);
+            SetButton(MainDialogToolStripButtonEnum.FORWARD, consideration);
+            SetButton(MainDialogToolStripButtonEnum.MAIN_BRANCH, consideration);
         }
 
         /// <summary>

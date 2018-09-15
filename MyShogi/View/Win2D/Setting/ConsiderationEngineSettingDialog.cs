@@ -4,7 +4,7 @@ using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.LocalServer;
-using MyShogi.View.Win2D.Common;
+using MyShogi.View.Win2D;
 
 namespace MyShogi.View.Win2D.Setting
 {

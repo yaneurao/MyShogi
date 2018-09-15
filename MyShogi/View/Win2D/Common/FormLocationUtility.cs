@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace MyShogi.View.Win2D.Common
+namespace MyShogi.View.Win2D
 {
     /// <summary>
     /// Windows.Formの位置調整などに用いるUtility

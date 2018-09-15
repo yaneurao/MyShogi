@@ -10,7 +10,6 @@ using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Usi;
-using MyShogi.View.Win2D.Common;
 using MyShogi.View.Win2D.Setting;
 using ObjectModel = MyShogi.Model.Common.ObjectModel;
 using SCore = MyShogi.Model.Shogi.Core;
@@ -671,18 +670,18 @@ namespace MyShogi.View.Win2D
         /// </summary>
         /// <param name="name"></param>
         /// <param name="enable"></param>
-        private void SetButton(ToolStripButtonEnum name, bool enable)
+        private void SetButton(MainDialogToolStripButtonEnum name, bool enable)
         {
             ToolStripButton btn;
             switch (name)
             {
-                case ToolStripButtonEnum.RESIGN: btn = this.toolStripButton1; break;
-                case ToolStripButtonEnum.UNDO_MOVE: btn = this.toolStripButton2; break;
-                case ToolStripButtonEnum.MOVE_NOW: btn = this.toolStripButton3; break;
-                case ToolStripButtonEnum.INTERRUPT: btn = this.toolStripButton4; break;
-                case ToolStripButtonEnum.REWIND: btn = this.toolStripButton9; break;
-                case ToolStripButtonEnum.FORWARD: btn = this.toolStripButton10; break;
-                case ToolStripButtonEnum.MAIN_BRANCH: btn = this.toolStripButton11; break;
+                case MainDialogToolStripButtonEnum.RESIGN: btn = this.toolStripButton1; break;
+                case MainDialogToolStripButtonEnum.UNDO_MOVE: btn = this.toolStripButton2; break;
+                case MainDialogToolStripButtonEnum.MOVE_NOW: btn = this.toolStripButton3; break;
+                case MainDialogToolStripButtonEnum.INTERRUPT: btn = this.toolStripButton4; break;
+                case MainDialogToolStripButtonEnum.REWIND: btn = this.toolStripButton9; break;
+                case MainDialogToolStripButtonEnum.FORWARD: btn = this.toolStripButton10; break;
+                case MainDialogToolStripButtonEnum.MAIN_BRANCH: btn = this.toolStripButton11; break;
                 default: btn = null; break;
             }
 
@@ -1015,8 +1014,8 @@ namespace MyShogi.View.Win2D
 
             // -- メニューの追加。
             {
-
-                var menu = new MenuStrip();
+                // MenuStripだと非アクティブ状態からのクリックで反応しないのでMenuStripExを使う。
+                var menu = new MenuStripEx();
 
                 //レイアウトロジックを停止する
                 SuspendLayout();

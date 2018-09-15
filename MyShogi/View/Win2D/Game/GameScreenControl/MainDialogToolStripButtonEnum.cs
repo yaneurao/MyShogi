@@ -4,7 +4,7 @@
     /// メインダイアログのToolStripについているボタンに対応する定数
     /// ボタン番号で呼ぶのはわかりにくいので名前をつける。
     /// </summary>
-    public enum ToolStripButtonEnum
+    public enum MainDialogToolStripButtonEnum
     {
         RESIGN, // 投了ボタン
         UNDO_MOVE, // 待った

@@ -1,4 +1,4 @@
-﻿namespace MyShogi.View.Win2D.Setting
+﻿namespace MyShogi.View.Win2D
 {
     partial class EngineOptionSettingDialog
     {
@@ -30,9 +30,9 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.engineOptionSettingControl1 = new MyShogi.View.Win2D.Setting.EngineOptionSettingControl();
+            this.engineOptionSettingControl1 = new MyShogi.View.Win2D.EngineOptionSettingControl();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.engineOptionSettingControl2 = new MyShogi.View.Win2D.Setting.EngineOptionSettingControl();
+            this.engineOptionSettingControl2 = new MyShogi.View.Win2D.EngineOptionSettingControl();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();

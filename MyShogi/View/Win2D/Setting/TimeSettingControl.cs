@@ -5,7 +5,7 @@ using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Kifu;
 using SCore = MyShogi.Model.Shogi.Core;
 
-namespace MyShogi.View.Win2D.Setting
+namespace MyShogi.View.Win2D
 {
     public partial class TimeSettingControl : UserControl
     {

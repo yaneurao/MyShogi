@@ -6,7 +6,6 @@ using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
-using MyShogi.View.Win2D.Common;
 using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D

@@ -6,9 +6,8 @@ using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.LocalServer;
-using MyShogi.View.Win2D.Common;
 
-namespace MyShogi.View.Win2D.Setting
+namespace MyShogi.View.Win2D
 {
     /// <summary>
     /// プレイヤーが「人間」か「コンピュータ」かを選択し、

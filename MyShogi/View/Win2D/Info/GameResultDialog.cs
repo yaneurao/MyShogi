@@ -9,7 +9,6 @@ using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
-using MyShogi.View.Win2D.Common;
 using MyShogi.View.Win2D.Setting;
 using SCore = MyShogi.Model.Shogi.Core;
 

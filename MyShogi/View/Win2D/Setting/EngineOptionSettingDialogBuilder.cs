@@ -6,7 +6,7 @@ using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Common.Utility;
 
-namespace MyShogi.View.Win2D.Setting
+namespace MyShogi.View.Win2D
 {
     /// <summary>
     /// EngineOptionSettingDialogに渡すパラメーターがあまりにも複雑なので、パラメーターを構築する部分を分離してある。

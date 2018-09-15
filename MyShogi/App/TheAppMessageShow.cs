@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using MyShogi.Model.Common.Utility;
 using MyShogi.View.Win2D;
-using MyShogi.View.Win2D.Common;
 
 namespace MyShogi.App
 {

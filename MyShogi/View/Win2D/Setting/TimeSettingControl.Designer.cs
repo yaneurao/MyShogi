@@ -1,4 +1,4 @@
-﻿namespace MyShogi.View.Win2D.Setting
+﻿namespace MyShogi.View.Win2D
 {
     partial class TimeSettingControl
     {

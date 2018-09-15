@@ -1,5 +1,20 @@
 ﻿
 
+■　2018/09/16
+
+
+- ToolStripのボタン、非アクティブ状態からだと2回クリックしないと反応しない。(T.Kさん)
+  - ToolStripの仕様らしい…。
+    - http://bbs.wankuma.com/index.cgi?mode=al2&namber=69912&KLOG=119
+    - https://blogs.msdn.microsoft.com/rickbrew/2006/01/09/how-to-enable-click-through-for-net-2-0-toolstrip-and-menustrip/
+    - ToolStripExを作成した。
+  - MenuStripも同様みたいなので、Menuに対しても同様に。
+    - MenuStripEx作成した。
+- namespace MyShogi.View.Win2D.Setting →　namespace MyShogi.View.Win2D に変更
+- ToolStripButtonEnum移動
+  - MainDialogToolStripButtonEnumとrename
+
+
 ■　2018/09/15
 
 

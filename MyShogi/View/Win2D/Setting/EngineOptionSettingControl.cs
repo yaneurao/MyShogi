@@ -8,9 +8,8 @@ using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.Usi;
-using MyShogi.View.Win2D.Common;
 
-namespace MyShogi.View.Win2D.Setting
+namespace MyShogi.View.Win2D
 {
     public partial class EngineOptionSettingControl : UserControl
     {

@@ -80,6 +80,13 @@
     <Compile Include="Model\Common\Extensions\StringExtensions.cs" />
     <Compile Include="Model\Shogi\Converter\SvgUtility.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
+    <Compile Include="View\Win2D\Common\ClickAction.cs" />
+    <Compile Include="View\Win2D\Common\MenuStripEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Common\ToolStripEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="View\Win2D\Common\ToolTipHelper.cs" />
     <Compile Include="Model\Common\Win32\Win32API.cs" />
     <Compile Include="Model\Resource\Images\AnimatorManager.cs" />
@@ -367,7 +374,7 @@
     <Compile Include="View\Win2D\Info\SystemInfo.Designer.cs">
       <DependentUpon>SystemInfo.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\Common\ToolStripButtonEnum.cs" />
+    <Compile Include="View\Win2D\Game\GameScreenControl\MainDialogToolStripButtonEnum.cs" />
     <Compile Include="View\Win2D\Setting\PlayerSettingControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
