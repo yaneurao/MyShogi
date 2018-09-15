@@ -48,14 +48,14 @@ namespace MyShogi.Model.Resource.Images
         /// <param name="myOnDraw_">描画用のdelegate</param>
         /// <param name="animated_">これをtrueにすると毎フレーム描画される。(動きのあるものを表現するときに使う)</param>
         /// <param name="startTime">表示を開始する時刻</param>
-        /// <param name="endTime">表示を終了する時刻(この時刻になると、自動的に解体される)</param>
-        public Animator(OnDrawDelegate myOnDraw_ , bool animated_ , long startTime , long endTime )
+        /// <param name="durationTime">表示する時間(開始からこの時間が経過すると、自動的に解体される)</param>
+        public Animator(OnDrawDelegate myOnDraw_ , bool animated_ , long startTime , long durationTime )
         {
             Debug.Assert(myOnDraw_ != null);
             myOnDraw = myOnDraw_;
             Animate = animated_;
             StartTime = startTime;
-            EndTime = endTime;
+            EndTime = startTime + durationTime;
         }
 
         public delegate void OnDrawDelegate(long frame);

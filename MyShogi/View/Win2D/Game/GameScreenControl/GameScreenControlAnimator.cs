@@ -4,6 +4,7 @@ using SPRITE = MyShogi.Model.Resource.Images.SpriteManager;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.App;
+using System.Drawing;
 
 namespace MyShogi.View.Win2D
 {
@@ -31,8 +32,45 @@ namespace MyShogi.View.Win2D
             if (!enable)
                 return;
 
-            // これだけでアニメーションできる。便利すぎ。
+            // 振り駒画像を表示するのかのフラグ
+            var piece_toss = false; //  true;
+            // 振り駒を表示しているので「対局開始」の表示が後ろ倒しになる時間。[ms]
+            var piece_toss_time = 0;
 
+            if (piece_toss)
+            {
+                // 振り駒イメージ画像
+                animatorManager.AddAnimator(new Animator(
+                    elapsed =>
+                    { DrawSprite(game_piece_toss_pos, SPRITE.GamePieceToss()); }, false, 0, 500
+                ));
+
+                // 駒を5枚描画
+
+                // pcs[x] == trueならx枚目として歩、falseなら「と」を描画。
+                var pcs = new bool[5];
+                foreach (var i in All.Int(5))
+                    pcs[i] = (i % 2) == 0;
+
+                animatorManager.AddAnimator(new Animator(
+                    elapsed =>
+                    {
+                        foreach(var i in All.Int(5))
+                        {
+                            var sprite = SPRITE.Piece(pcs[i] ? Piece.PAWN : Piece.PRO_PAWN);
+                            var dest = new Point(
+                                board_img_size.Width/2 + (i-2) * 110 - piece_img_size.Width / 2,
+                                board_img_size.Height / 2 - piece_img_size.Height * 3 / 4 );
+                            DrawSprite(dest, sprite);
+                        }
+
+                    }, false, 500, 2500
+                ));
+
+                piece_toss_time = 1000;
+            }
+
+            // これだけでアニメーションできる。便利すぎ。
             animatorManager.AddAnimator(new Animator(
                 elapsed => {
 
@@ -57,7 +95,7 @@ namespace MyShogi.View.Win2D
                     // 「後手」/「上手」
                     DrawSprite(game_white_pos, white);
 
-                }, false , 0 , 2000
+                }, false , piece_toss_time , 2000
             ));
         }
 

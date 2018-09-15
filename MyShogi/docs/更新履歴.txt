@@ -3,6 +3,17 @@
 ■　2018/09/16
 
 
+- ShogiGUIにあるような振り駒機能が欲しい。(math26さん)
+  - 素材到着[2018/09/10]
+  - image/game_effect/piece_toss_v1.png 追加
+  - 表示するコードは書けた。先後入れ替えるコードやイベントなどがまだ。
+- Animatorでendtime指定するの、わかりにくいのでdurationを指定するように変更。
+
+
+- 棋譜の末尾の局面で駒を掴んで、「末尾の局面に進める」を行うと駒を離していたの修正。
+  - KifuControl.ViewModelのKifuList、ちゃんと反映してなかったの修正。
+
+
 - ToolStripのボタン、非アクティブ状態からだと2回クリックしないと反応しない。(T.Kさん)
   - ToolStripの仕様らしい…。
     - http://bbs.wankuma.com/index.cgi?mode=al2&namber=69912&KLOG=119

@@ -265,6 +265,12 @@ namespace MyShogi.View.Win2D
         private static readonly Point game_white_pos = new Point((board_img_size.Width - 464) / 2, (board_img_size.Height - 230) / 2 - 75  + 20/*微調整*/);
 
         /// <summary>
+        /// 振り駒のイメージ画像の表示位置
+        /// </summary>
+        private static readonly Point game_piece_toss_pos = new Point((board_img_size.Width - 600) / 2, (board_img_size.Height - 550) / 2 - 50 /* 微調整 */);
+        
+
+        /// <summary>
         /// 連続対局のメッセージ(センタリングして表示)
         /// </summary>
         private static readonly Point continuos_game_pos = new Point(board_img_size.Width / 2 , 3);

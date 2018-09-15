@@ -317,6 +317,8 @@ namespace MyShogi.Model.Resource.Images
             Load(ref GameLoseImage,  "game_effect" + Sep + "game_lose_v1.png" , true);
             Load(ref GameDrawImage,  "game_effect" + Sep + "game_draw_v1.png" , true);
             Load(ref GameBlackWhiteImage, "game_effect" + Sep + "game_black_white_v1.png", true);
+
+            Load(ref GamePieceTossImage, "game_effect" + Sep + "piece_toss_v1.png", true);
         }
 
         /// <summary>
@@ -462,6 +464,12 @@ namespace MyShogi.Model.Resource.Images
         /// (プレイヤーの片側のみが人間であるとき)
         /// </summary>
         public ImageLoader GameDrawImage = new ImageLoader();
+
+        /// <summary>
+        /// 振り駒のイメージ画像。
+        /// (振り駒で開始するときのみ)
+        /// </summary>
+        public ImageLoader GamePieceTossImage = new ImageLoader();
 
         #endregion
     }

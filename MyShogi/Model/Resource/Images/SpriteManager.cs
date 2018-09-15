@@ -464,6 +464,17 @@ namespace MyShogi.Model.Resource.Images
             return new Sprite(image, rect);
         }
 
+        /// <summary>
+        /// 振り駒のイメージ画像。
+        /// (振り駒で開始するときのみ)
+        /// </summary>
+        /// <returns></returns>
+        public static Sprite GamePieceToss()
+        {
+            var image = TheApp.app.ImageManager.GamePieceTossImage.image;
+            return new Sprite(image);
+        }
+
         #endregion
 
 
