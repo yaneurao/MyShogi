@@ -209,8 +209,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                     kifuManager.Tree.GotoSelectedIndex(selectedIndex);
                     PlayTimers.SetKifuMoveTimes(kifuManager.Tree.GetKifuMoveTimes());
 
-                    // 局面が変わったので思考しなおす。
-                    if (GameMode.IsConsiderationWithEngine())
+                    // 検討モードのとき)
+                    //   思考エンジンでの検討中       → 局面が変わったので思考しなおすためにNotifyTurnChanged()が必要。
+                    //   思考エンジンで検討していない → 掴んでいる駒を離す必要があるためにNotifyTurnChanged()が必要。
+                    if (GameMode.IsConsideration())
                     {
                         NotifyTurnChanged();
                     }

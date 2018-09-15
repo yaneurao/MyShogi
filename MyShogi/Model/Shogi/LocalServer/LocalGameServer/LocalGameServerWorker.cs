@@ -821,8 +821,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             CanUserMove = stmPlayer.PlayerType == PlayerTypeEnum.Human || GameMode.CanUserMove();
 
             // 値が変わっていなくとも変更通知を送りたいので自力でハンドラを呼び出す。
-            RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
 
+            RaisePropertyChanged("TurnChanged", CanUserMove); // 仮想プロパティ"TurnChanged"
         }
 
         /// <summary>
