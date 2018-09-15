@@ -55,7 +55,7 @@ namespace MyShogi.View.Win2D
             /// LocalGameServerの同名のプロパティとDataBindによって接続されていて、
             /// あちらで更新があると、これらのプロパティの更新通知が来るのでそれをハンドルする。
             /// </summary>
-            public List<string> KifuList;
+            public List<string> KifuList = new List<string>();
             public string KifuListAdded;
             public object KifuListRemoved;
 
@@ -312,7 +312,8 @@ namespace MyShogi.View.Win2D
             listBox1.SelectedIndex = listBox1.Items.Count-1; // last
             ViewModel.SetKifuListSelectedIndex(listBox1.Items.Count - 1);
             ViewModel.KifuListCount = listBox1.Items.Count;
-
+            ViewModel.KifuList.Add(line); // ここも同期させておく。
+            
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
 
             // item数が変化したはずなので、「消一手」ボタンを更新する。
@@ -333,7 +334,8 @@ namespace MyShogi.View.Win2D
             listBox1.SelectedIndex = listBox1.Items.Count - 1; // last
             ViewModel.SetKifuListSelectedIndex(listBox1.Items.Count - 1);
             ViewModel.KifuListCount = listBox1.Items.Count;
-
+            ViewModel.KifuList.RemoveAt(ViewModel.KifuList.Count - 1); // ここも同期させておく。
+            
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
 
             // 1手戻った結果、「次分岐」があるかも知れないのでそのボタン状態を更新する。
@@ -419,6 +421,7 @@ namespace MyShogi.View.Win2D
             listbox.Items.Clear();
             listbox.Items.AddRange(list.ToArray());
             ViewModel.KifuListCount = listBox1.Items.Count;
+            ViewModel.KifuList = list;
             listbox.EndUpdate();
             listBox1.SelectedIndexChanged += listBox1_SelectedIndexChanged;
 

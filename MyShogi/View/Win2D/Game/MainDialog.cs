@@ -819,7 +819,10 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton13_Click(object sender, System.EventArgs e)
         {
-            kifuControl.ViewModel.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に移動するはず */;
+            //kifuControl.ViewModel.KifuListSelectedIndex = int.MaxValue /* clipされて末尾に移動するはず */;
+            // →　これ末尾の局面にいても無駄にイベント生起するのでやめとく。
+
+            kifuControl.ViewModel.KifuListSelectedIndex = kifuControl.ViewModel.KifuListCount - 1;
         }
 
         /// <summary>
