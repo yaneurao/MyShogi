@@ -21,7 +21,7 @@ namespace MyShogi.App
         /// 『将棋神やねうら王』のUpdate1.3 [2018/09/03]は、"1.1.3"。→　マイナビ公式で配布[2018/09/03]
         /// 『将棋神やねうら王』のUpdate2.5 [2018/09/XX]は、"1.2.5"を予定。
         /// </summary>
-        public static readonly string MYSHOGI_VERSION_STRING = "1.1.9";
+        public static readonly string MYSHOGI_VERSION_STRING = "1.2.0";
 
 
         public GlobalConfig()

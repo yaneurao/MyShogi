@@ -33,7 +33,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.engineConsiderationControl1 = new MyShogi.View.Win2D.EngineConsiderationControl();
             this.engineConsiderationControl2 = new MyShogi.View.Win2D.EngineConsiderationControl();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStrip1 = new ToolStripEx();
             this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
@@ -252,7 +252,7 @@
         private EngineConsiderationControl engineConsiderationControl1;
         private EngineConsiderationControl engineConsiderationControl2;
         private MiniShogiBoard miniShogiBoard1;
-        private System.Windows.Forms.ToolStrip toolStrip1;
+        private ToolStripEx toolStrip1;
         private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
