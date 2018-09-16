@@ -78,6 +78,7 @@
     <Compile Include="Model\Common\String\Scanner.cs" />
     <Compile Include="Model\Common\String\Serializer.cs" />
     <Compile Include="Model\Common\Extensions\StringExtensions.cs" />
+    <Compile Include="Model\Common\Utility\Rand.cs" />
     <Compile Include="Model\Shogi\Converter\SvgUtility.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="View\Win2D\Common\ClickAction.cs" />

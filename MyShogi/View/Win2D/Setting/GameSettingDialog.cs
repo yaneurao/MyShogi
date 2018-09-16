@@ -154,6 +154,9 @@ namespace MyShogi.View.Win2D
             binder.Bind(misc, "EnableBestMoveIgnoreTimeForEngine", checkBox5);
             binder.Bind(misc, "BestMoveIgnoreTimeForEngine", numericUpDown3);
 
+            // 振り駒
+            binder.Bind(misc, "EnablePieceToss", checkBox6);
+
             ResumeLayout();
         }
 

@@ -102,6 +102,14 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue<int>("BestMoveIgnoreTimeForEngine", value); }
         }
 
+        /// <summary>
+        /// 先後を振り駒で決める。
+        /// </summary>
+        public bool EnablePieceToss
+        {
+            get { return GetValue<bool>("EnablePieceToss"); }
+            set { SetValue<bool>("EnablePieceToss", value); }
+        }
 
         // -- public members
 
@@ -117,6 +125,8 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             EnableBestMoveIgnoreTimeForEngine = true;
             BestMoveIgnoreTimeForEngine = 0;
+
+            EnablePieceToss = false;
         }
 
         public MiscSettings Clone()

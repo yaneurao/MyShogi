@@ -152,7 +152,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         public int DrawCount;
 
         /// <summary>
-        /// 本局が元の手番から先後を入れ替えての対局中であるか。
+        /// GameStart()のときの対局設定(GameSetting)から、先後入れ替えているか。
+        /// (本局が元の手番から先後を入れ替えての対局中であるか。)
+        ///
+        /// 振り駒で先後が入れ替わるときもこれをtrueにする。
         /// </summary>
         public bool Swapped;
 
@@ -160,6 +163,20 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 駒落ちでの対局なのか
         /// </summary>
         public bool Handicapped;
+
+        /// <summary>
+        /// 振り駒をするのかのフラグ
+        ///
+        /// SetGameLimit()のあと呼び出し側で設定する。
+        /// </summary>
+        public bool EnablePieceToss;
+
+        /// <summary>
+        /// 振り駒したときの駒の裏表を表現する。
+        /// 
+        /// PieceTossPieceColor[x] == trueならx枚目として歩、falseなら「と」を描画。
+        /// </summary>
+        public bool[] PieceTossPieceColor = new bool[5];
 
         /// <summary>
         /// 対局結果から、勝敗カウンターを加算する。

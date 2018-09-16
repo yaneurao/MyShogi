@@ -247,12 +247,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 対局設定
         /// 
-        /// GameStart()で渡された設定。immutableであるものとする。(呼び出し側で勝手に値を変更しないものとする)
+        /// GameStart()で渡された設定。
+        /// そこ以外では勝手に値をsetしないものとする。
         /// </summary>
         public GameSetting GameSetting
         {
             get { return GetValue<GameSetting>("GameSetting"); }
-            set { SetValue<GameSetting>("GameSetting", value); }
+            private set { SetValue<GameSetting>("GameSetting", value); }
         }
 
         /// <summary>
@@ -412,7 +413,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                         var handicapped = kifuManager.Tree.position.Handicapped;
                         continuousGame.Handicapped = handicapped;
-                        RaisePropertyChanged("GameStartEvent", handicapped);
+                        RaisePropertyChanged("GameStartEvent", continuousGame);
 
                         continuousGame.StartTime = DateTime.Now;
                     }

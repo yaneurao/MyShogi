@@ -99,24 +99,38 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="gameSetting"></param>
         private void GameStart(GameSetting gameSetting)
         {
+            // 持ち時間などの設定が必要なので、
+            // GameStart()時点のGameSettingをこのクラスのpropertyとしてコピーしておく。
+            GameSetting = gameSetting;
+
+            var nextGameMode = GameModeEnum.InTheGame;
+
             // -- 連続対局の回数をセット
 
             var misc = gameSetting.MiscSettings;
             // CPU同士の時のみ連続対局が有効である。
 
-            continuousGame.SetPlayLimit(
-                gameSetting.PlayerSetting(Color.BLACK).IsCpu &&
-                gameSetting.PlayerSetting(Color.WHITE).IsCpu &&
-                misc.ContinuousGameEnable ? misc.ContinuousGame : 0
-                );
-            // 連続対局時にはプレイヤー入れ替えで壊す可能性があるので保存しておく。
-            continuousGame.GameSetting = gameSetting.Clone();
+            // ContinuousGameの初期化
+            {
+                continuousGame.SetPlayLimit(
+                    gameSetting.PlayerSetting(Color.BLACK).IsCpu &&
+                    gameSetting.PlayerSetting(Color.WHITE).IsCpu &&
+                    misc.ContinuousGameEnable ? misc.ContinuousGame : 0
+                    );
+
+                // 連続対局時にはプレイヤー入れ替えなどで壊す可能性があるのでClone()して保存しておく。
+                continuousGame.GameSetting = gameSetting.Clone();
+
+                // 対局開始時の振り駒のアニメーションのため、こちらにコピーして使う。
+                continuousGame.EnablePieceToss = gameSetting.MiscSettings.EnablePieceToss;
+
+                // 振り駒をするのかのチェック
+                CheckPieceToss(nextGameMode);
+            }
 
             // 以下の初期化中に駒が動かされるの気持ち悪いのでユーザー操作を禁止しておく。
             CanUserMove = false;
             Initializing = true;
-
-            var nextGameMode = GameModeEnum.InTheGame;
 
             // 音声:「よろしくお願いします。」
             TheApp.app.SoundManager.Stop(); // 再生中の読み上げをすべて停止
@@ -200,9 +214,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                 return;
             }
 
-            // 持ち時間などの設定が必要なので、コピーしておく。
-            GameSetting = gameSetting;
-
             // Restart処理との共通部分
             GameStartInCommon(nextGameMode);
 
@@ -246,21 +257,15 @@ namespace MyShogi.Model.Shogi.LocalServer
             // →　生成されているはず
             // エンジンの初期化も終わっているはず。
 
+            var gameSetting = GameSetting;
+
             // 対局の持ち時間設定などの先後入替
             // (対局設定ダイアログで「連続対局のときに先後入れ替えない」にチェックが入っていなければ)
-            var gameSetting = GameSetting;
             if (!gameSetting.MiscSettings.ContinuousGameNoSwapPlayer)
-            {
-                // プレイヤーの実体の先後入替え
-                Utility.Swap(ref Players[0], ref Players[1]);
-                Utility.Swap(ref EngineDefineExes[0], ref EngineDefineExes[1]);
-                continuousGame.SwapPresetName();
-                
-                gameSetting.SwapPlayer();
-                GameSetting = gameSetting;
+                SwapPlayer();
 
-                continuousGame.Swapped ^= true; // 先後入れ替えていることを明示
-            }
+            // 振り駒をするのかのチェック
+            CheckPieceToss(nextGameMode);
 
             // 検討ウィンドウのリダイレクト、先後入れ替えるのでいったんリセット
             foreach (var c in All.Colors())
@@ -292,6 +297,51 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // NotifyTurnChanged();
             // →　GameStart()と同じ理由により、これはここで呼び出してはならない。
+        }
+
+        /// <summary>
+        /// 先後のプレイヤーを入れ替える。
+        /// エンジンの名前、プリセットなども入れ替える。
+        /// </summary>
+        private void SwapPlayer()
+        {
+            // プレイヤーの実体の先後入替え
+            Utility.Swap(ref Players[0], ref Players[1]);
+            Utility.Swap(ref EngineDefineExes[0], ref EngineDefineExes[1]);
+
+            continuousGame.SwapPresetName();
+
+            // GameStart()のときの対局設定(GameSetting)から、先後入れ替えていることを明示
+            continuousGame.Swapped ^= true;
+
+            GameSetting.SwapPlayer();
+        }
+
+        /// <summary>
+        /// 振り駒を行うかのチェック
+        /// </summary>
+        private void CheckPieceToss(GameModeEnum nextGameMode)
+        {
+            if (nextGameMode == GameModeEnum.InTheGame
+                && continuousGame.EnablePieceToss)
+            {
+                // -- 振り駒ありなので駒を振る
+
+                // 表の枚数
+                var total_black = 0;
+                foreach (var i in All.Int(5))
+                {
+                    var r = Rand.NextBool();
+                    continuousGame.PieceTossPieceColor[i] = r;
+                    if (r)
+                        ++total_black;
+                }
+
+                // 表の枚数が3枚未満なら先手を元のGameSettingからswapされている状態にする。
+                var swap_needed = total_black < 3;
+                if (continuousGame.Swapped != swap_needed)
+                    SwapPlayer();
+            }
         }
 
         /// <summary>
@@ -339,11 +389,22 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             // コンピュータ vs 人間である場合、人間側を手前にしてやる。
             // 人間 vs 人間の場合も最初の手番側を手前にしてやる。
+            // ただし、人間 vs 人間で振り駒でこの手番が決まったのであれば、
+            // それを反映しなければならない。
+
             var stm = kifuManager.Position.sideToMove;
-            // 1. 手番側が人間である場合(非手番側が人間 or CPU)
             if (gameSetting.PlayerSetting(stm).IsHuman)
-                BoardReverse = (stm == Color.WHITE);
-            // 2. 手番側がCPUで、非手番側が人間である場合。
+            {
+                // 1. 両方が人間である場合、普通は手番側が手前だが、振り駒をしたなら
+                // 　対局設定の左側のプレイヤーがつねに手前。
+                if (gameSetting.PlayerSetting(stm.Not()).IsHuman)
+                    BoardReverse = (stm == Color.WHITE) ^ continuousGame.Swapped;
+
+                // 2. 手番側が人間である場合(非手番側がCPU)
+                else
+                    BoardReverse = (stm == Color.WHITE);
+            }
+            // 3. 手番側がCPUで、非手番側が人間である場合。
             else if (gameSetting.PlayerSetting(stm).IsCpu && gameSetting.PlayerSetting(stm.Not()).IsHuman)
                 BoardReverse = (stm == Color.BLACK);
 

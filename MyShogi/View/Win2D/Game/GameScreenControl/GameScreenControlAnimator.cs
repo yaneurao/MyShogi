@@ -5,6 +5,7 @@ using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.App;
 using System.Drawing;
+using MyShogi.Model.Shogi.LocalServer;
 
 namespace MyShogi.View.Win2D
 {
@@ -32,12 +33,14 @@ namespace MyShogi.View.Win2D
             if (!enable)
                 return;
 
+            var continuousGame = args.value as ContinuousGame;
+
             // 振り駒画像を表示するのかのフラグ
-            var piece_toss = false; //  true;
+            var enable_piece_toss = continuousGame.EnablePieceToss; //  true;
             // 振り駒を表示しているので「対局開始」の表示が後ろ倒しになる時間。[ms]
             var piece_toss_time = 0;
 
-            if (piece_toss)
+            if (enable_piece_toss)
             {
                 // 振り駒イメージ画像
                 animatorManager.AddAnimator(new Animator(
@@ -47,17 +50,14 @@ namespace MyShogi.View.Win2D
 
                 // 駒を5枚描画
 
-                // pcs[x] == trueならx枚目として歩、falseなら「と」を描画。
-                var pcs = new bool[5];
-                foreach (var i in All.Int(5))
-                    pcs[i] = (i % 2) == 0;
-
                 animatorManager.AddAnimator(new Animator(
                     elapsed =>
                     {
-                        foreach(var i in All.Int(5))
+                        // ptpc[x] == trueならx枚目として歩、falseなら「と」を描画。
+                        var ptpc = continuousGame.PieceTossPieceColor;
+                        foreach (var i in All.Int(5))
                         {
-                            var sprite = SPRITE.Piece(pcs[i] ? Piece.PAWN : Piece.PRO_PAWN);
+                            var sprite = SPRITE.Piece(ptpc[i] ? Piece.PAWN : Piece.PRO_PAWN);
                             var dest = new Point(
                                 board_img_size.Width/2 + (i-2) * 110 - piece_img_size.Width / 2,
                                 board_img_size.Height / 2 - piece_img_size.Height * 3 / 4 );
@@ -82,7 +82,7 @@ namespace MyShogi.View.Win2D
                     var sprite = restart ? SPRITE.GameRestart() : SPRITE.GameStart();
                     DrawSprite(game_start_pos , sprite );
 
-                    var handicapped = (bool)args.value;
+                    var handicapped = continuousGame.Handicapped;
 
                     var black = handicapped ? SPRITE.GameShitate() : SPRITE.GameBlack();
                     var white = handicapped ? SPRITE.GameUwate()   : SPRITE.GameWhite();

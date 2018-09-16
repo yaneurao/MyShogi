@@ -48,13 +48,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.playerSettingControl2 = new MyShogi.View.Win2D.PlayerSettingControl();
             this.playerSettingControl1 = new MyShogi.View.Win2D.PlayerSettingControl();
             this.timeSettingControl2 = new MyShogi.View.Win2D.TimeSettingControl();
             this.timeSettingControl1 = new MyShogi.View.Win2D.TimeSettingControl();
+            this.checkBox6 = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.groupBox6.SuspendLayout();
@@ -292,6 +293,18 @@
             this.comboBox1.TabIndex = 31;
             this.toolTip1.SetToolTip(this.comboBox1, resources.GetString("comboBox1.ToolTip"));
             // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.Location = new System.Drawing.Point(17, 276);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.Size = new System.Drawing.Size(249, 19);
+            this.checkBox5.TabIndex = 39;
+            this.checkBox5.Text = "コンピューターは1手に必ずこれだけ使う";
+            this.toolTip1.SetToolTip(this.checkBox5, "コンピューターは1手に必ずこれだけ使います。\r\n(思考が終わっていても指すのを待機します)\r\n単位は[ms]なので1秒を指定したいなら「1000」と入力してくださ" +
+        "い。");
+            this.checkBox5.UseVisualStyleBackColor = true;
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -318,18 +331,6 @@
             this.numericUpDown3.Size = new System.Drawing.Size(69, 22);
             this.numericUpDown3.TabIndex = 37;
             this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // checkBox5
-            // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.Location = new System.Drawing.Point(17, 276);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(249, 19);
-            this.checkBox5.TabIndex = 39;
-            this.checkBox5.Text = "コンピューターは1手に必ずこれだけ使う";
-            this.toolTip1.SetToolTip(this.checkBox5, "コンピューターは1手に必ずこれだけ使います。\r\n(思考が終わっていても指すのを待機します)\r\n単位は[ms]なので1秒を指定したいなら「1000」と入力してくださ" +
-        "い。");
-            this.checkBox5.UseVisualStyleBackColor = true;
             // 
             // playerSettingControl2
             // 
@@ -367,11 +368,23 @@
             this.timeSettingControl1.Size = new System.Drawing.Size(381, 131);
             this.timeSettingControl1.TabIndex = 32;
             // 
+            // checkBox6
+            // 
+            this.checkBox6.AutoSize = true;
+            this.checkBox6.Location = new System.Drawing.Point(17, 301);
+            this.checkBox6.Name = "checkBox6";
+            this.checkBox6.Size = new System.Drawing.Size(158, 19);
+            this.checkBox6.TabIndex = 39;
+            this.checkBox6.Text = "先後は振り駒で決める";
+            this.toolTip1.SetToolTip(this.checkBox6, "対局前に先手・後手を振り駒で決めます。\r\n(先手・後手がランダムで決まります)");
+            this.checkBox6.UseVisualStyleBackColor = true;
+            // 
             // GameSettingDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(771, 520);
+            this.Controls.Add(this.checkBox6);
             this.Controls.Add(this.checkBox5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.numericUpDown3);
@@ -429,5 +442,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.NumericUpDown numericUpDown3;
         private System.Windows.Forms.CheckBox checkBox5;
+        private System.Windows.Forms.CheckBox checkBox6;
     }
 }

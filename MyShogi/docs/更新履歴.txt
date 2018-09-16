@@ -3,6 +3,9 @@
 ■　2018/09/16
 
 
+- ShogiGUIにあるような振り駒機能その2
+  - 一応書けた気がする。
+
 - ShogiGUIにあるような振り駒機能が欲しい。(math26さん)
   - 素材到着[2018/09/10]
   - image/game_effect/piece_toss_v1.png 追加
