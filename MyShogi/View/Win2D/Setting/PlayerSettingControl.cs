@@ -356,7 +356,12 @@ namespace MyShogi.View.Win2D
         {
             if (radioButton1.Checked)
             {
-                textBox1.Text = ViewModel.Color.Pretty();
+                //textBox1.Text = ViewModel.Color.Pretty();
+
+                // 対局設定画面の「先手」と「後手」の文字、駒落ちだと上手と下手にすべきだし、振り駒で手番が入れ替わったときも
+                // ややこしいし、よくない。「あなた」と「わたし」を人間時のデフォルトに変更する。
+
+                textBox1.Text = ViewModel.Color == Color.BLACK ? "わたし" : "あなた";
             }
         }
 

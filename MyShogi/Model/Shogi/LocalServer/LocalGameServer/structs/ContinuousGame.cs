@@ -8,6 +8,8 @@ namespace MyShogi.Model.Shogi.LocalServer
 {
     /// <summary>
     /// 連続対局のための情報に関する構造体
+    ///
+    /// 対局者名などもここに入っている。
     /// </summary>
     public class ContinuousGame
     {
@@ -27,6 +29,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             Swapped = false;
             presetNames = new string[2];
             presetNames2 = new string[2];
+            displayNames = new string[2];
 
             // subfolderを作る設定になっているなら、それを取得する。
             kifuSubfolder = TheApp.app.Config.GameResultSetting.CreateSubfolderOnContinuousGame ?
@@ -121,11 +124,38 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 先後のプリセット名の入れ替え。
+        /// 対局者の表示用の名前
+        ///
+        /// GameStart()時にこのクラスのSetDiaplayName()で設定されるものとする。
         /// </summary>
-        public void SwapPresetName()
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public string DisplayName(Color c) { return displayNames[(int)c]; }
+        private string[] displayNames
+            = new string[2] { "あなた", "わたし" }; // 起動時に画面に表示しておく名前はこれ。
+
+        /// <summary>
+        /// GameStart()時に対局者名を設定する。
+        /// ここで設定したものはDisplayName()で取得できる。
+        ///
+        /// SwapPlayer()の影響を受ける。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="displayName"></param>
+        public void SetDisplayName(Color c , string displayName)
+        {
+            displayNames[(int)c] = displayName;
+        }
+
+
+        /// <summary>
+        /// 先後のプリセット名(PresetName)、表示名(DisplayName)の入れ替え。
+        /// 連続対局や振り駒の処理において行う。
+        /// </summary>
+        public void SwapPlayer()
         {
             Utility.Swap(ref presetNames[0], ref presetNames[1]);
+            Utility.Swap(ref displayNames[0], ref displayNames[1]);
         }
 
         /// <summary>
@@ -297,6 +327,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// 対局開始時のpreset名
+        /// SwapPlayer()の影響を受けない。
         /// </summary>
         private string[] presetNames2 = new string[2];
 

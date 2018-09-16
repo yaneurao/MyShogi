@@ -121,6 +121,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 連続対局時にはプレイヤー入れ替えなどで壊す可能性があるのでClone()して保存しておく。
                 continuousGame.GameSetting = gameSetting.Clone();
 
+                // 対局設定ダイアログの名前を表示名にする。
+                foreach(var c in All.Colors())
+                    continuousGame.SetDisplayName(c,GameSetting.PlayerSetting(c).PlayerName);
+
                 // 対局開始時の振り駒のアニメーションのため、こちらにコピーして使う。
                 continuousGame.EnablePieceToss = gameSetting.MiscSettings.EnablePieceToss;
 
@@ -309,7 +313,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             Utility.Swap(ref Players[0], ref Players[1]);
             Utility.Swap(ref EngineDefineExes[0], ref EngineDefineExes[1]);
 
-            continuousGame.SwapPresetName();
+            continuousGame.SwapPlayer();
 
             // GameStart()のときの対局設定(GameSetting)から、先後入れ替えていることを明示
             continuousGame.Swapped ^= true;

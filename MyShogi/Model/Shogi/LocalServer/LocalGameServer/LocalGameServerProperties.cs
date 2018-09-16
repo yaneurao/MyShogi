@@ -151,7 +151,12 @@ namespace MyShogi.Model.Shogi.LocalServer
             //return kifuManager.KifuHeader.GetPlayerName(c);
 
             // 対局ダイアログの設定を活かす
-            return GameSetting.PlayerSetting(c).PlayerName;
+            //return GameSetting.PlayerSetting(c).PlayerName;
+
+            // →　GameStart()時の名前
+            // (対局終了時にGameSettingをGameStart()時のものに復元するので、
+            // そのときに連続対局や振り駒のためにプレイヤーを入れ替えていると困るため)
+            return continuousGame.DisplayName(c);
         }
 
         /// <summary>
