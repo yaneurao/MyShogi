@@ -1,7 +1,38 @@
-﻿- 連続対局のとき後手のHash使用率の表示がおかしいのでは。(masaさん)
-- マウスホイールによる棋譜のスクロール(Tatuyaさん)
+﻿
+- 連続対局のとき後手のHash使用率の表示がおかしいのでは。(masaさん)
 - 棋譜ウインドウのスクロール位置を常に3手先ぐらいまで表示されているように。(T.Kさん)
 // 作業中
+
+
+■　2018/09/19
+
+
+- マウスホイールによる棋譜のスクロール(Tatuyaさん)
+  - 検討モードでメインウインドウにfocusがあるときにマウスホイールの回転で棋譜の指し手を移動できるようにした。(ShogiGUIに倣った)
+  - 検討ウインドウにfocusがあるときはうまく動かない。検討ウインドウのフロート化を実装したあとで考える。
+- メインウインドウにfocusがあるときにカーソルキーの上下で棋譜の指し手を移動できるように。
+  - これ、ボタンがkey event食ってしまうので無理だわ。ProcessDialogKey()のoverrideが必要になる。
+    - cf. https://dobon.net/vb/dotnet/form/keypreview2.html
+    - [System.Security.Permissions.UIPermission(
+    System.Security.Permissions.SecurityAction.Demand,
+    Window = System.Security.Permissions.UIPermissionWindow.AllWindows)]
+      - こんなの使うと今後の.NET Frameworkの変更の影響を受けかねない。やめておく。
+
+        // このコードで動いて欲しかったのだが…。
+        private void MainDialog_KeyDown(object sender, KeyEventArgs e)
+        {
+            // shift,ctrl,altなどが押されていない
+            if (e.Modifiers == 0)
+            {
+                if (e.KeyCode == Keys.Up)
+                    toolStripButton9_Click(sender, e); // 1手戻るボタンに委譲
+                else if (e.KeyCode == Keys.Down)
+                    toolStripButton10_Click(sender, e); // 1手進むボタンに委譲
+            }
+        }
+
+
+- 思考エンジンのプリセットに16級～20級を追加。
 
 
 ■　2018/09/18

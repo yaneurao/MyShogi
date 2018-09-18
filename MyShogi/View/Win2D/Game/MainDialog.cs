@@ -363,6 +363,9 @@ namespace MyShogi.View.Win2D
                 // コンストラクタでの初期化が間に合わなかったコントロールの初期化はここで行う。
                 first_tick = false;
 
+                // マウスのホイールイベントまわりの初期化
+                InitMouseWheel();
+
                 // 棋譜ウィンドウの更新通知のタイミングがなかったのでupdate
                 gameServer.RaisePropertyChanged("KifuList", gameServer.KifuList);
 
@@ -395,7 +398,24 @@ namespace MyShogi.View.Win2D
 
         private bool first_tick = true;
 
+        /// <summary>
+        /// マウスのWheelイベントの初期化
+        /// </summary>
+        private void InitMouseWheel()
+        {
+            this.MouseWheel += MainDialog_MouseWheel;
+        }
+
         // --
+
+        private void MainDialog_MouseWheel(object sender, MouseEventArgs e)
+        {
+            // ShogiGUIのように逆方向スクロールに設定
+            if (e.Delta > 0)
+                toolStripButton9_Click(sender,e); // 1手戻るボタンに委譲
+            else if (e.Delta < 0)
+                toolStripButton10_Click(sender, e); // 1手進むボタンに委譲
+        }
 
         public void MainDialog_Move(object sender, System.EventArgs e)
         {
@@ -875,6 +895,18 @@ namespace MyShogi.View.Win2D
             }
 
             ReadKifuFile(file);
+        }
+
+        private void MainDialog_KeyDown(object sender, KeyEventArgs e)
+        {
+            // shift,ctrl,altなどが押されていない
+            if (e.Modifiers == 0)
+            {
+                if (e.KeyCode == Keys.Up)
+                    toolStripButton9_Click(sender, e); // 1手戻るボタンに委譲
+                else if (e.KeyCode == Keys.Down)
+                    toolStripButton10_Click(sender, e); // 1手進むボタンに委譲
+            }
         }
 
         /// <summary>

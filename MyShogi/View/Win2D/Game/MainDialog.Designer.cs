@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainDialog));
-            this.toolStrip1 = new ToolStripEx();
+            this.toolStrip1 = new MyShogi.View.Win2D.ToolStripEx();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
@@ -53,6 +53,7 @@
             // 
             // toolStrip1
             // 
+            this.toolStrip1.ClickAction = MyShogi.View.Win2D.ClickActionEnum.MA_NOACTIVATE;
             this.toolStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
@@ -273,6 +274,7 @@
             this.Load += new System.EventHandler(this.MainDialog_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainDialog_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainDialog_DragEnter);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainDialog_KeyDown);
             this.Move += new System.EventHandler(this.MainDialog_Move);
             this.Resize += new System.EventHandler(this.MainDialog_Resize);
             this.toolStrip1.ResumeLayout(false);
