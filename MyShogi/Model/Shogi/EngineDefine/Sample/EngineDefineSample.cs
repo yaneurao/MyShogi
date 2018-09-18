@@ -74,7 +74,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         900	870 
                         800	726 
                         700	607 
-                        600	509 
+                        600	509
+
+                        500 428 // 11級
+                        400 361
+                        300 305
+                        200 258
+                        100 219 // 15級
+
                  */
 
                 // 8段 = R3000
@@ -235,6 +242,42 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
+                new EnginePreset("11級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","2"),
+                        new EngineOption("NodesLimit","428"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPv","1"),
+                }),
+                new EnginePreset("12級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","2"),
+                        new EngineOption("NodesLimit","361"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPv","1"),
+                }),
+                new EnginePreset("13級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","2"),
+                        new EngineOption("NodesLimit","305"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPv","1"),
+                }),
+                new EnginePreset("14級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","2"),
+                        new EngineOption("NodesLimit","258"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPv","1"),
+                }),
+                new EnginePreset("15級" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","2"),
+                        new EngineOption("NodesLimit","219"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPv","1"),
+                }),
+
             };
 
             // presetのDescription

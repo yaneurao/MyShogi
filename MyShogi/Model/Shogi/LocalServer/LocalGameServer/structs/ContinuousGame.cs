@@ -9,7 +9,7 @@ namespace MyShogi.Model.Shogi.LocalServer
     /// <summary>
     /// 連続対局のための情報に関する構造体
     ///
-    /// 対局者名などもここに入っている。
+    /// 表示用の対局者名などもここに入っている。
     /// </summary>
     public class ContinuousGame
     {
