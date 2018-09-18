@@ -1856,19 +1856,25 @@ namespace MyShogi.View.Win2D
                     { // -- 手番プレートの表示
 
                         var item = new ToolStripMenuItem();
-                        item.Text = "対局者名の右に手番マークの表示(&T)"; // Turn
+                        item.Text = "手番側の表現(&T)"; // Turn
 
                         var item1 = new ToolStripMenuItem();
-                        item1.Text = "なし(&N)"; // None
+                        item1.Text = "なし(&0)"; // None
                         item1.Checked = config.TurnDisplay == 0;
                         item1.Click += (sender, e) => { config.TurnDisplay = 0; };
                         item.DropDownItems.Add(item1);
 
                         var item2 = new ToolStripMenuItem();
-                        item2.Text = "あり(&E)"; // Visible
+                        item2.Text = "手番側の対局者名の右側に手番マーク(&1)";
                         item2.Checked = config.TurnDisplay == 1;
                         item2.Click += (sender, e) => { config.TurnDisplay = 1; };
                         item.DropDownItems.Add(item2);
+
+                        var item3 = new ToolStripMenuItem();
+                        item3.Text = "手番側の対局者名を赤文字で表現(&2)";
+                        item3.Checked = config.TurnDisplay == 2;
+                        item3.Click += (sender, e) => { config.TurnDisplay = 2; };
+                        item.DropDownItems.Add(item3);
 
                         item_display.DropDownItems.Add(item);
                     }

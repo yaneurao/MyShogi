@@ -231,6 +231,10 @@ namespace MyShogi.View.Win2D
                 DrawSprite(board_number_pos[1], SPRITE.BoardNumberRank(reverse));
             }
 
+            // 手番側が先手なら0、後手なら1。ただし、盤面反転しているなら、その逆。
+            int side = pos.sideToMove == SColor.BLACK ? 0 : 1;
+            side = reverse ? (side ^ 1) : side;
+
             if (Setting.NamePlateVisible)
             {
 
@@ -240,9 +244,15 @@ namespace MyShogi.View.Win2D
                     {
                         // 通常状態の駒台表示
                         case 0:
-                            DrawString(name_plate_name[0], gameServer.ShortDisplayNameWithTurn(reverse ? SColor.WHITE : SColor.BLACK), 26);
-                            DrawString(name_plate_name[1], gameServer.ShortDisplayNameWithTurn(reverse ? SColor.BLACK : SColor.WHITE), 26);
+                            // 手番側を赤文字で表現するなら、その処理
+                            var playerColors = new[] { Brushes.Black, Brushes.Black };
+                            if (config.TurnDisplay == 2)
+                                playerColors[side] = Brushes.IndianRed;
+
+                            DrawString(name_plate_name[0], gameServer.ShortDisplayNameWithTurn(reverse ? SColor.WHITE : SColor.BLACK), 26 , new DrawStringOption(playerColors[0],0));
+                            DrawString(name_plate_name[1], gameServer.ShortDisplayNameWithTurn(reverse ? SColor.BLACK : SColor.WHITE), 26 , new DrawStringOption(playerColors[1],0));
                             break;
+
                         // 細長い状態の駒台表示
                         case 1:
                             DrawSprite(turn_slim_pos, SPRITE.NamePlateSlim(pos.sideToMove, reverse));
@@ -282,13 +292,12 @@ namespace MyShogi.View.Win2D
 
                 // -- 手番の表示
                 {
-                    // 手番側が先手なら0、後手なら1。ただし、盤面反転しているなら、その逆。
-                    int side = pos.sideToMove == SColor.BLACK ? 0 : 1;
-                    side = reverse ? (side ^ 1) : side;
-
                     switch (PieceTableVersion)
                     {
-                        case 0: DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal()); break;
+                        case 0:
+                            if (config.TurnDisplay == 1)
+                                DrawSprite(turn_normal_pos[side], SPRITE.TurnNormal());
+                            break;
                         case 1: DrawSprite(turn_slim_pos, SPRITE.TurnSlim(pos.sideToMove, reverse)); break;
                     }
                 }

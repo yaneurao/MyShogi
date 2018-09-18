@@ -342,7 +342,8 @@ namespace MyShogi.App
         /// <summary>
         /// 手番表示の有無
         /// 0 : なし
-        /// 1 : あり
+        /// 1 : 通常の手番マーク(デフォルト)
+        /// 2 : 手番側が赤色
         /// </summary>
         [DataMember]
         public int TurnDisplay
