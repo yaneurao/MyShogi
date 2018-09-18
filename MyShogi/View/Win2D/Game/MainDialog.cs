@@ -897,18 +897,6 @@ namespace MyShogi.View.Win2D
             ReadKifuFile(file);
         }
 
-        private void MainDialog_KeyDown(object sender, KeyEventArgs e)
-        {
-            // shift,ctrl,altなどが押されていない
-            if (e.Modifiers == 0)
-            {
-                if (e.KeyCode == Keys.Up)
-                    toolStripButton9_Click(sender, e); // 1手戻るボタンに委譲
-                else if (e.KeyCode == Keys.Down)
-                    toolStripButton10_Click(sender, e); // 1手進むボタンに委譲
-            }
-        }
-
         /// <summary>
         /// 閉じるときに本当に終了しますかの確認を出す。
         /// </summary>

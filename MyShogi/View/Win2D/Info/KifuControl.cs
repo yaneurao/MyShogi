@@ -431,12 +431,38 @@ namespace MyShogi.View.Win2D
             selectedIndex = Math.Min(selectedIndex, listbox.Items.Count - 1);
 
             listbox.SelectedIndex = selectedIndex;
+
+            AdjustScrollTop();
 #endif
 
             UpdateButtonState();
 
             // item数が変化したはずなので、「消一手」ボタンを更新する。
             UpdateButtonState2();
+        }
+
+        /// <summary>
+        /// [UI thread]
+        /// 棋譜の途中の指し手において、選択行が表示範囲の3行ほど手前になるように調整する。
+        /// (横スクロール型のアクションゲームとかでよくあるやつ。)
+        /// </summary>
+        private void AdjustScrollTop()
+        {
+            var selected = ViewModel.KifuListSelectedIndex;
+            var top = listBox1.TopIndex;
+
+            var visibleCount = listBox1.ClientSize.Height / listBox1.ItemHeight;
+            var bottom = top + visibleCount; // これListBoxのpropertyにないのだ…。何故なのだ…。
+
+            // スクロール時にこの行数分だけ常に余裕があるように見せる。
+            // 縦幅を狭めているときは、marginを縮める必要がある。
+            var margin = Math.Min(3 /* デフォルトで3行 */ , (visibleCount - 1) / 2);
+            if (top + margin > selected)
+                top = selected - margin;
+            else if (selected + margin + 1 >= bottom)
+                top = selected - (visibleCount - margin - 1);
+
+            listBox1.TopIndex = top;
         }
 
 
@@ -460,6 +486,8 @@ namespace MyShogi.View.Win2D
 
             // 押し戻された可能性があるので、"ViewModel.KifuListSelectedIndex"に書き戻しておく。値が同じであれば変更イベントは発生しない。
             ViewModel.KifuListSelectedIndex = listBox1.SelectedIndex = selectedIndex;
+
+            AdjustScrollTop();
         }
 
         /// <summary>
