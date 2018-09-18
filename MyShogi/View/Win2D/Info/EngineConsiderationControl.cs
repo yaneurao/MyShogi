@@ -325,10 +325,11 @@ namespace MyShogi.View.Win2D
         {
             UpdateHeader(new UsiThinkReport()
             {
-                PonderMove = null,
-                NodesString = null,
-                NpsString = null,
-                HashPercentageString = null,
+                // 値がnullだと値が設定されないので、値をクリアしたいならばstring.Emptyを設定する。
+                PonderMove = string.Empty,
+                NodesString = string.Empty,
+                NpsString = string.Empty,
+                HashPercentageString = string.Empty,
             });
         }
 
@@ -557,7 +558,8 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// [UI Thread] : ヘッダー情報のところに反映させる。
-        /// nullの項目は書き換えない。
+        /// info.XXXの値がnullになっている項目は書き換えない。
+        /// 書き換えたいならば、string.Emptyを設定すること。
         /// </summary>
         /// <param name="info"></param>
         private void UpdateHeader(UsiThinkReport info)
