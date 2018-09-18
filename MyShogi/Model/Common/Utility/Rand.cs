@@ -1,10 +1,22 @@
 ﻿
+using MyShogi.Model.Shogi.Core;
 using System;
 
 namespace MyShogi.Model.Common.Utility
 {
     public class Rand
     {
+        public Rand(UInt64 seed) { s = seed; }
+        public Rand()
+        {
+            // 時刻などでseedを初期化する。
+            s = (UInt32)System.Environment.TickCount;
+
+            // 32bit seedなので10回ほど回して均しておく。
+            foreach (var i in All.Int(10))
+                rand64();
+        }
+
         /// <summary>
         /// 0からmax-1までの乱数を生成して返す。
         /// </summary>
@@ -12,7 +24,7 @@ namespace MyShogi.Model.Common.Utility
         /// <returns></returns>
         public static int Next(int max)
         {
-            return rand.random.Next(max);
+            return (int)rand.Next64((UInt64)max);
         }
 
         /// <summary>
@@ -26,9 +38,27 @@ namespace MyShogi.Model.Common.Utility
         }
 
         /// <summary>
-        /// .NETの乱数
+        /// 
+        /// 0からn-1までの乱数を返す。(一様分布ではないが現実的にはこれで十分)
         /// </summary>
-        private Random random = new Random();
+        /// <param name="n"></param>
+        /// <returns></returns>
+        UInt64 Next64(UInt64 n) { return rand64() % n; }
+
+        /// <summary>
+        /// 64bitの乱数の生成。Stockfishで使われているもの。
+        /// </summary>
+        /// <returns></returns>
+        private UInt64 rand64()
+        {
+            s ^= s >> 12;
+            s ^= s << 25;
+            s ^= s >> 27;
+            return s * 2685821657736338717L;
+        }
+
+        // 内部で使用している乱数のseed
+        private UInt64 s;
 
         /// <summary>
         /// singleton instance
