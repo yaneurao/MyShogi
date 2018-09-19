@@ -1,8 +1,7 @@
-﻿
+﻿using System;
 using MyShogi.Model.Shogi.Core;
-using System;
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.Model.Common.Math
 {
     public class Rand
     {

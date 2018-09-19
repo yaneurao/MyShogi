@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MyShogi.App;
-using MyShogi.Model.Common.Extensions;
+using MyShogi.Model.Common.Collections;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using MyShogi.Model.Common.Extensions;
+using MyShogi.Model.Common.Collections;
 using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Data

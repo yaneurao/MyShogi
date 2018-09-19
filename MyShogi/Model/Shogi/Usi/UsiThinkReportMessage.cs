@@ -1,4 +1,6 @@
-﻿namespace MyShogi.Model.Shogi.Usi
+﻿using System;
+
+namespace MyShogi.Model.Shogi.Usi
 {
     // 検討ダイアログにLocalGameServerが思考エンジンの読み筋などを出力する時の
     // メッセージングに必要なenumなど。
@@ -56,6 +58,11 @@
     /// <param name="args"></param>
     public class UsiThinkReportMessage
     {
+        /// <summary>
+        /// このUsiThinkReportMessageの通しナンバー。
+        /// </summary>
+        //public UInt64 Id;
+
         /// <summary>
         /// メッセージの種類
         /// </summary>

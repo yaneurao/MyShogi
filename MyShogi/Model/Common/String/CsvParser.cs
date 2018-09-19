@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using MyShogi.Model.Common.Extensions;
+using MyShogi.Model.Common.Collections;
 
 namespace MyShogi.Model.Common.String
 {

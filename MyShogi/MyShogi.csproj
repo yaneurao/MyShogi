@@ -59,6 +59,7 @@
     <Compile Include="App\GlobalConfig.cs" />
     <Compile Include="App\TheApp.cs" />
     <Compile Include="App\TheAppMessageShow.cs" />
+    <Compile Include="Model\Common\Collections\SynchronizedList.cs" />
     <Compile Include="Model\Common\Tool\DockManager.cs" />
     <Compile Include="Model\Common\Tool\MostRecentUsedFiles.cs" />
     <Compile Include="Model\Common\ObjectModel\ControlBinder.cs" />
@@ -72,13 +73,13 @@
     <Compile Include="Model\Common\Utility\EscapeFileName.cs" />
     <Compile Include="Model\Common\Utility\FileIO.cs" />
     <Compile Include="Model\Common\Utility\Enviroment.cs" />
-    <Compile Include="Model\Common\Extensions\ListExtensions.cs" />
+    <Compile Include="Model\Common\Collections\ListExtensions.cs" />
     <Compile Include="Model\Common\Tool\Logger.cs" />
     <Compile Include="Model\Common\Utility\MessageShow.cs" />
     <Compile Include="Model\Common\String\Scanner.cs" />
     <Compile Include="Model\Common\String\Serializer.cs" />
-    <Compile Include="Model\Common\Extensions\StringExtensions.cs" />
-    <Compile Include="Model\Common\Utility\Rand.cs" />
+    <Compile Include="Model\Common\Collections\StringExtensions.cs" />
+    <Compile Include="Model\Common\Math\Rand.cs" />
     <Compile Include="Model\Shogi\Converter\SvgUtility.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="View\Win2D\Common\ClickAction.cs" />

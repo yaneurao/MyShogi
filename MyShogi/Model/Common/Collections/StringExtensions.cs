@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace MyShogi.Model.Common.Extensions
+namespace MyShogi.Model.Common.Collections
 {
     /// <summary>
     /// string型に対する、LeftやRightを提供するextensions

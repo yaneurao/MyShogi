@@ -5,14 +5,14 @@ using System.Drawing;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Draw = System.Drawing;
+using MyShogi.App;
 using MyShogi.Model.Shogi.Converter;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Common.ObjectModel;
-using MyShogi.App;
-using MyShogi.Model.Common.Extensions;
+using MyShogi.Model.Common.Collections;
 
 namespace MyShogi.View.Win2D
 {
