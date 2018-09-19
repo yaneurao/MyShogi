@@ -158,6 +158,22 @@ namespace MyShogi.Model.Common.Extensions
         }
 
         /// <summary>
+        /// 全角文字を2文字、半角文字を1文字としてカウントするLength
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static int UnicodeLength(this string s)
+        {
+            if (s == null)
+                return 0;
+
+            int n = 0;
+            foreach (var c in s)
+                n += (c < 256) ? 1 : 2;
+            return n;
+        }
+
+        /// <summary>
         /// 先頭の1文字を返す。
         /// </summary>
         /// <param name="s"></param>

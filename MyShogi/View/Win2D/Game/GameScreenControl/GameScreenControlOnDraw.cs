@@ -268,13 +268,19 @@ namespace MyShogi.View.Win2D
                     {
                         // 通常状態の駒台表示
                         case 0:
-                            // 対局時間設定
-                            DrawString(time_setting_pos[0], gameServer.TimeSettingString(reverse ? SColor.WHITE : SColor.BLACK), 18);
-                            DrawString(time_setting_pos[1], gameServer.TimeSettingString(reverse ? SColor.BLACK : SColor.WHITE), 18);
+                            foreach(var c in All.IntColors())
+                            {
+                                var isWhite = c == 1;
 
-                            // 残り時間
-                            DrawString(time_setting_pos2[0], gameServer.RestTimeString(reverse ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.Black, 1));
-                            DrawString(time_setting_pos2[1], gameServer.RestTimeString(reverse ? SColor.BLACK : SColor.WHITE), 28, new DrawStringOption(Brushes.Black, 1));
+                                // 対局時間設定
+                                var timeSettingString = gameServer.TimeSettingString(reverse ^ isWhite ? SColor.WHITE : SColor.BLACK);
+                                // 2行に渡っているなら残り時間の表示位置を調整してやる。
+                                var offset = (timeSettingString == null || !timeSettingString.Contains("\r")) ? Size.Empty : new Size(0, 10);
+                                DrawString(time_setting_pos[c], timeSettingString, 18);
+
+                                // 残り時間
+                                DrawString(time_setting_pos2[c] + offset , gameServer.RestTimeString(reverse ^ isWhite ? SColor.WHITE : SColor.BLACK), 28, new DrawStringOption(Brushes.Black, 1));
+                            }
                             break;
 
                         // 細長い状態の駒台表示

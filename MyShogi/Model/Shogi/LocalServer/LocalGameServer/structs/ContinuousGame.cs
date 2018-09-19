@@ -278,7 +278,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
-        /// 対局結果の文字列を取得。(連続対局ウィンドウに出力)
+        /// 対局結果の文字列を取得。(連続対局結果ウィンドウに出力)
         /// </summary>
         /// <returns></returns>
         public string GetGameResultString()

@@ -344,6 +344,41 @@ namespace MyShogi.Model.Shogi.LocalServer
         }
 
         /// <summary>
+        /// エンジンのプリセット名 + 手合割(上手側のみ)
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public string PresetWithBoardTypeString(Color c)
+        {
+            // エンジンのプリセット名
+            var presetString = continuousGame.PresetName(c);
+
+            // 手合割
+            var boardTypeString = BoardTypeString(c);
+
+            // 段位プリセット + 手合割(もしあれば)
+            return $"{presetString}{boardTypeString}";
+        }
+
+        /// <summary>
+        /// 手合割(上手側のみ)を文字列化して返す。
+        /// 下手側ならばnullが返る。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public string BoardTypeString(Color c)
+        {
+            string boardTypeString = null;
+            if (c == Color.WHITE /*上手側*/)
+            {
+                var boardType = kifuManager.Tree.rootBoardType;
+                if (boardType != BoardType.NoHandicap && boardType.IsSfenOk())
+                    boardTypeString = boardType.Pretty();
+            }
+            return boardTypeString;
+        }
+
+        /// <summary>
         /// 最後に棋譜を保存してから棋譜が更新されたかのフラグ
         /// </summary>
         public bool KifuDirty

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using MyShogi.App;
+using MyShogi.Model.Common.Extensions;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.Core;
@@ -345,6 +346,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var swap_needed = total_black < 3;
                 if (continuousGame.Swapped != swap_needed)
                     SwapPlayer();
+
+                // 振り駒の画像が表示されないことがある。
+                // エンジン初期化直後だし初回読み込みのとき0.5秒で画面素材の読み込みが間に合わないことがあるのか…。
+                // 振り駒での対局が確定した時点で先読みしておく。
+
+                var piece_toss_image = TheApp.app.ImageManager.GamePieceTossImage.image;
             }
         }
 
@@ -378,13 +385,22 @@ namespace MyShogi.Model.Shogi.LocalServer
                 kifuManager.KifuHeader.SetPlayerName(c, name);
             }
 
-            // 消費時間計算用
+            // 持ち時間設定の表示文字列の構築(最初に構築してしまい、対局中には変化させない)
             foreach (var c in All.Colors())
             {
                 var pc = PlayTimer(c);
                 pc.KifuTimeSetting = GameSetting.KifuTimeSettings.Player(c);
                 pc.GameStart();
-                timeSettingStrings[(int)c] = pc.KifuTimeSetting.ToShortString();
+
+                var left = pc.KifuTimeSetting.ToShortString();
+                var right = PresetWithBoardTypeString(c);
+                string total;
+                if (left.UnicodeLength() + right.UnicodeLength() < 24)
+                    total = $"{left}/{right}"; // 1行で事足りる
+                else
+                    total = $"{left}\r\n{right}"; // 2行に分割する。 
+
+                timeSettingStrings[(int)c] = total;
             }
 
             // rootの持ち時間設定をここに反映させておかないと待ったでrootまで持ち時間が戻せない。
