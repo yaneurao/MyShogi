@@ -32,7 +32,7 @@ namespace MyShogiUpdater
         /// </summary>
         public bool MakePatchEnable = false;
         public string PatchSource1 = "V100";
-        public string PatchSource2 = "V113";
+        public string PatchSource2 = "V121";
 
 
         #region 過去にリリースした本Updaterの設定集
