@@ -61,8 +61,8 @@ namespace MyShogi.App
             // -- 検討設定
 
             //EngineConsiderationWindowEnableWhenVsHuman = true;
+            //ConsiderationWindowFollowMainWindow = true;
             ConsiderationMultiPV = 5;
-            ConsiderationWindowFollowMainWindow = true;
         }
 
         /// <summary>
@@ -545,30 +545,9 @@ namespace MyShogi.App
         [DataMember]
         public Point? DesktopLocation { get; set; }
 
-        /// <summary>
-        /// 検討ウィンドウのサイズ。
-        /// 記憶しておいて、次回同じサイズで生成する。
-        /// </summary>
-        [DataMember]
-        public Size ConsiderationDialogClientSize { get; set; }
 
-        /// <summary>
-        /// 検討ウィンドウの位置。(メインのウィンドウ相対)
-        /// 記憶しておいて、次回同じサイズで生成する。
-        /// </summary>
         [DataMember]
-        public Point ConsiderationDialogClientLocation { get; set; }
-
-        /// <summary>
-        /// 検討ウィンドウがメインウインドウを追随するか
-        /// デフォルト : true
-        /// </summary>
-        [DataMember]
-        public bool ConsiderationWindowFollowMainWindow
-        {
-            get { return GetValue<bool>("ConsiderationWindowFollowMainWindow"); }
-            set { SetValue<bool>("ConsiderationWindowFollowMainWindow", value); }
-        }
+        public DockManager EngineConsiderationWindowDockManager = new DockManager();
 
         /// <summary>
         /// 棋譜ウインドウはフローティングモードであるのかなどを管理する構造体。

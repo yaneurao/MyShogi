@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using MyShogi.App;
+using MyShogi.Model.Common.Collections;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Data;
@@ -13,20 +13,17 @@ namespace MyShogi.View.Win2D
     /// <summary>
     /// 思考エンジンの出力(最大 2CPU分) + ミニ盤面
     /// </summary>
-    public partial class EngineConsiderationDialog : Form
+    public partial class EngineConsiderationMainControl : Control
     {
-        public EngineConsiderationDialog()
+        public EngineConsiderationMainControl()
         {
             InitializeComponent();
-
-            // これ、どうするか考え中。
-            //Win32API.HideCloseButton(this.Handle);
 
             InitSpliter();
             InitEngineConsiderationControl();
         }
 
-        // -- ViewModel
+        #region ViewModel
 
         /// <summary>
         /// このクラスで用いるViewModel
@@ -45,7 +42,9 @@ namespace MyShogi.View.Win2D
 
         public EngineConsiderationDialogViewModel ViewModel = new EngineConsiderationDialogViewModel();
 
-        // -- init
+        #endregion
+
+        #region UsiThinkReportMessage
 
         /// <summary>
         /// ミニ盤面の初期化
@@ -57,11 +56,40 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// [UI Thread] : 読み筋などのメッセージを受け取り、
+        /// 読み筋などのメッセージを受け取り、ququeに積む。
+        ///
+        /// OnIdle()が呼び出されたときにdispatchする。
+        /// </summary>
+        public void EnqueueThinkReportMessage(UsiThinkReportMessage message)
+        {
+            thinkQuque.Add(message);
+        }
+
+        /// <summary>
+        /// [UI thread] : 一定時間ごとに(MainDialogなどのidle状態のときに)このメソッドを呼び出す。
+        ///
+        /// queueに積まれているUsiThinkReportMessageを処理する。
+        /// </summary>
+        public void OnIdle()
+        {
+            var queue = thinkQuque.GetList();
+
+            // TODO : これで処理が間に合わないなら、次のSetRootSfenメッセージまでメッセージをskipする処理が必要。
+
+            SuspendLayout();
+
+            foreach (var e in queue)
+                DispatchThinkReportMessage(e);
+
+            ResumeLayout();
+        }
+
+        /// <summary>
+        /// [UI thread] : 読み筋などのメッセージを受け取り、ququeに積む。
         /// UsiEngineReportMessageTypeの内容に応じた処理に振り分ける。
         /// </summary>
         /// <param name="message"></param>
-        public void DispatchThinkReportMessage(UsiThinkReportMessage message)
+        private void DispatchThinkReportMessage(UsiThinkReportMessage message)
         {
             switch (message.type)
             {
@@ -69,7 +97,6 @@ namespace MyShogi.View.Win2D
                     // 非表示なので検討ウィンドウが表示されているなら消しておく。
                     Visible = message.number != 0;
                     SetEngineInstanceNumber(message.number);
-
 
 #if false
                     // このメッセージに対して、継ぎ盤の局面を初期化したほうが良いのでは…。
@@ -119,6 +146,14 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        /// <summary>
+        /// 読み筋を積んでおくqueue。
+        /// 
+        /// EnqueueThinkReportMessage()とOnIdle()で用いる。
+        /// </summary>
+        private SynchronizedList<UsiThinkReportMessage> thinkQuque = new SynchronizedList<UsiThinkReportMessage>();
+
+        #endregion
 
         // -- properties
 
@@ -181,7 +216,6 @@ namespace MyShogi.View.Win2D
             }
         }
 
-
         // -- handlers
 
         private void splitContainer2_Resize(object sender, EventArgs e)
@@ -201,6 +235,8 @@ namespace MyShogi.View.Win2D
             InitSpliter2Position();
         }
 
+#if false
+        // closingイベント、あとでちゃんと書く。
         private void EngineConsiderationDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
 
@@ -223,6 +259,7 @@ namespace MyShogi.View.Win2D
                 ViewModel.RaisePropertyChanged("CloseButtonClicked");
             }
         }
+#endif
 
         // 以下 ミニ盤面用のボタン
 

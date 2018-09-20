@@ -77,9 +77,16 @@ namespace MyShogi.View.Win2D
             config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", UpdateKifuWindowDockState );
             config.KifuWindowDockManager.AddPropertyChangedHandler("DockPosition", UpdateKifuWindowDockState);
 
+            config.EngineConsiderationWindowDockManager.AddPropertyChangedHandler("DockState", UpdateEngineConsiderationWindowDockState);
+            config.EngineConsiderationWindowDockManager.AddPropertyChangedHandler("DockPosition", UpdateEngineConsiderationWindowDockState);
+
             // 棋譜ウインドウのfloating状態を起動時に復元する。
             //config.RaisePropertyChanged("KifuWindowFloating", config.KifuWindowFloating);
             // →　このタイミングで行うと、メインウインドウより先に棋譜ウインドウが出て気分が悪い。first_tickの処理で行うようにする。
+
+            // 検討ウインドウ(に埋め込んでいる内部Control)の初期化
+            engineConsiderationMainControl = new EngineConsiderationMainControl();
+            engineConsiderationMainControl.Init(gameServer.BoardReverse /* これ引き継ぐ。以降は知らん。*/);
 
         }
 
@@ -136,9 +143,15 @@ namespace MyShogi.View.Win2D
         //public Form ConsiderationEngineSettingDialog;
 
         /// <summary>
-        /// エンジンの思考出力用
+        /// 検討ウインドウを埋めて使うための入れ物。
+        /// エンジンの思考出力用。
         /// </summary>
-        public EngineConsiderationDialog engineConsiderationDialog;
+        public DockWindow engineConsiderationDockWindow;
+
+        /// <summary>
+        /// これが検討ウインドウ本体。これを↑のに埋めて使う。
+        /// </summary>
+        public EngineConsiderationMainControl engineConsiderationMainControl;
 
 #if false
         /// <summary>
@@ -295,8 +308,68 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        /// <summary>
+        /// UpdateKifuWindowDockState()の検討ウインドウ用。
+        /// だいたい同じ感じの処理。
+        /// </summary>
+        private void UpdateEngineConsiderationWindowDockState(PropertyChangedEventArgs args)
+        {
+            var dockState = (DockState)args.value;
+            //kifuControl.ViewModel.DockState = dockState;
+
+            var dockManager = TheApp.app.Config.EngineConsiderationWindowDockManager;
+            dockManager.DockState = dockState; // 次回起動時のためにここに保存しておく。
+
+            if (engineConsiderationDockWindow != null)
+            {
+                engineConsiderationDockWindow.RemoveControl();
+                engineConsiderationDockWindow.Dispose();
+                engineConsiderationDockWindow = null;
+            }
+
+            if (dockState == DockState.InTheMainWindow)
+            {
+                if (!gameScreenControl1.Controls.Contains(engineConsiderationMainControl))
+                    gameScreenControl1.Controls.Add(engineConsiderationMainControl);
+                gameScreenControl1.ResizeKifuControl(); // フォームに埋めたあとリサイズする。
+
+            }
+            else
+            {
+                engineConsiderationDockWindow = new DockWindow();
+                engineConsiderationDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
+                engineConsiderationDockWindow.Owner = this;
+
+                engineConsiderationDockWindow.ViewModel.Caption = "検討ウインドウ";
+                if (gameScreenControl1.Controls.Contains(engineConsiderationMainControl))
+                    gameScreenControl1.Controls.Remove(engineConsiderationMainControl);
+
+                // デフォルト位置とサイズにする。
+                if (dockManager.Size.IsEmpty)
+                {
+                    // メインウインドウに埋め込み時の棋譜ウインドウのサイズをデフォルトとしておいてやる。
+                    dockManager.Size = gameScreenControl1.CalcKifuWindowSize();
+                    var pos = gameScreenControl1.CalcKifuWindowLocation();
+                    // これクライアント座標なので、スクリーン座標にいったん変換する。
+                    pos = gameScreenControl1.PointToScreen(pos);
+
+                    dockManager.LocationOnDocked = new Point(pos.X - this.Location.X, pos.Y - this.Location.Y);
+                    dockManager.LocationOnFloating = pos;
+                }
+
+                // Showで表示とサイズが確定してからdockManagerを設定しないと、
+                // Showのときの位置とサイズがdockManagerに記録されてしまう。
+                engineConsiderationMainControl.Visible = true; // 細長い駒台モードのため非表示にしていたかも知れないので。
+
+                engineConsiderationDockWindow.AddControl(engineConsiderationMainControl, this, dockManager);
+                dockManager.InitDockWindowLocation(this, engineConsiderationDockWindow);
+
+                engineConsiderationDockWindow.Show();
+            }
+        }
+
         #endregion
-        
+
         #region privates
 
         /// <summary>
@@ -375,9 +448,10 @@ namespace MyShogi.View.Win2D
                 // コマンドラインでファイルの読み込みが予約されていればそれを実行する。
                 CommandLineCheck();
 
-                // 棋譜ウインドウのfloating状態を起動時に復元する。
+                // 棋譜ウインドウ・検討ウインドウのfloating状態を起動時に復元する。
                 var config = TheApp.app.Config;
                 config.KifuWindowDockManager.RaisePropertyChanged("DockState", config.KifuWindowDockManager.DockState);
+                config.EngineConsiderationWindowDockManager.RaisePropertyChanged("DockState", config.EngineConsiderationWindowDockManager.DockState);
 
                 // メインウインドウが表示されるまで、棋譜ウインドウの座標設定などを抑制していたのでここでメインウインドウ相対で移動させてやる。
                 UpdateDockedWindowLocation();
@@ -386,6 +460,9 @@ namespace MyShogi.View.Win2D
             // 自分が保有しているScreenがdirtyになっていることを検知したら、Invalidateを呼び出す。
             if (gameScreenControl1.Dirty)
                 gameScreenControl1.Invalidate();
+
+            // 検討ウインドウはmessage dispatcherのために自前でOnIdle()を呼び出す必要があるる
+            engineConsiderationMainControl.OnIdle();
 
             // 持ち時間描画だけの部分更新
             // あとでちゃんと書き直す
@@ -443,13 +520,11 @@ namespace MyShogi.View.Win2D
                 return;
 
             // 検討ウインドウ
-            if (TheApp.app.Config.ConsiderationWindowFollowMainWindow)
             {
-                if (engineConsiderationDialog != null)
+                if (engineConsiderationDockWindow != null)
                 {
-                    var loc = Location;
-                    engineConsiderationDialog.Location =
-                        new Point(loc.X, loc.Y + Height);
+                    var dockManager = TheApp.app.Config.EngineConsiderationWindowDockManager;
+                    dockManager.UpdateDockWindowLocation(this, engineConsiderationDockWindow);
                 }
             }
 
@@ -560,16 +635,18 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// [UI Thread] : LocalGameServerから送られてくるエンジンの読み筋などのハンドラ。
+        /// LocalGameServerから送られてくるエンジンの読み筋などのハンドラ。
         /// </summary>
         private void ThinkReportChanged(PropertyChangedEventArgs args)
         {
             var message = args.value as UsiThinkReportMessage;
+            engineConsiderationMainControl.EnqueueThinkReportMessage(message);
 
+
+#if false // このデバッグをしているとマスターアップに間に合わなさそう。後回し。
             // 評価値グラフの更新など
             gameServer.ThinkReportChangedCommand(message);
 
-#if false // このデバッグをしているとマスターアップに間に合わなさそう。後回し。
             if (evalGraphDialog == null)
             {
                 evalGraphDialog = new Info.EvalGraphDialog();
@@ -584,6 +661,8 @@ namespace MyShogi.View.Win2D
             cancelEvalGraph:;
 #endif
 
+            // 検討ウインドウのdock処理のためにリファクタリング中。
+#if false
             if (engineConsiderationDialog == null)
             {
                 // 結局検討ダイアログ使わないなら、無視して帰る。(子ダイアログ作ってすぐ消すと画面ちらつくので)
@@ -593,7 +672,6 @@ namespace MyShogi.View.Win2D
                     return;
 
                 var dialog = new EngineConsiderationDialog();
-                dialog.ShowInTaskbar = false; // タスクバー収納時は非表示
                 dialog.Init(gameServer.BoardReverse /* これ引き継ぐ。以降は知らん。*/);
                 // ウィンドウ幅を合わせておく。
 
@@ -646,10 +724,11 @@ namespace MyShogi.View.Win2D
             }
 
             var visible_old = engineConsiderationDialog.Visible;
-            engineConsiderationDialog.DispatchThinkReportMessage(message);
+            engineConsiderationDialog.EnqueueThinkReportMessage(message);
             // Dispatchした結果、Visible状態が変化したならメニューを更新してやる。
             if (visible_old != engineConsiderationDialog.Visible)
                 UpdateMenuItems();
+#endif
         }
 
         /// <summary>
@@ -960,6 +1039,8 @@ namespace MyShogi.View.Win2D
             if (size.Width >= 100 && size.Height >= 100)
                 config.MainDialogClientSize = size;
 
+            // 検討ウインドウのdockのためのリファクタリング中
+#if false
             // 検討ウィンドウの位置と大きさの保存
             if (engineConsiderationDialog != null && engineConsiderationDialog.Width >= 100 && engineConsiderationDialog.Height >= 100)
             {
@@ -974,6 +1055,7 @@ namespace MyShogi.View.Win2D
                         c_location.Y - location.Y
                     );
             }
+#endif
         }
 
 #endregion
@@ -2233,6 +2315,7 @@ namespace MyShogi.View.Win2D
                         item_.Text = "検討ウィンドウ(&C)"; // Consideration window
                         item_window.DropDownItems.Add(item_);
 
+#if false
                         {
                             var item = new ToolStripMenuItem();
                             item.Text = "再表示(&V)"; // Visible
@@ -2259,7 +2342,71 @@ namespace MyShogi.View.Win2D
                             };
                             item_.DropDownItems.Add(item);
                         }
+#endif
 
+                        var dock = config.EngineConsiderationWindowDockManager;
+
+                        {
+                            var item = new ToolStripMenuItem();
+                            item.Text = "再表示(&V)"; // visible // 
+                            item.ShortcutKeys = Keys.Control | Keys.E; // EngineConsiderationWindow
+                            item.Enabled = engineConsiderationDockWindow == null ? false :
+                                (!engineConsiderationDockWindow.Visible /* 解体されてる */ && dock.DockState != DockState.InTheMainWindow);
+                            item.Click += (sender, e) => { dock.RaisePropertyChanged("DockState", dock.DockState); };
+                            item_.DropDownItems.Add(item);
+                        }
+
+
+                        { // フローティングの状態
+                            var item = new ToolStripMenuItem();
+                            item.Text = "表示位置(&F)"; // Floating window mode
+                            item_.DropDownItems.Add(item);
+
+                            {
+
+                                var item1 = new ToolStripMenuItem();
+                                item1.Text = "メインウインドウに埋め込む(&0)(EmbeddedMode)";
+                                item1.Checked = dock.DockState == DockState.InTheMainWindow;
+                                item1.Click += (sender, e) => { dock.DockState = DockState.InTheMainWindow; };
+                                item.DropDownItems.Add(item1);
+
+                                var item2 = new ToolStripMenuItem();
+                                item2.Text = "メインウインドウから浮かせ、相対位置を常に保つ(&1)(FollowMode)";
+                                item2.Checked = dock.DockState == DockState.FollowToMainWindow;
+                                item2.Click += (sender, e) => { dock.DockState = DockState.FollowToMainWindow; };
+                                item.DropDownItems.Add(item2);
+
+                                var item3a = new ToolStripMenuItem();
+                                item3a.Text = "メインウインドウから浮かせ、メインウインドウの上側に配置する(&2)(DockMode)";
+                                item3a.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Top;
+                                item3a.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Top); };
+                                item.DropDownItems.Add(item3a);
+
+                                var item3b = new ToolStripMenuItem();
+                                item3b.Text = "メインウインドウから浮かせ、メインウインドウの左側に配置する(&3)(DockMode)";
+                                item3b.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Left;
+                                item3b.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Left); };
+                                item.DropDownItems.Add(item3b);
+
+                                var item3c = new ToolStripMenuItem();
+                                item3c.Text = "メインウインドウから浮かせ、メインウインドウの右側に配置する(&4)(DockMode)";
+                                item3c.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Right;
+                                item3c.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Right); };
+                                item.DropDownItems.Add(item3c);
+
+                                var item3d = new ToolStripMenuItem();
+                                item3d.Text = "メインウインドウから浮かせ、メインウインドウの下側に配置する(&5)(DockMode)";
+                                item3d.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Bottom;
+                                item3d.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Bottom); };
+                                item.DropDownItems.Add(item3d);
+
+                                var item4 = new ToolStripMenuItem();
+                                item4.Text = "メインウインドウから浮かせ、自由に配置する(&6)(FloatingMode)";
+                                item4.Checked = dock.DockState == DockState.FloatingMode;
+                                item4.Click += (sender, e) => { dock.DockState = DockState.FloatingMode; };
+                                item.DropDownItems.Add(item4);
+                            }
+                        }
                     }
 
                     { // -- 棋譜ウィンドウ
@@ -2292,13 +2439,13 @@ namespace MyShogi.View.Win2D
                                 var item1 = new ToolStripMenuItem();
                                 item1.Text = "メインウインドウに埋め込む(&0)(EmbeddedMode)";
                                 item1.Checked = dock.DockState == DockState.InTheMainWindow;
-                                item1.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.InTheMainWindow; };
+                                item1.Click += (sender, e) => { dock.DockState = DockState.InTheMainWindow; };
                                 item.DropDownItems.Add(item1);
 
                                 var item2 = new ToolStripMenuItem();
                                 item2.Text = "メインウインドウから浮かせ、相対位置を常に保つ(&1)(FollowMode)";
                                 item2.Checked = dock.DockState == DockState.FollowToMainWindow;
-                                item2.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.FollowToMainWindow; };
+                                item2.Click += (sender, e) => { dock.DockState = DockState.FollowToMainWindow; };
                                 item.DropDownItems.Add(item2);
 
                                 var item3a = new ToolStripMenuItem();
@@ -2328,7 +2475,7 @@ namespace MyShogi.View.Win2D
                                 var item4 = new ToolStripMenuItem();
                                 item4.Text = "メインウインドウから浮かせ、自由に配置する(&6)(FloatingMode)";
                                 item4.Checked = dock.DockState == DockState.FloatingMode;
-                                item4.Click += (sender, e) => { config.KifuWindowDockManager.DockState = DockState.FloatingMode; };
+                                item4.Click += (sender, e) => { dock.DockState = DockState.FloatingMode; };
                                 item.DropDownItems.Add(item4);
                             }
                         }
@@ -2665,7 +2812,7 @@ namespace MyShogi.View.Win2D
         private MenuStrip old_menu { get; set; } = null;
 
 
-        #endregion
+#endregion
 
     }
 }

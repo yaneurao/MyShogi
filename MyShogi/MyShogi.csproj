@@ -349,11 +349,11 @@
     <Compile Include="View\Win2D\Info\KifuControl.Designer.cs">
       <DependentUpon>KifuControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\Info\EngineConsiderationDialog.cs">
-      <SubType>Form</SubType>
+    <Compile Include="View\Win2D\Info\EngineConsiderationMainControl.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="View\Win2D\Info\EngineConsiderationDialog.Designer.cs">
-      <DependentUpon>EngineConsiderationDialog.cs</DependentUpon>
+    <Compile Include="View\Win2D\Info\EngineConsiderationMainControl.Designer.cs">
+      <DependentUpon>EngineConsiderationMainControl.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\Common\ListViewEx.cs">
       <SubType>Component</SubType>
@@ -453,8 +453,8 @@
     <EmbeddedResource Include="View\Win2D\Info\KifuControl.resx">
       <DependentUpon>KifuControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\Info\EngineConsiderationDialog.resx">
-      <DependentUpon>EngineConsiderationDialog.cs</DependentUpon>
+    <EmbeddedResource Include="View\Win2D\Info\EngineConsiderationMainControl.resx">
+      <DependentUpon>EngineConsiderationMainControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Game\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>

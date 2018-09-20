@@ -57,7 +57,10 @@ namespace MyShogi.View.Win2D
             gameServer.AddPropertyChangedHandler("RestTimeChanged", RestTimeChanged);
             gameServer.AddPropertyChangedHandler("InTheBoardEdit", InTheBoardEditChanged, Parent);
             gameServer.AddPropertyChangedHandler("BoardReverse", UpdateMenuItems, Parent);
-            gameServer.AddPropertyChangedHandler("ThinkReport", thinkReportChanged , Parent);
+
+            // このメソッドはUIスレッドから呼び出してはならない。
+            // これは、queuingしてUIに反映させないと、連続対局のときに更新が間に合わないからである。
+            gameServer.AddPropertyChangedHandler("ThinkReport", thinkReportChanged /*, Parent */ );
 
             // data-bind
             gameServer.Bind("KifuList", kifuControl1.ViewModel, DataBindWay.OneWay);
@@ -258,7 +261,10 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// [UI Thread] : LocalGameServerのThinkReportのプロパティが変更になった時に呼び出されるハンドラ。
+        /// LocalGameServerのThinkReportのプロパティが変更になった時に呼び出されるハンドラ。
+        ///
+        /// 注意) これを呼び出すスレッドはUI Threadではない。
+        /// これは、queuingしてUIに反映させないと、連続対局のときに更新が間に合わないからである。
         /// </summary>
         /// <param name="args"></param>
         private void thinkReportChanged(PropertyChangedEventArgs args)

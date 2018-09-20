@@ -1,6 +1,6 @@
 ﻿namespace MyShogi.View.Win2D
 {
-    partial class EngineConsiderationDialog
+    partial class EngineConsiderationMainControl
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EngineConsiderationDialog));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EngineConsiderationMainControl));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.engineConsiderationControl1 = new MyShogi.View.Win2D.EngineConsiderationControl();
@@ -219,17 +219,11 @@
             // 
             // EngineConsiderationDialog
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(763, 235);
             this.Controls.Add(this.splitContainer2);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Margin = new System.Windows.Forms.Padding(2);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "EngineConsiderationDialog";
             this.Text = "検討ウィンドウ";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EngineConsiderationDialog_FormClosing);
             this.Resize += new System.EventHandler(this.EngineConsiderationDialog_Resize);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);

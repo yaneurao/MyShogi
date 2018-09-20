@@ -1,11 +1,41 @@
 ﻿
 - 検討モードを終了させずに通常対局をすると思考エンジンが空になる。(T.Kさん)
 
-- 連続対局で低い段位同士をやらせるとウインドウメッセージの処理機会が与えられず、
-  ウインドウの操作が出来なくなってしまうの何とかする。その2
-
 
 ■　2018/09/20
+
+
+- 連続対局で低い段位同士をやらせるとウインドウメッセージの処理機会が与えられず、
+  ウインドウの操作が出来なくなってしまうの何とかする。その2
+  - バッファリングしたことでだいぶ改善された(気がする)
+- 検討ウインドウ、dockできるようになった。メインウインドウに埋め込み時の処理まだ。Dock状態、sizeの初期値の設定、実装まだ。
+- EngineConsiderationDialog →　EngineConsiderationMainControlとrenameして、Control化。これをDockWindowに埋めて使う。
+- GlobalConfigから削除
+
+        /// <summary>
+        /// 検討ウィンドウのサイズ。
+        /// 記憶しておいて、次回同じサイズで生成する。
+        /// </summary>
+        [DataMember]
+        public Size ConsiderationDialogClientSize { get; set; }
+
+        /// <summary>
+        /// 検討ウィンドウの位置。(メインのウィンドウ相対)
+        /// 記憶しておいて、次回同じサイズで生成する。
+        /// </summary>
+        [DataMember]
+        public Point ConsiderationDialogClientLocation { get; set; }
+
+        /// <summary>
+        /// 検討ウィンドウがメインウインドウを追随するか
+        /// デフォルト : true
+        /// </summary>
+        [DataMember]
+        public bool ConsiderationWindowFollowMainWindow
+        {
+            get { return GetValue<bool>("ConsiderationWindowFollowMainWindow"); }
+            set { SetValue<bool>("ConsiderationWindowFollowMainWindow", value); }
+        }
 
 
 - 棋譜を読み込んだ時に対局者名に反映されない。(msomaさん)

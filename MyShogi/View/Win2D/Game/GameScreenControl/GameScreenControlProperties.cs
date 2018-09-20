@@ -85,8 +85,11 @@ namespace MyShogi.View.Win2D
         public KifuControl kifuControl {  get { return kifuControl1; } }
 
         /// <summary>
-        /// [UI Thread] : LocalGameServerのEngineInfoが変更になった時に呼び出されるdelegate。
+        /// LocalGameServerのEngineInfoが変更になった時に呼び出されるdelegate。
         /// 思考エンジンの読み筋などを外部に出力したい時は、これを設定すること。
+        ///
+        /// 注意) これを呼び出すスレッドはUI Threadではない。
+        /// これは、queuingしてUIに反映させないと、連続対局のときに更新が間に合わないからである。
         /// </summary>
         public PropertyChangedEventHandler ThinkReportChanged;
     }
