@@ -258,12 +258,13 @@ namespace MyShogi.Model.Shogi.LocalServer
                         // 末尾の局面に移動するコマンドを叩いておく。
                         UpdateKifuSelectedIndex(int.MaxValue);
 
-                        // -- 棋譜上の名前をプレイヤー名に反映させる。
+                        // -- 棋譜上の名前を表示名に反映させる。
 
-                        // GameSetting、原則immutableだが、まあいいや…。
                         foreach (var c in All.Colors())
-                            GameSetting.PlayerSetting(c).PlayerName = kifuManager.KifuHeader.GetPlayerName(c);
-
+                        {
+                            var name = kifuManager.KifuHeader.GetPlayerName(c);
+                            SetPlayerName(c, name);
+                        }
                     }
 
                     // 棋譜が綺麗になった扱いにする。(この棋譜はファイルなどに丸ごと保存されているはずであるから)
@@ -290,10 +291,6 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                 try
                 {
-                    // プレイヤー名を棋譜上に反映させる。
-                    foreach (var c in All.Colors())
-                        kifuManager.KifuHeader.SetPlayerName(c, /* DisplayNameWithPreset(c)*/ DisplayName(c));
-
                     var content = kifuManager.ToString(type);
                     FileIO.WriteFile(path, content);
 
@@ -317,10 +314,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 try
                 {
-                    // プレイヤー名を棋譜上に反映させる。
-                    foreach (var c in All.Colors())
-                        kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
-
                     var content = kifuManager.ToString(type);
                     // Clipboard.SetText() を実行するスレッドは Single Thread Apartment モードに設定されていなければならない
                     TheApp.app.UIThread(() => System.Windows.Forms.Clipboard.SetText(content));
@@ -344,10 +337,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 try
                 {
-                    // プレイヤー名を棋譜上に反映させる。
-                    foreach (var c in All.Colors())
-                        kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
-
                     var content = kifuManager.ToPositionString(type);
                     FileIO.WriteFile(path, content);
                 }
@@ -368,10 +357,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 try
                 {
-                    // プレイヤー名を棋譜上に反映させる。
-                    foreach (var c in All.Colors())
-                        kifuManager.KifuHeader.SetPlayerName(c, GameSetting.PlayerSetting(c).PlayerName);
-
                     var content = kifuManager.ToPositionString(type);
                     TheApp.app.UIThread(() => System.Windows.Forms.Clipboard.SetText(content));
                 }
@@ -575,7 +560,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             });
         }
 
-        #region 形勢グラフ用。あとで見直す。
+#region 形勢グラフ用。あとで見直す。
 
         /// <summary>
         /// 評価値の更新
@@ -666,7 +651,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 reverse = reverse,
             };
         }
-        #endregion
+#endregion
 
         /// <summary>
         /// UI側から、worker threadで実行して欲しいコマンドを渡す。

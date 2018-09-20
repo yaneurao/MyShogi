@@ -157,6 +157,28 @@ namespace MyShogi.Model.Shogi.LocalServer
             // (対局終了時にGameSettingをGameStart()時のものに復元するので、
             // そのときに連続対局や振り駒のためにプレイヤーを入れ替えていると困るため)
             return continuousGame.DisplayName(c);
+
+        }
+
+        /// <summary>
+        /// プレイヤー名を設定する。
+        ///
+        /// このメソッドは、対局開始前に( GameStart(),GameRestart()から)呼び出される。
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="name"></param>
+        public void SetPlayerName(Color c , string name)
+        {
+            // 1) kifuManager.KifuHeader     : View-ModelのModel(これがmaster)
+            // 2) continuousGame.DisplayName : ↑のcache
+            // と考えられる。
+
+            // KifuHeader.SetPlayerName()はこのメソッド以外からは呼び出さない。
+            // この名前の変更は棋譜の保存の時に必要となる。
+            kifuManager.KifuHeader.SetPlayerName(c, name);
+
+            // これはDisplayName()に反映される。
+            continuousGame.SetDisplayName(c, name);
         }
 
         /// <summary>

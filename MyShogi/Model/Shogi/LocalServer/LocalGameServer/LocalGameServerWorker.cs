@@ -123,10 +123,6 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 連続対局時にはプレイヤー入れ替えなどで壊す可能性があるのでClone()して保存しておく。
                 continuousGame.GameSetting = gameSetting.Clone();
 
-                // 対局設定ダイアログの名前を表示名にする。
-                foreach(var c in All.Colors())
-                    continuousGame.SetDisplayName(c,GameSetting.PlayerSetting(c).PlayerName);
-
                 // 対局開始時の振り駒のアニメーションのため、こちらにコピーして使う。
                 continuousGame.EnablePieceToss = gameSetting.MiscSettings.EnablePieceToss;
 
@@ -383,7 +379,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                         break;
                 }
 
-                kifuManager.KifuHeader.SetPlayerName(c, name);
+                SetPlayerName(c, name);
             }
 
             // 持ち時間設定の表示文字列の構築(最初に構築してしまい、対局中には変化させない)
@@ -1234,8 +1230,7 @@ namespace MyShogi.Model.Shogi.LocalServer
                 // 2) 棋譜ファイルを保存する。
 
                 // プレイヤー名を棋譜上に反映させる。
-                foreach (var c in All.Colors())
-                    kifuManager.KifuHeader.SetPlayerName(c, /* DisplayNameWithPreset(c) */ DisplayName(c));
+                // →　これは、DisplayName()と同等であればすでに設定されている。
 
                 var kifu = kifuManager.ToString(setting.KifuFileType);
                 var filename = $"{continuousGame.GetKifuSubfolder()}{DefaultKifuFileName()}{setting.KifuFileType.ToExtensions()}";
@@ -1286,6 +1281,6 @@ namespace MyShogi.Model.Shogi.LocalServer
             }
         }
 
-        #endregion
+#endregion
     }
 }
