@@ -363,22 +363,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             kifuManager.Tree.KifuTimeSettings = gameSetting.KifuTimeSettings;
 
             // 対局者氏名の設定
-            // 人間の時のみ有効。エンジンの時は、エンジン設定などから取得することにする。
+            // 対局設定ダイアログの名前をそのまま引っ張ってくる。
             foreach (var c in All.Colors())
             {
-                var player = Player(c);
-                string name;
-                switch (player.PlayerType)
-                {
-                    case PlayerTypeEnum.Human:
-                        name = gameSetting.PlayerSetting(c).PlayerName;
-                        break;
-
-                    default:
-                        name = c.Pretty();
-                        break;
-                }
-
+                var name = gameSetting.PlayerSetting(c).PlayerName;
                 SetPlayerName(c, name);
             }
 
@@ -392,7 +380,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                 var left = pc.KifuTimeSetting.ToShortString();
                 var right = PresetWithBoardTypeString(c);
                 string total;
-                if (left.UnicodeLength() + right.UnicodeLength() < 24)
+                if (right.Empty())
+                    total = left;
+                else if (left.UnicodeLength() + right.UnicodeLength() < 24)
                     total = $"{left}/{right}"; // 1行で事足りる
                 else
                     total = $"{left}\r\n{right}"; // 2行に分割する。 
@@ -1190,7 +1180,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
             } catch (Exception ex)
             {
-                if (!string.IsNullOrEmpty(ex.Message))
+                if (!ex.Message.Empty())
                     TheApp.app.MessageShow(ex.Message , MessageShowType.Error);
                 Disconnect();
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MyShogi.Model.Common.Collections;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
 using MyShogi.Model.Common.String;
@@ -409,7 +410,7 @@ namespace MyShogi.Model.Shogi.Usi
             var list = OptionList
                 .Where(_ => _.OptionType != UsiOptionType.Button) // Button型以外はそのまま垂れ流してOk.
                 .Select(_ => _.CreateSetOptionCommandString())
-                .Where(_ => !string.IsNullOrEmpty(_))
+                .Where(_ => !_.Empty())
                 //.Select(_ => _ + '\n')
                 .ToArray();
 
@@ -863,7 +864,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// </example>
         public static EvalValue ParseMate(string text)
         {
-            if (string.IsNullOrEmpty(text))
+            if (text.Empty())
             {
                 throw new ArgumentNullException("text");
             }
@@ -910,7 +911,7 @@ namespace MyShogi.Model.Shogi.Usi
             var startIndex = 0;
             var result = 0L;
 
-            if (string.IsNullOrEmpty(text))
+            if (text.Empty())
             {
                 throw new ArgumentNullException("text");
             }

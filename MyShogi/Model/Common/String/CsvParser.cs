@@ -72,7 +72,7 @@ namespace MyShogi.Model.Common.String
             for (int i = 0; i < input.Length;)
             {
                 // Quote中は要素区切り記号と改行記号は無視する
-                if (string.IsNullOrEmpty(currentQuoteString))
+                if (currentQuoteString.Empty())
                 {
                     // 現在quote中ではない
 
@@ -191,7 +191,7 @@ namespace MyShogi.Model.Common.String
                 //	goto Next;
             }
 
-            if (throw_exception && !string.IsNullOrEmpty(currentQuoteString))
+            if (throw_exception && ! currentQuoteString.Empty())
                 throw new Exception("quote記号が閉じられていない。");
 
             return ret;

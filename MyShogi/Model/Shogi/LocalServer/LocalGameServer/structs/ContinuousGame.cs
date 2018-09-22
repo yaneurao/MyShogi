@@ -29,7 +29,9 @@ namespace MyShogi.Model.Shogi.LocalServer
             Swapped = false;
             presetNames = new string[2];
             presetNames2 = new string[2];
-            displayNames = new string[2];
+
+            // これはのちほど必ずSetPlayerNameが呼び出されるはずなのでここではやらない。
+            //displayNames = new string[2];
 
             // subfolderを作る設定になっているなら、それを取得する。
             kifuSubfolder = TheApp.app.Config.GameResultSetting.CreateSubfolderOnContinuousGame ?

@@ -11,6 +11,29 @@ namespace MyShogi.Model.Common.Collections
     public static class StringExtensions
     {
         /// <summary>
+        /// string.IsNullOrEmpty()のショートカット。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool Empty(this string s)
+        {
+            return string.IsNullOrEmpty(s);
+        }
+
+        // これ用意するとLinqのほうとごっちゃになるのでやめとく。
+#if false
+        /// <summary>
+        /// Empty()の否定
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static bool Any(this string s)
+        {
+            return !string.IsNullOrEmpty(s);
+        }
+#endif
+
+        /// <summary>
         /// 左からn文字切り出して返す。
         /// </summary>
         /// <param name="s"></param>

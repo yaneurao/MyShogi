@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyShogi.Model.Common.Collections;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -722,7 +723,7 @@ namespace MyShogi.Model.Shogi.Core
                 var h = Hand(c);
                 var s = h.ToUsi(c);
 
-                if (!string.IsNullOrEmpty(s))
+                if (!s.Empty())
                 {
                     found = true;
                     sb.Append(s);
@@ -823,7 +824,7 @@ namespace MyShogi.Model.Shogi.Core
             // --- 持ち駒を読み込む
 
             var hand_sfen = split[2];
-            if (string.IsNullOrEmpty(hand_sfen))
+            if (hand_sfen.Empty())
                 throw new SfenException("SFEN形式の手駒がありません。");
 
             Array.Clear(hands, 0, hands.Length);

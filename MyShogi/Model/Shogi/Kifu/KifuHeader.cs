@@ -1,5 +1,6 @@
-﻿using MyShogi.Model.Shogi.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using MyShogi.Model.Common.Collections;
+using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Kifu
 {
@@ -105,7 +106,7 @@ namespace MyShogi.Model.Shogi.Kifu
         private string playerName_getter(Color c_)
         {
             int c = c_.ToInt();
-            if (!string.IsNullOrEmpty(playerName[c]))
+            if (!playerName[c].Empty())
                 return playerName[c];
 
             string name;
