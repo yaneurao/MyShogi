@@ -983,6 +983,10 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void MainDialog_FormClosing(object sender, FormClosingEventArgs e)
         {
+            // 例外か何かのために終了しているなら、もうどうしようもない。
+            if (TheApp.app.Exiting)
+                return;
+
             if (gameScreenControl1.gameServer.InTheGame)
             {
                 if (TheApp.app.MessageShow("対局中ですが本当に終了しますか？", MessageShowType.WarningOkCancel)

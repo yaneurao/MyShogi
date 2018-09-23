@@ -41,6 +41,8 @@ namespace MyShogi.Model.Shogi.Usi
         {
             Disconnect(); // 前の接続があるなら切断する。
 
+            Log.Write(LogInfoType.UsiServer, $"思考エンジンに接続 , ExeFilePath = {data.ExeFilePath}");
+
             try
             {
                 negotiator = new ProcessNegotiator();

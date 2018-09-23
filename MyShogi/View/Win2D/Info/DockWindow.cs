@@ -140,6 +140,11 @@ namespace MyShogi.View.Win2D
 #endif
             // →　Ownerを設定する場合において、closeをCancelするのは筋が良くない。
 
+            // もう終了するなら、このメソッドが非UIスレッドから呼び出されていることになるし、
+            // 以下の処理を行わない。
+            if (TheApp.app.Exiting)
+                return;
+
             if (ViewModel.Control != null)
             {
                 // Dispose()が呼ばれるとたまらないのでremoveしておく。(親側で解体すべき)
