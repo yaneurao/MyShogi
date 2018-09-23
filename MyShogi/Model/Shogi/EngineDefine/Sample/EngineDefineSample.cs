@@ -104,19 +104,21 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 // 理由2. node数が多いので2スレッドで探索すると時間がかかるため
 
                 new EnginePreset( "十二段" , new EngineOption[] {
-                        new EngineOption("AutoThread_","true"), // 自動スレッドでのスレッド割り当て
+                        //new EngineOption("AutoThread_","true"), // 自動スレッドでのスレッド割り当て
+                        // →　エンジン詳細設定の値、上書きするのあまりいい挙動ではないのでやめとく。
+                        // (MyShogiを２つ起動したいかも知れないので..)
                         new EngineOption("NodesLimit","2165579"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset( "十一段" , new EngineOption[] {
-                        new EngineOption("AutoThread_","true"), // 自動スレッドでのスレッド割り当て
+                        //new EngineOption("AutoThread_","true"), // 自動スレッドでのスレッド割り当て
                         new EngineOption("NodesLimit","1099707"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
                 }),
                 new EnginePreset( "十段" , new EngineOption[] {
-                        new EngineOption("AutoThread","true"), // 自動スレッドでのスレッド割り当て
+                        //new EngineOption("AutoThread","true"), // 自動スレッドでのスレッド割り当て
                         new EngineOption("NodesLimit","558444"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","1"),
