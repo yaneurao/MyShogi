@@ -487,6 +487,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                         "option name nodestime type spin default 0 min 0 max 99999"),
 
+
+                    new EngineOptionDescription("SkillLevel"   , null ,
+                        "スキルレベル。棋力の調整用。",
+                        "この値を20より小さな値にすると手加減します。\r\n"+
+                        "0が最弱で(R2000以上弱い)、19でも20に設定したときよりR300程度弱いです。",
+
+                        "option name SkillLevel type spin default 20 min 0 max 20"),
+
                     // -- 評価関数
 
                     new EngineOptionDescription(null           , "評価関数の設定" ,
