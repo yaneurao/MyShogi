@@ -378,7 +378,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void ResizeConsiderationControl(PropertyChangedEventArgs args= null)
         {
-            if (!first_tick)
+            if (first_tick)
                 return;
             // first_tick前だとengineConsiderationMainControl == nullだったりしてまずいのだ。
 
