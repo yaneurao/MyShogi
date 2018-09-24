@@ -115,7 +115,7 @@ namespace MyShogi.View.Win2D
                     var b = (gameMode == GameModeEnum.ConsiderationWithEngine);
 
                     // MultiPV用の表示に
-                    ConsiderationInstance(0).Notify.EnableMultiPVComboBox = b;
+                    ConsiderationInstance(0).ViewModel.EnableMultiPVComboBox = b;
                     ConsiderationInstance(0).SortRanking = b;
                     break;
 
@@ -353,7 +353,7 @@ namespace MyShogi.View.Win2D
             SetEngineInstanceNumber(1);
 
             foreach (var i in All.Int(2))
-                ConsiderationInstance(i).Notify.AddPropertyChangedHandler( "PvClicked" , (h) =>
+                ConsiderationInstance(i).ViewModel.AddPropertyChangedHandler( "PvClicked" , (h) =>
                 {
                     var data = h.value as MiniShogiBoardData;
 

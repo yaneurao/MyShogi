@@ -141,11 +141,12 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("NegateEvalWhenWhite", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("ConsiderationWindowFollowMainWindow", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("KifuWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("ConsiderationWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl, mainDialog);
+            Config.AddPropertyChangedHandler("ConsiderationWindowHeightType", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("ConsiderationWindowHeightType", mainDialog.ResizeConsiderationControl, mainDialog);
             Config.AddPropertyChangedHandler("DisplayNameTurnVersion", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("EnableGameEffect", mainDialog.UpdateMenuItems, mainDialog);
 
@@ -164,7 +165,8 @@ namespace MyShogi.App
             // Window
 
             Config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
-
+            Config.EngineConsiderationWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
+            
             // -- ロギング用のハンドラをセット
 
             // メモリ上でのロギング

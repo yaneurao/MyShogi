@@ -87,7 +87,9 @@ namespace MyShogi.View.Win2D
             // 検討ウインドウ(に埋め込んでいる内部Control)の初期化
             engineConsiderationMainControl = new EngineConsiderationMainControl();
             engineConsiderationMainControl.Init(gameServer.BoardReverse /* これ引き継ぐ。以降は知らん。*/);
-
+            engineConsiderationMainControl.ConsiderationInstance(0).ViewModel.AddPropertyChangedHandler("MultiPV", (h) => {
+                gameServer.ChangeMultiPvCommand((int)h.value);
+            });
         }
 
         #endregion
@@ -330,9 +332,9 @@ namespace MyShogi.View.Win2D
             if (dockState == DockState.InTheMainWindow)
             {
                 if (!gameScreenControl1.Controls.Contains(engineConsiderationMainControl))
-                    gameScreenControl1.Controls.Add(engineConsiderationMainControl);
-                gameScreenControl1.ResizeKifuControl(); // フォームに埋めたあとリサイズする。
-
+                {
+                    this.Controls.Add(engineConsiderationMainControl);
+                }
             }
             else
             {
@@ -341,14 +343,15 @@ namespace MyShogi.View.Win2D
                 engineConsiderationDockWindow.Owner = this;
 
                 engineConsiderationDockWindow.ViewModel.Caption = "検討ウインドウ";
-                if (gameScreenControl1.Controls.Contains(engineConsiderationMainControl))
-                    gameScreenControl1.Controls.Remove(engineConsiderationMainControl);
+                if (this.Controls.Contains(engineConsiderationMainControl))
+                    this.Controls.Remove(engineConsiderationMainControl);
 
                 // デフォルト位置とサイズにする。
                 if (dockManager.Size.IsEmpty)
                 {
-                    // メインウインドウに埋め込み時の棋譜ウインドウのサイズをデフォルトとしておいてやる。
-                    dockManager.Size = gameScreenControl1.CalcKifuWindowSize();
+                    // デフォルトでは、このウインドウサイズに従う
+                    dockManager.Size = new Size(Width , Height /4);
+
                     var pos = gameScreenControl1.CalcKifuWindowLocation();
                     // これクライアント座標なので、スクリーン座標にいったん変換する。
                     pos = gameScreenControl1.PointToScreen(pos);
@@ -365,6 +368,52 @@ namespace MyShogi.View.Win2D
                 dockManager.InitDockWindowLocation(this, engineConsiderationDockWindow);
 
                 engineConsiderationDockWindow.Show();
+            }
+            ResizeConsiderationControl(); // フォームに埋めたあとリサイズする。
+        }
+
+        /// <summary>
+        /// 検討ウインドウのControlのサイズを調整。
+        /// (このウインドウに埋め込んでいるとき)
+        /// </summary>
+        public void ResizeConsiderationControl(PropertyChangedEventArgs args= null)
+        {
+            // 検討ウインドウをこのウインドウに埋め込んでいるときに、検討ウインドウをリサイズする。
+            
+            int w = ClientSize.Width;
+            int h = ClientSize.Height - gameScreenControl1.Location.Y; // メニューとToolStripの高さを引き算する。
+
+            var config = TheApp.app.Config;
+            var dockManager = config.EngineConsiderationWindowDockManager;
+
+            if (dockManager.DockState == DockState.InTheMainWindow)
+            {
+                // メインウインドウに埋め込み時の検討ウインドウ高さの倍率
+                float height_rate = 1 + 0.25f * config.ConsiderationWindowHeightType;
+
+                // 検討ウインドウの縦幅
+                var ch = (int)(height_rate * h / 5);
+
+                var loc = gameScreenControl1.Location;
+                gameScreenControl1.Dock = DockStyle.None; // ここでLocationが変化するのでこのあと復元する。
+                gameScreenControl1.Size = new Size(w, h - ch);
+                gameScreenControl1.Location = loc;
+
+                engineConsiderationMainControl.Dock = DockStyle.None;
+                engineConsiderationMainControl.Size = new Size(w, ch);
+                engineConsiderationMainControl.Location = new Point(0, ClientSize.Height - ch);
+            } else
+            {
+                var loc = gameScreenControl1.Location;
+                gameScreenControl1.Dock = DockStyle.Fill;
+                gameScreenControl1.Size = new Size(w, h);
+                gameScreenControl1.Location = loc;
+
+                engineConsiderationMainControl.Dock = DockStyle.Fill;
+
+                //gameScreenControl1.Size = new Size(w, h);
+                //engineConsiderationMainControl.Size = new Size(w, h / 4);
+                //engineConsiderationMainControl.Location = new Point(0, 0);
             }
         }
 
@@ -502,6 +551,7 @@ namespace MyShogi.View.Win2D
         private void MainDialog_Resize(object sender, System.EventArgs e)
         {
             SizeOrLocationChanged();
+            ResizeConsiderationControl();
         }
 
         private void SizeOrLocationChanged()
@@ -2335,35 +2385,6 @@ namespace MyShogi.View.Win2D
                         item_.Text = "検討ウィンドウ(&C)"; // Consideration window
                         item_window.DropDownItems.Add(item_);
 
-#if false
-                        {
-                            var item = new ToolStripMenuItem();
-                            item.Text = "再表示(&V)"; // Visible
-                            // 生成済みで非表示である時のみ
-                            item.Enabled = engineConsiderationDialog != null && !engineConsiderationDialog.Visible;
-                            item.Click += (sender, e) =>
-                            {
-                                if (engineConsiderationDialog != null)
-                                {
-                                    if (!engineConsiderationDialog.Visible)
-                                        engineConsiderationDialog.Visible = true;
-                                }
-                            };
-                            item_.DropDownItems.Add(item);
-                        }
-
-                        {
-                            var item = new ToolStripMenuItem();
-                            item.Text = "メインウィンドウの移動に追随する(&F)"; // Follow the main window
-                            item.Checked = config.ConsiderationWindowFollowMainWindow;
-                            item.Click += (sender, e) =>
-                            {
-                                config.ConsiderationWindowFollowMainWindow ^= true;
-                            };
-                            item_.DropDownItems.Add(item);
-                        }
-#endif
-
                         var dock = config.EngineConsiderationWindowDockManager;
 
                         {
@@ -2427,6 +2448,45 @@ namespace MyShogi.View.Win2D
                                 item.DropDownItems.Add(item4);
                             }
                         }
+
+                        { // 縦幅
+                            var item = new ToolStripMenuItem();
+                            item.Text = "メインウインドウに埋め込み時の高さ(&H)"; // Height
+                            item_.DropDownItems.Add(item);
+
+                            {
+                                var item1 = new ToolStripMenuItem();
+                                item1.Text = "100%(通常)(&1)"; // None
+                                item1.Checked = config.ConsiderationWindowHeightType == 0;
+                                item1.Click += (sender, e) => { config.ConsiderationWindowHeightType = 0; };
+                                item.DropDownItems.Add(item1);
+
+                                var item2 = new ToolStripMenuItem();
+                                item2.Text = "125%(&2)";
+                                item2.Checked = config.ConsiderationWindowHeightType == 1;
+                                item2.Click += (sender, e) => { config.ConsiderationWindowHeightType = 1; };
+                                item.DropDownItems.Add(item2);
+
+                                var item3 = new ToolStripMenuItem();
+                                item3.Text = "150%(&3)";
+                                item3.Checked = config.ConsiderationWindowHeightType == 2;
+                                item3.Click += (sender, e) => { config.ConsiderationWindowHeightType = 2; };
+                                item.DropDownItems.Add(item3);
+
+                                var item4 = new ToolStripMenuItem();
+                                item4.Text = "175%(&4)";
+                                item4.Checked = config.ConsiderationWindowHeightType == 3;
+                                item4.Click += (sender, e) => { config.ConsiderationWindowHeightType = 3; };
+                                item.DropDownItems.Add(item4);
+
+                                var item5 = new ToolStripMenuItem();
+                                item5.Text = "200%(&5)";
+                                item5.Checked = config.ConsiderationWindowHeightType == 4;
+                                item5.Click += (sender, e) => { config.ConsiderationWindowHeightType = 4; };
+                                item.DropDownItems.Add(item5);
+                            }
+                        }
+
                     }
 
                     { // -- 棋譜ウィンドウ

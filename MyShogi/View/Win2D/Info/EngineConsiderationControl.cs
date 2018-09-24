@@ -30,7 +30,7 @@ namespace MyShogi.View.Win2D
             {
                 InitListView();
                 InitKifuFormatter();
-                InitNotifyObject();
+                InitViewModel();
             }
         }
 
@@ -39,7 +39,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 通知の発生するproperties
         /// </summary>
-        public class EngineConsiderationNotifyObject : NotifyObject
+        public class EngineConsiderationViewModel : NotifyObject
         {
             /// <summary>
             /// [UI Thread] : UIのコンボボックスで選択されている候補手の数を返す。
@@ -86,7 +86,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// このControlから発生するpropertyの変更イベント。
         /// </summary>
-        public EngineConsiderationNotifyObject Notify = new EngineConsiderationNotifyObject();
+        public EngineConsiderationViewModel ViewModel = new EngineConsiderationViewModel();
 
 
         /// <summary>
@@ -350,7 +350,7 @@ namespace MyShogi.View.Win2D
             // multi selectではないので1つしか選択されていないはず…。
             int index = selected[0]; // first
             if (index < list_item_moves.Count && list_item_moves[index]!=null /* info stringなどだとnullがありうる。*/)
-                Notify.RaisePropertyChanged("PvClicked", new MiniShogiBoardData()
+                ViewModel.RaisePropertyChanged("PvClicked", new MiniShogiBoardData()
                 {
                     rootSfen = root_sfen,
                     moves = list_item_moves[index]
@@ -367,7 +367,7 @@ namespace MyShogi.View.Win2D
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             // 選択項目がないと-1になるので、その時にMultiPV == 1になることを保証する。
-            Notify.MultiPV = Math.Max(comboBox1.SelectedIndex + 1 , 1);
+            ViewModel.MultiPV = Math.Max(comboBox1.SelectedIndex + 1 , 1);
         }
 
         /// <summary>
@@ -503,18 +503,19 @@ namespace MyShogi.View.Win2D
             }
         }
 
-        private void InitNotifyObject()
+        private void InitViewModel()
         {
             // MultiPVの初期値
             var multiPV = TheApp.app.Config.ConsiderationMultiPV;
             multiPV = Math.Max(multiPV , 1); // 1以上を保証する
             multiPV = Math.Min(multiPV, comboBox1.Items.Count); // comboBox1の項目数と同じまで。
-            Notify.MultiPV = multiPV;
+            ViewModel.MultiPV = multiPV;
 
             // 候補手のコンボボックス
-            Notify.AddPropertyChangedHandler("EnableMultiPVComboBox", (e) =>
-            { UpdateMultiPVComboBox(Notify.EnableMultiPVComboBox); });
-            Notify.RaisePropertyChanged("EnableMultiPVComboBox", false);
+            ViewModel.AddPropertyChangedHandler("EnableMultiPVComboBox", (e) => {
+                UpdateMultiPVComboBox(ViewModel.EnableMultiPVComboBox);
+            });
+            ViewModel.RaisePropertyChanged("EnableMultiPVComboBox", false);
 
             // 後手の時に評価値を反転させるかのフラグ
             // Evalの元の値を残していない即時反映無理..
@@ -629,7 +630,7 @@ namespace MyShogi.View.Win2D
 
             if (enable)
             {
-                comboBox1.SelectedIndex = Notify.MultiPV -1;
+                comboBox1.SelectedIndex = ViewModel.MultiPV -1;
             }
         }
 

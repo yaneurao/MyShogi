@@ -404,6 +404,22 @@ namespace MyShogi.App
         public float KifuWindowFontSize { get; set; } = 11F;
 
         /// <summary>
+        /// 検討ウィンドウの縦幅
+        /// 0 = 100%
+        /// 1 = 125%
+        /// 2 = 150%
+        /// 3 = 175%
+        /// 4 = 200%
+        /// </summary>
+        [DataMember]
+        public int ConsiderationWindowHeightType
+        {
+            get { return GetValue<int>("ConsiderationWindowHeightType"); }
+            set { SetValue<int>("ConsiderationWindowHeightType", value); }
+        }
+
+
+        /// <summary>
         /// 対局中のエフェクト
         ///
         /// 0 : なし
