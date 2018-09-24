@@ -378,8 +378,12 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public void ResizeConsiderationControl(PropertyChangedEventArgs args= null)
         {
+            if (!first_tick)
+                return;
+            // first_tick前だとengineConsiderationMainControl == nullだったりしてまずいのだ。
+
             // 検討ウインドウをこのウインドウに埋め込んでいるときに、検討ウインドウをリサイズする。
-            
+
             int w = ClientSize.Width;
             int h = ClientSize.Height - gameScreenControl1.Location.Y; // メニューとToolStripの高さを引き算する。
 

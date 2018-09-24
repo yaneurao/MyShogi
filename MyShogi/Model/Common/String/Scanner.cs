@@ -207,7 +207,7 @@ namespace MyShogi.Model.Common.String
                 return peek;
 
             SkipSpace();
-            if (IsEof)
+            if (IsRawEof)
             {
                 // このメソッドは例外を投げない
                 return null;
