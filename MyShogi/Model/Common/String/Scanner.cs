@@ -49,18 +49,15 @@ namespace MyShogi.Model.Common.String
         /// </summary>
         public Scanner(string text_)
         {
-            text = text_;
+            Text = text_;
             index = 0;
         }
 
         /// <summary>
         /// 最初にコンストラクタの引数で渡した文字列
+        /// これが解析しているテキスト。
         /// </summary>
-        public string Text
-        {
-            get { return text; }
-            private set { text = value; }
-        }
+        public string Text { get; private set; }
 
         /// <summary>
         /// 未パースの文字列を取得する。
@@ -76,7 +73,16 @@ namespace MyShogi.Model.Common.String
         public bool IsEof
         {
             get { return peek == null /* まだこれをParseText()してない*/
-                    && (index >= Text.Length); }
+                    && IsRawEof; }
+        }
+
+        /// <summary>
+        /// 解析位置(index)が、Textの長さを超えていればtrueが返る。
+        /// 内部実装用。
+        /// </summary>
+        private bool IsRawEof
+        {
+            get { return !(index < Text.Length); }
         }
 
         /// <summary>
@@ -146,7 +152,7 @@ namespace MyShogi.Model.Common.String
             CheckEof();
 
             var sb = new StringBuilder();
-            while (index < Text.Length)
+            while (!IsRawEof)
             {
                 var c = Text[index++];
                 if (c == ' ' || c == '\t')
@@ -211,7 +217,7 @@ namespace MyShogi.Model.Common.String
             bool quote = false; // 先頭に " があったか
             bool first = true;
 
-            while (index < Text.Length)
+            while (!IsRawEof)
             {
                 var c = Text[index++];
                 if (first)
@@ -260,7 +266,7 @@ namespace MyShogi.Model.Common.String
         /// </summary>
         private void SkipSpace()
         {
-            while (index < Text.Length)
+            while (!IsRawEof)
             {
                 var c = Text[index];
                 if (c == ' ' || c == '\t' /* BOMは除去されている */)
@@ -273,11 +279,6 @@ namespace MyShogi.Model.Common.String
                 break;
             }
         }
-
-        /// <summary>
-        /// 現在解析しているテキスト
-        /// </summary>
-        private string text;
 
         /// <summary>
         /// 現在解析している場所

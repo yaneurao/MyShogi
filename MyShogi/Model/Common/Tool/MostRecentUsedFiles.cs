@@ -99,6 +99,14 @@ namespace MyShogi.Model.Common.Tool
         }
 
         /// <summary>
+        /// 保持しているファイルリストをクリアする。
+        /// </summary>
+        public void Clear()
+        {
+            Files = new List<string>(file_num);
+        }
+
+        /// <summary>
         /// Deserializeしたときにnullが突っ込まれるパターンがあるのでList使うの注意。
         /// Deserializeしたときにこのメソッドを呼び出すこと。
         /// </summary>
