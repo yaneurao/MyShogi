@@ -21,7 +21,7 @@ namespace MyShogi.View.Win2D
 
         #region PropertyChangedEventHandlers
         /// <summary>
-        /// 対局開始
+        /// [UI Thread] 対局開始
         /// </summary>
         /// <param name="args"></param>
         private void GameStartEventHandler(PropertyChangedEventArgs args)
@@ -100,7 +100,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// 対局終了
+        /// [UI Thread] 対局終了
         /// </summary>
         /// <param name="args"></param>
         private void GameEndEventHandler(PropertyChangedEventArgs args)

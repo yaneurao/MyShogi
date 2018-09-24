@@ -120,6 +120,9 @@ namespace MyShogi.Model.Resource.Images
 
         /// <summary>
         /// IAnimator派生クラスをlistに追加する。
+        ///
+        /// 注意 : OnDraw()をUI Threadから呼び出すなら(普通そうするはず)、このAddAnimatorもUI Threadから呼び出さないと
+        /// このlist.Add()がコレクションに対する変更操作になるからforeachで例外が出る。
         /// </summary>
         /// <param name="animator"></param>
         public void AddAnimator(IAnimator animator)

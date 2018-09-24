@@ -78,8 +78,8 @@ namespace MyShogi.View.Win2D
 
             // Game Effects
 
-            gameServer.AddPropertyChangedHandler("GameStartEvent", GameStartEventHandler);
-            gameServer.AddPropertyChangedHandler("GameEndEvent"  , GameEndEventHandler);
+            gameServer.AddPropertyChangedHandler("GameStartEvent", GameStartEventHandler , Parent);
+            gameServer.AddPropertyChangedHandler("GameEndEvent"  , GameEndEventHandler , Parent);
         }
 
         /// <summary>
