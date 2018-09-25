@@ -95,10 +95,10 @@ namespace MyShogi.App
 
         public void ApplicationExit()
         {
-            // 検討ウィンドウがあると閉じるのを阻害する。(window closingに対してCancelしているので)
-            // 検討ウィンドウはメインウインドウにぶら下がっているはずなので、メインウインドウを終了させてしまう。
+            // DockWindowがあると閉じるのを阻害する。(window closingに対してCancelしているので)
+            // DockWindowはメインウインドウにぶら下がっているはずなので、メインウインドウを終了させてしまう。
 
-            Exiting = true; // このフラグを検討ウィンドウから見に来ている。
+            Exiting = true; // このフラグをDockWindowから見に来ている。
 
             Application.Exit(); // 終了させてしまう。
         }

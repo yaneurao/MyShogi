@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Tool;
@@ -125,25 +126,20 @@ namespace MyShogi.View.Win2D
 
         private void DockWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-#if false
-            if (!TheApp.app.Exiting)
-            {
-                // cancelして非表示にして隠しておく。
-                e.Cancel = true;
-                Visible = false;
-
-                // 「棋譜ウインドウ」の再表示がメニュー上で選べるようになっていて欲しいので、
-                // メニューの再描画を要求する。
-
-                ViewModel.RaisePropertyChanged("MenuUpdated");
-            }
-#endif
             // →　Ownerを設定する場合において、closeをCancelするのは筋が良くない。
 
             // もう終了するなら、このメソッドが非UIスレッドから呼び出されていることになるし、
             // 以下の処理を行わない。
             if (TheApp.app.Exiting)
                 return;
+
+            if (e.CloseReason == CloseReason.FormOwnerClosing)
+            {
+                // 親ウインドウが棋譜を未保存だったりするので、
+                // 閉じることを確定させるとは限らない。このウインドウは閉じない。一昨日きやがれ。
+                e.Cancel = true;
+                return;
+            }
 
             if (ViewModel.Control != null)
             {

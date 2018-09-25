@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainDialog));
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.gameScreenControl1 = new MyShogi.View.Win2D.GameScreenControl();
             this.toolStrip1 = new MyShogi.View.Win2D.ToolStripEx();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
@@ -46,10 +48,24 @@
             this.toolStripButton9 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton10 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton13 = new System.Windows.Forms.ToolStripButton();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.gameScreenControl1 = new MyShogi.View.Win2D.GameScreenControl();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 15;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // gameScreenControl1
+            // 
+            this.gameScreenControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gameScreenControl1.Location = new System.Drawing.Point(0, 27);
+            this.gameScreenControl1.Margin = new System.Windows.Forms.Padding(6);
+            this.gameScreenControl1.Name = "gameScreenControl1";
+            this.gameScreenControl1.Setting = null;
+            this.gameScreenControl1.Size = new System.Drawing.Size(518, 229);
+            this.gameScreenControl1.TabIndex = 1;
             // 
             // toolStrip1
             // 
@@ -239,22 +255,6 @@
             this.toolStripButton13.Text = "▶";
             this.toolStripButton13.ToolTipText = "末尾の局面に進めます。(検討時)";
             this.toolStripButton13.Click += new System.EventHandler(this.toolStripButton13_Click);
-            // 
-            // timer1
-            // 
-            this.timer1.Enabled = true;
-            this.timer1.Interval = 15;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // gameScreenControl1
-            // 
-            this.gameScreenControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gameScreenControl1.Location = new System.Drawing.Point(0, 27);
-            this.gameScreenControl1.Margin = new System.Windows.Forms.Padding(6);
-            this.gameScreenControl1.Name = "gameScreenControl1";
-            this.gameScreenControl1.Setting = null;
-            this.gameScreenControl1.Size = new System.Drawing.Size(518, 229);
-            this.gameScreenControl1.TabIndex = 1;
             // 
             // MainDialog
             // 

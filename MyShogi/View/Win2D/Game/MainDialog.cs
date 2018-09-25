@@ -703,7 +703,6 @@ namespace MyShogi.View.Win2D
             var message = args.value as UsiThinkReportMessage;
             engineConsiderationMainControl.EnqueueThinkReportMessage(message);
 
-
 #if false // このデバッグをしているとマスターアップに間に合わなさそう。後回し。
             // 評価値グラフの更新など
             gameServer.ThinkReportChangedCommand(message);
@@ -722,74 +721,6 @@ namespace MyShogi.View.Win2D
             cancelEvalGraph:;
 #endif
 
-            // 検討ウインドウのdock処理のためにリファクタリング中。
-#if false
-            if (engineConsiderationDialog == null)
-            {
-                // 結局検討ダイアログ使わないなら、無視して帰る。(子ダイアログ作ってすぐ消すと画面ちらつくので)
-                if ((message.type == UsiEngineReportMessageType.NumberOfInstance && message.number == 0) ||
-                    (message.type == UsiEngineReportMessageType.SetGameMode)
-                    )
-                    return;
-
-                var dialog = new EngineConsiderationDialog();
-                dialog.Init(gameServer.BoardReverse /* これ引き継ぐ。以降は知らん。*/);
-                // ウィンドウ幅を合わせておく。
-
-                // 前回起動時のサイズが記録されているならそれを復元してやる。
-                var size = TheApp.app.Config.ConsiderationDialogClientSize;
-                if (size.Width < 192 || size.Height < 108)
-                    size = Size.Empty;
-                if (size.IsEmpty)
-                    size = new Size(Width, (int)(Width * 0.2)); /* メインウィンドウの20%ぐらいの高さ */
-                dialog.Size = size;
-                dialog.Show(/*this*/);
-                // 検討ウィンドウはClosingイベントをキャンセルして非表示にしているのでメインウインドウにぶら下げると
-                // アプリを終了できなくなってしまう。また、メインウインドウを動かした時に検討ウィンドウは自動追随するので
-                // 現状、普通に使用していてメインウインドウで検討ウィンドウが隠れることはないため、これで良しとする。
-
-                var offset = TheApp.app.Config.ConsiderationDialogClientLocation;
-                if (offset.IsEmpty)
-                    dialog.Location = new Point(Location.X, Location.Y + Height);
-                else
-                    dialog.Location = new Point(Location.X + offset.X, Location.Y + offset.Y);
-
-                dialog.Visible = false;
-
-                dialog.ConsiderationInstance(0).Notify.AddPropertyChangedHandler("MultiPV", (h) =>
-                 { gameServer.ChangeMultiPvCommand((int)h.value); });
-
-                // 検討ウィンドウを×ボタンで非表示にした時にメニューの検討ウィンドウのところが更新になるのでメニューのrefreshが必要。
-                dialog.ViewModel.AddPropertyChangedHandler("CloseButtonClicked", (_) =>
-                {
-                    // ConsiderationModeなら、解除しておく。
-                    if (gameServer.GameMode.IsConsideration())
-                       gameServer.ChangeGameModeCommand(GameModeEnum.ConsiderationWithoutEngine);
-
-                    UpdateMenuItems();
-                });
-
-                // MoveとResizeに応じて、それを記録しなければならない。
-                dialog.Move += (sender,args_) => SaveWindowSizeAndPosition();
-                dialog.Resize += (sender, args_) => SaveWindowSizeAndPosition();
-
-                engineConsiderationDialog = dialog;
-                // 何にせよ、インスタンスがなくては話にならないので生成だけしておく。
-
-            } else
-            {
-                // 検討ウィンドウが非表示になっていたら、PVのメッセージ無視していいや…。
-                // (処理に時間かかるし…)
-                if (!engineConsiderationDialog.Visible && message.type == UsiEngineReportMessageType.UsiThinkReport)
-                        return;
-            }
-
-            var visible_old = engineConsiderationDialog.Visible;
-            engineConsiderationDialog.EnqueueThinkReportMessage(message);
-            // Dispatchした結果、Visible状態が変化したならメニューを更新してやる。
-            if (visible_old != engineConsiderationDialog.Visible)
-                UpdateMenuItems();
-#endif
         }
 
         /// <summary>
@@ -1048,6 +979,7 @@ namespace MyShogi.View.Win2D
             if (TheApp.app.Exiting)
                 return;
 
+            e.Cancel = false; // DockWindow側でtrueにしていたはず。
             if (gameScreenControl1.gameServer.InTheGame)
             {
                 if (TheApp.app.MessageShow("対局中ですが本当に終了しますか？", MessageShowType.WarningOkCancel)
@@ -1061,19 +993,13 @@ namespace MyShogi.View.Win2D
                     e.Cancel = true;
             }
 
-#if false
-            // main windowにぶら下げているwindowは存在しないので、本当はこの処理は不要。
-            // (main windowが×ボタンで閉じられるときには他のformのFormClosingは呼び出されないため)
-            // また、Application.Exit()すると、何故かすべてのformのFormClosingイベントが呼び出されるので、
-            // その回避のためにTheApp.app.Exitingフラグを見てFormClosingのcancelをするかどうか決定する必要があるため、
-            // TheApp.app.Exiting自体は必要。
-            if (!e.Cancel)
-            {
-                // 閉じるのをcancelしないことが確定したので、これにて終了する。
-                TheApp.app.Exiting = true;
-            }
-#endif
+            // cancelが確定したら、ここでリターン
+            if (e.Cancel)
+                return;
 
+            // 閉じるのをcancelしないことが確定したので、これにて終了する。
+            TheApp.app.ApplicationExit();
+            
         }
 
         /// <summary>
@@ -2402,7 +2328,7 @@ namespace MyShogi.View.Win2D
                         {
                             var item = new ToolStripMenuItem();
                             item.Text = "再表示(&V)"; // visible // 
-                            item.ShortcutKeys = Keys.Control | Keys.E; // EngineConsiderationWindow
+                            item.ShortcutKeys = Keys.Control | Keys.R; // EngineConsiderationWindowのR。Eが盤面編集のEditのEで使ってた…。
                             item.Enabled = engineConsiderationDockWindow == null ? false :
                                 (!engineConsiderationDockWindow.Visible /* 解体されてる */ && dock.DockState != DockState.InTheMainWindow);
                             item.Click += (sender, e) => { dock.RaisePropertyChanged("DockState", dock.DockState); };
@@ -2894,7 +2820,9 @@ namespace MyShogi.View.Win2D
 
                 // フォームのメインメニューとする
                 MainMenuStrip = menu;
-                old_menu = menu; // 次回解放するので記憶しておかないと駄目。
+                old_menu = menu;
+                // 次回このメソッドが呼び出された時にthis.Controls.Remove(old_menu)する必要があるので
+                // 記憶しておかないと駄目。
 
                 // レイアウトロジックを再開する
                 menu.ResumeLayout(false);
@@ -2912,8 +2840,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private MenuStrip old_menu { get; set; } = null;
 
-
-#endregion
+        #endregion
 
     }
 }
