@@ -101,6 +101,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <param name="gameSetting"></param>
         private void GameStart(GameSetting gameSetting)
         {
+            // エンジン検討中であるなら、まずそれを停止させる。(通常検討モードに移行する)
+            // これは、GameModeへの代入によって自動的に処理がなされる。
+            if (GameMode.IsConsiderationWithEngine())
+                GameMode = GameModeEnum.ConsiderationWithoutEngine;
+
             // 持ち時間などの設定が必要なので、
             // GameStart()時点のGameSettingをこのクラスのpropertyとしてコピーしておく。
             GameSetting = gameSetting;
