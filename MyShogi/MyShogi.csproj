@@ -66,6 +66,7 @@
     <Compile Include="Model\Common\ObjectModel\NotifyCollection.cs" />
     <Compile Include="Model\Common\Process\RemoteService.cs" />
     <Compile Include="Model\Common\String\CommandLineParser.cs" />
+    <Compile Include="Model\Common\Utility\ExceptionExtensions.cs" />
     <Compile Include="Model\Dependent\Windows\CpuId.cs" />
     <Compile Include="Model\Common\String\CsvParser.cs" />
     <Compile Include="Model\Common\String\CsvTable.cs" />

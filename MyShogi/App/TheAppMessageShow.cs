@@ -31,6 +31,8 @@ namespace MyShogi.App
                         // 専用のダイアログなのでメインウインドウに対してセンタリングも楽ちん
                         if (parent != null)
                             FormLocationUtility.CenteringToThisForm(dialog, parent);
+
+                        FontUtility.ReplaceFont(dialog);
                         dialog.ShowDialog();
                     }
                     return DialogResult.OK;
@@ -83,13 +85,11 @@ namespace MyShogi.App
         {
             if (exit)
             {
-                MessageShow("例外が発生しましたので終了します。\r\n例外内容 : " + ex.Message + "\r\nスタックトレース : \r\n" + ex.StackTrace,
-                    MessageShowType.Exception);
+                MessageShow("例外が発生しましたので終了します。\r\n" + ex.Pretty() , MessageShowType.Exception);
                 ApplicationExit();
             } else
             {
-                MessageShow("例外が発生しました。\r\n例外内容 : " + ex.Message + "\r\nスタックトレース : \r\n" + ex.StackTrace,
-                    MessageShowType.Exception);
+                MessageShow("例外が発生しました。\r\n" + ex.Pretty() , MessageShowType.Exception);
             }
         }
 

@@ -7,6 +7,7 @@ using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
 using MyShogi.Model.Common.String;
 using MyShogi.Model.Common.Tool;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.Model.Shogi.Usi
@@ -58,8 +59,8 @@ namespace MyShogi.Model.Shogi.Usi
                 // 思考エンジンに接続できないとき、Win32Exceptionが飛んでくる
                 ChangeState(UsiEngineState.ConnectionFailed);
                 
-                Exception = new Exception("思考エンジンへの接続に失敗しました。\nファイル名 : " + data.ExeFilePath +
-                    "\n詳細情報 : " +ex.Message);
+                Exception = new Exception("思考エンジンへの接続に失敗しました。\r\nファイル名 : " + data.ExeFilePath +
+                    "\r\n" + ex.Pretty());
             }
         }
 
@@ -77,7 +78,7 @@ namespace MyShogi.Model.Shogi.Usi
                 switch (State)
                 {
                     case UsiEngineState.Connected:
-                        if (DateTime.Now - connected_time >= new TimeSpan(0, 0, 30))
+                        if (DateTime.Now - connected_time >= new TimeSpan(0, 0, 15))
                         {
                             ChangeState(UsiEngineState.ConnectionTimeout);
                         }
@@ -88,12 +89,14 @@ namespace MyShogi.Model.Shogi.Usi
 
             } catch (Exception ex)
             {
-                Exception = new Exception("思考エンジンとの通信が切断されました。" + 
-                    "\n詳細情報 : " + ex.Message);
+                //Exception = new Exception("思考エンジンとの通信で例外が発生しました。\r\n" + ex.Pretty());
+                // →　例外のなかに例外があって読みづらいメッセージ。
+
+                Exception = ex;
             }
 
-            if (negotiator.ProcessTerminated)
-                Exception = new Exception("思考エンジンが終了しました。");
+            if (negotiator.ProcessTerminated && Exception == null /* 例外が飛んできて終了したわけではなさそう */)
+                Exception = new Exception("思考エンジンが予期せず終了しました。");
         }
 
         /// <summary>
@@ -138,8 +141,7 @@ namespace MyShogi.Model.Shogi.Usi
             }
             catch (Exception ex)
             {
-                Exception = new Exception("思考エンジンとの通信が切断されました。" +
-                    "\n詳細情報 : " + ex.Message);
+                Exception = new Exception("思考エンジンとの通信が切断されました。\r\n" + ex.Pretty());
             }
 
         }
@@ -268,7 +270,7 @@ namespace MyShogi.Model.Shogi.Usi
             {
                 case UsiEngineState.Connected:
                     // 接続されたので"usi"と送信
-                    // これ、接続タイムアウトがある。
+                    // これ、応答タイムアウトがあるので現在時刻を保存。
                     connected_time = DateTime.Now;
                     SendCommand("usi");
                     break;
@@ -293,7 +295,10 @@ namespace MyShogi.Model.Shogi.Usi
                     SendCommand("usinewgame");
                     break;
 
-                // これ以外の変化に対する応答は必要ない。
+                case UsiEngineState.ConnectionTimeout:
+                    throw new Exception("エンジンからの応答がtimeoutになりました。エンジンのusiコマンドに対する応答が遅すぎます。");
+
+                    // これ以外の変化に対する応答は必要ない。
             }
         }
 
@@ -371,7 +376,7 @@ namespace MyShogi.Model.Shogi.Usi
             if (State != UsiEngineState.Connected)
             {
                 throw new UsiException(
-                    "usiコマンドが不正なタイミングで送られました。");
+                    "usiokコマンドを不正なタイミングで受信しました。");
             }
 
             // "usiok"に対してエンジン設定などを渡してやる。

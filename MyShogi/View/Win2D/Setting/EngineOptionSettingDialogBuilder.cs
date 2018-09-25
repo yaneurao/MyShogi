@@ -59,9 +59,8 @@ namespace MyShogi.View.Win2D
                     var ex = engine.Engine.Exception;
                     if (ex != null)
                     {
-                        // time outも例外が飛んでくる…ようにすべき…。
-                        // 現状の思考エンジンでここでタイムアウトにならないから、まあいいや…。
-                        TheApp.app.MessageShow(ex.ToString() , MessageShowType.Error);
+                        // タイムアウトでも例外が飛んでくるはず…。
+                        TheApp.app.MessageShow(ex.Pretty() , MessageShowType.Error);
                         return null;
                     }
                 }
