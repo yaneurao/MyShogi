@@ -1,4 +1,5 @@
 ﻿using System;
+using MyShogi.Model.Dependent;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {
@@ -59,32 +60,13 @@ namespace MyShogi.Model.Shogi.EngineDefine
             if (c != CpuType.UNKNOWN)
                 return c;
 
-            // 64bit環境でなければ無条件でNO_SSE
+            // 64bit環境でなければ無条件でNO_SSEとして扱う
             if (!Environment.Is64BitOperatingSystem)
                 c = CpuType.NO_SSE;
             else
-            {
                 // 64bit環境である。
                 // 思考エンジンは別プロセスで動作させるので、このプロセスが32bitであっても問題ない。
-
-                var cpuid = Model.Common.Utility.CpuId.flags;
-
-                if (cpuid.hasAVX512F)
-                    c = CpuType.AVX512;
-                else if (cpuid.hasAVX2)
-                    c = CpuType.AVX2;
-                else if (cpuid.hasAVX)
-                    c = CpuType.AVX;
-                else if (cpuid.hasSSE42)
-                    c = CpuType.SSE42;
-                else if (cpuid.hasSSE41)
-                    c = CpuType.SSE41;
-                else if (cpuid.hasSSE2)
-                    c = CpuType.SSE2;
-                else
-                    // そんな阿呆な…。
-                    throw new Exception("CPU判別に失敗しました。");
-            }
+                c = API.GetCurrentCpu();
 
             cpu = c; // 調べた結果を保存しておく。
             return c;

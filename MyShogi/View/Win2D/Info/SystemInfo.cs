@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Management;
 using System.Text;
 using System.Windows.Forms;
+using MyShogi.Model.Dependent;
 
 namespace MyShogi.View.Win2D
 {
@@ -31,7 +32,9 @@ namespace MyShogi.View.Win2D
 
             sb.AppendLine("--------");
 
-            var cpuid = Model.Common.Utility.CpuId.flags;
+#if !MONO
+            // Windows環境ではCPU情報が細かに取得できているはず。
+            var cpuid = CpuId.flags;
 
 #if false
             for (UInt32 i = 0; i < cpuid.basicLength; ++i)
@@ -55,6 +58,14 @@ namespace MyShogi.View.Win2D
             sb.AppendLine($"hasSSE42: {cpuid.hasSSE42}");
             sb.AppendLine($"hasAVX2: {cpuid.hasAVX2}");
             sb.AppendLine($"hasAVX512F: {cpuid.hasAVX512F}");
+
+#else
+
+            // Mac、Linux環境なら、とりま、CPU名ぐらい表示しとく。
+            var cpu = API.GetCurrentCpu();
+            sb.AppendLine($"cpuType: {cpu.ToString()}");
+
+#endif
 
             sb.AppendLine("--------");
 

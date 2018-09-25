@@ -1,9 +1,13 @@
-﻿using System;
+﻿#if !MONO
+using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MyShogi.Model.Common.Utility
+namespace MyShogi.Model.Dependent
 {
+    /// <summary>
+    /// CPU ID判別
+    /// </summary>
     public static class CpuId
     // "x86/x64 CPUID in C#" based on https://stackoverflow.com/a/8390726
     // license terms CC-BY-SA:
@@ -360,3 +364,4 @@ namespace MyShogi.Model.Common.Utility
         };
     }
 }
+#endif

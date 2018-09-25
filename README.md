@@ -196,6 +196,14 @@ USIプロトコル対応のエンジンならば問題なく使えます。
 - [PSN2format](MyShogi/docs/PSN2format.md) : PSN形式から改良された棋譜ファイルフォーマット
 - [USI2.0](MyShogi/docs/USI2.0.md) : USIプロトコルから改良されたプロトコル
 
+
+# Mac、Linux向けのビルド情報
+
+MyShogiはWindows向けに開発されていますが、機種依存するコードは最小限となっているので、他の環境でも頑張れば動くようです。
+
+- [Mac、Linuxで動作させるには](MyShogi/docs/Mac、Linuxで動作させるには.md)
+
+
 # 謝辞
 
 本GUIを使ってくださる皆様、開発に関わってくださった皆様、誠にありがとうございます。

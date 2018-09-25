@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyShogi.Model.Dependent;
+using System;
 using System.Management;
 
 namespace MyShogi.Model.Common.Utility
@@ -63,19 +64,7 @@ namespace MyShogi.Model.Common.Utility
         public static int GetProcessorCores()
         {
             if (processor_cores == 0)
-            {
-                var sumOfCores = 0;
-                using (ManagementClass mc = new ManagementClass("Win32_Processor"))
-                using (ManagementObjectCollection moc = mc.GetInstances())
-                    // これプロセッサが複数ある環境だとmocが複数あるので足し合わせたものにする。
-                    foreach (ManagementObject mo in moc)
-                    {
-                        var obj = mo["NumberOfCores"];
-                        if (obj != null) // 普通、このプロパティが取得できないことはないはずなのだが…。
-                            sumOfCores += (int)(uint)obj;
-                    }
-                processor_cores = sumOfCores;
-            }
+                processor_cores = API.GetProcessorCores();
 
             return processor_cores;
         }

@@ -1,10 +1,10 @@
 ﻿using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Dependent;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.LocalServer;
-using MyShogi.View.Win2D;
 
 namespace MyShogi.View.Win2D.Setting
 {
@@ -21,6 +21,8 @@ namespace MyShogi.View.Win2D.Setting
             InitializeComponent();
 
             InitViewModel();
+
+            FontReplacer.ReplaceFont(this);
         }
 
         #region ViewModel

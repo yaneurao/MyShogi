@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Dependent;
 using MyShogi.Model.Shogi.EngineDefine;
 
 namespace MyShogi.View.Win2D
@@ -23,6 +24,8 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             InitViewModel();
+
+            //FontReplacer.ReplaceFont(this);
         }
 
         public class EngineOptionSettingDialogViewModel : NotifyObject

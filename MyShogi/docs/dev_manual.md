@@ -44,3 +44,10 @@
   >  option name BookDir type string default ../../book
   のように書いて、EvalDirなどのデフォルト値を変更しておくと使い勝手が良いと思います。
 
+
+## Mac、Linux向けのビルド情報
+
+MyShogiはWindows向けに開発されていますが、機種依存するコードは最小限となっているので、他の環境でも頑張れば動くようです。
+
+- [Mac、Linuxで動作させるには](MyShogi/docs/Mac、Linuxで動作させるには.md)
+

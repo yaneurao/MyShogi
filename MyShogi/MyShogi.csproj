@@ -66,7 +66,7 @@
     <Compile Include="Model\Common\ObjectModel\NotifyCollection.cs" />
     <Compile Include="Model\Common\Process\RemoteService.cs" />
     <Compile Include="Model\Common\String\CommandLineParser.cs" />
-    <Compile Include="Model\Common\Utility\CpuId.cs" />
+    <Compile Include="Model\Dependent\Windows\CpuId.cs" />
     <Compile Include="Model\Common\String\CsvParser.cs" />
     <Compile Include="Model\Common\String\CsvTable.cs" />
     <Compile Include="Model\Common\Utility\Encode.cs" />
@@ -80,6 +80,8 @@
     <Compile Include="Model\Common\String\Serializer.cs" />
     <Compile Include="Model\Common\Collections\StringExtensions.cs" />
     <Compile Include="Model\Common\Math\Rand.cs" />
+    <Compile Include="Model\Dependent\Mono\MonoAPI.cs" />
+    <Compile Include="Model\Dependent\Windows\WindowsAPI.cs" />
     <Compile Include="Model\Shogi\Converter\SvgUtility.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="View\Win2D\Common\ClickAction.cs" />
@@ -90,10 +92,8 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="View\Win2D\Common\ToolTipHelper.cs" />
-    <Compile Include="Model\Common\Win32\Win32API.cs" />
     <Compile Include="Model\Resource\Images\AnimatorManager.cs" />
     <Compile Include="Model\Resource\Images\SpriteEx.cs" />
-    <Compile Include="Model\Resource\Sounds\SoundLoader.cs" />
     <Compile Include="Model\Resource\Sounds\SoundEnum.cs" />
     <Compile Include="Model\Resource\Sounds\SoundManager.cs" />
     <Compile Include="Model\Resource\Sounds\SoundQueue.cs" />
@@ -474,6 +474,7 @@
     <None Include="app.manifest" />
     <None Include="docs\dev_manual.md" />
     <None Include="docs\faq.md" />
+    <None Include="docs\Mac、Linuxで動作させるには.md" />
     <None Include="docs\online_manual.md" />
     <None Include="docs\PSN2format.md" />
     <None Include="docs\USI2.0.md" />
