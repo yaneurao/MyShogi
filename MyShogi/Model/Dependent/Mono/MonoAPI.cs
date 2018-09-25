@@ -126,7 +126,8 @@ namespace MyShogi.Model.Dependent
         /// <returns></returns>
         public static Font ReplaceFont(Font f)
         {
-            var name = f.OriginalFontName;
+            // なぜか、OriginalFontNameがnullのことがある。MenuStrip.Items.Fontとかそう。そのときはf.Nameを参照しないといけない。
+            var name = f.OriginalFontName ?? f.Name;
             var size = f.Size;
             switch (name)
             {
@@ -134,7 +135,7 @@ namespace MyShogi.Model.Dependent
                 case "MS UI Gothic":
                 case "ＭＳ ゴシック":
                 case "MSPゴシック":
-                case "YU Gothic UI":
+                case "Yu Gothic UI":
                     return new Font("Hiragino Kaku Gothic Pro W3", size);
 
                 default:

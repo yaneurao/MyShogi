@@ -81,7 +81,7 @@ namespace MyShogi.Model.Dependent
         /// </summary>
         /// <param name="f"></param>
         /// <returns></returns>
-        public static Font ReplaceFont( Font f)
+        public static Font ReplaceFont(Font f)
         {
 #if true
             // Windows環境では置換する必要はないのでそのまま返す。
@@ -89,7 +89,8 @@ namespace MyShogi.Model.Dependent
 #else
             // 試しに全部変わったフォントにしてみて、うまく動作しているかをテスト。
 
-            var name = f.OriginalFontName;
+            // なぜか、OriginalFontNameがnullのことがある。MenuStrip.Items.Fontとかそう。そのときはf.Nameを参照しないといけない。
+            var name = f.OriginalFontName ?? f.Name;
             var size = f.Size;
 
             //Console.WriteLine($"{name} : size ={size}");
@@ -100,7 +101,7 @@ namespace MyShogi.Model.Dependent
                 case "MS UI Gothic":
                 case "ＭＳ ゴシック":
                 case "MSPゴシック":
-                case "YU Gothic UI":
+                case "Yu Gothic UI":
                     return new Font("HGP行書体", size);
 
                 default:

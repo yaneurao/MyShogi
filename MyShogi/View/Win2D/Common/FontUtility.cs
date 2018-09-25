@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.Model.Dependent;
 
@@ -32,62 +33,35 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// Controlを渡して、そのフォントをその環境用に一括置換する。
+        /// Controlを渡して、そのすべてのフォントをその環境用に一括置換する。
         /// </summary>
         /// <param name="control"></param>
         public static void ReplaceFont(Control control)
         {
             if (control is ToolStrip)
             {
+                // MenuStripなどの時。
+
                 var menu = control as ToolStrip;
                 foreach (ToolStripItem c in menu.Items)
                 {
-                    // まずcのフォントを置換
-                    var oldFont = c.Font;
-                    var newFont = FontReplacer.ReplaceFont(c.Font);
-                    if (oldFont != newFont)
-                    {
-                        c.Font = newFont;
-                        if (oldFont != menu.Font)
-                            oldFont.Dispose();
-                    }
+                    ReplaceFontSimple(menu ,c);
 
-                    // TODO : メニュー項目に対して再帰的にフォントを変更していく。
-                    // ここ難しい。あとで考える。
-#if false
-                    if (c is ToolStripMenuItem)
-                    {
-                        var toolStrip = c as ToolStripMenuItem;
-                        
-                        foreach (ToolStripItem c2 in toolStrip.DropDownItems)
-                            ReplaceFont(c2.);
-                    }
-#endif                    
+                    // 本当はメニュー項目に対して再帰的にフォントを変更していく必要があるが、
+                    // 途中でフォント変更してないのでやる必要なさげ。
                 }
             }
             else
             {
+                // 通常のControlのとき
+
                 foreach (Control c in control.Controls)
                 {
-                    if (c.Controls.Count != 0)
-                    {
-                        // 子持ちのControlであれば、このFontは置換せず、その子たちのFontを置換する。
-                        ReplaceFont(c);
-                    }
-                    else
-                    {
-                        var oldFont = c.Font;
-                        var newFont = FontReplacer.ReplaceFont(c.Font);
-                        if (oldFont != newFont)
-                        {
-                            c.Font = newFont;
+                    ReplaceFontSimple(c);
 
-                            // 前のフォントがc.Parent.Fontでないなら解体すべき。
-                            // 所有権の問題があって難しいが…。
-                            if (oldFont != c.Parent.Font)
-                                oldFont.Dispose();
-                        }
-                    }
+                    // 子持ちのControlであれば、その子たちのFontも再帰的に置換する。
+                    if (c.Controls.Count != 0)
+                        ReplaceFont(c);
                 }
             }
         }
@@ -106,6 +80,36 @@ namespace MyShogi.View.Win2D
                 oldFont.Dispose();
 
             return newFont;
+        }
+
+        /// <summary>
+        /// フォントをこの環境用のフォントで置き換える。
+        /// 古いほうのフォントはc.Parent.Fontと異なるならDispose()を呼び出して解放する。
+        /// </summary>
+        /// <param name="font"></param>
+        /// <returns></returns>
+        private static void ReplaceFontSimple(Control c)
+        {
+            var oldFont = c.Font;
+            var newFont = FontReplacer.ReplaceFont(c.Font);
+            var parentFont = c.Parent == null ? null : c.Parent.Font;
+            if (oldFont!= null && oldFont != newFont && oldFont != parentFont)
+                oldFont.Dispose();
+            c.Font = newFont;
+        }
+
+        /// <summary>
+        /// フォントをこの環境用のフォントで置き換える。
+        /// 古いほうのフォントはparent.Fontと異なるならDispose()を呼び出して解放する。
+        /// </summary>
+        private static void ReplaceFontSimple(Control parent , ToolStripItem c)
+        {
+            var oldFont = c.Font;
+            var newFont = FontReplacer.ReplaceFont(c.Font);
+            var parentFont = parent == null ? null : parent.Font;
+            if (oldFont != null && oldFont != newFont && oldFont != parentFont)
+                oldFont.Dispose();
+            c.Font = newFont;
         }
 
     }

@@ -25,6 +25,9 @@ namespace MyShogi.View.Win2D
         public MainDialog()
         {
             InitializeComponent();
+
+            // ToolStripのフォントを設定しなおす。
+            FontUtility.ReplaceFont(toolStrip1);
         }
 
         #region ViewModel

@@ -43,7 +43,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl1.Font = new System.Drawing.Font("ＭＳ ゴシック", 10.125F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.tabControl1.Font = new System.Drawing.Font("ＭＳ ゴシック", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(1);
             this.tabControl1.Name = "tabControl1";
@@ -54,11 +54,11 @@
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.engineOptionSettingControl1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 23);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(1);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(1);
-            this.tabPage1.Size = new System.Drawing.Size(756, 641);
+            this.tabPage1.Size = new System.Drawing.Size(756, 639);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "共通設定";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -70,7 +70,7 @@
             this.engineOptionSettingControl1.Location = new System.Drawing.Point(1, 1);
             this.engineOptionSettingControl1.Margin = new System.Windows.Forms.Padding(1);
             this.engineOptionSettingControl1.Name = "engineOptionSettingControl1";
-            this.engineOptionSettingControl1.Size = new System.Drawing.Size(754, 639);
+            this.engineOptionSettingControl1.Size = new System.Drawing.Size(754, 637);
             this.engineOptionSettingControl1.TabIndex = 0;
             // 
             // tabPage2
@@ -102,6 +102,7 @@
             this.ClientSize = new System.Drawing.Size(764, 668);
             this.Controls.Add(this.tabControl1);
             this.DoubleBuffered = true;
+            this.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(1);
             this.MaximizeBox = false;

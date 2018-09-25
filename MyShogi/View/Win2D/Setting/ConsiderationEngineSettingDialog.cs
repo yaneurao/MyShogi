@@ -181,6 +181,7 @@ namespace MyShogi.View.Win2D.Setting
 
                 // modal dialogとして出すべき。
                 FormLocationUtility.CenteringToThisForm(dialog, this);
+
                 dialog.ShowDialog(Parent);
             }
         }
@@ -208,6 +209,9 @@ namespace MyShogi.View.Win2D.Setting
             try
             {
                 FormLocationUtility.CenteringToThisForm(dialog, this);
+
+                // 各フォントを設定しなおす。
+                FontUtility.ReplaceFont(dialog);
 
                 // modal dialogとして出す
                 dialog.ShowDialog(this);

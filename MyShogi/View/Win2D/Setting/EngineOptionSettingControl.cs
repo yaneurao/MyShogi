@@ -355,6 +355,9 @@ namespace MyShogi.View.Win2D
             if (pages.Count != 0 && pages[pages.Count - 1].Count == 0)
                 pages.RemoveAt(pages.Count - 1);
 
+            // 各フォントを設定しなおす。
+            FontUtility.ReplaceFont(this);
+
             ResumeLayout();
 
             UpdatePage(0);

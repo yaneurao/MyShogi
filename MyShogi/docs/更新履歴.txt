@@ -6,6 +6,19 @@
 ■　2018/09/25
 
 
+- メニューとToolStripとエンジン詳細設定のフォント変更の実装。
+  - ダイアログのタイトル、TabPageのタイトルのフォントが変わらない。
+  - https://stackoverflow.com/questions/35529780/how-can-i-change-in-tabcontrol-the-font-size-of-a-tab-title
+   > If you change the Font size of the Tab control then the font of the tab headers will change. And since Font is an ambient property it will also get passed on to all contained controls.
+   - ambient propertyらしい…。TabPageのほうで変更すればよさげな？TabPageはうまく変更できた。
+  - ダイアログのタイトルとToolTipのFontが変更できない。
+  - ToolTipはOwnerDrawにしないとFontの変更が出来ない。
+    - C# tooltipのフォントサイズを変更するには？ : https://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q1180804231
+    - ToolTip.Draw Event : https://docs.microsoft.com/ja-jp/dotnet/api/system.windows.forms.tooltip.draw?redirectedfrom=MSDN&view=netframework-4.7.2
+    - しんどー。これはまた今度(´ω｀)/~~~
+  - FormのFontはシステムが作成しているので変更できないっぽい。せめてUnicode対応してくれてないと表示がままならない。
+
+
 - 棋譜Controlで生成したFontのinstanceを共有している部分、やめる。
   - Fontの親以外との共有はよろしくないという考えに基づく。
 - FontReplacerのコード、整理した。半分ぐらい動いている。(気がする)

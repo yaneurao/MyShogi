@@ -160,6 +160,9 @@ namespace MyShogi.View.Win2D
 
             button1.Enabled = SelectionControlTopIndex - 5 >= 0;
             button2.Enabled = SelectionControlTopIndex + 5 < defines.Count;
+
+            // フォントをすべて置換する。
+            FontUtility.ReplaceFont(this);
         }
 
         /// <summary>
