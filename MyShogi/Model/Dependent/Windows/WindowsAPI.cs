@@ -76,49 +76,40 @@ namespace MyShogi.Model.Dependent
     public static class FontReplacer
     {
         /// <summary>
-        /// 引数で与えられたFontに対して、この環境用のフォントを生成しなおして返す。
+        /// 引数で与えられたFontに対して、必要ならばこの環境用のフォントを生成して返す。
+        /// FontUtility.ReplaceFont()から呼び出される。
         /// </summary>
-        /// <param name="master">Dialog自体に設定されているフォント。master == fなら、フォントを変更するときに解体しない。</param>
         /// <param name="f"></param>
         /// <returns></returns>
-        public static Font ReplaceFont(Font master , Font f)
+        public static Font ReplaceFont( Font f)
         {
 #if true
             // Windows環境では置換する必要はないのでそのまま返す。
             return f;
 #else
-            // 試しに全部明朝体にしてみて、うまく動作しているかをテスト。
+            // 試しに全部変わったフォントにしてみて、うまく動作しているかをテスト。
 
             var name = f.OriginalFontName;
             var size = f.Size;
+
+            //Console.WriteLine($"{name} : size ={size}");
+
             switch (name)
             {
+                case "MS Gothic":
                 case "MS UI Gothic":
-                    // TODO : ここで古いフォントを解体するの、所有権の問題があってややこしい。きちんと書かないと二重解放になる。あとでよく考える。
-                    if (master != f)
-                        f.Dispose();
-                    return new Font("ＭＳ 明朝", size);
-
                 case "ＭＳ ゴシック":
-                    // TODO : ここで古いフォントを解体するの、所有権の問題があってややこしい。きちんと書かないと二重解放になる。あとでよく考える。
-                    if (master != f)
-                        f.Dispose();
-                    return new Font("ＭＳ 明朝", f.Size);
+                case "MSPゴシック":
+                case "YU Gothic UI":
+                    return new Font("HGP行書体", size);
 
                 default:
+                    // 見知らぬフォント(OriginalFontNameが空欄でsizeしかないだとか…)
+                    //Console.WriteLine($"{name} : size ={size}");
+
                     return f;
             }
 #endif
-        }
-
-        /// <summary>
-        /// Controlを渡して、そのフォントを一括置換する。
-        /// </summary>
-        /// <param name="control"></param>
-        public static void ReplaceFont(Control control)
-        {
-            foreach (Control c in control.Controls)
-                ReplaceFont(control.Font, c.Font);
         }
     }
 }

@@ -24,8 +24,6 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             InitViewModel();
-
-            //FontReplacer.ReplaceFont(this);
         }
 
         public class EngineOptionSettingDialogViewModel : NotifyObject

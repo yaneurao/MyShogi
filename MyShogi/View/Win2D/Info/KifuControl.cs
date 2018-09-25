@@ -281,17 +281,18 @@ namespace MyShogi.View.Win2D
 
             last_font_size = font_size;
 
-            var font = new Font("MS Gothic", font_size, FontStyle.Regular, GraphicsUnit.Pixel);
+            var font = FontUtility.ReplaceFont(new Font("MS Gothic", font_size, FontStyle.Regular, GraphicsUnit.Pixel));
             FontUtility.SetFont( listBox1 , font);
 
             // buttonのFontSizeあまり変更すると高さが足りなくなるので横幅の比率変更は反映させない。
-            var font2 = new Font("MS Gothic", font_size2, FontStyle.Regular, GraphicsUnit.Pixel);
-            FontUtility.SetFont(button1 , font2);
-            FontUtility.SetFont(button2 , font2);
-            FontUtility.SetFont(button3 , font2);
-            FontUtility.SetFont(button4 , font2);
-            FontUtility.SetFont(button5 , font2);
-            FontUtility.SetFont(button6 , font2);
+            var buttons = new[] { button1, button2, button3, button4, button5, button6 };
+            foreach(var b in buttons)
+            {
+                // 親以外のFontをControl間で共有すべきではないという考えに基づき、
+                // 少し無駄ではあるが、それぞれにFontのinstanceを割り当てる。
+                var font2 = FontUtility.ReplaceFont(new Font("MS Gothic", font_size2, FontStyle.Regular, GraphicsUnit.Pixel));
+                FontUtility.SetFont(b, font2);
+            }
         }
 
         private float last_font_size = 0;

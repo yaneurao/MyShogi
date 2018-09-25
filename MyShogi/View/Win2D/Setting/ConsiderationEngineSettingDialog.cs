@@ -21,8 +21,6 @@ namespace MyShogi.View.Win2D.Setting
             InitializeComponent();
 
             InitViewModel();
-
-            FontReplacer.ReplaceFont(this);
         }
 
         #region ViewModel

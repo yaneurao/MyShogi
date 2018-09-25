@@ -91,6 +91,7 @@ namespace MyShogi.View.Win2D
             engineConsiderationMainControl.ConsiderationInstance(0).ViewModel.AddPropertyChangedHandler("MultiPV", (h) => {
                 gameServer.ChangeMultiPvCommand((int)h.value);
             });
+            FontUtility.ReplaceFont(engineConsiderationMainControl);
         }
 
         #endregion
@@ -226,6 +227,7 @@ namespace MyShogi.View.Win2D
                 dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.ConsiderationSetting;
                 dialog.ViewModel.AddPropertyChangedHandler("StartButtonClicked", _ => ToggleConsideration());
                 dialog.Bind(setting);
+                FontUtility.ReplaceFont(dialog);
                 dialog.ShowDialog(this);
             }
         }
@@ -243,6 +245,7 @@ namespace MyShogi.View.Win2D
                 dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.MateSetting;
                 dialog.ViewModel.AddPropertyChangedHandler("StartButtonClicked", _ => ToggleMateConsideration());
                 dialog.Bind(setting);
+                FontUtility.ReplaceFont(dialog);
                 dialog.ShowDialog(this);
             }
         }
@@ -1609,10 +1612,11 @@ namespace MyShogi.View.Win2D
                         item.ShowShortcutKeys = true;
                         item.Click += (sender, e) =>
                         {
-                            using (var gameSettingDialog = new GameSettingDialog(this))
+                            using (var dialog = new GameSettingDialog(this))
                             {
-                                FormLocationUtility.CenteringToThisForm(gameSettingDialog, this);
-                                gameSettingDialog.ShowDialog(this); // Modal Dialogにしておく。
+                                FormLocationUtility.CenteringToThisForm(dialog, this);
+                                FontUtility.ReplaceFont(dialog);
+                                dialog.ShowDialog(this); // Modal Dialogにしておく。
                             }
                         };
 
@@ -2628,6 +2632,7 @@ namespace MyShogi.View.Win2D
                                         TheApp.app.MessageShow("棋譜ファイルが読み込めませんでした。", MessageShowType.Error);
                                     }
                                 });
+                                FontUtility.ReplaceFont(dialog);
                                 dialog.ShowDialog(this);
                             }
                         };
@@ -2645,6 +2650,7 @@ namespace MyShogi.View.Win2D
                             using (var dialog = new GameResultWindowSettingDialog())
                             {
                                 FormLocationUtility.CenteringToThisForm(dialog, this);
+                                FontUtility.ReplaceFont(dialog);
                                 dialog.ShowDialog(this);
                             }
                         };
@@ -2688,6 +2694,7 @@ namespace MyShogi.View.Win2D
                                     if (debugDialog != null)
                                     {
                                         FormLocationUtility.CenteringToThisForm(debugDialog, this);
+                                        FontUtility.ReplaceFont(debugDialog);
                                         debugDialog.Show();
                                     }
                                 };
@@ -2772,10 +2779,11 @@ namespace MyShogi.View.Win2D
                         item1.Text = "バージョン情報(&V)"; // Version
                         item1.Click += (sender, e) =>
                         {
-                            using (var aboutDialog = new AboutYaneuraOu())
+                            using (var dialog = new AboutYaneuraOu())
                             {
-                                FormLocationUtility.CenteringToThisForm(aboutDialog, this);
-                                aboutDialog.ShowDialog(this);
+                                FormLocationUtility.CenteringToThisForm(dialog, this);
+                                FontUtility.ReplaceFont(dialog);
+                                dialog.ShowDialog(this);
                             }
                         };
                         item_others.DropDownItems.Add(item1);
@@ -2788,10 +2796,11 @@ namespace MyShogi.View.Win2D
                         item1.Text = "システム情報(&S)"; // System Infomation
                         item1.Click += (sender, e) =>
                         {
-                            using (var cpuInfoDialog = new SystemInfo())
+                            using (var dialog = new SystemInfo())
                             {
-                                FormLocationUtility.CenteringToThisForm(cpuInfoDialog, this);
-                                cpuInfoDialog.ShowDialog(this);
+                                FormLocationUtility.CenteringToThisForm(dialog, this);
+                                FontUtility.ReplaceFont(dialog);
+                                dialog.ShowDialog(this);
                             }
                         };
                         item_others.DropDownItems.Add(item1);
@@ -2875,7 +2884,11 @@ namespace MyShogi.View.Win2D
                 }
 #endif
 
+                // メニューのフォントを設定しなおす。
+                FontUtility.ReplaceFont(menu);
+
                 Controls.Add(menu);
+
                 // フォームのメインメニューとする
                 MainMenuStrip = menu;
                 old_menu = menu; // 次回解放するので記憶しておかないと駄目。

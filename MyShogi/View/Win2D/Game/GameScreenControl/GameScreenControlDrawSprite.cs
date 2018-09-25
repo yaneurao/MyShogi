@@ -112,7 +112,7 @@ namespace MyShogi.View.Win2D
             if (size <= 2)
                 return;
 
-            using (var font = new Font("MSPゴシック", size, GraphicsUnit.Pixel))
+            using (var font = FontUtility.ReplaceFont(new Font("MSPゴシック", size, GraphicsUnit.Pixel)))
             {
                 var brush = option == null ? Brushes.Black : option.brush;
                 var brush2 = option == null ? null : option.brush2;

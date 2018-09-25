@@ -119,44 +119,27 @@ namespace MyShogi.Model.Dependent
     public static class FontReplacer
     {
         /// <summary>
-        /// 引数で与えられたFontに対して、この環境用のフォントを生成しなおして返す。
+        /// 引数で与えられたFontに対して、必要ならばこの環境用のフォントを生成して返す。
+        /// FontUtility.ReplaceFont()から呼び出される。
         /// </summary>
-        /// <param name="master">Dialog自体に設定されているフォント。master == fなら、フォントを変更するときに解体しない。</param>
         /// <param name="f"></param>
         /// <returns></returns>
-        public static Font ReplaceFont(Font master , Font f)
+        public static Font ReplaceFont(Font f)
         {
             var name = f.OriginalFontName;
             var size = f.Size;
             switch (name)
             {
+                case "MS Gothic":
                 case "MS UI Gothic":
-                    // TODO : ここで古いフォントを解体するの、所有権の問題があってややこしい。きちんと書かないと二重解放になる。あとでよく考える。
-                    if (master != f)
-                        f.Dispose();
-                    // Mac用
-                    return new Font("Hiragino Kaku Gothic Pro W3", size);
-
                 case "ＭＳ ゴシック":
-                    // TODO : ここで古いフォントを解体するの、所有権の問題があってややこしい。きちんと書かないと二重解放になる。あとでよく考える。
-                    if (master != f)
-                        f.Dispose();
-                    // Mac用
-                    return new Font("Hiragino Kaku Gothic Pro W3", f.Size);
+                case "MSPゴシック":
+                case "YU Gothic UI":
+                    return new Font("Hiragino Kaku Gothic Pro W3", size);
 
                 default:
                     return f;
             }
-        }
-
-        /// <summary>
-        /// Controlを渡して、そのフォントを一括置換する。
-        /// </summary>
-        /// <param name="control"></param>
-        public static void ReplaceFont(Control control)
-        {
-            foreach (Control c in control.Controls)
-                ReplaceFont(control.Font, c.Font);
         }
     }
 }
