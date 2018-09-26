@@ -373,6 +373,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void InitSpliter2Position()
         {
+            // 親Form側が最小化されたりすると、Resizeイベントが発生して、そのときClientSize == (0,0)だったりする。
+            if (ClientSize.IsEmpty)
+                return;
+
             var board_height = Math.Max(ClientSize.Height - toolStrip1.Height, 1);
 
             // 継ぎ盤があるなら、その領域は最大でも横幅の1/4まで。

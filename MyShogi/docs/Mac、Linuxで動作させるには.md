@@ -15,6 +15,12 @@
 - ビルド方法
   > msbuild ../MyShogi.sln /p:Configuration=Debug
 
+  参考)
+    https://twitter.com/arrow_elpis/status/1044909606697283585
+     msbuildはmono入れたら入ってきますよ。あと、MyShogiをビルドするには MyShogiディレクトリ内で
+    "nuget install Microsoft.Net.Compilers" を実行してmonoではないコンパイラを落としてくる必要があります。
+
+
 - 起動方法
   > mono --arch=32 bin/Debug/MyShogi.exe
 
