@@ -407,10 +407,12 @@ namespace MyShogi.Model.Shogi.LocalServer
                 string total;
                 if (right.Empty())
                     total = left;
+                else if (left.Empty())
+                    total = right;                  // このとき連結のための"/"要らない
                 else if (left.UnicodeLength() + right.UnicodeLength() < 24)
-                    total = $"{left}/{right}"; // 1行で事足りる
+                    total = $"{left}/{right}";      // 1行で事足りる
                 else
-                    total = $"{left}\r\n{right}"; // 2行に分割する。 
+                    total = $"{left}\r\n{right}";   // 2行に分割する。 
 
                 timeSettingStrings[(int)c] = total;
             }

@@ -3,6 +3,15 @@
 ■　2018/09/27
 
 
+- 時間無制限のときに名前の表示のところが「/五段」のようになる(masaさん)
+  - 修正しました。
+
+
+- Mac上でサウンドの再生問題について
+  - libsoundio-sharpとPInvokeGeneratorについて(ものがたり) : http://atsushieno.hatenablog.com/entry/2017/12/07/041145
+  - libsound : http://libsound.io/
+
+
 - V1.2.2リリース。
   - eval : MyShogi201807260000Eval.zip
   - 本体 : MyShogi201809271520V122.zip
