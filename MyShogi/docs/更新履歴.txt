@@ -3,6 +3,12 @@
 ■　2018/09/27
 
 
+- V1.2.2リリース。
+  - eval : MyShogi201807260000Eval.zip
+  - 本体 : MyShogi201809271520V122.zip
+- "1.2.1"→"1.2.2" [2018/09/25]-[2018/09/27]
+
+
 -クリップボードの貼り付けで拒否されて例外が出ることがある(ohtaroさん)
   - cf. https://ja.stackoverflow.com/questions/47269/powershell%E3%82%84c%E3%81%8B%E3%82%89%E3%82%AF%E3%83%AA%E3%83%83%E3%83%97%E3%83%9C%E3%83%BC%E3%83%89%E8%BB%A2%E9%80%81%E6%99%82%E3%81%ABexternalexception%E3%81%8C%E9%A0%BB%E7%99%BA%E3%81%99%E3%82%8B%E5%8E%9F%E5%9B%A0%E3%81%A8%E5%AF%BE%E7%AD%96
    >   System.Windows.Forms.Clipboard のソースコードを確認してみると、
