@@ -116,25 +116,48 @@ namespace MyShogi.App
 
         /// <summary>
         /// UI threadで実行したい時にこれを用いる。
+        ///
+        /// 1) UIスレッドでのactionの実行完了を待つ。
+        /// 2) UI Threadで発生した例外はUI Threadを抜けて伝播する。
         /// </summary>
         /// <param name="action"></param>
         public void UIThread(Action action)
         {
-            var a = new Action(() =>
+            if (mainForm != null && mainForm.IsHandleCreated && !mainForm.IsDisposed)
             {
-                try
+                if (mainForm.InvokeRequired)
                 {
+                    Exception e = null;
+                    try
+                    {
+                        mainForm.Invoke((Action)( ()=>
+                        {
+                            try
+                            {
+                                action();
+                            } catch (Exception ex)
+                            {
+                                e = ex;
+                            }
+                        }));
+                        // これで結果が返るまで待つはず..
+                        // ここでウィンドウが破棄される可能性があるので成功するとは限らない。
+                    }
+                    catch { }
+
+                    // Invoke()中に親Windowが解体されたなら例外は無視して良いが、
+                    // さもなくば、このUI Thread内で発生した例外を伝播する必要がある。
+                    if (e != null)
+                        throw e;
+                }
+                else
                     action();
-                }
-                catch (Exception ex)
-                {
-                    MessageShow(ex);
-                }
-            });
-            if (mainForm == null)
-                a();
+            }
             else
-                mainForm.BeginInvoke(a);
+            {
+                // メインウインドウ、解体後。
+                action();
+            }
         }
 
     }

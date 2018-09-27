@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Utility;
@@ -297,9 +298,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // 棋譜が綺麗になった扱いにする。
                     KifuDirty = false;
                 }
-                catch (System.Exception e)
+                catch (Exception ex)
                 {
-                    TheApp.app.MessageShow($"棋譜ファイルの書き出しに失敗しました。\n{e}" , MessageShowType.Error);
+                    TheApp.app.MessageShow($"棋譜ファイルの書き出しに失敗しました。\r\n{ex.Pretty()}" , MessageShowType.Error);
                 }
             });
         }
@@ -316,11 +317,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 {
                     var content = kifuManager.ToString(type);
                     // Clipboard.SetText() を実行するスレッドは Single Thread Apartment モードに設定されていなければならない
-                    TheApp.app.UIThread(() => System.Windows.Forms.Clipboard.SetText(content));
+                    TheApp.app.UIThread(() => SafeClipboard.SetText(content));
                 }
-                catch (System.Exception e)
+                catch (Exception ex)
                 {
-                    TheApp.app.MessageShow($"棋譜のクリップボードへの書き出しに失敗しました。\n{e}", MessageShowType.Error);
+                    TheApp.app.MessageShow($"棋譜のクリップボードへの書き出しに失敗しました。\r\n{ex.Pretty()}", MessageShowType.Error);
                 }
             });
         }
@@ -340,9 +341,9 @@ namespace MyShogi.Model.Shogi.LocalServer
                     var content = kifuManager.ToPositionString(type);
                     FileIO.WriteFile(path, content);
                 }
-                catch (System.Exception e)
+                catch (Exception ex)
                 {
-                    TheApp.app.MessageShow($"棋譜ファイルの書き出しに失敗しました。\n{e}" , MessageShowType.Error);
+                    TheApp.app.MessageShow($"棋譜ファイルの書き出しに失敗しました。\r\n{ex.Pretty()}" , MessageShowType.Error);
                 }
             });
         }
@@ -358,11 +359,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                 try
                 {
                     var content = kifuManager.ToPositionString(type);
-                    TheApp.app.UIThread(() => System.Windows.Forms.Clipboard.SetText(content));
+                    TheApp.app.UIThread(() => SafeClipboard.SetText(content));
                 }
-                catch (System.Exception e)
+                catch (Exception ex)
                 {
-                    TheApp.app.MessageShow($"局面のクリップボードへの書き出しに失敗しました。\n{e}", MessageShowType.Error);
+                    TheApp.app.MessageShow($"局面のクリップボードへの書き出しに失敗しました。\r\n{ex.Pretty()}", MessageShowType.Error);
                 }
             });
         }

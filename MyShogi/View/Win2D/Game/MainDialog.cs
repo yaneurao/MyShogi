@@ -732,7 +732,7 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
-        /// Ctrl+V による棋譜の貼り付け
+        /// [UI Thread] : Ctrl+V による棋譜の貼り付け
         /// </summary>
         public void CopyFromClipboard()
         {
@@ -745,8 +745,10 @@ namespace MyShogi.View.Win2D
                         return;
                 }
 
-                //クリップボードからテキスト取得
-                var text = Clipboard.GetText();
+                // クリップボードからテキスト取得
+
+                // GetText()はUI Threadの制約があるので注意。
+                var text = SafeClipboard.GetText();
                 gameServer.KifuReadCommand(text);
                 ViewModel.LastFileName = null;
             }

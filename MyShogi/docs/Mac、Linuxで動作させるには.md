@@ -3,6 +3,7 @@
 - 参考記事
   - Mac環境
     - jnoryさんのfork : https://github.com/jnory/MyShogi
+    - AI将棋ソフト『MyShogi』をMacBookProでビルド＆遊んでみた : http://amado.hatenablog.com/entry/20180927/1537975944
   - Linux環境
     - やねうら王MyShogiをLinuxでビルドしてみた : http://hennohito.cocolog-nifty.com/blog/2018/06/myshogilinux-69.html
 
