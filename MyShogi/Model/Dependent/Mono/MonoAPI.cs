@@ -12,8 +12,10 @@
 
 using MyShogi.Model.Shogi.EngineDefine;
 using System;
-using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 // --- 単体で呼び出して使うAPI群
 
@@ -171,6 +173,7 @@ namespace MyShogi.Model.Dependent
             }
 #elif LINUX
             // Linux用、あとで実装する。
+            pasteText = null;
 #endif
             return pasteText;
         }
@@ -200,7 +203,11 @@ namespace MyShogi.Model.Dependent
                     System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                 var dst_ = dst as Bitmap;
-                var data2 = dst_.LockBits(dstRect, ImageLockMode.WriteOnly,
+
+                // Lockするとき、WriteOnlyにしてしまうと、Monoではゼロクリアされる。
+                // これもMonoの実装上のバグだと思う。
+
+                var data2 = dst_.LockBits(dstRect, /*ImageLockMode.WriteOnly*/ ImageLockMode.ReadWrite,
                     System.Drawing.Imaging.PixelFormat.Format24bppRgb);
 
                 byte[] buf = new byte[srcRect.Width * srcRect.Height * 4];

@@ -90,6 +90,9 @@ namespace MyShogi.Model.Resource.Images
                         // DrawImageで等倍の転送にするためにはrectの指定が必要
                         g.DrawImage(tatami.image, rect, rect, GraphicsUnit.Pixel);
 
+                        // Mono環境だと、転送元がalpha付きのDrawImage、うまく転送できないので
+                        // 自前のwrapper経由で行う。
+
                         DrawImageHelper.DrawImage(g , img.image , board.image, rect, rect, GraphicsUnit.Pixel);
                         DrawImageHelper.DrawImage(g , img.image , piece_table[piece_table_version].image, rect, rect, GraphicsUnit.Pixel);
 
@@ -100,19 +103,6 @@ namespace MyShogi.Model.Resource.Images
                         // 駒箱を合成するのは盤面編集モードの時のみ
                         if (piece_box_exist)
                             DrawImageHelper.DrawImage(g, img.image  , piece_box[piece_table_version].image, rect, rect, GraphicsUnit.Pixel);
-
-#if false
-                        g.DrawImage(board.image, rect, rect, GraphicsUnit.Pixel);
-                        g.DrawImage(piece_table[piece_table_version].image, rect, rect, GraphicsUnit.Pixel);
-
-                        // 駒台が縦長のとき、ネームプレートは別の素材
-                        if (piece_table_version == 0)
-                            g.DrawImage(name_plate.image, rect, rect, GraphicsUnit.Pixel);
-
-                        // 駒箱を合成するのは盤面編集モードの時のみ
-                        if (piece_box_exist)
-                            g.DrawImage(piece_box[piece_table_version].image, rect, rect, GraphicsUnit.Pixel);
-#endif
                     }
 
                     var id = piece_table_version + (piece_box_exist ? 2 : 0);

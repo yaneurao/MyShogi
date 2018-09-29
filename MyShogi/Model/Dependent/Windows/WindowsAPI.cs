@@ -5,10 +5,8 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Management;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Media;
 using MyShogi.Model.Shogi.EngineDefine;
