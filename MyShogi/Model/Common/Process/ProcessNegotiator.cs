@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
 using MyShogi.Model.Common.Tool;
 
 namespace MyShogi.Model.Common.Process
@@ -10,9 +13,22 @@ namespace MyShogi.Model.Common.Process
     /// </summary>
     public class ProcessNegotiator
     {
-        public ProcessNegotiator()
-        {
-        }
+        public delegate void CommandReceiveHandler(string command);
+
+        ///// <summary>
+        ///// 子プロセスの標準出力から新しい行を受信したときのコールバック
+        ///// Connect()のあとにRead()までにセットしておくこと。
+        ///// </summary>
+        public CommandReceiveHandler CommandReceived;
+
+        /// <summary>
+        /// エンジン側とやりとりする時のEncode。
+        /// Connect()を呼び出すまでに設定すること。
+        /// 
+        /// USIでは定められていない(漢字はサポートされていない？)が、SJISとして扱っている気がする。
+        /// いまどきSJISはないと思うので、デフォルトでUTF8とする。
+        /// </summary>
+        public Encoding Encode = Encoding.UTF8;
 
         /// <summary>
         /// 思考エンジンに接続する。
@@ -38,8 +54,9 @@ namespace MyShogi.Model.Common.Process
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = false,
+                    StandardOutputEncoding = Encode,
                 };
-                
+
                 var process = new System.Diagnostics.Process
                 {
                     StartInfo = info,
@@ -48,14 +65,13 @@ namespace MyShogi.Model.Common.Process
                 // 子プロセスがいないとき、ここで例外が発生する。
                 process.Start();
 
+                // 非同期での受信開始
+                writeStream = process.StandardInput.BaseStream;
+                process.OutputDataReceived += DataReceived;
+                process.BeginOutputReadLine();
+
                 // EXE用のprocess
                 exeProcess = process;
-
-                // remote service
-                remoteService = new RemoteService(
-                    process.StandardOutput.BaseStream, // read stream
-                    process.StandardInput.BaseStream   // write stream
-                 );
 
                 IsLowPriority = engineData.IsLowPriority;
             }
@@ -69,8 +85,14 @@ namespace MyShogi.Model.Common.Process
         /// </summary>
         public void Read()
         {
-            if (remoteService != null)
-                remoteService.Read();
+            lock (readLockObject)
+            {
+                // このタイミングで受信していたメッセージに対して、
+                // callbackを呼び出す。
+                foreach (var line in read_lines)
+                    CommandReceived(line);
+                read_lines.Clear();
+            }
         }
 
         /// <summary>
@@ -79,10 +101,17 @@ namespace MyShogi.Model.Common.Process
         /// このメソッドは、例外を投げる。
         /// </summary>
         /// <param name="s"></param>
-        public void Write(string s)
+        public void Write(string command)
         {
-            if (remoteService != null)
-                remoteService.Write(s);
+            // WriteはUIスレッドからも行うのでlockが必要。
+            lock (writeLockObject)
+            {
+                // 基本的に待たされることはないので、非同期には実行していない。
+                byte[] buffer = Encode.GetBytes($"{command}\n");
+                writeStream.Write(buffer, 0, buffer.Length);
+                writeStream.Flush(); // これを行わないとエンジンに渡されないことがある。
+                Log.Write(LogInfoType.SendCommandToEngine, command, pipe_id);
+            }
         }
 
         /// <summary>
@@ -103,27 +132,12 @@ namespace MyShogi.Model.Common.Process
 
                     exeProcess = null;
                 }
-                if (remoteService != null)
-                {
-                    remoteService.Dispose();
-                    remoteService = null;
-                }
             }
         }
 
         public void Dispose()
         {
             Disconnect();
-        }
-
-        /// <summary>
-        /// 子プロセスの標準出力から新しい行を受信したときのコールバック
-        /// Connect()のあとにRead()までにセットしておくこと。
-        /// </summary>
-        public CommandRecieveHandler CommandReceived
-        {
-            get { return remoteService.CommandReceived; }
-            set { remoteService.CommandReceived = value; }
         }
 
         /// <summary>
@@ -174,14 +188,48 @@ namespace MyShogi.Model.Common.Process
         private System.Diagnostics.Process exeProcess;
 
         /// <summary>
-        /// 入出力のリダイレクトをして、入力があったときにコールバックするためのヘルパー。
-        /// </summary>
-        private RemoteService remoteService;
-
-        /// <summary>
         /// 排他用
         /// </summary>
         private object lockObject = new object();
+        private object readLockObject = new object();
+        private object writeLockObject = new object();
+
+        /// <summary>
+        /// Processから非同期で呼び出される受信ハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            lock (readLockObject)
+                read_lines.Add(e.Data);
+        }
+        /// <summary>
+        /// 受信した行を保存しておくバッファ。Read()で放出。
+        /// </summary>
+        private List<string> read_lines = new List<string>();
+
+        private Stream writeStream;
+
+        /// <summary>
+        /// このインスタンスのunique idが返る。これによってログに書き出した時に
+        /// どのインスタンス(思考エンジン)との通信であるかを識別する。
+        /// インスタンス生成時にunique idが割り当たる。
+        /// </summary>
+        private int pipe_id = get_unique_id();
+
+        /// <summary>
+        /// pipe_idの発行用。取得するごとに1ずつ増える
+        /// </summary>
+        private static int g_pipe_id;
+        private static object g_lock_object = new object();
+        private static int get_unique_id()
+        {
+            int result;
+            // g_pipe_idから値を取得して、インクリメントするまでがatomicであって欲しい。
+            lock (g_lock_object) { result = g_pipe_id++; }
+            return result;
+        }
 
     }
 }

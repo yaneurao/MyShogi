@@ -1,5 +1,19 @@
 ﻿
 
+■　2018/09/29
+
+
+- 子プロセスからの通信を同期的に調べるときにWaitCompletionPacketがleakしてるっぽい？
+- RemoteServiceでCancelarationTokenのDispose()呼び出してなかった。
+  - しかし、これだけではない気がする…。
+- RemoteService.cs使わないことにする。
+- ProcessNegotiator、リファクタリングした。
+- DebugWindow閉じるタイミングでメッセージが送られてくると破棄されたWindowでInvokeしてることになって
+ 例外が出ていたの修正。
+
+
+
+
 ■　2018/09/27
 
 

@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.Tool;
 
 namespace MyShogi.View.Win2D
@@ -19,13 +20,14 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
-            var ListAdded_ = new ListAddedEventHandler(sender =>
+            var ListAdded_ = new ListAddedEventHandler(args =>
             {
-                // UIスレッドからの呼び出しを保証する。
-                if (InvokeRequired)
-                    Invoke(new Action(() => ListAdded(sender)));
-                else
-                    ListAdded(sender);
+                try
+                {
+                    // UIスレッドからの呼び出しを保証する。
+                    TheApp.app.UIThread(() => ListAdded(args));
+                }
+                catch { } // 終了間際だとInvoke()で例外が出るかもしれないので握りつぶしておく。
             });
 
             log.AddHandler(ListAdded_ , ref log_list);
