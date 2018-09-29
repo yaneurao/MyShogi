@@ -3,6 +3,11 @@
 ■　2018/09/29
 
 
+- エンジン側との入出力、EncodeをUTF8と変更。
+  - USI2.0でもUTF8を標準とするようにする。
+- ProcessNegotiatorにtry～catch追加など。
+
+
 - 子プロセスからの通信を同期的に調べるときにWaitCompletionPacketがleakしてるっぽい？
 - RemoteServiceでCancelarationTokenのDispose()呼び出してなかった。
   - しかし、これだけではない気がする…。

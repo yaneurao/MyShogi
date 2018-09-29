@@ -13,6 +13,7 @@ namespace MyShogi.Model.Common.Process
     /// </summary>
     public class ProcessNegotiator
     {
+        #region properties
         public delegate void CommandReceiveHandler(string command);
 
         ///// <summary>
@@ -30,6 +31,20 @@ namespace MyShogi.Model.Common.Process
         /// </summary>
         public Encoding Encode = Encoding.UTF8;
 
+        /// <summary>
+        /// 実行ファイルの優先度を普通より下げる。
+        /// UpdateProcessPriority()したときに反映される。
+        /// </summary>
+        public bool IsLowPriority { get; set; }
+
+        /// <summary>
+        /// プロセスが終了したかのフラグ。
+        /// </summary>
+        public bool ProcessTerminated { get { return exeProcess == null ? false : exeProcess.HasExited; } }
+
+        #endregion
+
+        #region publics
         /// <summary>
         /// 思考エンジンに接続する。
         /// </summary>
@@ -103,6 +118,9 @@ namespace MyShogi.Model.Common.Process
         /// <param name="s"></param>
         public void Write(string command)
         {
+            if (writeStream == null)
+                return;
+
             // WriteはUIスレッドからも行うのでlockが必要。
             lock (writeLockObject)
             {
@@ -124,11 +142,18 @@ namespace MyShogi.Model.Common.Process
             {
                 if (exeProcess != null)
                 {
-                    exeProcess.Close();
-                    //exeProcess.Kill();
-                    
-                    // Close()してからKill()できない。
-                    // "quit"を送っているし、pipeは切断されているし、無事終了してくれることを祈るばかりだ。
+                    try
+                    {
+                        exeProcess.Close();
+                        //exeProcess.Kill();
+
+                        // Close()してからKill()できない。
+                        // "quit"を送っているし、pipeは切断されているし、無事終了してくれることを祈るばかりだ。
+
+                        // 一応、Dispose()も呼び出しておくか…。
+                        exeProcess.Dispose();
+
+                    } catch { }
 
                     exeProcess = null;
                 }
@@ -168,18 +193,9 @@ namespace MyShogi.Model.Common.Process
                 Log.Write(LogInfoType.SystemError,"エンジンの実行優先順位を下げることができませんでした。:" + ex.ToString());
             }
         }
+        #endregion
 
-        /// <summary>
-        /// 実行ファイルの優先度を普通より下げる。
-        /// UpdateProcessPriority()したときに反映される。
-        /// </summary>
-        public bool IsLowPriority { get; set; }
-
-        /// <summary>
-        /// プロセスが終了したかのフラグ。
-        /// </summary>
-        public bool ProcessTerminated { get { return exeProcess == null ? false : exeProcess.HasExited; } }
-
+        #region privates
         // --- 以下private members
 
         /// <summary>
@@ -195,12 +211,13 @@ namespace MyShogi.Model.Common.Process
         private object writeLockObject = new object();
 
         /// <summary>
-        /// Processから非同期で呼び出される受信ハンドラ
+        /// Processから受信時に非同期で呼び出されるハンドラ
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void DataReceived(object sender, DataReceivedEventArgs e)
         {
+            // とりま、バッファに溜めておいて、Read()のタイミングで返す。
             lock (readLockObject)
                 read_lines.Add(e.Data);
         }
@@ -230,6 +247,6 @@ namespace MyShogi.Model.Common.Process
             lock (g_lock_object) { result = g_pipe_id++; }
             return result;
         }
-
+        #endregion
     }
 }

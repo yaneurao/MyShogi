@@ -64,7 +64,6 @@
     <Compile Include="Model\Common\Tool\MostRecentUsedFiles.cs" />
     <Compile Include="Model\Common\ObjectModel\ControlBinder.cs" />
     <Compile Include="Model\Common\ObjectModel\NotifyCollection.cs" />
-    <Compile Include="Model\Common\Process\RemoteService.cs" />
     <Compile Include="Model\Common\String\CommandLineParser.cs" />
     <Compile Include="Model\Common\Utility\ExceptionExtensions.cs" />
     <Compile Include="Model\Common\Utility\SafeClipboard.cs" />
