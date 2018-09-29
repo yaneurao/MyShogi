@@ -11,7 +11,10 @@
 // ・Linux →　LINUX
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
 using MyShogi.Model.Shogi.EngineDefine;
 
 // --- 単体で呼び出して使うAPI群
@@ -115,6 +118,63 @@ namespace MyShogi.Model.Dependent
                 c = CpuType.NO_SSE;
 
             return c;
+        }
+    }
+
+    /// <summary>
+    /// MonoやUbuntuではClipboardの仕組みが異なるので、標準のClipboardクラスではなくこちらを用いる。
+    /// 
+    /// cf.
+    /// Mono, Ubuntu and Clipboard : https://www.medo64.com/2011/01/mono-ubuntu-and-clipboard/
+    /// Clipboard Plugin for Xamarin, Windows & Gtk2 : https://github.com/stavroskasidis/XamarinClipboardPlugin
+    /// Mono Clipboard fix : http://bighow.org/questions/Mono-Clipboard-fix
+    /// </summary>
+    public static class ClipboardEx
+    {
+        public static void SetText(string text)
+        {
+#if MACOS
+            // Macではpbcopyコマンドで実現。
+            // この方法ならば追加でいかなるアセンブリ、ランタイムも不要。
+            using (var p = new Process())
+            {
+                p.StartInfo = new ProcessStartInfo("pbcopy", "-pboard general - Prefer txt")
+                {
+                    UseShellExecute = false,
+                    RedirectStandardOutput = false,
+                    RedirectStandardInput = true,
+                };
+                p.Start();
+                p.StandardInput.Write(text);
+                p.StandardInput.Close();
+                p.WaitForExit();
+            }
+#elif LINUX
+            // Linux用、あとで実装する。
+#endif
+        }
+
+        public static string GetText()
+        {
+            string pasteText;
+#if MACOS
+            // Macではpbpasteコマンドで実現。
+            // この方法ならば追加でいかなるアセンブリ、ランタイムも不要。
+            using (var p = new Process())
+            {
+                p.StartInfo = new ProcessStartInfo("pbpaste", "-pboard general")
+                {
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                };
+                p.Start();
+                pasteText = p.StandardOutput.ReadToEnd();
+                p.WaitForExit();
+            }
+#elif LINUX
+            // Linux用、あとで実装する。
+#endif
+            return pasteText;
         }
     }
 

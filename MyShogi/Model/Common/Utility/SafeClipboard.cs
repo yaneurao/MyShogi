@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Windows;
-using MyShogi.App;
 using MyShogi.Model.Common.Collections;
+using MyShogi.Model.Dependent;
 
 namespace MyShogi.Model.Common.Utility
 {
@@ -31,7 +30,7 @@ namespace MyShogi.Model.Common.Utility
             {
                 if (s.Empty()) return;
 
-                Clipboard.SetText(s);
+                ClipboardEx.SetText(s);
             }
             catch (Exception) { }
         }
@@ -46,7 +45,7 @@ namespace MyShogi.Model.Common.Utility
         {
             try
             {
-                return Clipboard.ContainsText() ? Clipboard.GetText() : null;
+                return ClipboardEx.GetText();
             }
             catch (Exception)
             {

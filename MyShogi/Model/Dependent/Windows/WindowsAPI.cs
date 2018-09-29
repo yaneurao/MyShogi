@@ -68,6 +68,20 @@ namespace MyShogi.Model.Dependent
 
             return c;
         }
+
+    }
+
+    /// <summary>
+    /// MonoやUbuntuではClipboardの仕組みが異なるので、標準のClipboardクラスをwrapしておく。
+    /// 
+    /// cf.Mono, Ubuntu and Clipboard : https://www.medo64.com/2011/01/mono-ubuntu-and-clipboard/
+    /// </summary>
+    public static class ClipboardEx
+    {
+        // System.Windows.Clipboardの同名のメソッドに委譲するだけ。
+
+        public static void SetText(string text) { Clipboard.SetText(text); }
+        public static string GetText() { return Clipboard.ContainsText() ? Clipboard.GetText() : null; }
     }
 
     /// <summary>
