@@ -5,8 +5,10 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Management;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Media;
 using MyShogi.Model.Shogi.EngineDefine;
@@ -85,6 +87,21 @@ namespace MyShogi.Model.Dependent
     }
 
     /// <summary>
+    /// MonoでGraphics.DrawImage()で転送元が半透明かつ、転送先がCreateBitmap()したBitmapだと
+    /// 転送元のalphaが無視されるので、DrawImage()をwrapする。
+    /// 
+    /// Monoではこの挙動、きちんと実装されていない。(bugだと言えると思う)
+    /// Monoは、GDIPlusまわりの実装、いまだにおかしいところ多い。
+    /// </summary>
+    public static class DrawImageHelper
+    {
+        public static void DrawImage(Graphics g, Image dst, Image src, Rectangle dstRect, Rectangle srcRect, GraphicsUnit unit)
+        {
+            g.DrawImage(src, dstRect, srcRect, unit);
+        }
+    }
+
+    /// <summary>
     /// Controlのフォントの一括置換用
     /// </summary>
     public static class FontReplacer
@@ -117,6 +134,7 @@ namespace MyShogi.Model.Dependent
                 case "ＭＳ ゴシック":
                 case "MSPゴシック":
                 case "Yu Gothic UI":
+                case "Microsoft Sans Serif":
                     return new Font("HGP行書体", size);
 
                 default:

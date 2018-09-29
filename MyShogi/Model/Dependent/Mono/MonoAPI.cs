@@ -10,12 +10,10 @@
 // ・macOS →　MACOS
 // ・Linux →　LINUX
 
+using MyShogi.Model.Shogi.EngineDefine;
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
-using MyShogi.Model.Shogi.EngineDefine;
 
 // --- 単体で呼び出して使うAPI群
 
@@ -48,7 +46,7 @@ namespace MyShogi.Model.Dependent
                 RedirectStandardError = false,
             };
 
-            var process = new System.Diagnostics.Process
+            var process = new Process
             {
                 StartInfo = info,
             };
@@ -73,7 +71,7 @@ namespace MyShogi.Model.Dependent
         /// <returns></returns>
         public static CpuType GetCurrentCpu()
         {
-            var info = new System.Diagnostics.ProcessStartInfo
+            var info = new ProcessStartInfo
             {
                 FileName = "sysctl",
                 Arguments = "machdep.cpu.features",
@@ -84,7 +82,7 @@ namespace MyShogi.Model.Dependent
                 RedirectStandardError = false,
             };
 
-            var process = new System.Diagnostics.Process
+            var process = new Process
             {
                 StartInfo = info,
             };
@@ -179,10 +177,67 @@ namespace MyShogi.Model.Dependent
     }
 
     /// <summary>
+    /// MonoでGraphics.DrawImage()で転送元が半透明かつ、転送先がCreateBitmap()したBitmapだと
+    /// 転送元のalphaが無視されるので、DrawImage()をwrapする。
+    /// 
+    /// Monoではこの挙動、きちんと実装されていない。(bugだと言えると思う)
+    /// Monoは、GDIPlusまわりの実装、いまだにおかしいところ多い。
+    /// </summary>
+    public static class DrawImageHelper
+    {
+        public static void DrawImage(Graphics g, Image dst, Image src, Rectangle dstRect, Rectangle srcRect, GraphicsUnit unit)
+        {
+            // Lockして自前で転送する。
+            if (dstRect == srcRect &&
+                dst.PixelFormat == System.Drawing.Imaging.PixelFormat.Format24bppRgb &&
+                src.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppArgb &&
+                src is Bitmap &&
+                dst is Bitmap
+                )
+            {
+                var src_ = src as Bitmap;
+                var data = src_.LockBits(srcRect, ImageLockMode.ReadOnly,
+                    System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                var dst_ = dst as Bitmap;
+                var data2 = dst_.LockBits(dstRect, ImageLockMode.WriteOnly,
+                    System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+
+                byte[] buf = new byte[srcRect.Width * srcRect.Height * 4];
+                Marshal.Copy(data.Scan0, buf, 0, buf.Length);
+                for (int i = 0, j = 0; i < buf.Length; i += 4 , j+=3)
+                {
+                    /* alphaがある程度大きければ、このpixelは上書き転送 */
+                    if (buf[i+3] > 128)
+                    {
+                        Marshal.WriteByte(data2.Scan0, j + 0, buf[i + 0]);
+                        Marshal.WriteByte(data2.Scan0, j + 1, buf[i + 1]);
+                        Marshal.WriteByte(data2.Scan0, j + 2, buf[i + 2]);
+                    }
+                }
+
+                dst_.UnlockBits(data2);
+                src_.UnlockBits(data);
+
+            } else
+            {
+                // すまん。救済不可
+                g.DrawImage(src, dstRect, srcRect, unit);
+            }
+        }
+    }
+
+    /// <summary>
     /// Controlのフォントの一括置換用
     /// </summary>
     public static class FontReplacer
     {
+        /// <summary>
+        /// 置換する文字フォント。
+        /// 全体がこのフォントで置換される。あとでもう少し細かな置換が出来るようにリファクタリングする。
+        /// </summary>
+        const string replace_fontname = "Hiragino Kaku Gothic Pro W3";
+
         /// <summary>
         /// 引数で与えられたFontに対して、必要ならばこの環境用のフォントを生成して返す。
         /// FontUtility.ReplaceFont()から呼び出される。
@@ -194,17 +249,25 @@ namespace MyShogi.Model.Dependent
             // なぜか、OriginalFontNameがnullのことがある。MenuStrip.Items.Fontとかそう。そのときはf.Nameを参照しないといけない。
             var name = f.OriginalFontName ?? f.Name;
             var size = f.Size;
+
+
             switch (name)
             {
+#if false
                 case "MS Gothic":
                 case "MS UI Gothic":
                 case "ＭＳ ゴシック":
                 case "MSPゴシック":
                 case "Yu Gothic UI":
-                    return new Font("Hiragino Kaku Gothic Pro W3", size);
+                case "Microsoft Sans Serif":
+#endif
+                // 置換済みなら置換しない。それ以外は全部置換する。
+                case replace_fontname:
+                    return f;
 
                 default:
-                    return f;
+                    return new Font(replace_fontname, size);
+
             }
         }
     }

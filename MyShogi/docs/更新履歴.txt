@@ -3,6 +3,51 @@
 ■　2018/09/30
 
 
+- macOS対応作業その3
+  - GDIPlus.CheckStatusで落ちる。
+  - pngの表示で落ちている模様。
+    Cannot load PNG in C# on Mac OSX running Mono : https://stackoverflow.com/questions/4674453/cannot-load-png-in-c-sharp-on-mac-osx-running-mono
+  - monoではPNG読み込み、非対応？
+  - image/ を image_/ とrenameしても同じところで落ちるのでPNGの問題ではなく、フォントサイズ0で描画とかそんな問題かも。
+  - ただ、どのテキスト描画でそうなるのか、スタックトレース見てもわからん…。
+  - いったんフォントを生成してから置換する手法は、この生成のときにフォントの計測で持っていないフォントだから
+  フォントサイズが0になってしまい、ResumeLayout()の瞬間、GDIPlusでの描画で落ちている可能性が…。
+  - Fontの置換ちゃんとやったほうが良い＆もう少し洗練された書き方をしたほうが良い。
+  - Font、とりま手ですべて置き換えたけどまだ落ちる。これFont絡みだけではないのか？
+
+  - GDIPlus.CheckStatus() [0x00098]で落ちるのは..  https://github.com/mono/mono/issues/10062
+    monoのmcs/classのソースコード読んだほうが早いな、これ。
+
+      https://github.com/mono/mono/blob/master/mcs/class/System.Drawing/System.Drawing/gdipFunctions.cs#227
+
+			  case Status.InvalidParameter:
+				  msg = Locale.GetText ("A null reference or invalid value was found [GDI+ status: {0}]", status);
+				  throw new ArgumentException (msg);
+
+      ああ、CheckStatus()は、エラーのStatusを適切な例外に変換して投げるだけのメソッドか。
+
+      https://github.com/mono/mono/blob/master/mcs/class/System.Drawing/System.Drawing/Graphics.cs#L1937
+
+			RectangleF boundingBox = new RectangleF ();
+
+			Status status = GDIPlus.GdipMeasureString (nativeObject, text, text.Length, font.NativeObject, 
+				ref layoutRect, stringFormat, out boundingBox, null, null);
+			GDIPlus.CheckStatus (status);
+
+  - VS Code + Mono Debug入れれば、デバッガーで追いかけられるようだ。これを用いる。
+    "Microsoft Sans Serif"フォントを使っているところがあって、そこで落ちてた。
+    - 見知らぬフォントが1つでもあると落ちるとは…。
+  - 対局盤面は表示されるようになった。駒もUI上から動かせるし、エンジン選択も動いている。
+  - 盤面の合成に失敗しているの、なんでなんだろう…。24bppRgbに32bppArgbのImageから転送するコード、実装されてないかな。
+    - そうでもなさげ。
+    - alphaが無視されて転送されてる。なんぞこれ…。
+      - C# アルファ透過が指定されている画像をビットマップに書くと汚くなる。 : http://www.atmarkit.co.jp/bbs/phpBB/viewtopic.php?topic=36481&forum=7
+        - この問題に酷似している。
+      - C# Graphics.DrawImage() transparent png background : https://stackoverflow.com/questions/35035368/c-sharp-graphics-drawimage-transparent-png-background
+        - この人と同じ問題。未解決。
+    - DrawImageHelper実装。自前でコピーすることにした。
+
+
 - macOS対応作業その2
   - Clipboardクラス、Mac用を用意した。
 
