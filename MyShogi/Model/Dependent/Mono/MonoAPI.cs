@@ -5,6 +5,11 @@
 // 現在、Macで動くように作業中。
 // Linux環境は適宜修正すべし。
 
+// 定義済みシンボル
+// ・MacかLinux環境 → MONO
+// ・macOS →　MACOS
+// ・Linux →　LINUX
+
 using System;
 using System.Drawing;
 using MyShogi.Model.Shogi.EngineDefine;
