@@ -105,7 +105,13 @@ namespace MyShogi.Model.Common.Process
                 // このタイミングで受信していたメッセージに対して、
                 // callbackを呼び出す。
                 foreach (var line in read_lines)
+                {
+                    // 先にログに出力しておかないと、どのresponseを受信したことにより
+                    // 例外が発生したのかがわからなくなる。
+                    Log.Write(LogInfoType.ReceiveCommandFromEngine, line, pipe_id);
+
                     CommandReceived(line);
+                }
                 read_lines.Clear();
             }
         }
