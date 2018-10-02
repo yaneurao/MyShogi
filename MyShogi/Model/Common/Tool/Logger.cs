@@ -86,22 +86,38 @@ namespace MyShogi.Model.Common.Tool
 
     /// <summary>
     /// メモリ上に記録するタイプのログ
+    ///
+    /// メモリ上のLogを1万行ぐらいまでの保存とする。
+    /// - これでも10局分ぐらいは保存できるはず。
+    /// - 1局100KB程度(1000行程度)なので1万局で1000万行、1GBぐらいになる。
+    /// - 連続対局中、Hashサイズの変更は出来ないので(Hashの再初期化をしないので)、メモリギリギリの状態からだと1GBはきつすぎる。
     /// </summary>
     public class MemoryLog : ILog
     {
+        /// <summary>
+        /// 保存する行数の上限。
+        ///
+        /// ただし、デバッグウインドウを開いている間は、この行数を超えて表示される。
+        /// (これはデバッグウインドウ側で保持しているQueueに追加されていくため)
+        /// </summary>
+        public int MaxLine { get; set; } = 10000;
+
         public void Write(LogInfoType logType, string log , int pipe_id)
         {
             var f_log = LogHelpper.Format(logType, log , pipe_id);
 
             lock (lock_object)
             {
-                LogList.Add(f_log);
+                LogList.Enqueue(f_log);
+
+                // 上限行数を超えていたら末尾のものを取り除く。
+                if (LogList.Count > MaxLine)
+                    LogList.Dequeue();
             }
 
             // イベントハンドラが設定されていればcallbackしたいが、lock解除してからでないとdead lockになる。
 
-            if (ListAdded != null)
-                ListAdded(f_log);
+            ListAdded?.Invoke(f_log);
         }
 
         /// <summary>
@@ -110,12 +126,12 @@ namespace MyShogi.Model.Common.Tool
         /// </summary>
         /// <param name="h"></param>
         /// <param name="list"></param>
-        public void AddHandler(ListAddedEventHandler h , ref List<string> list)
+        public void AddHandler(ListAddedEventHandler h , ref Queue<string> list)
         {
             lock (lock_object)
             {
                 ListAdded += h;
-                list = new List<string>(LogList); // その時点のlistをCloneして返す
+                list = new Queue<string>(LogList); // その時点のlistをCloneして返す
             }
         }
 
@@ -140,8 +156,9 @@ namespace MyShogi.Model.Common.Tool
 
         /// <summary>
         /// 書き出されたログ
+        /// 上限を1万行ぐらいに制限したいので、Queue構造にする。
         /// </summary>
-        private List<string> LogList { get; set; } = new List<string>();
+        private Queue<string> LogList { get; set; } = new Queue<string>();
 
         /// <summary>
         /// LogListが1行追加になった時に呼び出されるイベントハンドラ
