@@ -364,16 +364,16 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 new EnginePreset("Ｓ１級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","2281"),
-                        new EngineOption("SkillLevel","3"),
+                        new EngineOption("NodesLimit","17800"),         // [2018/10/03 19:20] , 454-5-541 R+30
+                        new EngineOption("SkillLevel","4"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","4"),
                 }),
                 new EnginePreset("Ｓ２級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","1534"),
-                        new EngineOption("SkillLevel","3"),
+                        new EngineOption("NodesLimit","8000"),          // [2018/10/03 22:10] , 503-6-491 R-4
+                        new EngineOption("SkillLevel","4"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","4"),
                 }),

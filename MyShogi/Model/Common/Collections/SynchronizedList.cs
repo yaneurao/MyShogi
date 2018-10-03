@@ -36,7 +36,8 @@ namespace MyShogi.Model.Common.Collections
         }
 
         /// <summary>
-        /// 内部的に保持しているListの実体
+        /// 内部的に保持しているListの実体。
+        /// 直接外部からアクセスしてはならない。
         /// </summary>
         private List<T> list = new List<T>();
 

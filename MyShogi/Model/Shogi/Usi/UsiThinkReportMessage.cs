@@ -77,5 +77,10 @@ namespace MyShogi.Model.Shogi.Usi
         /// データ本体。
         /// </summary>
         public object data;
+
+        /// <summary>
+        /// 次の局面のデータが来ているので表示上、このデータをskipして良いのかのフラグ。
+        /// </summary>
+        public bool skipDisplay;
     }
 }

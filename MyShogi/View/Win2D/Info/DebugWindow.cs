@@ -35,6 +35,9 @@ namespace MyShogi.View.Win2D
             memory_log = log;
 
             UpdateListBox();
+
+            // すぐに入力出来るようにフィルター用のテキストボックスにフォーカスを移動させておく。
+            ActiveControl = textBox1;
         }
 
         /// <summary>

@@ -34,6 +34,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             //displayNames = new string[2];
 
             // subfolderを作る設定になっているなら、それを取得する。
+            // 途中で棋譜ファイルの保存をする/しないを切り替える可能性はあるので、
+            // とりあえずここでフォルダ名は確定させておく必要がある。
             kifuSubfolder = TheApp.app.Config.GameResultSetting.CreateSubfolderOnContinuousGame ?
                 DateTime.Now.ToString("yyyyMMddHHmmss") + Path.DirectorySeparatorChar :
                 null;

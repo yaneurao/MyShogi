@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.Model.Common.Collections;
@@ -74,9 +75,51 @@ namespace MyShogi.View.Win2D
         {
             var queue = thinkQuque.GetList();
 
-            // TODO : これで処理が間に合わないなら、次のSetRootSfenメッセージまでメッセージをskipする処理が必要。
-
             SuspendLayout();
+#if false
+            // 子コントロールも明示的にSuspendLayout()～ResumeLayout()しないといけないらしい。
+            // Diagnosing Performance Problems with Layout : https://blogs.msdn.microsoft.com/jfoscoding/2005/03/04/suggestions-for-making-your-managed-dialogs-snappier/
+            foreach (var c in All.Int(2))
+                ConsiderationInstance(c).SuspendLayout();
+
+            foreach (var e in queue)
+                DispatchThinkReportMessage(e);
+
+            foreach (var c in All.Int(2))
+                ConsiderationInstance(c).ResumeLayout();
+#endif
+            // →　これでも処理、間に合わないぎみ
+
+            // 要らない部分をskipDisplay == trueにしてしまう。
+            // j : 前回のNumberOfInstanceの位置(ここ以降しか見ない)
+
+            for(int i = 0 , j = 0 ; i < queue.Count ; ++i)
+            {
+                var e = queue[i];
+                switch(e.type)
+                {
+                    case UsiEngineReportMessageType.NumberOfInstance:
+                        // ここ以前のやつ要らん。
+                        for (var k = j; k < i; ++k)
+                            queue[k].skipDisplay = true;
+                        j = i;
+                        break;
+
+                    case UsiEngineReportMessageType.SetRootSfen:
+                        // rootが変わるので、以前のrootに対する思考内容は不要になる。
+                        for (var k = j; k < i; ++k)
+                        {
+                            var q = queue[k];
+                            var t = q.type;
+                            if ((t == UsiEngineReportMessageType.SetRootSfen || t == UsiEngineReportMessageType.UsiThinkReport)
+                                && q.number == e.number
+                                )
+                                q.skipDisplay = true;
+                        }
+                        j = i;
+                        break;
+                }
+            }
 
             foreach (var e in queue)
                 DispatchThinkReportMessage(e);
@@ -94,9 +137,11 @@ namespace MyShogi.View.Win2D
             switch (message.type)
             {
                 case UsiEngineReportMessageType.NumberOfInstance:
-                    // 非表示なので検討ウィンドウが表示されているなら消しておく。
-                    Visible = message.number != 0;
-                    SetEngineInstanceNumber(message.number);
+                    if (!message.skipDisplay)
+                    {
+                        // 非表示なので検討ウィンドウが表示されているなら消しておく。
+                        Visible = message.number != 0;
+                        SetEngineInstanceNumber(message.number);
 
 #if false
                     // このメッセージに対して、継ぎ盤の局面を初期化したほうが良いのでは…。
@@ -104,29 +149,36 @@ namespace MyShogi.View.Win2D
                     {
                         rootSfen = BoardType.NoHandicap.ToSfen()
                     };
-                    // →　このメッセージの直後にrootSfenが来るはずだから、それに応じて初期化するようにする
+                    // →　このメッセージの直後にrootSfenが来るはずだから、それに応じて、その局面で初期化するようにする
 #endif
-                    must_init_miniboard = true;
-
+                        must_init_miniboard = true;
+                    }
                     break;
 
                 case UsiEngineReportMessageType.SetGameMode:
-                    var gameMode = (GameModeEnum)message.data;
-                    var b = (gameMode == GameModeEnum.ConsiderationWithEngine);
+                    if (!message.skipDisplay)
+                    {
+                        var gameMode = (GameModeEnum)message.data;
+                        var b = (gameMode == GameModeEnum.ConsiderationWithEngine);
 
-                    // MultiPV用の表示に
-                    ConsiderationInstance(0).ViewModel.EnableMultiPVComboBox = b;
-                    ConsiderationInstance(0).SortRanking = b;
+                        // MultiPV用の表示に
+                        ConsiderationInstance(0).ViewModel.EnableMultiPVComboBox = b;
+                        ConsiderationInstance(0).SortRanking = b;
+                    }
                     break;
 
                 case UsiEngineReportMessageType.SetEngineName:
-                    var engine_name = message.data as string;
-                    ConsiderationInstance(message.number).EngineName = engine_name;
+                    if (!message.skipDisplay)
+                    {
+                        var engine_name = message.data as string;
+                        ConsiderationInstance(message.number).EngineName = engine_name;
+                    }
                     break;
 
                 case UsiEngineReportMessageType.SetRootSfen:
                     var sfen = message.data as string;
-                    ConsiderationInstance(message.number).RootSfen = sfen;
+                    if (!message.skipDisplay)
+                        ConsiderationInstance(message.number).RootSfen = sfen;
 
                     // まだミニ盤面の初期化がなされていないならば。
                     if (must_init_miniboard)
@@ -140,8 +192,14 @@ namespace MyShogi.View.Win2D
                     break;
 
                 case UsiEngineReportMessageType.UsiThinkReport:
-                    var thinkReport = message.data as UsiThinkReport;
-                    ConsiderationInstance(message.number).AddThinkReport(thinkReport);
+
+                    if (!message.skipDisplay)
+                    {
+                        var thinkReport = message.data as UsiThinkReport;
+                        ConsiderationInstance(message.number).AddThinkReport(thinkReport);
+                    }
+                    // TODO : ここで評価値グラフのためのデータ構造体の更新を行うべき。
+
                     break;
             }
         }
@@ -153,7 +211,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private SynchronizedList<UsiThinkReportMessage> thinkQuque = new SynchronizedList<UsiThinkReportMessage>();
 
-        #endregion
+#endregion
 
         // -- properties
 
@@ -234,32 +292,6 @@ namespace MyShogi.View.Win2D
         {
             InitSpliter2Position();
         }
-
-#if false
-        // closingイベント、あとでちゃんと書く。
-        private void EngineConsiderationDialog_FormClosing(object sender, FormClosingEventArgs e)
-        {
-
-            //TheApp.app.MessageShow("この検討ウィンドウの表示/非表示は、メニューの「ウィンドウ」の設定に依存します。×ボタンで閉じることは出来ません。");
-            // MessageShow()は、モーダルなので、ここに制御が戻ってこれずhang upしてしまう。
-
-            if (!TheApp.app.Exiting)
-            {
-                // cancelして非表示にして隠しておく。
-                e.Cancel = true;
-                Visible = false;
-
-                // この瞬間に内容をクリアしておかないと再表示した時に前のものが残っていて紛らわしい。
-                foreach (var i in All.Int(2))
-                {
-                    ConsiderationInstance(i).ClearHeader();
-                    ConsiderationInstance(i).ClearItems();
-                }
-
-                ViewModel.RaisePropertyChanged("CloseButtonClicked");
-            }
-        }
-#endif
 
         // 以下 ミニ盤面用のボタン
 
