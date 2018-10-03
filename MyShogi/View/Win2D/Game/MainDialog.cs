@@ -2607,6 +2607,7 @@ namespace MyShogi.View.Win2D
 
                                 var item1 = new ToolStripMenuItem();
                                 item1.Text = "デバッグウィンドウの表示(&D)"; // Debug Window
+                                item1.ShortcutKeys = Keys.Control | Keys.D;
                                 item1.Click += (sender, e) =>
                                 {
                                     if (debugDialog != null)

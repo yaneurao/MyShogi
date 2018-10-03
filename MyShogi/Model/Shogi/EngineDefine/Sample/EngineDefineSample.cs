@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MyShogi.Model.Common.String;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MyShogi.Model.Shogi.EngineDefine
@@ -283,17 +284,22 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("MultiPv","1"),
                 }),
 
-                // 以下、調整中
+                // 以下、SkillLevelを用いた人間らしい棋力バランスのプリセット
+
+                // スレッド数を増やすと探索が全体的に浅くなる→SkillLevelのmove_to_pickに達しなくなる→単なるMultiPVになる→つよい
+                // みたいな流れはあるようだ。これは困った。スレッド数を2に固定する。
 
                 new EnginePreset("Ｓ九段" , new EngineOption[] {
-                        //new EngineOption("AutoThread_","false"),      // node数が多いので自動スレッド割り当て
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","39959"),
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","4"),
                 }),
                 new EnginePreset("Ｓ八段" , new EngineOption[] {
-//                        new EngineOption("AutoThread_","false"),      // node数が多いので自動スレッド割り当て
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","2"),
                         new EngineOption("NodesLimit","39959"),
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
@@ -334,7 +340,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 new EnginePreset("Ｓ三段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","65000"),         // [2018/10/03 00:00]
+                        new EngineOption("NodesLimit","66000"),         // [2018/10/03 06:20] , 431-8-366 R-28
                         new EngineOption("SkillLevel","6"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","4"),
@@ -342,7 +348,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 new EnginePreset("Ｓ二段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","30000"),         // [2018/10/01 22:50]
+                        new EngineOption("NodesLimit","30000"),         // [2018/10/03 03:30] , 316-6-319 R+2
                         new EngineOption("SkillLevel","6"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","4"),
@@ -350,8 +356,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 new EnginePreset("Ｓ初段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","3450"),
-                        new EngineOption("SkillLevel","3"),
+                        new EngineOption("NodesLimit","22000"),          // [2018/10/03 02:15] , 281-4-268 R+8
+                        new EngineOption("SkillLevel","5"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPv","4"),
                 }),
@@ -485,11 +491,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 {
                     var preset = preset_default_array[i];
 
-                    preset.Description = preset.Name + "ぐらいの強さになるように棋力を調整したものです。持ち時間、PCのスペックにほとんど依存しません。" +
-                        "短い持ち時間だと切れ負けになるので持ち時間無制限での対局をお願いします。"
-                        + (preset.Name.StartsWith("Ｓ") ? "棋力名が「Ｓ」で始まるは、序盤が弱いのに終盤だけ強いということはなく、まんべんなく同じ強さになるように調整されています。" +
-                        "思考時間は「Ｓ」のつかない同じ段位のものの10倍ぐらいの思考時間が必要となります。" : null)
-                        ;
+                    if (preset.Name.IsEmpty())
+                        preset.Description = null;
+                    else if (!preset.Name.StartsWith("Ｓ"))
+                        preset.Description = preset.Name + "ぐらいの強さになるように棋力を調整したものです。持ち時間、PCのスペックにほとんど依存しません。" +
+                            "短い持ち時間だと切れ負けになるので持ち時間無制限での対局をお願いします。";
+                    else
+                        preset.Description = preset.Name.Substring(1) + "ぐらいの強さになるように棋力を調整したものです。" +
+                            "棋力名が「Ｓ」で始まるは、序盤が弱いのに終盤だけ強いということはなく、まんべんなく同じ強さになるように調整されています。" +
+                            "思考時間は「Ｓ」のつかない同じ段位のものの10倍ぐらい必要となります。";
 
                         // + "また、段・級の設定は、将棋倶楽部24基準なので町道場のそれより少し辛口の調整になっています。";
                         // あえて書くほどでもないか…。
