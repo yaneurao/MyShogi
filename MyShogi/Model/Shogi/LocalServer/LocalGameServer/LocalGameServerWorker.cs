@@ -1253,16 +1253,17 @@ namespace MyShogi.Model.Shogi.LocalServer
         {
             try
             {
+                var lastColor = Position.sideToMove;
+
+                // 1) 勝敗のカウンターを加算
+                // (これは棋譜の自動保存が無効であってもなされなくてはならない)
+
+                continuousGame.IncResult(lastMove, lastColor);
+
                 // この対局棋譜を保存しなければならないなら保存する。
                 var setting = TheApp.app.Config.GameResultSetting;
                 if (!setting.AutomaticSaveKifu)
                     return;
-
-                var lastColor = Position.sideToMove;
-
-                // 1) 勝敗のカウンターを加算
-
-                continuousGame.IncResult(lastMove, lastColor);
 
                 // 2) 棋譜ファイルを保存する。
 
