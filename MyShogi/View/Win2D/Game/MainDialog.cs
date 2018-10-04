@@ -264,20 +264,36 @@ namespace MyShogi.View.Win2D
             var dockManager = TheApp.app.Config.KifuWindowDockManager;
             dockManager.DockState = dockState; // 次回起動時のためにここに保存しておく。
 
+            // 何にせよ、いったん解除する。
             if (kifuDockWindow != null)
             {
                 kifuDockWindow.RemoveControl();
                 kifuDockWindow.Dispose();
                 kifuDockWindow = null;
             }
+            if (gameScreenControl1.Controls.Contains(kifuControl))
+                gameScreenControl1.Controls.Remove(kifuControl);
+
+            // dockManager.Visibleは反映させないと駄目。
+            if (!dockManager.Visible)
+            {
+                // フォーカス移動されてると困るので戻す。
+                this.Focus();
+                return;
+            }
 
             if (dockState == DockState.InTheMainWindow)
             {
-                if (!gameScreenControl1.Controls.Contains(kifuControl))
-                    gameScreenControl1.Controls.Add(kifuControl);
+                gameScreenControl1.Controls.Add(kifuControl);
                 gameScreenControl1.ResizeKifuControl(); // フォームに埋めたあとリサイズする。
 
-            } else {
+                // 細長い駒台のときはVisibleにしないのでここで制御しない。
+
+                // TODO : メインウインドウを再描画しないと棋譜ウインドウが出てこない。何か初期化忘れている？
+                Invalidate();
+            }
+            else
+            {
 
                 kifuDockWindow = new DockWindow();
                 kifuDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
@@ -290,8 +306,6 @@ namespace MyShogi.View.Win2D
                 // 結論的には、OwnerをMainWindowにして、Close()のキャンセル処理はしないようにする。
 
                 kifuDockWindow.ViewModel.Caption = "棋譜ウインドウ";
-                if (gameScreenControl1.Controls.Contains(kifuControl))
-                    gameScreenControl1.Controls.Remove(kifuControl);
 
                 // デフォルト位置とサイズにする。
                 if (dockManager.Size.IsEmpty)
@@ -335,13 +349,24 @@ namespace MyShogi.View.Win2D
                 engineConsiderationDockWindow.Dispose();
                 engineConsiderationDockWindow = null;
             }
+            if (this.Controls.Contains(engineConsiderationMainControl))
+            {
+                this.Controls.Remove(engineConsiderationMainControl);
+                ResizeConsiderationControl(); // フォームに埋めたあとリサイズする。
+            }
+
+            // dockManager.Visibleは反映させないと駄目。
+            if (!dockManager.Visible)
+            {
+                // フォーカス移動されてると困るので戻す。
+                this.Focus();
+                return;
+            }
 
             if (dockState == DockState.InTheMainWindow)
             {
-                if (!gameScreenControl1.Controls.Contains(engineConsiderationMainControl))
-                {
-                    this.Controls.Add(engineConsiderationMainControl);
-                }
+                this.Controls.Add(engineConsiderationMainControl);
+                ResizeConsiderationControl(); // フォームに埋めたあとリサイズする。
             }
             else
             {
@@ -350,8 +375,6 @@ namespace MyShogi.View.Win2D
                 engineConsiderationDockWindow.Owner = this;
 
                 engineConsiderationDockWindow.ViewModel.Caption = "検討ウインドウ";
-                if (this.Controls.Contains(engineConsiderationMainControl))
-                    this.Controls.Remove(engineConsiderationMainControl);
 
                 // デフォルト位置とサイズにする。
                 if (dockManager.Size.IsEmpty)
@@ -369,14 +392,13 @@ namespace MyShogi.View.Win2D
 
                 // Showで表示とサイズが確定してからdockManagerを設定しないと、
                 // Showのときの位置とサイズがdockManagerに記録されてしまう。
-                engineConsiderationMainControl.Visible = true; // 細長い駒台モードのため非表示にしていたかも知れないので。
-
+                engineConsiderationMainControl.Visible = true;
+                
                 engineConsiderationDockWindow.AddControl(engineConsiderationMainControl, this, dockManager);
                 dockManager.InitDockWindowLocation(this, engineConsiderationDockWindow);
 
                 engineConsiderationDockWindow.Show();
             }
-            ResizeConsiderationControl(); // フォームに埋めたあとリサイズする。
         }
 
         /// <summary>
@@ -397,7 +419,7 @@ namespace MyShogi.View.Win2D
             var config = TheApp.app.Config;
             var dockManager = config.EngineConsiderationWindowDockManager;
 
-            if (dockManager.DockState == DockState.InTheMainWindow)
+            if (dockManager.DockState == DockState.InTheMainWindow && dockManager.Visible /* 非表示のときはないものとして扱う */)
             {
                 // メインウインドウに埋め込み時の検討ウインドウ高さの倍率
                 float height_rate = 1 + 0.25f * config.ConsiderationWindowHeightType;
@@ -2329,11 +2351,9 @@ namespace MyShogi.View.Win2D
 
                         {
                             var item = new ToolStripMenuItem();
-                            item.Text = "再表示(&V)"; // visible // 
+                            item.Text = dock.Visible ? "非表示(&V)" : "再表示(&V)"; // visible // 
                             item.ShortcutKeys = Keys.Control | Keys.R; // EngineConsiderationWindowのR。Eが盤面編集のEditのEで使ってた…。
-                            item.Enabled = engineConsiderationDockWindow == null ? false :
-                                (!engineConsiderationDockWindow.Visible /* 解体されてる */ && dock.DockState != DockState.InTheMainWindow);
-                            item.Click += (sender, e) => { dock.RaisePropertyChanged("DockState", dock.DockState); };
+                            item.Click += (sender, e) => { dock.Visible ^= true; dock.RaisePropertyChanged("DockState", dock.DockState); };
                             item_.DropDownItems.Add(item);
                         }
 
@@ -2440,11 +2460,9 @@ namespace MyShogi.View.Win2D
 
                         {
                             var item = new ToolStripMenuItem();
-                            item.Text = "再表示(&V)"; // visible // 
+                            item.Text = dock.Visible ? "非表示(&V)" : "再表示(&V)"; // visible // 
                             item.ShortcutKeys = Keys.Control | Keys.K; // KifuWindow
-                            item.Enabled = kifuDockWindow == null ? false :
-                                (!kifuDockWindow.Visible /* 解体されてる */ && dock.DockState != DockState.InTheMainWindow);
-                            item.Click += (sender, e) => { dock.RaisePropertyChanged("DockState", dock.DockState); };
+                            item.Click += (sender, e) => { dock.Visible ^= true;  dock.RaisePropertyChanged("DockState", dock.DockState); };
                             item_.DropDownItems.Add(item);
                         }
 

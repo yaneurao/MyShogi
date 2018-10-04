@@ -93,6 +93,17 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        /// <summary>
+        /// サブウインドウを表示するとき、Activeになられても困るので非アクティブで表示されるウインドウを出す。
+        /// これは、ShowWithoutActivationというプロパティをoverrideすれば良い。
+        ///
+        /// cf. 非アクティブのままサブ・フォームを表示するには？［2.0のみ、C#、VB］ : http://www.atmarkit.co.jp/fdotnet/dotnettips/494shownonactive/shownonactive.html
+        ///
+        /// つねにActiveになられては困るので MA_NOACTIVATE を指定する必要があるか…。
+        /// →　これ大変だな…。キーボードショートカットが利くようにすべきか…。
+        /// </summary>
+        protected override bool ShowWithoutActivation { get { return true; } }
+
         private void InitViewModel()
         {
             ViewModel.AddPropertyChangedHandler("Caption", (args) => { Text = (string)args.value; });
@@ -147,7 +158,16 @@ namespace MyShogi.View.Win2D
                 Controls.Remove(ViewModel.Control);
                 ViewModel.Control = null;
 
-                Visible = false; // これにしてから、Menuの更新をすれば、メニューの棋譜ウインドウの「再表示」が有効になる。
+                //Visible = false; // これにしてから、Menuの更新をすれば、メニューの棋譜ウインドウの「再表示」が有効になる。
+                // →筋が良くない。DockManager.Visibleのほうを使う。
+                var dockManager = ViewModel.DockManager;
+                dockManager.Visible = false;
+
+                // 親側にフォーカスを戻しておかないとキーボードショートカットが利かなくなってしまう。
+
+                //if (Owner != null)
+                //    Owner.Focus();
+
                 ViewModel.RaisePropertyChanged("MenuUpdated");
             }
         }

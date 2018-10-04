@@ -62,6 +62,12 @@ namespace MyShogi.Model.Common.Tool
         public Point LocationOnFloating { get; set; }
 
         /// <summary>
+        /// 表示/非表示の切り替え。非表示状態のときは、これをfalseにする。
+        /// </summary>
+        [DataMember]
+        public bool Visible { get; set; } = true;
+
+        /// <summary>
         /// ウインドウのサイズ
         ///
         /// Stateの状態に対して。
