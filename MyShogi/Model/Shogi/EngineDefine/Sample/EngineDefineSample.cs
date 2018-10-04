@@ -292,8 +292,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 new EnginePreset("Ｓ九段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","39959"),
-                        new EngineOption("SkillLevel","3"),
+                        new EngineOption("NodesLimit","1500000"),       // 調整中
+                        new EngineOption("SkillLevel","13"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPV","1"),
                 }),
@@ -308,7 +308,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 new EnginePreset("Ｓ七段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","500000"),        // [2018/10/02 16:40]
+                        new EngineOption("NodesLimit","400000"),        // 再調整中
                         new EngineOption("SkillLevel","11"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPV","1"),
