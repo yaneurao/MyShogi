@@ -27,7 +27,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                             // スレッドはエンジンの詳細設定に従う
                             new EngineOption("NodesLimit","0"),
                             new EngineOption("DepthLimit","0"),
-                            new EngineOption("MultiPv","1"),
+                            new EngineOption("MultiPV","1"),
 
                         // 他、棋力に関わる部分は設定すべき…。
                 }) ,
@@ -115,21 +115,21 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","2165579"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset( "十一段" , new EngineOption[] {
                         //new EngineOption("AutoThread_","true"), // 自動スレッドでのスレッド割り当て
                         new EngineOption("NodesLimit","1099707"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset( "十段" , new EngineOption[] {
                         //new EngineOption("AutoThread","true"), // 自動スレッドでのスレッド割り当て
                         new EngineOption("NodesLimit","558444"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset( "九段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -137,7 +137,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","283584"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("八段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -145,7 +145,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","144007"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("七段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -153,7 +153,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","73475"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("六段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -161,7 +161,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","39959"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("五段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -169,7 +169,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","22885"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("四段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -177,7 +177,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","13648"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("三段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -185,7 +185,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","8410"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("二段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -193,7 +193,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","5325"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("初段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -201,7 +201,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","3450"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("１級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -209,7 +209,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","2281"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("２級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -217,7 +217,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","1534"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("３級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -225,7 +225,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","1048"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("４級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -233,7 +233,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","726"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("５級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -241,7 +241,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","509"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("６級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -249,7 +249,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","361"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("７級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -257,7 +257,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","258"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("８級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -265,7 +265,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","187"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("９級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -273,7 +273,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","136"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("10級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -281,7 +281,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","100"),
                         new EngineOption("SkillLevel","20"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","1"),
+                        new EngineOption("MultiPV","1"),
                 }),
 
                 // 以下、SkillLevelを用いた人間らしい棋力バランスのプリセット
@@ -295,7 +295,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","39959"),
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ八段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -303,7 +303,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","1200000"),       // [2018/10/03 15:30] , 257-5-251 R-4
                         new EngineOption("SkillLevel","11"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ七段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -311,31 +311,31 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","500000"),        // [2018/10/02 16:40]
                         new EngineOption("SkillLevel","11"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ六段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","230000"),        // [2018/10/02 01:00]
+                        new EngineOption("NodesLimit","230000"),        // [2018/10/04 21:00] , 521-13-466 R-19
                         new EngineOption("SkillLevel","9"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ五段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","130000"),        // [2018/10/02 13:20]
+                        new EngineOption("NodesLimit","140000"),        // [2018/10/04 17:10] , 512-10-478 R+11
                         new EngineOption("SkillLevel","8"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ四段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","150000"),         // [2018/10/02 17:00]
+                        new EngineOption("NodesLimit","150000"),         // [2018/10/04 11:50] , 503-10-487 R-5
                         new EngineOption("SkillLevel","7"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ三段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -343,7 +343,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","66000"),         // [2018/10/03 06:20] , 431-8-366 R-28
                         new EngineOption("SkillLevel","6"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ二段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -351,7 +351,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","30000"),         // [2018/10/03 03:30] , 316-6-319 R+2
                         new EngineOption("SkillLevel","6"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ初段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -359,7 +359,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","22000"),          // [2018/10/03 02:15] , 281-4-268 R+8
                         new EngineOption("SkillLevel","5"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ１級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -367,7 +367,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","17800"),         // [2018/10/03 19:20] , 454-5-541 R+30
                         new EngineOption("SkillLevel","4"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ２級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
@@ -375,112 +375,82 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         new EngineOption("NodesLimit","8000"),          // [2018/10/03 22:10] , 503-6-491 R-4
                         new EngineOption("SkillLevel","4"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ３級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","1048"),
+                        new EngineOption("NodesLimit","8000"),          // [2018/10/04 01:00] , 505-4-491 R-5
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ４級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","726"),
+                        new EngineOption("NodesLimit","5500"),          // [2018/10/04 02:10] , 489-7-504 R+5
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ５級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","509"),
+                        new EngineOption("NodesLimit","3500"),          // [2018/10/04 03:00] , 485-4-511 R+9
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ６級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","361"),
+                        new EngineOption("NodesLimit","2200"),          // [2018/10/04 12:20] , 486-2-512 R+9
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ７級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","258"),
+                        new EngineOption("NodesLimit","1500"),          // [2018/10/04 13:10] , 494-15-491 R-1
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ８級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","187"),
+                        new EngineOption("NodesLimit","1100"),          // [2018/10/04 14:20] , 499-12-489 R-3
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ９級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","136"),
+                        new EngineOption("NodesLimit","920"),           // [2018/10/04 17:30] , 497-13-490 R-2
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ10級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","100"),
+                        new EngineOption("NodesLimit","800"),           // [2018/10/04 18:30] , 486-19-495 R+3
                         new EngineOption("SkillLevel","3"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
                 new EnginePreset("Ｓ11級" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","100"),
-                        new EngineOption("SkillLevel","3"),
+                        new EngineOption("NodesLimit","1000"),          // [2018/10/04 20:30] , 733-4-363 R+22 (S10級との対局結果)
+                        new EngineOption("SkillLevel","0"),
                         new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
+                        new EngineOption("MultiPV","1"),
                 }),
-                new EnginePreset("Ｓ12級" , new EngineOption[] {
-                        new EngineOption("AutoThread_","false"),
-                        new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","100"),
-                        new EngineOption("SkillLevel","3"),
-                        new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
-                }),
-                new EnginePreset("Ｓ13級" , new EngineOption[] {
-                        new EngineOption("AutoThread_","false"),
-                        new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","100"),
-                        new EngineOption("SkillLevel","3"),
-                        new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
-                }),
-                new EnginePreset("Ｓ14級" , new EngineOption[] {
-                        new EngineOption("AutoThread_","false"),
-                        new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","100"),
-                        new EngineOption("SkillLevel","3"),
-                        new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
-                }),
-                new EnginePreset("Ｓ15級" , new EngineOption[] {
-                        new EngineOption("AutoThread_","false"),
-                        new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","100"),
-                        new EngineOption("SkillLevel","3"),
-                        new EngineOption("DepthLimit","0"),
-                        new EngineOption("MultiPv","4"),
-                }),
+                // NodesLimit = 100、SkillLevel = 0にしてもS11級と強さがほぼ変わらない。(むしろR+50ぐらい強くなる)
+                // 原因はともかく、SkillLevelで調整する以上、これ以上の弱さにすることは出来ない。
 
             };
 

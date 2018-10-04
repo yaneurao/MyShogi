@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.Model.Common.Collections;
@@ -22,6 +23,9 @@ namespace MyShogi.View.Win2D
 
             InitSpliter();
             InitEngineConsiderationControl();
+
+            // タイマー開始
+            //lastDispatchTime.Start();
         }
 
         #region ViewModel
@@ -67,64 +71,82 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 最後のDispatchした時刻。
+        /// </summary>
+        //private Stopwatch lastDispatchTime = new Stopwatch();
+
+        /// <summary>
         /// [UI thread] : 一定時間ごとに(MainDialogなどのidle状態のときに)このメソッドを呼び出す。
         ///
         /// queueに積まれているUsiThinkReportMessageを処理する。
         /// </summary>
         public void OnIdle()
         {
-            var queue = thinkQuque.GetList();
-
-            SuspendLayout();
 #if false
-            // 子コントロールも明示的にSuspendLayout()～ResumeLayout()しないといけないらしい。
-            // Diagnosing Performance Problems with Layout : https://blogs.msdn.microsoft.com/jfoscoding/2005/03/04/suggestions-for-making-your-managed-dialogs-snappier/
-            foreach (var c in All.Int(2))
-                ConsiderationInstance(c).SuspendLayout();
-
-            foreach (var e in queue)
-                DispatchThinkReportMessage(e);
-
-            foreach (var c in All.Int(2))
-                ConsiderationInstance(c).ResumeLayout();
+            // 前回dispatch(≒表示)してから200[ms]以上経過するまでメッセージをbufferingしておく。
+            // (このメソッドが呼び出されるごとに1つずつメッセージが増えているような状況は好ましくないため)
+            if (lastDispatchTime.ElapsedMilliseconds < 200)
+                return;
 #endif
-            // →　これでも処理、間に合わないぎみ
 
-            // 要らない部分をskipDisplay == trueにしてしまう。
-            // j : 前回のNumberOfInstanceの位置(ここ以降しか見ない)
-
-            for(int i = 0 , j = 0 ; i < queue.Count ; ++i)
+            var queue = thinkQuque.GetList();
+            if (queue.Count > 0)
             {
-                var e = queue[i];
-                switch(e.type)
-                {
-                    case UsiEngineReportMessageType.NumberOfInstance:
-                        // ここ以前のやつ要らん。
-                        for (var k = j; k < i; ++k)
-                            queue[k].skipDisplay = true;
-                        j = i;
-                        break;
+                SuspendLayout();
 
-                    case UsiEngineReportMessageType.SetRootSfen:
-                        // rootが変わるので、以前のrootに対する思考内容は不要になる。
-                        for (var k = j; k < i; ++k)
-                        {
-                            var q = queue[k];
-                            var t = q.type;
-                            if ((t == UsiEngineReportMessageType.SetRootSfen || t == UsiEngineReportMessageType.UsiThinkReport)
-                                && q.number == e.number
-                                )
-                                q.skipDisplay = true;
-                        }
-                        j = i;
-                        break;
+                // 子コントロールも明示的にSuspendLayout()～ResumeLayout()しないといけないらしい。
+                // Diagnosing Performance Problems with Layout : https://blogs.msdn.microsoft.com/jfoscoding/2005/03/04/suggestions-for-making-your-managed-dialogs-snappier/
+                foreach (var c in All.Int(2))
+                    ConsiderationInstance(c).SuspendLayout();
+
+                // →　これでも処理、間に合わないぎみ
+                // 以下、メッセージのシュリンクを行う。
+
+                // 要らない部分をskipDisplay == trueにしてしまう。
+                // j : 前回のNumberOfInstanceの位置(ここ以降しか見ない)
+
+                for (int i = 0, j = 0; i < queue.Count; ++i)
+                {
+                    var e = queue[i];
+                    switch (e.type)
+                    {
+                        case UsiEngineReportMessageType.NumberOfInstance:
+                            // ここ以前のやつ要らん。
+                            for (var k = j; k < i; ++k)
+                                queue[k].skipDisplay = true;
+                            j = i;
+                            break;
+
+                        case UsiEngineReportMessageType.SetRootSfen:
+                            // rootが変わるので、以前のrootに対する思考内容は不要になる。
+                            for (var k = j; k < i; ++k)
+                            {
+                                var q = queue[k];
+                                var t = q.type;
+                                if ((t == UsiEngineReportMessageType.SetRootSfen || t == UsiEngineReportMessageType.UsiThinkReport)
+                                    && q.number == e.number
+                                    )
+                                    q.skipDisplay = true;
+                            }
+                            j = i;
+                            break;
+                    }
                 }
+
+                foreach (var e in queue)
+                    DispatchThinkReportMessage(e);
+
+                foreach (var c in All.Int(2))
+                    ConsiderationInstance(c).ResumeLayout();
+
+                ResumeLayout();
             }
 
-            foreach (var e in queue)
-                DispatchThinkReportMessage(e);
-
-            ResumeLayout();
+#if false
+            // 次回に呼び出された時のためにDispatchした時刻からの時間を計測する。
+            lastDispatchTime.Reset();
+            lastDispatchTime.Start();
+#endif
         }
 
         /// <summary>
