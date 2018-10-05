@@ -190,6 +190,14 @@ namespace MyShogi.View.Win2D
                     sb.AppendLine(text);
                 Clipboard.SetText(sb.ToString());
             }
+#if false
+            // →　デバッグウインドウでこのショートカットキーが利いても嬉しくないか…。
+            else
+            {
+                // メインウインドウのメニューに登録されているキーボードショートカットをハンドルする。
+                TheApp.app.KeyShortcut.KeyDown(sender, e);
+            }
+#endif
         }
 
         /// <summary>

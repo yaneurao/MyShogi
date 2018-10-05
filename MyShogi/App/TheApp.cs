@@ -300,6 +300,11 @@ namespace MyShogi.App
         public bool DeleteGlobalOption { get; set; }
 
         /// <summary>
+        /// サブウインドウでキーボードショートカットを自前でハンドルするためのもの。
+        /// </summary>
+        public KeyboardShortcutHelper KeyShortcut { get; } = new KeyboardShortcutHelper();
+
+        /// <summary>
         /// singletonなinstance。それぞれのViewModelなどにアクセスしたければ、これ経由でアクセスする。
         /// </summary>
         public static TheApp app = new TheApp();

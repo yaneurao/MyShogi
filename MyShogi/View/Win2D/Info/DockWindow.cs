@@ -19,6 +19,9 @@ namespace MyShogi.View.Win2D
 
             // タスクバーでは非表示。
             ShowInTaskbar = false;
+
+            // 子コントロールへのキー入力も、まずはこのフォームが受け取らなければならない。
+            KeyPreview = true;
         }
 
         public class DockWindowViewModel : NotifyObject
@@ -170,6 +173,12 @@ namespace MyShogi.View.Win2D
 
                 ViewModel.RaisePropertyChanged("MenuUpdated");
             }
+        }
+
+        private void DockWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            // メインウインドウのメニューに登録されているキーボードショートカットをハンドルする。
+            TheApp.app.KeyShortcut.KeyDown(sender, e);
         }
     }
 }

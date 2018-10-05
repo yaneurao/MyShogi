@@ -108,6 +108,7 @@
     <Compile Include="Model\Shogi\Converter\SvgUtility.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="View\Win2D\Common\ClickAction.cs" />
+    <Compile Include="View\Win2D\Common\KeyboardShortcutHelper.cs" />
     <Compile Include="View\Win2D\Common\MenuStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
