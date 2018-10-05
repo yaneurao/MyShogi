@@ -292,7 +292,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 new EnginePreset("Ｓ九段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","1500000"),       // 調整中
+                        new EngineOption("NodesLimit","1450000"),       // [2018/10/05 14:50] , 183-12-205 R+20   NodesLimit = 1500000にて。
                         new EngineOption("SkillLevel","13"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPV","1"),
@@ -468,7 +468,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                             "短い持ち時間だと切れ負けになるので持ち時間無制限での対局をお願いします。";
                     else
                         preset.Description = preset.Name.Substring(1) + "ぐらいの強さになるように棋力を調整したものです。" +
-                            "棋力名が「Ｓ」で始まるは、序盤が弱いのに終盤だけ強いということはなく、まんべんなく同じ強さになるように調整されています。" +
+                            "棋力名が「Ｓ」で始まるものは、序盤が弱いのに終盤だけ強いということはなく、まんべんなく同じ強さになるように調整されています。" +
                             "思考時間は「Ｓ」のつかない同じ段位のものの10倍ぐらい必要となります。";
 
                         // + "また、段・級の設定は、将棋倶楽部24基準なので町道場のそれより少し辛口の調整になっています。";
