@@ -143,7 +143,7 @@ namespace MyShogiUpdater
 
             } catch (Exception ex)
             {
-                progress_message($"アップデートに失敗しました。セキュリティソフト等にファイルコピーがブロックされている可能性があります。\r\n{ ex.Message }\r\n{ ex.StackTrace }");
+                progress_message($"アップデートに失敗しました。インストール先のフォルダの容量が不足しているか、セキュリティソフト等にファイルコピーがブロックされている可能性があります。\r\n{ ex.Message }\r\n{ ex.StackTrace }");
             }
         }
 

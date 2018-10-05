@@ -21,7 +21,7 @@ namespace MyShogiUpdater
         /// <summary>
         /// Update用のソースフォルダ
         /// </summary>
-        public string UpdateSourcePath = "V100toV113"; // Update1.3
+        public string UpdateSourcePath = "V100toV124"; // Update2(V1.24)
 #endif 
 
         /// <summary>
@@ -32,20 +32,26 @@ namespace MyShogiUpdater
         /// </summary>
         public bool MakePatchEnable = false;
         public string PatchSource1 = "V100";
-        public string PatchSource2 = "V121";
+        public string PatchSource2 = "V124";
 
 
         #region 過去にリリースした本Updaterの設定集
 #if false
 
-        // 『将棋神やねうら王』 Update1.3[2018/09/3]
+        // 『将棋神やねうら王』 Update2[2018/10/06]
         public string YaneuraOuVersion = "2018";
-        public string UpdateSourcePath = "V100toV113"; // Update1.3
+        public string UpdateSourcePath = "V100toV124"; // Update2(V1.24)
+        public string PatchSource1 = "V100";
+        public string PatchSource2 = "V124";
+
+        // 『将棋神やねうら王』 Update1.3[2018/09/03]
+        public string YaneuraOuVersion = "2018";
+        public string UpdateSourcePath = "V100toV113"; // Update1.3(V1.13)
         public string PatchSource1 = "V100";
         public string PatchSource2 = "V113";
 
 
-        // 『将棋神やねうら王』 Update1.2[2018/09/3]
+        // 『将棋神やねうら王』 Update1.2[2018/09/03]
         public string YaneuraOuVersion = "2018";
         public string UpdateSourcePath = "V100toV112"; // Update1.2
         public string PatchSource1 = "V100";

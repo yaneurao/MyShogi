@@ -292,7 +292,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 new EnginePreset("Ｓ九段" , new EngineOption[] {
                         new EngineOption("AutoThread_","false"),
                         new EngineOption("Threads","2"),
-                        new EngineOption("NodesLimit","1450000"),       // [2018/10/05 14:50] , 183-12-205 R+20   NodesLimit = 1500000にて。
+                        new EngineOption("NodesLimit","1450000"),       // [2018/10/06 02:00] , 216-11-229 R+10
                         new EngineOption("SkillLevel","13"),
                         new EngineOption("DepthLimit","0"),
                         new EngineOption("MultiPV","1"),
