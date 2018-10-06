@@ -3,6 +3,24 @@
 ■　2018/10/06
 
 
+- high dpi対応のためにapp.configに次のように書くべきらしい。
+  cf. https://docs.grapecity.com/help/spread-winforms-8/spwin-dpisupport.html
+  cf. https://qiita.com/felis_silv/items/efee4b1a397b0b95100a
+
+  <appSettings>
+    <add key="EnableWindowsFormsHighDpiAutoResizing" value="true" />
+  </appSettings>
+
+  app.minifestの以下の部分だけでは駄目なのか…。
+    <application xmlns="urn:schemas-microsoft-com:asm.v3">
+      <windowsSettings>
+        <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true</dpiAware>
+      </windowsSettings>
+    </application>
+
+  上のを書くならSetProcessDPIAware()は呼び出さなくて良い模様。  
+
+
 - Updater、フォルダ変更しても c:/ProgramFiles(x86)/...にインストールしていたのを修正。
 
 
