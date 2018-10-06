@@ -89,7 +89,7 @@ namespace MyShogiUpdater
         private void OutputProgressMessage(string message)
         {
             Invoke(new Action(() => {
-                richTextBox2.Text += "\r\n" + message;
+                richTextBox2.AppendText( "\r\n" + message);
                 try
                 {
                     var start = richTextBox2.Text.Length; // 末尾を選択しておく。
@@ -117,10 +117,7 @@ namespace MyShogiUpdater
                 fbd.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
 
                 if (fbd.ShowDialog(this) == DialogResult.OK)
-                {
                     textBox1.Text = fbd.SelectedPath;
-                    ViewModel.InstallFolder = fbd.SelectedPath;
-                }
             }
         }
 
@@ -138,6 +135,9 @@ namespace MyShogiUpdater
                 MessageBox.Show($"選択されたインストール先にmyshogi.exeがありません。\r\nこのフォルダには、{ViewModel.ProductName}がインストールされていません。");
                 return;
             }
+
+            // インストール先のフォルダは、このtargetFolderに変更。
+            ViewModel.InstallFolder = targetFolder;
 
             // インストール開始
             // 権限昇格しないといけない…。

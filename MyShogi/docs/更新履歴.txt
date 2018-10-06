@@ -3,6 +3,12 @@
 ■　2018/10/06
 
 
+- Updaterの改良
+  - 進捗を表示するRichTextBoxに対してテキスト追加をAppendText()を使うように変更
+  - 進捗を表示するRichTextBoxに対してDetectUrlsをfalseにする(ネットワーク上のドライブが勝手にハイパーリンクになるのを抑制)
+  - インストールするフォルダをテキストボックスを直接編集するとそれが反映されないバグを修正。
+
+
 - high dpi対応のためにapp.configに次のように書くべきらしい。
   cf. https://docs.grapecity.com/help/spread-winforms-8/spwin-dpisupport.html
   cf. https://qiita.com/felis_silv/items/efee4b1a397b0b95100a

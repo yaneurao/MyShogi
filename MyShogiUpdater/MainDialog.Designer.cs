@@ -86,6 +86,7 @@
             // 
             // richTextBox2
             // 
+            this.richTextBox2.DetectUrls = false;
             this.richTextBox2.Location = new System.Drawing.Point(2, 391);
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.ReadOnly = true;
