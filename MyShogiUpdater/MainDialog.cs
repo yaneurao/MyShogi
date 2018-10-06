@@ -119,6 +119,7 @@ namespace MyShogiUpdater
                 if (fbd.ShowDialog(this) == DialogResult.OK)
                 {
                     textBox1.Text = fbd.SelectedPath;
+                    ViewModel.InstallFolder = fbd.SelectedPath;
                 }
             }
         }
