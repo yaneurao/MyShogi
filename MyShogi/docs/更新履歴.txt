@@ -3,6 +3,25 @@
 ■　2018/10/08
 
 
+- メニューに「表示設定」追加その5
+  - 手番側の表現
+  なし,turn_style_0.png
+  手番マーク,turn_style_1.png
+  名前を赤字,turn_style_2.png
+  - 対局者名の先頭の手番記号
+  なし,turn_mark_style_0.png
+  「☗」と「☖」,turn_mark_style_1.png
+  「▲」と「△」,turn_mark_style_2.png
+  - 対局開始・終了エフェクト
+  なし,game_greeting_effect_style_0.png
+  あり,game_greeting_effect_style_1.png
+  - 振り駒のエフェクト
+  なし,game_piece_toss_effect_0.png
+  あり,game_piece_toss_effect_1.png
+- 対局開始時のエフェクトと振り駒のエフェクトの設定を分離する
+
+
+
 - メニューに「表示設定」追加その4
   - 成駒の色
   黒,pro_piece_color_style_1.png

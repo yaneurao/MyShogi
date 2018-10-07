@@ -64,6 +64,12 @@ namespace MyShogi.View.Win2D.Setting
             public int SelectionOffset { get; set; }
 
             /// <summary>
+            /// SelectionとBind()でbindするのがbool型である。
+            /// falseならint型とみなす。
+            /// </summary>
+            public bool SelectionTypeIsBool { get; set; }
+
+            /// <summary>
             /// この設定が有効になるのは、再起動後ですの警告を出すか
             /// </summary>
             public bool WarningRestart { get; set; }
@@ -87,7 +93,8 @@ namespace MyShogi.View.Win2D.Setting
 
         /// <summary>
         /// ViewModel.Selectionと、特定のNotifyObjectのnameをOneWayでBindする。
-        ///
+        /// ViewModel.SelectionTypeIsBool == true ならNotifyObjectのnameをbool型とみなす。falseならint型とみなす。
+        /// 
         /// 注意)
         /// ViewModel.SelectionOffsetの値が利いてくるので注意。
         /// Bind()を呼び出す前に、ViewModel.SelectionOffsetを適切な値に設定すること。
@@ -96,11 +103,24 @@ namespace MyShogi.View.Win2D.Setting
         /// <param name="name"></param>
         public void Bind(NotifyObject notify , string name)
         {
-            ViewModel.AddPropertyChangedHandler("Selection", (args) => {
-                notify.SetValueAndRaisePropertyChanged(name, (int)args.value + ViewModel.SelectionOffset);
-            });
-            ViewModel.Selection = notify.GetValue<int>(name) - ViewModel.SelectionOffset; // いま即座に値を反映させておく。
+            if (ViewModel.SelectionTypeIsBool)
+            {
+                ViewModel.AddPropertyChangedHandler("Selection", (args) =>
+                {
+                    notify.SetValueAndRaisePropertyChanged(name, ((int)args.value + ViewModel.SelectionOffset) != 0);
+                });
+                ViewModel.Selection = (notify.GetValue<bool>(name) ? 1 : 0) - ViewModel.SelectionOffset; // いま即座に値を反映させておく。
+            }
+            else
+            {
+                ViewModel.AddPropertyChangedHandler("Selection", (args) =>
+                {
+                    notify.SetValueAndRaisePropertyChanged(name, (int)args.value + ViewModel.SelectionOffset);
+                });
+                ViewModel.Selection = notify.GetValue<int>(name) - ViewModel.SelectionOffset; // いま即座に値を反映させておく。
+            }
         }
+
 
         #region コントロールとしてのProperty
 

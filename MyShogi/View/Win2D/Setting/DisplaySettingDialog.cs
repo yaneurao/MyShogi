@@ -31,7 +31,7 @@ namespace MyShogi.View.Win2D.Setting
             richSelector5.ViewModel.SelectionOffset = 1;
             richSelector5.Bind(config, "TatamiImageVersion");
 
-            // -- 「駒設定」のタブ
+            // -- 「駒表示」のタブ
 
             // 駒画像
             richSelector6.ViewModel.SelectionOffset = 1;
@@ -42,6 +42,14 @@ namespace MyShogi.View.Win2D.Setting
 
             // 移動方角マーカー
             richSelector8.Bind(config, "PieceAttackImageVersion");
+
+            // -- 「手番表示」のタブ
+
+            // 駒を掴んだ時の移動候補の升
+            richSelector13.Bind(config, "TurnDisplay");
+
+            // 対局者名の先頭の手番記号
+            richSelector14.Bind(config, "DisplayNameTurnVersion");
 
             // -- 「升表示」のタブ
 
@@ -67,6 +75,20 @@ namespace MyShogi.View.Win2D.Setting
             // 検討ウインドウの棋譜の記法
             richSelector3.ViewModel.WarningRestart = true;
             richSelector3.Bind(config, "ConsiderationWindowKifuVersion");
+
+            // -- 「対局エフェクト」のタブ
+
+            // 対局開始・終了エフェクト
+            richSelector16.Bind(config, "EnableGameGreetingEffect");
+
+            // 振り駒のエフェクト
+            richSelector17.Bind(config, "EnablePieceTossEffect");
+
+            // -- 「評価値の表示」のタブ
+
+            // 後手番のCPUの評価値をどちらから見た値にするか
+            richSelector15.ViewModel.SelectionTypeIsBool = true;
+            richSelector15.Bind(config, "NegateEvalWhenWhite");
 
         }
 

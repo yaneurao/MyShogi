@@ -61,7 +61,8 @@ namespace MyShogi.App
 
             // -- 対局エフェクト
 
-            EnableGameEffect = 1;
+            EnableGameGreetingEffect = 1;
+            EnablePieceTossEffect = 1;
 
             // -- 検討設定
 
@@ -425,16 +426,29 @@ namespace MyShogi.App
 
 
         /// <summary>
-        /// 対局中のエフェクト
+        /// 対局開始・終了時のエフェクト
         ///
         /// 0 : なし
         /// 1 : あり (デフォルト)
         /// </summary>
         [DataMember]
-        public int EnableGameEffect
+        public int EnableGameGreetingEffect
         {
-            get { return GetValue<int>("EnableGameEffect"); }
-            set { SetValue<int>("EnableGameEffect", value); }
+            get { return GetValue<int>("EnableGameGreetingEffect"); }
+            set { SetValue<int>("EnableGameGreetingEffect", value); }
+        }
+
+        /// <summary>
+        /// 振り駒のエフェクト
+        ///
+        /// 0 : なし
+        /// 1 : あり (デフォルト)
+        /// </summary>
+        [DataMember]
+        public int EnablePieceTossEffect
+        {
+            get { return GetValue<int>("EnablePieceTossEffect"); }
+            set { SetValue<int>("EnablePieceTossEffect", value); }
         }
 
         #endregion

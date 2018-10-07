@@ -28,11 +28,6 @@ namespace MyShogi.View.Win2D
         {
             animatorManager.ClearAnimator(); // 他のanimatorをすべて削除
 
-            // エフェクト無効なら、やらない。
-            var enable = TheApp.app.Config.EnableGameEffect != 0;
-            if (!enable)
-                return;
-
             var continuousGame = args.value as ContinuousGame;
 
             // 振り駒画像を表示するのかのフラグ
@@ -40,7 +35,9 @@ namespace MyShogi.View.Win2D
             // 振り駒を表示しているので「対局開始」の表示が後ろ倒しになる時間。[ms]
             var piece_toss_time = 0;
 
-            if (enable_piece_toss)
+            // 振り駒エフェクト無効なら、やらない。
+            var enable_piece_toss_effect = TheApp.app.Config.EnablePieceTossEffect != 0;
+            if (enable_piece_toss && enable_piece_toss_effect)
             {
                 // 振り駒イメージ画像
                 animatorManager.AddAnimator(new Animator(
@@ -69,6 +66,11 @@ namespace MyShogi.View.Win2D
 
                 piece_toss_time = 1000;
             }
+
+            // 開始エフェクト無効なら、やらない。
+            var enable_greeting = TheApp.app.Config.EnableGameGreetingEffect != 0;
+            if (!enable_greeting)
+                return;
 
             // これだけでアニメーションできる。便利すぎ。
             animatorManager.AddAnimator(new Animator(
@@ -108,7 +110,7 @@ namespace MyShogi.View.Win2D
             animatorManager.ClearAnimator(); // 他のanimatorをすべて削除
 
             // エフェクト無効なら、やらない。
-            var enable = TheApp.app.Config.EnableGameEffect != 0;
+            var enable = TheApp.app.Config.EnableGameGreetingEffect != 0;
             if (!enable)
                 return;
 

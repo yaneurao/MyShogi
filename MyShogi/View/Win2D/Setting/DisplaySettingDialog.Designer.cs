@@ -39,18 +39,29 @@
             this.richSelector7 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector6 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.richSelector14 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.richSelector13 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
             this.richSelector12 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector11 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector10 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector9 = new MyShogi.View.Win2D.Setting.RichSelector();
-            this.tabPage10 = new System.Windows.Forms.TabPage();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
             this.richSelector3 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector2 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.richSelector16 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.richSelector15 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.richSelector17 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
-            this.tabPage10.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tabPage5.SuspendLayout();
+            this.tabPage6.SuspendLayout();
+            this.tabPage7.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -66,7 +77,10 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
-            this.tabControl1.Controls.Add(this.tabPage10);
+            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage5);
+            this.tabControl1.Controls.Add(this.tabPage6);
+            this.tabControl1.Controls.Add(this.tabPage7);
             this.tabControl1.Location = new System.Drawing.Point(-4, -5);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -168,16 +182,51 @@
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.richSelector12);
-            this.tabPage3.Controls.Add(this.richSelector11);
-            this.tabPage3.Controls.Add(this.richSelector10);
-            this.tabPage3.Controls.Add(this.richSelector9);
+            this.tabPage3.Controls.Add(this.richSelector14);
+            this.tabPage3.Controls.Add(this.richSelector13);
             this.tabPage3.Location = new System.Drawing.Point(4, 25);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(784, 414);
-            this.tabPage3.TabIndex = 3;
-            this.tabPage3.Text = "升表示";
+            this.tabPage3.TabIndex = 4;
+            this.tabPage3.Text = "手番表示";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // richSelector14
+            // 
+            this.richSelector14.GroupBoxTitle = "対局者名の先頭の手番記号";
+            this.richSelector14.Location = new System.Drawing.Point(3, 105);
+            this.richSelector14.Name = "richSelector14";
+            this.richSelector14.SelectionTexts = new string[] {
+        "なし,turn_mark_style_0.png",
+        "「☗」と「☖」,turn_mark_style_1.png",
+        "「▲」と「△」,turn_mark_style_2.png"};
+            this.richSelector14.Size = new System.Drawing.Size(772, 110);
+            this.richSelector14.TabIndex = 4;
+            // 
+            // richSelector13
+            // 
+            this.richSelector13.GroupBoxTitle = "手番側の表現";
+            this.richSelector13.Location = new System.Drawing.Point(3, 3);
+            this.richSelector13.Name = "richSelector13";
+            this.richSelector13.SelectionTexts = new string[] {
+        "なし,turn_style_0.png",
+        "手番マーク,turn_style_1.png",
+        "名前を赤字,turn_style_2.png"};
+            this.richSelector13.Size = new System.Drawing.Size(772, 110);
+            this.richSelector13.TabIndex = 3;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.richSelector12);
+            this.tabPage4.Controls.Add(this.richSelector11);
+            this.tabPage4.Controls.Add(this.richSelector10);
+            this.tabPage4.Controls.Add(this.richSelector9);
+            this.tabPage4.Location = new System.Drawing.Point(4, 25);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(784, 414);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "升表示";
+            this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // richSelector12
             // 
@@ -233,22 +282,22 @@
             this.richSelector9.Size = new System.Drawing.Size(772, 110);
             this.richSelector9.TabIndex = 2;
             // 
-            // tabPage10
+            // tabPage5
             // 
-            this.tabPage10.Controls.Add(this.richSelector3);
-            this.tabPage10.Controls.Add(this.richSelector2);
-            this.tabPage10.Location = new System.Drawing.Point(4, 25);
-            this.tabPage10.Name = "tabPage10";
-            this.tabPage10.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage10.Size = new System.Drawing.Size(784, 414);
-            this.tabPage10.TabIndex = 1;
-            this.tabPage10.Text = "棋譜表示";
-            this.tabPage10.UseVisualStyleBackColor = true;
+            this.tabPage5.Controls.Add(this.richSelector3);
+            this.tabPage5.Controls.Add(this.richSelector2);
+            this.tabPage5.Location = new System.Drawing.Point(4, 25);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(784, 414);
+            this.tabPage5.TabIndex = 1;
+            this.tabPage5.Text = "棋譜表示";
+            this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // richSelector3
             // 
             this.richSelector3.GroupBoxTitle = "検討ウィンドウの棋譜の表示形式";
-            this.richSelector3.Location = new System.Drawing.Point(6, 113);
+            this.richSelector3.Location = new System.Drawing.Point(4, 110);
             this.richSelector3.Name = "richSelector3";
             this.richSelector3.SelectionTexts = new string[] {
         "標準(KI2),cons_window_kif_style_0.png",
@@ -261,7 +310,7 @@
             // richSelector2
             // 
             this.richSelector2.GroupBoxTitle = "棋譜ウィンドウの棋譜の表示形式";
-            this.richSelector2.Location = new System.Drawing.Point(6, 6);
+            this.richSelector2.Location = new System.Drawing.Point(4, 3);
             this.richSelector2.Name = "richSelector2";
             this.richSelector2.SelectionTexts = new string[] {
         "標準(KI2),kifwindow_kif_style_0.png",
@@ -270,6 +319,60 @@
         "SFEN,kifwindow_kif_style_3.png"};
             this.richSelector2.Size = new System.Drawing.Size(772, 112);
             this.richSelector2.TabIndex = 1;
+            // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.richSelector17);
+            this.tabPage6.Controls.Add(this.richSelector16);
+            this.tabPage6.Location = new System.Drawing.Point(4, 25);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Size = new System.Drawing.Size(784, 414);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "対局エフェクト";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // richSelector16
+            // 
+            this.richSelector16.GroupBoxTitle = "対局開始・終了エフェクト";
+            this.richSelector16.Location = new System.Drawing.Point(3, 3);
+            this.richSelector16.Name = "richSelector16";
+            this.richSelector16.SelectionTexts = new string[] {
+        "なし,game_greeting_effect_style_0.png",
+        "あり,game_greeting_effect_style_1.png"};
+            this.richSelector16.Size = new System.Drawing.Size(772, 112);
+            this.richSelector16.TabIndex = 4;
+            // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.richSelector15);
+            this.tabPage7.Location = new System.Drawing.Point(4, 25);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Size = new System.Drawing.Size(784, 414);
+            this.tabPage7.TabIndex = 6;
+            this.tabPage7.Text = "評価値表示";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // richSelector15
+            // 
+            this.richSelector15.GroupBoxTitle = "後手番のCPUの評価値をどちらから見た値にするか";
+            this.richSelector15.Location = new System.Drawing.Point(3, 3);
+            this.richSelector15.Name = "richSelector15";
+            this.richSelector15.SelectionTexts = new string[] {
+        "後手側,eval_sign_style_0.png",
+        "先手側,eval_sign_style_1.png"};
+            this.richSelector15.Size = new System.Drawing.Size(772, 112);
+            this.richSelector15.TabIndex = 3;
+            // 
+            // richSelector17
+            // 
+            this.richSelector17.GroupBoxTitle = "振り駒のエフェクト";
+            this.richSelector17.Location = new System.Drawing.Point(3, 107);
+            this.richSelector17.Name = "richSelector17";
+            this.richSelector17.SelectionTexts = new string[] {
+        "なし,game_piece_toss_effect_0.png",
+        "あり,game_piece_toss_effect_1.png"};
+            this.richSelector17.Size = new System.Drawing.Size(772, 112);
+            this.richSelector17.TabIndex = 5;
             // 
             // DisplaySettingDialog
             // 
@@ -286,7 +389,10 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
-            this.tabPage10.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage6.ResumeLayout(false);
+            this.tabPage7.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -297,7 +403,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage10;
+        private System.Windows.Forms.TabPage tabPage5;
         private RichSelector richSelector1;
         private RichSelector richSelector2;
         private RichSelector richSelector3;
@@ -306,11 +412,19 @@
         private System.Windows.Forms.TabPage tabPage2;
         private RichSelector richSelector6;
         private RichSelector richSelector7;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabPage tabPage4;
         private RichSelector richSelector8;
         private RichSelector richSelector9;
         private RichSelector richSelector10;
         private RichSelector richSelector11;
         private RichSelector richSelector12;
+        private System.Windows.Forms.TabPage tabPage3;
+        private RichSelector richSelector13;
+        private RichSelector richSelector14;
+        private System.Windows.Forms.TabPage tabPage6;
+        private System.Windows.Forms.TabPage tabPage7;
+        private RichSelector richSelector15;
+        private RichSelector richSelector16;
+        private RichSelector richSelector17;
     }
 }
