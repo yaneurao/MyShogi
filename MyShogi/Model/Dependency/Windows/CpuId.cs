@@ -3,7 +3,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace MyShogi.Model.Dependent
+namespace MyShogi.Model.Dependency
 {
     /// <summary>
     /// CPU ID判別

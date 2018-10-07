@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Management;
 using System.Text;
 using System.Windows.Forms;
-using MyShogi.Model.Dependent;
+using MyShogi.Model.Dependency;
 
 namespace MyShogi.View.Win2D
 {

@@ -19,7 +19,7 @@ using System.Diagnostics;
 
 // --- 単体で呼び出して使うAPI群
 
-namespace MyShogi.Model.Dependent
+namespace MyShogi.Model.Dependency
 {
     /// <summary>
     /// Mac/Linux環境に依存するAPI群

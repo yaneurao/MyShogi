@@ -13,7 +13,7 @@ using MyShogi.Model.Shogi.EngineDefine;
 
 // --- 単体で呼び出して使うAPI群
 
-namespace MyShogi.Model.Dependent
+namespace MyShogi.Model.Dependency
 {
     /// <summary>
     /// Windows環境に依存するAPI群

@@ -6,7 +6,7 @@ using DColor = System.Drawing.Color;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Core;
-using MyShogi.Model.Dependent;
+using MyShogi.Model.Dependency;
 
 namespace MyShogi.Model.Resource.Images
 {

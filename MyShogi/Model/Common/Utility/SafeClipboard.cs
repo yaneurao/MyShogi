@@ -1,6 +1,6 @@
 ﻿using System;
 using MyShogi.Model.Common.Collections;
-using MyShogi.Model.Dependent;
+using MyShogi.Model.Dependency;
 
 namespace MyShogi.Model.Common.Utility
 {

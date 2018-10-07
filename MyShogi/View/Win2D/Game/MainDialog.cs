@@ -2074,6 +2074,20 @@ namespace MyShogi.View.Win2D
                     item_settings.DropDownItems.Add(item);
                 }
 
+                {
+                    var item = new ToolStripMenuItem();
+                    item.Text = "表示設定 (&D)"; // Display setting
+                    item.Click += (sender, e) => {
+                        using (var dialog = new DisplaySettingDialog())
+                        {
+                            FormLocationUtility.CenteringToThisForm(dialog, this);
+                            FontUtility.ReplaceFont(dialog);
+                            dialog.ShowDialog(this);
+                        }
+                    };
+                    item_settings.DropDownItems.Add(item);
+                }
+
                 item_settings.DropDownItems.Add(new ToolStripSeparator());
 
                 // -- 設定の初期化

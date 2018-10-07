@@ -31,13 +31,13 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
+            this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.checkBox7 = new System.Windows.Forms.CheckBox();
             this.checkBox8 = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
+            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -76,25 +76,17 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "各サウンド・音声の設定";
             // 
-            // checkBox3
+            // groupBox2
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(17, 55);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(113, 19);
-            this.checkBox3.TabIndex = 0;
-            this.checkBox3.Text = "検討時の駒音";
-            this.checkBox3.UseVisualStyleBackColor = true;
-            // 
-            // checkBox4
-            // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(17, 94);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(168, 19);
-            this.checkBox4.TabIndex = 0;
-            this.checkBox4.Text = "対局時の棋譜読み上げ";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.groupBox2.Controls.Add(this.checkBox6);
+            this.groupBox2.Controls.Add(this.checkBox5);
+            this.groupBox2.Controls.Add(this.checkBox7);
+            this.groupBox2.Location = new System.Drawing.Point(17, 120);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(480, 103);
+            this.groupBox2.TabIndex = 1;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "棋譜読み上げの各設定";
             // 
             // checkBox6
             // 
@@ -105,6 +97,16 @@
             this.checkBox6.TabIndex = 0;
             this.checkBox6.Text = "棋譜読み上げの時、「先手」「後手」を毎回読み上げる";
             this.checkBox6.UseVisualStyleBackColor = true;
+            // 
+            // checkBox5
+            // 
+            this.checkBox5.AutoSize = true;
+            this.checkBox5.Location = new System.Drawing.Point(17, 25);
+            this.checkBox5.Name = "checkBox5";
+            this.checkBox5.Size = new System.Drawing.Size(181, 19);
+            this.checkBox5.TabIndex = 0;
+            this.checkBox5.Text = "対局開始・終了時の挨拶";
+            this.checkBox5.UseVisualStyleBackColor = true;
             // 
             // checkBox7
             // 
@@ -119,34 +121,32 @@
             // checkBox8
             // 
             this.checkBox8.AutoSize = true;
-            this.checkBox8.Location = new System.Drawing.Point(17, 263);
+            this.checkBox8.Location = new System.Drawing.Point(17, 239);
             this.checkBox8.Name = "checkBox8";
-            this.checkBox8.Size = new System.Drawing.Size(251, 19);
+            this.checkBox8.Size = new System.Drawing.Size(344, 34);
             this.checkBox8.TabIndex = 0;
-            this.checkBox8.Text = "秒読みの読み上げを行う(人間側のみ)";
+            this.checkBox8.Text = "秒読みの読み上げを行う(人間側のみ) \r\n(時間設定で秒読みを10～60に設定した時のみ有効)";
             this.checkBox8.UseVisualStyleBackColor = true;
             // 
-            // groupBox2
+            // checkBox4
             // 
-            this.groupBox2.Controls.Add(this.checkBox6);
-            this.groupBox2.Controls.Add(this.checkBox5);
-            this.groupBox2.Controls.Add(this.checkBox7);
-            this.groupBox2.Location = new System.Drawing.Point(17, 120);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(480, 103);
-            this.groupBox2.TabIndex = 1;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "棋譜読み上げの各設定";
+            this.checkBox4.AutoSize = true;
+            this.checkBox4.Location = new System.Drawing.Point(17, 94);
+            this.checkBox4.Name = "checkBox4";
+            this.checkBox4.Size = new System.Drawing.Size(168, 19);
+            this.checkBox4.TabIndex = 0;
+            this.checkBox4.Text = "対局時の棋譜読み上げ";
+            this.checkBox4.UseVisualStyleBackColor = true;
             // 
-            // checkBox5
+            // checkBox3
             // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.Location = new System.Drawing.Point(17, 25);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(181, 19);
-            this.checkBox5.TabIndex = 0;
-            this.checkBox5.Text = "対局開始・終了時の挨拶";
-            this.checkBox5.UseVisualStyleBackColor = true;
+            this.checkBox3.AutoSize = true;
+            this.checkBox3.Location = new System.Drawing.Point(17, 55);
+            this.checkBox3.Name = "checkBox3";
+            this.checkBox3.Size = new System.Drawing.Size(113, 19);
+            this.checkBox3.TabIndex = 0;
+            this.checkBox3.Text = "検討時の駒音";
+            this.checkBox3.UseVisualStyleBackColor = true;
             // 
             // SoundSettingDialog
             // 

@@ -89,7 +89,7 @@
     <Compile Include="Model\Common\String\CommandLineParser.cs" />
     <Compile Include="Model\Common\Utility\ExceptionExtensions.cs" />
     <Compile Include="Model\Common\Utility\SafeClipboard.cs" />
-    <Compile Include="Model\Dependent\Windows\CpuId.cs" />
+    <Compile Include="Model\Dependency\Windows\CpuId.cs" />
     <Compile Include="Model\Common\String\CsvParser.cs" />
     <Compile Include="Model\Common\String\CsvTable.cs" />
     <Compile Include="Model\Common\Utility\Encode.cs" />
@@ -103,8 +103,8 @@
     <Compile Include="Model\Common\String\Serializer.cs" />
     <Compile Include="Model\Common\Collections\StringExtensions.cs" />
     <Compile Include="Model\Common\Math\Rand.cs" />
-    <Compile Include="Model\Dependent\Mono\MonoAPI.cs" />
-    <Compile Include="Model\Dependent\Windows\WindowsAPI.cs" />
+    <Compile Include="Model\Dependency\Mono\MonoAPI.cs" />
+    <Compile Include="Model\Dependency\Windows\WindowsAPI.cs" />
     <Compile Include="Model\Shogi\Converter\SvgUtility.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="View\Win2D\Common\ClickAction.cs" />
@@ -292,6 +292,12 @@
     <Compile Include="View\Win2D\Setting\ConsiderationEngineSettingDialog.Designer.cs">
       <DependentUpon>ConsiderationEngineSettingDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\Setting\DisplaySettingDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\DisplaySettingDialog.Designer.cs">
+      <DependentUpon>DisplaySettingDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\Setting\EngineOptionSettingControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -461,6 +467,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\ConsiderationEngineSettingDialog.resx">
       <DependentUpon>ConsiderationEngineSettingDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\DisplaySettingDialog.resx">
+      <DependentUpon>DisplaySettingDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\EngineOptionSettingControl.resx">
       <DependentUpon>EngineOptionSettingControl.cs</DependentUpon>

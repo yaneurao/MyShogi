@@ -1,6 +1,6 @@
-﻿using MyShogi.Model.Dependent;
-using System;
+﻿using System;
 using System.Management;
+using MyShogi.Model.Dependency;
 
 namespace MyShogi.Model.Common.Utility
 {

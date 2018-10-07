@@ -1,5 +1,5 @@
 ﻿using System;
-using MyShogi.Model.Dependent;
+using MyShogi.Model.Dependency;
 
 namespace MyShogi.Model.Shogi.EngineDefine
 {

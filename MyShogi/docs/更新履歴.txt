@@ -3,6 +3,14 @@
 ■　2018/10/07
 
 
+- メニューに「表示設定」追加(作業中)
+  - DisplaySettingDialog追加
+- 音声設定の秒読みのところに注釈追加。
+- Model.Dependent → Model.Dependencyに rename
+- フォントにMicrosoft Sans Serif使っているところ修正する。(このフォント使わないようにする)
+  - 見つからない。使ってる箇所ないようだけど、使ってることになってる。(´ω｀)？
+
+
 - FontUtilityにParentのnullチェック追加。(海苔さんからの指摘)
 - メニュー→ファイル「設定の初期化」を「設定」のところに移動。
 
