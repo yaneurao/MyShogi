@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 
 namespace MyShogi.Model.Resource.Images
@@ -88,6 +89,8 @@ namespace MyShogi.Model.Resource.Images
             {
                 var dstRect = new Rectangle(0, 0, width, height);
                 var srcRect = new Rectangle(0, 0, image.Width, image.Height);
+                //  高品質で縮小する。さほど大きな画像のリサイズは行わないので品質が高く時間がかかろうとも問題ない。
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.DrawImage(this.image, dstRect, srcRect, GraphicsUnit.Pixel);
             }
             return img;

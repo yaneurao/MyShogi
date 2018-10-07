@@ -3,6 +3,26 @@
 ■　2018/10/08
 
 
+- メニューに「表示設定」追加その3
+  -  棋譜ウィンドウの棋譜の形式
+    標準(KI2),kifwindow_kif_style_0.png
+    簡易(KIF),kifwindow_kif_style_1.png
+    CSA,kifwindow_kif_style_2.png
+    SFEN,kifwindow_kif_style_3.png
+  - 検討ウインドウ
+    標準(KI2),cons_window_kif_style_0.png
+    簡易(KIF),cons_window_kif_style_1.png
+    CSA,cons_window_kif_style_2.png
+    SFEN,cons_window_kif_style_3.png
+  - 駒画像
+    二文字駒,piece_image_ver_1.png
+    一文字駒,piece_image_ver_2.png
+    英文字駒,piece_image_ver_3.png
+- ImageLoaderのCreateAndCopyの縮小時の品質を上げる。
+          g.InterpolationMode = InterpolationMode.HighQualityBicubic; /* 高品質で縮小する */
+- RichSelector、画像を選択してもラジオボタンがクリックされたのと同等の扱いにする。
+
+
 - メニューに「表示設定」追加その2
   - RichSelectorコントロール追加
   - 画像として image/display_setting/ フォルダを掘る

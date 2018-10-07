@@ -2,7 +2,9 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
 
@@ -38,7 +40,18 @@ namespace MyShogi.View.Win2D.Setting
                 get { return GetValue<int>("Selection"); }
                 set { SetValue<int>("Selection", value); }
             }
+
+            /// <summary>
+            /// Bind()したときに、ラジオボタンの1つ目を このSelectionOffsetの値だけ加算した値とみなしてSelectionとbindする。
+            /// </summary>
+            public int SelectionOffset { get; set; }
+
+            /// <summary>
+            /// この設定が有効になるのは、再起動後ですの警告を出すか
+            /// </summary>
+            public bool WarningRestart { get; set; }
         }
+
         public RichSelectorViewModel ViewModel = new RichSelectorViewModel();
 
         private void InitViewModel()
@@ -57,13 +70,19 @@ namespace MyShogi.View.Win2D.Setting
 
         /// <summary>
         /// ViewModel.Selectionと、特定のNotifyObjectのnameをOneWayでBindする。
+        ///
+        /// 注意)
+        /// ViewModel.SelectionOffsetの値が利いてくるので注意。
+        /// Bind()を呼び出す前に、ViewModel.SelectionOffsetを適切な値に設定すること。
         /// </summary>
         /// <param name="notify"></param>
         /// <param name="name"></param>
         public void Bind(NotifyObject notify , string name)
         {
-            ViewModel.AddPropertyChangedHandler("Selection", (args) => { notify.SetValueAndRaisePropertyChanged(name, (int)args.value); });
-            ViewModel.Selection = notify.GetValue<int>(name); // いま即座に値を反映させておく。
+            ViewModel.AddPropertyChangedHandler("Selection", (args) => {
+                notify.SetValueAndRaisePropertyChanged(name, (int)args.value + ViewModel.SelectionOffset);
+            });
+            ViewModel.Selection = notify.GetValue<int>(name) - ViewModel.SelectionOffset; // いま即座に値を反映させておく。
         }
 
         #region コントロールとしてのProperty
@@ -127,12 +146,21 @@ namespace MyShogi.View.Win2D.Setting
                     continue;
 
                 var r = new RadioButton();
-                var x = (pictureBox1.Width + groupBox1.Margin.Left*2) * i + groupBox1.Margin.Left;
-                var rx = x + radioButton1.Location.X;
+                var x = (pictureBox1.Width + groupBox1.Margin.Left*2) * i + Margin.Left*3;
+                var rx = x  /* + radioButton1.Location.X */;
                 r.Location = new Point(rx , radioButton1.Location.Y);
                 r.Text = texts[0];
                 var j = i; // copy for lambda's capture
-                r.CheckedChanged += (sender, args) => { if (r.Checked) ViewModel.Selection = j; };
+                r.CheckedChanged += (sender, args) => {
+                    if (r.Checked)
+                    {
+                        // 再起動するように警告表示
+                        if (ViewModel.WarningRestart)
+                            TheApp.app.MessageShow("この変更が反映するのは次回起動時です。", MessageShowType.Confirmation);
+
+                        ViewModel.Selection = j;
+                    }
+                };
                 r.Checked = i == ViewModel.Selection;
                 radioButtons[i] = r;
                 groupBox1.Controls.Add(r);
@@ -141,6 +169,8 @@ namespace MyShogi.View.Win2D.Setting
                 var x2 = x;
                 p.Location = new Point(x2 , pictureBox1.Location.Y);
                 p.Size = pictureBox1.Size; // サイズは固定しておいたほうが扱いやすい
+                p.Click += (sender,args) => { r.Checked = true; /* RadioButtonがクリックされたのと同等の扱いをしてやる*/ };
+                p.BorderStyle = BorderStyle.FixedSingle;
                 pictureBoxes[i] = p;
                 groupBox1.Controls.Add(p);
 
