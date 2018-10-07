@@ -19,7 +19,7 @@ namespace MyShogi.View.Win2D
         {
             if (c.Font != null)
             {
-                if (c.Font != c.Parent.Font /* 親Fontに紐付いているFontだと解放してはまずい */)
+                if (c.Parent == null || c.Font != c.Parent.Font /* 親Fontに紐付いているFontだと解放してはまずい */)
                 {
                     c.Font.Dispose();
                     c.Font = null;
