@@ -2085,78 +2085,26 @@ namespace MyShogi.View.Win2D
 
                         item_display.DropDownItems.Add(item);
                     }
-
                 }
 
-                // 「音声」
+
+                // 「設定」
+                var item_settings = new ToolStripMenuItem();
+                item_settings.Text = "設定(&S)"; // Settings
+                menu.Items.Add(item_settings);
                 {
-                    var item_sounds = new ToolStripMenuItem();
-                    item_sounds.Text = "音声(&S)"; // Sound
-                    menu.Items.Add(item_sounds);
-
-                    {
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = "対局時の駒音(&P)"; // Piece sound
-                        item1.Checked = config.PieceSoundInTheGame == 1;
-                        item1.Click += (sender, e) => { config.PieceSoundInTheGame ^= 1 /* 0,1反転 */; };
-                        item_sounds.DropDownItems.Add(item1);
-                    }
-
-#if false
-                        // あまりいい効果音作れなかったのでコメントアウトしとく。
-                    {
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = "王手などの駒音を衝撃音に(&C)"; // Check sound
-                        item1.Checked = config.CrashPieceSoundInTheGame == 1;
-                        item1.Click += (sender, e) => { config.CrashPieceSoundInTheGame ^= 1 /* 0,1反転 */; };
-                        item_sounds.DropDownItems.Add(item1);
-                    }
-#endif
-
-                    {
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = "検討時の駒音(&Q)"; // Piece soundのPの(アルファベット的に)次の文字。
-                        item1.Checked = config.PieceSoundOffTheGame == 1;
-                        item1.Click += (sender, e) => { config.PieceSoundOffTheGame ^= 1 /* 0,1反転 */; };
-                        item_sounds.DropDownItems.Add(item1);
-                    }
-
-
-                    {
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = "対局時の棋譜読み上げ(&R)"; // Read out
-                        item1.Checked = config.ReadOutKifu == 1;
-                        item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
-                        item1.Click += (sender, e) => { config.ReadOutKifu ^= 1 /* 0,1反転 */; };
-                        item_sounds.DropDownItems.Add(item1);
-                    }
-
-                    {
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = "棋譜読み上げの時、「先手」「後手」を毎回読み上げる(&E)"; // Everytime
-                        item1.Checked = config.ReadOutSenteGoteEverytime == 1;
-                        item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
-                        item1.Click += (sender, e) => { config.ReadOutSenteGoteEverytime ^= 1 /* 0,1反転 */; };
-                        item_sounds.DropDownItems.Add(item1);
-                    }
-
-                    {
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = "終局時に以降の音声読み上げをキャンセルする。(&C)"; // Cancel
-                        item1.Checked = config.ReadOutCancelWhenGameEnd == 1;
-                        item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
-                        item1.Click += (sender, e) => { config.ReadOutCancelWhenGameEnd ^= 1 /* 0,1反転 */; };
-                        item_sounds.DropDownItems.Add(item1);
-                    }
-
-                    {
-                        var item1 = new ToolStripMenuItem();
-                        item1.Text = "秒読みの読み上げを行う(人間側のみ) (&B)"; // Byoyomi
-                        item1.Checked = config.ReadOutByoyomi == 1;
-                        item1.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
-                        item1.Click += (sender, e) => { config.ReadOutByoyomi ^= 1 /* 0,1反転 */; };
-                        item_sounds.DropDownItems.Add(item1);
-                    }
+                    var item = new ToolStripMenuItem();
+                    item.Text = "音声設定 (&S)"; // Sound setting
+                    item.Enabled = config.CommercialVersion != 0; // 商用版のみ選択可
+                    item.Click += (sender, e) => {
+                        using (var dialog = new SoundSettingDialog())
+                        {
+                            FormLocationUtility.CenteringToThisForm(dialog, this);
+                            FontUtility.ReplaceFont(dialog);
+                            dialog.ShowDialog(this);
+                        }
+                    };
+                    item_settings.DropDownItems.Add(item);
 
                 }
 

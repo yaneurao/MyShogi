@@ -40,7 +40,9 @@ namespace MyShogi.Model.Resource.Sounds
         /// <param name=""></param>
         public void ReadOut(SoundEnum e)
         {
-            if (TheApp.app.Config.ReadOutKifu == 0)
+            // global設定でオフになっているか、棋譜読み上げがオフなら何もせずに帰る。
+            var config = TheApp.app.Config;
+            if (config.EnableSound == 0 || config.ReadOutKifu == 0)
                 return;
 
             if (!dic.ContainsKey(e))
@@ -62,6 +64,11 @@ namespace MyShogi.Model.Resource.Sounds
         /// <param name="e"></param>
         public void Play(SoundEnum e)
         {
+            // global設定でオフになっているなら何もせずに帰る。
+            var config = TheApp.app.Config;
+            if (config.EnableSound == 0)
+                return;
+
             if (!dic.ContainsKey(e))
             {
                 var subFolder = e.IsKoma() ? KomaSoundPath : ReadOutSoundPath;

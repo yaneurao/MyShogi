@@ -4,7 +4,6 @@ using System.IO;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Tool;
-using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Resource.Sounds;
 using MyShogi.Model.Shogi.EngineDefine;
@@ -149,18 +148,6 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("ConsiderationWindowHeightType", mainDialog.ResizeConsiderationControl, mainDialog);
             Config.AddPropertyChangedHandler("DisplayNameTurnVersion", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("EnableGameEffect", mainDialog.UpdateMenuItems, mainDialog);
-
-            // 音声
-
-            Config.AddPropertyChangedHandler("PieceSoundInTheGame", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("PieceSoundOffTheGame", mainDialog.UpdateMenuItems, mainDialog);
-
-            // 読み上げ
-
-            Config.AddPropertyChangedHandler("ReadOutKifu", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("ReadOutSenteGoteEverytime", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("ReadOutCancelWhenGameEnd", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("ReadOutByoyomi", mainDialog.UpdateMenuItems, mainDialog);
 
             // Window
 

@@ -139,9 +139,12 @@ namespace MyShogi.Model.Shogi.LocalServer
             CanUserMove = false;
             Initializing = true;
 
+            var config = TheApp.app.Config;
+
             // 音声:「よろしくお願いします。」
             TheApp.app.SoundManager.Stop(); // 再生中の読み上げをすべて停止
-            TheApp.app.SoundManager.ReadOut(SoundEnum.Start);
+            if (config.ReadOutGreeting != 0)
+                TheApp.app.SoundManager.ReadOut(SoundEnum.Start);
 
             // 初回の指し手で、「先手」「後手」と読み上げるためのフラグ
             sengo_read_out = new bool[2] { false, false };
@@ -1061,11 +1064,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 対局中だったものが終了したのか？
             if (GameMode == GameModeEnum.InTheGame)
             {
-                if (TheApp.app.Config.ReadOutCancelWhenGameEnd == 1)
+                var config = TheApp.app.Config;
+                if (config.ReadOutCancelWhenGameEnd != 0)
                     TheApp.app.SoundManager.Stop();
 
                 // 音声:「ありがとうございました。またお願いします。」
-                TheApp.app.SoundManager.ReadOut(SoundEnum.End);
+                if (config.ReadOutGreeting != 0)
+                    TheApp.app.SoundManager.ReadOut(SoundEnum.End);
 
                 // --- 終局時にエンジンに対して"gameover win"などを送信するための処理
 

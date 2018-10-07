@@ -238,6 +238,41 @@ namespace MyShogi.Model.Common.ObjectModel
             AddHandler<bool>(notify, name, h1, control, h2);
         }
 
+        /// <summary>
+        /// CheckBoxとint型の値をbindする
+        /// </summary>
+        /// <param name="notify"></param>
+        /// <param name="name"></param>
+        /// <param name="c"></param>
+        /// <param name="f"></param>
+        /// <param name="way"></param>
+        public void BindToInt(NotifyObject notify, string name, CheckBox c, Action<bool> f = null, DataBindWay way = DataBindWay.TwoWay)
+        {
+            // 値が変更になった時にデータバインドしているほうに値を戻す。
+            var control = c; // copy for capture
+
+            var h1 = new PropertyChangedEventHandler((args) =>
+            {
+                // 値が範囲外なら補整してからセットする。
+                var v = ((int)args.value ) != 0;
+                control.Checked = v;
+                if (f != null)
+                    f(v);
+            });
+            notify.AddPropertyChangedHandler(name, h1);
+
+            EventHandler h2 = null;
+
+            if (way == DataBindWay.TwoWay)
+            {
+                h2 = new EventHandler((sender, args) => { notify.SetValue<int>(name, control.Checked ? 1 : 0); });
+                c.CheckedChanged += h2;
+            }
+
+            AddHandler<int>(notify, name, h1, control, h2);
+        }
+
+
         public void Bind(NotifyObject notify, string name, RadioButton c, Action<bool> f = null , DataBindWay way = DataBindWay.TwoWay)
         {
             // 値が変更になった時にデータバインドしているほうに値を戻す。

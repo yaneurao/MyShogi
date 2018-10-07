@@ -407,6 +407,12 @@
     <Compile Include="View\Win2D\Setting\PlayerSettingControl.Designer.cs">
       <DependentUpon>PlayerSettingControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\Setting\SoundSettingDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\SoundSettingDialog.Designer.cs">
+      <DependentUpon>SoundSettingDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\Setting\TimeSettingControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -491,6 +497,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\PlayerSettingControl.resx">
       <DependentUpon>PlayerSettingControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\SoundSettingDialog.resx">
+      <DependentUpon>SoundSettingDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\TimeSettingControl.resx">
       <DependentUpon>TimeSettingControl.cs</DependentUpon>

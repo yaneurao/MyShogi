@@ -21,7 +21,7 @@ namespace MyShogi.App
         /// 『将棋神やねうら王』のUpdate1.3 [2018/09/03]は、"1.1.3"。→　マイナビ公式で配布[2018/09/03]
         /// 『将棋神やねうら王』のUpdate2   [2018/09/XX]は、"1.2.4"。→　マイナビ公式で配布予定
         /// </summary>
-        public static readonly string MYSHOGI_VERSION_STRING = "1.2.4";
+        public static readonly string MYSHOGI_VERSION_STRING = "1.2.5";
 
 
         public GlobalConfig()
@@ -41,6 +41,10 @@ namespace MyShogi.App
             TurnDisplay = 1;
             DisplayNameTurnVersion = 1;
 
+            // -- 音声設定
+
+            EnableSound = 1;
+
             // -- 駒音
 
             PieceSoundInTheGame = 1;
@@ -50,6 +54,7 @@ namespace MyShogi.App
             // -- 読み上げ
 
             ReadOutKifu = 1;
+            ReadOutGreeting = 1;
             ReadOutSenteGoteEverytime = 1;
             ReadOutCancelWhenGameEnd = 1;
             ReadOutByoyomi = 1;
@@ -437,6 +442,20 @@ namespace MyShogi.App
         #region Sound Setting
 
         /// <summary>
+        /// すべてのサウンドを有効/無効にする
+        /// (有効にしていても個別に無効には出来る)
+        ///
+        /// 0 : 無効
+        /// 1 : 有効
+        /// </summary>
+        [DataMember]
+        public int EnableSound
+        {
+            get { return GetValue<int>("EnableSound"); }
+            set { SetValue<int>("EnableSound", value); }
+        }
+
+        /// <summary>
         /// 対局時の駒音
         /// 0 : なし
         /// 1 : あり(デフォルト)
@@ -510,6 +529,18 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("ReadOutCancelWhenGameEnd"); }
             set { SetValue<int>("ReadOutCancelWhenGameEnd", value); }
+        }
+
+        /// <summary>
+        /// 対局開始時の挨拶
+        /// 0 : なし
+        /// 1 : あり(デフォルト) : 商用版のみ素材あり。
+        /// </summary>
+        [DataMember]
+        public int ReadOutGreeting
+        {
+            get { return GetValue<int>("ReadOutGreeting"); }
+            set { SetValue<int>("ReadOutGreeting", value); }
         }
 
         /// <summary>
