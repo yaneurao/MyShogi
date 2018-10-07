@@ -3,6 +3,37 @@
 ■　2018/10/08
 
 
+- メニューに「表示設定」追加その4
+  - 成駒の色
+  黒,pro_piece_color_style_1.png
+  赤,pro_piece_color_style_2.png
+  - 移動方角マーカー
+  なし,piece_attack_image_ver_0.png
+  あり,piece_attack_image_ver_1.png
+  - 最終手の移動元の升
+  効果なし,last_move_from_style_0.png
+  朱色,last_move_from_style_1.png
+  青色,last_move_from_style_2.png
+  緑色,last_move_from_style_3.png
+  - 最終手の移動先の升
+  効果なし,last_move_to_style_0.png
+  朱色,last_move_to_style_1.png
+  青色,last_move_to_style_2.png
+  緑色,last_move_to_style_3.png
+ - 駒を掴んだ時の移動元の升
+  効果なし,picked_move_from_style_0.png
+  黄色,picked_move_from_style_1.png
+  青色,picked_move_from_style_2.png
+  緑色,picked_move_from_style_3.png
+  - 駒を掴んだ時の移動候補の升
+  効果なし,picked_move_to_style_0.png
+  パターン1,picked_move_to_style_1.png
+  パターン2,picked_move_to_style_2.png
+  パターン3,picked_move_to_style_3.png
+  パターン4,picked_move_to_style_4.png
+  パターン5,picked_move_to_style_5.png
+
+
 - メニューに「表示設定」追加その3
   -  棋譜ウィンドウの棋譜の形式
     標準(KI2),kifwindow_kif_style_0.png

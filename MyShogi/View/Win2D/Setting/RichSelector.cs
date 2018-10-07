@@ -24,6 +24,23 @@ namespace MyShogi.View.Win2D.Setting
             radioButton1.Visible = false;
             pictureBox1.Visible = false;
 
+            // Visual Studioのデザイナーからでも一応表示できたほうが便利なのだが…。
+            if (TheApp.app.DesignMode)
+            {
+                // 簡単ではなさそう…。
+                // cf. カスタムコントロールから、デザイン時にプロジェクトのパスを取得する方法 : http://www.atmarkit.co.jp/bbs/phpBB/viewtopic.php?topic=47369&forum=7&start=16
+
+                // まあ、いいや。とりま、このControlを貼り付けたFormを編集したいなら、各自、この部分を自分の環境に合わせて一時的に書き換えるってことで(；ω；)
+                ImageFolder = @"C:\Users\yaneu\Documents\Visual Studio 2017\project\MyShogi\MyShogi\bin\Debug\image\display_setting/";
+
+                // レジストリとか環境変数とか使うのがスマートなのかな…。
+                // どちらもあまり使いたくないのだが…。
+
+            } else
+            {
+                ImageFolder = "image/display_setting/";
+            }
+
             InitViewModel();
 
             Disposed += OnDispose;
@@ -108,6 +125,12 @@ namespace MyShogi.View.Win2D.Setting
 
         #region privates
 
+        /// <summary>
+        /// 画像が格納されているフォルダ
+        /// コンストラクタで設定される。
+        /// </summary>
+        private string ImageFolder;
+
         private void ResizeRadioButtons(int n)
         {
             if (radioButtons != null && radioButtons.Length == n)
@@ -176,7 +199,8 @@ namespace MyShogi.View.Win2D.Setting
 
                 var img = new ImageLoader();
                 var tmp_img = new ImageLoader();
-                var path = Path.Combine("image/display_setting/",texts[1]);
+
+                var path = Path.Combine(ImageFolder, texts[1]);
                 tmp_img.Load(path);
                 images[i] = tmp_img.CreateAndCopy(p.Width,p.Height);
                 p.Image = images[i].image;

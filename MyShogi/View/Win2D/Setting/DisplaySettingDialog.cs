@@ -16,6 +16,8 @@ namespace MyShogi.View.Win2D.Setting
         {
             var config = TheApp.app.Config;
 
+            // RichSelectorに丸投げできるので、ここではBindの設定をするだけで良い。
+
             // -- 「盤面設定」のタブ
 
             // 段・筋の表示
@@ -34,6 +36,27 @@ namespace MyShogi.View.Win2D.Setting
             // 駒画像
             richSelector6.ViewModel.SelectionOffset = 1;
             richSelector6.Bind(config, "PieceImageVersion");
+
+            // 成駒の色
+            richSelector7.Bind(config, "PromotePieceColorType");
+
+            // 移動方角マーカー
+            richSelector8.Bind(config, "PieceAttackImageVersion");
+
+            // -- 「升表示」のタブ
+
+            // 最終手の移動元の升
+            richSelector9.Bind(config, "LastMoveFromColorType");
+
+            // 最終手の移動先の升
+            richSelector10.Bind(config, "LastMoveToColorType");
+
+            // 駒を掴んだ時の移動元の升
+            richSelector11.Bind(config, "PickedMoveFromColorType");
+
+            // 駒を掴んだ時の移動候補の升
+            richSelector12.Bind(config, "PickedMoveToColorType");
+
 
             // -- 「棋譜設定」のタブ
 
