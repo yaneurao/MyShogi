@@ -77,21 +77,22 @@
             // richTextBox1
             // 
             this.richTextBox1.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.richTextBox1.Location = new System.Drawing.Point(2, 3);
+            this.richTextBox1.Location = new System.Drawing.Point(6, 3);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(846, 353);
+            this.richTextBox1.Size = new System.Drawing.Size(832, 354);
             this.richTextBox1.TabIndex = 5;
             this.richTextBox1.Text = "";
             // 
             // richTextBox2
             // 
             this.richTextBox2.DetectUrls = false;
-            this.richTextBox2.Location = new System.Drawing.Point(2, 391);
+            this.richTextBox2.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.richTextBox2.Location = new System.Drawing.Point(6, 391);
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.ReadOnly = true;
             this.richTextBox2.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richTextBox2.Size = new System.Drawing.Size(846, 93);
+            this.richTextBox2.Size = new System.Drawing.Size(832, 93);
             this.richTextBox2.TabIndex = 6;
             this.richTextBox2.Text = "";
             // 

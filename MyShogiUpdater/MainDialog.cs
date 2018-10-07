@@ -206,6 +206,23 @@ namespace MyShogiUpdater
             // UACで起動したので起動する。
             if (ViewModel.AutoInstall)
                 button1_Click(null, null);
+
+            /*
+               Updater、dpiスケーリング、利いてない。なぜ？
+                利いてるけど、TextBoxやRichTextBox、ListBox等の高さまで拡大されるという問題のようで、これ回避できないのでは…。
+                    cf. http://bbs.wankuma.com/index.cgi?mode=al2&namber=67969&KLOG=115
+                高さ自前で計算してレイアウト修正すべきなのか…。なんぞこれ…。
+            */
+
+            // 200%にscalingしている環境だとrichTextBox2の高さだけ本来の高さの2倍されてしまっている。
+            // 原因不明。管理者権限で実行したときの .NET側のバグと思われる。richTextBox1を基準にリサイズしてしまう。
+
+            //richTextBox2.Height = richTextBox1.Height / 4;
+
+            // →　フォントを設定していないとこうなる模様。なんぞこれ…。
+            // フォント未設定 = dpiに依存するフォントが設定されていて、2倍の表示域が必要→2倍の高さに
+            // みたいな理屈なのだろうか。ひどすぎる。
+
         }
     }
 }
