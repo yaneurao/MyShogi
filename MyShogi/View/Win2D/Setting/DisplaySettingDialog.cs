@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MyShogi.App;
 using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D.Setting
@@ -15,6 +8,16 @@ namespace MyShogi.View.Win2D.Setting
         public DisplaySettingDialog()
         {
             InitializeComponent();
+
+            InitViewModel();
         }
+
+        private void InitViewModel()
+        {
+            var config = TheApp.app.Config;
+            richSelector1.Bind(config, "BoardNumberImageVersion");
+
+        }
+
     }
 }
