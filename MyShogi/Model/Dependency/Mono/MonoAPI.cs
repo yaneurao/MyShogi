@@ -16,6 +16,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 // --- 単体で呼び出して使うAPI群
 
@@ -118,6 +119,53 @@ namespace MyShogi.Model.Dependency
                 c = CpuType.NO_SSE;
 
             return c;
+        }
+
+        /// <summary>
+        /// 現在使用されていない利用可能な物理メモリのサイズ(kB)
+        /// </summary>
+        /// <returns></returns>
+        public static ulong GetFreePhysicalMemory()
+        {
+            var info = new ProcessStartInfo
+            {
+                FileName = "vm_stat",
+                Arguments = "",
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardInput = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = false,
+            };
+
+            var process = new Process
+            {
+                StartInfo = info,
+            };
+
+            process.Start();
+
+            string result = process.StandardOutput.ReadToEnd();
+            string[] rows = result.Split('\n');
+
+            ulong freeMemory = 0;
+            // 始めの行はタイトルなので飛ばす
+            for(int i = 1; i < rows.Length; i++)
+            {
+                string row = rows[i];
+                string[] data = row.Split(':');
+                if (data.Length != 2) continue;
+
+                string key = data[0].Trim();
+                string value = data[1].Trim();
+                // 空きメモリとカーネルが持っているキャッシュを合計する(必要になったら開放できるもの)
+                if (key == "Pages free" || key == "Pages purgeable" || key == "File-backed pages")
+                {
+                    freeMemory += ulong.Parse(value.Replace(".", "")) * 4096ul;
+                }
+            }
+
+            return freeMemory / 1024ul;
         }
     }
 

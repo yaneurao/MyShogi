@@ -69,6 +69,36 @@ namespace MyShogi.Model.Dependency
             return c;
         }
 
+        /// <summary>
+        /// 現在使用されていない利用可能な物理メモリのサイズ(kB)
+        /// </summary>
+        /// <returns></returns>
+        public static ulong GetFreePhysicalMemory()
+        {
+            ulong result = 0;
+            try
+            {
+                using (var mc = new ManagementClass("Win32_OperatingSystem"))
+                using (var moc = mc.GetInstances())
+                    foreach (var mo in moc) // 何故か複数あることが想定されている。NUMA環境か？
+                    {
+                        result = (ulong)mo["FreePhysicalMemory"]; // このメンバ存在しないということはないはず。
+
+                        mo.Dispose(); // これ要るのか？
+                    }
+            }
+            catch { }
+
+            if (!Environment.Is64BitOperatingSystem)
+            {
+                // 32bitで動作しているプロセス空間では、2GBまでしか物理メモリを扱えないので
+                // 物理メモリがいかにあろうと2GBであるとみなす。
+                result = System.Math.Min(result, 2 * 1024 * 1024ul);
+            }
+
+            return result;
+        }
+
     }
 
     /// <summary>
