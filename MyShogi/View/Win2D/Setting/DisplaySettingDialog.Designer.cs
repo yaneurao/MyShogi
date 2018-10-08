@@ -50,10 +50,10 @@
             this.richSelector3 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector2 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.richSelector17 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector16 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage7 = new System.Windows.Forms.TabPage();
             this.richSelector15 = new MyShogi.View.Win2D.Setting.RichSelector();
-            this.richSelector17 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -106,8 +106,8 @@
             this.richSelector5.Location = new System.Drawing.Point(6, 208);
             this.richSelector5.Name = "richSelector5";
             this.richSelector5.SelectionTexts = new string[] {
-        "薄い,tatami_image_ver_1.png",
-        "濃い,tatami_image_ver_2.png"};
+        "薄い,tatami_image_ver_1.png,畳の色を薄めの色にします。",
+        "濃い,tatami_image_ver_2.png,畳の色を濃いめの色にします。"};
             this.richSelector5.Size = new System.Drawing.Size(772, 110);
             this.richSelector5.TabIndex = 0;
             // 
@@ -117,8 +117,8 @@
             this.richSelector4.Location = new System.Drawing.Point(9, 106);
             this.richSelector4.Name = "richSelector4";
             this.richSelector4.SelectionTexts = new string[] {
-        "白色,board_image_ver_1.png",
-        "黄色,board_image_ver_2.png"};
+        "白色,board_image_ver_1.png,将棋盤を白色っぽい色にします。",
+        "黄色,board_image_ver_2.png,将棋盤を黄色っぽい色にします。"};
             this.richSelector4.Size = new System.Drawing.Size(772, 110);
             this.richSelector4.TabIndex = 0;
             // 
@@ -128,9 +128,9 @@
             this.richSelector1.Location = new System.Drawing.Point(6, 6);
             this.richSelector1.Name = "richSelector1";
             this.richSelector1.SelectionTexts = new string[] {
-        "非表示,rank_style_0.png",
-        "標準,rank_style_1.png",
-        "Chess式,rank_style_2.png"};
+        "非表示,rank_style_0.png,段・筋を表示しません。",
+        "標準,rank_style_1.png,段を漢数字で表示します。",
+        "Chess式,rank_style_2.png,段をアルファベットで表示します(SFEN方式)"};
             this.richSelector1.Size = new System.Drawing.Size(772, 110);
             this.richSelector1.TabIndex = 0;
             // 
@@ -152,8 +152,8 @@
             this.richSelector8.Location = new System.Drawing.Point(3, 205);
             this.richSelector8.Name = "richSelector8";
             this.richSelector8.SelectionTexts = new string[] {
-        "なし,piece_attack_image_ver_0.png",
-        "あり,piece_attack_image_ver_1.png"};
+        "なし,piece_attack_image_ver_0.png,通常の状態です。",
+        "あり,piece_attack_image_ver_1.png,駒の移動できる方角がわかる赤いマーカーを表示します。"};
             this.richSelector8.Size = new System.Drawing.Size(772, 110);
             this.richSelector8.TabIndex = 1;
             // 
@@ -163,8 +163,8 @@
             this.richSelector7.Location = new System.Drawing.Point(3, 105);
             this.richSelector7.Name = "richSelector7";
             this.richSelector7.SelectionTexts = new string[] {
-        "黒,pro_piece_color_style_1.png",
-        "赤,pro_piece_color_style_2.png"};
+        "黒,pro_piece_color_style_1.png,成り駒の文字の色を黒にします。",
+        "赤,pro_piece_color_style_2.png,成り駒の文字の色を赤にします。"};
             this.richSelector7.Size = new System.Drawing.Size(772, 110);
             this.richSelector7.TabIndex = 1;
             // 
@@ -174,9 +174,9 @@
             this.richSelector6.Location = new System.Drawing.Point(3, 3);
             this.richSelector6.Name = "richSelector6";
             this.richSelector6.SelectionTexts = new string[] {
-        "二文字駒,piece_image_ver_1.png",
-        "一文字駒,piece_image_ver_2.png",
-        "英文字駒,piece_image_ver_3.png"};
+        "二文字駒,piece_image_ver_1.png,駒を二文字駒にします。",
+        "一文字駒,piece_image_ver_2.png,駒を一文字駒にします。",
+        "英文字駒,piece_image_ver_3.png,駒をアルファベットの駒(SFENで使われている文字)にします。"};
             this.richSelector6.Size = new System.Drawing.Size(772, 110);
             this.richSelector6.TabIndex = 1;
             // 
@@ -193,13 +193,13 @@
             // 
             // richSelector14
             // 
-            this.richSelector14.GroupBoxTitle = "対局者名の先頭の手番記号";
+            this.richSelector14.GroupBoxTitle = "対局者名の先頭の先後の記号";
             this.richSelector14.Location = new System.Drawing.Point(3, 105);
             this.richSelector14.Name = "richSelector14";
             this.richSelector14.SelectionTexts = new string[] {
-        "なし,turn_mark_style_0.png",
-        "「☗」と「☖」,turn_mark_style_1.png",
-        "「▲」と「△」,turn_mark_style_2.png"};
+        "なし,turn_mark_style_0.png,対局者名に先後の記号をつけません。",
+        "「☗」と「☖」,turn_mark_style_1.png,対局者名の先頭に先後の記号をつけます。",
+        "「▲」と「△」,turn_mark_style_2.png,対局者名の先頭に先後の記号をつけます。"};
             this.richSelector14.Size = new System.Drawing.Size(772, 110);
             this.richSelector14.TabIndex = 4;
             // 
@@ -209,9 +209,9 @@
             this.richSelector13.Location = new System.Drawing.Point(3, 3);
             this.richSelector13.Name = "richSelector13";
             this.richSelector13.SelectionTexts = new string[] {
-        "なし,turn_style_0.png",
-        "手番マーク,turn_style_1.png",
-        "名前を赤字,turn_style_2.png"};
+        "なし,turn_style_0.png,手番側の表現をしません。",
+        "手番マーク,turn_style_1.png,手番側の対局者に手番マークを表示します。",
+        "名前を赤字,turn_style_2.png,手番側の対局者名を赤い文字にします。"};
             this.richSelector13.Size = new System.Drawing.Size(772, 110);
             this.richSelector13.TabIndex = 3;
             // 
@@ -234,12 +234,12 @@
             this.richSelector12.Location = new System.Drawing.Point(3, 304);
             this.richSelector12.Name = "richSelector12";
             this.richSelector12.SelectionTexts = new string[] {
-        "効果なし,picked_move_to_style_0.png",
-        "パターン1,picked_move_to_style_1.png",
-        "パターン2,picked_move_to_style_2.png",
-        "パターン3,picked_move_to_style_3.png",
-        "パターン4,picked_move_to_style_4.png",
-        "パターン5,picked_move_to_style_5.png"};
+        "効果なし,picked_move_to_style_0.png,視覚効果なし",
+        "パターン1,picked_move_to_style_1.png,移動できない升を少し暗くします",
+        "パターン2,picked_move_to_style_2.png,移動できない升を暗くします",
+        "パターン3,picked_move_to_style_3.png,移動できない升をかなり暗くします",
+        "パターン4,picked_move_to_style_4.png,移動できる升を少し明るくします",
+        "パターン5,picked_move_to_style_5.png,移動できる升をかなり明るくします"};
             this.richSelector12.Size = new System.Drawing.Size(772, 110);
             this.richSelector12.TabIndex = 5;
             // 
@@ -249,10 +249,10 @@
             this.richSelector11.Location = new System.Drawing.Point(3, 205);
             this.richSelector11.Name = "richSelector11";
             this.richSelector11.SelectionTexts = new string[] {
-        "効果なし,picked_move_from_style_0.png",
-        "黄色,picked_move_from_style_1.png",
-        "青色,picked_move_from_style_2.png",
-        "緑色,picked_move_from_style_3.png"};
+        "効果なし,picked_move_from_style_0.png,視覚効果を施しません。",
+        "黄色,picked_move_from_style_1.png,駒を掴んだ時の移動元の升を朱色にします。",
+        "青色,picked_move_from_style_2.png,駒を掴んだ時の移動先の升を青色にします。",
+        "緑色,picked_move_from_style_3.png,駒を掴んだ時の移動先の升を緑色にします。"};
             this.richSelector11.Size = new System.Drawing.Size(772, 110);
             this.richSelector11.TabIndex = 4;
             // 
@@ -262,10 +262,10 @@
             this.richSelector10.Location = new System.Drawing.Point(3, 104);
             this.richSelector10.Name = "richSelector10";
             this.richSelector10.SelectionTexts = new string[] {
-        "効果なし,last_move_to_style_0.png",
-        "朱色,last_move_to_style_1.png",
-        "青色,last_move_to_style_2.png",
-        "緑色,last_move_to_style_3.png"};
+        "効果なし,last_move_to_style_0.png,視覚効果を施しません。",
+        "朱色,last_move_to_style_1.png,最終手の移動先の升を朱色にします。",
+        "青色,last_move_to_style_2.png,最終手の移動先の升を青色にします。",
+        "緑色,last_move_to_style_3.png,最終手の移動先の升を緑色にします。"};
             this.richSelector10.Size = new System.Drawing.Size(772, 110);
             this.richSelector10.TabIndex = 3;
             // 
@@ -275,10 +275,10 @@
             this.richSelector9.Location = new System.Drawing.Point(3, 3);
             this.richSelector9.Name = "richSelector9";
             this.richSelector9.SelectionTexts = new string[] {
-        "効果なし,last_move_from_style_0.png",
-        "朱色,last_move_from_style_1.png",
-        "青色,last_move_from_style_2.png",
-        "緑色,last_move_from_style_3.png"};
+        "効果なし,last_move_from_style_0.png,視覚効果を施しません。",
+        "朱色,last_move_from_style_1.png,最終手の移動元の升を朱色にします。",
+        "青色,last_move_from_style_2.png,最終手の移動元の升を青色にします。",
+        "緑色,last_move_from_style_3.png,最終手の移動元の升を緑色にします。"};
             this.richSelector9.Size = new System.Drawing.Size(772, 110);
             this.richSelector9.TabIndex = 2;
             // 
@@ -300,10 +300,10 @@
             this.richSelector3.Location = new System.Drawing.Point(4, 110);
             this.richSelector3.Name = "richSelector3";
             this.richSelector3.SelectionTexts = new string[] {
-        "標準(KI2),cons_window_kif_style_0.png",
-        "簡易(KIF),cons_window_kif_style_1.png",
-        "CSA,cons_window_kif_style_2.png",
-        "SFEN,cons_window_kif_style_3.png"};
+        "標準(KI2),cons_window_kif_style_0.png,標準的な棋譜表記にします。",
+        "簡易(KIF),cons_window_kif_style_1.png,移動元の升が書かれている簡易な棋譜表記にします。",
+        "CSA,cons_window_kif_style_2.png,移動元の升が書かれている簡易な棋譜表記にします。",
+        "SFEN,cons_window_kif_style_3.png,チェスで使われているSFEN方式の棋譜表記にします。"};
             this.richSelector3.Size = new System.Drawing.Size(772, 112);
             this.richSelector3.TabIndex = 1;
             // 
@@ -313,10 +313,10 @@
             this.richSelector2.Location = new System.Drawing.Point(4, 3);
             this.richSelector2.Name = "richSelector2";
             this.richSelector2.SelectionTexts = new string[] {
-        "標準(KI2),kifwindow_kif_style_0.png",
-        "簡易(KIF),kifwindow_kif_style_1.png",
-        "CSA,kifwindow_kif_style_2.png",
-        "SFEN,kifwindow_kif_style_3.png"};
+        "標準(KI2),kifwindow_kif_style_0.png,標準的な棋譜表記にします。",
+        "簡易(KIF),kifwindow_kif_style_1.png,移動元の升が書かれている簡易な棋譜表記にします。",
+        "CSA,kifwindow_kif_style_2.png,CSA形式の棋譜表記にします。",
+        "SFEN,kifwindow_kif_style_3.png,チェスで使われているSFEN方式の棋譜表記にします。"};
             this.richSelector2.Size = new System.Drawing.Size(772, 112);
             this.richSelector2.TabIndex = 1;
             // 
@@ -331,14 +331,25 @@
             this.tabPage6.Text = "対局エフェクト";
             this.tabPage6.UseVisualStyleBackColor = true;
             // 
+            // richSelector17
+            // 
+            this.richSelector17.GroupBoxTitle = "振り駒のエフェクト";
+            this.richSelector17.Location = new System.Drawing.Point(3, 107);
+            this.richSelector17.Name = "richSelector17";
+            this.richSelector17.SelectionTexts = new string[] {
+        "なし,game_piece_toss_effect_0.png,振り駒で手番を決める時の画面エフェクトなし。",
+        "あり,game_piece_toss_effect_1.png,振り駒で手番を決める時の画面エフェクトあり。"};
+            this.richSelector17.Size = new System.Drawing.Size(772, 112);
+            this.richSelector17.TabIndex = 5;
+            // 
             // richSelector16
             // 
             this.richSelector16.GroupBoxTitle = "対局開始・終了エフェクト";
             this.richSelector16.Location = new System.Drawing.Point(3, 3);
             this.richSelector16.Name = "richSelector16";
             this.richSelector16.SelectionTexts = new string[] {
-        "なし,game_greeting_effect_style_0.png",
-        "あり,game_greeting_effect_style_1.png"};
+        "なし,game_greeting_effect_style_0.png,対局開始・終了の画面エフェクトなし。",
+        "あり,game_greeting_effect_style_1.png,対局開始・終了の画面エフェクトあり。"};
             this.richSelector16.Size = new System.Drawing.Size(772, 112);
             this.richSelector16.TabIndex = 4;
             // 
@@ -358,21 +369,10 @@
             this.richSelector15.Location = new System.Drawing.Point(3, 3);
             this.richSelector15.Name = "richSelector15";
             this.richSelector15.SelectionTexts = new string[] {
-        "後手側,eval_sign_style_0.png",
-        "先手側,eval_sign_style_1.png"};
+        "後手側,eval_sign_style_0.png,後手側の評価値は、自分から見た値(プラスだと後手良しの意味)になります。",
+        "先手側,eval_sign_style_1.png,後手側の評価値は、先手から見た値(プラスだと先手良しの意味)になります。"};
             this.richSelector15.Size = new System.Drawing.Size(772, 112);
             this.richSelector15.TabIndex = 3;
-            // 
-            // richSelector17
-            // 
-            this.richSelector17.GroupBoxTitle = "振り駒のエフェクト";
-            this.richSelector17.Location = new System.Drawing.Point(3, 107);
-            this.richSelector17.Name = "richSelector17";
-            this.richSelector17.SelectionTexts = new string[] {
-        "なし,game_piece_toss_effect_0.png",
-        "あり,game_piece_toss_effect_1.png"};
-            this.richSelector17.Size = new System.Drawing.Size(772, 112);
-            this.richSelector17.TabIndex = 5;
             // 
             // DisplaySettingDialog
             // 

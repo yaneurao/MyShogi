@@ -66,6 +66,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
             var current_cpu = CpuUtil.GetCurrentCpu();
 
             // サポートしている実行ファイルのなかで、一番いいものにする。
+            // サポートされているものがなければ、XXX_unknown.exeになってそのあと
+            // ファイルが存在せず例外が出ることになるがこれはいい動作と言えるのかどうか…。
             var cpu = CpuType.UNKNOWN;
             foreach (var c in engine_define.SupportedCpus)
                 if (c <= current_cpu /* 現在のCPUで動作する*/ && cpu < c /* 一番ええやつ */)

@@ -137,7 +137,7 @@ namespace MyShogi.View.Win2D.Setting
         /// それぞれの選択肢のテキスト
         /// この数だけRadioButtonを生成する。
         ///
-        /// "表示する,rank_0.png"のように表示名と画像ファイル名を書く。
+        /// "表示する,rank_0.png,ToolTip用の説明文"のように表示名と画像ファイル名を書く。
         /// </summary>
         public string [] SelectionTexts { get; set; }
 
@@ -185,11 +185,11 @@ namespace MyShogi.View.Win2D.Setting
             foreach (var i in All.Int(n))
             {
                 var texts = SelectionTexts[i].Split(',');
-                if (texts.Length != 2)
+                if (texts.Length < 2)
                     continue;
 
                 var r = new RadioButton();
-                var x = (pictureBox1.Width + groupBox1.Margin.Left*2) * i + Margin.Left*3;
+                var x = (pictureBox1.Width + groupBox1.Margin.Left*2) * i + Margin.Left*5;
                 var rx = x  /* + radioButton1.Location.X */;
                 r.Location = new Point(rx , radioButton1.Location.Y);
                 r.Text = texts[0];
@@ -224,6 +224,14 @@ namespace MyShogi.View.Win2D.Setting
                 tmp_img.Load(path);
                 images[i] = tmp_img.CreateAndCopy(p.Width,p.Height);
                 p.Image = images[i].image;
+
+                // ToolTipの追加。
+                if (texts.Length >= 3)
+                {
+                    var tips = texts[2];
+                    toolTip1.SetToolTip(r, tips);
+                    toolTip1.SetToolTip(p, tips);
+                }
             }
 
             Invalidate();

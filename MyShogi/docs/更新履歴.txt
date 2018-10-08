@@ -1,6 +1,28 @@
 ﻿
+■　2018/10/09
+
+
+- 表示設定ダイアログ、文字が収まりきらないのでもう少し間隔開ける。(masaさん)
+- 表示設定ダイアログのすべての項目にTooltip追加
+  効果なし,picked_move_to_style_0.png,視覚効果なし
+  パターン1,picked_move_to_style_1.png,移動できない升を少し暗くします
+  パターン2,picked_move_to_style_2.png,移動できない升を暗くします
+  パターン3,picked_move_to_style_3.png,移動できない升をかなり暗くします
+  パターン4,picked_move_to_style_4.png,移動できる升を少し明るくします
+  パターン5,picked_move_to_style_5.png,移動できる升をかなり明るくします
+
+
+- CPU判別がUnknown扱いになったときにエンジンのファイル名としてUnknownとsuffixについたものを
+  選びに行くの修正。
+   - よく見たら、仕方ない動作だった。修正しないでおこう。
+
+
+- [WIP] Macで空きメモリ容量を計算するコードを追加。 #58 (jnoryさんのプルリク)
+
+
 
 ■　2018/10/08
+
 
 - V1.2.5リリース。
   - eval : MyShogi201807260000Eval.zip
