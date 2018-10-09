@@ -273,8 +273,6 @@ namespace MyShogi.View.Win2D
             ThinkReportChanged?.Invoke(args);
         }
 
-        private bool dirty;
-
         // 持ち時間が減っていくときに、持ち時間の部分だけの再描画をしたいのでそのためのフラグ
         //public bool DirtyRestTime
         //{
@@ -631,15 +629,19 @@ namespace MyShogi.View.Win2D
             // 上記 1.と3.
             if (!canPromote)
             {
+                surpressDraw = true; StateReset();
+
                 // 成れないので成る選択肢は消して良い。
-                gameServer.DoMoveCommand(unpro_move, () => StateReset() );
+                DoMoveCommand(unpro_move);
             }
             // 上記 2.
             else if (!canUnpro && canPromote)
             {
+                surpressDraw = true; StateReset();
+
                 // 成るしか出来ないので、不成は選択肢から消して良い。
                 // 成れないので成る選択肢は消して良い。
-                gameServer.DoMoveCommand(pro_move , () => StateReset() );
+                DoMoveCommand(pro_move);
             }
             // 上記 4.
             // これで、上記の1.～4.のすべての状態を網羅したことになる。
@@ -960,7 +962,7 @@ namespace MyShogi.View.Win2D
                                 case PromoteDialogSelectionEnum.PROMOTE:
                                     var m = Util.MakeMove(state.picked_from, state.picked_to,
                                         state.promote_dialog_selection == PromoteDialogSelectionEnum.PROMOTE);
-                                    gameServer.DoMoveCommand(m, () => StateReset() );
+                                    DoMoveCommand(m);
                                     break;
                             }
 
@@ -1022,7 +1024,41 @@ namespace MyShogi.View.Win2D
             raw_pos.gamePly = 1;
 
             var sfen = Position.SfenFromRawPosition(raw_pos);
-            gameServer.SetSfenCommand(sfen , () => StateReset() );
+            SetSfenCommand(sfen);
+        }
+
+        /// <summary>
+        /// SetSfenを行う。LocalGameServer.SetSfenCommand()を直接呼び出さずに、
+        /// 必ずこのメソッドを経由すること。
+        /// </summary>
+        /// <param name="sfen"></param>
+        public void SetSfenCommand(string sfen)
+        {
+            // 描画の抑制。
+            // これを行うことにより、見かけ上のatomic性を担保する。
+            surpressDraw = true;
+            StateReset();
+
+            gameServer.SetSfenCommand(sfen,
+                () => surpressDraw = false // 終了ハンドラで描画の抑制を解除する。
+                );
+        }
+
+        /// <summary>
+        /// DoMove()を行う。LocalGameServer.DoMoveCommand()を直接呼び出さずに、
+        /// 必ずこのメソッドを経由すること。
+        /// </summary>
+        /// <param name="sfen"></param>
+        public void DoMoveCommand(Move m)
+        {
+            // 描画の抑制。
+            // これを行うことにより、見かけ上のatomic性を担保する。
+            surpressDraw = true;
+            StateReset();
+
+            gameServer.DoMoveCommand(m ,
+                () => surpressDraw = false // 終了ハンドラで描画の抑制を解除する。
+                );
         }
 
         /// <summary>

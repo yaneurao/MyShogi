@@ -811,7 +811,7 @@ namespace MyShogi.View.Win2D
         private void toolStripButton1_Click(object sender, System.EventArgs e)
         {
             // 受理されるかどうかは知らん
-            gameServer.DoMoveCommand(SCore.Move.RESIGN );
+            gameScreenControl1.DoMoveCommand(SCore.Move.RESIGN );
         }
 
         /// <summary>
@@ -1704,7 +1704,7 @@ namespace MyShogi.View.Win2D
                             var raw_pos = gameServer.Position.CreateRawPosition();
                             raw_pos.sideToMove = raw_pos.sideToMove.Not();
                             var sfen = Position.SfenFromRawPosition(raw_pos);
-                            gameServer.SetSfenCommand(sfen);
+                            gameScreenControl1.SetSfenCommand(sfen);
                         };
                         item_boardedit.DropDownItems.Add(item);
                     }
@@ -1713,7 +1713,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Enabled = inTheBoardEdit;
                         item.Text = "平手の初期局面配置(&N)"; // No handicaped
-                        item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.NoHandicap.ToSfen()); };
+                        item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.NoHandicap.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
@@ -1727,98 +1727,98 @@ namespace MyShogi.View.Win2D
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "香落ち(&1)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapKyo.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "右香落ち(&2)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapRightKyo.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapRightKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "角落ち(&3)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapKaku.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapKaku.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "飛車落ち(&4)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapHisya.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapHisya.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "飛香落ち(&5)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapHisyaKyo.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapHisyaKyo.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "二枚落ち(&6)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap2.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap2.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "三枚落ち(&7)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap3.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap3.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "四枚落ち(&8)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap4.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap4.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "五枚落ち(&9)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap5.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap5.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "左五枚落ち(&A)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapLeft5.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapLeft5.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "六枚落ち(&B)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap6.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap6.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "八枚落ち(&C)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap8.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap8.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "十枚落ち(&D)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Handicap10.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Handicap10.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
                         {
                             var item = new ToolStripMenuItem();
                             item.Enabled = inTheBoardEdit;
                             item.Text = "歩三枚(&E)";
-                            item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.HandicapPawn3.ToSfen()); };
+                            item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.HandicapPawn3.ToSfen()); };
                             item_handicap.DropDownItems.Add(item);
                         }
 
@@ -1828,7 +1828,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Enabled = inTheBoardEdit;
                         item.Text = "詰将棋用に配置(&M)"; // Mate
-                        item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Mate1.ToSfen()); };
+                        item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Mate1.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
@@ -1836,7 +1836,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Enabled = inTheBoardEdit;
                         item.Text = "双玉詰将棋用に配置(&D)"; // Dual king mate
-                        item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Mate2.ToSfen()); };
+                        item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Mate2.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
 
@@ -1846,7 +1846,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Enabled = inTheBoardEdit;
                         item.Text = "双玉で玉以外すべて駒箱に配置(&U)"; // dUal king
-                        item.Click += (sender, e) => { gameServer.SetSfenCommand(BoardType.Mate3.ToSfen()); };
+                        item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Mate3.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
                 }

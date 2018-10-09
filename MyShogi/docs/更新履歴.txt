@@ -3,6 +3,8 @@
 ■　2018/10/09
 
 
+- GameScreenControlにSetSfenCommand()/DoMoveCommand()を追加。
+  - これを用いて、見かけ上のatomic性を担保するようにした。
 - 駒のpickupに関するソースコメント追加。
 
 

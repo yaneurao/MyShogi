@@ -35,6 +35,7 @@ namespace MyShogi.View.Win2D
             var config = app.Config;
 
             // 描画する局面
+            // これに基づいて描画しないと駄目(途中でgameServer.Positionが差し替わる必要があるので、参照を掴んでおく必要がある)
             var pos = gameServer.Position; // MainDialogViewModel。掴んでいる駒などのViewの状態
             if (pos == null)
                 return; // 初期化まだ終わってない。
@@ -112,10 +113,6 @@ namespace MyShogi.View.Win2D
                         if (sq == lastMoveTo)
                             DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.To));
                     }
-
-                    // pickしている駒がないケースを考慮して描画しなくてはならない。
-                    // cf. LocalGameServer.DoMoveCommand()のコメント。
-                    // ここでは、pc == NO_PIECEならば、nullが返ってくるので、問題ない。
 
                     // 盤面反転モードなら、駒を先後入れ替えて描画する。
                     var sprite = SPRITE.Piece(reverse ? pc.Inverse() : pc);

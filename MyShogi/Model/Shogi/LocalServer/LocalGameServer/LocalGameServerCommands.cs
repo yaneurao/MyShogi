@@ -61,6 +61,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// ユーザーがマウス操作によってmの指し手を入力した。
         /// ユーザーはこれを合法手だと思っているが、これが受理されるかどうかは別の話。
         /// (時間切れなどがあるので)
+        /// 
+        /// 注意)
+        /// GameScreenControlを用いる場合は、このメソッドを使わずに
+        /// GameScreenControlの同名のメソッドを用いること。
         /// </summary>
         /// <param name="m"></param>
         public void DoMoveCommand(Move m , Action OnCompleted = null)
@@ -78,10 +82,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             // DoMoveCommand()は、lambdaをとれるようにする必要がある。
 
             // 本当は、Completedイベントと、画面の更新通知(PositionUpdate)とはatomicに行う必要がある。
-            // Completedイベントをあとから送っているので、駒移動後→PositionUpdate→描画→Completeイベント
+            // Completedイベントをあとから送っているので、
+            // 内部状態変更→駒移動→PositionUpdate→描画→Completeイベント
             // の順番になる可能性があることに注意。
-            // GameScreen.OnDraw()ではこの点に配慮する必要があるのだが、pickしている駒がない場合、
-            // Piece.NO_PIECEが返ってきて、Sprite == nullで描画されるので問題ない。
+
+            // 内部状態変更をCompleteイベントで行うのは気持ち悪いので(前の状態のままなので別の操作などを
+            // 受け付けてしまう可能性がある)、surpressDraw = trueにして、更新が終わるまで画面描画を行わない。
+            // CompleteイベントでsurpressDraw = falseにすべきである。
             
             AddCommand(
             () =>
@@ -492,6 +499,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// 盤面編集用。
         ///
         /// DoMoveCommand()と同様の理由によりOnCompletedを取れる。
+        ///
+        /// 注意)
+        /// GameScreenControlを用いる場合は、このメソッドを使わずに
+        /// GameScreenControlの同名のメソッドを用いること。
         /// </summary>
         public void SetSfenCommand(string sfen , Action OnCompleted = null)
         {

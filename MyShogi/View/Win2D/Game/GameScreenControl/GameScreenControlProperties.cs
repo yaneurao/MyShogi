@@ -48,7 +48,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public bool Dirty
         {
-            get { return dirty || animatorManager.Dirty /* animatorが生きてる */; }
+            get { return (dirty || animatorManager.Dirty /* animatorが生きてる */) && !surpressDraw; }
             private set
             {
                 // Thread生成なしにLocalGameServerを動作させているなら、即座に画面描画すべき。(これ用にタイマーも回ってないので)
@@ -63,6 +63,12 @@ namespace MyShogi.View.Win2D
                     dirty = value;
             }
         }
+        private bool dirty;
+
+        /// <summary>
+        /// 描画の抑制フラグ。これが立っているときは描画を抑制する。
+        /// </summary>
+        private bool surpressDraw;
 
         /// <summary>
         /// 残り持ち時間だけが更新されたので部分的に描画して欲しいフラグ
