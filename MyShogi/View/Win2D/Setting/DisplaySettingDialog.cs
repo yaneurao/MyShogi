@@ -18,7 +18,7 @@ namespace MyShogi.View.Win2D.Setting
 
             // RichSelectorに丸投げできるので、ここではBindの設定をするだけで良い。
 
-            // -- 「盤面設定」のタブ
+            // -- 「盤面」のタブ
 
             // 段・筋の表示
             richSelector1.Bind(config, "BoardNumberImageVersion");
@@ -31,7 +31,7 @@ namespace MyShogi.View.Win2D.Setting
             richSelector5.ViewModel.SelectionOffset = 1;
             richSelector5.Bind(config, "TatamiImageVersion");
 
-            // -- 「駒表示」のタブ
+            // -- 「駒」のタブ
 
             // 駒画像
             richSelector6.ViewModel.SelectionOffset = 1;
@@ -43,15 +43,10 @@ namespace MyShogi.View.Win2D.Setting
             // 移動方角マーカー
             richSelector8.Bind(config, "PieceAttackImageVersion");
 
-            // -- 「手番表示」のタブ
+            // 駒を掴む表現
+            richSelector18.Bind(config, "PickedMoveDisplayStyle");
 
-            // 駒を掴んだ時の移動候補の升
-            richSelector13.Bind(config, "TurnDisplay");
-
-            // 対局者名の先頭の手番記号
-            richSelector14.Bind(config, "DisplayNameTurnVersion");
-
-            // -- 「升表示」のタブ
+            // -- 「升」のタブ
 
             // 最終手の移動元の升
             richSelector9.Bind(config, "LastMoveFromColorType");
@@ -65,8 +60,19 @@ namespace MyShogi.View.Win2D.Setting
             // 駒を掴んだ時の移動候補の升
             richSelector12.Bind(config, "PickedMoveToColorType");
 
+            // -- 「操作」のタブ
 
-            // -- 「棋譜設定」のタブ
+            richSelector19.Bind(config, "EnableMouseDrag");
+
+            // -- 「手番」のタブ
+
+            // 駒を掴んだ時の移動候補の升
+            richSelector13.Bind(config, "TurnDisplay");
+
+            // 対局者名の先頭の手番記号
+            richSelector14.Bind(config, "DisplayNameTurnVersion");
+
+            // -- 「棋譜」のタブ
 
             // 棋譜ウインドウの棋譜の記法
             richSelector2.ViewModel.WarningRestart = true;
@@ -76,7 +82,7 @@ namespace MyShogi.View.Win2D.Setting
             richSelector3.ViewModel.WarningRestart = true;
             richSelector3.Bind(config, "ConsiderationWindowKifuVersion");
 
-            // -- 「対局エフェクト」のタブ
+            // -- 「エフェクト」のタブ
 
             // 対局開始・終了エフェクト
             richSelector16.Bind(config, "EnableGameGreetingEffect");
@@ -84,7 +90,7 @@ namespace MyShogi.View.Win2D.Setting
             // 振り駒のエフェクト
             richSelector17.Bind(config, "EnablePieceTossEffect");
 
-            // -- 「評価値の表示」のタブ
+            // -- 「評価値」のタブ
 
             // 後手番のCPUの評価値をどちらから見た値にするか
             richSelector15.ViewModel.SelectionTypeIsBool = true;

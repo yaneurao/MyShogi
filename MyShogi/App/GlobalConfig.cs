@@ -41,6 +41,9 @@ namespace MyShogi.App
             TurnDisplay = 1;
             DisplayNameTurnVersion = 1;
 
+            EnableMouseDrag = 1;
+            PickedMoveDisplayStyle = 1;
+
             // -- 音声設定
 
             EnableSound = 1;
@@ -343,6 +346,28 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("PickedMoveToColorType"); }
             set { SetValue<int>("PickedMoveToColorType", value); }
+        }
+
+        /// <summary>
+        /// 駒を選択したときの表示
+        /// 0 : 駒を持ち上げる(移動元の升で少し浮いている表現にする)
+        /// 1 : マウスカーソルに持ち上げた駒を追随させる。 : デフォルト
+        /// </summary>
+        [DataMember]
+        public int PickedMoveDisplayStyle
+        {
+            get { return GetValue<int>("PickedMoveDisplayStyle"); }
+            set { SetValue<int>("PickedMoveDisplayStyle", value); }
+        }
+
+        /// <summary>
+        /// 駒の移動にマウスドラッグを許容する。
+        /// </summary>
+        [DataMember]
+        public int EnableMouseDrag
+        {
+            get { return GetValue<int>("EnableMouseDrag"); }
+            set { SetValue<int>("EnableMouseDrag", value); }
         }
 
         /// <summary>

@@ -126,28 +126,30 @@ namespace MyShogi.App
 
             // 表示設定
 
-            Config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("PromotePieceColorType", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("PieceAttackImageVersion", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("LastMoveFromColorType", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("LastMoveToColorType", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("TurnDisplay", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("NegateEvalWhenWhite", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("KifuWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("ConsiderationWindowKifuVersion", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.UpdateMenuItems, mainDialog);
+            Config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("PromotePieceColorType", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("PieceAttackImageVersion", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("LastMoveFromColorType", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("LastMoveToColorType", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("PickedMoveFromColorType", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("PickedMoveToColorType", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("TurnDisplay", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("MemoryLoggingEnable", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("FileLoggingEnable", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("NegateEvalWhenWhite", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("KifuWindowKifuVersion", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("ConsiderationWindowKifuVersion", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("ConsiderationWindowHeightType", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("DisplayNameTurnVersion", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("EnableGameEffect", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("PickedMoveDisplayStyle", mainDialog.ForceRedraw);
+
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl, mainDialog);
-            Config.AddPropertyChangedHandler("ConsiderationWindowHeightType", mainDialog.UpdateMenuItems, mainDialog);
             Config.AddPropertyChangedHandler("ConsiderationWindowHeightType", mainDialog.ResizeConsiderationControl, mainDialog);
-            Config.AddPropertyChangedHandler("DisplayNameTurnVersion", mainDialog.UpdateMenuItems, mainDialog);
-            Config.AddPropertyChangedHandler("EnableGameEffect", mainDialog.UpdateMenuItems, mainDialog);
 
             // Window
 

@@ -1034,6 +1034,14 @@ namespace MyShogi.View.Win2D
         /// <param name="p"></param>
         public void OnClick(Point p , bool dragged = false)
         {
+            var config = TheApp.app.Config;
+
+            // マウスドラッグが許可されていないなら無視する。
+            if (dragged && config.EnableMouseDrag == 0)
+            {
+                return ;
+            }
+
             /// 座標系を、affine変換(逆変換)して、盤面座標系(0,0)-(board_img_width,board_image_height)にする。
             p = InverseAffine(p);
 
@@ -1047,6 +1055,17 @@ namespace MyShogi.View.Win2D
 
             } else
             {
+                // 移動不可の升に移動させている場合、それはユーザーの誤操作の可能性があるので
+                // このクリックを無視する。
+                if (dragged &&
+                    viewState.state == GameScreenControlViewStateEnum.PiecePickedUp &&
+                    sq < SquareHand.SquareNB &&
+                    !viewState.picked_piece_legalmovesto.IsSet((Square)sq)
+                    )
+                {
+                    return;
+                }
+
                 OnBoardClick(sq);
             }
 
@@ -1123,12 +1142,13 @@ namespace MyShogi.View.Win2D
 
             var state = viewState;
 
+            var pt = InverseAffine(p);
+
             // 成り・不成のダイアログを出している
             if (state.state == GameScreenControlViewStateEnum.PromoteDialog)
             {
                 // 与えられたpointがどこに属するか判定する。
                 // まず逆affine変換して、viewの(DrawSpriteなどで使っている)座標系にする
-                var pt = InverseAffine(p);
                 var zero = state.promote_dialog_location; // ここを原点とする
                 pt = new Point(pt.X - zero.X, pt.Y - zero.Y);
                 var selection = SPRITE.IsHoverPromoteDialog(pt);
@@ -1137,6 +1157,18 @@ namespace MyShogi.View.Win2D
                 if (state.promote_dialog_selection != selection)
                 {
                     state.promote_dialog_selection = selection;
+                    Dirty = true;
+                }
+
+            } else {
+                // 成り・不成のダイアログを出していないので、この座標を保存しておく。
+                MouseClientLocation = pt;
+
+                if (state.state == GameScreenControlViewStateEnum.PiecePickedUp && TheApp.app.Config.PickedMoveDisplayStyle == 1)
+                {
+
+                    // 駒をマウスカーソルに追随させるモードである
+                    // マウスカーソルが移動しているので、このとき再描画が必要になる。
                     Dirty = true;
                 }
             }

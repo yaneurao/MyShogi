@@ -2363,6 +2363,15 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 対局盤面の再描画を促す。
+        /// </summary>
+        /// <param name="args"></param>
+        public void ForceRedraw(PropertyChangedEventArgs args)
+        {
+            gameScreenControl1.ForceRedraw();
+        }
+
+        /// <summary>
         /// 前回のメニュー項目。
         /// </summary>
         private MenuStrip old_menu { get; set; } = null;

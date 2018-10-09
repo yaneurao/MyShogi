@@ -1,6 +1,7 @@
 ﻿using MyShogi.Model.Common.Math;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.LocalServer;
+using System.Drawing;
 
 namespace MyShogi.View.Win2D
 {
@@ -92,5 +93,11 @@ namespace MyShogi.View.Win2D
         /// これは、queuingしてUIに反映させないと、連続対局のときに更新が間に合わないからである。
         /// </summary>
         public PropertyChangedEventHandler ThinkReportChanged;
+
+        /// <summary>
+        /// マウスカーソルのある位置(DrawSpriteなどで指定する座標系において)
+        /// 駒を持ち上げた時用
+        /// </summary>
+        private Point MouseClientLocation;
     }
 }
