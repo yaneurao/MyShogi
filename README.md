@@ -16,6 +16,7 @@ MyShogiは、オープンソースの将棋ソフト用GUIです。
 |<img src="https://pbs.twimg.com/media/DhP9uLkUEAAue8I.jpg" width="400" height="254" alt="対局画面">|<img src="https://pbs.twimg.com/media/Dez3hKnUcAANNd9.jpg" width="400" height="254" alt="成り不成">|
 |<img src="https://pbs.twimg.com/media/DhmEiQ-UYAATJQF.jpg" width="400" height="254" alt="エンジン選択">|<img src="https://pbs.twimg.com/media/Dem5sS2U0AEjgC7.jpg" width="400" height="254" alt="利きマーカー">|
 <img src="https://pbs.twimg.com/media/Deb12RyV0AA7ZCw.jpg" width="400" height="254" alt="英字駒">|<img src="https://pbs.twimg.com/media/Deb13B4VMAAYAfZ.jpg" width="400" height="254" alt="1文字駒">|
+<img src="https://pbs.twimg.com/media/DpCA9CSUwAAmUWW.jpg" width="400" height="254" alt="設定ダイアログ 駒表示">|<img src="https://pbs.twimg.com/media/DpCA9BvUcAEU1Qx.jpg" width="400" height="254" alt="設定ダイアログ 盤面表示">|
 
 
 # 特徴
