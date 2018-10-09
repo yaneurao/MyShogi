@@ -113,6 +113,11 @@ namespace MyShogi.View.Win2D
                             DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.To));
                     }
 
+                    // pickしている駒がないケースを考慮して描画しなくてはならない。
+                    // cf. LocalGameServer.DoMoveCommand()のコメント。
+                    // ここでは、pc == NO_PIECEならば、nullが返ってくるので、問題ない。
+
+                    // 盤面反転モードなら、駒を先後入れ替えて描画する。
                     var sprite = SPRITE.Piece(reverse ? pc.Inverse() : pc);
 
                     // いま持ち上げている駒であるなら、少し持ち上げている感じで描画する
@@ -145,7 +150,7 @@ namespace MyShogi.View.Win2D
                         }
                     }
 
-                    // 盤面反転モードなら、駒を先後入れ替えて描画する。
+                    // 駒の通常の描画
                     DrawSprite(dest, sprite);
                 }
 
@@ -180,14 +185,13 @@ namespace MyShogi.View.Win2D
                             // この駒を掴んでいるならすごしずれたところに描画する。
                             // ただし、掴んでいるので描画を一番最後に回す
                             if (picked_from == piece)
+                                // 掴んでいる表現
                                 DrawPickedSprite(sprite, dest);
                             else
-                            {
-                                // 駒の普通の描画
+                                // 駒の通常の描画
                                 DrawSprite(dest, sprite);
-                            }
 
-                            // 数字の描画(枚数が2枚以上のとき)
+                            // 駒の枚数を表す数字の描画(枚数が2枚以上のとき)
                             if (count >= 2)
                                 DrawSprite(dest + hand_number_offset, SPRITE.HandNumber(count));
                         }

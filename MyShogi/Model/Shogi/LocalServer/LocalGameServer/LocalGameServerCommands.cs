@@ -77,6 +77,12 @@ namespace MyShogi.Model.Shogi.LocalServer
             // つまり、DoMoveCommand()が受理されてからStateReset()が呼び出されるべきであり、
             // DoMoveCommand()は、lambdaをとれるようにする必要がある。
 
+            // 本当は、Completedイベントと、画面の更新通知(PositionUpdate)とはatomicに行う必要がある。
+            // Completedイベントをあとから送っているので、駒移動後→PositionUpdate→描画→Completeイベント
+            // の順番になる可能性があることに注意。
+            // GameScreen.OnDraw()ではこの点に配慮する必要があるのだが、pickしている駒がない場合、
+            // Piece.NO_PIECEが返ってきて、Sprite == nullで描画されるので問題ない。
+            
             AddCommand(
             () =>
             {
