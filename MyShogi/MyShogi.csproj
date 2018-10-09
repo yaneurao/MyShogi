@@ -361,6 +361,12 @@
     <Compile Include="View\Win2D\Setting\EngineSelectionDialog.Designer.cs">
       <DependentUpon>EngineSelectionDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\Setting\FontSelectConrol.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\FontSelectConrol.Designer.cs">
+      <DependentUpon>FontSelectConrol.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\Setting\GameResultWindowSettingDialog.cs">
       <SubType>Form</SubType>
     </Compile>
