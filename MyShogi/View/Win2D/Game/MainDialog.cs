@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
@@ -12,7 +11,6 @@ using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.Model.Shogi.Usi;
 using MyShogi.View.Win2D.Setting;
-using ObjectModel = MyShogi.Model.Common.ObjectModel;
 using SCore = MyShogi.Model.Shogi.Core;
 
 namespace MyShogi.View.Win2D
@@ -1115,10 +1113,30 @@ namespace MyShogi.View.Win2D
         private GameModeEnum lastGameMode = GameModeEnum.ConsiderationWithoutEngine;
 
         /// <summary>
+        /// メインウインドウのCaption部分を更新する。
+        /// </summary>
+        /// <param name="args"></param>
+        public void UpdateCaption(PropertyChangedEventArgs args = null)
+        {
+            var config = TheApp.app.Config;
+
+            // 読み込んでいる棋譜ファイル名(メインウインドウの上に表示しておく)
+            var readfilename = ViewModel.LastFileName == null ? null : $" - {Path.GetFileName(ViewModel.LastFileName)}";
+
+            // Commercial Version GUI
+            bool CV_GUI = config.CommercialVersion != 0;
+            if (CV_GUI)
+                Text = "将棋神やねうら王" + readfilename;
+            else
+                Text = "MyShogi" + readfilename;
+            // 商用版とどこで差別化するのか考え中
+        }
+
+        /// <summary>
         /// [UI thread] : メニューのitemを動的に追加する。
         /// 商用版とフリーウェア版とでメニューが異なるのでここで動的に追加する必要がある。
         /// </summary>
-        public void UpdateMenuItems(ObjectModel.PropertyChangedEventArgs args = null)
+        public void UpdateMenuItems(PropertyChangedEventArgs args = null)
         {
             // 頑張れば高速化出来るが、対局中はこのメソッド呼び出されていないし、
             // ToolStripも、CPU×CPUの対局中は更新は発生していないし、
@@ -1128,11 +1146,8 @@ namespace MyShogi.View.Win2D
             var shortcut = TheApp.app.KeyShortcut;
             shortcut.OnKeyDown = null; // このdelegateにShortcutキーのハンドラを登録していく。
 
-            // Commercial Version GUI
-            bool CV_GUI = config.CommercialVersion != 0;
-            if (CV_GUI)
-                Text = "将棋神やねうら王";
-            // 商用版とどこで差別化するのか考え中
+            // 使ったファイル名をメインウインドウのText部に描画する必要がある。
+            UpdateCaption();
 
             // -- メニューの追加。
             {
