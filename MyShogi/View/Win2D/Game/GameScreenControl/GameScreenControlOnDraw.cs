@@ -1,6 +1,7 @@
 ﻿using MyShogi.App;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
+using System;
 using System.Drawing;
 using System.Linq;
 using SColor = MyShogi.Model.Shogi.Core.Color; // 将棋のほうのColor
@@ -61,6 +62,28 @@ namespace MyShogi.View.Win2D
 
             // -- 駒の描画
             {
+                // -- 駒を持ち上げた時の描画
+
+                var DrawPickedSprite = (Action<Sprite,Point>)((sprite,dest) =>
+                {
+                    // 移動元の升に適用されるエフェクトを描画する。
+                    DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
+
+                    switch (config.PickedMoveDisplayStyle)
+                    {
+                        case 0:
+                            // 少し持ち上げた感じで描画する。
+                            picked_sprite = new SpriteEx(sprite, dest + new Size(-5, -20));
+                            break;
+
+                        case 1:
+                            // マウスカーソルに追随させるモードであるから、マウスカーソルの位置に..
+                            picked_sprite = new SpriteEx(sprite, MouseClientLocation
+                                + new Size(-piece_img_size.Width / 2, -piece_img_size.Height / 2));
+                            break;
+                    }
+                });
+
                 // -- 盤上の駒
 
                 // 最終手(初期盤面などでは存在せず、lastMove == Move.NONEであることに注意)
@@ -99,23 +122,8 @@ namespace MyShogi.View.Win2D
                         // (なので今回の描画はskipする)
                         if (sq == (Square)picked_from)
                         {
-                            // 移動元の升に適用されるエフェクトを描画する。
-                            DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
-
-                            switch (config.PickedMoveDisplayStyle)
-                            {
-                                case 0:
-                                    picked_sprite = new SpriteEx(sprite, dest + new Size(-5, -20));
-                                    break;
-
-                                case 1:
-                                    // マウスカーソルに追随させるモードであるから、マウスカーソルの位置に..
-                                    picked_sprite = new SpriteEx(sprite, MouseClientLocation
-                                        + new Size( - piece_img_size.Width/2, - piece_img_size.Height/2 ));
-                                    break;
-                            }
-
-                            continue;
+                            DrawPickedSprite(sprite, dest);
+                            continue; // 持ち上げているので通常の駒の描画をskipする。
                         }
                         else
                         {
@@ -172,15 +180,10 @@ namespace MyShogi.View.Win2D
                             // この駒を掴んでいるならすごしずれたところに描画する。
                             // ただし、掴んでいるので描画を一番最後に回す
                             if (picked_from == piece)
-                            {
-                                // 移動元の升に適用されるエフェクトを描画する。
-                                DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom));
-
-                                picked_sprite = new SpriteEx(sprite, dest + new Size(-5, -20));
-                            }
+                                DrawPickedSprite(sprite, dest);
                             else
                             {
-                                // 駒の描画
+                                // 駒の普通の描画
                                 DrawSprite(dest, sprite);
                             }
 

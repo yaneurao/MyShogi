@@ -70,7 +70,7 @@ namespace MyShogi.View.Win2D
 
                 if (mouseLastDown != p)
                 {
-                    OnClick(p , true); // 2点クリックされたかのように扱う
+                    OnClick(p , true /* dragged */); // 2点クリックされたかのように扱う
                     // ただし、ここに駒を移動できないときに、そこにある駒を掴み直すのはユーザーの意図しない挙動である
                     // 可能性が高いので、それは行わない。
                 }

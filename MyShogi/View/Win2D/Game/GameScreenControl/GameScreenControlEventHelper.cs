@@ -633,7 +633,19 @@ namespace MyShogi.View.Win2D
             {
                 // 成れないので成る選択肢は消して良い。
                 gameServer.DoMoveCommand(unpro_move);
-                StateReset();
+                //StateReset();
+
+                // →　駒の移動が確定しても、DoMoveCommand()が受理されるまで新しい場所に駒が描画されないのに
+                // StateReset()でDirtyになるから描画が先に行われることがあり、
+                // そのときの駒の描画される升がおかしくて(移動元の升に描画される)、すごく違和感がある。
+                // ゆえにこのとき描画を抑制しなければならない。
+                // 描画自体は、DoMoveCommand()でPositionの変更が発生すれば、そのハンドラにて描画が促されるわけで…。
+
+                // →　駒がドラッグ移動されて、移動をLocalGameServerにCommandとして送信したときに、それが受理されるまで
+                // 画面更新を抑制することでこの問題を回避するのは間違っている。いつ描画されても正しく描画されるようにすべき。
+                // TODO : あとでよく考える。
+
+                viewState.Reset();
             }
             // 上記 2.
             else if (!canUnpro && canPromote)
@@ -641,12 +653,17 @@ namespace MyShogi.View.Win2D
                 // 成るしか出来ないので、不成は選択肢から消して良い。
                 // 成れないので成る選択肢は消して良い。
                 gameServer.DoMoveCommand(pro_move);
-                StateReset();
+                //StateReset();
+                // →　上と同様
+
+                viewState.Reset();
             }
             // 上記 4.
             // これで、上記の1.～4.のすべての状態を網羅したことになる。
             else // if (canPromote && canUnPro)
             {
+                // 成り・不成の選択ダイアログを出す
+
                 state.state = GameScreenControlViewStateEnum.PromoteDialog;
                 state.moved_piece_type = pos.PieceOn(from).PieceType();
 
@@ -702,6 +719,9 @@ namespace MyShogi.View.Win2D
             {
                 // このケースを除外しておかないと、toの駒を手駒に移動させる処理などで
                 // from == toだと手駒が増えることになる。
+
+                // しかし、駒を掴んでいる状態が変化するのでこのときだけ再描画は必要。
+                Dirty = true;
             }
             else if (to.IsBoardPiece())
             {
@@ -731,6 +751,7 @@ namespace MyShogi.View.Win2D
                         }
                     });
 #endif
+
                 }
                 else if (from.IsHandPiece())
                 {
@@ -846,7 +867,10 @@ namespace MyShogi.View.Win2D
 
             }
 
-            StateReset();
+            //StateReset();
+
+            // →　このときに再描画がおきるとmove_piece()と同じ問題が起きる。
+            viewState.Reset();
         }
 
         /// <summary>
@@ -1060,6 +1084,7 @@ namespace MyShogi.View.Win2D
                 if (dragged &&
                     viewState.state == GameScreenControlViewStateEnum.PiecePickedUp &&
                     sq < SquareHand.SquareNB &&
+                    !gameServer.InTheBoardEdit && // 盤面編集中だけは不法な移動を許可
                     !viewState.picked_piece_legalmovesto.IsSet((Square)sq)
                     )
                 {
