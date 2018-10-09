@@ -632,31 +632,14 @@ namespace MyShogi.View.Win2D
             if (!canPromote)
             {
                 // 成れないので成る選択肢は消して良い。
-                gameServer.DoMoveCommand(unpro_move);
-                //StateReset();
-
-                // →　駒の移動が確定しても、DoMoveCommand()が受理されるまで新しい場所に駒が描画されないのに
-                // StateReset()でDirtyになるから描画が先に行われることがあり、
-                // そのときの駒の描画される升がおかしくて(移動元の升に描画される)、すごく違和感がある。
-                // ゆえにこのとき描画を抑制しなければならない。
-                // 描画自体は、DoMoveCommand()でPositionの変更が発生すれば、そのハンドラにて描画が促されるわけで…。
-
-                // →　駒がドラッグ移動されて、移動をLocalGameServerにCommandとして送信したときに、それが受理されるまで
-                // 画面更新を抑制することでこの問題を回避するのは間違っている。いつ描画されても正しく描画されるようにすべき。
-                // TODO : あとでよく考える。
-
-                viewState.Reset();
+                gameServer.DoMoveCommand(unpro_move, () => StateReset() );
             }
             // 上記 2.
             else if (!canUnpro && canPromote)
             {
                 // 成るしか出来ないので、不成は選択肢から消して良い。
                 // 成れないので成る選択肢は消して良い。
-                gameServer.DoMoveCommand(pro_move);
-                //StateReset();
-                // →　上と同様
-
-                viewState.Reset();
+                gameServer.DoMoveCommand(pro_move , () => StateReset() );
             }
             // 上記 4.
             // これで、上記の1.～4.のすべての状態を網羅したことになる。
@@ -867,10 +850,6 @@ namespace MyShogi.View.Win2D
 
             }
 
-            //StateReset();
-
-            // →　このときに再描画がおきるとmove_piece()と同じ問題が起きる。
-            viewState.Reset();
         }
 
         /// <summary>
@@ -981,8 +960,7 @@ namespace MyShogi.View.Win2D
                                 case PromoteDialogSelectionEnum.PROMOTE:
                                     var m = Util.MakeMove(state.picked_from, state.picked_to,
                                         state.promote_dialog_selection == PromoteDialogSelectionEnum.PROMOTE);
-                                    gameServer.DoMoveCommand(m);
-                                    StateReset();
+                                    gameServer.DoMoveCommand(m, () => StateReset() );
                                     break;
                             }
 
@@ -1044,7 +1022,7 @@ namespace MyShogi.View.Win2D
             raw_pos.gamePly = 1;
 
             var sfen = Position.SfenFromRawPosition(raw_pos);
-            gameServer.SetSfenCommand(sfen);
+            gameServer.SetSfenCommand(sfen , () => StateReset() );
         }
 
         /// <summary>

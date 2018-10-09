@@ -63,44 +63,65 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// (時間切れなどがあるので)
         /// </summary>
         /// <param name="m"></param>
-        public void DoMoveCommand(Move m)
+        public void DoMoveCommand(Move m , Action OnCompleted = null)
         {
+            // →　駒の移動が確定しても、DoMoveCommand()が受理されるまで新しい場所に駒が描画されないのに
+            // StateReset()でDirtyになるから描画が先に行われることがあり、
+            // そのときの駒の描画される升がおかしくて(移動元の升に描画される)、すごく違和感がある。
+            // ゆえにこのとき描画を抑制しなければならない。
+            // 描画自体は、DoMoveCommand()でPositionの変更が発生すれば、そのハンドラにて描画が促されるわけで…。
+
+            // →　駒がドラッグ移動されて、移動をLocalGameServerにCommandとして送信したときに、それが受理されるまで
+            // 画面更新を抑制することでこの問題を回避するのは間違っている。いつ描画されても正しく描画されるようにすべき。
+
+            // つまり、DoMoveCommand()が受理されてからStateReset()が呼び出されるべきであり、
+            // DoMoveCommand()は、lambdaをとれるようにする必要がある。
+
             AddCommand(
             () =>
             {
-                var stm = kifuManager.Position.sideToMove;
-                var stmPlayer = Player(stm);
-                var config = TheApp.app.Config;
-
-                if (InTheGame)
+                try
                 {
-                    // 対局中は、Human以外であれば受理しない。
-                    if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+                    var stm = kifuManager.Position.sideToMove;
+                    var stmPlayer = Player(stm);
+                    var config = TheApp.app.Config;
+
+                    if (InTheGame)
                     {
-                        // これを積んでおけばworker_threadのほうでいずれ処理される。(かも)
-                        // 仮に、すでに次の局面になっていたとしても、次にこのユーザーの手番になったときに
-                        // BestMove = Move.NONEとされるのでその時に破棄される。
-                        stmPlayer.BestMove = m;
+                        // 対局中は、Human以外であれば受理しない。
+                        if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
+                        {
+                            // これを積んでおけばworker_threadのほうでいずれ処理される。(かも)
+                            // 仮に、すでに次の局面になっていたとしても、次にこのユーザーの手番になったときに
+                            // BestMove = Move.NONEとされるのでその時に破棄される。
+                            stmPlayer.BestMove = m;
+                        }
                     }
-                } else if (GameMode.IsConsideration()){
+                    else if (GameMode.IsConsideration())
+                    {
 
-                    // 対局中でなく、盤面編集中でなければ自由に動かせる。
-                    // 受理して、必要ならば分岐棋譜を生成して…。
+                        // 対局中でなく、盤面編集中でなければ自由に動かせる。
+                        // 受理して、必要ならば分岐棋譜を生成して…。
 
+                        var misc = config.GameSetting.MiscSettings;
+                        if (!kifuManager.Tree.DoMoveUI(m, misc))
+                            return;
 
-                    var misc = config.GameSetting.MiscSettings;
-                    if (!kifuManager.Tree.DoMoveUI(m, misc))
-                        return;
+                        // DoMoveに成功したので駒音を再生する。
+                        PlayPieceSound(GameMode, m.To(), stm);
 
-                    // DoMoveに成功したので駒音を再生する。
-                    PlayPieceSound(GameMode, m.To(), stm);
+                        // 動かした結果、棋譜の選択行と異なる可能性があるので、棋譜ウィンドウの当該行をSelectしなおす。
+                        UpdateKifuSelectedIndex();
 
-                    // 動かした結果、棋譜の選択行と異なる可能性があるので、棋譜ウィンドウの当該行をSelectしなおす。
-                    UpdateKifuSelectedIndex();
-
-                    // 再度、Thinkコマンドを叩く。
-                    if (GameMode.IsConsiderationWithEngine())
-                        NotifyTurnChanged();
+                        // 再度、Thinkコマンドを叩く。
+                        if (GameMode.IsConsiderationWithEngine())
+                            NotifyTurnChanged();
+                    }
+                }
+                finally
+                {
+                    // 完了時のイベント
+                    OnCompleted?.Invoke();
                 }
             }
             );
@@ -463,21 +484,30 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 編集した盤面を代入する
         /// 盤面編集用。
+        ///
+        /// DoMoveCommand()と同様の理由によりOnCompletedを取れる。
         /// </summary>
-        public void SetSfenCommand(string sfen)
+        public void SetSfenCommand(string sfen , Action OnCompleted = null)
         {
             AddCommand(
             ()=>
             {
-                // 盤面編集中以外使用不可
-                if (InTheBoardEdit)
+                try
                 {
+                    // 盤面編集中以外使用不可
+                    if (InTheBoardEdit)
+                    {
 
-                    var error = kifuManager.FromString($"sfen {sfen}");
-                    // sfenのparser経由で代入するのが楽ちん。
-                    if (error != null)
-                        TheApp.app.MessageShow(error , MessageShowType.Error);
+                        var error = kifuManager.FromString($"sfen {sfen}");
+                        // sfenのparser経由で代入するのが楽ちん。
+                        if (error != null)
+                            TheApp.app.MessageShow(error, MessageShowType.Error);
+                    }
+                } finally
+                {
+                    OnCompleted?.Invoke();
                 }
+
             }
             );
         }

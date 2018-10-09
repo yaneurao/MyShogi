@@ -811,7 +811,7 @@ namespace MyShogi.View.Win2D
         private void toolStripButton1_Click(object sender, System.EventArgs e)
         {
             // 受理されるかどうかは知らん
-            gameServer.DoMoveCommand(SCore.Move.RESIGN);
+            gameServer.DoMoveCommand(SCore.Move.RESIGN );
         }
 
         /// <summary>
