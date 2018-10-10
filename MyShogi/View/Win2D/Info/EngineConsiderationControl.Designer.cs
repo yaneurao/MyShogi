@@ -65,33 +65,33 @@
             // textBox3
             // 
             this.textBox3.BackColor = System.Drawing.Color.White;
-            this.textBox3.Location = new System.Drawing.Point(316, 2);
+            this.textBox3.Location = new System.Drawing.Point(315, 2);
             this.textBox3.Margin = new System.Windows.Forms.Padding(2);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(166, 19);
+            this.textBox3.Size = new System.Drawing.Size(155, 19);
             this.textBox3.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox3, "探索した局面数です。");
             // 
             // textBox4
             // 
             this.textBox4.BackColor = System.Drawing.Color.White;
-            this.textBox4.Location = new System.Drawing.Point(484, 2);
+            this.textBox4.Location = new System.Drawing.Point(471, 2);
             this.textBox4.Margin = new System.Windows.Forms.Padding(2);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(126, 19);
+            this.textBox4.Size = new System.Drawing.Size(125, 19);
             this.textBox4.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox4, "1秒間の探索局面数です。(Nodes Per Second)");
             // 
             // textBox5
             // 
             this.textBox5.BackColor = System.Drawing.Color.White;
-            this.textBox5.Location = new System.Drawing.Point(612, 2);
+            this.textBox5.Location = new System.Drawing.Point(597, 2);
             this.textBox5.Margin = new System.Windows.Forms.Padding(2);
             this.textBox5.Name = "textBox5";
             this.textBox5.ReadOnly = true;
-            this.textBox5.Size = new System.Drawing.Size(120, 19);
+            this.textBox5.Size = new System.Drawing.Size(125, 19);
             this.textBox5.TabIndex = 2;
             this.toolTip1.SetToolTip(this.textBox5, "エンジンのHASHの使用率です。\r\nこの値が大きいと探索効率が悪くなります。\r\n(コンピューターの棋力が下がります)\r\nこの値が大きい場合(50%以上)は、エンジ" +
         "ン設定の\r\nHASHの項目でHASHの割当を増やすなどして調整すべきです。\r\n");

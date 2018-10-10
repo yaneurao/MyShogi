@@ -362,11 +362,11 @@
     <Compile Include="View\Win2D\Setting\EngineSelectionDialog.Designer.cs">
       <DependentUpon>EngineSelectionDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\Setting\FontSelectConrol.cs">
+    <Compile Include="View\Win2D\Setting\FontSelectionConrol.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="View\Win2D\Setting\FontSelectConrol.Designer.cs">
-      <DependentUpon>FontSelectConrol.cs</DependentUpon>
+    <Compile Include="View\Win2D\Setting\FontSelectionConrol.Designer.cs">
+      <DependentUpon>FontSelectionConrol.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\Setting\GameResultWindowSettingDialog.cs">
       <SubType>Form</SubType>
@@ -495,6 +495,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\EngineSelectionDialog.resx">
       <DependentUpon>EngineSelectionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\FontSelectionConrol.resx">
+      <DependentUpon>FontSelectionConrol.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\GameResultWindowSettingDialog.resx">
       <DependentUpon>GameResultWindowSettingDialog.cs</DependentUpon>

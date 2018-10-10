@@ -20,7 +20,7 @@ namespace MyShogi.View.Win2D
     /// エンジンの思考内容。
     /// 片側のエンジン分
     /// </summary>
-    public partial class EngineConsiderationControl : UserControl
+    public partial class EngineConsiderationControl : UserControl , IFontUpdate
     {
         public EngineConsiderationControl()
         {
@@ -334,6 +334,21 @@ namespace MyShogi.View.Win2D
         }
 
         // -- handlers
+
+        /// <summary>
+        /// Fontの変更に対するハンドラ。
+        /// </summary>
+        public void UpdateFont()
+        {
+            // テキストボックス、LabelはFontSizeの変更を反映させない。(はみ出てしまう..)
+            var fontname = this.Font.FontFamily;
+            var fontStyle = this.Font.Style;
+            var font = new Font(fontname, 9 /* 9pt固定 */, fontStyle);
+
+            var boxes = new Control[] { textBox1 , textBox2, textBox3 , textBox4, textBox5 , button1 , comboBox1 };
+            foreach (var box in boxes)
+                box.Font = font;
+        }
 
         private void listView1_Resize(object sender, System.EventArgs e)
         {

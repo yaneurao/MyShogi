@@ -139,10 +139,10 @@ namespace MyShogi.Model.Common.Tool
     /// </summary>
     public static class FontList
     {
-        //public static readonly string DefaultFont = "MS UI Gothic";
+        public static readonly string DefaultFont = "MS UI Gothic";
 
         // 特徴的なフォントに変更してみて、フォントの置換が適切に行われているかをテストする。
-        public static readonly string DefaultFont = "HGP行書体";
+        //public static readonly string DefaultFont = "HGP行書体";
 
         /// <summary>
         /// 設定ダイアログ

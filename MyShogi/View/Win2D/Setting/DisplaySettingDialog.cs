@@ -98,6 +98,18 @@ namespace MyShogi.View.Win2D.Setting
             richSelector15.ViewModel.SelectionTypeIsBool = true;
             richSelector15.Bind(config, "NegateEvalWhenWhite");
 
+            // -- 「フォント」のタブ
+
+            var font = TheApp.app.Config.FontManager;
+            fontSelectionConrol1.Bind(font.MenuStrip);
+            fontSelectionConrol2.Bind(font.MainToolStrip);
+            fontSelectionConrol3.Bind(font.MainWindow);
+            fontSelectionConrol4.Bind(font.SettingDialog);
+            fontSelectionConrol5.Bind(font.MessageDialog);
+            fontSelectionConrol6.Bind(font.KifuWindow);
+            fontSelectionConrol7.Bind(font.ConsiderationWindow);
+            fontSelectionConrol8.Bind(font.DebugWindow);
+
         }
 
     }

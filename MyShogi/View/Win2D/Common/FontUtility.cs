@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.Model.Common.Tool;
 
@@ -11,6 +10,22 @@ namespace MyShogi.View.Win2D
         /// Control.Fontが変更になったので、このフォント相対でサイズを決定していたフォントを更新する。
         /// </summary>
         void UpdateFont();
+    }
+
+    public static class FontExtensions
+    {
+        public static string Pretty(this FontStyle style)
+        {
+            switch(style)
+            {
+                case FontStyle.Regular  : return "標準";
+                case FontStyle.Italic   : return "斜体";
+                case FontStyle.Bold     : return "太字";
+                case FontStyle.Bold+(int)FontStyle.Italic:
+                    return "太字 斜体";
+                default: return "不明なスタイル";
+            }
+        }
     }
 
     public static class FontUtility
