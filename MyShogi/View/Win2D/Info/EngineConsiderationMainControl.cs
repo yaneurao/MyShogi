@@ -16,7 +16,7 @@ namespace MyShogi.View.Win2D
     /// <summary>
     /// 思考エンジンの出力(最大 2CPU分) + ミニ盤面
     /// </summary>
-    public partial class EngineConsiderationMainControl : Control
+    public partial class EngineConsiderationMainControl : UserControl
     {
         public EngineConsiderationMainControl()
         {
@@ -499,7 +499,9 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void InitFont()
         {
-            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.ConsiderationWindow);
+            var f = TheApp.app.Config.FontManager;
+            FontUtility.ReplaceFont(this            , f.ConsiderationWindow);
+            FontUtility.ReplaceFont(this.toolStrip1 , f.SubToolStrip);
         }
 
         // -- test code

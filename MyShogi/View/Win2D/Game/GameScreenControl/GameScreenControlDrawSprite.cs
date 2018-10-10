@@ -114,9 +114,11 @@ namespace MyShogi.View.Win2D
                 return;
 
             var config = TheApp.app.Config;
-            var fontname = config.FontManager.MainWindow.FontName;
-            var fontstyle = config.FontManager.MainWindow.FontStyle;
-            using (var font = new Font(fontname ,size, fontstyle ,GraphicsUnit.Pixel))
+            var fd = config.FontManager.MainWindow;
+            var fontname = fd.FontName;
+            var fontstyle = fd.FontStyle;
+            var fontsize = fd.FontSize; // これを9ptからの相対的な大きさをフォントに反映させる。
+            using (var font = new Font(fontname ,size * fontsize / 9f, fontstyle ,GraphicsUnit.Pixel))
             {
                 var brush = option == null ? Brushes.Black : option.brush;
                 var brush2 = option == null ? null : option.brush2;

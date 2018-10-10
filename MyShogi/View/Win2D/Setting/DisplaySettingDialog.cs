@@ -103,12 +103,13 @@ namespace MyShogi.View.Win2D.Setting
             var font = TheApp.app.Config.FontManager;
             fontSelectionConrol1.Bind(font.MenuStrip);
             fontSelectionConrol2.Bind(font.MainToolStrip);
-            fontSelectionConrol3.Bind(font.MainWindow);
-            fontSelectionConrol4.Bind(font.SettingDialog);
-            fontSelectionConrol5.Bind(font.MessageDialog);
-            fontSelectionConrol6.Bind(font.KifuWindow);
-            fontSelectionConrol7.Bind(font.ConsiderationWindow);
-            fontSelectionConrol8.Bind(font.DebugWindow);
+            fontSelectionConrol3.Bind(font.SubToolStrip);
+            fontSelectionConrol4.Bind(font.MainWindow);
+            fontSelectionConrol5.Bind(font.SettingDialog);
+            fontSelectionConrol6.Bind(font.MessageDialog);
+            fontSelectionConrol7.Bind(font.KifuWindow);
+            fontSelectionConrol8.Bind(font.ConsiderationWindow);
+            fontSelectionConrol9.Bind(font.DebugWindow);
 
         }
 

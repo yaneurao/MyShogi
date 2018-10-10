@@ -94,6 +94,15 @@ namespace MyShogi.View.Win2D
                     if (userControl is IFontUpdate)
                         (userControl as IFontUpdate).UpdateFont();
                 }
+                else if (c is ToolStrip)
+                {
+                    /*
+                    // ToolStripはambient propertyではないので明示的な設定が必要。
+                    ToolStrip toolStrip = c as ToolStrip;
+                    toolStrip.Font = font;
+                    */
+                    // →　これ、巻き込まないほうがいいか…。そうか…。
+                }
             }
         }
 

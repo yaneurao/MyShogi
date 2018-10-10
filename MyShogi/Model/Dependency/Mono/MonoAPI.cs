@@ -320,6 +320,11 @@ namespace MyShogi.Model.Common.Tool
         public static readonly string MainWindow = DefaultFont;
 
         /// <summary>
+        /// ミニ盤面下のToolStrip(ボタン)のフォント
+        /// </summary>
+        public static readonly string SubToolStrip = DefaultFont;
+
+        /// <summary>
         /// 棋譜ウインドウ
         /// </summary>
         public static readonly string KifuWindow = DefaultFont;

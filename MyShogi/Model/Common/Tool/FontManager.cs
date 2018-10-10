@@ -12,7 +12,8 @@ namespace MyShogi.Model.Common.Tool
         {
             SettingDialog       = new FontData(FontList.SettingDialog , 11f);
             MenuStrip           = new FontData(FontList.MenuStrip     , 9f);
-            MainToolStrip       = new FontData(FontList.MainToolStrip , 11f);
+            MainToolStrip       = new FontData(FontList.MainToolStrip , 13f);
+            SubToolStrip        = new FontData(FontList.SubToolStrip  , 13f);
             MessageDialog       = new FontData(FontList.MessageDialog , 11f);
             MainWindow          = new FontData(FontList.MainWindow    , 9f);
             KifuWindow          = new FontData(FontList.KifuWindow    , 9f);
@@ -37,6 +38,12 @@ namespace MyShogi.Model.Common.Tool
         /// </summary>
         [DataMember]
         public FontData MainToolStrip { get; set; }
+
+        /// <summary>
+        /// ミニ盤面下に配置しているToolStripのフォント
+        /// </summary>
+        [DataMember]
+        public FontData SubToolStrip { get; set; }
 
         /// <summary>
         /// メッセージダイアログのフォント

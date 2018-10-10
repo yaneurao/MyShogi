@@ -57,11 +57,13 @@
             this.tabPage8 = new System.Windows.Forms.TabPage();
             this.richSelector15 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage9 = new System.Windows.Forms.TabPage();
+            this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.fontSelectionConrol9 = new MyShogi.View.Win2D.Setting.FontSelectionConrol();
             this.fontSelectionConrol8 = new MyShogi.View.Win2D.Setting.FontSelectionConrol();
             this.fontSelectionConrol7 = new MyShogi.View.Win2D.Setting.FontSelectionConrol();
             this.fontSelectionConrol6 = new MyShogi.View.Win2D.Setting.FontSelectionConrol();
@@ -421,11 +423,13 @@
             // 
             // tabPage9
             // 
+            this.tabPage9.Controls.Add(this.label6);
             this.tabPage9.Controls.Add(this.label5);
             this.tabPage9.Controls.Add(this.label4);
             this.tabPage9.Controls.Add(this.label3);
             this.tabPage9.Controls.Add(this.label2);
             this.tabPage9.Controls.Add(this.label1);
+            this.tabPage9.Controls.Add(this.fontSelectionConrol9);
             this.tabPage9.Controls.Add(this.fontSelectionConrol8);
             this.tabPage9.Controls.Add(this.fontSelectionConrol7);
             this.tabPage9.Controls.Add(this.fontSelectionConrol6);
@@ -440,6 +444,15 @@
             this.tabPage9.TabIndex = 8;
             this.tabPage9.Text = "フォント";
             this.tabPage9.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(58, 342);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(516, 12);
+            this.label6.TabIndex = 3;
+            this.label6.Text = "※　棋譜ウインドウをメインウインドウに埋め込んでいる時は、ここで設定したフォントのサイズは反映されません。";
             // 
             // label5
             // 
@@ -486,10 +499,19 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "フォントを変更します。変更は再起動後に反映します。";
             // 
+            // fontSelectionConrol9
+            // 
+            this.fontSelectionConrol9.BackColor = System.Drawing.Color.Transparent;
+            this.fontSelectionConrol9.Description = "デバッグウインドウ";
+            this.fontSelectionConrol9.Location = new System.Drawing.Point(33, 293);
+            this.fontSelectionConrol9.Name = "fontSelectionConrol9";
+            this.fontSelectionConrol9.Size = new System.Drawing.Size(725, 26);
+            this.fontSelectionConrol9.TabIndex = 0;
+            // 
             // fontSelectionConrol8
             // 
             this.fontSelectionConrol8.BackColor = System.Drawing.Color.Transparent;
-            this.fontSelectionConrol8.Description = "デバッグウインドウ";
+            this.fontSelectionConrol8.Description = "検討ウインドウ";
             this.fontSelectionConrol8.Location = new System.Drawing.Point(33, 263);
             this.fontSelectionConrol8.Name = "fontSelectionConrol8";
             this.fontSelectionConrol8.Size = new System.Drawing.Size(725, 26);
@@ -498,7 +520,7 @@
             // fontSelectionConrol7
             // 
             this.fontSelectionConrol7.BackColor = System.Drawing.Color.Transparent;
-            this.fontSelectionConrol7.Description = "検討ウインドウ";
+            this.fontSelectionConrol7.Description = "棋譜ウインドウ";
             this.fontSelectionConrol7.Location = new System.Drawing.Point(33, 233);
             this.fontSelectionConrol7.Name = "fontSelectionConrol7";
             this.fontSelectionConrol7.Size = new System.Drawing.Size(725, 26);
@@ -507,7 +529,7 @@
             // fontSelectionConrol6
             // 
             this.fontSelectionConrol6.BackColor = System.Drawing.Color.Transparent;
-            this.fontSelectionConrol6.Description = "棋譜ウインドウ";
+            this.fontSelectionConrol6.Description = "メッセージダイアログ";
             this.fontSelectionConrol6.Location = new System.Drawing.Point(33, 203);
             this.fontSelectionConrol6.Name = "fontSelectionConrol6";
             this.fontSelectionConrol6.Size = new System.Drawing.Size(725, 26);
@@ -516,7 +538,7 @@
             // fontSelectionConrol5
             // 
             this.fontSelectionConrol5.BackColor = System.Drawing.Color.Transparent;
-            this.fontSelectionConrol5.Description = "メッセージダイアログ";
+            this.fontSelectionConrol5.Description = "設定ダイアログ関連";
             this.fontSelectionConrol5.Location = new System.Drawing.Point(33, 173);
             this.fontSelectionConrol5.Name = "fontSelectionConrol5";
             this.fontSelectionConrol5.Size = new System.Drawing.Size(725, 26);
@@ -525,7 +547,7 @@
             // fontSelectionConrol4
             // 
             this.fontSelectionConrol4.BackColor = System.Drawing.Color.Transparent;
-            this.fontSelectionConrol4.Description = "設定ダイアログ関連";
+            this.fontSelectionConrol4.Description = "メインウインドウ(対局者名など)";
             this.fontSelectionConrol4.Location = new System.Drawing.Point(33, 143);
             this.fontSelectionConrol4.Name = "fontSelectionConrol4";
             this.fontSelectionConrol4.Size = new System.Drawing.Size(725, 26);
@@ -534,7 +556,7 @@
             // fontSelectionConrol3
             // 
             this.fontSelectionConrol3.BackColor = System.Drawing.Color.Transparent;
-            this.fontSelectionConrol3.Description = "メインウインドウ(対局者名など)";
+            this.fontSelectionConrol3.Description = "ミニ盤面の下部にあるボタン";
             this.fontSelectionConrol3.Location = new System.Drawing.Point(33, 113);
             this.fontSelectionConrol3.Name = "fontSelectionConrol3";
             this.fontSelectionConrol3.Size = new System.Drawing.Size(725, 26);
@@ -618,12 +640,14 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-        private FontSelectionConrol fontSelectionConrol4;
-        private FontSelectionConrol fontSelectionConrol3;
-        private FontSelectionConrol fontSelectionConrol2;
-        private FontSelectionConrol fontSelectionConrol6;
         private FontSelectionConrol fontSelectionConrol5;
-        private FontSelectionConrol fontSelectionConrol8;
+        private FontSelectionConrol fontSelectionConrol4;
+        private FontSelectionConrol fontSelectionConrol2;
         private FontSelectionConrol fontSelectionConrol7;
+        private FontSelectionConrol fontSelectionConrol6;
+        private FontSelectionConrol fontSelectionConrol9;
+        private FontSelectionConrol fontSelectionConrol8;
+        private FontSelectionConrol fontSelectionConrol3;
+        private System.Windows.Forms.Label label6;
     }
 }

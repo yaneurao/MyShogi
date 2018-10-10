@@ -160,6 +160,11 @@ namespace MyShogi.Model.Common.Tool
         public static readonly string MainToolStrip = DefaultFont;
 
         /// <summary>
+        /// ミニ盤面下のToolStrip(ボタン)のフォント
+        /// </summary>
+        public static readonly string SubToolStrip = DefaultFont;
+        
+        /// <summary>
         /// メッセージダイアログのフォント
         /// </summary>
         public static readonly string MessageDialog = DefaultFont;

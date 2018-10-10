@@ -275,6 +275,12 @@
     <Compile Include="View\Win2D\Info\EngineConsiderationControl.Designer.cs">
       <DependentUpon>EngineConsiderationControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\Info\EngineConsiderationMainControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Info\EngineConsiderationMainControl.designer.cs">
+      <DependentUpon>EngineConsiderationMainControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\Info\ExceptionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -386,12 +392,6 @@
     <Compile Include="View\Win2D\Info\KifuControl.Designer.cs">
       <DependentUpon>KifuControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\Info\EngineConsiderationMainControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="View\Win2D\Info\EngineConsiderationMainControl.Designer.cs">
-      <DependentUpon>EngineConsiderationMainControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="View\Win2D\Common\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -466,6 +466,9 @@
     <EmbeddedResource Include="View\Win2D\Game\GameScreenControl\GameScreenControl.resx">
       <DependentUpon>GameScreenControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Info\EngineConsiderationMainControl.resx">
+      <DependentUpon>EngineConsiderationMainControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Info\EvalGraphControl.resx">
       <DependentUpon>EvalGraphControl.cs</DependentUpon>
     </EmbeddedResource>
@@ -507,9 +510,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Info\KifuControl.resx">
       <DependentUpon>KifuControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\Info\EngineConsiderationMainControl.resx">
-      <DependentUpon>EngineConsiderationMainControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Game\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>
