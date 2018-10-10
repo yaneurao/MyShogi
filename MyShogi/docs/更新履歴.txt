@@ -5,6 +5,12 @@
 ■　2018/10/10
 
 
+- フォント選択のためにFontSelectControl追加。その3。
+
+
+- Update2がマイナビ公式で公開されたので、関連するドキュメント類を更新。
+
+
 - フォント選択のためにFontSelectControl追加。その2。
 - FontReplacer削除。Font名をそれぞれ書いておけるようにする。
 - FontManager追加。大改造になった..(´ω｀)
