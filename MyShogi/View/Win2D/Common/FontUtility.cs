@@ -1,9 +1,18 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
-using MyShogi.Model.Dependency;
+using MyShogi.Model.Common.Tool;
 
 namespace MyShogi.View.Win2D
 {
+    interface IFontUpdate
+    {
+        /// <summary>
+        /// Control.Fontが変更になったので、このフォント相対でサイズを決定していたフォントを更新する。
+        /// </summary>
+        void UpdateFont();
+    }
+
     public static class FontUtility
     {
         /// <summary>
@@ -18,97 +27,59 @@ namespace MyShogi.View.Win2D
         {
             if (c.Font != null)
             {
-                if (c.Parent == null || c.Font != c.Parent.Font /* 親Fontに紐付いているFontだと解放してはまずい */)
-                {
+                // 古いフォントを解放する。
+                // メインウインドウにぶら下がっているフォントは解放してはならない。
+                // (これはambient propertyであり、他のControlから暗黙的に参照されている)
+                var parentFont = c.Parent?.Font;
+                if (parentFont != null /* 独立したウインドウなら解放しない */ && c.Font != parentFont)
                     c.Font.Dispose();
-                    c.Font = null;
 
-                    // 複数のControlから共有しているFontはすでに解放済みで例外が出ることがあるが、
-                    // 複数のControlで親のFont以外を共有すべきではない。(それは論理的なバグである)
-                    // だからその例外はここで捕捉しない。
-                }
+                // 複数のControlから共有しているFontはすでに解放済みで例外が出ることがあるが、
+                // 複数のControlで親のFont以外を共有すべきではない。(それは論理的なバグである)
+                // だからその例外はここで捕捉しない。
             }
             c.Font = font;
         }
 
         /// <summary>
-        /// Controlを渡して、そのすべてのフォントをその環境用に一括置換する。
+        /// control.FontをfontDataのFontに置換する。
         /// </summary>
         /// <param name="control"></param>
-        public static void ReplaceFont(Control control)
+        public static void ReplaceFont(Control control , FontData fontData)
         {
-            if (control is ToolStrip)
+            // まず、Control本体のフォントだけ置換する。
+            var newFontSize = fontData.FontSize <= 0 ? 9 : fontData.FontSize;
+            var newFont = new Font(fontData.FontName, newFontSize, fontData.FontStyle);
+            SetFont(control, newFont);
+
+            // 子コントロールに対して、UserControl絡みだけ置換する。
+            ReplaceUserControlFont(control , newFont);
+        }
+
+        /// <summary>
+        /// Controlに対して、その子コントロールを調べてUSerControlがあれば置換する。
+        /// </summary>
+        private static void ReplaceUserControlFont(Control control , Font font)
+        {
+            foreach (var c in control.Controls)
             {
-                // MenuStripなどの時。
-
-                var menu = control as ToolStrip;
-                foreach (ToolStripItem c in menu.Items)
+                if (c is SplitContainer)
                 {
-                    ReplaceFontSimple(menu ,c);
-
-                    // 本当はメニュー項目に対して再帰的にフォントを変更していく必要があるが、
-                    // 途中でフォント変更してないのでやる必要なさげ。
+                    // このコンテナ内にあるUserControlも置換する必要がある。
+                    // 再帰的に呼び出す
+                    var split = c as SplitContainer;
+                    ReplaceUserControlFont(split.Panel1 , font);
+                    ReplaceUserControlFont(split.Panel2 , font);
+                }
+                else if (c is UserControl)
+                {
+                    UserControl userControl = c as UserControl;
+                    userControl.Font = font;
+                    // このUserControlがUpdateFont()を持つなら、それを呼び出して、Fontの再計算をさせてやるべき。
+                    if (userControl is IFontUpdate)
+                        (userControl as IFontUpdate).UpdateFont();
                 }
             }
-            else
-            {
-                // 通常のControlのとき
-
-                foreach (Control c in control.Controls)
-                {
-                    ReplaceFontSimple(c);
-
-                    // 子持ちのControlであれば、その子たちのFontも再帰的に置換する。
-                    if (c.Controls.Count != 0)
-                        ReplaceFont(c);
-                }
-            }
-        }
-
-        /// <summary>
-        /// フォントをこの環境用のフォントで置き換える。
-        /// 古いほうのフォントはDispose()を呼び出して解放する。
-        /// </summary>
-        /// <param name="font"></param>
-        /// <returns></returns>
-        public static Font ReplaceFont(Font font)
-        {
-            var oldFont = font;
-            var newFont = FontReplacer.ReplaceFont(font);
-            if (oldFont != newFont)
-                oldFont.Dispose();
-
-            return newFont;
-        }
-
-        /// <summary>
-        /// フォントをこの環境用のフォントで置き換える。
-        /// 古いほうのフォントはc.Parent.Fontと異なるならDispose()を呼び出して解放する。
-        /// </summary>
-        /// <param name="font"></param>
-        /// <returns></returns>
-        private static void ReplaceFontSimple(Control c)
-        {
-            var oldFont = c.Font;
-            var newFont = FontReplacer.ReplaceFont(c.Font);
-            var parentFont = c.Parent == null ? null : c.Parent.Font;
-            if (oldFont!= null && oldFont != newFont && oldFont != parentFont)
-                oldFont.Dispose();
-            c.Font = newFont;
-        }
-
-        /// <summary>
-        /// フォントをこの環境用のフォントで置き換える。
-        /// 古いほうのフォントはparent.Fontと異なるならDispose()を呼び出して解放する。
-        /// </summary>
-        private static void ReplaceFontSimple(Control parent , ToolStripItem c)
-        {
-            var oldFont = c.Font;
-            var newFont = FontReplacer.ReplaceFont(c.Font);
-            var parentFont = parent == null ? null : parent.Font;
-            if (oldFont != null && oldFont != newFont && oldFont != parentFont)
-                oldFont.Dispose();
-            c.Font = newFont;
         }
 
     }

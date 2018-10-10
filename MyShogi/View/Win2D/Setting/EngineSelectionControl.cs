@@ -14,7 +14,7 @@ namespace MyShogi.View.Win2D
     /// エンジン選択ダイアログ用のControl。
     /// 1つのエンジン分の情報を表示する。
     /// </summary>
-    public partial class EngineSelectionControl : UserControl
+    public partial class EngineSelectionControl : UserControl , IFontUpdate
     {
         public EngineSelectionControl()
         {
@@ -128,6 +128,31 @@ namespace MyShogi.View.Win2D
             {
                 labels[i].Location = new Point(labels[i - 1].Location.X + labels[i - 1].Width , labels[i - 1].Location.Y);
             }
+        }
+
+        /// <summary>
+        /// IFontUpdate.UpdateFont()
+        /// </summary>
+        public void UpdateFont()
+        {
+            // labelのフォントは親フォント相対でサイズを決定する。
+
+            // エンジン名を見出しとして表示しているフォント
+            var font1 = new Font(this.Font.FontFamily, this.Font.Size * 11 / 9, this.Font.Style);
+
+            // メモリの空きなどを表示している説明文のフォント
+            var font2 = new Font(this.Font.FontFamily, this.Font.Size * 8  / 9, this.Font.Style);
+
+            // エンジンの説明文のフォント
+            //var font3 = new Font(this.Font.FontFamily, this.Font.Size * 9 / 9, this.Font.Style);
+
+            label1.Font = font1;
+
+            var labels = new[] { label2, label3, label4, label5 };
+            foreach (var label in labels)
+                label.Font = font2;
+
+            //textBox1.Font = font3;
         }
 
         // -- handlers

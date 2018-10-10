@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.EngineDefine;
 
@@ -23,6 +24,8 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             InitViewModel();
+
+            InitFont();
         }
 
         public class EngineOptionSettingDialogViewModel : NotifyObject
@@ -80,6 +83,14 @@ namespace MyShogi.View.Win2D
                 var configType = (EngineConfigType)args.value;
                 this.Text = $"エンジンオプション設定({configType.Pretty()}用)";
             });
+        }
+
+        /// <summary>
+        /// フォントの初期化
+        /// </summary>
+        private void InitFont()
+        {
+            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
         }
 
     }

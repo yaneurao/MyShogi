@@ -51,7 +51,7 @@
             // 
             this.button1.Location = new System.Drawing.Point(0, 106);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(158, 28);
+            this.button1.Size = new System.Drawing.Size(170, 28);
             this.button1.TabIndex = 1;
             this.button1.Text = "対局結果の保存設定";
             this.button1.UseVisualStyleBackColor = true;
@@ -60,9 +60,9 @@
             // button4
             // 
             this.button4.Enabled = false;
-            this.button4.Location = new System.Drawing.Point(516, 106);
+            this.button4.Location = new System.Drawing.Point(527, 106);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(177, 28);
+            this.button4.Size = new System.Drawing.Size(170, 28);
             this.button4.TabIndex = 4;
             this.button4.Text = "対局棋譜の読み込み";
             this.button4.UseVisualStyleBackColor = true;
@@ -70,9 +70,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(164, 106);
+            this.button2.Location = new System.Drawing.Point(173, 106);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(158, 28);
+            this.button2.Size = new System.Drawing.Size(170, 28);
             this.button2.TabIndex = 2;
             this.button2.Text = "棋譜保存フォルダを開く";
             this.button2.UseVisualStyleBackColor = true;
@@ -80,9 +80,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(328, 106);
+            this.button3.Location = new System.Drawing.Point(346, 106);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(158, 28);
+            this.button3.Size = new System.Drawing.Size(170, 28);
             this.button3.TabIndex = 3;
             this.button3.Text = "対局結果一覧のクリア";
             this.button3.UseVisualStyleBackColor = true;
@@ -98,7 +98,6 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.listView1);
-            this.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "GameResultDialog";
             this.Text = "対局結果一覧";

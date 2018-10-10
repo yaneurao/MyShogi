@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using MyShogi.App;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D
@@ -30,6 +31,8 @@ namespace MyShogi.View.Win2D
         private void Init()
         {
             ExceptionDialog_SizeChanged(null, null);
+
+            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.MessageDialog);
         }
 
         /// <summary>

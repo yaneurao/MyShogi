@@ -184,6 +184,7 @@ namespace MyShogi.View.Win2D
             // -- ダイアログの構築
 
             var dialog = new EngineOptionSettingDialog();
+
             dialog.SettingControls(0).ViewModel.Setting = commonSettings;
             dialog.SettingControls(0).ViewModel.AddPropertyChangedHandler("ValueChanged", (args) =>
             {

@@ -135,7 +135,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(202, 42);
+            this.label2.Location = new System.Drawing.Point(227, 42);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(17, 12);
             this.label2.TabIndex = 1;
@@ -143,7 +143,7 @@
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(97, 38);
+            this.numericUpDown1.Location = new System.Drawing.Point(122, 38);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             9999999,
             0,
@@ -166,7 +166,6 @@
             // 
             // button3
             // 
-            this.button3.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.button3.Location = new System.Drawing.Point(83, 207);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(113, 31);
@@ -187,10 +186,9 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.label3.Location = new System.Drawing.Point(9, 11);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(220, 15);
+            this.label3.Size = new System.Drawing.Size(177, 12);
             this.label3.TabIndex = 14;
             this.label3.Text = "検討で使うエンジンを選んでください。";
             // 

@@ -281,50 +281,58 @@ namespace MyShogi.Model.Dependency
             }
         }
     }
+}
 
+// --- フォントの設定
+namespace MyShogi.Model.Common.Tool
+{
     /// <summary>
-    /// Controlのフォントの一括置換用
+    /// 各ダイアログで用いるデフォルトフォント名の一覧。
+    /// 表示設定ダイアログのフォントのところで変更できる。
     /// </summary>
-    public static class FontReplacer
+    public static class FontList
     {
-        /// <summary>
-        /// 置換する文字フォント。
-        /// 全体がこのフォントで置換される。あとでもう少し細かな置換が出来るようにリファクタリングする。
-        /// </summary>
-        const string replace_fontname = "Hiragino Kaku Gothic Pro W3";
+        public static readonly string DefaultFont = "Hiragino Kaku Gothic Pro W3";
 
         /// <summary>
-        /// 引数で与えられたFontに対して、必要ならばこの環境用のフォントを生成して返す。
-        /// FontUtility.ReplaceFont()から呼び出される。
+        /// 設定ダイアログ
         /// </summary>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public static Font ReplaceFont(Font f)
-        {
-            // なぜか、OriginalFontNameがnullのことがある。MenuStrip.Items.Fontとかそう。そのときはf.Nameを参照しないといけない。
-            var name = f.OriginalFontName ?? f.Name;
-            var size = f.Size;
+        public static readonly string SettingDialog = DefaultFont;
 
+        /// <summary>
+        /// メニューのフォント
+        /// </summary>
+        public static readonly string MenuStrip = DefaultFont;
 
-            switch (name)
-            {
-#if false
-                case "MS Gothic":
-                case "MS UI Gothic":
-                case "ＭＳ ゴシック":
-                case "MSPゴシック":
-                case "Yu Gothic UI":
-                case "Microsoft Sans Serif":
-#endif
-                // 置換済みなら置換しない。それ以外は全部置換する。
-                case replace_fontname:
-                    return f;
+        /// <summary>
+        /// メインウインドウのToolStrip(ボタン)のフォント
+        /// </summary>
+        public static readonly string MainToolStrip = DefaultFont;
 
-                default:
-                    return new Font(replace_fontname, size);
+        /// <summary>
+        /// メッセージダイアログのフォント
+        /// </summary>
+        public static readonly string MessageDialog = DefaultFont;
 
-            }
-        }
+        /// <summary>
+        /// メインウインドウ上のフォント(対局者名など)
+        /// </summary>
+        public static readonly string MainWindow = DefaultFont;
+
+        /// <summary>
+        /// 棋譜ウインドウ
+        /// </summary>
+        public static readonly string KifuWindow = DefaultFont;
+
+        /// <summary>
+        /// 検討ウインドウ
+        /// </summary>
+        public static readonly string ConsiderationWindow = DefaultFont;
+
+        /// <summary>
+        /// デバッグウインドウ
+        /// </summary>
+        public static readonly string DebugWindow = DefaultFont;
     }
 }
 

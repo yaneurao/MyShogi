@@ -49,13 +49,13 @@
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.checkBox5 = new System.Windows.Forms.CheckBox();
+            this.checkBox6 = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
             this.playerSettingControl2 = new MyShogi.View.Win2D.PlayerSettingControl();
             this.playerSettingControl1 = new MyShogi.View.Win2D.PlayerSettingControl();
             this.timeSettingControl2 = new MyShogi.View.Win2D.TimeSettingControl();
             this.timeSettingControl1 = new MyShogi.View.Win2D.TimeSettingControl();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.groupBox6.SuspendLayout();
@@ -98,7 +98,7 @@
             "十枚落ち"});
             this.comboBox2.Location = new System.Drawing.Point(123, 22);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(110, 23);
+            this.comboBox2.Size = new System.Drawing.Size(110, 20);
             this.comboBox2.TabIndex = 9;
             // 
             // radioButton6
@@ -106,7 +106,7 @@
             this.radioButton6.AutoSize = true;
             this.radioButton6.Location = new System.Drawing.Point(13, 46);
             this.radioButton6.Name = "radioButton6";
-            this.radioButton6.Size = new System.Drawing.Size(102, 19);
+            this.radioButton6.Size = new System.Drawing.Size(85, 16);
             this.radioButton6.TabIndex = 8;
             this.radioButton6.TabStop = true;
             this.radioButton6.Text = "現在の局面 ";
@@ -119,7 +119,7 @@
             this.radioButton5.Checked = true;
             this.radioButton5.Location = new System.Drawing.Point(13, 23);
             this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(85, 19);
+            this.radioButton5.Size = new System.Drawing.Size(71, 16);
             this.radioButton5.TabIndex = 8;
             this.radioButton5.TabStop = true;
             this.radioButton5.Text = "初期局面";
@@ -142,7 +142,7 @@
             this.checkBox1.AutoSize = true;
             this.checkBox1.Location = new System.Drawing.Point(399, 331);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(205, 19);
+            this.checkBox1.Size = new System.Drawing.Size(167, 16);
             this.checkBox1.TabIndex = 20;
             this.checkBox1.Text = "後手の時間設定を個別にする";
             this.toolTip1.SetToolTip(this.checkBox1, "後手の持ち時間を先手とは異なる持ち時間設定にしたい時にオンにしてください。");
@@ -164,7 +164,7 @@
             this.checkBox4.AutoSize = true;
             this.checkBox4.Location = new System.Drawing.Point(12, 20);
             this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(187, 19);
+            this.checkBox4.Size = new System.Drawing.Size(153, 16);
             this.checkBox4.TabIndex = 20;
             this.checkBox4.Text = "指定手数で引き分けにする";
             this.toolTip1.SetToolTip(this.checkBox4, "指定手数を超えると引き分け扱いにします。\r\nコンピューターと対局するときは、「詳細設定」の「MaxMovesToDraw」を\r\nここで設定したのと同じ値に変更して" +
@@ -180,7 +180,7 @@
             0,
             0});
             this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(60, 22);
+            this.numericUpDown2.Size = new System.Drawing.Size(60, 19);
             this.numericUpDown2.TabIndex = 30;
             this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericUpDown2.Value = new decimal(new int[] {
@@ -212,7 +212,7 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(298, 49);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(22, 15);
+            this.label3.Size = new System.Drawing.Size(17, 12);
             this.label3.TabIndex = 36;
             this.label3.Text = "局";
             // 
@@ -221,7 +221,7 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(298, 23);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(22, 15);
+            this.label2.Size = new System.Drawing.Size(17, 12);
             this.label2.TabIndex = 35;
             this.label2.Text = "手";
             // 
@@ -230,7 +230,7 @@
             this.checkBox3.AutoSize = true;
             this.checkBox3.Location = new System.Drawing.Point(32, 72);
             this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(251, 19);
+            this.checkBox3.Size = new System.Drawing.Size(205, 16);
             this.checkBox3.TabIndex = 33;
             this.checkBox3.Text = "連続対局のときに手番を入れ替えない";
             this.checkBox3.UseVisualStyleBackColor = true;
@@ -240,7 +240,7 @@
             this.checkBox2.AutoSize = true;
             this.checkBox2.Location = new System.Drawing.Point(12, 46);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(220, 19);
+            this.checkBox2.Size = new System.Drawing.Size(179, 16);
             this.checkBox2.TabIndex = 33;
             this.checkBox2.Text = "連続対局を行う(COM同士の時)";
             this.toolTip1.SetToolTip(this.checkBox2, "プレイヤーがコンピュータ同士の対局であるとき、連続対局を行います。\r\n対局結果一覧はメニューの「ウィンドウ」→「対局結果ウインドウ」を選ぶと確認できます。");
@@ -260,7 +260,7 @@
             0,
             0});
             this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(60, 22);
+            this.numericUpDown1.Size = new System.Drawing.Size(60, 19);
             this.numericUpDown1.TabIndex = 34;
             this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericUpDown1.Value = new decimal(new int[] {
@@ -274,7 +274,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 104);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(73, 15);
+            this.label1.Size = new System.Drawing.Size(59, 12);
             this.label1.TabIndex = 32;
             this.label1.Text = "入玉ルール";
             // 
@@ -289,7 +289,7 @@
             "トライルール"});
             this.comboBox1.Location = new System.Drawing.Point(91, 101);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(138, 23);
+            this.comboBox1.Size = new System.Drawing.Size(138, 20);
             this.comboBox1.TabIndex = 31;
             this.toolTip1.SetToolTip(this.comboBox1, resources.GetString("comboBox1.ToolTip"));
             // 
@@ -298,19 +298,30 @@
             this.checkBox5.AutoSize = true;
             this.checkBox5.Location = new System.Drawing.Point(17, 276);
             this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(249, 19);
+            this.checkBox5.Size = new System.Drawing.Size(202, 16);
             this.checkBox5.TabIndex = 39;
             this.checkBox5.Text = "コンピューターは1手に必ずこれだけ使う";
             this.toolTip1.SetToolTip(this.checkBox5, "コンピューターは1手に必ずこれだけ使います。\r\n(思考が終わっていても指すのを待機します)\r\n単位は[ms]なので1秒を指定したいなら「1000」と入力してくださ" +
         "い。");
             this.checkBox5.UseVisualStyleBackColor = true;
             // 
+            // checkBox6
+            // 
+            this.checkBox6.AutoSize = true;
+            this.checkBox6.Location = new System.Drawing.Point(17, 301);
+            this.checkBox6.Name = "checkBox6";
+            this.checkBox6.Size = new System.Drawing.Size(131, 16);
+            this.checkBox6.TabIndex = 39;
+            this.checkBox6.Text = "先後は振り駒で決める";
+            this.toolTip1.SetToolTip(this.checkBox6, "対局前に先手・後手を振り駒で決めます。\r\n(先手・後手がランダムで決まります)");
+            this.checkBox6.UseVisualStyleBackColor = true;
+            // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(343, 277);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 15);
+            this.label4.Size = new System.Drawing.Size(28, 12);
             this.label4.TabIndex = 38;
             this.label4.Text = "[ms]";
             // 
@@ -328,7 +339,7 @@
             0,
             0});
             this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(69, 22);
+            this.numericUpDown3.Size = new System.Drawing.Size(69, 19);
             this.numericUpDown3.TabIndex = 37;
             this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
@@ -368,17 +379,6 @@
             this.timeSettingControl1.Size = new System.Drawing.Size(381, 131);
             this.timeSettingControl1.TabIndex = 32;
             // 
-            // checkBox6
-            // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.Location = new System.Drawing.Point(17, 301);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(158, 19);
-            this.checkBox6.TabIndex = 39;
-            this.checkBox6.Text = "先後は振り駒で決める";
-            this.toolTip1.SetToolTip(this.checkBox6, "対局前に先手・後手を振り駒で決めます。\r\n(先手・後手がランダムで決まります)");
-            this.checkBox6.UseVisualStyleBackColor = true;
-            // 
             // GameSettingDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -397,13 +397,13 @@
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.groupBox3);
-            this.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "GameSettingDialog";
             this.Text = "対局";
+            this.Load += new System.EventHandler(this.GameSettingDialog_Load);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();

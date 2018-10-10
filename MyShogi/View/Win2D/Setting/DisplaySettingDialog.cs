@@ -1,5 +1,5 @@
-﻿using MyShogi.App;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
+using MyShogi.App;
 
 namespace MyShogi.View.Win2D.Setting
 {
@@ -10,6 +10,8 @@ namespace MyShogi.View.Win2D.Setting
             InitializeComponent();
 
             InitViewModel();
+
+            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
         }
 
         private void InitViewModel()

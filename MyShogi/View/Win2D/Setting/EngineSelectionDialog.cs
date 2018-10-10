@@ -68,6 +68,10 @@ namespace MyShogi.View.Win2D
             }
 
             InitSelectionControls();
+
+            // フォント変更。コンストラクタのタイミング゛は子Controlが生成されておらず、間に合わなかったので
+            // このタイミングで初期化を行う。
+            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
         }
 
         /// <summary>
@@ -160,9 +164,6 @@ namespace MyShogi.View.Win2D
 
             button1.Enabled = SelectionControlTopIndex - 5 >= 0;
             button2.Enabled = SelectionControlTopIndex + 5 < defines.Count;
-
-            // フォントをすべて置換する。
-            FontUtility.ReplaceFont(this);
         }
 
         /// <summary>

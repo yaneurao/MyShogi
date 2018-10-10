@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.Collections;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Shogi.Core;
@@ -23,6 +24,7 @@ namespace MyShogi.View.Win2D
 
             InitSpliter();
             InitEngineConsiderationControl();
+            InitFont();
 
             // タイマー開始
             //lastDispatchTime.Start();
@@ -491,6 +493,14 @@ namespace MyShogi.View.Win2D
         /// 次回のrootSfenが送られてきたときにその局面でミニ盤面を初期化しないといけないフラグ
         /// </summary>
         private bool must_init_miniboard = false;
+
+        /// <summary>
+        /// フォントの初期化
+        /// </summary>
+        private void InitFont()
+        {
+            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.ConsiderationWindow);
+        }
 
         // -- test code
 

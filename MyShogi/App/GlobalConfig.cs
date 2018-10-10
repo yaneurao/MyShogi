@@ -14,6 +14,8 @@ namespace MyShogi.App
     /// </summary>
     public class GlobalConfig : NotifyObject
     {
+        #region publics
+
         /// <summary>
         /// MyShogiのバージョン文字列。Aboutダイアログに表示される。
         ///
@@ -171,6 +173,8 @@ namespace MyShogi.App
         /// 2 : 以下、来年以降の商用版の番号を振るかも。
         /// </summary>
         public int CommercialVersion { get; private set; }
+
+        #endregion
 
         #region Display Setting
 
@@ -701,6 +705,16 @@ namespace MyShogi.App
         /// </summary>
         [DataMember]
         public GameResultSetting GameResultSetting { get; set; } = new GameResultSetting();
+
+        #endregion
+
+        #region FontSetting
+
+        /// <summary>
+        /// 各Dialogなどのフォント設定
+        /// </summary>
+        [DataMember]
+        public FontManager FontManager { get; set; } = new FontManager();
 
         #endregion
     }

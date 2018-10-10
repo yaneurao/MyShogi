@@ -128,51 +128,61 @@ namespace MyShogi.Model.Dependency
             g.DrawImage(src, dstRect, srcRect, unit);
         }
     }
+}
 
+// --- フォントの設定
+namespace MyShogi.Model.Common.Tool
+{
     /// <summary>
-    /// Controlのフォントの一括置換用
+    /// 各ダイアログで用いるデフォルトフォント名の一覧。
+    /// 表示設定ダイアログのフォントのところで変更できる。
     /// </summary>
-    public static class FontReplacer
+    public static class FontList
     {
+        //public static readonly string DefaultFont = "MS UI Gothic";
+
+        // 特徴的なフォントに変更してみて、フォントの置換が適切に行われているかをテストする。
+        public static readonly string DefaultFont = "HGP行書体";
+
         /// <summary>
-        /// 引数で与えられたFontに対して、必要ならばこの環境用のフォントを生成して返す。
-        /// FontUtility.ReplaceFont()から呼び出される。
+        /// 設定ダイアログ
         /// </summary>
-        /// <param name="f"></param>
-        /// <returns></returns>
-        public static Font ReplaceFont(Font f)
-        {
-#if true
-            // Windows環境では置換する必要はないのでそのまま返す。
-            // あとで、棋譜ウインドウ、検討ウインドウ、対局者、ダイアログ、それぞれのフォントを変更できるようにするが…。
-            return f;
-#else
-            // 試しに全部変わったフォントにしてみて、うまく動作しているかをテスト。
+        public static readonly string SettingDialog = DefaultFont;
 
-            // なぜか、OriginalFontNameがnullのことがある。MenuStrip.Items.Fontとかそう。そのときはf.Nameを参照しないといけない。
-            var name = f.OriginalFontName ?? f.Name;
-            var size = f.Size;
+        /// <summary>
+        /// メニューのフォント
+        /// </summary>
+        public static readonly string MenuStrip = DefaultFont;
 
-            //Console.WriteLine($"{name} : size ={size}");
+        /// <summary>
+        /// メインウインドウのToolStrip(ボタン)のフォント
+        /// </summary>
+        public static readonly string MainToolStrip = DefaultFont;
 
-            switch (name)
-            {
-                case "MS Gothic":
-                case "MS UI Gothic":
-                case "ＭＳ ゴシック":
-                case "MSPゴシック":
-                case "Yu Gothic UI":
-                case "Microsoft Sans Serif":
-                    return new Font("HGP行書体", size);
+        /// <summary>
+        /// メッセージダイアログのフォント
+        /// </summary>
+        public static readonly string MessageDialog = DefaultFont;
 
-                default:
-                    // 見知らぬフォント(OriginalFontNameが空欄でsizeしかないだとか…)
-                    //Console.WriteLine($"{name} : size ={size}");
+        /// <summary>
+        /// メインウインドウ上のフォント(対局者名など)
+        /// </summary>
+        public static readonly string MainWindow = DefaultFont;
 
-                    return f;
-            }
-#endif
-        }
+        /// <summary>
+        /// 棋譜ウインドウ
+        /// </summary>
+        public static readonly string KifuWindow = DefaultFont;
+
+        /// <summary>
+        /// 検討ウインドウ
+        /// </summary>
+        public static readonly string ConsiderationWindow = DefaultFont;
+
+        /// <summary>
+        /// デバッグウインドウ
+        /// </summary>
+        public static readonly string DebugWindow = DefaultFont;
     }
 }
 

@@ -14,6 +14,7 @@ namespace MyShogi.View.Win2D.Setting
             BindControl();
             Disposed += OnDisposed;
 
+            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
         }
 
         private void BindControl()

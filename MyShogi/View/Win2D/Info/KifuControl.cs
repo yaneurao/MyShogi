@@ -281,8 +281,11 @@ namespace MyShogi.View.Win2D
 
             last_font_size = font_size;
 
-            var font = FontUtility.ReplaceFont(new Font("MS Gothic", font_size, FontStyle.Regular, GraphicsUnit.Pixel));
-            FontUtility.SetFont( listBox1 , font);
+            var config = TheApp.app.Config;
+            var fontname = config.FontManager.KifuWindow.FontName;
+            var fontstyle = config.FontManager.KifuWindow.FontStyle;
+            var font = new Font(fontname , font_size, fontstyle , GraphicsUnit.Pixel);
+            FontUtility.SetFont( listBox1 , font );
 
             // buttonのFontSizeあまり変更すると高さが足りなくなるので横幅の比率変更は反映させない。
             var buttons = new[] { button1, button2, button3, button4, button5, button6 };
@@ -290,7 +293,7 @@ namespace MyShogi.View.Win2D
             {
                 // 親以外のFontをControl間で共有すべきではないという考えに基づき、
                 // 少し無駄ではあるが、それぞれにFontのinstanceを割り当てる。
-                var font2 = FontUtility.ReplaceFont(new Font("MS Gothic", font_size2, FontStyle.Regular, GraphicsUnit.Pixel));
+                var font2 = new Font(fontname , font_size2, fontstyle , GraphicsUnit.Pixel);
                 FontUtility.SetFont(b, font2);
             }
         }

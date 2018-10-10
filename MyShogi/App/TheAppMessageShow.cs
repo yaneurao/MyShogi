@@ -32,7 +32,6 @@ namespace MyShogi.App
                         if (parent != null)
                             FormLocationUtility.CenteringToThisForm(dialog, parent);
 
-                        FontUtility.ReplaceFont(dialog);
                         dialog.ShowDialog();
                     }
                     return DialogResult.OK;

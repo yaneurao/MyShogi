@@ -83,6 +83,7 @@
     <Compile Include="App\TheAppMessageShow.cs" />
     <Compile Include="Model\Common\Collections\SynchronizedList.cs" />
     <Compile Include="Model\Common\Tool\DockManager.cs" />
+    <Compile Include="Model\Common\Tool\FontManager.cs" />
     <Compile Include="Model\Common\Tool\MostRecentUsedFiles.cs" />
     <Compile Include="Model\Common\ObjectModel\ControlBinder.cs" />
     <Compile Include="Model\Common\ObjectModel\NotifyCollection.cs" />

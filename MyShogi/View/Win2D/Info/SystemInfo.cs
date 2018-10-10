@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Management;
 using System.Text;
 using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Dependency;
 
 namespace MyShogi.View.Win2D
@@ -14,6 +15,8 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             CpuInfo();
+
+            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
         }
 
         /// <summary>

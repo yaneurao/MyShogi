@@ -22,6 +22,8 @@ namespace MyShogi.View.Win2D
 
             InitListViewHeader();
             InitListViewContents();
+
+            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
         }
 
         public class GameResultDialogViewModel : NotifyObject

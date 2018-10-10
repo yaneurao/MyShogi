@@ -25,7 +25,7 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             // ToolStripのフォントを設定しなおす。
-            FontUtility.ReplaceFont(toolStrip1);
+            FontUtility.ReplaceFont(toolStrip1 , TheApp.app.Config.FontManager.MainToolStrip);
         }
 
         #region ViewModel
@@ -92,7 +92,6 @@ namespace MyShogi.View.Win2D
             engineConsiderationMainControl.ConsiderationInstance(0).ViewModel.AddPropertyChangedHandler("MultiPV", (h) => {
                 gameServer.ChangeMultiPvCommand((int)h.value);
             });
-            FontUtility.ReplaceFont(engineConsiderationMainControl);
         }
 
         #endregion
@@ -228,7 +227,7 @@ namespace MyShogi.View.Win2D
                 dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.ConsiderationSetting;
                 dialog.ViewModel.AddPropertyChangedHandler("StartButtonClicked", _ => ToggleConsideration());
                 dialog.Bind(setting);
-                FontUtility.ReplaceFont(dialog);
+
                 dialog.ShowDialog(this);
             }
         }
@@ -246,7 +245,7 @@ namespace MyShogi.View.Win2D
                 dialog.ViewModel.DialogType = ConsiderationEngineSettingDialogType.MateSetting;
                 dialog.ViewModel.AddPropertyChangedHandler("StartButtonClicked", _ => ToggleMateConsideration());
                 dialog.Bind(setting);
-                FontUtility.ReplaceFont(dialog);
+
                 dialog.ShowDialog(this);
             }
         }
@@ -1552,7 +1551,6 @@ namespace MyShogi.View.Win2D
                             using (var dialog = new GameSettingDialog(this))
                             {
                                 FormLocationUtility.CenteringToThisForm(dialog, this);
-                                FontUtility.ReplaceFont(dialog);
                                 dialog.ShowDialog(this); // Modal Dialogにしておく。
                             }
                         };
@@ -1619,7 +1617,6 @@ namespace MyShogi.View.Win2D
                         using (var dialog = new SoundSettingDialog())
                         {
                             FormLocationUtility.CenteringToThisForm(dialog, this);
-                            FontUtility.ReplaceFont(dialog);
                             dialog.ShowDialog(this);
                         }
                     };
@@ -1633,7 +1630,6 @@ namespace MyShogi.View.Win2D
                         using (var dialog = new DisplaySettingDialog())
                         {
                             FormLocationUtility.CenteringToThisForm(dialog, this);
-                            FontUtility.ReplaceFont(dialog);
                             dialog.ShowDialog(this);
                         }
                     };
@@ -2101,7 +2097,6 @@ namespace MyShogi.View.Win2D
                                         TheApp.app.MessageShow("棋譜ファイルが読み込めませんでした。", MessageShowType.Error);
                                     }
                                 });
-                                FontUtility.ReplaceFont(dialog);
                                 dialog.ShowDialog(this);
                             }
                         };
@@ -2119,7 +2114,6 @@ namespace MyShogi.View.Win2D
                             using (var dialog = new GameResultWindowSettingDialog())
                             {
                                 FormLocationUtility.CenteringToThisForm(dialog, this);
-                                FontUtility.ReplaceFont(dialog);
                                 dialog.ShowDialog(this);
                             }
                         };
@@ -2165,7 +2159,6 @@ namespace MyShogi.View.Win2D
                                     if (debugDialog != null)
                                     {
                                         FormLocationUtility.CenteringToThisForm(debugDialog, this);
-                                        FontUtility.ReplaceFont(debugDialog);
                                         debugDialog.Show();
                                     }
                                 };
@@ -2253,7 +2246,6 @@ namespace MyShogi.View.Win2D
                             using (var dialog = new AboutYaneuraOu())
                             {
                                 FormLocationUtility.CenteringToThisForm(dialog, this);
-                                FontUtility.ReplaceFont(dialog);
                                 dialog.ShowDialog(this);
                             }
                         };
@@ -2270,7 +2262,6 @@ namespace MyShogi.View.Win2D
                             using (var dialog = new SystemInfo())
                             {
                                 FormLocationUtility.CenteringToThisForm(dialog, this);
-                                FontUtility.ReplaceFont(dialog);
                                 dialog.ShowDialog(this);
                             }
                         };
@@ -2356,7 +2347,7 @@ namespace MyShogi.View.Win2D
 #endif
 
                 // メニューのフォントを設定しなおす。
-                FontUtility.ReplaceFont(menu);
+                FontUtility.ReplaceFont(menu , config.FontManager.MenuStrip);
 
                 Controls.Add(menu);
 

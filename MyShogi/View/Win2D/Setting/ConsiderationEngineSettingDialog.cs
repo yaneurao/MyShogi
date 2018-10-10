@@ -20,6 +20,8 @@ namespace MyShogi.View.Win2D.Setting
             InitializeComponent();
 
             InitViewModel();
+
+            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
         }
 
         #region ViewModel
@@ -208,9 +210,6 @@ namespace MyShogi.View.Win2D.Setting
             try
             {
                 FormLocationUtility.CenteringToThisForm(dialog, this);
-
-                // 各フォントを設定しなおす。
-                FontUtility.ReplaceFont(dialog);
 
                 // modal dialogとして出す
                 dialog.ShowDialog(this);

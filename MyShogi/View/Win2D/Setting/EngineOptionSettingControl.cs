@@ -122,6 +122,9 @@ namespace MyShogi.View.Win2D
             // bindしている値が変化した時にイベントを生起する
             var valueChanged = new Action(() => ViewModel.RaisePropertyChanged("ValueChanged", null));
 
+            var fontname = this.Font.FontFamily;
+            var fontsize = this.Font.Size;
+
             for (var k = 0; k < setting.Descriptions.Count; ++k)
             {
                 var desc = setting.Descriptions[k];
@@ -139,7 +142,7 @@ namespace MyShogi.View.Win2D
                     {
                         var label = new Label();
                         // 水平線なのでフォントは問題ではない
-                        label.Font = new Font("ＭＳ ゴシック", 9);
+                        label.Font = new Font(fontname, fontsize);
                         label.Location = new Point(label_x[0] + x_offset, y);
                         label.Size = new Size(ClientSize.Width, 1);
                         label.BorderStyle = BorderStyle.FixedSingle;
@@ -158,7 +161,7 @@ namespace MyShogi.View.Win2D
                     label1.Location = new Point(label_x[0] + x_offset, y);
                     label1.AutoSize = true;
                     label1.Text = desc.DisplayName;
-                    label1.Font = new Font("ＭＳ ゴシック", 14 );
+                    label1.Font = new Font(fontname , fontsize / 9 * 11 );
                     // Font()の第三引数に " GraphicsUnit.Pixel "をつけるとdpi設定の影響を受けない。
                     // ここでは、dpi設定の影響を受けないといけないので、指定しない。
 
@@ -279,7 +282,7 @@ namespace MyShogi.View.Win2D
                         $"\r\nデフォルト値 = {defaultText}";
 
                     var label1 = new Label();
-                    label1.Font = new Font("ＭＳ ゴシック", 10);
+                    label1.Font = new Font(fontname , fontsize );
                     label1.Location = new Point(label_x[0] + x_offset, y);
                     label1.AutoSize = true;
                     label1.Text = displayName.LeftUnicode(18); // GPS将棋とか長すぎるオプション名がある。
@@ -289,7 +292,7 @@ namespace MyShogi.View.Win2D
                     page.Add(label1);
 
                     var label2 = new Label();
-                    label2.Font = new Font("ＭＳ ゴシック", 10);
+                    label2.Font = new Font(fontname, fontsize);
                     label2.Location = new Point(label_x[2] + x_offset  + hh /* 配置したcontrolから少し右に配置 */ , y);
                     label2.AutoSize = true;
                     label2.Text = desc.DescriptionSimple;
@@ -301,7 +304,7 @@ namespace MyShogi.View.Win2D
                     control.Location = new Point(label_x[1] + x_offset , y);
                     toolTip1.SetToolTip(control, description);
 
-                    control.Font = new Font("ＭＳ ゴシック", 9);
+                    control.Font = new Font(fontname , fontsize);
 
                     control.Size = new Size(label_x[2] - label_x[1] , control.Height);
                     Controls.Add(control);
@@ -354,9 +357,6 @@ namespace MyShogi.View.Win2D
             // 最後のページから空のページでありうるので、その場合、最後のページを削除する。
             if (pages.Count != 0 && pages[pages.Count - 1].Count == 0)
                 pages.RemoveAt(pages.Count - 1);
-
-            // 各フォントを設定しなおす。
-            FontUtility.ReplaceFont(this);
 
             ResumeLayout();
 

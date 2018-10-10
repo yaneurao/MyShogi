@@ -127,6 +127,9 @@ namespace MyShogi.View.Win2D
                      groupBox1.Text = whiteEnable ? "時間設定[後手/上手]" : "時間設定";
                      // 後手用のboxは、WhiteEnable == falseのときは丸ごと無効。
                      groupBox1.Enabled = whiteEnable;
+
+                     // 時間無制限のCheckBoxは、groupBox1に属さないのでこれも同様に対応する。
+                     checkBox2.Enabled = whiteEnable;
                  }
 
              });

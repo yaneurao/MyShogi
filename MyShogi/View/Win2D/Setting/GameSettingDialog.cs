@@ -38,6 +38,8 @@ namespace MyShogi.View.Win2D
             BindSetting();
 
             Disposed += OnDisposed;
+
+            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
         }
 
         // -- screen settings
@@ -185,14 +187,14 @@ namespace MyShogi.View.Win2D
         private void CreateEngineSelectionDialog(SCore.Color c)
         {
             // 詳細設定ボタンの無効化と、このエンジン選択ダイアログを閉じる時に詳細設定ボタンの再有効化。
-            using (var engineSelectionDialog = new EngineSelectionDialog())
+            using (var dialog = new EngineSelectionDialog())
             {
-                engineSelectionDialog.InitEngineDefines(true, false);
+                dialog.InitEngineDefines(true, false);
 
                 var playerSettings = new[] { playerSettingControl1, playerSettingControl2 };
 
                 // エンジンを選択し、「選択」ボタンが押された時のイベントハンドラ
-                engineSelectionDialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
+                dialog.ViewModel.AddPropertyChangedHandler("ButtonClicked", (args) =>
                 {
                     // これが選択された。
                     var engineDefine = (EngineDefineEx)args.value;
@@ -217,12 +219,13 @@ namespace MyShogi.View.Win2D
                     // プレイヤー表示名の変更。
                     setting.PlayerSetting(c).PlayerName = engineDefine.EngineDefine.DisplayName;
 
-                    engineSelectionDialog.Close();
+                    dialog.Close();
                 });
 
                 // modal dialogとして出すべき。
-                FormLocationUtility.CenteringToThisForm(engineSelectionDialog, this);
-                engineSelectionDialog.ShowDialog(Parent);
+                FormLocationUtility.CenteringToThisForm(dialog, this);
+                dialog.ShowDialog(Parent);
+                engineSelectionDialog = dialog; // あとで何らかの操作をするときのためにMainWindowにもたせておく。
             }
         }
 
@@ -268,6 +271,15 @@ namespace MyShogi.View.Win2D
             UnbindSetting();
             TheApp.app.Config.GameSetting.SwapPlayer();
             BindSetting();
+        }
+
+        private void GameSettingDialog_Load(object sender, EventArgs e)
+        {
+            // 子Controlのフォント設定を親に従う
+            playerSettingControl1.Font = this.Font;
+            playerSettingControl2.Font = this.Font;
+            timeSettingControl1.Font = this.Font;
+            timeSettingControl2.Font = this.Font;
         }
 
         private void OnDisposed(object sender, EventArgs e)
