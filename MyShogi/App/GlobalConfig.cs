@@ -433,12 +433,6 @@ namespace MyShogi.App
         }
 
         /// <summary>
-        /// 棋譜ウインドウの、ウインドウ時のフォントサイズ。
-        /// </summary>
-        [DataMember]
-        public float KifuWindowFontSize { get; set; } = 11F;
-
-        /// <summary>
         /// 検討ウィンドウの縦幅
         /// 0 = 100%
         /// 1 = 125%

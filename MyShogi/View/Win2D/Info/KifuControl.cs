@@ -588,19 +588,12 @@ namespace MyShogi.View.Win2D
         {
             if (ViewModel.DockState != DockState.InTheMainWindow)
             {
-                var fontsize = TheApp.app.Config.KifuWindowFontSize;
-                if (fontsize == 0)
-                    fontsize = 11.25f;
-                else if (fontsize < MIN_FONT_SIZE)
-                    fontsize = 5f;
-                else if (fontsize > MAX_FONT_SIZE)
-                    fontsize = 30f;
-                TheApp.app.Config.KifuWindowFontSize = fontsize; // writeback
+                var f = TheApp.app.Config.FontManager.KifuWindow;
 
-                var font = new Font("MS Gothic", fontsize , FontStyle.Regular, GraphicsUnit.Point);
+                var font = new Font(f.FontName , f.FontSize , f.FontStyle , GraphicsUnit.Point);
                 FontUtility.SetFont(listBox1, font);
 
-                var font2 = new Font("MS Gothic", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+                var font2 = new Font(f.FontName , f.FontSize , f.FontStyle , GraphicsUnit.Point);
 
                 FontUtility.SetFont(button1, font2);
                 FontUtility.SetFont(button2, font2);
@@ -624,8 +617,9 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void UpdateButtonEnable()
         {
-            button5.Enabled = TheApp.app.Config.KifuWindowFontSize < MAX_FONT_SIZE;
-            button6.Enabled = TheApp.app.Config.KifuWindowFontSize > MIN_FONT_SIZE;
+            var fontsize = TheApp.app.Config.FontManager.KifuWindow.FontSize;
+            button5.Enabled = fontsize < MAX_FONT_SIZE;
+            button6.Enabled = fontsize > MIN_FONT_SIZE;
         }
 
         /// <summary>
@@ -637,9 +631,10 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void button5_Click(object sender, EventArgs e)
         {
-            if (TheApp.app.Config.KifuWindowFontSize < MAX_FONT_SIZE)
+            var f = TheApp.app.Config.FontManager.KifuWindow;
+            if (f.FontSize < MAX_FONT_SIZE)
             {
-                TheApp.app.Config.KifuWindowFontSize++;
+                f.FontSize++;
                 KifuControl_SizeChanged(sender, e);
                 UpdateButtonEnable();
             }
@@ -654,9 +649,10 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void button6_Click(object sender, EventArgs e)
         {
-            if (TheApp.app.Config.KifuWindowFontSize > MIN_FONT_SIZE)
+            var f = TheApp.app.Config.FontManager.KifuWindow;
+            if (f.FontSize > MIN_FONT_SIZE)
             {
-                TheApp.app.Config.KifuWindowFontSize--;
+                f.FontSize--;
                 KifuControl_SizeChanged(sender, e);
                 UpdateButtonEnable();
             }
