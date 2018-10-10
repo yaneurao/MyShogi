@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using MyShogi.App;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D

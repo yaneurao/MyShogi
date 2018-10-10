@@ -37,7 +37,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(233, 4);
+            this.textBox1.Location = new System.Drawing.Point(280, 4);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(207, 19);
@@ -54,7 +54,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(442, 4);
+            this.textBox2.Location = new System.Drawing.Point(489, 4);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
             this.textBox2.Size = new System.Drawing.Size(106, 19);
@@ -62,7 +62,7 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(550, 4);
+            this.textBox3.Location = new System.Drawing.Point(597, 4);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
             this.textBox3.Size = new System.Drawing.Size(67, 19);
@@ -70,7 +70,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(623, 2);
+            this.button1.Location = new System.Drawing.Point(670, 2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(71, 23);
             this.button1.TabIndex = 4;
@@ -88,7 +88,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
             this.Name = "FontSelectionConrol";
-            this.Size = new System.Drawing.Size(712, 27);
+            this.Size = new System.Drawing.Size(746, 27);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -10,6 +10,9 @@ namespace MyShogi.Model.Common.Tool
     {
         public FontManager()
         {
+            // フォントを";"区切りで複数書けるようにして、先頭から調べて行って存在するフォントが
+            // 選ばれるような仕組みのほうがいいのかも…。
+
             SettingDialog       = new FontData(FontList.SettingDialog , 11f);
             MenuStrip           = new FontData(FontList.MenuStrip     , 9f);
             MainToolStrip       = new FontData(FontList.MainToolStrip , 13f);
@@ -18,6 +21,7 @@ namespace MyShogi.Model.Common.Tool
             MainWindow          = new FontData(FontList.MainWindow    , 9f);
             KifuWindow          = new FontData(FontList.KifuWindow    , 9f);
             ConsiderationWindow = new FontData(FontList.ConsiderationWindow , 11f);
+            ToolTip             = new FontData(FontList.ToolTip       ,11f);
             DebugWindow         = new FontData(FontList.DebugWindow   , 9f);
         }
 
@@ -70,6 +74,12 @@ namespace MyShogi.Model.Common.Tool
         public FontData ConsiderationWindow { get; set; }
 
         /// <summary>
+        /// ToolTip
+        /// </summary>
+        [DataMember]
+        public FontData ToolTip { get; set; }
+
+        /// <summary>
         /// デバッグウインドウ用
         /// </summary>
         [DataMember]
@@ -90,6 +100,15 @@ namespace MyShogi.Model.Common.Tool
             FontName = fontName;
             FontSize = fontSize;
             FontStyle = fontStyle;
+        }
+
+        /// <summary>
+        /// 現在のFontName,FontSize,FontStyleでFontを生成する。
+        /// </summary>
+        /// <returns></returns>
+        public Font CreateFont()
+        {
+            return new Font(FontName, FontSize, FontStyle);
         }
 
         /// <summary>

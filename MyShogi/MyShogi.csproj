@@ -116,6 +116,9 @@
     <Compile Include="View\Win2D\Common\ToolStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="View\Win2D\Common\ToolTipEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="View\Win2D\Common\ToolTipHelper.cs" />
     <Compile Include="Model\Resource\Images\AnimatorManager.cs" />
     <Compile Include="Model\Resource\Images\SpriteEx.cs" />

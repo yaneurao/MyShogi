@@ -109,7 +109,8 @@ namespace MyShogi.View.Win2D.Setting
             fontSelectionConrol6.Bind(font.MessageDialog);
             fontSelectionConrol7.Bind(font.KifuWindow);
             fontSelectionConrol8.Bind(font.ConsiderationWindow);
-            fontSelectionConrol9.Bind(font.DebugWindow);
+            fontSelectionConrol9.Bind(font.ToolTip);
+            fontSelectionConrol10.Bind(font.DebugWindow);
 
         }
 

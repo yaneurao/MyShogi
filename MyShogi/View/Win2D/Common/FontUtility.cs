@@ -55,7 +55,7 @@ namespace MyShogi.View.Win2D
             }
             c.Font = font;
         }
-
+        
         /// <summary>
         /// control.FontをfontDataのFontに置換する。
         /// </summary>
@@ -64,7 +64,7 @@ namespace MyShogi.View.Win2D
         {
             // まず、Control本体のフォントだけ置換する。
             var newFontSize = fontData.FontSize <= 0 ? 9 : fontData.FontSize;
-            var newFont = new Font(fontData.FontName, newFontSize, fontData.FontStyle);
+            var newFont = fontData.CreateFont();
             SetFont(control, newFont);
 
             // 子コントロールに対して、UserControl絡みだけ置換する。

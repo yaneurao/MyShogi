@@ -185,6 +185,11 @@ namespace MyShogi.Model.Common.Tool
         public static readonly string ConsiderationWindow = DefaultFont;
 
         /// <summary>
+        /// ToolTip
+        /// </summary>
+        public static readonly string ToolTip = DefaultFont;
+
+        /// <summary>
         /// デバッグウインドウ
         /// </summary>
         public static readonly string DebugWindow = DefaultFont;
