@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Text;
 using System.Windows.Forms;
 using MyShogi.App;
+using MyShogi.Model.Common.Collections;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
@@ -183,6 +185,7 @@ namespace MyShogi.View.Win2D
                         pictureBox1.Image = null;
                         comboBox1.Items.Clear();
                         textBox2.Text = null;
+                        toolTip1.SetToolTip(pictureBox1, null);
                         return;
                     }
 
@@ -244,6 +247,9 @@ namespace MyShogi.View.Win2D
                     // エンジンを選択したのだから、対局相手はコンピュータになっていて欲しいはず。
                     // →　エンジンを選択したとは限らない。先後入替えでもここが呼び出される。
                     //radioButton2.Checked = true;
+
+                    // ToolTipを更新しておく。Descriptionは改行なしに書かれているはずなので適宜改行する。
+                    toolTip1.SetToolTip(pictureBox1, engine_define.Description.UnicodeInsertEvery("\r\n",60));
 
                 }
                 finally

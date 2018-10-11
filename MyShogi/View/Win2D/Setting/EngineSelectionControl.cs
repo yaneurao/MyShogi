@@ -157,7 +157,7 @@ namespace MyShogi.View.Win2D
 
         // -- handlers
 
-        private void button1_Click(object sender, System.EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             // メモリ足りないならこの時点で警告ダイアログを出す。
 
@@ -179,6 +179,14 @@ namespace MyShogi.View.Win2D
             ViewModel.RaisePropertyChanged("ButtonClicked");
         }
 
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            // 画像がクリックされてもボタン1が押されたことにする。
+
+            // ボタン1のハンドラに委譲してやる。
+            button1_Click(sender, e);
+        }
+
         private void OnDispose(object sender , EventArgs e)
         {
             // 画像リソースの解放
@@ -189,5 +197,6 @@ namespace MyShogi.View.Win2D
         /// banner用のImageLoader
         /// </summary>
         private ImageLoader banner_mini = new ImageLoader();
+
     }
 }

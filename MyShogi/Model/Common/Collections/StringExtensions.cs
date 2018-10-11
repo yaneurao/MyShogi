@@ -208,5 +208,33 @@ namespace MyShogi.Model.Common.Collections
 
             return s[0];
         }
+
+        /// <summary>
+        /// 全角文字を2文字、半角文字を1文字としてカウントして、lengthごとに tを挿入する。
+        /// 改行文字列が入っていないstringに対して、改行文字列を一定文字数ごとに挿入したいときなどに用いる。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="t"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static string UnicodeInsertEvery(this string s , string t , int length)
+        {
+            var sb = new StringBuilder();
+            var len = 0;
+            var next_len = length;
+            foreach (var c in s)
+            {
+                len += (c < 256) ? 1 : 2;
+                sb.Append(c);
+
+                // tの挿入位置になったのか？
+                if (len >= next_len)
+                {
+                    sb.Append(t);
+                    next_len += length;
+                }
+            }
+            return sb.ToString();
+        }
     }
 }
