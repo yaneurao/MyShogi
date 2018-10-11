@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
@@ -22,8 +23,10 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// フォント
+        /// これpublic setterを持つとデザイナがnullを突っ込むので迷惑。
+        /// このフォントを変更したいことはないと思うのでprivateにしておく。
         /// </summary>
-        public Font Font { get; set; }
+        private Font Font { get; set; }
 
         private void Init()
         {
@@ -36,6 +39,8 @@ namespace MyShogi.View.Win2D
 
             // デフォルトで、このクラスは設定されているフォントにしておく。
             Font = TheApp.app.Config.FontManager.ToolTip.CreateFont();
+
+            //Debug.Assert(Font != null);
         }
 
         private void OnDraw(object sender, DrawToolTipEventArgs e)

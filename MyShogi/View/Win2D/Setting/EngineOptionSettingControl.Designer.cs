@@ -34,7 +34,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.toolTip1 = new ToolTipEx(this.components);
+            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.SuspendLayout();
             // 
             // label1
@@ -52,7 +52,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label2.Location = new System.Drawing.Point(146, 2);
+            this.label2.Location = new System.Drawing.Point(156, 2);
             this.label2.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 12);
@@ -63,7 +63,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.label3.Location = new System.Drawing.Point(261, 2);
+            this.label3.Location = new System.Drawing.Point(271, 2);
             this.label3.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(41, 12);

@@ -125,6 +125,22 @@ namespace MyShogi.View.Win2D
             var fontname = this.Font.FontFamily;
             var fontsize = this.Font.Size;
 
+            if (indivisual)
+            {
+                // 個別設定なので説明文をヘッダーに表示する。
+
+                var label1 = new Label();
+                label1.Location = new Point(label_x[0] , y);
+                label1.AutoSize = true;
+                label1.Text = "左端のチェックボックスをオンにしているとその項目は共通設定に従います。";
+                label1.Font = new Font(fontname, fontsize);
+
+                Controls.Add(label1);
+                page.Add(label1);
+
+                y += label1.Height + hh / 2;
+            }
+
             for (var k = 0; k < setting.Descriptions.Count; ++k)
             {
                 var desc = setting.Descriptions[k];
@@ -285,7 +301,7 @@ namespace MyShogi.View.Win2D
                     label1.Font = new Font(fontname , fontsize );
                     label1.Location = new Point(label_x[0] + x_offset, y);
                     label1.AutoSize = true;
-                    label1.Text = displayName.LeftUnicode(18); // GPS将棋とか長すぎるオプション名がある。
+                    label1.Text = displayName.LeftUnicode(20 , ".."); // GPS将棋とか長すぎるオプション名がある。
                     toolTip1.SetToolTip(label1, description);
 
                     Controls.Add(label1);

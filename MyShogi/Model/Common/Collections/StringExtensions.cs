@@ -113,6 +113,22 @@ namespace MyShogi.Model.Common.Collections
             return s; // 文字列丸ごとが、nの範囲に収まった。
         }
 
+        /// <summary>
+        /// LeftUnicode()と同等だが、sの文字数がn - t.UnicodeLengthを超えたときにはtを出力する(「..」などを出力したい時に用いる)
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="n"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static string LeftUnicode(this string s, int n , string t)
+        {
+            n -= t.UnicodeLength();
+            var length = s.UnicodeLength();
+            return (length <= n) ?
+                s.LeftUnicode(n):
+                $"{s.LeftUnicode(n)}{t}";
+        }
+
         // 他、また気が向いたら書く。
 
         /// <summary>
