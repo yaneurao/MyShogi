@@ -384,7 +384,9 @@ namespace MyShogi.View.Win2D
                     //textBox2.Text = "エンジン未選択です。「エンジン選択」ボタンを押してエンジンを選択してください。";
 
                     // エンジン選択ダイアログを出したほうが親切か？
-                    ViewModel.RaisePropertyChanged("EngineSelectionButtonClicked");
+                    // ただしBind中の変更によってエンジンが未選択だからと言ってここが呼び出されるのは嫌だ。
+                    if (ViewModel.PlayerSetting != null /* bind()からは呼び出さない */)
+                        ViewModel.RaisePropertyChanged("EngineSelectionButtonClicked");
                     return;
                 }
 

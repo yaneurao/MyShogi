@@ -27,6 +27,9 @@ namespace MyShogi.View.Win2D
 
         private void Init()
         {
+            if (TheApp.app.DesignMode)
+                return;
+
             OwnerDraw = true;
             Draw += new DrawToolTipEventHandler(OnDraw);
             Popup += new PopupEventHandler(OnPopup);
