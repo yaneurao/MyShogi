@@ -12,6 +12,7 @@ namespace MyShogi.Model.Common.Tool
         {
             // フォントを";"区切りで複数書けるようにして、先頭から調べて行って存在するフォントが
             // 選ばれるような仕組みのほうがいいのかも…。
+            // →　しかしその仕組みでMac/Linux対応するのは筋が良くない気がするのでやめとく。
 
             SettingDialog       = new FontData(FontList.SettingDialog , 11f);
             MenuStrip           = new FontData(FontList.MenuStrip     ,  9f);
