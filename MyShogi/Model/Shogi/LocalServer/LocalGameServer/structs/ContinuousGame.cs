@@ -228,11 +228,13 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 先手から見た勝敗に変換する
             if (lastColor == Color.WHITE)
                 result = result.Not();
+
+            // この変数は先後入れ替えを考慮しない。
+            LastGameResult = result;
+
             // 先後入れ替えての対局中であるなら、逆手番側の勝ちとしなければならない。
             if (Swapped)
                 result = result.Not();
-
-            LastGameResult = result;
 
             switch (result)
             {
@@ -355,11 +357,13 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// IncResult()されたときに引数を保存しておいたもの。
         /// ここから直前のゲームの勝敗がわかる。
+        ///
+        /// LastGameResultは先手から見た勝敗。Swappedは考慮せず、本対局の先手側が勝ったかどうかで判定したもの。
         /// </summary>
         private Move LastMove;
         private Color LastColor;
-        private MoveGameResult LastGameResult; // 先手から見た勝敗
-
+        private MoveGameResult LastGameResult;
+        
         #endregion
     }
 }

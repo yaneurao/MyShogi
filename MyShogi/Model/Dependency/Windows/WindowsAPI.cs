@@ -140,6 +140,7 @@ namespace MyShogi.Model.Common.Tool
     public static class FontList
     {
         public static readonly string DefaultFont = "MS UI Gothic";
+        public static readonly string DefaultFont2 = "ＭＳ ゴシック";
 
         // 特徴的なフォントに変更してみて、フォントの置換が適切に行われているかをテストする。
         //public static readonly string DefaultFont = "HGP行書体";
@@ -176,13 +177,14 @@ namespace MyShogi.Model.Common.Tool
 
         /// <summary>
         /// 棋譜ウインドウ
+        /// 棋譜ウインドウの文字、等幅フォントでないと秒の出力のところが表示がずれるのでデフォルトで等倍フォントにすべき。
         /// </summary>
-        public static readonly string KifuWindow = DefaultFont;
+        public static readonly string KifuWindow = DefaultFont2;
 
         /// <summary>
         /// 検討ウインドウ
         /// </summary>
-        public static readonly string ConsiderationWindow = DefaultFont;
+        public static readonly string ConsiderationWindow = DefaultFont2;
 
         /// <summary>
         /// ToolTip

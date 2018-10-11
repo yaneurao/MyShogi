@@ -490,6 +490,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     kifuManager.EnableKifuList = true;
                     kifuManager.UndoMoveInTheGame();
                     kifuManager.EnableKifuList = false;
+
+                    // これにより検討中の局面が変更になる可能性があるのだが…。
                 }
             });
         }

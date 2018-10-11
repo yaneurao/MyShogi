@@ -14,15 +14,15 @@ namespace MyShogi.Model.Common.Tool
             // 選ばれるような仕組みのほうがいいのかも…。
 
             SettingDialog       = new FontData(FontList.SettingDialog , 11f);
-            MenuStrip           = new FontData(FontList.MenuStrip     , 9f);
+            MenuStrip           = new FontData(FontList.MenuStrip     ,  9f);
             MainToolStrip       = new FontData(FontList.MainToolStrip , 13f);
             SubToolStrip        = new FontData(FontList.SubToolStrip  , 13f);
             MessageDialog       = new FontData(FontList.MessageDialog , 11f);
-            MainWindow          = new FontData(FontList.MainWindow    , 9f);
-            KifuWindow          = new FontData(FontList.KifuWindow    , 9f);
+            MainWindow          = new FontData(FontList.MainWindow    ,  9f);
+            KifuWindow          = new FontData(FontList.KifuWindow    , 11f);
             ConsiderationWindow = new FontData(FontList.ConsiderationWindow , 11f);
-            ToolTip             = new FontData(FontList.ToolTip       ,11f);
-            DebugWindow         = new FontData(FontList.DebugWindow   , 9f);
+            ToolTip             = new FontData(FontList.ToolTip       , 11f);
+            DebugWindow         = new FontData(FontList.DebugWindow   ,  9f);
         }
 
         /// <summary>

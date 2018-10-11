@@ -82,7 +82,7 @@ namespace MyShogi.View.Win2D.Setting
         private void InitViewModel()
         {
             ViewModel.AddPropertyChangedHandler("FontName", (args) => { textBox1.Text = args.value as string; });
-            ViewModel.AddPropertyChangedHandler("FontSize", (args) => { textBox3.Text = ((float)args.value).ToString() + "pt"; });
+            ViewModel.AddPropertyChangedHandler("FontSize", (args) => { textBox3.Text = ((float)args.value).ToString() + " pt "; });
             ViewModel.AddPropertyChangedHandler("FontStyle", (args) => { textBox2.Text = ((FontStyle)args.value).Pretty(); });
         }
 

@@ -96,10 +96,11 @@
             this.tabControl1.Controls.Add(this.tabPage7);
             this.tabControl1.Controls.Add(this.tabPage8);
             this.tabControl1.Controls.Add(this.tabPage9);
-            this.tabControl1.Location = new System.Drawing.Point(-4, -5);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(792, 443);
+            this.tabControl1.Size = new System.Drawing.Size(791, 541);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
@@ -110,7 +111,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(784, 417);
+            this.tabPage1.Size = new System.Drawing.Size(783, 515);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "盤面";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -157,7 +158,7 @@
             this.tabPage2.Controls.Add(this.richSelector6);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Size = new System.Drawing.Size(784, 417);
+            this.tabPage2.Size = new System.Drawing.Size(783, 515);
             this.tabPage2.TabIndex = 2;
             this.tabPage2.Text = "駒";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -215,7 +216,7 @@
             this.tabPage3.Controls.Add(this.richSelector9);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(784, 417);
+            this.tabPage3.Size = new System.Drawing.Size(783, 515);
             this.tabPage3.TabIndex = 3;
             this.tabPage3.Text = "升";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -279,7 +280,7 @@
             this.tabPage4.Controls.Add(this.richSelector19);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(784, 417);
+            this.tabPage4.Size = new System.Drawing.Size(783, 515);
             this.tabPage4.TabIndex = 7;
             this.tabPage4.Text = "操作";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -301,7 +302,7 @@
             this.tabPage5.Controls.Add(this.richSelector13);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
-            this.tabPage5.Size = new System.Drawing.Size(784, 417);
+            this.tabPage5.Size = new System.Drawing.Size(783, 515);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "手番";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -337,7 +338,7 @@
             this.tabPage6.Location = new System.Drawing.Point(4, 22);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(784, 417);
+            this.tabPage6.Size = new System.Drawing.Size(783, 515);
             this.tabPage6.TabIndex = 1;
             this.tabPage6.Text = "棋譜";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -374,7 +375,7 @@
             this.tabPage7.Controls.Add(this.richSelector16);
             this.tabPage7.Location = new System.Drawing.Point(4, 22);
             this.tabPage7.Name = "tabPage7";
-            this.tabPage7.Size = new System.Drawing.Size(784, 417);
+            this.tabPage7.Size = new System.Drawing.Size(783, 515);
             this.tabPage7.TabIndex = 5;
             this.tabPage7.Text = "エフェクト";
             this.tabPage7.UseVisualStyleBackColor = true;
@@ -406,7 +407,7 @@
             this.tabPage8.Controls.Add(this.richSelector15);
             this.tabPage8.Location = new System.Drawing.Point(4, 22);
             this.tabPage8.Name = "tabPage8";
-            this.tabPage8.Size = new System.Drawing.Size(784, 417);
+            this.tabPage8.Size = new System.Drawing.Size(783, 515);
             this.tabPage8.TabIndex = 6;
             this.tabPage8.Text = "評価値";
             this.tabPage8.UseVisualStyleBackColor = true;
@@ -442,7 +443,7 @@
             this.tabPage9.Controls.Add(this.fontSelectionConrol1);
             this.tabPage9.Location = new System.Drawing.Point(4, 22);
             this.tabPage9.Name = "tabPage9";
-            this.tabPage9.Size = new System.Drawing.Size(784, 417);
+            this.tabPage9.Size = new System.Drawing.Size(783, 515);
             this.tabPage9.TabIndex = 8;
             this.tabPage9.Text = "フォント";
             this.tabPage9.UseVisualStyleBackColor = true;
@@ -450,12 +451,12 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(84, 370);
+            this.label6.Location = new System.Drawing.Point(51, 365);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(528, 24);
+            this.label6.Size = new System.Drawing.Size(528, 48);
             this.label6.TabIndex = 3;
             this.label6.Text = "※　棋譜ウインドウをメインウインドウに埋め込んでいる時は、フォントサイズは棋譜ウインドウの横幅で決まるため、\r\n　　ここで設定したフォントのサイズは反映されません" +
-    "。";
+    "。\r\n※　棋譜ウインドウ、検討ウインドウではフォントが等倍であることを前提として描画するので等倍フォント以外では\r\n　　表示がずれることがあります。\r\n";
             // 
             // label5
             // 
@@ -506,97 +507,97 @@
             // 
             this.fontSelectionConrol10.BackColor = System.Drawing.Color.Transparent;
             this.fontSelectionConrol10.Description = "デバッグウインドウ";
-            this.fontSelectionConrol10.Location = new System.Drawing.Point(33, 323);
+            this.fontSelectionConrol10.Location = new System.Drawing.Point(8, 323);
             this.fontSelectionConrol10.Name = "fontSelectionConrol10";
-            this.fontSelectionConrol10.Size = new System.Drawing.Size(748, 26);
+            this.fontSelectionConrol10.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol10.TabIndex = 0;
             // 
             // fontSelectionConrol9
             // 
             this.fontSelectionConrol9.BackColor = System.Drawing.Color.Transparent;
             this.fontSelectionConrol9.Description = "ToolTip(マウスカーソルをhoverさせた時の説明)";
-            this.fontSelectionConrol9.Location = new System.Drawing.Point(33, 293);
+            this.fontSelectionConrol9.Location = new System.Drawing.Point(8, 293);
             this.fontSelectionConrol9.Name = "fontSelectionConrol9";
-            this.fontSelectionConrol9.Size = new System.Drawing.Size(748, 26);
+            this.fontSelectionConrol9.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol9.TabIndex = 0;
             // 
             // fontSelectionConrol8
             // 
             this.fontSelectionConrol8.BackColor = System.Drawing.Color.Transparent;
             this.fontSelectionConrol8.Description = "検討ウインドウ";
-            this.fontSelectionConrol8.Location = new System.Drawing.Point(33, 263);
+            this.fontSelectionConrol8.Location = new System.Drawing.Point(8, 263);
             this.fontSelectionConrol8.Name = "fontSelectionConrol8";
-            this.fontSelectionConrol8.Size = new System.Drawing.Size(748, 26);
+            this.fontSelectionConrol8.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol8.TabIndex = 0;
             // 
             // fontSelectionConrol7
             // 
             this.fontSelectionConrol7.BackColor = System.Drawing.Color.Transparent;
             this.fontSelectionConrol7.Description = "棋譜ウインドウ";
-            this.fontSelectionConrol7.Location = new System.Drawing.Point(33, 233);
+            this.fontSelectionConrol7.Location = new System.Drawing.Point(8, 233);
             this.fontSelectionConrol7.Name = "fontSelectionConrol7";
-            this.fontSelectionConrol7.Size = new System.Drawing.Size(748, 26);
+            this.fontSelectionConrol7.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol7.TabIndex = 0;
             // 
             // fontSelectionConrol6
             // 
             this.fontSelectionConrol6.BackColor = System.Drawing.Color.Transparent;
             this.fontSelectionConrol6.Description = "メッセージダイアログ";
-            this.fontSelectionConrol6.Location = new System.Drawing.Point(33, 203);
+            this.fontSelectionConrol6.Location = new System.Drawing.Point(8, 203);
             this.fontSelectionConrol6.Name = "fontSelectionConrol6";
-            this.fontSelectionConrol6.Size = new System.Drawing.Size(748, 26);
+            this.fontSelectionConrol6.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol6.TabIndex = 0;
             // 
             // fontSelectionConrol5
             // 
             this.fontSelectionConrol5.BackColor = System.Drawing.Color.Transparent;
             this.fontSelectionConrol5.Description = "設定ダイアログ関連";
-            this.fontSelectionConrol5.Location = new System.Drawing.Point(33, 173);
+            this.fontSelectionConrol5.Location = new System.Drawing.Point(8, 173);
             this.fontSelectionConrol5.Name = "fontSelectionConrol5";
-            this.fontSelectionConrol5.Size = new System.Drawing.Size(748, 26);
+            this.fontSelectionConrol5.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol5.TabIndex = 0;
             // 
             // fontSelectionConrol4
             // 
             this.fontSelectionConrol4.BackColor = System.Drawing.Color.Transparent;
             this.fontSelectionConrol4.Description = "メインウインドウ(対局者名など)";
-            this.fontSelectionConrol4.Location = new System.Drawing.Point(33, 143);
+            this.fontSelectionConrol4.Location = new System.Drawing.Point(8, 143);
             this.fontSelectionConrol4.Name = "fontSelectionConrol4";
-            this.fontSelectionConrol4.Size = new System.Drawing.Size(748, 26);
+            this.fontSelectionConrol4.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol4.TabIndex = 0;
             // 
             // fontSelectionConrol3
             // 
             this.fontSelectionConrol3.BackColor = System.Drawing.Color.Transparent;
             this.fontSelectionConrol3.Description = "ミニ盤面の下部にあるボタン";
-            this.fontSelectionConrol3.Location = new System.Drawing.Point(33, 113);
+            this.fontSelectionConrol3.Location = new System.Drawing.Point(8, 113);
             this.fontSelectionConrol3.Name = "fontSelectionConrol3";
-            this.fontSelectionConrol3.Size = new System.Drawing.Size(748, 26);
+            this.fontSelectionConrol3.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol3.TabIndex = 0;
             // 
             // fontSelectionConrol2
             // 
             this.fontSelectionConrol2.BackColor = System.Drawing.Color.Transparent;
             this.fontSelectionConrol2.Description = "メインウインドウの上部にあるボタン";
-            this.fontSelectionConrol2.Location = new System.Drawing.Point(33, 83);
+            this.fontSelectionConrol2.Location = new System.Drawing.Point(8, 83);
             this.fontSelectionConrol2.Name = "fontSelectionConrol2";
-            this.fontSelectionConrol2.Size = new System.Drawing.Size(748, 26);
+            this.fontSelectionConrol2.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol2.TabIndex = 0;
             // 
             // fontSelectionConrol1
             // 
             this.fontSelectionConrol1.BackColor = System.Drawing.Color.Transparent;
             this.fontSelectionConrol1.Description = "メインメニュー";
-            this.fontSelectionConrol1.Location = new System.Drawing.Point(33, 53);
+            this.fontSelectionConrol1.Location = new System.Drawing.Point(8, 53);
             this.fontSelectionConrol1.Name = "fontSelectionConrol1";
-            this.fontSelectionConrol1.Size = new System.Drawing.Size(748, 26);
+            this.fontSelectionConrol1.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol1.TabIndex = 0;
             // 
             // DisplaySettingDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(791, 441);
+            this.ClientSize = new System.Drawing.Size(791, 541);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "DisplaySettingDialog";

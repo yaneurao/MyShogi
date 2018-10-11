@@ -293,6 +293,7 @@ namespace MyShogi.Model.Common.Tool
     public static class FontList
     {
         public static readonly string DefaultFont = "Hiragino Kaku Gothic Pro W3";
+        public static readonly string DefaultFont2 = "Hiragino Kaku Gothic Pro W3";
 
         /// <summary>
         /// 設定ダイアログ
@@ -326,13 +327,14 @@ namespace MyShogi.Model.Common.Tool
 
         /// <summary>
         /// 棋譜ウインドウ
+        /// 棋譜ウインドウの文字、等幅フォントでないと秒の出力のところが表示がずれるのでデフォルトで等倍フォントにすべき。
         /// </summary>
-        public static readonly string KifuWindow = DefaultFont;
+        public static readonly string KifuWindow = DefaultFont2;
 
         /// <summary>
         /// 検討ウインドウ
         /// </summary>
-        public static readonly string ConsiderationWindow = DefaultFont;
+        public static readonly string ConsiderationWindow = DefaultFont2;
 
         /// <summary>
         /// ToolTip
