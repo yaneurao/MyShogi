@@ -416,7 +416,11 @@ namespace MyShogi.View.Win2D
             var config = TheApp.app.Config;
             var dockManager = config.EngineConsiderationWindowDockManager;
 
-            if (dockManager.DockState == DockState.InTheMainWindow && dockManager.Visible /* 非表示のときはないものとして扱う */)
+            // 非表示のときはないものとして扱う
+            if (!dockManager.Visible)
+                return;
+
+            if (dockManager.DockState == DockState.InTheMainWindow)
             {
                 // メインウインドウに埋め込み時の検討ウインドウ高さの倍率
                 float height_rate = 1 + 0.25f * config.ConsiderationWindowHeightType;

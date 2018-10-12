@@ -182,8 +182,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     if (stmPlayer.PlayerType == PlayerTypeEnum.Human)
                     {
                         // 棋譜を消すUndo()
-                        kifuManager.UndoMoveInTheGame();
-                        kifuManager.UndoMoveInTheGame();
+                        kifuManager.UndoMoveAndRemoveKifu();
+                        kifuManager.UndoMoveAndRemoveKifu();
 
                         // 残り持ち時間などを巻き戻さないといけない。
                         // ただし、再開局で開始局面以上に巻き戻すと、いまより持ち時間が減ってしまう可能性がある。
@@ -493,10 +493,14 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                     // 1手戻る
                     kifuManager.EnableKifuList = true;
-                    kifuManager.UndoMoveInTheGame();
+                    kifuManager.UndoMoveAndRemoveKifu();
                     kifuManager.EnableKifuList = false;
 
-                    // これにより検討中の局面が変更になる可能性があるのだが…。
+                    // これにより検討中の局面が変更になる可能性がある。
+                    // KifuControlのほうで選択行の更新イベントが発生して、巡り巡って
+                    // KifuListSelectedIndexChangedCommand()が呼び出される。
+                    // KifuListSelectedIndexChangedCommand()のなかで、残り時間の巻き戻しなどを
+                    // しているので、この処理で問題ない。
                 }
             });
         }

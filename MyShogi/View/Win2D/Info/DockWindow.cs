@@ -157,19 +157,21 @@ namespace MyShogi.View.Win2D
 
             if (ViewModel.Control != null)
             {
-                // Dispose()が呼ばれるとたまらないのでremoveしておく。(親側で解体すべき)
-                Controls.Remove(ViewModel.Control);
-                ViewModel.Control = null;
-
                 //Visible = false; // これにしてから、Menuの更新をすれば、メニューの棋譜ウインドウの「再表示」が有効になる。
                 // →筋が良くない。DockManager.Visibleのほうを使う。
                 var dockManager = ViewModel.DockManager;
                 dockManager.Visible = false;
 
+                // Dispose()が呼ばれるとたまらないのでremoveしておく。(親側で解体すべき)
+                // Controls.Remove()は呼び出してはならない。(DockStyleを復元しないため)
+                RemoveControl();
+
                 // 親側にフォーカスを戻しておかないとキーボードショートカットが利かなくなってしまう。
 
                 //if (Owner != null)
                 //    Owner.Focus();
+
+                // これ自体は、dockManager.Visibleを変更したときに親側で行うので問題ない。
 
                 ViewModel.RaisePropertyChanged("MenuUpdated");
             }

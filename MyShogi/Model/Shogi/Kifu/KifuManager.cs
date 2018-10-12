@@ -140,7 +140,7 @@ namespace MyShogi.Model.Shogi.Kifu
         ///
         /// 削除したならtrueが返る。
         /// </summary>
-        public bool UndoMoveInTheGame()
+        public bool UndoMoveAndRemoveKifu()
         {
             var node = Tree.currentNode;
             if (node.prevNode == null)
