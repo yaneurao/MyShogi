@@ -195,6 +195,11 @@ namespace MyShogi.Model.Shogi.LocalServer
 
                         // これにより、2手目の局面などであれば1手しかundoできずに手番が変わりうるので手番の更新を通知。
                         NotifyTurnChanged();
+
+                        // TreeのUndoにより、KifuListの更新がかかり、選択行が変化して、
+                        // 更新通知が来て、そのハンドラのなかでSetKifuMoveTimes()とNotifyTurnChanged()を
+                        // 行っているので、本来、上の文は不要なのだが、そのハンドラでは、Consideration中しか
+                        // その処理を行わない(ユーザーの棋譜選択でそこが変更されると困る)ので上記処理は必要。
                     }
                 }
             });

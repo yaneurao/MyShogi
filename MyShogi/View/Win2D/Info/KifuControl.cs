@@ -336,7 +336,14 @@ namespace MyShogi.View.Win2D
 
             listBox1.Items.RemoveAt(listBox1.Items.Count - 1);
             listBox1.SelectedIndex = listBox1.Items.Count - 1; // last
-            ViewModel.SetKifuListSelectedIndex(listBox1.Items.Count - 1);
+//            ViewModel.SetKifuListSelectedIndex(listBox1.Items.Count - 1);
+
+            // → 「待った」によるUndoと「消一手」による末尾の指し手の削除でしかこのメソッドが
+            // 呼び出されないので、ここで選択行が変更になったイベントを生起させるべき。
+            // 対局中の「待った」に対しては、そのハンドラでは、対局中は何も処理をしないし、
+            // 検討中ならば、残り時間の巻き戻しとNotifyTurnChanged()を行うのでこの書き方で問題ない。
+            ViewModel.KifuListSelectedIndex = listBox1.Items.Count - 1;
+
             ViewModel.KifuListCount = listBox1.Items.Count;
             ViewModel.KifuList.RemoveAt(ViewModel.KifuList.Count - 1); // ここも同期させておく。
             

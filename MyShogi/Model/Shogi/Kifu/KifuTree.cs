@@ -422,6 +422,9 @@ namespace MyShogi.Model.Shogi.Kifu
             if (!IsSpecialNode())
             {
                 position.UndoMove();
+
+                // これ、RemoveKifu()で棋譜リストの更新を行うならばKifuListSelectedIndexが変化するので
+                // 再度このイベントが発生する。無駄と言えば無駄だが…。
                 RaisePropertyChanged("Position", position.Clone());
             }
 
