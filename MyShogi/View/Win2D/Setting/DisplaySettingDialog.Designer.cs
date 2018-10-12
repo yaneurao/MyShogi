@@ -288,12 +288,12 @@
             // 
             // richSelector19
             // 
-            this.richSelector19.GroupBoxTitle = "駒の移動操作としてマウスドラッグを受け付けるか";
+            this.richSelector19.GroupBoxTitle = "駒をマウスのドラッグでも移動できるようにするか";
             this.richSelector19.Location = new System.Drawing.Point(3, 3);
             this.richSelector19.Name = "richSelector19";
             this.richSelector19.SelectionTexts = new string[] {
-        "許容しない,dragged_move_style_0.png,マウスドラッグでの移動を許容しません。",
-        "許容する,dragged_move_style_1.png,マウスドラッグでの移動を許容します。"};
+        "しない,dragged_move_style_0.png,マウスドラッグでの駒の移動を許容しません。",
+        "する,dragged_move_style_1.png,マウスドラッグでの駒の移動を許容します。"};
             this.richSelector19.Size = new System.Drawing.Size(772, 110);
             this.richSelector19.TabIndex = 3;
             // 
@@ -474,7 +474,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(556, 35);
+            this.label5.Location = new System.Drawing.Point(638, 35);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(34, 12);
             this.label5.TabIndex = 2;
@@ -483,7 +483,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(465, 35);
+            this.label4.Location = new System.Drawing.Point(547, 35);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(41, 12);
             this.label4.TabIndex = 2;
@@ -492,7 +492,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(294, 35);
+            this.label3.Location = new System.Drawing.Point(376, 35);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(50, 12);
             this.label3.TabIndex = 2;

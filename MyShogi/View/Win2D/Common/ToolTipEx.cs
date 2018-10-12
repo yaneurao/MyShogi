@@ -51,7 +51,8 @@ namespace MyShogi.View.Win2D
 
             // カスタムテキストの描画
 
-            using (StringFormat sf = new StringFormat())
+
+            using (var sf = new StringFormat())
             {
 
                 sf.Alignment = StringAlignment.Near;
@@ -59,10 +60,24 @@ namespace MyShogi.View.Win2D
                 sf.HotkeyPrefix = System.Drawing.Text.HotkeyPrefix.None;
                 sf.FormatFlags = StringFormatFlags.NoWrap;
 
-                Rectangle rect = new Rectangle(Point.Empty, this.Size);
+                //var rect = new Rectangle(Point.Empty, this.Size);
 
+#if false
                 // e.Fontは元のフォント。使っては駄目。
-                e.Graphics.DrawString(e.ToolTipText, Font, SystemBrushes.ActiveCaptionText, rect, sf);
+                e.Graphics.DrawString(e.ToolTipText, Font, SystemBrushes.ActiveCaptionText, /*rect*/
+                    e.Bounds, sf);
+#endif
+
+                // →　paddingするか、DrawText()を用いるかしないとはみ出る。なんぞこれ…。
+                //    DrawString()用のサイズではないということか…。
+                // cf.
+                // Custom OwnerDraw ToolTip size issue
+                // https://stackoverflow.com/questions/49199417/custom-ownerdraw-tooltip-size-issue
+
+                TextRenderer.DrawText(e.Graphics, e.ToolTipText, Font, e.Bounds,
+                                      ForeColor, Color.Empty,
+                                      TextFormatFlags.Default);
+
 
             }
         }
