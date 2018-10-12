@@ -34,7 +34,7 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.toolTip1 = new ToolTipEx(this.components);
+            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.SuspendLayout();

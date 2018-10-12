@@ -600,14 +600,12 @@ namespace MyShogi.View.Win2D
                 var font = new Font(f.FontName , f.FontSize , f.FontStyle , GraphicsUnit.Point);
                 FontUtility.SetFont(listBox1, font);
 
-                var font2 = new Font(f.FontName , f.FontSize , f.FontStyle , GraphicsUnit.Point);
-
-                FontUtility.SetFont(button1, font2);
-                FontUtility.SetFont(button2, font2);
-                FontUtility.SetFont(button3, font2);
-                FontUtility.SetFont(button4, font2);
-                FontUtility.SetFont(button5, font2);
-                FontUtility.SetFont(button6, font2);
+                var buttons = new[] { button1, button2, button3, button4, button5, button6 };
+                foreach (var button in buttons)
+                {
+                    var font2 = new Font(f.FontName, f.FontSize, f.FontStyle, GraphicsUnit.Point);
+                    FontUtility.SetFont(button, font2);
+                }
 
                 UpdateButtonLocation();
             }
@@ -664,6 +662,11 @@ namespace MyShogi.View.Win2D
                 UpdateButtonEnable();
             }
         }
+
+        //private void KifuControl_Paint(object sender, PaintEventArgs e)
+        //{
+        //    Console.WriteLine($"{ Width} , { Height}");
+        //}
 
 
 #if false

@@ -285,9 +285,6 @@ namespace MyShogi.View.Win2D
                 gameScreenControl1.ResizeKifuControl(); // フォームに埋めたあとリサイズする。
 
                 // 細長い駒台のときはVisibleにしないのでここで制御しない。
-
-                // TODO : メインウインドウを再描画しないと棋譜ウインドウが出てこない。何か初期化忘れている？
-                Invalidate();
             }
             else
             {
