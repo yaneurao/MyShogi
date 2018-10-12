@@ -231,16 +231,26 @@ namespace MyShogi.View.Win2D
                     : (info.Depth != null && info.SelDepth != null) ? $"{info.Depth}/{info.SelDepth}"
                     : (info.Depth == null ? null : info.Depth.ToString());
 
-                // 後手番の時に自分から見た評価値を表示する設定であるなら、評価値の表示を反転させる。
+                // info.Evalは自分から見たスコアが格納されている。
+                // 後手番の時に先手から見た評価値を表示する設定であるなら、評価値の表示を反転させる。
                 // ここで表示している値、保存していないので即時反映は無理だわ…。まあ、これは仕様ということで…。
                 var isWhite = position.sideToMove == Model.Shogi.Core.Color.WHITE;
+
+                // 形勢判断の文字列を出力する。
+                var evalJudgement = TheApp.app.Config.DisplayEvalJudgement;
+                var evalJudgementString = (evalJudgement == 0 || info.Eval == null) ? null :
+                    !isWhite ? info.Eval.Eval.ToEvalJudgement() : // 先手
+                    info.Eval.negate().Eval.ToEvalJudgement();    // 後手
+                
                 if (isWhite && TheApp.app.Config.NegateEvalWhenWhite)
                 {
                     if (info.Eval != null)
                         info.Eval = info.Eval.negate();
                 }
+                var evalString = info.Eval == null ? null :
+                    evalJudgementString == null ? info.Eval.Eval.Pretty() :
+                    $"{evalJudgementString}({info.Eval.Eval.Pretty()})";
 
-                var evalString = info.Eval == null ? null : info.Eval.Eval.Pretty();
                 var evalBound = info.Eval == null ? null : info.Eval.Bound.Pretty();
                 kifuString.Append(info.MovesSuffix);
                 var pvString = kifuString.ToString();
@@ -450,7 +460,7 @@ namespace MyShogi.View.Win2D
 
             var eval = new ColumnHeader();
             eval.Text = "評価値  ";
-            eval.Width = 150;
+            eval.Width = 200;
             eval.TextAlign = HorizontalAlignment.Right;
 
             // 評価値のScoreBound

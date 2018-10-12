@@ -55,6 +55,7 @@
             this.richSelector17 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector16 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.richSelector20 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector15 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage9 = new System.Windows.Forms.TabPage();
             this.label6 = new System.Windows.Forms.Label();
@@ -404,6 +405,7 @@
             // 
             // tabPage8
             // 
+            this.tabPage8.Controls.Add(this.richSelector20);
             this.tabPage8.Controls.Add(this.richSelector15);
             this.tabPage8.Location = new System.Drawing.Point(4, 22);
             this.tabPage8.Name = "tabPage8";
@@ -411,6 +413,17 @@
             this.tabPage8.TabIndex = 6;
             this.tabPage8.Text = "評価値";
             this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // richSelector20
+            // 
+            this.richSelector20.GroupBoxTitle = "形勢を評価値のところに表示する(次の局面以降有効)";
+            this.richSelector20.Location = new System.Drawing.Point(3, 104);
+            this.richSelector20.Name = "richSelector20";
+            this.richSelector20.SelectionTexts = new string[] {
+        "表示しない,eval_jugdement_style_0.png,表示しません",
+        "表示する,eval_jugdement_style_1.png,評価値の左側に「形勢互角」「先手有利」などの文字を表示します。"};
+            this.richSelector20.Size = new System.Drawing.Size(772, 112);
+            this.richSelector20.TabIndex = 4;
             // 
             // richSelector15
             // 
@@ -663,5 +676,6 @@
         private FontSelectionConrol fontSelectionConrol3;
         private System.Windows.Forms.Label label6;
         private FontSelectionConrol fontSelectionConrol10;
+        private RichSelector richSelector20;
     }
 }

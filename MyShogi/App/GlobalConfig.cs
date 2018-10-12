@@ -46,6 +46,10 @@ namespace MyShogi.App
             EnableMouseDrag = 1;
             PickedMoveDisplayStyle = 1;
 
+            // -- 評価値
+
+            DisplayEvalJudgement = 1;
+
             // -- 音声設定
 
             EnableSound = 1;
@@ -415,6 +419,19 @@ namespace MyShogi.App
         {
             get { return GetValue<bool>("NegateEvalWhenWhite"); }
             set { SetValue<bool>("NegateEvalWhenWhite", value); }
+        }
+
+        /// <summary>
+        /// 形勢判断の文字列を評価値のところに出力する。
+        /// 0 : 出力しない
+        /// 1 : 出力する(デフォルト)
+        ///   激指に合わせる。300以上 有利 , 800以上 優勢 , 2000以上 勝勢
+        /// </summary>
+        [DataMember]
+        public int DisplayEvalJudgement
+        {
+            get { return GetValue<int>("DisplayEvalJudgement"); }
+            set { SetValue<int>("DisplayEvalJudgement", value); }
         }
 
         /// <summary>

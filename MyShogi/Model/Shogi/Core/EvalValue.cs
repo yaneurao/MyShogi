@@ -103,20 +103,52 @@ namespace MyShogi.Model.Shogi.Core
                 switch(value)
                 {
                     case EvalValue.Unknown   : return "不明";
-                    case EvalValue.MatePlus  : return "MATE(手数不明)";
-                    case EvalValue.MatedMinus: return "MATED(手数不明)";
+                    case EvalValue.MatePlus  : return "MATE 手数不明";
+                    case EvalValue.MatedMinus: return "MATED 手数不明";
                     case EvalValue.NoValue   : return ""; // これ表示するとおかしくなるので表示なしにしとく。
                 }
 
                 // int にキャストしないと 0手 が Zero手 と出力される
                 if (value > 0)
-                    return $"MATE({(int)(EvalValue.Mate - value)}手)";
+                    return $"MATE {(int)(EvalValue.Mate - value)}手";
                 if (value < 0)
-                    return $"MATED({(int)(value - EvalValue.Mated)}手)";
+                    return $"MATED {(int)(value - EvalValue.Mated)}手";
             }
 
             // 0以外は符号付きで出力
             return ((int)value).ToString("+0;-0;0");
+        }
+
+        /// <summary>
+        /// 形勢判断の文字列に変換する
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static string ToEvalJudgement(this EvalValue value)
+        {
+            if (value.IsSpecialValue())
+            {
+                if (value > 0)
+                    return "先手勝ち";
+                else
+                    return "後手勝ち";
+            }
+            else
+            {
+                var v = (int)value;
+                if (v > 0)
+                    return
+                        (v >= 2000) ? "先手勝勢" :
+                        (v >=  800) ? "先手優勢" :
+                        (v >=  300) ? "先手有利" :
+                        "形勢互角";
+                else
+                    return
+                        (v <= -2000) ? "後手勝勢" :
+                        (v <=  -800) ? "後手優勢" :
+                        (v <=  -300) ? "後手有利" :
+                        "形勢互角";
+            }
         }
 
         /// <summary>

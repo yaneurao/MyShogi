@@ -98,6 +98,9 @@ namespace MyShogi.View.Win2D.Setting
             richSelector15.ViewModel.SelectionTypeIsBool = true;
             richSelector15.Bind(config, "NegateEvalWhenWhite");
 
+            // 形勢を評価値のところに表示するか
+            richSelector20.Bind(config, "DisplayEvalJudgement");
+
             // -- 「フォント」のタブ
 
             var font = TheApp.app.Config.FontManager;
