@@ -81,14 +81,18 @@ namespace MyShogi.Model.Resource.Images
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        public ImageLoader CreateAndCopy(int width , int height , PixelFormat format = PixelFormat.Format24bppRgb)
+        /// <param name="src">転送元矩形(省略時は全域)</param>
+        public ImageLoader CreateAndCopy(int width , int height ,
+            Rectangle? src = null ,
+            PixelFormat format = PixelFormat.Format24bppRgb
+            )
         {
             var img = new ImageLoader();
             img.CreateBitmap(width, height,format);
             using (var g = Graphics.FromImage(img.image))
             {
                 var dstRect = new Rectangle(0, 0, width, height);
-                var srcRect = new Rectangle(0, 0, image.Width, image.Height);
+                var srcRect = src != null ? src.Value : new Rectangle(0, 0, image.Width, image.Height);
                 //  高品質で縮小する。さほど大きな画像のリサイズは行わないので品質が高く時間がかかろうとも問題ない。
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.DrawImage(this.image, dstRect, srcRect, GraphicsUnit.Pixel);

@@ -18,35 +18,23 @@ namespace MyShogi.App
         {
             var caption = type.Pretty();
             var icon = type.ToIcon();
-            var buttons = type.ToButtons();
-
             var show = new Func<Form,DialogResult>((parent) =>
             {
-                if (type == MessageShowType.Exception)
-                {
-                    // 例外のときだけ、コピペできるように専用のDialogを出す。
-                    using (var dialog = new ExceptionDialog())
-                    {
-                        dialog.SetMessage(text);
-                        // 専用のダイアログなのでメインウインドウに対してセンタリングも楽ちん
-                        if (parent != null)
-                            FormLocationUtility.CenteringToThisForm(dialog, parent);
+                // MessageBoxのセンタリングにはWindows依存のコードが必要だし、
+                // Mono環境でMessageBox.Show()で日本語が文字化けするので
+                // 自前で描画する。
 
-                        dialog.ShowDialog();
-                    }
-                    return DialogResult.OK;
-                }
-                else
-                {
-                    // これセンタリングしたいのだが、メッセージフックしないと不可能。
-                    // cf.
-                    //   オーナーウィンドウの中央にメッセージボックスを表示する (C#プログラミング)
-                    //   https://www.ipentec.com/document/csharp-show-message-box-in-center-of-owner-window
+                // MessageBoxのセンタリングは、メッセージフックしないと不可能。
+                // cf.
+                //   オーナーウィンドウの中央にメッセージボックスを表示する (C#プログラミング)
+                //   https://www.ipentec.com/document/csharp-show-message-box-in-center-of-owner-window
 
+                using (var dialog = new MessageDialog())
+                {
+                    dialog.SetMessage(caption,text,type);
                     if (parent != null)
-                        return MessageBox.Show(parent, text, caption, buttons, icon);
-                    else
-                        return MessageBox.Show(text, caption, buttons, icon);
+                        FormLocationUtility.CenteringToThisForm(dialog, parent);
+                    return dialog.ShowDialog();
                 }
             });
 

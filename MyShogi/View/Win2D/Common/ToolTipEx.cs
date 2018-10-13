@@ -51,7 +51,7 @@ namespace MyShogi.View.Win2D
 
             // カスタムテキストの描画
 
-
+#if false
             using (var sf = new StringFormat())
             {
 
@@ -62,37 +62,33 @@ namespace MyShogi.View.Win2D
 
                 //var rect = new Rectangle(Point.Empty, this.Size);
 
-#if false
                 // e.Fontは元のフォント。使っては駄目。
                 e.Graphics.DrawString(e.ToolTipText, Font, SystemBrushes.ActiveCaptionText, /*rect*/
                     e.Bounds, sf);
+
+            // →　paddingするか、DrawText()を用いるかしないとはみ出る。なんぞこれ…。
+            //    DrawString()用のサイズではないということか…。
+            // cf.
+            // Custom OwnerDraw ToolTip size issue
+            // https://stackoverflow.com/questions/49199417/custom-ownerdraw-tooltip-size-issue
+        }
 #endif
 
-                // →　paddingするか、DrawText()を用いるかしないとはみ出る。なんぞこれ…。
-                //    DrawString()用のサイズではないということか…。
-                // cf.
-                // Custom OwnerDraw ToolTip size issue
-                // https://stackoverflow.com/questions/49199417/custom-ownerdraw-tooltip-size-issue
-
+            var flags = TextFormatFlags.LeftAndRightPadding | TextFormatFlags.VerticalCenter;
                 TextRenderer.DrawText(e.Graphics, e.ToolTipText, Font, e.Bounds,
                                       ForeColor, Color.Empty,
-                                      TextFormatFlags.Default);
+                                      flags /*TextFormatFlags.Default*/
+                                      );
 
-
-            }
         }
 
         private void OnPopup(object sender, PopupEventArgs e)
         {
-            e.ToolTipSize = TextRenderer.MeasureText(this.GetToolTip(e.AssociatedControl), Font);
-            Size = e.ToolTipSize;
+            var size = TextRenderer.MeasureText(this.GetToolTip(e.AssociatedControl), Font);
+            size = new Size(size.Width + 8 , size.Height + 8); // 少しpaddingしておく。
+            e.ToolTipSize = size;
         }
 
-        /// <summary>
-        /// 表示サイズ。
-        /// これはPopupハンドラで確定する。
-        /// </summary>
-        private Size Size;
     }
 
 }

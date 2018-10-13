@@ -284,11 +284,11 @@
     <Compile Include="View\Win2D\Info\EngineConsiderationMainControl.designer.cs">
       <DependentUpon>EngineConsiderationMainControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\Info\ExceptionDialog.cs">
+    <Compile Include="View\Win2D\Info\MessageDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\Info\ExceptionDialog.Designer.cs">
-      <DependentUpon>ExceptionDialog.cs</DependentUpon>
+    <Compile Include="View\Win2D\Info\MessageDialog.Designer.cs">
+      <DependentUpon>MessageDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\Info\GameResultDialog.cs">
       <SubType>Form</SubType>
@@ -478,8 +478,8 @@
     <EmbeddedResource Include="View\Win2D\Info\EvalGraphDialog.resx">
       <DependentUpon>EvalGraphDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\Info\ExceptionDialog.resx">
-      <DependentUpon>ExceptionDialog.cs</DependentUpon>
+    <EmbeddedResource Include="View\Win2D\Info\MessageDialog.resx">
+      <DependentUpon>MessageDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Info\GameResultDialog.resx">
       <DependentUpon>GameResultDialog.cs</DependentUpon>

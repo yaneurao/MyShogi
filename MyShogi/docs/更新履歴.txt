@@ -3,13 +3,20 @@
 // 起動時、検討ウインドウの位置が確定するまで画面描画をSuspendしたほうが良いのでは…。
 
 
+■　2018/10/13
+
+
 - Mac(Mono環境)でMessageBox.Show()が使えない件
   - 自前で描画する
   - アイコン素材発注済み    
   - message_box_v1_512_128.png 追加
-
-
-■　2018/10/13
+- デフォルトフォント、メニューはMS ゴシックに変更。
+- ToolTips、描画方法変更
+  - backgroundにPadding (10,10)追加。
+  - メニューのボタンのtooltipのフォントが変わってない。
+    これ自前で書かないと駄目なのか…。うわー。
+    cf. ToolStrip with Custom ToolTip : https://www.codeproject.com/Articles/376643/ToolStrip-with-Custom-ToolTip
+    - 大変そう。あとでよく考える。
 
 
 - 表示設定のフォントのところ、ラベルの位置がずれているの修正。

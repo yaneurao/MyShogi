@@ -20,7 +20,7 @@ namespace MyShogi.Model.Common.Utility
         Exception,           // 例外
     }
 
-    public static class MessageShowTypeExtension
+    public static class MessageShowTypeExtensions
     {
         /// <summary>
         /// MessageShowType型を綺麗な日本語文字列に変換

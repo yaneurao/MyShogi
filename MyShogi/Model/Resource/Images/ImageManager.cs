@@ -324,6 +324,9 @@ namespace MyShogi.Model.Resource.Images
             Load(ref GameBlackWhiteImage, "game_effect" + Sep + "game_black_white_v1.png", true);
 
             Load(ref GamePieceTossImage, "game_effect" + Sep + "piece_toss_v1.png", true);
+
+            // -- アイコン
+            Load(ref MessageBoxIconImage, "message_box_v1_512_128.png", true);
         }
 
         /// <summary>
@@ -435,6 +438,11 @@ namespace MyShogi.Model.Resource.Images
         /// エンジンのバナーなし
         /// </summary>
         public ImageLoader NoBannerImage = new ImageLoader();
+
+        /// <summary>
+        /// MessageBoxのアイコン
+        /// </summary>
+        public ImageLoader MessageBoxIconImage = new ImageLoader();
 
 #region GameEffects
         /// <summary>
