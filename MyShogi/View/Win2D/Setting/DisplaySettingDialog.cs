@@ -40,6 +40,9 @@ namespace MyShogi.View.Win2D.Setting
             richSelector6.Bind(config, "PieceImageVersion");
 
             // 成駒の色
+            richSelector21.Bind(config, "PieceImageColorVersion");
+
+            // 成駒の色
             richSelector7.Bind(config, "PromotePieceColorType");
 
             // 移動方角マーカー

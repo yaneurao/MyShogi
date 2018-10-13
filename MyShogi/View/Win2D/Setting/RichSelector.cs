@@ -266,7 +266,7 @@ namespace MyShogi.View.Win2D.Setting
         {
             if (images != null)
                 foreach (var img in images)
-                    img.Dispose();
+                    img?.Dispose();
         }
         #endregion
     }

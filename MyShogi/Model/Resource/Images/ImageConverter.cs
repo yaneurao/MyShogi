@@ -1,5 +1,7 @@
 ﻿using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace MyShogi.Model.Resource.Images
 {
@@ -264,6 +266,60 @@ namespace MyShogi.Model.Resource.Images
                 g.FillRectangle(b, 0, 0, bmp.Width, bmp.Height);
             }
 
+        }
+
+        /// <summary>
+        /// bmp (32ARGB)に対して、alpha >= 16 のpixelを指定された色とブレンドする。
+        /// </summary>
+        /// <param name="bmp"></param>
+        /// <param name="a"></param>
+        /// <param name="r"></param>
+        /// <param name="g"></param>
+        /// <param name="b"></param>
+        public static void BlendColor(Image bmp , int a , int r , int g, int b)
+        {
+            if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+                return; // あぼーん
+
+            var src = bmp as Bitmap;
+            var srcRect = new Rectangle(0, 0, src.Width, src.Height);
+
+            var data = src.LockBits(srcRect, ImageLockMode.ReadWrite,
+                System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            byte[] pixels = new byte[srcRect.Width * srcRect.Height * 4];
+            Marshal.Copy(data.Scan0, pixels, 0, pixels.Length);
+
+            int ia = 255 - a; // aを反転させたやつ inverse of a
+            int b2 = b * a;
+            int g2 = g * a;
+            int r2 = r * a;
+
+            for (int i = 0 ; i < pixels.Length; i += 4)
+            {
+                int b1 = pixels[i + 0];
+                int g1 = pixels[i + 1];
+                int r1 = pixels[i + 2];
+                int a1 = pixels[i + 3];
+
+                /* alphaがある程度大きければ、このpixelを書き換える */
+                if (a1 >= 16)
+                {
+                    // mixed
+                    int bm = (b1 * ia + b2)/255;
+                    int gm = (g1 * ia + g2)/255;
+                    int rm = (r1 * ia + r2)/255;
+
+                    // aはそのまま
+                    pixels[i + 0] = (byte)bm;
+                    pixels[i + 1] = (byte)gm;
+                    pixels[i + 2] = (byte)rm;
+                }
+            }
+
+            // 書き戻す
+            Marshal.Copy(pixels, 0, data.Scan0 , pixels.Length);
+            src.UnlockBits(data);
         }
     }
 }

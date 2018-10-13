@@ -132,6 +132,18 @@ namespace MyShogi.Model.Resource.Images
         {
             var config = TheApp.app.Config;
             Load(ref PieceImage, $"piece_v{config.PieceImageVersion}_776_636.png");
+
+            // 試しに駒の濃さを変更してみる。
+
+            switch(config.PieceImageColorVersion)
+            {
+                case 0: /* ImageConverter.BlendColor(PieceImage.image , 0 , 0 , 0 , 0); // 元画像のまま */ break;
+                case 1: ImageConverter.BlendColor(PieceImage.image, 20 , 0, 0, 0); break; // 少し暗め
+                case 2: ImageConverter.BlendColor(PieceImage.image, 40 , 0, 0, 0); break; // かなり暗め
+                case 3: ImageConverter.BlendColor(PieceImage.image, 64, 215, 169, 90); break;  // キャラメル色
+                case 4: ImageConverter.BlendColor(PieceImage.image, 64, 237, 233, 225); break; // 薄い木目風
+                case 5: ImageConverter.BlendColor(PieceImage.image, 64, 247, 236, 147); break; // プラスチック風
+            }
         }
 
         public void UpdatePieceAttackImage(PropertyChangedEventArgs args = null)

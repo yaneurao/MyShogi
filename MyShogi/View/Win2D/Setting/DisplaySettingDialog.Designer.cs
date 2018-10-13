@@ -36,6 +36,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.richSelector18 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector8 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.richSelector21 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector7 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector6 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -155,6 +156,7 @@
             // 
             this.tabPage2.Controls.Add(this.richSelector18);
             this.tabPage2.Controls.Add(this.richSelector8);
+            this.tabPage2.Controls.Add(this.richSelector21);
             this.tabPage2.Controls.Add(this.richSelector7);
             this.tabPage2.Controls.Add(this.richSelector6);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
@@ -167,7 +169,7 @@
             // richSelector18
             // 
             this.richSelector18.GroupBoxTitle = "駒を掴む表現";
-            this.richSelector18.Location = new System.Drawing.Point(3, 308);
+            this.richSelector18.Location = new System.Drawing.Point(3, 409);
             this.richSelector18.Name = "richSelector18";
             this.richSelector18.SelectionTexts = new string[] {
         "浮かせる,picked_piece_image_ver_0.png,移動元の升で少し浮かせます。",
@@ -178,7 +180,7 @@
             // richSelector8
             // 
             this.richSelector8.GroupBoxTitle = "移動方角マーカー";
-            this.richSelector8.Location = new System.Drawing.Point(3, 205);
+            this.richSelector8.Location = new System.Drawing.Point(3, 306);
             this.richSelector8.Name = "richSelector8";
             this.richSelector8.SelectionTexts = new string[] {
         "なし,piece_attack_image_ver_0.png,通常の状態です。",
@@ -186,10 +188,25 @@
             this.richSelector8.Size = new System.Drawing.Size(772, 110);
             this.richSelector8.TabIndex = 1;
             // 
+            // richSelector21
+            // 
+            this.richSelector21.GroupBoxTitle = "駒の色味";
+            this.richSelector21.Location = new System.Drawing.Point(11, 103);
+            this.richSelector21.Name = "richSelector21";
+            this.richSelector21.SelectionTexts = new string[] {
+        "オリジナル,piece_color_type_0.png,元のままの変更しません",
+        "少し暗く,piece_color_type_1.png,少し濃い色にします",
+        "暗く,piece_color_type_2.png,かなり濃い色にします",
+        "キャラメル,piece_color_type_3.png,キャラメル色に近づけます",
+        "明るめの木,piece_color_type_4.png,明るめの木の色に近づけます",
+        "プラスチック,piece_color_type_5.png,プラスチック風の色に近づけます"};
+            this.richSelector21.Size = new System.Drawing.Size(772, 110);
+            this.richSelector21.TabIndex = 1;
+            // 
             // richSelector7
             // 
             this.richSelector7.GroupBoxTitle = "成駒の色";
-            this.richSelector7.Location = new System.Drawing.Point(3, 105);
+            this.richSelector7.Location = new System.Drawing.Point(3, 206);
             this.richSelector7.Name = "richSelector7";
             this.richSelector7.SelectionTexts = new string[] {
         "黒,pro_piece_color_style_1.png,成り駒の文字の色を黒にします。",
@@ -677,5 +694,6 @@
         private System.Windows.Forms.Label label6;
         private FontSelectionConrol fontSelectionConrol10;
         private RichSelector richSelector20;
+        private RichSelector richSelector21;
     }
 }

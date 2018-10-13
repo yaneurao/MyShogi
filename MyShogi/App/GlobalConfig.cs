@@ -23,7 +23,7 @@ namespace MyShogi.App
         /// 『将棋神やねうら王』のUpdate1.3 は、"1.1.3"。→　マイナビ公式で配布[2018/09/03]
         /// 『将棋神やねうら王』のUpdate2   は、"1.2.4"。→　マイナビ公式で配布[2018/10/10]
         /// </summary>
-        public static readonly string MYSHOGI_VERSION_STRING = "1.2.7";
+        public static readonly string MYSHOGI_VERSION_STRING = "1.2.9";
 
 
         public GlobalConfig()
@@ -210,6 +210,22 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("PieceImageVersion"); }
             set { SetValue<int>("PieceImageVersion",value); }
+        }
+
+        /// <summary>
+        /// 駒の色のバリエーション
+        /// 0 : 元のまま (デフォルト)
+        /// 1 : 暗め
+        /// 2 : かなり暗め
+        /// 3 : キャラメル色
+        /// 4 : 明るめの木目
+        /// 5 : プラスチック
+        /// </summary>
+        [DataMember]
+        public int PieceImageColorVersion
+        {
+            get { return GetValue<int>("PieceImageColorVersion"); }
+            set { SetValue<int>("PieceImageColorVersion", value); }
         }
 
         /// <summary>
