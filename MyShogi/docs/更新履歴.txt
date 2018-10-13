@@ -6,6 +6,10 @@
 ■　2018/10/13
 
 
+- ToolStrip with Custom ToolTip
+  - メインメニューのボタン、ミニ盤面のボタンのToolStripの文字フォントも表示設定のフォントで設定したものが反映するようになった。
+
+
 - Mac(Mono環境)でMessageBox.Show()が使えない件
   - 自前で描画する
   - アイコン素材発注済み    
