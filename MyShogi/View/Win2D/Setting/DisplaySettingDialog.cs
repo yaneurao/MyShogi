@@ -29,9 +29,15 @@ namespace MyShogi.View.Win2D.Setting
             richSelector4.ViewModel.SelectionOffset = 1;
             richSelector4.Bind(config, "BoardImageVersion");
 
+            // 盤の色味
+            richSelector22.Bind(config, "BoardImageColorVersion");
+
             // 畳画像
             richSelector5.ViewModel.SelectionOffset = 1;
             richSelector5.Bind(config, "TatamiImageVersion");
+
+            // 畳の色味
+            richSelector23.Bind(config, "TatamiImageColorVersion");
 
             // -- 「駒」のタブ
 

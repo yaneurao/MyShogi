@@ -56,6 +56,25 @@ namespace MyShogi.Model.Resource.Images
             Load(ref tatami, $"tatami_v{config.TatamiImageVersion}_1920_1080.png");
             Load(ref name_plate, "name_plate_v1_1920_1080.png");
 
+            switch (config.BoardImageColorVersion)
+            {
+                case 0: /* ImageConverter.BlendColor(board.image , 0 , 0 , 0 , 0); // 元画像のまま */ break;
+                case 1: ImageConverter.BlendColor(board.image, 20, 0, 0, 0); break; // 少し暗め
+                case 2: ImageConverter.BlendColor(board.image, 40, 0, 0, 0); break; // かなり暗め
+                case 3: ImageConverter.BlendColor(board.image, 64, 215, 169, 90); break;  // キャラメル色
+                case 4: ImageConverter.BlendColor(board.image, 64, 237, 233, 225); break; // 薄い木目風
+                case 5: ImageConverter.BlendColor(board.image, 64, 247, 236, 147); break; // プラスチック風
+            }
+            switch (config.TatamiImageColorVersion)
+            {
+                case 0: /* ImageConverter.BlendColor(tatami.image , 0 , 0 , 0 , 0); // 元画像のまま */ break;
+                case 1: ImageConverter.BlendColor(tatami.image, 20, 0, 0, 0); break; // 少し暗め
+                case 2: ImageConverter.BlendColor(tatami.image, 40, 0, 0, 0); break; // かなり暗め
+                case 3: ImageConverter.BlendColor(tatami.image, 64, 215, 169, 90); break;  // キャラメル色
+                case 4: ImageConverter.BlendColor(tatami.image, 80, 211, 172, 132); break; // 古い畳風
+                case 5: ImageConverter.BlendColor(tatami.image, 80, 152, 148, 78); break;  // 新しい畳風
+            }
+
             var piece_table = new ImageLoader[2];
             var piece_box = new ImageLoader[2];
 

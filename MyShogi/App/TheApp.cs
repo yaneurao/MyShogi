@@ -98,7 +98,9 @@ namespace MyShogi.App
                 // GlobalConfigのプロパティ変更に対して、このimageManagerが呼び出されるようにbindしておく。
 
                 Config.AddPropertyChangedHandler("BoardImageVersion", ImageManager.UpdateBoardImage);
+                Config.AddPropertyChangedHandler("BoardImageColorVersion", ImageManager.UpdateBoardImage);
                 Config.AddPropertyChangedHandler("TatamiImageVersion", ImageManager.UpdateBoardImage);
+                Config.AddPropertyChangedHandler("TatamiImageColorVersion", ImageManager.UpdateBoardImage);
                 Config.AddPropertyChangedHandler("PieceTableImageVersion", ImageManager.UpdateBoardImage);
 
                 Config.AddPropertyChangedHandler("PieceImageVersion", ImageManager.UpdatePieceImage);
@@ -129,7 +131,9 @@ namespace MyShogi.App
             // 表示設定
 
             Config.AddPropertyChangedHandler("BoardImageVersion", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("BoardImageColorVersion", mainDialog.ForceRedraw);
             Config.AddPropertyChangedHandler("TatamiImageVersion", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("TatamiImageColorVersion", mainDialog.ForceRedraw);
             Config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.ForceRedraw);
             Config.AddPropertyChangedHandler("PieceImageColorVersion", mainDialog.ForceRedraw);
             Config.AddPropertyChangedHandler("PromotePieceColorType", mainDialog.ForceRedraw);

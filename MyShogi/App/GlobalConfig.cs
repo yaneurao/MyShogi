@@ -193,6 +193,22 @@ namespace MyShogi.App
         }
 
         /// <summary>
+        /// 盤の色味のバリエーション
+        /// 0 : 元のまま (デフォルト)
+        /// 1 : 暗め
+        /// 2 : かなり暗め
+        /// 3 : キャラメル色
+        /// 4 : 明るめの木目
+        /// 5 : プラスチック
+        /// </summary>
+        [DataMember]
+        public int BoardImageColorVersion
+        {
+            get { return GetValue<int>("BoardImageColorVersion"); }
+            set { SetValue<int>("BoardImageColorVersion", value); }
+        }
+
+        /// <summary>
         /// 畳画像のバージョン
         /// </summary>
         [DataMember]
@@ -200,6 +216,22 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("TatamiImageVersion"); }
             set { SetValue<int>("TatamiImageVersion", value); }
+        }
+
+        /// <summary>
+        /// 畳の色味のバリエーション
+        /// 0 : 元のまま (デフォルト)
+        /// 1 : 暗め
+        /// 2 : かなり暗め
+        /// 3 : キャラメル色
+        /// 4 : 古い畳風
+        /// 5 : 新しい畳風
+        /// </summary>
+        [DataMember]
+        public int TatamiImageColorVersion
+        {
+            get { return GetValue<int>("TatamiImageColorVersion"); }
+            set { SetValue<int>("TatamiImageColorVersion", value); }
         }
 
         /// <summary>
@@ -213,7 +245,7 @@ namespace MyShogi.App
         }
 
         /// <summary>
-        /// 駒の色のバリエーション
+        /// 駒の色味のバリエーション
         /// 0 : 元のまま (デフォルト)
         /// 1 : 暗め
         /// 2 : かなり暗め

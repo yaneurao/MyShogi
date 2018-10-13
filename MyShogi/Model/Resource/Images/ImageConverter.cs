@@ -269,7 +269,7 @@ namespace MyShogi.Model.Resource.Images
         }
 
         /// <summary>
-        /// bmp (32ARGB)に対して、alpha >= 16 のpixelを指定された色とブレンドする。
+        /// bmp (32bppArgb)に対して、alpha >= 16 のpixelを指定された色とブレンドする。
         /// </summary>
         /// <param name="bmp"></param>
         /// <param name="a"></param>
@@ -278,19 +278,22 @@ namespace MyShogi.Model.Resource.Images
         /// <param name="b"></param>
         public static void BlendColor(Image bmp , int a , int r , int g, int b)
         {
-            if (bmp.PixelFormat != System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+            if (bmp.PixelFormat != PixelFormat.Format32bppArgb)
                 return; // あぼーん
 
             var src = bmp as Bitmap;
             var srcRect = new Rectangle(0, 0, src.Width, src.Height);
 
-            var data = src.LockBits(srcRect, ImageLockMode.ReadWrite,
-                System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var data = src.LockBits(srcRect, ImageLockMode.ReadWrite,PixelFormat.Format32bppArgb);
 
             byte[] pixels = new byte[srcRect.Width * srcRect.Height * 4];
             Marshal.Copy(data.Scan0, pixels, 0, pixels.Length);
 
-            int ia = 255 - a; // aを反転させたやつ inverse of a
+            // (R,G,B) = 元の(R,G,B)×(1 - alpha) + 変異させる色の(R,G,B)×alpha
+            // である。alpha = a/255なので式全体を255倍して、
+            // (R,G,B) = (元の(R,G,B)×(255 - a) + 変異させる色の(R,G,B)×a )/255
+            // そこで、(255-a) と 変異させる色の(R,G,B)×a をループの外で事前に計算しておく。
+            int ia = 255 - a;
             int b2 = b * a;
             int g2 = g * a;
             int r2 = r * a;
@@ -305,7 +308,7 @@ namespace MyShogi.Model.Resource.Images
                 /* alphaがある程度大きければ、このpixelを書き換える */
                 if (a1 >= 16)
                 {
-                    // mixed
+                    // mixする
                     int bm = (b1 * ia + b2)/255;
                     int gm = (g1 * ia + g2)/255;
                     int rm = (r1 * ia + r2)/255;

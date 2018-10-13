@@ -3,7 +3,31 @@
 ■　2018/10/14
 
 
-- 表示設定の駒のところから駒の色を変更できるようにした。
+- 表示設定の盤のところから、盤面の色味も変更できるように。
+- 表示設定の盤のところから、畳の色味も変更できるように。
+  オリジナル,tatami_color_type_0.png,元のままの変更しません
+  少し暗く,tatami_color_type_1.png,少し濃い色にします
+  暗く,tatami_color_type_2.png,かなり濃い色にします
+  キャラメル,tatami_color_type_3.png,キャラメル色に近づけます
+  古めの畳,tatami_color_type_4.png,古めの畳の色に近づけます
+  新しめの畳,tatami_color_type_5.png,新しめの畳の色に近づけます
+- 表示設定に畳のタブ追加。
+- 表示設定、サイズ調整
+  オリジナル,board_color_type_0.png,元のままの変更しません
+  少し暗く,board_color_type_1.png,少し濃い色にします
+  暗く,board_color_type_2.png,かなり濃い色にします
+  キャラメル,board_color_type_3.png,キャラメル色に近づけます
+  明るめの木,board_color_type_4.png,明るめの木の色に近づけます
+  プラスチック,board_color_type_5.png,プラスチック風の色に近づけます
+
+
+- 描画の高速化
+	- 画面描画の時の更新矩形を最適化する
+		- 残り時間の描画など
+    - どうせ1秒に1回なのでまあいいか…。これ、やりだすと描画がいたずらに複雑になる。
+
+
+- 表示設定の駒のところから駒の色味を変更できるようにした。
   PieceImageColorVersion
         /// <summary>
         /// 駒の色のバリエーション
