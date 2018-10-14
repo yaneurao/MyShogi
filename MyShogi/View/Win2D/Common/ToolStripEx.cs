@@ -40,13 +40,27 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        // -- Mac(Mono)環境の地雷回避
+
+        public override Font Font
+        {
+            get { return base.Font; }
+            set
+            {
+                base.Font = value;
+                // Mac(Mono)では、ここがambient propertyになっていないので明示的な置換をしないといけないくさい。
+                // Linux(Mono)では、この問題は起きない。
+                OverflowButton.DropDown.Font = value;
+            }
+        }
+
         // -- 以下、Custom Tooltipのための実装
 
         /// <summary>
         /// ToolTipが表示されている時間[ms]
         /// </summary>
         public int ToolTipInterval = int.MaxValue;
-        
+
         /// <summary>
         /// ToolTip本体
         /// 

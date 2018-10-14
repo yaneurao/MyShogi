@@ -23,7 +23,7 @@ namespace MyShogi.App
         /// 『将棋神やねうら王』のUpdate1.3 は、"1.1.3"。→　マイナビ公式で配布[2018/09/03]
         /// 『将棋神やねうら王』のUpdate2   は、"1.2.4"。→　マイナビ公式で配布[2018/10/10]
         /// </summary>
-        public static readonly string MYSHOGI_VERSION_STRING = "1.2.9";
+        public static readonly string MYSHOGI_VERSION_STRING = "1.3.0";
 
 
         public GlobalConfig()
@@ -31,8 +31,11 @@ namespace MyShogi.App
             // -- 表示設定
 
             BoardImageVersion = 1;
+            BoardImageColorVersion = 0;
             TatamiImageVersion = 1;
+            TatamiImageColorVersion = 0;
             PieceImageVersion = 1;
+            PieceImageColorVersion = 0;
             PieceAttackImageVersion = 0;
             BoardNumberImageVersion = 1;
             LastMoveFromColorType = 0;

@@ -2382,7 +2382,7 @@ namespace MyShogi.View.Win2D
         /// <summary>
         /// 前回のメニュー項目。
         /// </summary>
-        private MenuStrip old_menu { get; set; } = null;
+        private MenuStripEx old_menu { get; set; } = null;
 
         #endregion
 

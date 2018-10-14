@@ -300,20 +300,21 @@ namespace MyShogi.Model.Resource.Images
 
             for (int i = 0 ; i < pixels.Length; i += 4)
             {
-                int b1 = pixels[i + 0];
-                int g1 = pixels[i + 1];
-                int r1 = pixels[i + 2];
                 int a1 = pixels[i + 3];
 
                 /* alphaがある程度大きければ、このpixelを書き換える */
                 if (a1 >= 16)
                 {
+                    int b1 = pixels[i + 0];
+                    int g1 = pixels[i + 1];
+                    int r1 = pixels[i + 2];
+
                     // mixする
                     int bm = (b1 * ia + b2)/255;
                     int gm = (g1 * ia + g2)/255;
                     int rm = (r1 * ia + r2)/255;
 
-                    // aはそのまま
+                    // alphaはそのまま
                     pixels[i + 0] = (byte)bm;
                     pixels[i + 1] = (byte)gm;
                     pixels[i + 2] = (byte)rm;
