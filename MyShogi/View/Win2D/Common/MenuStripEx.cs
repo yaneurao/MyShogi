@@ -28,6 +28,12 @@ namespace MyShogi.View.Win2D
             }
         }
 
+#if MACOS
+        /// <summary>
+        /// Mac用のMonoだと、ToolStripMenuItem.Fontがambient propertyになっていないので、
+        /// MenuStripのFontを置き換えたときに反映しない。(Monoの実装上のバグ)
+        /// これを回避するためにFont propertyを生やす。
+        /// </summary>
         public override Font Font
         {
             get { return base.Font; }
@@ -42,5 +48,6 @@ namespace MyShogi.View.Win2D
                 }
             }
         }
+#endif
     }
 }

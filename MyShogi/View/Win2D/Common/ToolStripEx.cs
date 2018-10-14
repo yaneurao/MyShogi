@@ -42,6 +42,7 @@ namespace MyShogi.View.Win2D
 
         // -- Mac(Mono)環境の地雷回避
 
+#if MACOS
         public override Font Font
         {
             get { return base.Font; }
@@ -49,10 +50,11 @@ namespace MyShogi.View.Win2D
             {
                 base.Font = value;
                 // Mac(Mono)では、ここがambient propertyになっていないので明示的な置換をしないといけないくさい。
-                // Linux(Mono)では、この問題は起きない。
+                // Linux(Mono)では、この問題は起きない。Mac(Mono)のバグだと思う。
                 OverflowButton.DropDown.Font = value;
             }
         }
+#endif
 
         // -- 以下、Custom Tooltipのための実装
 
@@ -163,14 +165,5 @@ namespace MyShogi.View.Win2D
         private Point mouseOverPoint;
         private ToolStripItem mouseOverItem = null;
 
-        public override Font Font
-        {
-            get { return base.Font; }
-            set {
-                base.Font = value;
-                // Monoでは、ここがambient propertyになっていないので明示的な置換をしないといけないくさい。
-                OverflowButton.DropDown.Font = value;
-            }
-        }
     }
 }
