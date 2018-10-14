@@ -16,7 +16,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Windows.Forms;
+using System.IO;
+using System.Reflection;
 
 // --- 単体で呼び出して使うAPI群
 
@@ -171,7 +172,7 @@ namespace MyShogi.Model.Dependency
 
     /// <summary>
     /// MonoやUbuntuではClipboardの仕組みが異なるので、標準のClipboardクラスではなくこちらを用いる。
-    /// 
+    ///
     /// cf.
     /// Mono, Ubuntu and Clipboard : https://www.medo64.com/2011/01/mono-ubuntu-and-clipboard/
     /// Clipboard Plugin for Xamarin, Windows & Gtk2 : https://github.com/stavroskasidis/XamarinClipboardPlugin
@@ -230,7 +231,7 @@ namespace MyShogi.Model.Dependency
     /// <summary>
     /// MonoでGraphics.DrawImage()で転送元が半透明かつ、転送先がCreateBitmap()したBitmapだと
     /// 転送元のalphaが無視されるので、DrawImage()をwrapする。
-    /// 
+    ///
     /// Monoではこの挙動、きちんと実装されていない。(bugだと言えると思う)
     /// Monoは、GDIPlusまわりの実装、いまだにおかしいところ多い。
     /// </summary>
@@ -354,11 +355,48 @@ namespace MyShogi.Model.Resource.Sounds
 {
     /// <summary>
     /// wavファイル一つのwrapper。
-    /// 
+    ///
     /// 他の環境に移植する場合は、このクラスをその環境用に再実装すべし。
     /// </summary>
     public class SoundLoader : IDisposable
     {
+        public SoundLoader()
+        {
+            lock (_lock)
+            {
+                if (_refCount == 0)
+                {
+                    var playerExePath = _exeDir + "/SoundPlayer.exe";
+                    if (!File.Exists(playerExePath))
+                    {
+                        return;
+                    }
+
+                    var info = new ProcessStartInfo
+                    {
+                        FileName = "mono",
+                        Arguments = playerExePath + " " + _exeDir,
+                        CreateNoWindow = true,
+                        UseShellExecute = false,
+                        RedirectStandardInput = true,
+                        RedirectStandardOutput = false,
+                        RedirectStandardError = false,
+                    };
+
+                    var process = new Process
+                    {
+                        StartInfo = info,
+                    };
+
+                    process.Start();
+                    _playerProcess = process;
+                    _refCount++;
+                }
+
+            }
+
+        }
+
         /// <summary>
         /// ファイルからサウンドを読み込む。
         /// wavファイル。
@@ -368,7 +406,8 @@ namespace MyShogi.Model.Resource.Sounds
         /// <param name="filename_"></param>
         public void ReadFile(string filename_)
         {
-            filename = filename_;
+            // フルパスにする。
+            filename = _exeDir + "/" + filename_;
         }
 
         /// <summary>
@@ -376,13 +415,19 @@ namespace MyShogi.Model.Resource.Sounds
         /// </summary>
         public void Release()
         {
-            if (player != null)
+            lock (_lock)
             {
-                //player.Stop();
-                // Stop()ではリソースの開放がなされないようである…。
-                // 明示的にClose()を呼び出す。
-                //player.Close();
-                player = null;
+                if (_playerProcess == null)
+                {
+                    return;
+                }
+
+                _refCount--;
+                if (_refCount == 0)
+                {
+                    _playerProcess?.StandardInput.WriteLine("exit");
+                    _playerProcess = null;
+                }
             }
         }
 
@@ -391,20 +436,14 @@ namespace MyShogi.Model.Resource.Sounds
         /// </summary>
         public void Play()
         {
-            try
+            lock (_lock)
             {
-                if (player == null)
+                if (_playerProcess == null || _playerProcess.HasExited)
                 {
-                    //player = new MediaPlayer();
-                    //player.Open(new System.Uri(Path.GetFullPath(filename)));
+                    return;
                 }
-
-                // Positionをセットしなおすと再度Play()で頭から再生できるようだ。なんぞこの裏技。
-                //player.Position = TimeSpan.Zero;
-                //player.Play();
-
+                _playerProcess.StandardInput.WriteLine(filename);
             }
-            catch { }
         }
 
         /// <summary>
@@ -413,6 +452,7 @@ namespace MyShogi.Model.Resource.Sounds
         /// <returns></returns>
         public bool IsPlaying()
         {
+            // 再生中かどうか知るすべが(今のところ)ないのでとりあえずfalseで…
             return false;
         }
 
@@ -422,15 +462,17 @@ namespace MyShogi.Model.Resource.Sounds
         }
 
         /// <summary>
-        /// 読み込んでいるサウンド
-        /// </summary>
-        private object player = null;
-
-        /// <summary>
         /// 読み込んでいるサウンドファイル名
         /// </summary>
         private string filename;
 
+        private static string _exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        // 音声再生サーバーの通信用
+        private static Process _playerProcess;
+        // このクラスのインスタンス数 (0になったらサーバーを止める)
+        private static int _refCount = 0;
+        // 排他制御用
+        private static object _lock = new object();
     }
 }
 
