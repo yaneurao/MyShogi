@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D
@@ -24,6 +25,21 @@ namespace MyShogi.View.Win2D
                 // このメッセージを書き換える。
 
                 m.Result = (IntPtr)ClickAction;
+            }
+        }
+
+        public override Font Font
+        {
+            get { return base.Font; }
+            set {
+                base.Font = value;
+                foreach (var item in Items)
+                {
+                    if (item is ToolStripMenuItem menuItem)
+                    {
+                        menuItem.Font = value;
+                    }
+                }
             }
         }
     }

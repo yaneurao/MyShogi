@@ -162,5 +162,15 @@ namespace MyShogi.View.Win2D
         private Timer timer;
         private Point mouseOverPoint;
         private ToolStripItem mouseOverItem = null;
+
+        public override Font Font
+        {
+            get { return base.Font; }
+            set {
+                base.Font = value;
+                // Monoでは、ここがambient propertyになっていないので明示的な置換をしないといけないくさい。
+                OverflowButton.DropDown.Font = value;
+            }
+        }
     }
 }
