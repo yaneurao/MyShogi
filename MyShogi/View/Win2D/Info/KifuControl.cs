@@ -285,17 +285,13 @@ namespace MyShogi.View.Win2D
             var fontname = config.FontManager.KifuWindow.FontName;
             var fontstyle = config.FontManager.KifuWindow.FontStyle;
             var font = new Font(fontname , font_size, fontstyle , GraphicsUnit.Pixel);
-            FontUtility.SetFont( listBox1 , font );
+            listBox1.Font = font;
 
             // buttonのFontSizeあまり変更すると高さが足りなくなるので横幅の比率変更は反映させない。
+            var font2 = new Font(fontname , font_size2, fontstyle , GraphicsUnit.Pixel);
             var buttons = new[] { button1, button2, button3, button4, button5, button6 };
             foreach(var b in buttons)
-            {
-                // 親以外のFontをControl間で共有すべきではないという考えに基づき、
-                // 少し無駄ではあるが、それぞれにFontのinstanceを割り当てる。
-                var font2 = new Font(fontname , font_size2, fontstyle , GraphicsUnit.Pixel);
-                FontUtility.SetFont(b, font2);
-            }
+                b.Font = font2;
         }
 
         private float last_font_size = 0;
@@ -598,14 +594,12 @@ namespace MyShogi.View.Win2D
                 var f = TheApp.app.Config.FontManager.KifuWindow;
 
                 var font = new Font(f.FontName , f.FontSize , f.FontStyle , GraphicsUnit.Point);
-                FontUtility.SetFont(listBox1, font);
+                listBox1.Font = font;
 
                 var buttons = new[] { button1, button2, button3, button4, button5, button6 };
+                var font2 = new Font(f.FontName, f.FontSize, f.FontStyle, GraphicsUnit.Point);
                 foreach (var button in buttons)
-                {
-                    var font2 = new Font(f.FontName, f.FontSize, f.FontStyle, GraphicsUnit.Point);
-                    FontUtility.SetFont(button, font2);
-                }
+                    button.Font = font2;
 
                 UpdateButtonLocation();
             }

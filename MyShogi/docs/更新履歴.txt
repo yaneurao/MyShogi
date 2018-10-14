@@ -3,6 +3,67 @@
 ■　2018/10/15
 
 
+- 検討ウインドウをメインウインドウに埋め込んで非表示から表示に戻したときにgameScreenControl1のリサイズをしてなかった。
+  - V1.27ではしてたが、不要かと思ってリファクタリングしたときに間違った。修正。
+- 細長い駒台から普通の駒台に変わるときに落ちるようになった。なんぞこれ。
+  - あー、Fontどこか解放してはいけないところを解放してるのか…。これは難しい。
+  - FontUtility.SetFont()廃止する。
+
+   場所 System.Drawing.Font.GetHeight(Graphics graphics)
+   場所 System.Drawing.Font.get_SizeInPoints()
+   場所 System.Windows.Forms.Internal.WindowsFont.FromFont(Font font, WindowsFontQuality fontQuality)
+   場所 System.Windows.Forms.Internal.WindowsGraphicsCacheManager.GetWindowsFont(Font font, WindowsFontQuality fontQuality)
+   場所 System.Windows.Forms.TextRenderer.MeasureText(String text, Font font, Size proposedSize, TextFormatFlags flags)
+   場所 System.Windows.Forms.ButtonInternal.ButtonBaseAdapter.LayoutOptions.GetTextSize(Size proposedSize)
+   場所 System.Windows.Forms.ButtonInternal.ButtonBaseAdapter.LayoutOptions.LayoutTextAndImage(LayoutData layout)
+   場所 System.Windows.Forms.ButtonInternal.ButtonBaseAdapter.LayoutOptions.Layout()
+   場所 System.Windows.Forms.ButtonInternal.ButtonStandardAdapter.PaintWorker(PaintEventArgs e, Boolean up, CheckState state)
+   場所 System.Windows.Forms.ButtonInternal.ButtonStandardAdapter.PaintUp(PaintEventArgs e, CheckState state)
+   場所 System.Windows.Forms.ButtonInternal.ButtonBaseAdapter.Paint(PaintEventArgs pevent)
+   場所 System.Windows.Forms.ButtonBase.OnPaint(PaintEventArgs pevent)
+   場所 System.Windows.Forms.Control.PaintWithErrorHandling(PaintEventArgs e, Int16 layer)
+   場所 System.Windows.Forms.Control.WmPaint(Message& m)
+   場所 System.Windows.Forms.Control.WndProc(Message& m)
+   場所 System.Windows.Forms.ButtonBase.WndProc(Message& m)
+   場所 System.Windows.Forms.Button.WndProc(Message& m)
+   場所 System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   場所 System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   場所 System.Windows.Forms.NativeWindow.DebuggableCallback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+
+        /// <summary>
+        /// Fontを自分でnewしたものであることがわかっているときに用いる。
+        /// 前のFontを開放してから新しいFontを設定する。
+        ///
+        /// Fontをusing(var font = new Font(... ) )のように書けないときは、
+        /// なるべくこのメソッドを用いて、前使っていたFontを解放すること。
+        /// </summary>
+        /// <param name="c"></param>
+        public static void SetFont(Control c, Font font)
+        {
+            if (c.Font != null)
+            {
+                // 古いフォントを解放する。
+                // メインウインドウにぶら下がっているフォントは解放してはならない。
+                // (これはambient propertyであり、他のControlから暗黙的に参照されている)
+                var parentFont = c.Parent?.Font;
+                if (parentFont != null /* 独立したウインドウなら解放しない */ && c.Font != parentFont)
+                    c.Font.Dispose();
+
+                // 複数のControlから共有しているFontはすでに解放済みで例外が出ることがあるが、
+                // 複数のControlで親のFont以外を共有すべきではない。(それは論理的なバグである)
+                // だからその例外はここで捕捉しない。
+            }
+            // →　Fontはどことどこが依存するか難しく、現実的にはこの処理を書くのは不可能。
+            // これはやめて、.NET側に任せることにする。
+
+            c.Font = font;
+        }
+
+- 1手進める/戻すボタンが小さく見える。(T.Kさん)
+  - ◀ ▶ から ⯇⯈に変更するか？ MS ゴシックだとこれのほうが大きいのだが、Yu Gothic UIだと前者のほうが大きい模様。なんぞこれ。
+  - これ、修正容易ではないな…。困ったな。
+
+
 - ToolStripExで、ボタンがないところをクリックされてもFocusが移るように修正。(T.Kさん)
 - MenuStripExも同様。
 
