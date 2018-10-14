@@ -1,3 +1,0 @@
-[submodule "external/libsoundio-sharp"]
-	path = external/libsoundio-sharp
-	url = https://github.com/atsushieno/libsoundio-sharp.git

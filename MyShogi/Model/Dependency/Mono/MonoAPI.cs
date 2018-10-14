@@ -362,20 +362,23 @@ namespace MyShogi.Model.Resource.Sounds
     {
         public SoundLoader()
         {
-            lock (_lock)
+            lock (lockObject)
             {
-                if (_refCount == 0)
+                if (refCount++ == 0)
                 {
-                    var playerExePath = _exeDir + "/SoundPlayer.exe";
+                    // ファイルが存在しないときはreturnするが、このとき、
+                    // 参照カウント自体は非0でかつ、_playerProcess == null
+                    var playerExePath = Path.Combine(Directory.GetCurrentDirectory(), "SoundPlayer.exe");
                     if (!File.Exists(playerExePath))
-                    {
                         return;
-                    }
 
                     var info = new ProcessStartInfo
                     {
                         FileName = "mono",
-                        Arguments = playerExePath + " " + _exeDir,
+                        Arguments = playerExePath + " " + Directory.GetCurrentDirectory() ,
+                        // →　ここ、playerExePathにスペースが混じっているとスペースでsplitするなら、まずいような？
+                        //Arguments = $"\"{playerExePath}\" \"{Directory.GetCurrentDirectory()}\"",
+
                         CreateNoWindow = true,
                         UseShellExecute = false,
                         RedirectStandardInput = true,
@@ -390,7 +393,6 @@ namespace MyShogi.Model.Resource.Sounds
 
                     process.Start();
                     _playerProcess = process;
-                    _refCount++;
                 }
 
             }
@@ -406,8 +408,8 @@ namespace MyShogi.Model.Resource.Sounds
         /// <param name="filename_"></param>
         public void ReadFile(string filename_)
         {
-            // フルパスにする。
-            filename = _exeDir + "/" + filename_;
+            // フルパスにして保持しておく。Play()のときに用いる。
+            filename = Path.Combine(Directory.GetCurrentDirectory() , filename_);
         }
 
         /// <summary>
@@ -415,19 +417,13 @@ namespace MyShogi.Model.Resource.Sounds
         /// </summary>
         public void Release()
         {
-            lock (_lock)
+            lock (lockObject)
             {
-                if (_playerProcess == null)
-                {
-                    return;
-                }
+                // ここでリソースを解放するコマンドを送るべきだが、
+                // とりま、終了まで解放せずにサウンドを使うので解放しないことにする。
 
-                _refCount--;
-                if (_refCount == 0)
-                {
-                    _playerProcess?.StandardInput.WriteLine("exit");
-                    _playerProcess = null;
-                }
+                // _playerProcess?.StandardInput.WriteLine($"release {filename}");
+
             }
         }
 
@@ -436,13 +432,18 @@ namespace MyShogi.Model.Resource.Sounds
         /// </summary>
         public void Play()
         {
-            lock (_lock)
+            lock (lockObject)
             {
                 if (_playerProcess == null || _playerProcess.HasExited)
-                {
                     return;
-                }
+
                 _playerProcess.StandardInput.WriteLine(filename);
+
+                // →　ここで通しナンバーを生成して渡したほうがいいような…。
+                /*
+                play_id = play_id_count++;
+                _playerProcess.StandardInput.WriteLine($"play {play_id} {filename}");
+                */
             }
         }
 
@@ -454,25 +455,50 @@ namespace MyShogi.Model.Resource.Sounds
         {
             // 再生中かどうか知るすべが(今のところ)ないのでとりあえずfalseで…
             return false;
+
+            // →　再生するときに再生用に通しナンバーを渡して、そのナンバーのサウンドが再生中であるか問い合わせるべきのような。
+            // この呼び出しスレッドはサウンド用のWorker Threadなので、ここで問い合わせに多少時間がかかっても許されるので。
+
+            /*
+            _playerProcess.StandardInput.WriteLine($"is_playing {play_id}");
+            var result = _playerProcess.StandardOutput.ReadLine();
+            …
+            */
         }
 
         public void Dispose()
         {
             Release();
+
+            lock (lockObject)
+            {
+                if (-- refCount == 0)
+                {
+                    _playerProcess?.StandardInput.WriteLine("exit");
+                    _playerProcess = null;
+                }
+            }
         }
 
+        // サウンド再生のための通しナンバー。再生中であるかはこれを用いて問い合わせる。
+        private int play_id;
+
         /// <summary>
-        /// 読み込んでいるサウンドファイル名
+        /// 読み込んでいるサウンドファイル名(FullPathで)
         /// </summary>
         private string filename;
 
-        private static string _exeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         // 音声再生サーバーの通信用
         private static Process _playerProcess;
+
         // このクラスのインスタンス数 (0になったらサーバーを止める)
-        private static int _refCount = 0;
+        private static int refCount = 0;
+
+        // play_idの発行用。
+        private static int play_id_count = 0;
+
         // 排他制御用
-        private static object _lock = new object();
+        private static object lockObject = new object();
     }
 }
 
