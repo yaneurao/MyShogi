@@ -293,38 +293,41 @@ namespace MyShogi.Model.Common.Tool
     /// </summary>
     public static class FontList
     {
-        public static readonly string DefaultFont = "Hiragino Kaku Gothic Pro W3";
+        public static readonly string DefaultFont1 = "Hiragino Kaku Gothic Pro W3";
         public static readonly string DefaultFont2 = "Hiragino Kaku Gothic Pro W3";
+        public static readonly string DefaultFont3 = "Hiragino Kaku Gothic Pro W3";
 
         /// <summary>
         /// 設定ダイアログ
         /// </summary>
-        public static readonly string SettingDialog = DefaultFont;
+        public static readonly string SettingDialog = DefaultFont1;
 
         /// <summary>
         /// メニューのフォント
         /// </summary>
-        public static readonly string MenuStrip = DefaultFont;
+        public static readonly string MenuStrip = DefaultFont1;
 
         /// <summary>
         /// メインウインドウのToolStrip(ボタン)のフォント
+        /// ここ、◀ ▶ が大きく表示されるフォントでないとつらい。
         /// </summary>
-        public static readonly string MainToolStrip = DefaultFont;
+        public static readonly string MainToolStrip = DefaultFont3;
 
         /// <summary>
         /// メッセージダイアログのフォント
         /// </summary>
-        public static readonly string MessageDialog = DefaultFont;
+        public static readonly string MessageDialog = DefaultFont1;
 
         /// <summary>
         /// メインウインドウ上のフォント(対局者名など)
         /// </summary>
-        public static readonly string MainWindow = DefaultFont;
+        public static readonly string MainWindow = DefaultFont1;
 
         /// <summary>
         /// ミニ盤面下のToolStrip(ボタン)のフォント
+        /// ここ、◀ ▶ が大きく表示されるフォントでないとつらい。
         /// </summary>
-        public static readonly string SubToolStrip = DefaultFont;
+        public static readonly string SubToolStrip = DefaultFont3;
 
         /// <summary>
         /// 棋譜ウインドウ
@@ -340,12 +343,12 @@ namespace MyShogi.Model.Common.Tool
         /// <summary>
         /// ToolTip
         /// </summary>
-        public static readonly string ToolTip = DefaultFont;
+        public static readonly string ToolTip = DefaultFont1;
 
         /// <summary>
         /// デバッグウインドウ
         /// </summary>
-        public static readonly string DebugWindow = DefaultFont;
+        public static readonly string DebugWindow = DefaultFont1;
     }
 }
 

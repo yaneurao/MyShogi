@@ -139,8 +139,9 @@ namespace MyShogi.Model.Common.Tool
     /// </summary>
     public static class FontList
     {
-        public static readonly string DefaultFont = "MS UI Gothic";
+        public static readonly string DefaultFont1 = "MS UI Gothic";
         public static readonly string DefaultFont2 = "ＭＳ ゴシック";
+        public static readonly string DefaultFont3 = "Yu Gothic UI";
 
         // 特徴的なフォントに変更してみて、フォントの置換が適切に行われているかをテストする。
         //public static readonly string DefaultFont = "HGP行書体";
@@ -148,7 +149,7 @@ namespace MyShogi.Model.Common.Tool
         /// <summary>
         /// 設定ダイアログ
         /// </summary>
-        public static readonly string SettingDialog = DefaultFont;
+        public static readonly string SettingDialog = DefaultFont1;
 
         /// <summary>
         /// メニューのフォント
@@ -157,23 +158,24 @@ namespace MyShogi.Model.Common.Tool
 
         /// <summary>
         /// メインウインドウのToolStrip(ボタン)のフォント
+        /// ここ、Yu Gothic UI にしておかないと、◀ ▶ が小さい。(ＭＳ ゴシックだとこの文字かなり小さい)
         /// </summary>
-        public static readonly string MainToolStrip = DefaultFont2;
+        public static readonly string MainToolStrip = DefaultFont3;
 
         /// <summary>
         /// ミニ盤面下のToolStrip(ボタン)のフォント
         /// </summary>
-        public static readonly string SubToolStrip = DefaultFont2;
+        public static readonly string SubToolStrip = DefaultFont3;
         
         /// <summary>
         /// メッセージダイアログのフォント
         /// </summary>
-        public static readonly string MessageDialog = DefaultFont;
+        public static readonly string MessageDialog = DefaultFont1;
 
         /// <summary>
         /// メインウインドウ上のフォント(対局者名など)
         /// </summary>
-        public static readonly string MainWindow = DefaultFont;
+        public static readonly string MainWindow = DefaultFont1;
 
         /// <summary>
         /// 棋譜ウインドウ
@@ -189,12 +191,12 @@ namespace MyShogi.Model.Common.Tool
         /// <summary>
         /// ToolTip
         /// </summary>
-        public static readonly string ToolTip = DefaultFont;
+        public static readonly string ToolTip = DefaultFont1;
 
         /// <summary>
         /// デバッグウインドウ
         /// </summary>
-        public static readonly string DebugWindow = DefaultFont;
+        public static readonly string DebugWindow = DefaultFont1;
     }
 }
 
