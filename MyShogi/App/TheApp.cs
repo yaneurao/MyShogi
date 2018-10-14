@@ -137,6 +137,7 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("PieceImageVersion", mainDialog.ForceRedraw);
             Config.AddPropertyChangedHandler("PieceImageColorVersion", mainDialog.ForceRedraw);
             Config.AddPropertyChangedHandler("PromotePieceColorType", mainDialog.ForceRedraw);
+            Config.AddPropertyChangedHandler("FlipWhitePromoteDialog", mainDialog.ForceRedraw);
             Config.AddPropertyChangedHandler("PieceAttackImageVersion", mainDialog.ForceRedraw);
             Config.AddPropertyChangedHandler("BoardNumberImageVersion", mainDialog.ForceRedraw);
             Config.AddPropertyChangedHandler("LastMoveFromColorType", mainDialog.ForceRedraw);

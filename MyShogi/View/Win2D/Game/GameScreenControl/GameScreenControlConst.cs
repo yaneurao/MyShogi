@@ -202,6 +202,11 @@ namespace MyShogi.View.Win2D
         private static readonly Point turn_slim_pos = new Point(430, 1030);
 
         /// <summary>
+        /// PromoteDialogのサイズ
+        /// </summary>
+        private static readonly Size promote_dialog_size = new Size(205,163);
+
+        /// <summary>
         /// 対局時間の表示
         /// 通常の駒台用
         /// </summary>

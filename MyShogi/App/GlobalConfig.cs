@@ -45,6 +45,7 @@ namespace MyShogi.App
             PromotePieceColorType = 0;
             TurnDisplay = 1;
             DisplayNameTurnVersion = 1;
+            FlipWhitePromoteDialog = 1;
 
             EnableMouseDrag = 1;
             PickedMoveDisplayStyle = 1;
@@ -346,6 +347,16 @@ namespace MyShogi.App
             set { SetValue<int>("DisplayNameTurnVersion", value); }
         }
 
+        /// <summary>
+        /// 後手番の成り・不成のダイアログは反転(180度回転)させるのか。
+        /// 0 : させない
+        /// 1 : させる  ←　デフォルト
+        /// </summary>
+        public int FlipWhitePromoteDialog
+        {
+            get { return GetValue<int>("FlipWhitePromoteDialog"); }
+            set { SetValue<int>("FlipWhitePromoteDialog", value); }
+        }
 
         /// <summary>
         /// 最終手の駒の移動元の升の背景色

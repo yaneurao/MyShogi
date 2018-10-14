@@ -61,6 +61,7 @@ namespace MyShogi.View.Win2D
         /// 以下の描画を移植性を考慮してすべてスプライトの描画に抽象化しておく。
         /// pの地点に等倍でSpriteを描画する。(描画するときにaffine変換を行うものとする)
         /// ratioは表示倍率。デフォルトでは1.0
+        /// ratioがマイナスなら、180度回転させての描画
         /// </summary>
         /// <param name="g"></param>
         /// <param name="img"></param>
@@ -78,8 +79,8 @@ namespace MyShogi.View.Win2D
 
             // dstOffsetが指定されていれば、この分だけ(affine変換してから)ずらした場所に描画する。
             var dstOffset = AffineScale(src.dstOffset);
-            dstRect.X += dstOffset.Width;
-            dstRect.Y += dstOffset.Height;
+            dstRect.X += (int)(dstOffset.Width * ratio);
+            dstRect.Y += (int)(dstOffset.Height * ratio);
 
             graphics.DrawImage(src.image, dstRect, src.rect, GraphicsUnit.Pixel);
 

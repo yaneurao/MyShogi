@@ -334,8 +334,10 @@ namespace MyShogi.View.Win2D
             // -- 成り、不成の選択ダイアログを出している最中であるなら
             if (state.state == GameScreenControlViewStateEnum.PromoteDialog)
             {
-                DrawSprite(state.promote_dialog_location,
-                    SPRITE.PromoteDialog(state.promote_dialog_selection, state.moved_piece_type));
+                // 相手側の駒のダイアログなら180度反転させる
+                bool flip;
+                var dest = CalcPromoteDialogLocation(state,reverse,out flip);
+                DrawSprite(dest, SPRITE.PromoteDialog(state.promote_dialog_selection, state.moved_piece_type) , (flip ? -1.0f : 1.0f) );
             }
 
             // -- エンジン初期化中のダイアログ

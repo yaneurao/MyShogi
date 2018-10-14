@@ -8,6 +8,7 @@ using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.LocalServer;
 using ShogiCore = MyShogi.Model.Shogi.Core;
+using SColor = MyShogi.Model.Shogi.Core.Color;
 using SPRITE = MyShogi.Model.Resource.Images.SpriteManager;
 
 namespace MyShogi.View.Win2D
@@ -651,27 +652,10 @@ namespace MyShogi.View.Win2D
 
                 state.state = GameScreenControlViewStateEnum.PromoteDialog;
                 state.moved_piece_type = pos.PieceOn(from).PieceType();
+                state.moved_piece_color = pos.PieceOn(from).PieceColor();
 
                 // この状態を初期状態にするのは少しおかしいが、どうせこのあとマウスを動かすであろうからいいや。
                 state.promote_dialog_selection = PromoteDialogSelectionEnum.NO_SELECT;
-
-                // toの近くに成り・不成のダイアログを描画してやる。
-                // これは移動先の升の少し下に出す。
-                // ただし、1段目であると画面外に行ってしまうので
-                // 1,2段目であれば上に変位させる必要がある。
-                // あと、棋譜ウィンドウもこの手前に描画できないので
-                // ここも避ける必要がある。
-
-                var dest = PieceLocation(to , reverse);
-                if (dest.Y >= board_img_size.Height * 0.8) // 画面の下らへんである..
-                    dest += new Size(-130 + 95 / 2, -200);
-                else
-                    dest += new Size(-103 + 95 / 2, +100);
-
-                if (dest.X < board_location.X)
-                    dest += new Size(150, 0);
-
-                state.promote_dialog_location = dest;
 
                 // toの升以外は暗くする。
                 state.picked_piece_legalmovesto = new Bitboard((Square)to);
@@ -680,6 +664,55 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        /// <summary>
+        /// 移動先の升を与えて、成り・不成のダイアログを表示する位置を計算する。
+        /// </summary>
+        /// <param name="movedPieceColor"></param>
+        /// <param name="to"></param>
+        /// <param name="reverse"></param>
+        /// <param name="flip">反転させて表示するのかのフラグ。</param>
+        /// <returns></returns>
+        public Point CalcPromoteDialogLocation(GameScreenControlViewState state, bool reverse , out bool flip)
+        {
+            // toの近くに成り・不成のダイアログを描画してやる。
+            // これは移動先の升の少し下に出す。
+            // ただし、1段目であると画面外に行ってしまうので
+            // 1,2段目であれば上に変位させる必要がある。
+            // あと、棋譜ウィンドウもこの手前に描画できないので
+            // ここも避ける必要がある。
+
+            var dest = PieceLocation(state.picked_to , reverse);
+
+            // このダイアログを反転表示するのか
+            var config = TheApp.app.Config;
+            flip = config.FlipWhitePromoteDialog == 1 &&
+                state.moved_piece_color == (!reverse ? SColor.WHITE : SColor.BLACK);
+            if (flip)
+            {
+                // 移動先の升より少し上の座標に
+                if (dest.Y <= board_img_size.Height * 0.2) // 画面の上らへんである..
+                    dest += new Size(-130 + 95 / 2, +100);
+                else
+                    dest += new Size(-103 + 95 / 2, -200);
+            }
+            else
+            {
+                // 移動先の升より少し下の座標に
+                if (dest.Y >= board_img_size.Height * 0.8) // 画面の下らへんである..
+                    dest += new Size(-130 + 95 / 2, -200);
+                else
+                    dest += new Size(-103 + 95 / 2, +100);
+            }
+
+            if (dest.X < board_location.X)
+                dest += new Size(150, 0);
+
+            // flip表示のときは起点が異なるのでこのダイアログサイズ分だけずらして描画する必要がある。
+            if (flip)
+                dest += promote_dialog_size;
+
+            return dest;
+        }
 
         /// <summary>
         /// 駒の移動 盤面編集
@@ -1188,8 +1221,10 @@ namespace MyShogi.View.Win2D
             {
                 // 与えられたpointがどこに属するか判定する。
                 // まず逆affine変換して、viewの(DrawSpriteなどで使っている)座標系にする
-                var zero = state.promote_dialog_location; // ここを原点とする
-                pt = new Point(pt.X - zero.X, pt.Y - zero.Y);
+                var reverse = gameServer.BoardReverse;
+                bool flip;
+                var zero = CalcPromoteDialogLocation(state , reverse , out flip); // ここを原点とする
+                pt = !flip ? new Point(pt.X - zero.X, pt.Y - zero.Y) : new Point(zero.X - pt.X , zero.Y - pt.Y);
                 var selection = SPRITE.IsHoverPromoteDialog(pt);
 
                 // 前回までと違う場所が選択されたのでselectionの値を更新して、画面の描画をしなおす。

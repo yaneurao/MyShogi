@@ -2,6 +2,7 @@
 using System.Drawing;
 using MyShogi.Model.Resource.Images;
 using MyShogi.Model.Shogi.Core;
+using SColor = MyShogi.Model.Shogi.Core.Color;
 
 namespace MyShogi.View.Win2D
 {
@@ -48,6 +49,11 @@ namespace MyShogi.View.Win2D
         public SquareHand picked_to;
 
         /// <summary>
+        /// picked_fromにある駒の色。
+        /// </summary>
+        public SColor moved_piece_color;
+
+        /// <summary>
         /// picked_fromとpicked_toをリセットして、
         /// stateをNormalに戻す。
         /// picked_piece_legalmovestoをZeroBB()にする。
@@ -65,11 +71,6 @@ namespace MyShogi.View.Win2D
         /// PromoteDialogのときは、picked_toのみ1になっている。
         /// </summary>
         public Bitboard picked_piece_legalmovesto;
-
-        /// <summary>
-        /// state == PromoteDialogのときにそれを描画している座標(affine変換前)
-        /// </summary>
-        public Point promote_dialog_location;
 
         /// <summary>
         /// state == PromoteDialogのときにダイアログを描画している座標

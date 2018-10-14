@@ -73,7 +73,11 @@ namespace MyShogi.View.Win2D.Setting
 
             // -- 「操作」のタブ
 
+            // マウスドラッグを許容するか
             richSelector19.Bind(config, "EnableMouseDrag");
+
+            // 相手側の成り・不成のダイアログを反転させるか。
+            richSelector24.Bind(config, "FlipWhitePromoteDialog");
 
             // -- 「手番」のタブ
 
