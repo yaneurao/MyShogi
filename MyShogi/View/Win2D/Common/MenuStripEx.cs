@@ -13,7 +13,7 @@ namespace MyShogi.View.Win2D
         /// このToolStripのクリックされたときの動作。
         /// 上の4つの定数から選ぶ。MA_NOACTIVATEがこのToolStripExのデフォルト。
         /// </summary>
-        public ClickActionEnum ClickAction { get; set; } = ClickActionEnum.MA_NOACTIVATE;
+        public ClickActionEnum ClickAction { get; set; } = ClickActionEnum.MA_ACTIVATE;
 
         protected const int WM_MOUSEACTIVATE = 0x0021;
 

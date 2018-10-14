@@ -111,6 +111,10 @@ namespace MyShogi.View.Win2D
             var newMouseOverItem = this.GetItemAt(e.Location);
             if (newMouseOverItem != null)
                 ToolTip.Hide(this);
+
+            // いくらなんでも、どこかがクリックされた以上、フォーカスの移動はしたほうが良いような…。
+            // ClickActionをMA_ACTIVATEに変更してもボタンがないところだと反応しない。ここで何とかする。
+            this.Focus();
         }
 
         protected override void OnMouseLeave(EventArgs e)
