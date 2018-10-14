@@ -1213,15 +1213,14 @@ namespace MyShogi.View.Win2D
             // 素材がhover状態の表示になるので、その変化を反映しなくてはならない。
 
             var state = viewState;
-
             var pt = InverseAffine(p);
+            var reverse = gameServer.BoardReverse;
 
             // 成り・不成のダイアログを出している
             if (state.state == GameScreenControlViewStateEnum.PromoteDialog)
             {
                 // 与えられたpointがどこに属するか判定する。
                 // まず逆affine変換して、viewの(DrawSpriteなどで使っている)座標系にする
-                var reverse = gameServer.BoardReverse;
                 bool flip;
                 var zero = CalcPromoteDialogLocation(state , reverse , out flip); // ここを原点とする
                 pt = !flip ? new Point(pt.X - zero.X, pt.Y - zero.Y) : new Point(zero.X - pt.X , zero.Y - pt.Y);
@@ -1237,6 +1236,7 @@ namespace MyShogi.View.Win2D
             } else {
                 // 成り・不成のダイアログを出していないので、この座標を保存しておく。
                 MouseClientLocation = pt;
+                MouseClientLocationReverse = reverse; // この保存されたときにreverseであったかも併せて保存しておく。
 
                 if (state.state == GameScreenControlViewStateEnum.PiecePickedUp && TheApp.app.Config.PickedMoveDisplayStyle == 1)
                 {

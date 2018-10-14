@@ -104,6 +104,24 @@ namespace MyShogi.View.Win2D
         /// マウスカーソルのある位置(DrawSpriteなどで指定する座標系において)
         /// 駒を持ち上げた時用
         /// </summary>
-        private Point MouseClientLocation;
+        private Point MouseClientLocation
+        {
+            get
+            {
+                // MouseClientLocationをcaptureしたときから、盤面反転がなされたなら
+                // 画面の真ん中を中心として180度回転させた座標を返す。
+                return MouseClientLocationReverse == gameServer.BoardReverse ?
+                    mouseClientLocation :
+                    new Point(board_img_size.Width - mouseClientLocation.X , board_img_size.Height - mouseClientLocation.Y);
+            }
+            set { mouseClientLocation = value; }
+        }
+        private Point mouseClientLocation;
+
+        /// <summary>
+        /// MouseClientLocationに座標を保存したときのgameServer.BoardReverseの値
+        /// (その後、BoardReverseが変化したら、そこに移動させなければならないので…)
+        /// </summary>
+        private bool MouseClientLocationReverse;
     }
 }
