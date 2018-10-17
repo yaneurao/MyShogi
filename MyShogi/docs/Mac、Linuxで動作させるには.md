@@ -1,22 +1,28 @@
 ﻿
 # Mac、Linuxで動作させるには？
 
-- 参考記事
+
+- MyShogi V1.31ではコードの修正なしにMonoでコンパイルでき、Mac/Linuxで動作するはずです。
+
+
+- 参考記事(MyShogiの少し古いバージョンの話なので参考程度にどうぞ)
   - MyShogiをMac環境で動かす
     - jnoryさんのfork : https://github.com/jnory/MyShogi
     - AI将棋ソフト『MyShogi』をMacBookProでビルド＆遊んでみた : http://amado.hatenablog.com/entry/20180927/1537975944
   - MyShogiをLinux環境で動かす
     - やねうら王MyShogiをLinuxでビルドしてみた : http://hennohito.cocolog-nifty.com/blog/2018/06/myshogilinux-69.html
 
-  参考)
-    https://twitter.com/arrow_elpis/status/1044909606697283585
-     msbuildはmono入れたら入ってきますよ。あと、MyShogiをビルドするには MyShogiディレクトリ内で
-    "nuget install Microsoft.Net.Compilers" を実行してmonoではないコンパイラを落としてくる必要があります。
 
 
 ## 将棋神やねうら王をMacで
 
+
 - Monoのコンパイラが動くようにする。(上の「AI将棋ソフト『MyShogi』をMacBookProでビルド＆遊んでみた」を参考に)
+
+  参考)
+    https://twitter.com/arrow_elpis/status/1044909606697283585
+     msbuildはmono入れたら入ってきますよ。あと、MyShogiをビルドするには MyShogiディレクトリ内で
+    "nuget install Microsoft.Net.Compilers" を実行してmonoではないコンパイラを落としてくる必要があります。
 
 - git clone
   > git clone https://github.com/yaneurao/MyShogi.git
@@ -38,8 +44,6 @@
 
 ## 将棋神やねうら王をLinuxで
 
-// 機種依存コードを移植してないと動きません。
-//  → MyShogi.Model.Dependent.Mono/MonoAPI.csにLinux用のコードを書き足してください。
 
 - ビルド方法
   > msbuild MyShogi.sln /p:Configuration=LINUX
@@ -52,4 +56,81 @@
 
 ## 画像集について
 
+
 - 画像素材は『将棋神やねうら王』のインストール先フォルダからコピーしてきてください。(そのうち整理して公開する予定です)
+
+
+## 思考エンジンについて
+
+
+- 『将棋神やねうら王』の各思考エンジンをMac/Linux上でコンパイルする必要があります。
+  (Windows向けの実行ファイルをそのまま動かすことは出来ません)
+
+  - 『tanuki-2018』 → NNUE型
+  - 『tanuki- SDT5』,『Qhapaq 2018』『読み太 2018』→ KPPT型
+  - 『やねうら王 2018』→ KKPT型
+  - 『tanuki-詰将棋』→ MATE_ENGINE
+  の4種類あります。
+
+### 思考エンジンのコンパイル手順
+
+- やねうら王のmakefileを用いてclangでコンパイルします。
+
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+
+    YaneuraOu-by-gcc.exeというファイルが出来ますので、これをMyShogi.exe配下の以下のところにコピーします。
+      engine/tanuki2018/YaneuraOu2018NNUE_avx2.exe
+
+    以下、各CPUのファイルをビルドする例です。
+
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_avx2.exe
+
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    mingw32-make -j8 sse42 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_sse42.exe
+
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    mingw32-make -j8 sse41 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_sse41.exe
+
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    mingw32-make -j8 sse2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_sse2.exe
+
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    mingw32-make -j8 COMPILER=clang++ tournament YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_tournament.exe
+
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    mingw32-make -j8 evallearn COMPILER=g++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_learn_avx2.exe
+
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    mingw32-make -j8 evallearn-sse42 COMPILER=g++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_learn_sse42.exe
+
+    // 32bit環境向け
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    mingw32-make -j8 nosse COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_nosse.exe
+
+    // KPPT型、AVX2用にコンパイルする例
+  
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPPT
+    mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPPT
+    cp YaneuraOu-by-gcc.exe XXX/engine/yomita2018/YaneuraOu2018KPPT_avx2.exe
+
+    // KKPT型、AVX2用にコンパイルする例
+
+    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPP_KKPT
+    mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPP_KKPT
+    cp YaneuraOu-by-gcc.exe XXX/engine/yaneuraou2018/Yaneuraou2018_kpp_kkpt_avx2.exe
+
+    // tanuki-詰将棋エンジンをAVX2用にコンパイルする例
+
+    mingw32-make clean YANEURAOU_EDITION=MATE_ENGINE
+    mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=MATE_ENGINE
+    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki_mate/2018-Otafuku/tanuki_mate_avx2.exe

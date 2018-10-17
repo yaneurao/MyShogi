@@ -158,7 +158,7 @@ MyShogiは、オープンソースの将棋ソフト用GUIです。
 	- 多言語対応
 
 - 移植
-	- Mac/Linux対応。ニーズ、作業量を検討した上で。
+	- Mac/Linux対応。→ [2018/10/17] かなり動くところまで来ました。
 	- スマホ版(iOS/Android)
 	- ブラウザ版 , ブラウザ版によるオンライン対局
 
@@ -216,11 +216,14 @@ MyShogiはWindows向けに開発されていますが、機種依存するコー
 - GUIの開発を協力してくれたMizarさん
 - レーティング計測にご協力いただいたuuunuuunさん
 - やねうら王に貢献してくださっている方々
+- やねうら王のブログのコメント欄で要望などを教えていただいた皆さん
 - Stockfishの開発チーム
 - βテスターでご協力いただいた皆さん
   - うさ親さん , masaさん , kumaさん , 48さん , かず@なのはさん , tanuki-さん , Wandre-sakさん , tibigameさん
   - まふさん , suimonさん , uuunuuunさん ,  田中誠さん
-  - ぐららるさん , yoiyoiさん , 和左積 商さん , Backgammonさん , tkponさん
+  - ぐららるさん , yoiyoiさん , 和差積 商さん , Backgammonさん , tkponさん
+- Mac/Linux移植協力
+  - jnoryさん , ao-o10yanさん
 
 # ライセンス
 
