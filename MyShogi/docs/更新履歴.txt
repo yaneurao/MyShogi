@@ -3,6 +3,9 @@
 ■　2018/10/17
 
 
+- LinuxのgetProcessCoreで落ちるの修正。
+
+
 - LinuxのGetCurrentCpu()などを ao-o10yanさんのプルリクを参考に修正。
   - https://github.com/yaneurao/MyShogi/pull/61
   - https://github.com/ao-o10yan/MyShogi/commit/cd5513fc6efa5609a312134a2d6ac73eda7b010b

@@ -67,7 +67,10 @@ namespace MyShogi.Model.Dependency
 
             var result = process.StandardOutput.ReadToEnd();
             result = result.Trim();
+#if MACOS
+            // Linuxだとこれ不要
             result = result.Substring(14);
+#endif
 
             int processor_cores;
             var success = int.TryParse(result, out processor_cores);
