@@ -11,7 +11,9 @@ namespace MyShogi.View.Win2D.Setting
 
             InitViewModel();
 
-            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
+            // フォントの変更。即時反映
+            var fontSetter = new FontSetter(this, "SettingDialog");
+            Disposed += (sender,args) => fontSetter.Dispose();
         }
 
         private void InitViewModel()
@@ -117,16 +119,16 @@ namespace MyShogi.View.Win2D.Setting
             // -- 「フォント」のタブ
 
             var font = TheApp.app.Config.FontManager;
-            fontSelectionConrol1.Bind(font.MenuStrip);
-            fontSelectionConrol2.Bind(font.MainToolStrip);
-            fontSelectionConrol3.Bind(font.SubToolStrip);
-            fontSelectionConrol4.Bind(font.MainWindow);
-            fontSelectionConrol5.Bind(font.SettingDialog);
-            fontSelectionConrol6.Bind(font.MessageDialog);
-            fontSelectionConrol7.Bind(font.KifuWindow);
-            fontSelectionConrol8.Bind(font.ConsiderationWindow);
-            fontSelectionConrol9.Bind(font.ToolTip);
-            fontSelectionConrol10.Bind(font.DebugWindow);
+            fontSelectionConrol1.Bind(font.MenuStrip            , "MenuStrip");
+            fontSelectionConrol2.Bind(font.MainToolStrip        , "MainToolStrip");
+            fontSelectionConrol3.Bind(font.SubToolStrip         , "SubToolStrip");
+            fontSelectionConrol4.Bind(font.MainWindow           , "MainWindow");
+            fontSelectionConrol5.Bind(font.SettingDialog        , "SettingDialog");
+            fontSelectionConrol6.Bind(font.MessageDialog        , "MessageDialog");
+            fontSelectionConrol7.Bind(font.KifuWindow           , "KifuWindow");
+            fontSelectionConrol8.Bind(font.ConsiderationWindow  , "ConsiderationWindow");
+            fontSelectionConrol9.Bind(font.ToolTip              , "ToolTip");
+            fontSelectionConrol10.Bind(font.DebugWindow         , "DebugWindow");
 
         }
 

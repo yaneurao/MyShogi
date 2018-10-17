@@ -1,5 +1,7 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
+using MyShogi.App;
 using MyShogi.Model.Common.Tool;
 
 namespace MyShogi.View.Win2D
@@ -32,10 +34,15 @@ namespace MyShogi.View.Win2D
     {
         /// <summary>
         /// control.FontをfontDataのFontに置換する。
+        /// 
+        /// control == nullなら何もせず帰る。(ことを保証する)
         /// </summary>
         /// <param name="control"></param>
         public static void ReplaceFont(Control control , FontData fontData)
         {
+            if (control == null)
+                return;
+
             // まず、Control本体のフォントだけ置換する。
             var newFontSize = fontData.FontSize <= 0 ? 9 : fontData.FontSize;
             var newFont = fontData.CreateFont();
@@ -79,6 +86,47 @@ namespace MyShogi.View.Win2D
                 }
             }
         }
+    }
 
+    /// <summary>
+    /// フォントに設定する補助をするクラス
+    /// </summary>
+    public class FontSetter : IDisposable
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fontDataName_">FontManager上の変数名</param>
+        public FontSetter(Control control_ , string fontDataName_)
+        {
+            control = control_;
+            fontDataName = fontDataName_;
+
+            var fm = TheApp.app.Config.FontManager;
+            fm.AddPropertyChangedHandler("FontChanged",FontDataChanged);
+            fm.RaisePropertyChanged("FontChanged",fontDataName);
+        }
+
+        public void Dispose()
+        {
+            TheApp.app.Config.FontManager.RemovePropertyChangedHandler("FontChanged", FontDataChanged);
+        }
+
+        /// <summary>
+        /// FontManager上の変数名
+        /// </summary>
+        private string fontDataName;
+        /// <summary>
+        /// フォントを設定する対象
+        /// </summary>
+        private Control control;
+
+        private void FontDataChanged(Model.Common.ObjectModel.PropertyChangedEventArgs args)
+        {
+            var fm = TheApp.app.Config.FontManager;
+            var s = (string)args.value;
+            if (s == fontDataName)
+                FontUtility.ReplaceFont(control, fm.GetValue<FontData>(s));
+        }
     }
 }

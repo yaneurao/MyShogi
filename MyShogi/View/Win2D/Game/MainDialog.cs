@@ -26,7 +26,25 @@ namespace MyShogi.View.Win2D
             InitializeComponent();
 
             // ToolStripのフォントを設定しなおす。
-            FontUtility.ReplaceFont(toolStrip1 , TheApp.app.Config.FontManager.MainToolStrip);
+            var fm = TheApp.app.Config.FontManager;
+            FontUtility.ReplaceFont(toolStrip1 , fm.MainToolStrip);
+            // フォントの変更は即時反映にする。
+            // メインウインドウが解体されるときは終了する時だから、このハンドラのRemoveはしてない。
+            fm.AddPropertyChangedHandler("FontChanged", (args) =>
+            {
+                var s = (string)args.value;
+                if (s == "MainToolStrip")
+                    FontUtility.ReplaceFont(toolStrip1, fm.MainToolStrip);
+
+                // メニューのフォント
+                else if (s == "MenuStrip")
+                    FontUtility.ReplaceFont(old_menu, fm.MenuStrip);
+
+                // メインウインドウは、再描画をしてフォント変更を反映させる。
+                else if (s == "MainWindow")
+                    gameScreenControl1?.ForceRedraw();
+            });
+
         }
 
         #region ViewModel

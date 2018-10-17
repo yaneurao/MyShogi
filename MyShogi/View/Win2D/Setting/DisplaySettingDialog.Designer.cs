@@ -48,6 +48,7 @@
             this.richSelector10 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector9 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.richSelector24 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector19 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.richSelector14 = new MyShogi.View.Win2D.Setting.RichSelector();
@@ -78,7 +79,6 @@
             this.fontSelectionConrol3 = new MyShogi.View.Win2D.Setting.FontSelectionConrol();
             this.fontSelectionConrol2 = new MyShogi.View.Win2D.Setting.FontSelectionConrol();
             this.fontSelectionConrol1 = new MyShogi.View.Win2D.Setting.FontSelectionConrol();
-            this.richSelector24 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -352,6 +352,17 @@
             this.tabPage5.Text = "操作";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
+            // richSelector24
+            // 
+            this.richSelector24.GroupBoxTitle = "後手側(相手側)の成り・不成ダイアログを上下反転させるか";
+            this.richSelector24.Location = new System.Drawing.Point(6, 116);
+            this.richSelector24.Name = "richSelector24";
+            this.richSelector24.SelectionTexts = new string[] {
+        "しない,promote_dialog_style_0.png,上下反転しません。",
+        "する,promote_dialog_style_1.png,後手(相手側)は上下反転します。"};
+            this.richSelector24.Size = new System.Drawing.Size(772, 110);
+            this.richSelector24.TabIndex = 4;
+            // 
             // richSelector19
             // 
             this.richSelector19.GroupBoxTitle = "駒をマウスのドラッグでも移動できるようにするか";
@@ -578,9 +589,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 10);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(258, 12);
+            this.label1.Size = new System.Drawing.Size(107, 12);
             this.label1.TabIndex = 1;
-            this.label1.Text = "フォントを変更します。変更は再起動後に反映します。";
+            this.label1.Text = "フォントを変更します。";
             // 
             // fontSelectionConrol10
             // 
@@ -671,17 +682,6 @@
             this.fontSelectionConrol1.Name = "fontSelectionConrol1";
             this.fontSelectionConrol1.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol1.TabIndex = 0;
-            // 
-            // richSelector24
-            // 
-            this.richSelector24.GroupBoxTitle = "後手側(相手側)の成り・不成ダイアログを上下反転させるか";
-            this.richSelector24.Location = new System.Drawing.Point(6, 116);
-            this.richSelector24.Name = "richSelector24";
-            this.richSelector24.SelectionTexts = new string[] {
-        "しない,promote_dialog_style_0.png,上下反転しません。",
-        "する,promote_dialog_style_1.png,後手(相手側)は上下反転します。"};
-            this.richSelector24.Size = new System.Drawing.Size(772, 110);
-            this.richSelector24.TabIndex = 4;
             // 
             // DisplaySettingDialog
             // 

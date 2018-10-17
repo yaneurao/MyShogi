@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using MyShogi.App;
@@ -40,7 +39,29 @@ namespace MyShogi.View.Win2D
             // デフォルトで、このクラスは設定されているフォントにしておく。
             Font = TheApp.app.Config.FontManager.ToolTip.CreateFont();
 
+            // フォントの変更は即時反映に。
+            TheApp.app.Config.FontManager.AddPropertyChangedHandler("FontChanged", FontChanged);
+
             //Debug.Assert(Font != null);
+        }
+
+        public new void Dispose()
+        {
+            base.Dispose();
+
+            // 追加したハンドラ、削除しとかないと。
+            TheApp.app.Config.FontManager.RemovePropertyChangedHandler("FontChanged", FontChanged);
+        }
+
+        /// <summary>
+        /// フォント変更を即時反映にするためのハンドラ
+        /// </summary>
+        /// <param name="args"></param>
+        private void FontChanged(Model.Common.ObjectModel.PropertyChangedEventArgs args)
+        {
+            var s = (string)args.value;
+            if (s == "ToolTip")
+                Font = TheApp.app.Config.FontManager.ToolTip.CreateFont();
         }
 
         private void OnDraw(object sender, DrawToolTipEventArgs e)

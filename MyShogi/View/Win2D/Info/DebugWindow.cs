@@ -39,7 +39,9 @@ namespace MyShogi.View.Win2D
             // すぐに入力出来るようにフィルター用のテキストボックスにフォーカスを移動させておく。
             ActiveControl = textBox1;
 
-            FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.DebugWindow);
+            // フォントの変更。即時反映
+            var fontSetter = new FontSetter(this, "DebugWindow");
+            Disposed += (sender, args) => fontSetter.Dispose();
         }
 
         /// <summary>

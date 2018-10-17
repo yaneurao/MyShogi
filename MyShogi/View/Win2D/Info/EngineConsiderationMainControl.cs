@@ -499,9 +499,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void InitFont()
         {
-            var f = TheApp.app.Config.FontManager;
-            FontUtility.ReplaceFont(this            , f.ConsiderationWindow);
-            FontUtility.ReplaceFont(this.toolStrip1 , f.SubToolStrip);
+            // フォントの変更。即時反映
+            var fontSetter1 = new FontSetter(this, "ConsiderationWindow");
+            var fontSetter2 = new FontSetter(this.toolStrip1, "SubToolStrip");
+            Disposed += (sender, args) => { fontSetter1.Dispose(); fontSetter2.Dispose(); };
         }
 
         // -- test code
