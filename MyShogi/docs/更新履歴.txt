@@ -1,6 +1,24 @@
 ﻿
 
+■　2018/10/17
+
+
+- LinuxのGetCurrentCpu()などを ao-o10yanさんのプルリクを参考に修正。
+  - https://github.com/yaneurao/MyShogi/pull/61
+  - https://github.com/ao-o10yan/MyShogi/commit/cd5513fc6efa5609a312134a2d6ac73eda7b010b
+
+- LocalGameServer/structsをStructsと変更したのがGitHub上に反映していなかった件。
+  - git config core.ignorecase false
+
+
+
 ■　2018/10/15
+
+
+- V1.3.0リリース。
+  - eval : MyShogi201807260000Eval.zip
+  - 本体 : MyShogi201810150450V130.zip
+- "1.2.9"→"1.3.0" [2018/10/14]-[2018/10/15]
 
 
 - マウス追随モードで成り・不成のダイアログが出ているときに「転」ボタンを押すと180度回転させた升に移動させるように見える。

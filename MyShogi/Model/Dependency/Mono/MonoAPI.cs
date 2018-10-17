@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using MyShogi.Model.Common.Tool;
 
 // --- 単体で呼び出して使うAPI群
 
@@ -36,13 +37,20 @@ namespace MyShogi.Model.Dependency
         public static int GetProcessorCores()
         {
             // MacOSではsysctlを呼び出して物理コア数が取得できる模様。
-            // Linuxは未確認。
+            // Linuxでは、nprocを用いるる
 
-            var info = new System.Diagnostics.ProcessStartInfo
+#if MACOS
+            var FileName = "sysctl";
+            var Arguments = "hw.activecpu";
+#elif LINUX
+            var FileName = "nproc";
+            var Arguments = "--all";
+#endif
+
+            var info = new ProcessStartInfo
             {
-                FileName = "sysctl",
-                // WorkingDirectory = engineData.ExeWorkingDirectory,
-                Arguments = "hw.activecpu",
+                FileName = FileName,
+                Arguments = Arguments,
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardInput = false,
@@ -62,9 +70,13 @@ namespace MyShogi.Model.Dependency
             result = result.Substring(14);
 
             int processor_cores;
-            var success = Int32.TryParse(result, out processor_cores);
+            var success = int.TryParse(result, out processor_cores);
             if (!success)
+            {
+                // 失敗したのでログ上に出力しておく。
+                Log.Write(LogInfoType.SystemError, $"GetProcessorCores() , success = {success} , processor_cores = {processor_cores}");
                 processor_cores = 1;
+            }
 
             return processor_cores;
         }
@@ -75,10 +87,18 @@ namespace MyShogi.Model.Dependency
         /// <returns></returns>
         public static CpuType GetCurrentCpu()
         {
+#if MACOS
+            var FileName = "sysctl";
+            var Arguments = "machdep.cpu.features";
+#elif LINUX
+            var FileName = "grep";
+            var Arguments = "flags /proc/cpuinfo";
+#endif
+
             var info = new ProcessStartInfo
             {
-                FileName = "sysctl",
-                Arguments = "machdep.cpu.features",
+                FileName = FileName,
+                Arguments = Arguments,
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardInput = false,
@@ -86,40 +106,44 @@ namespace MyShogi.Model.Dependency
                 RedirectStandardError = false,
             };
 
-            var process = new Process
+            using (var process = new Process { StartInfo = info })
             {
-                StartInfo = info,
-            };
+                process.Start();
 
-            process.Start();
-
-            string result = process.StandardOutput.ReadToEnd();
-            result = result.Trim();
+                var result = process.StandardOutput.ReadToEnd();
+                result = result.Trim();
+#if MACOS
             result = result.Substring(22);
+#elif LINUX
+                // Linuxだともう少し長い文字列であり、小文字が混じる可能性がある。
+                result = result.ToUpper();
+#endif
 
-            CpuType c;
-            if (result.Contains("AVX512"))
-                c = CpuType.AVX512;
+                CpuType c;
+                if (result.Contains("AVX512"))
+                    c = CpuType.AVX512;
 
-            else if (result.Contains("AVX2"))
-                c = CpuType.AVX2;
+                else if (result.Contains("AVX2"))
+                    c = CpuType.AVX2;
 
-            else if (result.Contains("AVX1"))
-                c = CpuType.AVX;
+                else if (result.Contains("AVX1"))
+                    c = CpuType.AVX;
 
-            else if (result.Contains("SSE4.2"))
-                c = CpuType.SSE42;
+                else if (result.Contains("SSE4.2") /* macOS */ || result.Contains("SSE4_2") /* Linux */)
+                    c = CpuType.SSE42;
 
-            else if (result.Contains("SSE4.1"))
-                c = CpuType.SSE41;
+                else if (result.Contains("SSE4.1") /* macOS */ || result.Contains("SSE4_1") /* Linux */)
+                    c = CpuType.SSE41;
 
-            else if (result.Contains("SSE2"))
-                c = CpuType.SSE2;
+                else if (result.Contains("SSE2"))
+                    c = CpuType.SSE2;
 
-            else
-                c = CpuType.NO_SSE;
+                else
+                    c = CpuType.NO_SSE;
 
-            return c;
+                process.WaitForExit();
+                return c;
+            }
         }
 
         /// <summary>
@@ -128,10 +152,19 @@ namespace MyShogi.Model.Dependency
         /// <returns></returns>
         public static ulong GetFreePhysicalMemory()
         {
+
+#if MACOS
+			var FileName = "vm_stat";
+			var Arguments = "";
+#elif LINUX
+            var FileName = "vmstat";
+            var Arguments = "-s";
+#endif
+
             var info = new ProcessStartInfo
             {
-                FileName = "vm_stat",
-                Arguments = "",
+                FileName = FileName,
+                Arguments = Arguments,
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardInput = false,
@@ -139,34 +172,47 @@ namespace MyShogi.Model.Dependency
                 RedirectStandardError = false,
             };
 
-            var process = new Process
+            using (var process = new Process { StartInfo = info })
             {
-                StartInfo = info,
-            };
+                process.Start();
 
-            process.Start();
+                var result = process.StandardOutput.ReadToEnd();
+                var rows = result.Split('\n');
 
-            string result = process.StandardOutput.ReadToEnd();
-            string[] rows = result.Split('\n');
+                ulong freeMemory = 0;
+                // 始めの行はタイトルなので飛ばす
+                for (int i = 1; i < rows.Length; i++)
+                {
+                    var row = rows[i];
 
-            ulong freeMemory = 0;
-            // 始めの行はタイトルなので飛ばす
-            for(int i = 1; i < rows.Length; i++)
-            {
-                string row = rows[i];
-                string[] data = row.Split(':');
+#if MACOS
+                var data = row.Split(':');
                 if (data.Length != 2) continue;
 
-                string key = data[0].Trim();
-                string value = data[1].Trim();
+                var key = data[0].Trim();
+                var value = data[1].Trim();
                 // 空きメモリとカーネルが持っているキャッシュを合計する(必要になったら開放できるもの)
                 if (key == "Pages free" || key == "Pages purgeable" || key == "File-backed pages")
                 {
                     freeMemory += ulong.Parse(value.Replace(".", "")) * 4096ul;
                 }
-            }
+#elif LINUX
+                    var data = row.Split('K');
+                    if (data.Length != 2) continue;
 
-            return freeMemory / 1024ul;
+                    var key = data[1].Trim();
+                    var value = data[0].Trim();
+
+                    // 空きメモリとカーネルが持っているキャッシュを合計する(必要になったら開放できるもの)
+                    if (key == "inactive memory" || key == "free memory" || key == "buffer memory")
+                    {
+                        freeMemory += ulong.Parse(value.Replace(".", "")) * 4096ul;
+                    }
+#endif
+                }
+                process.WaitForExit();
+                return freeMemory / 1024ul;
+            }
         }
     }
 
