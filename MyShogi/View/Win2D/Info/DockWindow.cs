@@ -3,6 +3,9 @@ using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Tool;
+#if !MONO
+using System.Security.Permissions;
+#endif
 
 namespace MyShogi.View.Win2D
 {
@@ -182,5 +185,24 @@ namespace MyShogi.View.Win2D
             // メインウインドウのメニューに登録されているキーボードショートカットをハンドルする。
             TheApp.app.KeyShortcut.KeyDown(sender, e);
         }
+
+#if !MONO
+        // タイトルバーがダブルクリックされた時に最大化しない。
+        // cf.フォームを最大化、最小化できないようにする : https://dobon.net/vb/dotnet/form/preventmaximize.html
+        [SecurityPermission(SecurityAction.Demand , Flags = SecurityPermissionFlag.UnmanagedCode)]
+        protected override void WndProc(ref Message m)
+        {
+            const int WM_NCLBUTTONDBLCLK = 0xA3;
+
+            if (m.Msg == WM_NCLBUTTONDBLCLK)
+            {
+                //非クライアント領域がダブルクリックされた時
+                m.Result = IntPtr.Zero;
+                return;
+            }
+
+            base.WndProc(ref m);
+        }
+#endif
     }
 }

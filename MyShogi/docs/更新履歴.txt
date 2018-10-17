@@ -1,8 +1,15 @@
 ﻿
-// DockWindowなどの最大化防ぐべき。
 
 
 ■　2018/10/18
+
+
+- DockWindowなどの最大化防ぐべき。
+  - タイトルバーがダブルクリックされるのを防がないと…。
+  - cf. フォームを最大化、最小化できないようにする : https://dobon.net/vb/dotnet/form/preventmaximize.html
+  - Windows限定になってしまうが、まあ仕方がないな…。
+- 棋譜ウインドウ、ResizeのときなどにちらつくのでSuspendLayout～ResumeLayout追加。
+- Mac/Linux向けに、思考エンジン側のビルド手順、追記。改行修正。
 
 
 - Mac/Linux向けに、思考エンジン側のビルド手順、追記。

@@ -76,61 +76,62 @@
 
 - やねうら王のmakefileを用いてclangでコンパイルします。
 
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
 
     YaneuraOu-by-gcc.exeというファイルが出来ますので、これをMyShogi.exe配下の以下のところにコピーします。
       engine/tanuki2018/YaneuraOu2018NNUE_avx2.exe
 
     以下、各CPUのファイルをビルドする例です。
 
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_avx2.exe
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_avx2.exe
 
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    mingw32-make -j8 sse42 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_sse42.exe
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > mingw32-make -j8 sse42 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_sse42.exe
 
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    mingw32-make -j8 sse41 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_sse41.exe
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > mingw32-make -j8 sse41 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_sse41.exe
 
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    mingw32-make -j8 sse2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_sse2.exe
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > mingw32-make -j8 sse2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_sse2.exe
 
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    mingw32-make -j8 COMPILER=clang++ tournament YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_tournament.exe
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > mingw32-make -j8 COMPILER=clang++ tournament YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_tournament.exe
 
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    mingw32-make -j8 evallearn COMPILER=g++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_learn_avx2.exe
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > mingw32-make -j8 evallearn COMPILER=g++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_learn_avx2.exe
 
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    mingw32-make -j8 evallearn-sse42 COMPILER=g++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_learn_sse42.exe
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > mingw32-make -j8 evallearn-sse42 COMPILER=g++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_learn_sse42.exe
 
     // 32bit環境向け
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    mingw32-make -j8 nosse COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
-    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_nosse.exe
+
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > mingw32-make -j8 nosse COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_TNK_ENGINE
+    > cp YaneuraOu-by-gcc.exe XXX/engine/tanuki2018/YaneuraOu2018NNUE_nosse.exe
 
     // KPPT型、AVX2用にコンパイルする例
   
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPPT
-    mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPPT
-    cp YaneuraOu-by-gcc.exe XXX/engine/yomita2018/YaneuraOu2018KPPT_avx2.exe
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPPT
+    > mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPPT
+    > cp YaneuraOu-by-gcc.exe XXX/engine/yomita2018/YaneuraOu2018KPPT_avx2.exe
 
     // KKPT型、AVX2用にコンパイルする例
 
-    mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPP_KKPT
-    mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPP_KKPT
-    cp YaneuraOu-by-gcc.exe XXX/engine/yaneuraou2018/Yaneuraou2018_kpp_kkpt_avx2.exe
+    > mingw32-make clean YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPP_KKPT
+    > mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=YANEURAOU_2018_OTAFUKU_ENGINE_KPP_KKPT
+    > cp YaneuraOu-by-gcc.exe XXX/engine/yaneuraou2018/Yaneuraou2018_kpp_kkpt_avx2.exe
 
     // tanuki-詰将棋エンジンをAVX2用にコンパイルする例
 
-    mingw32-make clean YANEURAOU_EDITION=MATE_ENGINE
-    mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=MATE_ENGINE
-    cp YaneuraOu-by-gcc.exe XXX/engine/tanuki_mate/2018-Otafuku/tanuki_mate_avx2.exe
+    > mingw32-make clean YANEURAOU_EDITION=MATE_ENGINE
+    > mingw32-make -j8 avx2 COMPILER=clang++ YANEURAOU_EDITION=MATE_ENGINE
+    > cp YaneuraOu-by-gcc.exe XXX/engine/tanuki_mate/2018-Otafuku/tanuki_mate_avx2.exe

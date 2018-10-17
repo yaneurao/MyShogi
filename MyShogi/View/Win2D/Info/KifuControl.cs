@@ -221,9 +221,12 @@ namespace MyShogi.View.Win2D
         /// <param name="args"></param>
         private void InTheGameChanged(PropertyChangedEventArgs args)
         {
-            UpdateButtonLocation();
-            UpdateButtonState();
-            UpdateButtonState2();
+            using (var s = new SuspendLayoutBlock(this))
+            {
+                UpdateButtonLocation();
+                UpdateButtonState();
+                UpdateButtonState2();
+            }
         }
 
         /// <summary>
@@ -242,56 +245,62 @@ namespace MyShogi.View.Win2D
             if (Width == 0 || Height == 0 || listBox1.ClientSize.Width == 0)
                 return;
 
-            // リサイズしたので連動してボタンの位置が変わる。
-            UpdateButtonLocation();
+            using (var s = new SuspendLayoutBlock(this))
+            {
 
-            // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
-            var w_rate = 1.0f + TheApp.app.Config.KifuWindowWidthType * 0.25f; // 横幅をどれだけ引き伸ばすのか
-            var font_size = (float)(19.5 * scale * w_rate);
-            var font_size2 = (float)(16 * scale); // button用のフォントサイズ
-            /*
-                // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ
-                // fontを小さく表示してやる。
-                font_size *= (float)listBox1.ClientSize.Width / this.Width;
+                // リサイズしたので連動してボタンの位置が変わる。
+                UpdateButtonLocation();
 
-                Console.WriteLine(listBox1.ClientSize.Width + "/" + this.Width);
-            */
+                // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
+                var w_rate = 1.0f + TheApp.app.Config.KifuWindowWidthType * 0.25f; // 横幅をどれだけ引き伸ばすのか
+                var font_size = (float)(19.5 * scale * w_rate);
+                var font_size2 = (float)(16 * scale);
+                // button用のフォントサイズ
 
-            // スクロールバーが出たために文字の横幅が収まらない可能性を考慮してItems.Add()ごとに
-            // OnResize()を都度呼び出してやりたい…が、スクロールバーが出た結果、文字を縮小して、
-            // その結果、スクロールバーが消えるという現象が…。
+                /*
+                    // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ
+                    // fontを小さく表示してやる。
+                    font_size *= (float)listBox1.ClientSize.Width / this.Width;
 
-            // →　結論的には、スクロールバーの有無によって文字フォントサイズを変更するのは
-            // 筋が良くないということに。最初からスクロールバーの分だけ控えて描画すべき。
+                    Console.WriteLine(listBox1.ClientSize.Width + "/" + this.Width);
+                */
 
-            // ところがスクロールバーの横幅不明。実測34だったが、環境によって異なる可能性が..
-            // AutoScaleの値とか反映されてると困るのだが…。
-            font_size *= ((float)Width - 34 /* scroll bar */) / Width;
-            font_size2 *= ((float)Width - 34 /* scroll bar */) / Width;
+                // スクロールバーが出たために文字の横幅が収まらない可能性を考慮してItems.Add()ごとに
+                // OnResize()を都度呼び出してやりたい…が、スクロールバーが出た結果、文字を縮小して、
+                // その結果、スクロールバーが消えるという現象が…。
 
-            // 幅を縮めるとfont_sizeが負になるが、負のサイズのFontは生成できないので1にしておく。
-            if (font_size <= 0)
-                font_size = 1;
-            if (font_size2 <= 0)
-                font_size2 = 1;
+                // →　結論的には、スクロールバーの有無によって文字フォントサイズを変更するのは
+                // 筋が良くないということに。最初からスクロールバーの分だけ控えて描画すべき。
 
-            // 前回のフォントサイズと異なるときだけ再設定する
-            //if (last_font_size == font_size)
-            //    return;
+                // ところがスクロールバーの横幅不明。実測34だったが、環境によって異なる可能性が..
+                // AutoScaleの値とか反映されてると困るのだが…。
+                font_size *= ((float)Width - 34 /* scroll bar */) / Width;
+                font_size2 *= ((float)Width - 34 /* scroll bar */) / Width;
 
-            last_font_size = font_size;
+                // 幅を縮めるとfont_sizeが負になるが、負のサイズのFontは生成できないので1にしておく。
+                if (font_size <= 0)
+                    font_size = 1;
+                if (font_size2 <= 0)
+                    font_size2 = 1;
 
-            var config = TheApp.app.Config;
-            var fontname = config.FontManager.KifuWindow.FontName;
-            var fontstyle = config.FontManager.KifuWindow.FontStyle;
-            var font = new Font(fontname , font_size, fontstyle , GraphicsUnit.Pixel);
-            listBox1.Font = font;
+                // 前回のフォントサイズと異なるときだけ再設定する
+                //if (last_font_size == font_size)
+                //    return;
 
-            // buttonのFontSizeあまり変更すると高さが足りなくなるので横幅の比率変更は反映させない。
-            var font2 = new Font(fontname , font_size2, fontstyle , GraphicsUnit.Pixel);
-            var buttons = new[] { button1, button2, button3, button4, button5, button6 };
-            foreach(var b in buttons)
-                b.Font = font2;
+                last_font_size = font_size;
+
+                var config = TheApp.app.Config;
+                var fontname = config.FontManager.KifuWindow.FontName;
+                var fontstyle = config.FontManager.KifuWindow.FontStyle;
+                var font = new Font(fontname, font_size, fontstyle, GraphicsUnit.Pixel);
+                listBox1.Font = font;
+
+                // buttonのFontSizeあまり変更すると高さが足りなくなるので横幅の比率変更は反映させない。
+                var font2 = new Font(fontname, font_size2, fontstyle, GraphicsUnit.Pixel);
+                var buttons = new[] { button1, button2, button3, button4, button5, button6 };
+                foreach (var b in buttons)
+                    b.Font = font2;
+            }
         }
 
         private float last_font_size = 0;
@@ -591,17 +600,20 @@ namespace MyShogi.View.Win2D
         {
             if (ViewModel.DockState != DockState.InTheMainWindow)
             {
-                var f = TheApp.app.Config.FontManager.KifuWindow;
+                using (var s = new SuspendLayoutBlock(this))
+                {
+                    var f = TheApp.app.Config.FontManager.KifuWindow;
 
-                var font = new Font(f.FontName , f.FontSize , f.FontStyle , GraphicsUnit.Point);
-                listBox1.Font = font;
+                    var font = new Font(f.FontName, f.FontSize, f.FontStyle, GraphicsUnit.Point);
+                    listBox1.Font = font;
 
-                var buttons = new[] { button1, button2, button3, button4, button5, button6 };
-                var font2 = new Font(f.FontName, f.FontSize, f.FontStyle, GraphicsUnit.Point);
-                foreach (var button in buttons)
-                    button.Font = font2;
+                    var buttons = new[] { button1, button2, button3, button4, button5, button6 };
+                    var font2 = new Font(f.FontName, f.FontSize, f.FontStyle, GraphicsUnit.Point);
+                    foreach (var button in buttons)
+                        button.Font = font2;
 
-                UpdateButtonLocation();
+                    UpdateButtonLocation();
+                }
             }
         }
 

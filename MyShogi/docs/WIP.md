@@ -109,6 +109,8 @@
 
 
 - "1.3.0"→"1.3.1" [2018/10/15]-[2018/10/XX]
+  - DockWindow(フロートさせているWindow)、タイトルバーのダブルクリックで最大化されるの抑制。
+  - 棋譜ウインドウ、ResizeのときなどにちらつくのでSuspendLayout～ResumeLayout追加。
   - LinuxのGetCurrentCpu()などを ao-o10yanさんのプルリクを参考に修正。
 
 
