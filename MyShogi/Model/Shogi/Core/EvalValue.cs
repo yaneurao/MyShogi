@@ -123,30 +123,34 @@ namespace MyShogi.Model.Shogi.Core
         /// 形勢判断の文字列に変換する
         /// </summary>
         /// <param name="value"></param>
+        /// <param name="handicapped">駒落ちであるか</param>
         /// <returns></returns>
-        public static string ToEvalJudgement(this EvalValue value)
+        public static string ToEvalJudgement(this EvalValue value , bool handicapped)
         {
+            var black = handicapped ? "下手" : "先手";
+            var white = handicapped ? "上手" : "後手";
+
             if (value.IsSpecialValue())
             {
                 if (value > 0)
-                    return "先手勝ち";
+                    return $"{black}勝ち";
                 else
-                    return "後手勝ち";
+                    return $"{white}勝ち";
             }
             else
             {
                 var v = (int)value;
                 if (v > 0)
                     return
-                        (v >= 2000) ? "先手勝勢" :
-                        (v >=  800) ? "先手優勢" :
-                        (v >=  300) ? "先手有利" :
+                        (v >= 2000) ? $"{black}勝勢" :
+                        (v >=  800) ? $"{black}優勢" :
+                        (v >=  300) ? $"{black}有利" :
                         "形勢互角";
                 else
                     return
-                        (v <= -2000) ? "後手勝勢" :
-                        (v <=  -800) ? "後手優勢" :
-                        (v <=  -300) ? "後手有利" :
+                        (v <= -2000) ? $"{white}勝勢" :
+                        (v <=  -800) ? $"{white}優勢" :
+                        (v <=  -300) ? $"{white}有利" :
                         "形勢互角";
             }
         }

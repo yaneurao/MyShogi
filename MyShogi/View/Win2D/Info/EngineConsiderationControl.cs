@@ -238,9 +238,10 @@ namespace MyShogi.View.Win2D
 
                 // 形勢判断の文字列を出力する。
                 var evalJudgement = TheApp.app.Config.DisplayEvalJudgement;
+                var handicapped = position.Handicapped;
                 var evalJudgementString = (evalJudgement == 0 || info.Eval == null) ? null :
-                    !isWhite ? info.Eval.Eval.ToEvalJudgement() : // 先手
-                    info.Eval.negate().Eval.ToEvalJudgement();    // 後手
+                    !isWhite ? info.Eval.Eval.ToEvalJudgement(handicapped) : // 先手
+                    info.Eval.negate().Eval.ToEvalJudgement(handicapped);    // 後手
                 
                 if (isWhite && TheApp.app.Config.NegateEvalWhenWhite)
                 {

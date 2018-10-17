@@ -113,6 +113,7 @@
     <Compile Include="View\Win2D\Common\MenuStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="View\Win2D\Common\SuspendLayoutBlock.cs" />
     <Compile Include="View\Win2D\Common\ToolStripEx.cs">
       <SubType>Component</SubType>
     </Compile>
