@@ -719,6 +719,12 @@ namespace MyShogi.App
         public DockManager KifuWindowDockManager = new DockManager();
 
         /// <summary>
+        /// 棋譜ウィンドウの各Columnの幅 将来的な拡張を考慮して6個用意しとく
+        /// </summary>
+        [DataMember]
+        public NotifyCollection<int> KifuColumnWidth { get; set; } = new NotifyCollection<int>(6);
+
+        /// <summary>
         /// 検討ウィンドウの各Columnの幅(先後共通)
         /// </summary>
         [DataMember]

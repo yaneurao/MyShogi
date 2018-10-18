@@ -238,7 +238,7 @@ namespace MyShogi.Model.Shogi.Kifu
         public void ResetKifuList()
         {
             KifuList = new List<KifuListRow>();
-            KifuList.Add(new KifuListRow("===", "開始局面", "==="));
+            KifuList.Add(new KifuListRow("===", "開始局面", "===" , "00:00:00"));
         }
 
         /// <summary>
@@ -1180,13 +1180,15 @@ namespace MyShogi.Model.Shogi.Kifu
                 else
                     time_string = $"{t.Days}日{t.Hours,2}時間{t.Minutes,2}分{t.Seconds,2}秒";
 
-                //var move_time = move_text.PadMidUnicode( time_string , 12 /*指し手=最大全角6文字=半角12文字*/ + 1 /* space */+ 7 /*時間文字列、1分00秒で半角7文字*/);
-
-                //var text = $"{indent}{plus}{move_text_game_ply, 3}.{move_time}";
-
                 var ply_text = $"{indent}{plus}{move_text_game_ply,3}";
 
-                var row = new KifuListRow(ply_text , move_text, time_string);
+                var total = TimeSpan.Zero;
+                // D2だと99時間までなのでそれを超える場合は、桁のある限り。
+                var total_consumption_time_string =
+                    total.TotalHours >= 100 ?   $"{(int)total.TotalHours}:{total.Minutes,2:D2}:{total.Seconds,2:D2}":
+                                                $"{(int)total.TotalHours,2:D2}:{total.Minutes,2:D2}:{total.Seconds,2:D2}";
+
+                var row = new KifuListRow(ply_text , move_text, time_string , total_consumption_time_string);
                 KifuList.Add(row);
                 RaisePropertyChanged("KifuListAdded", row /*末尾が変更になった。変更になった行を送る。*/);
 

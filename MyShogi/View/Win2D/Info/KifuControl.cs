@@ -287,27 +287,24 @@ namespace MyShogi.View.Win2D
             time_string.TextAlign = HorizontalAlignment.Right;
 
             var sum_time_string = new ColumnHeader();
-            sum_time_string.Text = "総時間";
-            sum_time_string.Width = 80; // これはのちにresizeされる
-            sum_time_string.TextAlign = HorizontalAlignment.Center;
+            sum_time_string.Text = " 総時間";
+            sum_time_string.Width = 0; // これはのちにresizeされる
+            sum_time_string.TextAlign = HorizontalAlignment.Left;
 
             var header = new[] { ply_string, move_string, time_string , sum_time_string };
             
             listView1.Columns.AddRange(header);
 
-            // TODO : あとで
-
             //listView1.AutoResizeColumns( ColumnHeaderAutoResizeStyle.ColumnContent);
-            // headerとcontentの文字長さを考慮して、横幅が自動調整されて水平スクロールバーで移動してくれるといいのだが、うまくいかない。よくわからない。
-#if false
-            foreach (var index in All.Int(5))
+
+            foreach (var index in All.Int(3))
             {
                 int w1 = listView1.Columns[index].Width;
-                int w2 = TheApp.app.Config.ConsiderationColumnWidth[index];
+                int w2 = TheApp.app.Config.KifuColumnWidth[index];
                 listView1.Columns[index].Width = w2 == 0 ? w1 : w2; // w2が初期化直後の値なら、採用しない。
-                                                                    // これだと幅を0にすると保存されなくなってしまうのか…。そうか…。保存するときに1にしておくべきなのか…。
+                // これだと幅を0にすると保存されなくなってしまうのか…。そうか…。保存するときに1にしておくべきなのか…。
             }
-#endif
+
         }
 
         // -- handlers
@@ -348,7 +345,7 @@ namespace MyShogi.View.Win2D
         /// <param name="row"></param>
         private ListViewItem KifuListRowToListItem(KifuListRow row)
         {
-            var list = new[] { row.PlyString, row.MoveString, row.ConsumeTime };
+            var list = new[] { row.PlyString, row.MoveString, $"{row.ConsumptionTime} " , $" {row.TotalConsumptionTime}" };
             return new ListViewItem( list );
         }
 
@@ -650,6 +647,7 @@ namespace MyShogi.View.Win2D
             //if (ViewModel.DockState != DockState.InTheMainWindow)
 
             UpdateButtonLocation();
+            UpdateListViewColumnWidth();
         }
 
         /// <summary>
@@ -698,6 +696,15 @@ namespace MyShogi.View.Win2D
 
         private void listView1_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
         {
+            var index = e.ColumnIndex;
+            if (!(0 <= index && index < 3))
+                return; // 範囲外？
+
+            // この設定、Globalに紐づけておく。
+            // 変更された値が0なら1として保存する。(0 は、初期化されてないときの値を意味するため)
+            var w = listView1.Columns[index].Width;
+            TheApp.app.Config.KifuColumnWidth[index] = w == 0 ? 1 : w;
+
             // 4列目(総消費時間)を残り幅いっぱいにする。
             UpdateListViewColumnWidth();
         }

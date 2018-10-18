@@ -9,6 +9,7 @@
   - MyShogiをMac環境で動かす
     - jnoryさんのfork : https://github.com/jnory/MyShogi
     - AI将棋ソフト『MyShogi』をMacBookProでビルド＆遊んでみた : http://amado.hatenablog.com/entry/20180927/1537975944
+    - Ubuntuで『将棋神　やねうら王』（無料版） : http://fxst24.blog.fc2.com/blog-entry-545.html
   - MyShogiをLinux環境で動かす
     - やねうら王MyShogiをLinuxでビルドしてみた : http://hennohito.cocolog-nifty.com/blog/2018/06/myshogilinux-69.html
 
@@ -72,7 +73,9 @@
   - 『tanuki-詰将棋』→ MATE_ENGINE
   の4種類あります。
 
+
 ### 思考エンジンのコンパイル手順
+
 
 - やねうら王のmakefileを用いてclangでコンパイルします。
 

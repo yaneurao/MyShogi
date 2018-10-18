@@ -5,11 +5,12 @@
     /// </summary>
     public class KifuListRow
     {
-        public KifuListRow(string ply_string,string move_string ,string consume_time /* あとで ,string total_time */)
+        public KifuListRow(string ply_string,string move_string ,string consumption_time , string total_consumption_time)
         {
             PlyString = ply_string;
             MoveString = move_string;
-            ConsumeTime = consume_time;
+            ConsumptionTime = consumption_time;
+            TotalConsumptionTime = total_consumption_time;
         }
 
         /// <summary>
@@ -25,6 +26,11 @@
         /// <summary>
         /// 消費時間
         /// </summary>
-        public string ConsumeTime { get; private set; }
+        public string ConsumptionTime { get; private set; }
+
+        /// <summary>
+        /// 総消費時間
+        /// </summary>
+        public string TotalConsumptionTime { get; private set; }
     }
 }
