@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Tool;
+using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
 
 namespace MyShogi.View.Win2D
@@ -148,6 +149,22 @@ namespace MyShogi.View.Win2D
             ViewModel.KifuListSelectedIndex = Math.Min(ViewModel.KifuListCount - 1 , ViewModel.KifuListSelectedIndex + 1);
         }
 
+        private void UpdateListViewColumnWidth()
+        {
+            // ListViewの4列目(総消費時間)を残りいっぱいサイズにする。
+            var col = listView1.Columns;
+            var sum = 0;
+            foreach (var i in All.Int(3))
+                sum += col[i].Width;
+
+            var newWidth = Math.Max(Width - sum , 0);
+
+            // Widthにはマイナスの値を設定しても0に補整される。この結果、上のMax()がないと、newWidthがマイナスだと
+            // このifは成立してしまい、代入によってイベントが生起されるので無限再帰となる。
+            if (col[3].Width != newWidth)
+                col[3].Width = newWidth; //残りいっぱい分にする
+        }
+
         /// <summary>
         /// [UI thread] : 内部状態が変わったのでボタンの有効、無効を更新するためのハンドラ。
         /// 
@@ -159,6 +176,8 @@ namespace MyShogi.View.Win2D
             // 最小化したのかな？
             if (Width == 0 || Height == 0 || listView1.ClientSize.Width == 0)
                 return;
+
+            UpdateListViewColumnWidth();
 
             var inTheGame = ViewModel.InTheGame;
 
@@ -235,83 +254,6 @@ namespace MyShogi.View.Win2D
             }
         }
 
-#if false
-        /// <summary>
-        /// [UI thread] : 親ウインドウがリサイズされた時にそれに収まるようにこのコントロール内の文字の大きさを調整する。
-        /// (MainWindowに埋め込んでいるときに、リサイズに対して呼び出される)
-        /// 
-        /// inTheGame == trueのときはゲーム中なので「本譜」ボタンと「次分岐」ボタンを表示しない。
-        /// </summary>
-        /// <param name="scale"></param>
-        public void OnResize(double scale)
-        {
-            // MainWindowに埋め込んでいないなら呼び出してはならない。
-            Debug.Assert(ViewModel.DockState == DockState.InTheMainWindow);
-
-            // 最小化したのかな？
-            if (Width == 0 || Height == 0 || listView1.ClientSize.Width == 0)
-                return;
-
-            using (var s = new SuspendLayoutBlock(this))
-            {
-
-                // リサイズしたので連動してボタンの位置が変わる。
-                UpdateButtonLocation();
-
-                // 画面を小さくしてもスクロールバーは小さくならないから計算通りのフォントサイズだとまずいのか…。
-                var w_rate = 1.0f + TheApp.app.Config.KifuWindowWidthType * 0.25f; // 横幅をどれだけ引き伸ばすのか
-                var font_size = (float)(19.5 * scale * w_rate);
-                var font_size2 = (float)(16 * scale);
-                // button用のフォントサイズ
-
-                /*
-                    // ClientSizeはスクロールバーを除いた幅なので、controlのwidthとの比の分だけ
-                    // fontを小さく表示してやる。
-                    font_size *= (float)listBox1.ClientSize.Width / this.Width;
-
-                    Console.WriteLine(listBox1.ClientSize.Width + "/" + this.Width);
-                */
-
-                // スクロールバーが出たために文字の横幅が収まらない可能性を考慮してItems.Add()ごとに
-                // OnResize()を都度呼び出してやりたい…が、スクロールバーが出た結果、文字を縮小して、
-                // その結果、スクロールバーが消えるという現象が…。
-
-                // →　結論的には、スクロールバーの有無によって文字フォントサイズを変更するのは
-                // 筋が良くないということに。最初からスクロールバーの分だけ控えて描画すべき。
-
-                // ところがスクロールバーの横幅不明。実測34だったが、環境によって異なる可能性が..
-                // AutoScaleの値とか反映されてると困るのだが…。
-                font_size *= ((float)Width - 34 /* scroll bar */) / Width;
-                font_size2 *= ((float)Width - 34 /* scroll bar */) / Width;
-
-                // 幅を縮めるとfont_sizeが負になるが、負のサイズのFontは生成できないので1にしておく。
-                if (font_size <= 0)
-                    font_size = 1;
-                if (font_size2 <= 0)
-                    font_size2 = 1;
-
-                // 前回のフォントサイズと異なるときだけ再設定する
-                //if (last_font_size == font_size)
-                //    return;
-
-                last_font_size = font_size;
-
-                var config = TheApp.app.Config;
-                var fontname = config.FontManager.KifuWindow.FontName;
-                var fontstyle = config.FontManager.KifuWindow.FontStyle;
-                var font = new Font(fontname, font_size, fontstyle, GraphicsUnit.Pixel);
-                listView1.Font = font;
-
-                // buttonのFontSizeあまり変更すると高さが足りなくなるので横幅の比率変更は反映させない。
-                var font2 = new Font(fontname, font_size2, fontstyle, GraphicsUnit.Pixel);
-                var buttons = new[] { button1, button2, button3, button4, button5, button6 };
-                foreach (var b in buttons)
-                    b.Font = font2;
-            }
-        }
-        private float last_font_size = 0;
-#endif
-
         // -- initialize design
 
         /// <summary>
@@ -339,7 +281,12 @@ namespace MyShogi.View.Win2D
             time_string.Width = 60;
             time_string.TextAlign = HorizontalAlignment.Right;
 
-            var header = new[] { ply_string, move_string, time_string };
+            var sum_time_string = new ColumnHeader();
+            sum_time_string.Text = "総時間";
+            sum_time_string.Width = 80; // これはのちにresizeされる
+            sum_time_string.TextAlign = HorizontalAlignment.Center;
+
+            var header = new[] { ply_string, move_string, time_string , sum_time_string };
             
             listView1.Columns.AddRange(header);
 
@@ -370,7 +317,7 @@ namespace MyShogi.View.Win2D
                 // 増えた1行がargs.valueに入っているはず。
                 var row = args.value as KifuListRow;
 
-                listView1.SelectedIndexChanged -= listView1_SelectedIndexChanged;
+                listView1.ItemSelectionChanged -= listView1_ItemSelectionChanged;
 
                 listView1.Items.Add(KifuListRowToListItem(row));
 
@@ -383,7 +330,7 @@ namespace MyShogi.View.Win2D
                 // 末尾の項目を選択しておく。
                 SetListViewSelectedIndex(lastIndex);
 
-                listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
+                listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
 
                 // item数が変化したはずなので、「消一手」ボタンなどを更新する。
                 UpdateButtonState();
@@ -408,7 +355,7 @@ namespace MyShogi.View.Win2D
             if (listView1.Items.Count == 0)
                 return; // なんで？
 
-            listView1.SelectedIndexChanged -= listView1_SelectedIndexChanged;
+            listView1.ItemSelectionChanged -= listView1_ItemSelectionChanged;
 
             listView1.Items.RemoveAt(listView1.Items.Count - 1);
 
@@ -425,7 +372,7 @@ namespace MyShogi.View.Win2D
             ViewModel.KifuListCount = listView1.Items.Count;
             ViewModel.KifuList.RemoveAt(ViewModel.KifuList.Count - 1); // ここも同期させておく。
 
-            listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
+            listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
 
             // 1手戻った結果、「次分岐」があるかも知れないのでそのボタン状態を更新する。
             UpdateButtonState();
@@ -439,7 +386,7 @@ namespace MyShogi.View.Win2D
         {
             // ここでListBoxをいじって、listBox1_SelectedIndexChanged()が呼び出されるのは嫌だから抑制する。
 
-            listView1.SelectedIndexChanged -= listView1_SelectedIndexChanged;
+            listView1.ItemSelectionChanged -= listView1_ItemSelectionChanged;
 
             // 現在の選択行を復元する。
             //var selected = GetListViewSelectedIndex();
@@ -461,7 +408,7 @@ namespace MyShogi.View.Win2D
             ViewModel.KifuList = list;
 
             listView1.EndUpdate();
-            listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
+            listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
 
             // 現在の選択行を復元する。
             //if (0 <= selected && selected < listView1.Items.Count)
@@ -549,7 +496,7 @@ namespace MyShogi.View.Win2D
         /// <param name="index"></param>
         private void SetListViewSelectedIndex(int index)
         {
-            listView1.SelectedIndexChanged -= listView1_SelectedIndexChanged;
+            listView1.ItemSelectionChanged -= listView1_ItemSelectionChanged;
             if (0 <= index && index < listView1.Items.Count)
             {
                 listView1.EnsureVisible(index);
@@ -561,16 +508,38 @@ namespace MyShogi.View.Win2D
 
             UpdateButtonState();
 
-            listView1.SelectedIndexChanged += listView1_SelectedIndexChanged;
+            listView1.ItemSelectionChanged += listView1_ItemSelectionChanged;
         }
+
+        private void listView1_CheckUnselect(object sender,EventArgs args)
+        {
+            if (listView1.SelectedItems.Count == 0 && lastSelectedIndex < listView1.Items.Count)
+                listView1.Items[lastSelectedIndex].Selected = true;
+            // いま解除されたものを再度選択してやる。
+
+            // 呼び出されたということは、このhandlerが設定されているわけで、それを解除する
+            Application.Idle -= listView1_CheckUnselect;
+        }
+        private int lastSelectedIndex;
 
         /// <summary>
         /// 選択行が変更されたので、ViewModelにコマンドを送信してみる。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void listView1_ItemSelectionChanged(object sender , ListViewItemSelectionChangedEventArgs e)
         {
+            if (!e.IsSelected)
+            {
+                // 選択が解除になる。これは無視して良い。
+                // 解除になったあと再度選択されているかが問題なのでIdleイベントに突っ込む。
+                // このアイデアは以下の掲示板の書き込みによるもの。
+                // cf. ListViewの選択関連のイベント : https://dobon.net/vb/bbs/log3-55/32345.html
+                lastSelectedIndex = e.ItemIndex;
+                Application.Idle += listView1_CheckUnselect;
+
+                return;
+            }
 
 #if false
             var items = listView1.SelectedItems;
@@ -659,8 +628,6 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// リサイズ。
-        /// 非フローティングモードなら、このメッセージは無視する。
-        /// フローティングモードなら自律的にサイズを変更。
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -671,23 +638,10 @@ namespace MyShogi.View.Win2D
 
             // メインウインドウに埋め込み時もフォント固定する。
             //if (ViewModel.DockState != DockState.InTheMainWindow)
+
+            using (var s = new SuspendLayoutBlock(this))
             {
-                using (var s = new SuspendLayoutBlock(this))
-                {
-                    // このフォント、ここで設定しなければ親に従うのでは…。
-                    /*
-                    var f = TheApp.app.Config.FontManager.KifuWindow;
-
-                    var font = f.CreateFont();
-                    listView1.Font = font;
-
-                    var buttons = new[] { button1, button2, button3, button4, button5, button6 };
-                    foreach (var button in buttons)
-                        button.Font = font;
-                    */
-
-                    UpdateButtonLocation();
-                }
+                UpdateButtonLocation();
             }
         }
 
@@ -733,6 +687,12 @@ namespace MyShogi.View.Win2D
                 fm.KifuWindow.FontSize--;
                 fm.RaisePropertyChanged("FontChanged", "KifuWindow");
             }
+        }
+
+        private void listView1_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+        {
+            // 4列目(総消費時間)を残り幅いっぱいにする。
+            UpdateListViewColumnWidth();
         }
 
     }

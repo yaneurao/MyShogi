@@ -33,10 +33,10 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.listView1 = new MyShogi.View.Win2D.ListViewEx();
+            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.SuspendLayout();
             // 
             // button1
@@ -121,6 +121,7 @@
             this.listView1.Size = new System.Drawing.Size(268, 97);
             this.listView1.TabIndex = 4;
             this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.ColumnWidthChanged += new System.Windows.Forms.ColumnWidthChangedEventHandler(this.listView1_ColumnWidthChanged);
             // 
             // KifuControl
             // 

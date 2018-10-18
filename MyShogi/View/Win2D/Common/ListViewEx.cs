@@ -31,6 +31,7 @@ namespace MyShogi.View.Win2D
             DrawColumnHeader += MyListView_DrawColumnHeader;
             DrawSubItem += MyListView_DrawSubItem;
             // DrawItemとDrawSubItemは描画範囲が重複しているので片側のみで良い。
+
         }
 
         private void MyListView_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)

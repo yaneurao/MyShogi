@@ -564,8 +564,14 @@ namespace MyShogi.View.Win2D
             for (; i < listView1.Columns.Count - 1; ++i)
                 sum_width += listView1.Columns[i].Width;
 
+            var newWidth = Math.Max(ClientSize.Width - sum_width,0);
+
+            // Widthにはマイナスの値を設定しても0に補整される。この結果、上のMax()がないと、newWidthがマイナスだと
+            // このifは成立してしまい、代入によってイベントが生起されるので無限再帰となる。
+
             // Columnsの末尾が「読み筋」の表示であるから、この部分は、残りの幅全部にしてやる。
-            listView1.Columns[i /* is the last index*/].Width = ClientSize.Width - sum_width;
+            if (listView1.Columns[i].Width != newWidth)
+                listView1.Columns[i /* is the last index*/].Width = newWidth;
         }
 
         /// <summary>

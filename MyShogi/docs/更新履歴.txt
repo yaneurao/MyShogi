@@ -1,9 +1,35 @@
 ﻿
+- 棋譜ウインドウのボタン高さ、固定する。
+- 棋譜ウインドウのスクロールの3行前ぐらいが表示される処理
+- 棋譜ウインドウの列幅を記憶するコード追加する。
+
 
 ■　2018/10/18
 
 
+- 検討ウインドウの読み筋の幅を計算するコード、サイズが小さいと無限再帰になりかねないの修正。
 - 棋譜ウインドウのListView、非選択状態になるのどうにかならんのか…。
+  - 項目のない列が選択されたときに非選択状態になる。
+  - これListViewExのほうでの修正は困難。KifuWindowのresizeイベントで列幅いっぱいにする。
+  - 項目がないと非選択になるのか…。うわー。
+
+        private void listView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            // 項目のない場所のクリックで行が非選択状態になるのを回避するため、
+            // Itemのない場所のクリックを禁止とする。
+            var selection = listView1.GetItemAt(e.X, e.Y);
+            if (selection == null)
+            {
+                e.Cancel = true;
+                // このメソッドがない
+            }
+        }
+
+  - SelectedIndexChangedではなくItemSelectionChangedを使うべきなのか。
+  - 違うわ。Application.Idle使うのか。こんなの気づかん…。
+
+        // このアイデアは以下の掲示板の書き込みによるもの。
+        // cf. ListViewの選択関連のイベント : https://dobon.net/vb/bbs/log3-55/32345.html
 
 
 - 棋譜ウインドウ、メインウインドウに埋め込み時もフォントサイズを固定するように変更。
