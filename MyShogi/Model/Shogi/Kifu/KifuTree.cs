@@ -1182,11 +1182,17 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 var ply_text = $"{indent}{plus}{move_text_game_ply,3}";
 
-                var total = TimeSpan.Zero;
-                // D2だと99時間までなのでそれを超える場合は、桁のある限り。
-                var total_consumption_time_string =
-                    total.TotalHours >= 100 ?   $"{(int)total.TotalHours}:{total.Minutes,2:D2}:{total.Seconds,2:D2}":
-                                                $"{(int)total.TotalHours,2:D2}:{total.Minutes,2:D2}:{total.Seconds,2:D2}";
+                string total_consumption_time_string = null;
+                var prevNode = currentNode.prevNode;
+                if (prevNode != null)
+                {
+                    var kifuMoveTime = prevNode.moves.Find(x => x.nextNode == currentNode).kifuMoveTimes;
+                    var total = kifuMoveTime.Player(Color.BLACK).TotalTime;
+                    // D2だと99時間までなのでそれを超える場合は、桁のある限り。
+                    total_consumption_time_string =
+                        total.TotalHours >= 100 ? $"{(int)total.TotalHours}:{total.Minutes,2:D2}:{total.Seconds,2:D2}" :
+                                                  $"{(int)total.TotalHours,2:D2}:{total.Minutes,2:D2}:{total.Seconds,2:D2}";
+                }
 
                 var row = new KifuListRow(ply_text , move_text, time_string , total_consumption_time_string);
                 KifuList.Add(row);

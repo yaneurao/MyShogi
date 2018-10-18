@@ -197,6 +197,7 @@ namespace MyShogi.Model.Dependency
                 // 空きメモリとカーネルが持っているキャッシュを合計する(必要になったら開放できるもの)
                 if (key == "Pages free" || key == "Pages purgeable" || key == "File-backed pages")
                 {
+                    // 1 page = 4[MB]なので、4096をかけて[kB]単位に変換する。
                     freeMemory += ulong.Parse(value.Replace(".", "")) * 4096ul;
                 }
 #elif LINUX
@@ -214,7 +215,7 @@ namespace MyShogi.Model.Dependency
 #endif
                 }
                 process.WaitForExit();
-                return freeMemory / 1024ul;
+                return freeMemory;
             }
         }
     }
