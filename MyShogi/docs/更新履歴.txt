@@ -1,10 +1,38 @@
 ﻿
-- 棋譜ウインドウのボタン高さ、固定する。
-- 棋譜ウインドウのスクロールの3行前ぐらいが表示される処理
+- 総消費時間、棋譜ウインドウに出力するように。
 - 棋譜ウインドウの列幅を記憶するコード追加する。
 
 
 ■　2018/10/18
+
+
+- 棋譜ウインドウのボタン高さ、固定する。
+- 棋譜ウインドウのTabStopやめる。(動的にEnableが変化するのでTabStop、あまり嬉しくない)
+- 棋譜ウインドウのスクロールの3行前ぐらいが表示される処理
+  - EnsureVisible()で実装しなおした。
+- 棋譜ウインドウをDockするときに選択行が変わる。うわー。何これ。
+  - 前からあるバグのようであった。修正した。
+- 水平スクロールバー、消せない。吐きそう。
+      OnPaint()とかでやる必要がありそう。これ良くないな…。やめよう。
+  - ちゃんとClientSize.Widthから引き算すればぴったりになって、水平スクロールバー出ない。
+
+      listView1.ShowHorizontalScrollBar(false);
+
+#if !MONO
+        [System.Runtime.InteropServices.DllImport("user32")]
+        public static extern int ShowScrollBar(IntPtr handle, int wBar, bool bShow);
+        /// <summary>
+        /// 水平スクロールバーを有効/無効(デフォルト有効)
+        /// </summary>
+        /// <param name="b"></param>
+        public void ShowHorizontalScrollBar(bool b)
+        {
+            ShowScrollBar(this.Handle, 0 /* SB_HORZ */ , b );
+        }
+#else
+        public void ShowHorizontalScrollBar(bool b){}
+#endif
+
 
 
 - 検討ウインドウの読み筋の幅を計算するコード、サイズが小さいと無限再帰になりかねないの修正。

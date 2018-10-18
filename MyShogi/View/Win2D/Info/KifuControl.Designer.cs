@@ -46,6 +46,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(51, 26);
             this.button1.TabIndex = 1;
+            this.button1.TabStop = false;
             this.button1.Text = "本譜";
             this.toolTip1.SetToolTip(this.button1, "本譜の手順に戻ります。");
             this.button1.UseVisualStyleBackColor = true;
@@ -58,6 +59,7 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(56, 26);
             this.button3.TabIndex = 3;
+            this.button3.TabStop = false;
             this.button3.Text = "消分岐";
             this.toolTip1.SetToolTip(this.button3, "この分岐を削除します。");
             this.button3.UseVisualStyleBackColor = true;
@@ -70,6 +72,7 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(51, 26);
             this.button2.TabIndex = 2;
+            this.button2.TabStop = false;
             this.button2.Text = "次分岐";
             this.toolTip1.SetToolTip(this.button2, "次の分岐に進みます。");
             this.button2.UseVisualStyleBackColor = true;
@@ -81,7 +84,8 @@
             this.button4.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(56, 26);
-            this.button4.TabIndex = 3;
+            this.button4.TabIndex = 4;
+            this.button4.TabStop = false;
             this.button4.Text = "消一手";
             this.toolTip1.SetToolTip(this.button4, "この変化における末尾の一手を削除します。");
             this.button4.UseVisualStyleBackColor = true;
@@ -94,6 +98,7 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(23, 26);
             this.button5.TabIndex = 3;
+            this.button5.TabStop = false;
             this.button5.Text = "＋";
             this.toolTip1.SetToolTip(this.button5, "文字を少し大きくします。");
             this.button5.UseVisualStyleBackColor = true;
@@ -106,6 +111,7 @@
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(23, 26);
             this.button6.TabIndex = 3;
+            this.button6.TabStop = false;
             this.button6.Text = "－";
             this.toolTip1.SetToolTip(this.button6, "文字を小さくします。");
             this.button6.UseVisualStyleBackColor = true;

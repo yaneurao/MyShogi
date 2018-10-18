@@ -559,12 +559,13 @@ namespace MyShogi.View.Win2D
             if (listView1.Columns.Count == 0)
                 return;
 
-            int sum_width = 0;
+            int sum_width = 0; //  listView1.Margin.Left + listView1.Margin.Right;
             int i = 0;
             for (; i < listView1.Columns.Count - 1; ++i)
                 sum_width += listView1.Columns[i].Width;
 
-            var newWidth = Math.Max(ClientSize.Width - sum_width,0);
+            // これ、ちゃんと設定してやらないと水平スクロールバーが出てきてしまう。
+            var newWidth = Math.Max(listView1.ClientSize.Width - sum_width,0);
 
             // Widthにはマイナスの値を設定しても0に補整される。この結果、上のMax()がないと、newWidthがマイナスだと
             // このifは成立してしまい、代入によってイベントが生起されるので無限再帰となる。

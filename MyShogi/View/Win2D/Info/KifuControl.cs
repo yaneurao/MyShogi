@@ -25,7 +25,7 @@ namespace MyShogi.View.Win2D
             InitListView();
 
             var fm = new FontSetter(this, "KifuWindow");
-            Disposed += (sender,args) => { fm.Dispose(); }; 
+            Disposed += (sender,args) => { fm.Dispose(); };
         }
 
         // -- properties
@@ -153,11 +153,12 @@ namespace MyShogi.View.Win2D
         {
             // ListViewの4列目(総消費時間)を残りいっぱいサイズにする。
             var col = listView1.Columns;
-            var sum = 0;
+            var sum = 0; //  listView1.Margin.Left + listView1.Margin.Right;
             foreach (var i in All.Int(3))
                 sum += col[i].Width;
 
-            var newWidth = Math.Max(Width - sum , 0);
+            // これ、ちゃんと設定してやらないと水平スクロールバーが出てきてしまう。
+            var newWidth = Math.Max(listView1.ClientSize.Width - sum , 0);
 
             // Widthにはマイナスの値を設定しても0に補整される。この結果、上のMax()がないと、newWidthがマイナスだと
             // このifは成立してしまい、代入によってイベントが生起されるので無限再帰となる。
@@ -177,67 +178,71 @@ namespace MyShogi.View.Win2D
             if (Width == 0 || Height == 0 || listView1.ClientSize.Width == 0)
                 return;
 
-            UpdateListViewColumnWidth();
-
-            var inTheGame = ViewModel.InTheGame;
-
-            // 非表示だったものを表示したのであれば、これによって棋譜が隠れてしまう可能性があるので注意。
-            var needScroll = !button1.Visible && !inTheGame;
-
-            // ボタンの表示は対局外のときのみ
-            button1.Visible = !inTheGame;
-            button2.Visible = !inTheGame;
-            button3.Visible = !inTheGame;
-            button4.Visible = !inTheGame;
-
-            // フォントサイズ変更ボタンが有効か
-            // 「+」「-」ボタンは、メインウインドウに埋め込んでいないときのみ
-            // → やめよう　メインウインドウ埋め込み時も有効にしよう。
-            var font_button_enable = !inTheGame; // && ViewModel.DockState != DockState.InTheMainWindow;
-
-            button5.Visible = font_button_enable;
-            button6.Visible = font_button_enable;
-
-            // -- ボタンなどのリサイズ
-
-            // ボタン高さ
-
-            // メインウインドウに埋め込んでいるなら 全体の8%
-            // フローティングモードなら23固定。
-            // 対局中は非表示。
-            int bh = inTheGame ? 0 :
-                (ViewModel.DockState == DockState.InTheMainWindow) ? Height * 8 / 100 :
-                23;
-
-            int x = font_button_enable ? Width / 5 : Width / 4;
-            int y = Height - bh;
-
-            listView1.Location = new Point(0, 0);
-            listView1.Size = new Size(Width, y);
-
-            if (!inTheGame)
+            using (var slb = new SuspendLayoutBlock(this))
             {
-                button1.Location = new Point(x * 0, y);
-                button1.Size = new Size(x, bh);
-                button2.Location = new Point(x * 1, y);
-                button2.Size = new Size(x, bh);
-                button3.Location = new Point(x * 2, y);
-                button3.Size = new Size(x, bh);
-                button4.Location = new Point(x * 3, y);
-                button4.Size = new Size(x, bh);
 
-                button5.Location = new Point(x * 4, y);
-                button5.Size = new Size(x/2, bh);
-                button6.Location = new Point((int)(x * 4.5), y);
-                button6.Size = new Size(x/2, bh);
-            }
+                UpdateListViewColumnWidth();
 
-            if (needScroll)
-            {
-                // 選択行が隠れていないことを確認しなければ..。
-                // SelectedIndexを変更すると、SelectedIndexChangedイベントが発生してしまうので良くない。
-                // 現在は、対局が終了した瞬間であるから、棋譜の末尾に移動して良い。
-                SetListViewSelectedIndex(listView1.Items.Count - 1);
+                var inTheGame = ViewModel.InTheGame;
+
+                // 非表示だったものを表示したのであれば、これによって棋譜が隠れてしまう可能性があるので注意。
+                //var needScroll = !button1.Visible && !inTheGame;
+
+                // ボタンの表示は対局外のときのみ
+                button1.Visible = !inTheGame;
+                button2.Visible = !inTheGame;
+                button3.Visible = !inTheGame;
+                button4.Visible = !inTheGame;
+
+                // フォントサイズ変更ボタンが有効か
+                // 「+」「-」ボタンは、メインウインドウに埋め込んでいないときのみ
+                // → やめよう　メインウインドウ埋め込み時も有効にしよう。
+                var font_button_enable = !inTheGame; // && ViewModel.DockState != DockState.InTheMainWindow;
+
+                button5.Visible = font_button_enable;
+                button6.Visible = font_button_enable;
+
+                // -- ボタンなどのリサイズ
+
+                // ボタン高さ
+
+                // 対局中は非表示。
+                int bh = button1.Height;
+                int x = font_button_enable ? Width / 5 : Width / 4;
+                int y = button1.Visible ? Height - bh : Height;
+
+                listView1.Location = new Point(0, 0);
+                listView1.Size = new Size(Width, y);
+
+                if (!inTheGame)
+                {
+                    button1.Location = new Point(x * 0, y);
+                    button1.Size = new Size(x, bh);
+                    button2.Location = new Point(x * 1, y);
+                    button2.Size = new Size(x, bh);
+                    button3.Location = new Point(x * 2, y);
+                    button3.Size = new Size(x, bh);
+                    button4.Location = new Point(x * 3, y);
+                    button4.Size = new Size(x, bh);
+
+                    button5.Location = new Point(x * 4, y);
+                    button5.Size = new Size(x / 2, bh);
+                    button6.Location = new Point((int)(x * 4.5), y);
+                    button6.Size = new Size(x / 2, bh);
+                }
+
+                //if (needScroll)
+                {
+                    // 選択行が隠れていないことを確認しなければ..。
+                    // SelectedIndexを変更すると、SelectedIndexChangedイベントが発生してしまうので良くない。
+                    // 現在は、対局が終了した瞬間であるから、棋譜の末尾に移動して良い。
+                    //SetListViewSelectedIndex(listView1.Items.Count - 1);
+                    // →　こことは限らない。DockWindow化しただけかも知れない。
+
+                    var index = ViewModel.KifuListSelectedIndex;
+                    if (0 <= index && index < listView1.Items.Count)
+                        listView1.EnsureVisible(index);
+                }
             }
         }
 
@@ -430,25 +435,30 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void AdjustScrollTop()
         {
-            // TODO あとで
-#if false
             var selected = ViewModel.KifuListSelectedIndex;
             var top = listView1.TopItem.Index;
 
-            var visibleCount = listView1.ClientSize.Height / listView1.ItemHeight;
+            var itemHeight = (listView1.ItemHeight == 0) ? 16 : listView1.ItemHeight;
+            var visibleCount = listView1.ClientSize.Height / itemHeight;
             var bottom = top + visibleCount; // これListBoxのpropertyにないのだ…。何故なのだ…。
 
             // スクロール時にこの行数分だけ常に余裕があるように見せる。
             // 縦幅を狭めているときは、marginを縮める必要がある。
-            var margin = Math.Min(3 /* デフォルトで3行 */ , (visibleCount - 1) / 2);
+            var margin = Math.Min(2 /* デフォルトで2行 */ , (visibleCount - 1) / 2);
+
+#if false
             if (top + margin > selected)
                 top = selected - margin;
             else if (selected + margin + 1 >= bottom)
                 top = selected - (visibleCount - margin - 1);
-
-            listView1.TopItem.Index = top;
 #endif
-    }
+            // いま欲しいのはtopではない。
+
+            if (top + margin > selected)
+                listView1.EnsureVisible(Math.Max(selected - margin, 0));
+            else if (selected + margin + 1 >= bottom)
+                listView1.EnsureVisible(Math.Min(selected + margin , listView1.Items.Count - 1));
+        }
 
 
         /// <summary>
@@ -639,10 +649,7 @@ namespace MyShogi.View.Win2D
             // メインウインドウに埋め込み時もフォント固定する。
             //if (ViewModel.DockState != DockState.InTheMainWindow)
 
-            using (var s = new SuspendLayoutBlock(this))
-            {
-                UpdateButtonLocation();
-            }
+            UpdateButtonLocation();
         }
 
         /// <summary>

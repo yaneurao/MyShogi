@@ -38,7 +38,15 @@ namespace MyShogi.View.Win2D
         {
             // OwnerDraw時でもデフォルトの描画でOkな場合、こうしておくだけで良い。
             e.DrawDefault = true;
+            ItemHeight = e.Bounds.Height;
         }
+
+        /// <summary>
+        /// アイテム高さ。
+        /// ListViewにはこれがなくて困っていた。
+        /// OwnerDrawなら描画時のRectからわかる。
+        /// </summary>
+        public int ItemHeight { get; private set; }
 
         private void MyListView_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
