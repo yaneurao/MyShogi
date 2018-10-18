@@ -149,12 +149,18 @@ namespace MyShogi.View.Win2D
             ViewModel.KifuListSelectedIndex = Math.Min(ViewModel.KifuListCount - 1 , ViewModel.KifuListSelectedIndex + 1);
         }
 
+        /// <summary>
+        /// ListViewの4列目(総消費時間)を残りいっぱいサイズにする。
+        /// 
+        /// ※ 4列目を表示していない時は3列目が残り幅いっぱいになるようにする。
+        /// </summary>
         private void UpdateListViewColumnWidth()
         {
-            // ListViewの4列目(総消費時間)を残りいっぱいサイズにする。
+            var last = enable_total_time ? 3 : 2;
+
             var col = listView1.Columns;
             var sum = 0; //  listView1.Margin.Left + listView1.Margin.Right;
-            foreach (var i in All.Int(3))
+            foreach (var i in All.Int(last))
                 sum += col[i].Width;
 
             // これ、ちゃんと設定してやらないと水平スクロールバーが出てきてしまう。
@@ -162,8 +168,8 @@ namespace MyShogi.View.Win2D
 
             // Widthにはマイナスの値を設定しても0に補整される。この結果、上のMax()がないと、newWidthがマイナスだと
             // このifは成立してしまい、代入によってイベントが生起されるので無限再帰となる。
-            if (col[3].Width != newWidth)
-                col[3].Width = newWidth; //残りいっぱい分にする
+            if (col[last].Width != newWidth)
+                col[last].Width = newWidth; //残りいっぱい分にする
         }
 
         /// <summary>
@@ -291,7 +297,12 @@ namespace MyShogi.View.Win2D
             sum_time_string.Width = 0; // これはのちにresizeされる
             sum_time_string.TextAlign = HorizontalAlignment.Left;
 
-            var header = new[] { ply_string, move_string, time_string , sum_time_string };
+            // 総消費時間を表示するのか(これは再起動後に有効)
+            enable_total_time = TheApp.app.Config.KifuWindowDisplayTotalTime != 0;
+
+            var header = enable_total_time ?
+                new[] { ply_string, move_string, time_string, sum_time_string } :
+                new[] { ply_string, move_string, time_string };
             
             listView1.Columns.AddRange(header);
 
@@ -306,6 +317,11 @@ namespace MyShogi.View.Win2D
             }
 
         }
+
+        /// <summary>
+        /// 総消費時間を表示するのか(これは再起動後に有効なので起動時の値を保持しておく)
+        /// </summary>
+        private bool enable_total_time;
 
         // -- handlers
 

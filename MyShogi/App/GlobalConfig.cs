@@ -50,6 +50,10 @@ namespace MyShogi.App
             EnableMouseDrag = 1;
             PickedMoveDisplayStyle = 1;
 
+            // 棋譜
+
+            KifuWindowDisplayTotalTime = 0;
+
             // -- 評価値
 
             DisplayEvalJudgement = 1;
@@ -316,6 +320,19 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("KifuWindowKifuVersion"); }
             set { SetValue<int>("KifuWindowKifuVersion", value); }
+        }
+
+        /// <summary>
+        /// 棋譜ウインドウに総消費時間を表示するのか
+        ///
+        /// 0 : しない ←　デフォルト
+        /// 1 : する
+        /// </summary>
+        [DataMember]
+        public int KifuWindowDisplayTotalTime
+        {
+            get { return GetValue<int>("KifuWindowDisplayTotalTime"); }
+            set { SetValue<int>("KifuWindowDisplayTotalTime", value); }
         }
 
         /// <summary>

@@ -54,6 +54,7 @@
             this.richSelector14 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector13 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.richSelector25 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector3 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector2 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage8 = new System.Windows.Forms.TabPage();
@@ -410,6 +411,7 @@
             // 
             // tabPage7
             // 
+            this.tabPage7.Controls.Add(this.richSelector25);
             this.tabPage7.Controls.Add(this.richSelector3);
             this.tabPage7.Controls.Add(this.richSelector2);
             this.tabPage7.Location = new System.Drawing.Point(4, 22);
@@ -419,6 +421,17 @@
             this.tabPage7.TabIndex = 1;
             this.tabPage7.Text = "棋譜";
             this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // richSelector25
+            // 
+            this.richSelector25.GroupBoxTitle = "棋譜ウィンドウに総消費時間を表示するのか";
+            this.richSelector25.Location = new System.Drawing.Point(6, 226);
+            this.richSelector25.Name = "richSelector25";
+            this.richSelector25.SelectionTexts = new string[] {
+        "しない,kifwindow_totaltime_style_0.png,棋譜ウインドウに総消費時間を表示しません。",
+        "する,kifwindow_totaltime_style_1.png,棋譜ウインドウに総消費時間を表示します。"};
+            this.richSelector25.Size = new System.Drawing.Size(772, 110);
+            this.richSelector25.TabIndex = 2;
             // 
             // richSelector3
             // 
@@ -747,5 +760,6 @@
         private RichSelector richSelector23;
         private RichSelector richSelector5;
         private RichSelector richSelector24;
+        private RichSelector richSelector25;
     }
 }

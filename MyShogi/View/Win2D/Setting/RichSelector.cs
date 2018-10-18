@@ -31,7 +31,7 @@ namespace MyShogi.View.Win2D.Setting
                 // cf. カスタムコントロールから、デザイン時にプロジェクトのパスを取得する方法 : http://www.atmarkit.co.jp/bbs/phpBB/viewtopic.php?topic=47369&forum=7&start=16
 
                 // まあ、いいや。とりま、このControlを貼り付けたFormを編集したいなら、各自、この部分を自分の環境に合わせて一時的に書き換えるってことで(；ω；)
-                ImageFolder = @"C:\Users\yaneu\Documents\Visual Studio 2017\project\MyShogi\MyShogi\bin\Debug\image\display_setting/";
+                ImageFolder = @"C:\Users\yaneu\Documents\Visual Studio 2017\project\MyShogi\MyShogi\bin\Debug\image\display_setting\";
 
                 // レジストリとか環境変数とか使うのがスマートなのかな…。
                 // どちらもあまり使いたくないのだが…。
@@ -193,18 +193,24 @@ namespace MyShogi.View.Win2D.Setting
                 var rx = x  /* + radioButton1.Location.X */;
                 r.Location = new Point(rx , radioButton1.Location.Y);
                 r.Text = texts[0];
+
                 var j = i; // copy for lambda's capture
                 r.CheckedChanged += (sender, args) => {
                     if (r.Checked)
                     {
                         // 再起動するように警告表示
-                        if (ViewModel.WarningRestart)
+                        if (ViewModel.WarningRestart && ViewModel.Selection != j)
                             TheApp.app.MessageShow("この変更が反映するのは次回起動時です。", MessageShowType.Confirmation);
 
                         ViewModel.Selection = j;
                     }
                 };
+
+                // 先にCheckを変更しないと、このあとのCheckedChangedのイベントハンドラが呼び出されてしまう。
+                // →　先に変更しても無駄だった。そうか…。上のハンドラのなかに
+                // " && ViewModel.Selection = j "を追加する。
                 r.Checked = i == ViewModel.Selection;
+
                 radioButtons[i] = r;
                 groupBox1.Controls.Add(r);
 

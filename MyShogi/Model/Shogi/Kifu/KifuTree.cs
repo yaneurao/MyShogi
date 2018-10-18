@@ -1183,16 +1183,19 @@ namespace MyShogi.Model.Shogi.Kifu
                 var ply_text = $"{indent}{plus}{move_text_game_ply,3}";
 
                 string total_consumption_time_string = null;
-                var prevNode = currentNode.prevNode;
-                if (prevNode != null)
-                {
-                    var kifuMoveTime = prevNode.moves.Find(x => x.nextNode == currentNode).kifuMoveTimes;
-                    var total = kifuMoveTime.Player(Color.BLACK).TotalTime;
-                    // D2だと99時間までなのでそれを超える場合は、桁のある限り。
-                    total_consumption_time_string =
-                        total.TotalHours >= 100 ? $"{(int)total.TotalHours}:{total.Minutes,2:D2}:{total.Seconds,2:D2}" :
-                                                  $"{(int)total.TotalHours,2:D2}:{total.Minutes,2:D2}:{total.Seconds,2:D2}";
-                }
+                var kifuMoveTime = currentNode.moves.Find(x => x.nextMove == m).kifuMoveTimes;
+
+                // この指し手の手番側。最後、SpecialMoveに関しては、手番側とは限らないのであとで考える。
+                // (先手が指す→千日手成立[ここで先手の総消費時間が出て欲しい] みたいなのもあるので)
+                // TODO : 現状、Special Moveに対してTotalTime積んでないな。これ、時間切れのときに総消費時間わからんな…。
+                // あとでよく考える。
+                var turn = position.sideToMove;
+
+                var total = kifuMoveTime.Player(turn).TotalTime;
+                // D2だと99時間までなのでそれを超える場合は、桁のある限り。
+                total_consumption_time_string =
+                    total.TotalHours >= 100 ? $"{(int)total.TotalHours}:{total.Minutes,2:D2}:{total.Seconds,2:D2}" :
+                                                $"{(int)total.TotalHours,2:D2}:{total.Minutes,2:D2}:{total.Seconds,2:D2}";
 
                 var row = new KifuListRow(ply_text , move_text, time_string , total_consumption_time_string);
                 KifuList.Add(row);

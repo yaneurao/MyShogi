@@ -99,6 +99,10 @@ namespace MyShogi.View.Win2D.Setting
             richSelector3.ViewModel.WarningRestart = true;
             richSelector3.Bind(config, "ConsiderationWindowKifuVersion");
 
+            // 棋譜ウインドウに総消費時間を表示するのか
+            richSelector25.ViewModel.WarningRestart = true;
+            richSelector25.Bind(config, "KifuWindowDisplayTotalTime");
+
             // -- 「エフェクト」のタブ
 
             // 対局開始・終了エフェクト
