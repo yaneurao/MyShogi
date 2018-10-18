@@ -154,7 +154,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 if (EnableKifuList)
                 {
                     ResetKifuList();
-                    RaisePropertyChanged("KifuList", new List<string>(KifuList));
+                    RaisePropertyChanged("KifuList", new List<KifuListRow>(KifuList));
                 }
 
                 if (EnableUsiMoveList)
@@ -237,8 +237,8 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public void ResetKifuList()
         {
-            KifuList = new List<string>();
-            KifuList.Add("   === 開始局面 ===");
+            KifuList = new List<KifuListRow>();
+            KifuList.Add(new KifuListRow("===", "開始局面", "==="));
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace MyShogi.Model.Shogi.Kifu
         /// この"KifuList"のプロパティ変更通知が来る。
         /// immutableではないので、data-bindなどで用いるなら、Clone()してから用いること。
         /// </summary>
-        public List<string> KifuList
+        public List<KifuListRow> KifuList
         {
             get; set;
         }
@@ -582,7 +582,7 @@ namespace MyShogi.Model.Shogi.Kifu
                 // 棋譜が同期していない可能性があるので現在行以降を削除
                 ClearKifuForward();
 
-                RaisePropertyChanged("KifuList", new List<string>(KifuList));
+                RaisePropertyChanged("KifuList", new List<KifuListRow>(KifuList));
             }
         }
 
@@ -711,7 +711,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             PropertyChangedEventEnable = true;
 
-            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("KifuList", new List<KifuListRow>(KifuList));
             RaisePropertyChanged("Position", position.Clone());
 
             EnableKifuList = e; // 元の値
@@ -763,7 +763,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             PropertyChangedEventEnable = true;
 
-            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("KifuList", new List<KifuListRow>(KifuList));
             RaisePropertyChanged("Position", position.Clone());
 
             EnableKifuList = e; // 元の値
@@ -821,7 +821,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             PropertyChangedEventEnable = true;
 
-            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("KifuList", new List<KifuListRow>(KifuList));
             RaisePropertyChanged("Position", position.Clone());
 
             EnableKifuList = e; // 元の値
@@ -861,7 +861,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             EnableKifuList = e;
             PropertyChangedEventEnable = true;
-            RaisePropertyChanged("KifuList", new List<string>(KifuList)); // 棋譜ウィンドウのカーソル位置変わりうる。
+            RaisePropertyChanged("KifuList", new List<KifuListRow>(KifuList)); // 棋譜ウィンドウのカーソル位置変わりうる。
         }
 
         /// <summary>
@@ -1037,7 +1037,7 @@ namespace MyShogi.Model.Shogi.Kifu
             EnableKifuList = false;
             PropertyChangedEventEnable = true;
 
-            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("KifuList", new List<KifuListRow>(KifuList));
             RaisePropertyChanged("Position", position.Clone());
 
             KifuDirty = true; // 新しいnodeに到達したので棋譜は汚れた扱い。
@@ -1092,7 +1092,7 @@ namespace MyShogi.Model.Shogi.Kifu
             EnableKifuList = oldEnableKifuList;
             PropertyChangedEventEnable = true;
 
-            RaisePropertyChanged("KifuList", new List<string>(KifuList));
+            RaisePropertyChanged("KifuList", new List<KifuListRow>(KifuList));
             RaisePropertyChanged("Position", position.Clone());
         }
 
@@ -1180,12 +1180,15 @@ namespace MyShogi.Model.Shogi.Kifu
                 else
                     time_string = $"{t.Days}日{t.Hours,2}時間{t.Minutes,2}分{t.Seconds,2}秒";
 
-                var move_time = move_text.PadMidUnicode( time_string , 12 /*指し手=最大全角6文字=半角12文字*/ + 1 /* space */+ 7 /*時間文字列、1分00秒で半角7文字*/);
+                //var move_time = move_text.PadMidUnicode( time_string , 12 /*指し手=最大全角6文字=半角12文字*/ + 1 /* space */+ 7 /*時間文字列、1分00秒で半角7文字*/);
 
-                var text = $"{indent}{plus}{move_text_game_ply, 3}.{move_time}";
+                //var text = $"{indent}{plus}{move_text_game_ply, 3}.{move_time}";
 
-                KifuList.Add(text);
-                RaisePropertyChanged("KifuListAdded", text /*末尾が変更になった。変更になった行を送る。*/);
+                var ply_text = $"{indent}{plus}{move_text_game_ply,3}";
+
+                var row = new KifuListRow(ply_text , move_text, time_string);
+                KifuList.Add(row);
+                RaisePropertyChanged("KifuListAdded", row /*末尾が変更になった。変更になった行を送る。*/);
 
                 // -- この内容をLastKifuStringに反映させる。
 

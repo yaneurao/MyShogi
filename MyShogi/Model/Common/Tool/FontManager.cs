@@ -28,6 +28,16 @@ namespace MyShogi.Model.Common.Tool
         }
 
         /// <summary>
+        /// フォントの最大サイズ
+        /// </summary>
+        public static readonly int MAX_FONT_SIZE = 40;
+
+        /// <summary>
+        /// フォントの最小サイズ
+        /// </summary>
+        public static readonly int MIN_FONT_SIZE = 6;
+
+        /// <summary>
         /// 対局設定・エンジン設定ダイアログなどのフォント
         /// </summary>
         [DataMember]
@@ -156,6 +166,10 @@ namespace MyShogi.Model.Common.Tool
         /// <returns></returns>
         public Font CreateFont()
         {
+            // 無理ぽ。
+            if (FontSize <= 0)
+                FontSize = 1;
+
             return new Font(FontName, FontSize, FontStyle);
         }
 

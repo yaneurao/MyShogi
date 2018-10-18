@@ -203,6 +203,14 @@ namespace MyShogi.View.Win2D
                 return;
             }
 
+            // いまから検討を開始するのに検討ウインドウが非表示なら表示させる。
+            var dock = TheApp.app.Config.EngineConsiderationWindowDockManager;
+            if (!consideration && !dock.Visible)
+            {
+                dock.Visible ^= true;
+                dock.RaisePropertyChanged("DockState", dock.DockState);
+            }
+
             gameServer.ChangeGameModeCommand(
                 consideration ?
                 GameModeEnum.ConsiderationWithoutEngine :
@@ -224,6 +232,14 @@ namespace MyShogi.View.Win2D
 
                 // ↑のメソッド内であとは勝手にやってくれるじゃろ…。
                 return;
+            }
+
+            // いまから検討を開始するのに検討ウインドウが非表示なら表示させる。
+            var dock = TheApp.app.Config.EngineConsiderationWindowDockManager;
+            if (!mate_consideration && !dock.Visible)
+            {
+                dock.Visible ^= true;
+                dock.RaisePropertyChanged("DockState", dock.DockState);
             }
 
             gameServer.ChangeGameModeCommand(

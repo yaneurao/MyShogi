@@ -290,7 +290,9 @@ namespace MyShogi.View.Win2D
             {
                 kifu.Size = CalcKifuWindowSize();
                 kifu.Location = CalcKifuWindowLocation();
-                kifu.OnResize(AffineMatrix.Scale.X);
+
+                //kifu.OnResize(AffineMatrix.Scale.X);
+                // 文字フォントサイズは固定するので、この処理不要に。
             }
 
             // 駒台が縦長のモードのときは、このコントロールは非表示にする。

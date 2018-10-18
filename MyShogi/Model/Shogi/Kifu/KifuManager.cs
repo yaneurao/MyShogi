@@ -46,7 +46,7 @@ namespace MyShogi.Model.Shogi.Kifu
         ///
         /// EnableKifuListがtrueのとき、DoMove()/UndoMove()するごとにリアルタイムに更新される。
         /// </summary>
-        public List<string> KifuList
+        public List<KifuListRow> KifuList
         {
             get { return Tree.KifuList; }
             set { Tree.KifuList = value; }
@@ -279,7 +279,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
                 // イベントの一時抑制を解除して、更新通知を送る。
                 Tree.PropertyChangedEventEnable = e;
-                Tree.RaisePropertyChanged("KifuList",new List<string>(Tree.KifuList));
+                Tree.RaisePropertyChanged("KifuList",new List<KifuListRow>(Tree.KifuList));
                 Tree.RaisePropertyChanged("Position",Tree.position.Clone());
 
             }

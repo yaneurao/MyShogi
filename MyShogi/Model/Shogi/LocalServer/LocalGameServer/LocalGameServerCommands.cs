@@ -440,11 +440,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                     kifuManager.Tree.MainBranch();
 
                     // ここが分岐の起点だったのでここのnode選択する。
-                    if (branch != -1)
-                    {
-                        // ここを選んで、局面をここに移動させておく。
-                        UpdateKifuSelectedIndex(branch);
-                    }
+                    // 1) branch == -1のときは、plyの局面に移動したい　   → UpdateKifuSelectedIndex()の引数は-1 == branch。
+                    // 2) branch != -1のときは、branchの局面に移動したい　→ UpdateKifuSelectedIndex()の引数はbranch。
+                    // つまりは以下のように書くだけで良い。
+                    UpdateKifuSelectedIndex(branch);
                 }
             });
         }
@@ -459,7 +458,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 // 対局中は使用不可
                 if (GameMode.IsConsideration())
+                {
                     kifuManager.Tree.NextBranch();
+                    UpdateKifuSelectedIndex();
+                }
             });
         }
 
@@ -473,7 +475,10 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 // 対局中は使用不可
                 if (GameMode.IsConsideration())
+                {
                     kifuManager.Tree.EraseBranch();
+                    UpdateKifuSelectedIndex();
+                }
             });
         }
 

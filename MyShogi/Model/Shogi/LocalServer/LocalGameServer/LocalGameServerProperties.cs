@@ -5,6 +5,7 @@ using MyShogi.Model.Common.Collections;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.EngineDefine;
+using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Shogi.Usi;
 
@@ -20,16 +21,16 @@ namespace MyShogi.Model.Shogi.LocalServer
         public Position Position
         {
             get { return GetValue<Position>("Position"); }
-            set { SetValue<Position>("Position", value); }
+            set { SetValue("Position", value); }
         }
 
         /// <summary>
         /// 棋譜。これをメインウィンドウの棋譜ウィンドウとdata bindする。
         /// </summary>
-        public List<string> KifuList
+        public List<KifuListRow> KifuList
         {
-            get { return GetValue<List<string>>("KifuList"); }
-            set { SetValue<List<string>>("KifuList", value); }
+            get { return GetValue<List<KifuListRow>>("KifuList"); }
+            set { SetValue("KifuList", value); }
         }
 
         // 仮想プロパティ。棋譜が1行追加/削除された時に発生するイベント。

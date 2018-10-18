@@ -63,7 +63,6 @@
             this.richSelector20 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector15 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage10 = new System.Windows.Forms.TabPage();
-            this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -515,7 +514,6 @@
             // 
             // tabPage10
             // 
-            this.tabPage10.Controls.Add(this.label6);
             this.tabPage10.Controls.Add(this.label5);
             this.tabPage10.Controls.Add(this.label4);
             this.tabPage10.Controls.Add(this.label3);
@@ -537,16 +535,6 @@
             this.tabPage10.TabIndex = 8;
             this.tabPage10.Text = "フォント";
             this.tabPage10.UseVisualStyleBackColor = true;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(51, 365);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(528, 48);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "※　棋譜ウインドウをメインウインドウに埋め込んでいる時は、フォントサイズは棋譜ウインドウの横幅で決まるため、\r\n　　ここで設定したフォントのサイズは反映されません" +
-    "。\r\n※　棋譜ウインドウ、検討ウインドウではフォントが等倍であることを前提として描画するので等幅フォント以外では\r\n　　表示がずれることがあります。\r\n";
             // 
             // label5
             // 
@@ -751,7 +739,6 @@
         private FontSelectionConrol fontSelectionConrol9;
         private FontSelectionConrol fontSelectionConrol8;
         private FontSelectionConrol fontSelectionConrol3;
-        private System.Windows.Forms.Label label6;
         private FontSelectionConrol fontSelectionConrol10;
         private RichSelector richSelector20;
         private RichSelector richSelector21;

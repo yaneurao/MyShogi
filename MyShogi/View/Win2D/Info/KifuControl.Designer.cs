@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.listBox1 = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -37,20 +36,8 @@
             this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.button5 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
+            this.listView1 = new MyShogi.View.Win2D.ListViewEx();
             this.SuspendLayout();
-            // 
-            // listBox1
-            // 
-            this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.listBox1.Font = new System.Drawing.Font("ＭＳ ゴシック", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 12;
-            this.listBox1.Location = new System.Drawing.Point(8, 6);
-            this.listBox1.Margin = new System.Windows.Forms.Padding(0);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(297, 96);
-            this.listBox1.TabIndex = 0;
-            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             // 
             // button1
             // 
@@ -124,17 +111,28 @@
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
+            // listView1
+            // 
+            this.listView1.HideSelection = false;
+            this.listView1.Location = new System.Drawing.Point(8, 4);
+            this.listView1.MultiSelect = false;
+            this.listView1.Name = "listView1";
+            this.listView1.OwnerDraw = true;
+            this.listView1.Size = new System.Drawing.Size(268, 97);
+            this.listView1.TabIndex = 4;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            // 
             // KifuControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.Controls.Add(this.listView1);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.listBox1);
             this.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.Name = "KifuControl";
             this.Size = new System.Drawing.Size(316, 144);
@@ -144,14 +142,13 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
-        private ToolTipEx toolTip1;
+        private MyShogi.View.Win2D.ToolTipEx toolTip1;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
+        private MyShogi.View.Win2D.ListViewEx listView1;
     }
 }

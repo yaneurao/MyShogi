@@ -36,7 +36,7 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.toolTip1 = new ToolTipEx(this.components);
+            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.listView1 = new MyShogi.View.Win2D.ListViewEx();
             this.SuspendLayout();
             // 
@@ -175,7 +175,7 @@
 
         #endregion
 
-        private ListViewEx listView1;
+        private MyShogi.View.Win2D.ListViewEx listView1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox3;
@@ -183,6 +183,6 @@
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Button button1;
-        private ToolTipEx toolTip1;
+        private MyShogi.View.Win2D.ToolTipEx toolTip1;
     }
 }

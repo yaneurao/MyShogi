@@ -1,6 +1,7 @@
 ﻿using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Tool;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -88,6 +89,8 @@ namespace MyShogi.View.Win2D.Setting
             ViewModel.AddPropertyChangedHandler("FontName", (args) => { font.FontName = args.value as string; });
             ViewModel.AddPropertyChangedHandler("FontSize", (args) => { font.FontSize = (float)args.value; });
             ViewModel.AddPropertyChangedHandler("FontStyle", (args) => { font.FontStyle = (FontStyle)args.value; });
+
+            UpdateButtonState();
         }
 
         private void InitViewModel()
@@ -135,6 +138,8 @@ namespace MyShogi.View.Win2D.Setting
                         ViewModel.FontSize = fd.Font.Size;
                         ViewModel.FontStyle = fd.Font.Style;
 
+                        UpdateButtonState();
+
                         // 変更が生じたので変更イベントを生起しておく。
                         RaiseFontChanged();
                     }
@@ -145,13 +150,28 @@ namespace MyShogi.View.Win2D.Setting
         private void button2_Click(object sender, System.EventArgs e)
         {
             ViewModel.FontSize++;
+            UpdateButtonState();
             RaiseFontChanged();
         }
 
         private void button3_Click(object sender, System.EventArgs e)
         {
             ViewModel.FontSize--;
+            UpdateButtonState();
             RaiseFontChanged();
+        }
+
+        /// <summary>
+        /// フォントサイズに制限をかける。
+        /// また、フォントサイズが許容範囲内のときだけボタンを有効にする。
+        /// </summary>
+        private void UpdateButtonState()
+        {
+            ViewModel.FontSize = Math.Max(ViewModel.FontSize, FontManager.MIN_FONT_SIZE);
+            ViewModel.FontSize = Math.Min(ViewModel.FontSize, FontManager.MAX_FONT_SIZE);
+
+            button2.Enabled = ViewModel.FontSize < FontManager.MAX_FONT_SIZE;
+            button3.Enabled = ViewModel.FontSize > FontManager.MIN_FONT_SIZE;
         }
 
         /// <summary>
