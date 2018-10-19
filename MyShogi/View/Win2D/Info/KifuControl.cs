@@ -361,7 +361,9 @@ namespace MyShogi.View.Win2D
         /// <param name="row"></param>
         private ListViewItem KifuListRowToListItem(KifuListRow row)
         {
-            var list = new[] { row.PlyString, row.MoveString, $"{row.ConsumptionTime} " , $" {row.TotalConsumptionTime}" };
+            var list = enable_total_time ?
+                new[] { row.PlyString, row.MoveString, $"{row.ConsumptionTime} " , $" {row.TotalConsumptionTime}" }:
+                new[] { row.PlyString, row.MoveString, $"{row.ConsumptionTime} "};
             return new ListViewItem( list );
         }
 
@@ -710,10 +712,20 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        /// <summary>
+        /// 列の幅を変更したときのハンドラ
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void listView1_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
         {
+            // 最後の列の幅は記録しない
+            // (総消費時間を表示していない状態で3列目を記録してしまい、そのあと総消費時間(4列目)を表示すると
+            // 3列目が残り幅いっぱいになっていて、4列目が表示されていないように見えるため)
+            var last = enable_total_time ? 3 : 2;
+
             var index = e.ColumnIndex;
-            if (!(0 <= index && index < 3))
+            if (!(0 <= index && index < last))
                 return; // 範囲外？
 
             // この設定、Globalに紐づけておく。

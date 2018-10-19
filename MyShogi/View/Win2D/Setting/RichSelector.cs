@@ -15,6 +15,9 @@ namespace MyShogi.View.Win2D.Setting
         /// <summary>
         /// GroupBox内に複数個のRaidoButtonがあり、そこから選択するためのUserControl。
         /// 画像から選択できる。
+        ///
+        /// 画像は100×50pxで用意すること。ただしPictureBoxに境界線が設定されているため、実際に表示される領域は
+        /// その内側の98×48pxである。
         /// </summary>
         public RichSelector()
         {
