@@ -128,6 +128,7 @@
             this.listView1.TabIndex = 4;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.ColumnWidthChanged += new System.Windows.Forms.ColumnWidthChangedEventHandler(this.listView1_ColumnWidthChanged);
+            this.listView1.ClientSizeChanged += new System.EventHandler(this.listView1_ClientSizeChanged);
             // 
             // KifuControl
             // 

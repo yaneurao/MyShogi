@@ -121,6 +121,7 @@
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
+            this.DoubleBuffered = true;
             this.Name = "FontSelectionConrol";
             this.Size = new System.Drawing.Size(770, 27);
             this.ResumeLayout(false);

@@ -3,11 +3,55 @@
 ■　2018/10/19
 
 
+- "1.3.1"→"1.3.1a" [2018/10/19]-[2018/10/19]
+
+- 棋譜ウインドウ、ListViewのheader生成前に列幅調整しようとして(特定環境で)落ちるの修正。
+- 棋譜ウインドウ、スクロールバーが出てくると時間の列が隠れる。
+  - スクロールバーの列の幅を見越して列の幅の調整をすべきでは…。
+  - スクロールバーが出るときにClientSizeが変わるのでハンドルするように。
+
+
+- 棋譜ウインドウ、OwnerDrawに変更したので分岐棋譜をもう少しわかりやく色変更したり出来なくはないが…。
+  - 色変更、見にくくなると嫌だし、電王盤と違って、本譜以外の分岐がすべて枝葉末節かというとそうでもないし。
+  - いまのままでいいや…。そんなに悪い表現ではないと思う。
+  - 分岐に'*'を使ってしまったので、棋譜コメントのある行に'*'が使えないのか…。うーむ..？
+  - Cにするか。
+  - 指し手の右側らへんに 💬 とかがわかりやすくて良いのでは…。(このUnicode文字、あるのかどうかは知らんが..)
+    - 表示設定で選べるといいのかも…。
+
+
+- 表示設定ダイアログのタブ切り替えたときにちらつくの何故？
+  - DoubleBuffer trueになっているのに…。
+  - RichSelectorとFontSelectorのこのプロパティもtrueに変更。
+    - 少しだけマシになった。
+  - TabControlのDoubleBufferは利かないらしい。
+    - cf. TabControl（Page）上のコントロール再描画ちらつきを抑制したい : http://www.atmarkit.co.jp/bbs/phpBB/viewtopic.php?topic=39187&forum=7
+
+    // 以下のコードでDoubleBufferが利くようになるようだが、他の部分に支障が出かねない。やめとく。
+    // WindowsAPIの実装に不具合があるので、.NETではDoubleBufferを反映しない実装になっているのかな…。うむむ…。
+
+        コード:	
+        Public Class BufferedTabControl
+            Inherits TabControl
+            Private WS_EX_COMPOSITED As Integer = &H2000000
+
+            Protected Overrides ReadOnly Property CreateParams() As System.Windows.Forms.CreateParams
+                Get
+                    Dim c As CreateParams
+                    c = MyBase.CreateParams
+                    c.ExStyle = c.ExStyle Or Me.WS_EX_COMPOSITED
+                    Return c
+                End Get
+            End Property
+        End Class
+
+
 
 - V1.3.1リリース。
   - eval : MyShogi201807260000Eval.zip
   - 本体 : MyShogi201810190830V131.zip
 - "1.3.0"→"1.3.1" [2018/10/15]-[2018/10/19]
+  - Configのバージョンナンバー変更するの忘れてた
 
 
 - 棋譜ウインドウの総消費時間を表示していないときに3列目の幅の値を保存しないようにする。

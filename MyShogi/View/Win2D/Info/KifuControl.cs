@@ -156,15 +156,34 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void UpdateListViewColumnWidth()
         {
-            var last = enable_total_time ? 3 : 2;
-
             var col = listView1.Columns;
+
+            // Column 生成前
+            if (col.Count == 0)
+                return;
+
+            var last = enable_total_time ? 3 : 2;
             var sum = 0; //  listView1.Margin.Left + listView1.Margin.Right;
             foreach (var i in All.Int(last))
                 sum += col[i].Width;
 
             // これ、ちゃんと設定してやらないと水平スクロールバーが出てきてしまう。
-            var newWidth = Math.Max(listView1.ClientSize.Width - sum , 0);
+            // ClientSizeはスクロールバーを除外したサイズ。
+            // →　スクロールバーが出ていない状態で計算して、
+            // そのあとスクロールバーが出ると困るのだが…。押し戻す処理をするか。
+            // スクロールバーを常に表示するモードがないので、スクロールバーが出ているならその分を控えて計算するか。
+
+            // スクロールバーが10pxより小さいことはありえないので、それを超えているならスクロールバーが出ている。
+            /*
+            var scrollbar = listView1.Width - listView1.ClientSize.Width > 10;
+            var width = scrollbar ?
+                listView1.ClientSize.Width :
+                listView1.ClientSize.Width - 22; // 実測でこれくらい high dpiだと変わるかも..
+            */
+            // →　これやめる。スクロールバーが出るとClientSizeが変化するのだから、そのときリサイズイベントが起きるのでは。
+
+            var width = listView1.ClientSize.Width;
+            var newWidth = Math.Max(width - sum , 0);
 
             // Widthにはマイナスの値を設定しても0に補整される。この結果、上のMax()がないと、newWidthがマイナスだと
             // このifは成立してしまい、代入によってイベントが生起されるので無限再帰となる。
@@ -737,5 +756,15 @@ namespace MyShogi.View.Win2D
             UpdateListViewColumnWidth();
         }
 
+        /// <summary>
+        /// スクロールバーが非表示から表示になったときにもこのイベントが発生するはず。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listView1_ClientSizeChanged(object sender, EventArgs e)
+        {
+            // 4列目(総消費時間)を残り幅いっぱいにする。
+            UpdateListViewColumnWidth();
+        }
     }
 }

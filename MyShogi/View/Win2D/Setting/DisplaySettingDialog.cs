@@ -5,6 +5,11 @@ namespace MyShogi.View.Win2D.Setting
 {
     public partial class DisplaySettingDialog : Form
     {
+        /// <summary>
+        /// 
+        /// 表示設定ダイアログ
+        /// 
+        /// </summary>
         public DisplaySettingDialog()
         {
             InitializeComponent();
@@ -15,6 +20,18 @@ namespace MyShogi.View.Win2D.Setting
             var fontSetter = new FontSetter(this, "SettingDialog");
             Disposed += (sender,args) => fontSetter.Dispose();
         }
+
+        /*
+        - 表示設定ダイアログのタブ切り替えたときにちらつくの何故？
+          - DoubleBuffer trueになっているのに…。
+          - RichSelectorとFontSelectorのこのプロパティもtrueに変更。
+            - 少しだけマシになった。
+          - TabControlのDoubleBufferは利かないらしい。
+            - cf. TabControl（Page）上のコントロール再描画ちらつきを抑制したい : http://www.atmarkit.co.jp/bbs/phpBB/viewtopic.php?topic=39187&forum=7
+
+            // 以下のコードでDoubleBufferが利くようになるようだが、他の部分に支障が出かねない。やめとく。
+            // WindowsAPIの実装に不具合があるので、.NETではDoubleBufferを反映しない実装になっているのかな…。うむむ…。
+        */
 
         private void InitViewModel()
         {
