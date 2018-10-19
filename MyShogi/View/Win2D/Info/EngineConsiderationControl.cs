@@ -361,11 +361,6 @@ namespace MyShogi.View.Win2D
                 box.Font = font;
         }
 
-        private void listView1_Resize(object sender, System.EventArgs e)
-        {
-            UpdatePvWidth();
-        }
-
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             // この現在選択されているところにある読み筋の指し手を復元して、イベントハンドラに移譲する。
@@ -697,5 +692,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private List<List<Move>> list_item_moves = new List<List<Move>>();
 
+        private void listView1_ClientSizeChanged(object sender, EventArgs e)
+        {
+            // スクロールバーが非表示から表示になったときに水平スクロールバーがでるのを抑制する。
+            UpdatePvWidth();
+        }
     }
 }
