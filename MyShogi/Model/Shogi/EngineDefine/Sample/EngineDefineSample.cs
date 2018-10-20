@@ -500,7 +500,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 var engine_define = new EngineDefine()
                 {
                     DisplayName = "やねうら王",
-                    EngineExeName = "yaneuraou2018_kpp_kkpt",
+                    EngineExeName = "Yaneuraou2018_kpp_kkpt",
                     SupportedCpus = default_cpus ,
                     EvalMemory = 480, // KPP_KKPTは、これくらい？
                     WorkingMemory = 200 ,

@@ -3,6 +3,14 @@
 ■　2018/10/20
 
 
+- やねうら王2018のEngineDefineに書かれている実行ファイル名の先頭が小文字になっていたのでMac/Linux環境で実行に失敗していた問題を修正。
+  (EngineDefine作り直した)
+  - cf. Ubuntuで『将棋神やねうら王』 (2018/10/19) : http://fxst24.blog.fc2.com/blog-entry-545.html
+  > (注) 思考エンジンのファイル名は本来は「Yaneuraou2018_kpp_kkpt_sse42.exe」である。
+  だが、MyShogiは「yaneuraou2018_kpp_kkpt_sse42.exe」で読み込もうとするため、対局、
+  または検討時にやねうら王2018年度版を選択すると、MyShogiが落ちてしまう。
+
+
 - Mono(Mac)でKifuControl.csの以下のEnsureVisibleで例外が出る件、呼び出しているところ、Mac用に #if #endifで囲む。
 
 
