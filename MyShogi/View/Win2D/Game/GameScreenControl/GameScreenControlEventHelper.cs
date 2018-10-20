@@ -288,11 +288,10 @@ namespace MyShogi.View.Win2D
             var kifu = kifuControl;
             if (kifu.ViewModel.DockState == DockState.InTheMainWindow)
             {
-                kifu.Size = CalcKifuWindowSize();
+                // (起動時) 先にLocationを移動させておかないとSizeの変更で変なところに表示されて見苦しい。
+                // ※　理由はよくわからない。DockStyle.Noneにした影響か何か。
                 kifu.Location = CalcKifuWindowLocation();
-
-                //kifu.OnResize(AffineMatrix.Scale.X);
-                // 文字フォントサイズは固定するので、この処理不要に。
+                kifu.Size = CalcKifuWindowSize();
             }
 
             // 駒台が縦長のモードのときは、このコントロールは非表示にする。
@@ -327,7 +326,6 @@ namespace MyShogi.View.Win2D
             int w_offset = (int)(w_rate * 265);
 
             var point = new Point(229 - w_offset, 600);
-            var kifu = kifuControl;
             return Affine(point);
         }
 

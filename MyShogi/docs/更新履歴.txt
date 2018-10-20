@@ -3,7 +3,16 @@
 ■　2018/10/20
 
 
-- MonoAPI.csのGetFreePhysicalMemory、MacとLinuxの両方の単位間違えてたので修正。ゴメン。
+- 起動時に棋譜ウインドウが一瞬画面左上あたりに表示されるの修正。
+  - それでも一瞬、検討ウインドウをメインウインドウに埋め込んでいないときの位置に表示されるのとか、修正できるなら
+    修正したいが、これは大改造になりかねないのでやめとく。
+- Mono(Mac)でKifuControl.csの以下のEnsureVisibleで例外が出るらしい。MonoのScrollbarまわりの実装bugっているのでは。
+                    var index = ViewModel.KifuListSelectedIndex;
+                    if (0 <= index && index < listView1.Items.Count)
+                        listView1.EnsureVisible(index);
+
+
+- MonoAPI.csのGetFreePhysicalMemory、MacとLinuxの両方の単位間違えてたので修正。
 
 
 - Mac : 最新のサウンドプレイヤーで動くように修正。 #62(jnoryさんのプルリク)

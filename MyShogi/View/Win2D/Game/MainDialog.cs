@@ -460,19 +460,26 @@ namespace MyShogi.View.Win2D
                 var ch = (int)(height_rate * h / 5);
 
                 var loc = gameScreenControl1.Location;
-                gameScreenControl1.Dock = DockStyle.None; // ここでLocationが変化するのでこのあと復元する。
+
+                // Noneにした瞬間にresizeイベントが発生するのだが、この時まだSizeが設定されていないので
+                // 棋譜ウインドウがおかしいところに移動する。そこでDockStyleの設定前にSizeの設定が必要である。
+                // しかしこれでも一瞬、ずれて表示される。画面の描画が完了するまで棋譜ウインドウのVisible = false
+                // にしたいが、それはわりと難しい。これで我慢する。
+
                 gameScreenControl1.Size = new Size(w, h - ch);
                 gameScreenControl1.Location = loc;
+                gameScreenControl1.Dock = DockStyle.None; // ここでLocationが変化するのでこのあと復元する。
 
-                engineConsiderationMainControl.Dock = DockStyle.None;
                 engineConsiderationMainControl.Size = new Size(w, ch);
                 engineConsiderationMainControl.Location = new Point(0, ClientSize.Height - ch);
-            } else
-            {
+                engineConsiderationMainControl.Dock = DockStyle.None;
+
+            } else {
+
                 var loc = gameScreenControl1.Location;
-                gameScreenControl1.Dock = DockStyle.Fill;
                 gameScreenControl1.Size = new Size(w, h);
                 gameScreenControl1.Location = loc;
+                gameScreenControl1.Dock = DockStyle.Fill;
 
                 engineConsiderationMainControl.Dock = DockStyle.Fill;
 
