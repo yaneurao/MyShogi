@@ -38,6 +38,10 @@
 - (V1.30) 表示設定のフォント選択ダイアログがフリーズするらしいです。(Linuxだとこの問題は起きない) Mac用のMonoのバグではないかと…。
 - (V1.32) libsoundioを用いて音が鳴るようになりました。
   https://github.com/jnory/MyShogiSoundPlayer/releases/tag/v0.1.1
+- (V1.32) Mono(Mac)でKifuControl.csのListViewのEnsureVisibleで例外が出るらしい。間違いなくMonoのScrollbarまわりの実装がbugっている。
+    KifuControl.csにあるEnsureVisible()全部コメントアウトすると起動するとのこと。Mono側が修正されるまで、Macでは、EnsureVisibleを呼ばないことにする。
+    (このため、いまのところMacでは棋譜ウインドウの棋譜の自動スクロールがなされない。)
+
 
 - すべての機能を動作確認できているわけではありません。
 

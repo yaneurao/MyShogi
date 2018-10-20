@@ -265,10 +265,25 @@ namespace MyShogi.View.Win2D
                     // →　こことは限らない。DockWindow化しただけかも知れない。
 
                     var index = ViewModel.KifuListSelectedIndex;
-                    if (0 <= index && index < listView1.Items.Count)
-                        listView1.EnsureVisible(index);
+                    EnsureVisible(index);
                 }
             }
+        }
+
+        /// <summary>
+        /// ListViewのindexの行が画面に表示されるようにする。
+        /// </summary>
+        /// <param name="index"></param>
+        private void EnsureVisible(int index)
+        {
+#if !MACOS
+            // Mono(Mac)は、EnsureVisibleで落ちるらしい。絶対Mono側の原因。
+            // Mono側が修正されたらこの#ifを削除する。
+
+            // 範囲チェックを行う。
+            if (0 <= index && index < listView1.Items.Count)
+                listView1.EnsureVisible(index);
+#endif
         }
 
         /// <summary>
@@ -398,8 +413,7 @@ namespace MyShogi.View.Win2D
 
             listView1.Items.RemoveAt(listView1.Items.Count - 1);
 
-            //listView1.SelectedIndex = listView1.Items.Count - 1; // last
-            listView1.EnsureVisible(listView1.Items.Count - 1);
+            EnsureVisible(listView1.Items.Count - 1);
 //            ViewModel.SetKifuListSelectedIndex(listBox1.Items.Count - 1);
 
             // → 「待った」によるUndoと「消一手」による末尾の指し手の削除でしかこのメソッドが
@@ -489,9 +503,9 @@ namespace MyShogi.View.Win2D
             // いま欲しいのはtopではない。
 
             if (top + margin > selected)
-                listView1.EnsureVisible(Math.Max(selected - margin, 0));
+                EnsureVisible(Math.Max(selected - margin, 0));
             else if (selected + margin + 1 >= bottom)
-                listView1.EnsureVisible(Math.Min(selected + margin , listView1.Items.Count - 1));
+                EnsureVisible(Math.Min(selected + margin , listView1.Items.Count - 1));
         }
 
 
@@ -543,8 +557,8 @@ namespace MyShogi.View.Win2D
             listView1.ItemSelectionChanged -= listView1_ItemSelectionChanged;
             if (0 <= index && index < listView1.Items.Count)
             {
-                listView1.EnsureVisible(index);
-
+                EnsureVisible(index);
+                
                 // ListBox相当のSelectedIndexをemulationする。
 
                 listView1.Items[index].Selected = true;
