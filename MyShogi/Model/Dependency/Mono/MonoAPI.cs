@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using MyShogi.Model.Common.String;
 using MyShogi.Model.Common.Tool;
 
 // --- 単体で呼び出して使うAPI群
@@ -428,14 +429,12 @@ namespace MyShogi.Model.Resource.Sounds
                     var info = new ProcessStartInfo
                     {
                         FileName = "mono",
-                        Arguments = playerExePath + " " + Directory.GetCurrentDirectory() ,
-                        // →　ここ、playerExePathにスペースが混じっているとスペースでsplitするなら、まずいような？
-                        //Arguments = $"\"{playerExePath}\" \"{Directory.GetCurrentDirectory()}\"",
+                        Arguments = $"\"{playerExePath}\" \"{Directory.GetCurrentDirectory()}\"",
 
                         CreateNoWindow = true,
                         UseShellExecute = false,
                         RedirectStandardInput = true,
-                        RedirectStandardOutput = false,
+                        RedirectStandardOutput = true,
                         RedirectStandardError = false,
                     };
 
@@ -472,11 +471,7 @@ namespace MyShogi.Model.Resource.Sounds
         {
             lock (lockObject)
             {
-                // ここでリソースを解放するコマンドを送るべきだが、
-                // とりま、終了まで解放せずにサウンドを使うので解放しないことにする。
-
-                // _playerProcess?.StandardInput.WriteLine($"release {filename}");
-
+                _playerProcess?.StandardInput.WriteLine($"release {filename}");
             }
         }
 
@@ -490,13 +485,8 @@ namespace MyShogi.Model.Resource.Sounds
                 if (_playerProcess == null || _playerProcess.HasExited)
                     return;
 
-                _playerProcess.StandardInput.WriteLine(filename);
-
-                // →　ここで通しナンバーを生成して渡したほうがいいような…。
-                /*
                 play_id = play_id_count++;
                 _playerProcess.StandardInput.WriteLine($"play {play_id} {filename}");
-                */
             }
         }
 
@@ -506,17 +496,16 @@ namespace MyShogi.Model.Resource.Sounds
         /// <returns></returns>
         public bool IsPlaying()
         {
-            // 再生中かどうか知るすべが(今のところ)ないのでとりあえずfalseで…
-            return false;
+            if (_playerProcess == null || _playerProcess.HasExited)
+                return false;
 
-            // →　再生するときに再生用に通しナンバーを渡して、そのナンバーのサウンドが再生中であるか問い合わせるべきのような。
-            // この呼び出しスレッドはサウンド用のWorker Threadなので、ここで問い合わせに多少時間がかかっても許されるので。
-
-            /*
             _playerProcess.StandardInput.WriteLine($"is_playing {play_id}");
             var result = _playerProcess.StandardOutput.ReadLine();
-            …
-            */
+            if (String.IsNullOrWhiteSpace(result))
+                return false;
+
+            result = result.Trim();
+            return result == "yes";
         }
 
         public void Dispose()
