@@ -198,8 +198,8 @@ namespace MyShogi.Model.Dependency
                 // 空きメモリとカーネルが持っているキャッシュを合計する(必要になったら開放できるもの)
                 if (key == "Pages free" || key == "Pages purgeable" || key == "File-backed pages")
                 {
-                    // 1 page = 4[MB]なので、4096をかけて[kB]単位に変換する。
-                    freeMemory += ulong.Parse(value.Replace(".", "")) * 4096ul;
+                    // 1 page = 4[kB]なので、4をかけて[kB]単位に変換する。
+                    freeMemory += ulong.Parse(value.Replace(".", "")) * 4ul;
                 }
 #elif LINUX
                     var data = row.Split('K');
@@ -211,7 +211,9 @@ namespace MyShogi.Model.Dependency
                     // 空きメモリとカーネルが持っているキャッシュを合計する(必要になったら開放できるもの)
                     if (key == "inactive memory" || key == "free memory" || key == "buffer memory")
                     {
-                        freeMemory += ulong.Parse(value.Replace(".", "")) * 4096ul;
+                        //  CentOSなど、"95724 K free memory"のように返ってくる。
+                        // この"K"でSplitして、左側の数字。単位は、kB単位なので単位の変換不要。
+                        freeMemory += ulong.Parse(value.Replace(".", ""));
                     }
 #endif
                 }
