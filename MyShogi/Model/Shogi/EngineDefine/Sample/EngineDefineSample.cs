@@ -461,13 +461,19 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 {
                     var preset = preset_default_array[i];
 
+                    // Sのつくプリセットの開始位置
+                    // 将棋神 + 12段 + 10級
+                    var s_preset = 1 + 12 + 10;
+                    var rating = i < s_preset ? 3800 - (i - 1) * 200 : 3200 - (i - s_preset) * 200;
+                    var rating_string = $"(R{rating})";
+
                     if (preset.Name.IsEmpty())
                         preset.Description = null;
                     else if (!preset.Name.StartsWith("Ｓ"))
-                        preset.Description = preset.Name + "ぐらいの強さになるように棋力を調整したものです。持ち時間、PCのスペックにほとんど依存しません。" +
+                        preset.Description = preset.Name + "ぐらいの強さ"+rating_string+"になるように棋力を調整したものです。持ち時間、PCのスペックにほとんど依存しません。" +
                             "短い持ち時間だと切れ負けになるので持ち時間無制限での対局をお願いします。";
                     else
-                        preset.Description = preset.Name.Substring(1) + "ぐらいの強さになるように棋力を調整したものです。" +
+                        preset.Description = preset.Name.Substring(1) + "ぐらいの強さ"+ rating_string + "になるように棋力を調整したものです。" +
                             "棋力名が「Ｓ」で始まるものは、序盤が弱いのに終盤だけ強いということはなく、まんべんなく同じ強さになるように調整されています。" +
                             "思考時間は「Ｓ」のつかない同じ段位のものの10倍ぐらい必要となります。";
 
