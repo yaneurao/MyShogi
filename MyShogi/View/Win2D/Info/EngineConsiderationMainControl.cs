@@ -94,54 +94,53 @@ namespace MyShogi.View.Win2D
             var queue = thinkQuque.GetList();
             if (queue.Count > 0)
             {
-                SuspendLayout();
-
-                // 子コントロールも明示的にSuspendLayout()～ResumeLayout()しないといけないらしい。
-                // Diagnosing Performance Problems with Layout : https://blogs.msdn.microsoft.com/jfoscoding/2005/03/04/suggestions-for-making-your-managed-dialogs-snappier/
-                foreach (var c in All.Int(2))
-                    ConsiderationInstance(c).SuspendLayout();
-
-                // →　これでも処理、間に合わないぎみ
-                // 以下、メッセージのシュリンクを行う。
-
-                // 要らない部分をskipDisplay == trueにしてしまう。
-                // j : 前回のNumberOfInstanceの位置(ここ以降しか見ない)
-
-                for (int i = 0, j = 0; i < queue.Count; ++i)
+                using (var slb = new SuspendLayoutBlock(this))
                 {
-                    var e = queue[i];
-                    switch (e.type)
+                    // 子コントロールも明示的にSuspendLayout()～ResumeLayout()しないといけないらしい。
+                    // Diagnosing Performance Problems with Layout : https://blogs.msdn.microsoft.com/jfoscoding/2005/03/04/suggestions-for-making-your-managed-dialogs-snappier/
+                    foreach (var c in All.Int(2))
+                        ConsiderationInstance(c).SuspendLayout();
+
+                    // →　これでも処理、間に合わないぎみ
+                    // 以下、メッセージのシュリンクを行う。
+
+                    // 要らない部分をskipDisplay == trueにしてしまう。
+                    // j : 前回のNumberOfInstanceの位置(ここ以降しか見ない)
+
+                    for (int i = 0, j = 0; i < queue.Count; ++i)
                     {
-                        case UsiEngineReportMessageType.NumberOfInstance:
-                            // ここ以前のやつ要らん。
-                            for (var k = j; k < i; ++k)
-                                queue[k].skipDisplay = true;
-                            j = i;
-                            break;
+                        var e = queue[i];
+                        switch (e.type)
+                        {
+                            case UsiEngineReportMessageType.NumberOfInstance:
+                                // ここ以前のやつ要らん。
+                                for (var k = j; k < i; ++k)
+                                    queue[k].skipDisplay = true;
+                                j = i;
+                                break;
 
-                        case UsiEngineReportMessageType.SetRootSfen:
-                            // rootが変わるので、以前のrootに対する思考内容は不要になる。
-                            for (var k = j; k < i; ++k)
-                            {
-                                var q = queue[k];
-                                var t = q.type;
-                                if ((t == UsiEngineReportMessageType.SetRootSfen || t == UsiEngineReportMessageType.UsiThinkReport)
-                                    && q.number == e.number
-                                    )
-                                    q.skipDisplay = true;
-                            }
-                            j = i;
-                            break;
+                            case UsiEngineReportMessageType.SetRootSfen:
+                                // rootが変わるので、以前のrootに対する思考内容は不要になる。
+                                for (var k = j; k < i; ++k)
+                                {
+                                    var q = queue[k];
+                                    var t = q.type;
+                                    if ((t == UsiEngineReportMessageType.SetRootSfen || t == UsiEngineReportMessageType.UsiThinkReport)
+                                        && q.number == e.number
+                                        )
+                                        q.skipDisplay = true;
+                                }
+                                j = i;
+                                break;
+                        }
                     }
+
+                    foreach (var e in queue)
+                        DispatchThinkReportMessage(e);
+
+                    foreach (var c in All.Int(2))
+                        ConsiderationInstance(c).ResumeLayout();
                 }
-
-                foreach (var e in queue)
-                    DispatchThinkReportMessage(e);
-
-                foreach (var c in All.Int(2))
-                    ConsiderationInstance(c).ResumeLayout();
-
-                ResumeLayout();
             }
 
 #if false

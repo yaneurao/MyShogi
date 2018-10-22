@@ -4,6 +4,37 @@ using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D
 {
+#if LINUX
+    /*
+        - ListViewExでOwnerDrawにすると無限再帰になってメッセージの処理ができなくなる。これもMono(Linux)のバグくさい。
+        - DrawSubItemのイベントで描画したときに画面が汚れた判定になっていて、再描画イベントがまた飛んでくるのがおかしい。
+        - これのせいでメッセージを処理できなくなり、メニューなどが描画されない。
+        - Linux用のビルドだけ、OwnerDrawにするのやめる。
+    */
+    public class ListViewEx : ListView
+    {
+        public ListViewEx()
+        {
+            DoubleBuffered = true;
+            OwnerDraw = false;
+        }
+
+        /// <summary>
+        /// SubItemの表示高さ。
+        /// </summary>
+        public int ItemHeight
+        {
+            get
+            {
+                // 表示高さ≒FontSizeとみなしておく。
+                var height = Font == null ? 0 : (int)Font.Size;
+                return height < 1 ? (12 + 2) : height + 2;
+            }
+        }
+    }
+
+#else
+
     /// <summary>
     /// 1) DoubleBuffer = trueなListView
     /// 2) focusを失うと選択行がわからなくなるのでLeaveに対して選択行の背景を青にするコードを入れたもの。
@@ -104,4 +135,5 @@ namespace MyShogi.View.Win2D
             }
         }
     }
+#endif
 }

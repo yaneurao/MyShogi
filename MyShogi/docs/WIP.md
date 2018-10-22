@@ -111,10 +111,12 @@
 
 
 - "1.3.1b"→"1.3.2" [2018/10/20]-[2018/10/XX]
+  - Ubuntu18.04で動作確認
   - 段位プリセットにレーティング併記するようにした。例:「(R400)」
   - やねうら王2018のEngineDefineに書かれている実行ファイル名の先頭が小文字になっていたのでMac/Linux環境で実行に失敗していた問題を修正。
     (EngineDefine作り直した)
   - Mono(Mac)でKifuControl.csの以下のEnsureVisibleで例外が出る件、呼び出しているところ、Mac用に #if #endifで囲む。
+    - Linuxも同様の問題があるらしい。現バージョンのMono自体のbugっぽい。
   - 起動時に棋譜ウインドウが一瞬画面左上あたりに表示されるの修正。
   - MonoAPI.csのGetFreePhysicalMemory、MacとLinuxの両方の単位間違えてたので修正。
   - Mac : 最新のサウンドプレイヤーで動くように修正。 #62(jnoryさんのプルリク)

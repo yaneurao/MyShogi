@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D
@@ -11,23 +13,37 @@ namespace MyShogi.View.Win2D
     /// </summary>
     public class SuspendLayoutBlock : IDisposable
     {
-        public SuspendLayoutBlock(Control c)
+        public SuspendLayoutBlock(Control c_)
         {
-            c_ = c;
             lock (lockObject)
-                if (refCount ++ == 0)
-                    c_.SuspendLayout();
+            {
+                c = c_;
+
+                if (list.ContainsKey(c))
+                    ++list[c]; // 参照カウントのインクリメント
+                else
+                {
+                    list.Add(c, 1);
+                    c.SuspendLayout();
+                }
+            }
         }
 
         public void Dispose()
         {
-            lock(lockObject)
-                if (--refCount == 0)
-                    c_.ResumeLayout();
+            lock (lockObject)
+            {
+                Debug.Assert(list.ContainsKey(c));
+                if (--list[c] == 0)
+                {
+                    list.Remove(c);
+                    c.ResumeLayout();
+                }
+            }
         }
 
-        private Control c_;
-        private static int refCount = 0;
+        private Control c;
         private static object lockObject = new object();
+        private static Dictionary<Control, int> list = new Dictionary<Control, int>();
     }
 }

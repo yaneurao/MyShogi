@@ -75,9 +75,8 @@ namespace MyShogi.View.Win2D.Setting
 
             ViewModel.AddPropertyChangedHandler("EngineDefineFolderPath", (args) =>
             {
-                SuspendLayout();
-                try
-                {
+                using (var slb = new SuspendLayoutBlock(this))
+                { 
                     var folderPath = (string)args.value;
                     var engine_define_ex = TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
                     Setting.EngineDefineFolderPath = folderPath;
@@ -128,10 +127,6 @@ namespace MyShogi.View.Win2D.Setting
                     }
 
                     pictureBox1.Image = banner_mini.image;
-                }
-                finally
-                {
-                    ResumeLayout();
                 }
             });
 

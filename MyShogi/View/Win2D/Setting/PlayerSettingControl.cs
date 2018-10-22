@@ -382,7 +382,11 @@ namespace MyShogi.View.Win2D
             {
                 // コンピュータの名前を持ってくる。
                 var folderPath = ViewModel.EngineDefineFolderPath;
-                if (folderPath == null)
+
+                // エンジンのフォルダ移動させているとここで対応するエンジンが存在しないのでぬるぽで落ちるのでその対策
+                var engineDefineEx = folderPath == null ? null : TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
+
+                if (folderPath == null || engineDefineEx == null)
                 {
                     // 自分でエンジンの説明を見てから選ばないと空き物理メモリが足りない時に
                     // そのエンジンを選択してしまっていることがある。
@@ -393,16 +397,16 @@ namespace MyShogi.View.Win2D
                     // ただしBind中の変更によってエンジンが未選択だからと言ってここが呼び出されるのは嫌だ。
                     if (ViewModel.PlayerSetting != null /* bind()からは呼び出さない */)
                         ViewModel.RaisePropertyChanged("EngineSelectionButtonClicked");
-                    return;
                 }
+                else
+                {
+                    // プレイヤー名をエンジンの名前に変更する。
+                    textBox1.Text = engineDefineEx.EngineDefine.DisplayName;
 
-                // プレイヤー名をエンジンの名前に変更する。
-                var engineDefineEx = TheApp.app.EngineDefines.Find(x => x.FolderPath == folderPath);
-                textBox1.Text = engineDefineEx.EngineDefine.DisplayName;
-
-                // →　このタイミングで変更するとdata-bindでこの値が書き換えられた時に設定されてしまう…。
-                // ユーザーがUI操作で変更した時とdata bindによって値が変更された時とは事情が異なる。
-                // data bindするときの順番を調整することで回避しておく。
+                    // →　このタイミングで変更するとdata-bindでこの値が書き換えられた時に設定されてしまう…。
+                    // ユーザーがUI操作で変更した時とdata bindによって値が変更された時とは事情が異なる。
+                    // data bindするときの順番を調整することで回避しておく。
+                }
             }
         }
 

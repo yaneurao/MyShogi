@@ -5,6 +5,44 @@
 ■　2018/10/22
 
 
+- Ubuntu18.04で動作確認その1
+  - cf. Ubuntuで『将棋神やねうら王』 (2018/10/22) : http://fxst24.blog.fc2.com/blog-entry-545.html
+  - ListViewExでOwnerDrawにすると無限再帰になってメッセージの処理ができなくなる。これもMono(Linux)のバグくさい。
+    - DrawSubItemのイベントで描画したときに画面が汚れた判定になっていて、再描画イベントがまた飛んでくるのがおかしい。
+    - これのせいでメッセージを処理できなくなり、メニューなどが描画されない。
+    - Linux用のビルドだけ、ListViewExでOwnerDrawにするのやめる。
+  - SuspendLayoutBlockの実装、入れ子にしたときの処理がおかしかったの修正。
+- 棋譜ウインドウのコードがLinuxで動かない件。
+  - Mono(Mac)でKifuControl.csの以下のEnsureVisibleで例外が出る件、呼び出しているところ、Mac用に #if #endifで囲む。
+    - Linuxも同様の問題があるらしい。現バージョンのMono自体のbugっぽい。
+-  デバッグシンボルを出力するなら以下のようにする？これでもスタックトレースが表示されない。なんで…。ああ、msbuildでbuildするからか…。
+  > msbuild MyShogi.sln /p:DebugSymbols=true /p:Configuration=LINUX
+- 例外が出たときのMessageDialogのテキストボックス、readonlyにしてなかったの修正。
+- PlayerSettingControl、ファイルEngineDefine.xmlを別フォルダに移動させたときにぬるぽで落ちるの修正。
+- Linux環境でエンジン選択のときにエンジンバナー出ていない。
+  - png画像、32bppになっているから、MonoのCreateBitmapの地雷を踏んでるのか…。ハゲそう。
+
+        public static void SetAlpha255(Image src)
+        {
+            if (src.PixelFormat == System.Drawing.Imaging.PixelFormat.Format32bppArgb && src is Bitmap)
+            {
+                var src_ = src as Bitmap;
+                var srcRect = new Rectangle(0, 0, src.Width, src.Height);
+                var data = src_.LockBits(srcRect, ImageLockMode.ReadWrite,
+                    System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                var length = src.Width * src.Height * 4;
+                for (int i = 0; i < length; i += 4)
+                {
+                    // alpha = 255
+                    Marshal.WriteByte(data.Scan0, i + 3, 255);
+                }
+                src_.UnlockBits(data);
+            }
+        }
+  - このコードでは回避できず。転送先をARGB32に変更。
+
+
 - 段位プリセットにレーティング併記する。例:「(R400)」
 
 
@@ -155,7 +193,6 @@
 #else
         public void ShowHorizontalScrollBar(bool b){}
 #endif
-
 
 
 - 検討ウインドウの読み筋の幅を計算するコード、サイズが小さいと無限再帰になりかねないの修正。

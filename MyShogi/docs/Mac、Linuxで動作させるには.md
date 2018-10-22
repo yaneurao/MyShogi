@@ -11,7 +11,7 @@
   - MyShogiをMac環境で動かす
     - jnoryさんのfork : https://github.com/jnory/MyShogi
     - AI将棋ソフト『MyShogi』をMacBookProでビルド＆遊んでみた : http://amado.hatenablog.com/entry/20180927/1537975944
-    - Ubuntuで『将棋神　やねうら王』（無料版） : http://fxst24.blog.fc2.com/blog-entry-545.html
+    - Ubuntuで『将棋神　やねうら王』 : http://fxst24.blog.fc2.com/blog-entry-545.html
   - MyShogiをLinux環境で動かす
     - やねうら王MyShogiをLinuxでビルドしてみた : http://hennohito.cocolog-nifty.com/blog/2018/06/myshogilinux-69.html
 
@@ -32,6 +32,8 @@
 
 - ビルド方法
   > msbuild MyShogi.sln /p:Configuration=macOS
+  - MsBuildでビルドすると例外が出たときに行番号が表示されなくて困るが、mcsはまだC#7.2までしか対応していないのでビルドできない。
+  - mcsがC#7.3まで対応したら、mcsでビルドするようにすべきだと思う。
 
 - 起動方法
   > mono --arch=32 MyShogi/bin/macOS/MyShogi.exe
@@ -40,8 +42,8 @@
 - (V1.30) 表示設定のフォント選択ダイアログがフリーズするらしいです。(Linuxだとこの問題は起きない) Mac用のMonoのバグではないかと…。
 - (V1.32) libsoundioを用いて音が鳴るようになりました。サウンド再生のために別途以下のライブラリが必要です。
     https://github.com/jnory/MyShogiSoundPlayer/releases/tag/v0.1.1
-- (V1.32) Mono(Mac)でKifuControl.csのListViewのEnsureVisibleで例外が出るらしい。間違いなくMonoのScrollbarまわりの実装がbugっている。
-    KifuControl.csにあるEnsureVisible()全部コメントアウトすると起動するとのこと。Mono側が修正されるまで、Macでは、EnsureVisibleを呼ばないことにする。
+- (V1.32) Mono(Mac)でKifuControl.csのListViewのEnsureVisibleで例外が出るらしい。間違いなくMonoのScrollbarまわりの実装がbugっています。
+    KifuControl.csにあるEnsureVisible()全部コメントアウトすると起動するとのこと。Mono側が修正されるまで、Macでは、EnsureVisibleを呼ばないことにします。
     (このため、いまのところMacでは棋譜ウインドウの棋譜の自動スクロールがなされない。)
 
 - すべての機能を動作確認できているわけではありません。
@@ -57,9 +59,35 @@
   > msbuild MyShogi.sln /p:Configuration=LINUX
 
 - 起動方法
-  > mono --arch=32 MyShogi/bin/LINUX/MyShogi.exe
+  > MyShogi/bin/LINUX/MyShogi.exe
 
 - 詳細は上の「将棋神やねうら王をMacで」を参考にしてください。
+
+- Ubuntuで『将棋神　やねうら王』 : http://fxst24.blog.fc2.com/blog-entry-545.html
+  - この手順でHyper-V + Ubuntu18.04で動作することを確認しました。[2018/10/22 4:00]
+
+
+## Monoのバグ
+
+
+- Mono(Mac/Linux共通)
+  - ListViewのEnsureVisibleで例外が出る。
+  - GDI+でalpha channelのある画像の転送でゴミが出る。(alpha = 0の部分の画像の転送がおかしい)
+  - Graphics.DrawImage()で転送元が半透明かつ、転送先がCreateBitmap()したBitmapだと転送元のalphaが無視される
+    // 「warning: iCCP: known incorrect sRGB profile」と標準出力に出ている。これが原因か？
+    // dvipdfmxで「warning: iCCP: known incorrect sRGB profile」というエラーが出る場合の対処方法 : https://qiita.com/takahashim/items/39534bd820f7fd71a5bb
+    > ImageMagickのconvertコマンドを使って、
+    > convert "foo.png" -strip "foo.png"
+    > と変換し、プロファイルやその他のメタデータを削除するとエラーが出なくなります。
+
+
+- Mono(Mac)
+  - ファイルダイアログを出すところでフリーズ。
+
+- Mono(Linux)
+  - ListViewExでOwnerDrawにすると無限再帰になってメッセージの処理ができなくなる。これもMono(Linux)のバグくさい。
+    - DrawSubItemのイベントで描画したときに画面が汚れた判定になっていて、再描画イベントがまた飛んでくるのがおかしい。
+    - これのせいでメッセージを処理できなくなり、メニューなどが描画されない。
 
 
 ## 音声・画像素材について

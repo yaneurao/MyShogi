@@ -8,7 +8,7 @@ using System.Drawing;
 using System.IO;
 using System.Management;
 using System.Windows.Forms;
-using System.Windows.Media;
+using System.Windows.Media; // PresentationCore.dllのアセンブリ参照が必要。正直使いたくないのだが…。
 using MyShogi.Model.Shogi.EngineDefine;
 
 // --- 単体で呼び出して使うAPI群
@@ -117,7 +117,7 @@ namespace MyShogi.Model.Dependency
     /// <summary>
     /// MonoでGraphics.DrawImage()で転送元が半透明かつ、転送先がCreateBitmap()したBitmapだと
     /// 転送元のalphaが無視されるので、DrawImage()をwrapする。
-    /// 
+    ///
     /// Monoではこの挙動、きちんと実装されていない。(bugだと言えると思う)
     /// Monoは、GDIPlusまわりの実装、いまだにおかしいところ多い。
     /// </summary>

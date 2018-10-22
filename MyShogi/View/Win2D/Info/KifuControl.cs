@@ -162,33 +162,36 @@ namespace MyShogi.View.Win2D
             if (col.Count == 0)
                 return;
 
-            var last = enable_total_time ? 3 : 2;
-            var sum = 0; //  listView1.Margin.Left + listView1.Margin.Right;
-            foreach (var i in All.Int(last))
-                sum += col[i].Width;
+            using (var sbc = new SuspendLayoutBlock(this))
+            {
+                var last = enable_total_time ? 3 : 2;
+                var sum = 0; //  listView1.Margin.Left + listView1.Margin.Right;
+                foreach (var i in All.Int(last))
+                    sum += col[i].Width;
 
-            // これ、ちゃんと設定してやらないと水平スクロールバーが出てきてしまう。
-            // ClientSizeはスクロールバーを除外したサイズ。
-            // →　スクロールバーが出ていない状態で計算して、
-            // そのあとスクロールバーが出ると困るのだが…。押し戻す処理をするか。
-            // スクロールバーを常に表示するモードがないので、スクロールバーが出ているならその分を控えて計算するか。
+                // これ、ちゃんと設定してやらないと水平スクロールバーが出てきてしまう。
+                // ClientSizeはスクロールバーを除外したサイズ。
+                // →　スクロールバーが出ていない状態で計算して、
+                // そのあとスクロールバーが出ると困るのだが…。押し戻す処理をするか。
+                // スクロールバーを常に表示するモードがないので、スクロールバーが出ているならその分を控えて計算するか。
 
-            // スクロールバーが10pxより小さいことはありえないので、それを超えているならスクロールバーが出ている。
-            /*
-            var scrollbar = listView1.Width - listView1.ClientSize.Width > 10;
-            var width = scrollbar ?
-                listView1.ClientSize.Width :
-                listView1.ClientSize.Width - 22; // 実測でこれくらい high dpiだと変わるかも..
-            */
-            // →　これやめる。スクロールバーが出るとClientSizeが変化するのだから、そのときリサイズイベントが起きるのでは。
+                // スクロールバーが10pxより小さいことはありえないので、それを超えているならスクロールバーが出ている。
+                /*
+                var scrollbar = listView1.Width - listView1.ClientSize.Width > 10;
+                var width = scrollbar ?
+                    listView1.ClientSize.Width :
+                    listView1.ClientSize.Width - 22; // 実測でこれくらい high dpiだと変わるかも..
+                */
+                // →　これやめる。スクロールバーが出るとClientSizeが変化するのだから、そのときリサイズイベントが起きるのでは。
 
-            var width = listView1.ClientSize.Width;
-            var newWidth = Math.Max(width - sum , 0);
+                var width = listView1.ClientSize.Width;
+                var newWidth = Math.Max(width - sum, 0);
 
-            // Widthにはマイナスの値を設定しても0に補整される。この結果、上のMax()がないと、newWidthがマイナスだと
-            // このifは成立してしまい、代入によってイベントが生起されるので無限再帰となる。
-            if (col[last].Width != newWidth)
-                col[last].Width = newWidth; //残りいっぱい分にする
+                // Widthにはマイナスの値を設定しても0に補整される。この結果、上のMax()がないと、newWidthがマイナスだと
+                // このifは成立してしまい、代入によってイベントが生起されるので無限再帰となる。
+                if (col[last].Width != newWidth)
+                    col[last].Width = newWidth; //残りいっぱい分にする
+            }
         }
 
         /// <summary>
@@ -276,8 +279,8 @@ namespace MyShogi.View.Win2D
         /// <param name="index"></param>
         private void EnsureVisible(int index)
         {
-#if !MACOS
-            // Mono(Mac)は、EnsureVisibleで落ちるらしい。絶対Mono側の原因。
+#if !MONO
+            // Mono(Mac/Linux)は、EnsureVisibleで落ちるらしい。絶対Mono側の原因。
             // Mono側が修正されたらこの#ifを削除する。
 
             // 範囲チェックを行う。
@@ -697,8 +700,11 @@ namespace MyShogi.View.Win2D
             // メインウインドウに埋め込み時もフォント固定する。
             //if (ViewModel.DockState != DockState.InTheMainWindow)
 
-            UpdateButtonLocation();
-            UpdateListViewColumnWidth();
+            using (var slb = new SuspendLayoutBlock(this))
+            {
+                UpdateButtonLocation();
+                UpdateListViewColumnWidth();
+            }
         }
 
         /// <summary>

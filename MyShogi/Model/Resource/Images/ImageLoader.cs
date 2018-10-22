@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MyShogi.Model.Dependency;
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -77,20 +78,29 @@ namespace MyShogi.Model.Resource.Images
         }
         
         /// <summary>
-        /// width×heightのbitmapを作成してそこに現在の内容を(拡大・縮小)コピーして返す
+        /// width×heightのbitmapを作成してそこに現在の内容を(拡大・縮小)コピーして返す。
+        /// 縮小のために用いるものであり、転送元は透過画像ではないと仮定している。
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <param name="src">転送元矩形(省略時は全域)</param>
         public ImageLoader CreateAndCopy(int width , int height ,
             Rectangle? src = null ,
+#if! MONO
+            PixelFormat format = PixelFormat.Format32bppArgb
+            // Mono(Linux)で転送元が透過画像(Format32bppArgb)でかつ、
+            // 転送先がCreateBitmap()した画像だと正常に転送されないので転送先を32bppArgbに変更。
+            // Macのほうはよくわからないが、同様の可能性が高い。
+#else
             PixelFormat format = PixelFormat.Format24bppRgb
+#endif
             )
         {
             var img = new ImageLoader();
             img.CreateBitmap(width, height,format);
             using (var g = Graphics.FromImage(img.image))
             {
+
                 var dstRect = new Rectangle(0, 0, width, height);
                 var srcRect = src != null ? src.Value : new Rectangle(0, 0, image.Width, image.Height);
                 //  高品質で縮小する。さほど大きな画像のリサイズは行わないので品質が高く時間がかかろうとも問題ない。
