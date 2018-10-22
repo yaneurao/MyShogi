@@ -2,7 +2,30 @@
 - 検討ウインドウの現在選択されている読み筋に対して「再クリック」もしくは「スペースキー」で再度ミニ盤面にその読み筋が反映されて欲しい。
 
 
+
 ■　2018/10/22
+
+
+- Ubuntu18.04で動作確認その2
+  - 起動後、ゲーム画面のリサイズが起きないの、MainWindow、double bufferにした影響か？
+    →そうでもなさげ。とりま、Double Bufferオフにしとく。
+  - Affine行列、再セットされてない感じ。DockStyle絡む、(Monoの)resizeのバグのようだ。
+      // 1) ここ、Size()を事前に設定しないとDockStyle.Noneにした瞬間おかしいところにKifuControlが移動してしまう。
+      // 2) Monoでは、DockStyle.Noneにした瞬間に、それ以前のresizeイベントがクリアされる(?)ため、再描画がなされなくなる。
+      // 結論的には、DockStyle.Noneの前後でサイズを代入するのが良いようだ。なんぞこれ…。
+      →　2)も違うようだ。強制的にResizeイベント起こしたほうが無難っぽい。
+- バージョン表示、WebBrowserを使っているので表示自体が無理ぽ。
+  - これぐらい自前で作ったほうが良いのでは…。
+- システム情報も落ちるわｗ
+      // MonoだとManagementClass自体、未実装。
+      - #if で囲む。
+- ListViewのOwenerDrawで、無限ループになる。→　MonoのListViewのバグ。オーナードローをやめる。
+  - 無限ループになるのは回避できたが、それでもまだListViewの描画がされない。なんで…。ListViewのほうのバグではないのでは…。
+  - 簡単なサンプルを作って動作確認すべき。
+- バージョン表示、WebBrowserを使っているので表示自体が無理ぽ。
+  - これぐらい自前で作りなおす。
+- RichSelctorをPictureBox.StretchImageを使うように変更。
+- あとはListViewだけか…。
 
 
 - Ubuntu18.04で動作確認その1

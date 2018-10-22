@@ -218,6 +218,8 @@ namespace MyShogi.View.Win2D.Setting
                 groupBox1.Controls.Add(r);
 
                 var p = new PictureBox();
+                // 引き伸ばしておく。
+                p.SizeMode = PictureBoxSizeMode.StretchImage;
                 var x2 = x;
                 p.Location = new Point(x2 , pictureBox1.Location.Y);
                 p.Size = pictureBox1.Size; // サイズは固定しておいたほうが扱いやすい
@@ -227,13 +229,11 @@ namespace MyShogi.View.Win2D.Setting
                 groupBox1.Controls.Add(p);
 
                 var img = new ImageLoader();
-                var tmp_img = new ImageLoader();
-
                 var path = Path.Combine(ImageFolder, texts[1]);
-                tmp_img.Load(path);
-                images[i] = tmp_img.CreateAndCopy(p.Width,p.Height);
+                img.Load(path);
+                images[i] = img;
                 p.Image = images[i].image;
-
+                
                 // ToolTipの追加。
                 if (texts.Length >= 3)
                 {
@@ -254,9 +254,9 @@ namespace MyShogi.View.Win2D.Setting
         private Control[] radioButtons;
         private Control[] pictureBoxes;
         private ImageLoader[] images;
-        #endregion
+#endregion
 
-        #region handlers
+#region handlers
         private void RichSelector_SizeChanged(object sender, System.EventArgs e)
         {
             // サイズが変更されたら、それに合わせたGroupBoxのサイズに変更する。
@@ -277,6 +277,6 @@ namespace MyShogi.View.Win2D.Setting
                 foreach (var img in images)
                     img?.Dispose();
         }
-        #endregion
+#endregion
     }
 }

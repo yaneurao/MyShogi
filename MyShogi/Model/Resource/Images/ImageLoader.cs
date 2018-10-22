@@ -86,7 +86,7 @@ namespace MyShogi.Model.Resource.Images
         /// <param name="src">転送元矩形(省略時は全域)</param>
         public ImageLoader CreateAndCopy(int width , int height ,
             Rectangle? src = null ,
-#if! MONO
+#if MONO
             PixelFormat format = PixelFormat.Format32bppArgb
             // Mono(Linux)で転送元が透過画像(Format32bppArgb)でかつ、
             // 転送先がCreateBitmap()した画像だと正常に転送されないので転送先を32bppArgbに変更。

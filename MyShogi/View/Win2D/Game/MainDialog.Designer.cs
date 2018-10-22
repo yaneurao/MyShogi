@@ -253,7 +253,6 @@
             this.ClientSize = new System.Drawing.Size(518, 256);
             this.Controls.Add(this.gameScreenControl1);
             this.Controls.Add(this.toolStrip1);
-            this.DoubleBuffered = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(185, 55);

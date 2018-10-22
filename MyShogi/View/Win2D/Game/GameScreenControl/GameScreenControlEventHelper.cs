@@ -376,6 +376,14 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// リサイズイベントと等価な処理。
+        /// </summary>
+        public void ForceRedraw2()
+        {
+            GameScreenControl_SizeChanged(null,null);
+        }
+
+        /// <summary>
         /// sqの描画する場所を得る。
         /// reverse : 盤面を180度回転するのかのフラグ
         /// </summary>

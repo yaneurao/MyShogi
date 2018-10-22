@@ -468,8 +468,10 @@ namespace MyShogi.View.Win2D
 
                 gameScreenControl1.Size = new Size(w, h - ch);
                 gameScreenControl1.Dock = DockStyle.None; // ここでLocationが変化するのでこのあと復元する。
-                // LocationをDockの変更前に設定するとDockへの代入で変化してしまう。
+                // ここ、MonoだとなぜかResizeイベントが起きない。自前で呼び出す。
+
                 gameScreenControl1.Location = loc;
+                // LocationをDockの変更前に設定するとDockへの代入で変化してしまう。
 
                 engineConsiderationMainControl.Size = new Size(w, ch);
                 engineConsiderationMainControl.Dock = DockStyle.None;
@@ -578,6 +580,8 @@ namespace MyShogi.View.Win2D
 
                 // メインウインドウが表示されるまで、棋譜ウインドウの座標設定などを抑制していたのでここでメインウインドウ相対で移動させてやる。
                 UpdateDockedWindowLocation();
+
+                gameScreenControl1.ForceRedraw2();
             }
 
             // 自分が保有しているScreenがdirtyになっていることを検知したら、Invalidateを呼び出す。
@@ -2431,7 +2435,7 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private MenuStripEx old_menu { get; set; } = null;
 
-        #endregion
+#endregion
 
     }
 }

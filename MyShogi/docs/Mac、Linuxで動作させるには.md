@@ -64,7 +64,8 @@
 - 詳細は上の「将棋神やねうら王をMacで」を参考にしてください。
 
 - Ubuntuで『将棋神　やねうら王』 : http://fxst24.blog.fc2.com/blog-entry-545.html
-  - この手順でHyper-V + Ubuntu18.04で動作することを確認しました。[2018/10/22 4:00]
+  - (V1.32) この手順でHyper-V + Ubuntu18.04で動作することを確認中。[2018/10/22 10:20]
+    - 棋譜ウインドウと検討ウインドウのListViewの表示がうまくいかない。なんぞこれ。
 
 
 ## Monoのバグ
@@ -74,12 +75,6 @@
   - ListViewのEnsureVisibleで例外が出る。
   - GDI+でalpha channelのある画像の転送でゴミが出る。(alpha = 0の部分の画像の転送がおかしい)
   - Graphics.DrawImage()で転送元が半透明かつ、転送先がCreateBitmap()したBitmapだと転送元のalphaが無視される
-    // 「warning: iCCP: known incorrect sRGB profile」と標準出力に出ている。これが原因か？
-    // dvipdfmxで「warning: iCCP: known incorrect sRGB profile」というエラーが出る場合の対処方法 : https://qiita.com/takahashim/items/39534bd820f7fd71a5bb
-    > ImageMagickのconvertコマンドを使って、
-    > convert "foo.png" -strip "foo.png"
-    > と変換し、プロファイルやその他のメタデータを削除するとエラーが出なくなります。
-
 
 - Mono(Mac)
   - ファイルダイアログを出すところでフリーズ。

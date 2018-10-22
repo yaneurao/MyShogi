@@ -72,6 +72,8 @@ namespace MyShogi.View.Win2D
 
             sb.AppendLine("--------");
 
+            // MonoだとManagementClass自体、未実装。
+#if !MONO
             // 32bit環境でManagementObjectが持っていない項目があるとそこで落ちるので…。
             object GetVManagementObjectValue(ManagementObject mo , string key)
             {
@@ -128,6 +130,7 @@ namespace MyShogi.View.Win2D
                     sb.AppendLine("--------");
                     mo.Dispose();
                 }
+#endif
 
             stopwatch.Stop();
             sb.AppendLine();

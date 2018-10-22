@@ -336,6 +336,11 @@ namespace MyShogi.Model.Resource.Images
             // いまは素材が少ないのでさほど問題とはなっていないが、素材が増えてきて、
             // 起動が遅くなるのは嫌なので…。
 
+            var commercial = TheApp.app.Config.CommercialVersion;
+
+            // -- ゲームロゴ
+            Load(ref GameLogo , commercial == 0 ? "myshogi_logo.png" : "yaneura_logo.jpg" , true);
+
             // -- エンジンの初期化時の描画
 
             Load(ref EngineInitImage, "engine_init.png" , true);
@@ -474,6 +479,11 @@ namespace MyShogi.Model.Resource.Images
         /// MessageBoxのアイコン
         /// </summary>
         public ImageLoader MessageBoxIconImage = new ImageLoader();
+
+        /// <summary>
+        /// Aboutダイアログで表示するロゴ
+        /// </summary>
+        public ImageLoader GameLogo = new ImageLoader();
 
 #region GameEffects
         /// <summary>

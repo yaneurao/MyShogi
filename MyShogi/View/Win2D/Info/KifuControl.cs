@@ -22,6 +22,9 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
 
+            if (TheApp.app.DesignMode)
+                return;
+
             InitListView();
 
             var fm = new FontSetter(this, "KifuWindow");
