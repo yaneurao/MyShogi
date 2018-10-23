@@ -323,7 +323,6 @@ namespace MyShogi.View.Win2D
             }
             else
             {
-
                 kifuDockWindow = new DockWindow();
                 kifuDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
                 kifuDockWindow.Owner = this;
@@ -441,57 +440,68 @@ namespace MyShogi.View.Win2D
             // first_tick前だとengineConsiderationMainControl == nullだったりしてまずいのだ。
 
             // 検討ウインドウをこのウインドウに埋め込んでいるときに、検討ウインドウをリサイズする。
-
-            int w = ClientSize.Width;
-            int h = ClientSize.Height - gameScreenControl1.Location.Y; // メニューとToolStripの高さを引き算する。
-
-            var config = TheApp.app.Config;
-            var dockManager = config.EngineConsiderationWindowDockManager;
-
-            // 非表示のときはないものとして扱う。
-            // すなわち、DockWindow側にあるものとして、gameScreenControl1をDockStyle.Fillにする必要がある。
-
-            if (dockManager.DockState == DockState.InTheMainWindow && dockManager.Visible)
+            using (var slb1 = new SuspendLayoutBlock(this))
+            using (var slb2 = new SuspendLayoutBlock(gameScreenControl1))
             {
-                // メインウインドウに埋め込み時の検討ウインドウ高さの倍率
-                float height_rate = 1 + 0.25f * config.ConsiderationWindowHeightType;
 
-                // 検討ウインドウの縦幅
-                var ch = (int)(height_rate * h / 5);
+                int w = ClientSize.Width;
+                int h = ClientSize.Height - gameScreenControl1.Location.Y; // メニューとToolStripの高さを引き算する。
 
-                var loc = gameScreenControl1.Location;
+                var config = TheApp.app.Config;
+                var dockManager = config.EngineConsiderationWindowDockManager;
 
-                // Noneにした瞬間にresizeイベントが発生するのだが、この時まだSizeが設定されていないので
-                // 棋譜ウインドウがおかしいところに移動する。そこでDockStyleの設定前にSizeの設定が必要である。
-                // しかしこれでも一瞬、ずれて表示される。画面の描画が完了するまで棋譜ウインドウのVisible = false
-                // にしたいが、それはわりと難しい。これで我慢する。
+                // 非表示のときはないものとして扱う。
+                // すなわち、DockWindow側にあるものとして、gameScreenControl1をDockStyle.Fillにする必要がある。
 
-                gameScreenControl1.Size = new Size(w, h - ch);
-                gameScreenControl1.Dock = DockStyle.None; // ここでLocationが変化するのでこのあと復元する。
-                // ここ、MonoだとなぜかResizeイベントが起きない。自前で呼び出す。
+                if (dockManager.DockState == DockState.InTheMainWindow && dockManager.Visible)
+                {
+                    // メインウインドウに埋め込み時の検討ウインドウ高さの倍率
+                    float height_rate = 1 + 0.25f * config.ConsiderationWindowHeightType;
 
-                gameScreenControl1.Location = loc;
-                // LocationをDockの変更前に設定するとDockへの代入で変化してしまう。
+                    // 検討ウインドウの縦幅
+                    var ch = (int)(height_rate * h / 5);
 
-                engineConsiderationMainControl.Size = new Size(w, ch);
-                engineConsiderationMainControl.Dock = DockStyle.None;
-                engineConsiderationMainControl.Location = new Point(0, ClientSize.Height - ch);
+                    var loc = gameScreenControl1.Location;
 
-                // ※　Linux(Ubuntu18.04)で、このLocationの代入が無視されてて変なところに表示される。
+                    // Noneにした瞬間にresizeイベントが発生するのだが、この時まだSizeが設定されていないので
+                    // 棋譜ウインドウがおかしいところに移動する。そこでDockStyleの設定前にSizeの設定が必要である。
+                    // しかしこれでも一瞬、ずれて表示される。画面の描画が完了するまで棋譜ウインドウのVisible = false
+                    // にしたいが、それはわりと難しい。これで我慢する。
 
-            }
-            else {
+                    gameScreenControl1.Size = Size.Empty;
+                    gameScreenControl1.Dock = DockStyle.None; // ここでLocationが変化するのでこのあと復元する。
+                    gameScreenControl1.Size = new Size(w, h - ch);
 
-                var loc = gameScreenControl1.Location;
-                gameScreenControl1.Size = new Size(w, h);
-                gameScreenControl1.Dock = DockStyle.Fill;
-                gameScreenControl1.Location = loc;
+                    // ここ、Monoだとなぜかresizeイベントが起きない。
+                    // DockStyle.Noneにする前のサイズと同じだからのようだ。
+                    // そこでわざとDockStyle.Noneの前でサイズを(0,0)にして、DockStyleを変更後にSizeを設定することによって
+                    // 強制的にresizeイベントを生起させる。
 
-                engineConsiderationMainControl.Dock = DockStyle.Fill;
+                    gameScreenControl1.Location = loc;
+                    // LocationをDockの変更前に設定するとDockへの代入で変化してしまう。
 
-                //gameScreenControl1.Size = new Size(w, h);
-                //engineConsiderationMainControl.Size = new Size(w, h / 4);
-                //engineConsiderationMainControl.Location = new Point(0, 0);
+                    engineConsiderationMainControl.Size = Size.Empty;
+                    engineConsiderationMainControl.Dock = DockStyle.None;
+                    engineConsiderationMainControl.Size = new Size(w, ch);
+                    engineConsiderationMainControl.Location = new Point(0, ClientSize.Height - ch);
+
+                    // ※　Linux(Ubuntu18.04)で、このLocationの代入が無視されてて変なところに表示される。
+                    // 変なところというより、SizeChangedイベントが発生していなくて前のAffine行列に対して描画している感じ。
+                }
+                else
+                {
+                    var loc = gameScreenControl1.Location;
+                    gameScreenControl1.Size = Size.Empty;
+                    gameScreenControl1.Dock = DockStyle.Fill;
+                    gameScreenControl1.Size = new Size(w, h);
+                    gameScreenControl1.Location = loc;
+
+                    engineConsiderationMainControl.Dock = DockStyle.Fill;
+
+                    //gameScreenControl1.Size = new Size(w, h);
+                    //engineConsiderationMainControl.Size = new Size(w, h / 4);
+                    //engineConsiderationMainControl.Location = new Point(0, 0);
+                }
             }
         }
 
@@ -582,8 +592,6 @@ namespace MyShogi.View.Win2D
 
                 // メインウインドウが表示されるまで、棋譜ウインドウの座標設定などを抑制していたのでここでメインウインドウ相対で移動させてやる。
                 UpdateDockedWindowLocation();
-
-                gameScreenControl1.ForceRedraw2();
             }
 
             // 自分が保有しているScreenがdirtyになっていることを検知したら、Invalidateを呼び出す。

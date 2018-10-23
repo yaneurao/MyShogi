@@ -5,6 +5,24 @@
 ■　2018/10/23
 
 
+- Ubuntu18.04で動作確認その4(とりま、これで終わり)
+  - Control1のサイズ変更してるのにウインドウのResizeイベント起きてない。なんぞこれ…。
+    - DockStyleを変更前にSizeが同じだからか…そうか…。修正した。
+    - Ctrl+Rのときに一瞬白くなるの少し嫌だが、レスポンス速くなったので良しとする。
+    - Linuxで棋譜ウインドウを浮かせた時に再描画イベント走ってない。
+      - DockStyleの変更によってresizeイベント起きない。これはMonoのbugだ。
+  - メニューで「設定」のプルダウンメニューにフォント設定が反映されていない件。
+    - 「対局」をぶら下げなければ問題ないみたい。何だこれ。
+    - 仕方がないのでFontUtilityで自前で置換する。
+  - Linuxのクリップボードの実装、AO_o10yanさんのツイートの方法で実装。
+    cf. https://twitter.com/AO_o10yan/status/1053891533043159045
+    cf. https://github.com/ao-o10yan/MyShogi/blob/linux_master/MyShogi/Model/Dependency/Mono/MonoAPI.cs
+    - サウンドのほうは、aplayを使う実装はあまり良いと思わないので、AO_o10yanにお伝えする。
+      https://twitter.com/yaneuraou/status/1054603178744762368
+      https://twitter.com/yaneuraou/status/1054603478440398848
+  - これで一通り動いたのでUbuntuで遊ぶの終わり。
+
+
 - Ubuntu18.04で動作確認その3
   - 単体テストだとListView.EnsureVisible()で落ちないぞ…。
   - OwnerDrawだと列の幅を移動させたときに再描画がおかしくなる。OwnerDrawはMonoのdirtifyの処理がバグっていると見て間違いなさそう。

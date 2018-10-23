@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Tool;
+using System.Drawing;
 #if !MONO
 using System.Security.Permissions;
 #endif

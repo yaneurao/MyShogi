@@ -50,6 +50,21 @@ namespace MyShogi.View.Win2D
 
             // 子コントロールに対して、UserControl絡みだけ置換する。
             ReplaceUserControlFont(control , newFont);
+
+#if MONO
+            // Linux(Monoでメインメニューのフォントが途中から置換されない。Monoのbugくさい。自前で置換する。
+            if (control is MenuStrip)
+            {
+                // そこにぶら下がっているToolStripMenuItemに対してFontの置換を実施する。
+                var menu = control as MenuStrip;
+                foreach (var item in menu.Items)
+                {
+                    if (item is ToolStripMenuItem)
+                        (item as ToolStripMenuItem).Font = newFont;
+                }
+            }
+#endif
+
         }
 
         /// <summary>
@@ -69,7 +84,7 @@ namespace MyShogi.View.Win2D
                 }
                 else if (c is UserControl)
                 {
-                    UserControl userControl = c as UserControl;
+                    var userControl = c as UserControl;
                     userControl.Font = font;
                     // このUserControlがUpdateFont()を持つなら、それを呼び出して、Fontの再計算をさせてやるべき。
                     if (userControl is IFontUpdate)

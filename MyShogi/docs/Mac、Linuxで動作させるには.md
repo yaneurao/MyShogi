@@ -3,8 +3,6 @@
 
 
 - MyShogi V1.32ではコードの修正なしにMonoでコンパイルでき、Mac/Linuxで動作するはずです。
-  - [2018/10/20] メニューや棋譜ウインドウを色々いじった結果、LinuxではMyShogiの最新版は動かないようです。
-        Update3までに調査してなんとかします。
 
 
 - 参考記事(MyShogiの少し古いバージョンの話なので参考程度にどうぞ)
@@ -16,35 +14,36 @@
     - やねうら王MyShogiをLinuxでビルドしてみた : http://hennohito.cocolog-nifty.com/blog/2018/06/myshogilinux-69.html
 
 
+## ビルドする上で注意点
+
+
+- Monoのコンパイラ(mcs)が現状C#7.2までしか対応しておらず、本プロジェクトではC#7.3をターゲットとしているので、そのままだとコンパイルが通りません。
+- MsBuildでビルドすると例外が出たときに行番号が表示されなくて困るのですが、mcsはまだC#7.2までしか対応していないのでビルドできません。
+- mcsがC#7.3まで対応したら、mcsでビルドするようにすべきだと思います。
+
 
 ## 将棋神やねうら王をMacで
 
-
 - Monoのコンパイラが動くようにする。(上の「AI将棋ソフト『MyShogi』をMacBookProでビルド＆遊んでみた」を参考に)
-
-  参考)
-    https://twitter.com/arrow_elpis/status/1044909606697283585
-     msbuildはmono入れたら入ってきますよ。あと、MyShogiをビルドするには MyShogiディレクトリ内で
-    "nuget install Microsoft.Net.Compilers" を実行してmonoではないコンパイラを落としてくる必要があります。
 
 - git clone
   > git clone https://github.com/yaneurao/MyShogi.git
 
 - ビルド方法
   > msbuild MyShogi.sln /p:Configuration=macOS
-  - MsBuildでビルドすると例外が出たときに行番号が表示されなくて困るが、mcsはまだC#7.2までしか対応していないのでビルドできない。
-  - mcsがC#7.3まで対応したら、mcsでビルドするようにすべきだと思う。
+
 
 - 起動方法
   > mono --arch=32 MyShogi/bin/macOS/MyShogi.exe
 
-- (V1.30) 公式のGitHubのソースコードで、修正なしにビルドが通って実行自体は出来るところまできました。
 - (V1.30) 表示設定のフォント選択ダイアログがフリーズするらしいです。(Linuxだとこの問題は起きない) Mac用のMonoのバグではないかと…。
 - (V1.32) libsoundioを用いて音が鳴るようになりました。サウンド再生のために別途以下のライブラリが必要です。
     https://github.com/jnory/MyShogiSoundPlayer/releases/tag/v0.1.1
-- (V1.32) Mono(Mac)でKifuControl.csのListViewのEnsureVisibleで例外が出るらしい。間違いなくMonoのScrollbarまわりの実装がbugっています。
-    KifuControl.csにあるEnsureVisible()全部コメントアウトすると起動するとのこと。Mono側が修正されるまで、Macでは、EnsureVisibleを呼ばないことにします。
-    (このため、いまのところMacでは棋譜ウインドウの棋譜の自動スクロールがなされない。)
+- (V1.32) 棋譜ウインドウ、常に現在の局面が選択されている状態にしたいのですが、ListViewのOwnerDraw、Monoでバグるのでいまのところ実現できないです。
+- (V1.32) 棋譜ウインドウ、メインウインドウに埋め込み状態からフロート状態に変更したときに再描画されません。
+    - DockStyleの変更によってresizeイベント起きないというMonoのbugです。回避が難しいので、
+      そのあと棋譜ウインドウをリサイズして再描画を促すか、再起動するかしてください。
+
 
 - すべての機能を動作確認できているわけではありません。
 
@@ -61,11 +60,14 @@
 - 起動方法
   > MyShogi/bin/LINUX/MyShogi.exe
 
+- その他、依存ライブラリ
+  - 棋譜のクリップボードへのコピー、クリップボードからのペーストには、xclipが/usr/bin/xclipにインストールされている必要があります。
+  - サウンド再生は、Mac用と同じく、libsoundioをwrapしたjnoryさんのライブラリ(実行ファイル)に依存します。
+
 - 詳細は上の「将棋神やねうら王をMacで」を参考にしてください。
 
 - Ubuntuで『将棋神　やねうら王』 : http://fxst24.blog.fc2.com/blog-entry-545.html
-  - (V1.32) この手順でHyper-V + Ubuntu18.04で動作することを確認中。[2018/10/22 10:20]
-    - 棋譜ウインドウと検討ウインドウのListViewの表示がうまくいかない。なんぞこれ。
+  - (V1.32) この手順でHyper-V + Ubuntu18.04で動作することを確認しました。[2018/10/23 14:30]
 
 
 ## Monoのバグ
@@ -75,18 +77,23 @@
   - ListViewのEnsureVisibleで例外が出る。Visible=falseのときにスクローバーの高さの計算を間違うようだ。
     - Visible=falseのときはEnsureVisibleを呼び出さないようにして回避。
   - GDI+でalpha channelのある画像の転送でゴミが出る。(alpha = 0の部分の画像の転送がおかしい)
+    - 自前で転送するコードを書いて回避。
   - Graphics.DrawImage()で転送元が半透明かつ、転送先がCreateBitmap()したBitmapだと転送元のalphaが無視される
+    - 転送先が24bppRgbだとこの問題が出るようなので、Monoの時だけ転送先を32bppArgbに変更して回避。
 
 - Mono(Mac)
-  - ファイルダイアログを出すところでフリーズ。
+  - ファイルダイアログを出すところでフリーズ。回避しようがないのであぼーん。
 
 - Mono(Linux)
-  - ListViewExでOwnerDrawにすると無限再帰になってメッセージの処理ができなくなる。これもMono(Linux)のバグくさい。
+  - ListViewExでOwnerDrawにすると無限再帰になってメッセージの処理ができなくなる。これもMono(Linux)のバグくさい。Macではどうだかわからない。
     - DrawSubItemのイベントで描画したときに画面が汚れた判定になっていて、再描画イベントがまた飛んでくるのがおかしい。
     - これのせいでメッセージを処理できなくなり、メニューなどが描画されない。
-    - ListViewのEnsureVisible悪くなかった。ListViewのOwnerDrawでおかしくなっているのだった。
+    - MonoのときだけListViewのOwnerDrawで描画するのをやめる。
   - メニューの「設定」の項目から右側の項目、文字フォントの変更が反映していない。
     - MenuStripにぶらさげているToolStripMenuItemの、ambient propertyになっているFont、親のFontが反映しないバグ。
+    - 自前ですべてにフォントを設定することで回避。
+  - 棋譜ウインドウをフロートに変更したときに再描画されない。
+    - DockStyleの変更によってresizeイベント起きないというMonoのbugのため。回避が難しいので、とりま放置。
 
 
 ## 音声・画像素材について

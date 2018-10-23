@@ -10,7 +10,6 @@
 // ・macOS →　MACOS
 // ・Linux →　LINUX
 
-using MyShogi.Model.Shogi.EngineDefine;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -20,6 +19,7 @@ using System.IO;
 using System.Reflection;
 using MyShogi.Model.Common.String;
 using MyShogi.Model.Common.Tool;
+using MyShogi.Model.Shogi.EngineDefine;
 
 // --- 単体で呼び出して使うAPI群
 
@@ -252,7 +252,24 @@ namespace MyShogi.Model.Dependency
                 p.WaitForExit();
             }
 #elif LINUX
-            // Linux用、あとで実装する。
+            // Linux用 "xclip"がインストールされていることを前提とできるなら、xclipを呼べば良い。
+            // Linux用、別途xclipのインストールが必要。
+            if (!File.Exists("/usr/bin/xclip"))
+                return;
+
+            using (var p = new Process())
+            {
+                p.StartInfo = new ProcessStartInfo("xclip", "-selection clipboard")
+                {
+                    UseShellExecute = false,
+                    RedirectStandardOutput = false,
+                    RedirectStandardInput = true,
+                };
+                p.Start();
+                p.StandardInput.Write(text);
+                p.StandardInput.Close();
+                p.WaitForExit();
+            }
 #endif
         }
 
@@ -274,8 +291,25 @@ namespace MyShogi.Model.Dependency
                 p.WaitForExit();
             }
 #elif LINUX
-            // Linux用、あとで実装する。
-            pasteText = null;
+            // Linux用、別途xclipのインストールが必要。
+            if (!File.Exists("/usr/bin/xclip"))
+            {
+                pasteText = null;
+            }
+            else
+            {
+                using (var p = new Process())
+                {
+                    p.StartInfo = new ProcessStartInfo("xclip", "-selection clipboard -o")
+                    {
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                    };
+                    p.Start();
+                    pasteText = p.StandardOutput.ReadToEnd();
+                    p.WaitForExit();
+                }
+            }
 #endif
             return pasteText;
         }
@@ -448,7 +482,6 @@ namespace MyShogi.Model.Resource.Sounds
                     process.Start();
                     _playerProcess = process;
                 }
-
             }
 
         }
