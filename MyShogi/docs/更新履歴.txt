@@ -5,6 +5,14 @@
 ■　2018/10/23
 
 
+- DockStyleの変更、DockUtilityに移動させる。
+  MainWindowのDockStyleの変更部分、綺麗に整理した。
+  - 相変わらずLinuxではDockStyleの変更後、再描画イベントおきない。なんなんこれ…。
+- MessageShow()に関して、例外の場合は、Consoleにも出力するようにした。
+        // Linuxでデバッグするときなど、例外が渡ってきて、ウインドウを出せずに終了することがあるので
+        // 例外に関してはメッセージをConsoleに出すほうが親切かもなー。
+
+
 - Ubuntu18.04で動作確認その4(とりま、これで終わり)
   - Control1のサイズ変更してるのにウインドウのResizeイベント起きてない。なんぞこれ…。
     - DockStyleを変更前にSizeが同じだからか…そうか…。修正した。
@@ -21,6 +29,7 @@
       https://twitter.com/yaneuraou/status/1054603178744762368
       https://twitter.com/yaneuraou/status/1054603478440398848
   - これで一通り動いたのでUbuntuで遊ぶの終わり。
+  - 検討ウインドウ、メインウインドウに埋め込んでいると描画されないみたい。なんぞこれ。
 
 
 - Ubuntu18.04で動作確認その3

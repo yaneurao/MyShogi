@@ -16,6 +16,11 @@ namespace MyShogi.App
         /// <param name="text"></param>
         public DialogResult MessageShow(string text, MessageShowType type)
         {
+            // Linuxでデバッグするときなど、例外が渡ってきて、ウインドウを出せずに終了することがあるので
+            // 例外に関してはメッセージをConsoleに出すほうが親切かもなー。
+            if (type == MessageShowType.Exception)
+                Console.WriteLine(text);
+
             var caption = type.Pretty();
             var icon = type.ToIcon();
             var show = new Func<Form,DialogResult>((parent) =>

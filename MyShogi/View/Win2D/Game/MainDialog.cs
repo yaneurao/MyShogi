@@ -461,53 +461,20 @@ namespace MyShogi.View.Win2D
                     // 検討ウインドウの縦幅
                     var ch = (int)(height_rate * h / 5);
 
-                    var loc = gameScreenControl1.Location;
-
-                    // Noneにした瞬間にresizeイベントが発生するのだが、この時まだSizeが設定されていないので
-                    // 棋譜ウインドウがおかしいところに移動する。そこでDockStyleの設定前にSizeの設定が必要である。
-                    // しかしこれでも一瞬、ずれて表示される。画面の描画が完了するまで棋譜ウインドウのVisible = false
-                    // にしたいが、それはわりと難しい。これで我慢する。
-
-                    gameScreenControl1.Size = Size.Empty;
-                    gameScreenControl1.Dock = DockStyle.None; // ここでLocationが変化するのでこのあと復元する。
-                    gameScreenControl1.Size = new Size(w, h - ch);
-
-                    // ここ、Monoだとなぜかresizeイベントが起きない。
-                    // DockStyle.Noneにする前のサイズと同じだからのようだ。
-                    // そこでわざとDockStyle.Noneの前でサイズを(0,0)にして、DockStyleを変更後にSizeを設定することによって
-                    // 強制的にresizeイベントを生起させる。
-
-                    gameScreenControl1.Location = loc;
-                    // LocationをDockの変更前に設定するとDockへの代入で変化してしまう。
-
-                    engineConsiderationMainControl.Size = Size.Empty;
-                    engineConsiderationMainControl.Dock = DockStyle.None;
-                    engineConsiderationMainControl.Size = new Size(w, ch);
-                    engineConsiderationMainControl.Location = new Point(0, ClientSize.Height - ch);
-
-                    // ※　Linux(Ubuntu18.04)で、このLocationの代入が無視されてて変なところに表示される。
-                    // 変なところというより、SizeChangedイベントが発生していなくて前のAffine行列に対して描画している感じ。
+                    DockUtility.Change(gameScreenControl1            , DockStyle.None , new Size(w, h - ch) , null /*いまの場所*/ );
+                    DockUtility.Change(engineConsiderationMainControl, DockStyle.None , new Size(w, ch)     , new Point(0, ClientSize.Height - ch));
                 }
                 else
                 {
-                    var loc = gameScreenControl1.Location;
-                    gameScreenControl1.Size = Size.Empty;
-                    gameScreenControl1.Dock = DockStyle.Fill;
-                    gameScreenControl1.Size = new Size(w, h);
-                    gameScreenControl1.Location = loc;
-
-                    engineConsiderationMainControl.Dock = DockStyle.Fill;
-
-                    //gameScreenControl1.Size = new Size(w, h);
-                    //engineConsiderationMainControl.Size = new Size(w, h / 4);
-                    //engineConsiderationMainControl.Location = new Point(0, 0);
+                    DockUtility.Change(gameScreenControl1            , DockStyle.Fill , new Size(w, h), null);
+                    DockUtility.Change(engineConsiderationMainControl, DockStyle.Fill , null , null );
                 }
             }
         }
 
-        #endregion
+#endregion
 
-        #region privates
+#region privates
 
         /// <summary>
         /// コマンドラインで何か指示されていたら、それを行う。
@@ -550,9 +517,9 @@ namespace MyShogi.View.Win2D
             }
         }
 
-        #endregion
+#endregion
 
-        #region event handlers
+#region event handlers
 
         // -- 以下、Windows Messageのイベントハンドラ
 

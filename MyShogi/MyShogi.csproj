@@ -110,6 +110,7 @@
     <Compile Include="Model\Common\Utility\Swap.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuListRow.cs" />
     <Compile Include="View\Win2D\Common\ClickAction.cs" />
+    <Compile Include="View\Win2D\Common\DockUtility.cs" />
     <Compile Include="View\Win2D\Common\KeyboardShortcutHelper.cs" />
     <Compile Include="View\Win2D\Common\MenuStripEx.cs">
       <SubType>Component</SubType>
