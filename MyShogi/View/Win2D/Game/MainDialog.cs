@@ -477,6 +477,8 @@ namespace MyShogi.View.Win2D
                 engineConsiderationMainControl.Dock = DockStyle.None;
                 engineConsiderationMainControl.Location = new Point(0, ClientSize.Height - ch);
 
+                // ※　Linux(Ubuntu18.04)で、このLocationの代入が無視されてて変なところに表示される。
+
             }
             else {
 

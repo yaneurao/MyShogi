@@ -16,7 +16,14 @@ namespace MyShogi.View.Win2D
         public ListViewEx()
         {
             DoubleBuffered = true;
-            OwnerDraw = false;
+
+            // ここで代入してもデザイナが代入しなおすので無駄。
+
+            SizeChanged += (sender,args) => {
+                MultiSelect = false;
+                OwnerDraw = false;
+                HideSelection = false;
+            };
         }
 
         /// <summary>
@@ -54,10 +61,14 @@ namespace MyShogi.View.Win2D
             // cf. ListView OwnerDrawの既定の実装 : https://stackoverrun.com/ja/q/2363016
             // cf. オーナー描画	: http://jsworld.jp/surasura/mgh?contentid=prg003p004
 
-            OwnerDraw = true;
+            // ここで代入しても、デザイナが代入しなおすので駄目。SizeChangedか何かでやらないと(´ω｀)
 
-            // OwnerDrawなので関係ない(はず)
-            HideSelection = false;
+            SizeChanged += (sender,args) => {
+                MultiSelect = false;
+                OwnerDraw = true;
+                // OwnerDrawなので関係ない(はず)
+                HideSelection = false;
+            };
 
             DrawColumnHeader += MyListView_DrawColumnHeader;
             DrawSubItem += MyListView_DrawSubItem;

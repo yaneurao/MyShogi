@@ -72,7 +72,8 @@
 
 
 - Mono(Mac/Linux共通)
-  - ListViewのEnsureVisibleで例外が出る。
+  - ListViewのEnsureVisibleで例外が出る。Visible=falseのときにスクローバーの高さの計算を間違うようだ。
+    - Visible=falseのときはEnsureVisibleを呼び出さないようにして回避。
   - GDI+でalpha channelのある画像の転送でゴミが出る。(alpha = 0の部分の画像の転送がおかしい)
   - Graphics.DrawImage()で転送元が半透明かつ、転送先がCreateBitmap()したBitmapだと転送元のalphaが無視される
 
@@ -83,6 +84,9 @@
   - ListViewExでOwnerDrawにすると無限再帰になってメッセージの処理ができなくなる。これもMono(Linux)のバグくさい。
     - DrawSubItemのイベントで描画したときに画面が汚れた判定になっていて、再描画イベントがまた飛んでくるのがおかしい。
     - これのせいでメッセージを処理できなくなり、メニューなどが描画されない。
+    - ListViewのEnsureVisible悪くなかった。ListViewのOwnerDrawでおかしくなっているのだった。
+  - メニューの「設定」の項目から右側の項目、文字フォントの変更が反映していない。
+    - MenuStripにぶらさげているToolStripMenuItemの、ambient propertyになっているFont、親のFontが反映しないバグ。
 
 
 ## 音声・画像素材について

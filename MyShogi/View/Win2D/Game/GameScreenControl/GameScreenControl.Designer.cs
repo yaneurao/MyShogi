@@ -34,11 +34,11 @@
             // kifuControl1
             // 
             this.kifuControl1.Location = new System.Drawing.Point(148, 546);
-            this.kifuControl1.Visible = false;
             this.kifuControl1.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.kifuControl1.Name = "kifuControl1";
             this.kifuControl1.Size = new System.Drawing.Size(100, 100);
             this.kifuControl1.TabIndex = 0;
+            this.kifuControl1.Visible = false;
             // 
             // GameScreenControl
             // 

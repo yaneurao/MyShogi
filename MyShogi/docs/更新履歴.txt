@@ -2,10 +2,35 @@
 - 検討ウインドウの現在選択されている読み筋に対して「再クリック」もしくは「スペースキー」で再度ミニ盤面にその読み筋が反映されて欲しい。
 
 
+■　2018/10/23
+
+
+- Ubuntu18.04で動作確認その3
+  - 単体テストだとListView.EnsureVisible()で落ちないぞ…。
+  - OwnerDrawだと列の幅を移動させたときに再描画がおかしくなる。OwnerDrawはMonoのdirtifyの処理がバグっていると見て間違いなさそう。
+  - OwnerDrawでなければ大丈夫くさい。他のところとの複合要因なのか…。うむむ…。
+  - GameScreenControlのDoubleBuffered = falseにするわけにはいかないしな。Linuxだとこれfalseにしてもちらつかないな…なんでだろう。内部的にbufferingしてるのかな。
+  - Ubuntuの棋譜ウインドウ、カーソルキーで局面を移動したり、マウスカーソルでクリックしたりはできるようだ。描画だけがなされない。なんぞこれ。
+    - どこかのSuspendLayout()で描画が止まっている状態くさいのだが。
+  - メニューの「設定」の項目から右側の項目、文字フォントの変更が反映していない。MenuStripのambient propertyになっているFontが反映しない。
+  - KifuControlのListView.TopItemのnull check追加。
+  - KifuControlとEngineConsiderationControlに貼り付けてあるListViewのOwnerDraw = trueにデザイナでしてた(´ω｀)
+    - Linuxで描画されなかったの、これが原因か…。
+    - ListViewExのコードも修正。
+    - KifuControlのListViewでデザイナでMultiSelection = trueになっていたのも修正。
+  - 検討ウインドウ、メインウインドウに埋め込んでいると表示位置おかしい。Locationが利いてない。
+  - EnsureVisible悪くなかった。ListViewのOwnerDrawでおかしくなっているのだった。
+    - いや、EnsureVisibleをVisible==falseのときに呼び出すと落ちる。これはVisible==falseのケースを弾くようにする。
+- Ubuntuで『将棋神やねうら王』 (2018/10/22) : http://fxst24.blog.fc2.com/blog-entry-545.html
+  > mogrify -format png *.png
+  > これを実行しないと、MyShogiの起動時に
+  > libpng warning: iCCP: known incorrect sRGB profile
+  > という警告が出る。具体的にどのような問題が起きるのか分からないが、鬱陶しいので実行しておく。
+
 
 ■　2018/10/22
 
-
+ 
 - Ubuntu18.04で動作確認その2
   - 起動後、ゲーム画面のリサイズが起きないの、MainWindow、double bufferにした影響か？
     →そうでもなさげ。とりま、Double Bufferオフにしとく。

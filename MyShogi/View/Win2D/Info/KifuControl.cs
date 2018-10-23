@@ -282,14 +282,15 @@ namespace MyShogi.View.Win2D
         /// <param name="index"></param>
         private void EnsureVisible(int index)
         {
-#if !MONO
-            // Mono(Mac/Linux)は、EnsureVisibleで落ちるらしい。絶対Mono側の原因。
-            // Mono側が修正されたらこの#ifを削除する。
+            // Mono(Mac/Linux)は、EnsureVisibleで落ちるらしい。絶対Mono側の原因
+            // →　Visible == falseのときにスクローバーの高さの計算を間違えるようだ。
+            // このとき、EnsureVisibleを呼び出さずに帰れば問題ない。
+            if (!Visible)
+                return;
 
             // 範囲チェックを行う。
             if (0 <= index && index < listView1.Items.Count)
                 listView1.EnsureVisible(index);
-#endif
         }
 
         /// <summary>
@@ -490,8 +491,13 @@ namespace MyShogi.View.Win2D
         private void AdjustScrollTop()
         {
             var selected = ViewModel.KifuListSelectedIndex;
-            var top = listView1.TopItem.Index;
 
+            var top_item = listView1.TopItem;
+            // この変数、nullがありうるようだ。質が悪い…。
+            if (top_item == null)
+                return;
+
+            var top = top_item.Index;
             var itemHeight = (listView1.ItemHeight == 0) ? 16 : listView1.ItemHeight;
             var visibleCount = listView1.ClientSize.Height / itemHeight;
             var bottom = top + visibleCount; // これListBoxのpropertyにないのだ…。何故なのだ…。
