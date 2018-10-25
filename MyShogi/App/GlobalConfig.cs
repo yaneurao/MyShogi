@@ -22,9 +22,15 @@ namespace MyShogi.App
         /// 『将棋神やねうら王』(2018年8月末発売)のマスターアップ版[2018/08/06]は"1.0.0"
         /// 『将棋神やねうら王』のUpdate1.3 は、"1.1.3"。→　マイナビ公式で配布[2018/09/03]
         /// 『将棋神やねうら王』のUpdate2   は、"1.2.4"。→　マイナビ公式で配布[2018/10/10]
+        ///
+        /// このバージョン文字列は、Serializer.VersionStringToInt()によって数値に変換できるものとする。
         /// </summary>
         public static readonly string MYSHOGI_VERSION_STRING = "1.3.2";
 
+        /// <summary>
+        /// このファイルがシリアライズされて保存された時のバージョン文字列
+        /// </summary>
+        public string Version { get; set; }
 
         public GlobalConfig()
         {
@@ -98,11 +104,31 @@ namespace MyShogi.App
             // ファイルがなかったら新規に作成する。
             if (config == null)
                 config = new GlobalConfig();
+            else
+                // データ構造のマイグレーション
+                config.Migrate();
 
             config.Init();
 
             return config;
         }
+
+        #region データ構造のMigration
+        /// <summary>
+        /// データ構造がバージョンごとに変化する場合、ここでそのマイグレーションを行う。
+        /// phpのフレームワークとかでよくあるやつ。
+        /// </summary>
+        private void Migrate()
+        {
+            var version = Serializer.VersionStringToInt(Version);
+
+            // Version 1.32以前
+            if (version < 1320)
+            { }
+
+            // 以下、if (version < XXX) { .. } をだらだら書いていく。
+        }
+        #endregion
 
         /// <summary>
         /// ファイルから設定をデシリアライズした直後に呼び出して、ファイルから読み込んだ内容の一部を
@@ -154,6 +180,8 @@ namespace MyShogi.App
         /// </summary>
         public void Save()
         {
+            // 保存するときのバージョンを埋め込んでおく。
+            Version = MYSHOGI_VERSION_STRING;
             Serializer.Serialize(xmlFile, this);
         }
 

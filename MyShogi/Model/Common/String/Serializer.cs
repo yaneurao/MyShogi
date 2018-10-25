@@ -1,5 +1,7 @@
 ﻿using System.Xml;
 using System.Runtime.Serialization;
+using System.Diagnostics;
+using MyShogi.Model.Common.Collections;
 
 namespace MyShogi.Model.Common.String
 {
@@ -68,7 +70,34 @@ namespace MyShogi.Model.Common.String
             }
 
             return result;
+        }
 
+        /// <summary>
+        /// バージョン文字列をint型にする。
+        /// 例) "1.2.3"→ 1230 , "1.2.3a"→1231 , "12.3.4"→ 12340
+        /// 不明なら"0"
+        /// </summary>
+        /// <param name="versionString"></param>
+        /// <returns></returns>
+        public static int VersionStringToInt(string versionString)
+        {
+            // まず"."を除去して、末尾にアルファベットがあるなら、それを1の位の数字とみなす。なければ末尾に"0"を付与。
+            if (versionString.Empty())
+                return 0;
+
+            // 末尾の文字列
+            var lastChar = char.ToLower(versionString.Right(1)[0]);
+
+            if ('0' <= lastChar && lastChar <= '9')
+            {
+                return int.Parse(versionString.Replace(".","")) * 10;
+            }
+            else
+            {
+                var lastDecimal = (lastChar) - 'a' + 1; /* 'a'を1 , 'b'を2 , ..に変換する */
+
+                return int.Parse(versionString.Left(versionString.Length-1).Replace(".","")) * 10 + lastDecimal;
+            }
         }
     }
 }
