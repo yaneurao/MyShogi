@@ -12,7 +12,7 @@ namespace MyShogi.App
     /// 全体設定。
     /// 駒画像番号、サウンドの有無、ウインドウ比率など…
     /// </summary>
-    public class GlobalConfig : NotifyObject
+    public partial class GlobalConfig : NotifyObject
     {
         #region publics
 
@@ -105,30 +105,13 @@ namespace MyShogi.App
             if (config == null)
                 config = new GlobalConfig();
             else
-                // データ構造のマイグレーション
+                // 以前のデータ構造からのマイグレーション
                 config.Migrate();
 
             config.Init();
 
             return config;
         }
-
-        #region データ構造のMigration
-        /// <summary>
-        /// データ構造がバージョンごとに変化する場合、ここでそのマイグレーションを行う。
-        /// phpのフレームワークとかでよくあるやつ。
-        /// </summary>
-        private void Migrate()
-        {
-            var version = Serializer.VersionStringToInt(Version);
-
-            // Version 1.32以前
-            if (version < 1320)
-            { }
-
-            // 以下、if (version < XXX) { .. } をだらだら書いていく。
-        }
-        #endregion
 
         /// <summary>
         /// ファイルから設定をデシリアライズした直後に呼び出して、ファイルから読み込んだ内容の一部を
@@ -339,15 +322,28 @@ namespace MyShogi.App
         /// 棋譜ウィンドウに表示する棋譜の種類
         ///
         /// 0 : 標準(KI2形式) 「８八同金右」 ←　デフォルト
-        /// 1 : 簡易(KIF形式) 「88金(79)」
-        /// 2 : Csa式        「7988KI」
-        /// 3 : Chess式       「7i8h」
+        /// 1 : 打強制(KI2形式+打つ)「８八金打」
+        /// 2 : 簡易(KIF形式) 「88金(79)」
+        /// 3 : Csa式        「7988KI」
+        /// 4 : Chess式       「7i8h」
+        /// 
+        /// 打つは、紛らわしくないときは書かないのが正式。(KI2形式が正式)
+        /// cf.日本将棋連盟 「棋譜の表記方法」: https://www.shogi.or.jp/faq/kihuhyouki.html
+        /// しかし、書かないとわかりにくいと将棋初心者には不評。
         /// </summary>
         [DataMember]
         public int KifuWindowKifuVersion
         {
             get { return GetValue<int>("KifuWindowKifuVersion"); }
             set { SetValue<int>("KifuWindowKifuVersion", value); }
+        }
+
+        /// </summary>
+        [DataMember]
+        public int KifuWindowKifuDropVersion
+        {
+            get { return GetValue<int>("KifuWindowKifuDropVersion"); }
+            set { SetValue<int>("KifuWindowKifuDropVersion", value); }
         }
 
         /// <summary>
@@ -367,9 +363,10 @@ namespace MyShogi.App
         /// 検討ウィンドウの読み筋に表示する棋譜の種類
         ///
         /// 0 : 標準(KI2形式) 「８八同金右」 ←　デフォルト
-        /// 1 : 簡易(KIF形式) 「88金(79)」
-        /// 2 : Csa式        「7988KI」
-        /// 3 : Chess式       「7i8h」
+        /// 1 : 打強制(KI2形式+打つ)「８八金打」
+        /// 2 : 簡易(KIF形式) 「88金(79)」
+        /// 3 : Csa式        「7988KI」
+        /// 4 : Chess式       「7i8h」
         /// </summary>
         [DataMember]
         public int ConsiderationWindowKifuVersion

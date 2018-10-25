@@ -5,6 +5,27 @@
 ■　2018/10/25
 
 
+- 検討ウインドウの読み筋の右クリックメニューを追加。
+  - メイン棋譜に分岐として送る/置き換える
+    - メニューの表示まで実装した。中身の実装はまだ。
+    - これ、検討中のみしか機能しないようにしとかないとややこしいことになりそう。あとで考える。
+
+
+- 棋譜の記法で駒打ちのときには必ず「打」を記すオプション
+  - 棋譜表記は、以下のサイトを参考に忠実に守っているのだが、「打」の文字が無いのはわかりにくいと不評。
+  - 日本将棋連盟 「棋譜の表記方法」: https://www.shogi.or.jp/faq/kihuhyouki.html
+- 棋譜形式のオプション項目、2個目以降が右に一つずれるのでimmigrator書く。
+
+  kifwindow_kif_style_1.png → kifwindow_kif_style_2.pngにrename。以下同様。
+  cons_window_kif_style_1.png 以下も同様。
+
+  標準(KI2),cons_window_kif_style_0.png,標準的な棋譜表記にします。日本将棋連盟の定める正式な表記です。
+  拡張(KI2打),cons_window_kif_style_1.png,KI2と同等ですが、駒打の時は必ず「打」と記す拡張表記です。
+  簡易(KIF),cons_window_kif_style_2.png,移動元の升が書かれている簡易な棋譜表記にします。
+  CSA,cons_window_kif_style_3.png,移動元の升が書かれている簡易な棋譜表記にします。
+  SFEN,cons_window_kif_style_4.png,チェスで使われているSFEN方式の棋譜表記にします。
+
+
 - 旧データからのimmigrator書かないと。
   - GlobalConfig.Migrate()追加。とりま、書けた。
 

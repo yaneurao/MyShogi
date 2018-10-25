@@ -291,6 +291,17 @@ namespace MyShogi.Model.Shogi.Converter
         );
 
         /// <summary>
+        /// KI2(☗☖手番文字あり) + 打を必ず表記
+        /// </summary>
+        public static KifFormatterImmutableOptions Ki2CPDrop { get; } = new KifFormatterImmutableOptions(
+            BaseFormat.KIF,
+            ColorFormat.Piece,
+            SquareFormat.FullWidthMix,
+            SamePosFormat.KI2sp,
+            FromSqFormat.Drop // 打
+        );
+
+        /// <summary>
         /// KI2(手番文字なし,最終着手/RootPV表示向け)
         /// 例: 同２三銀右
         /// </summary>

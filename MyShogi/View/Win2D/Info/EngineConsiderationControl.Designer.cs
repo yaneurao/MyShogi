@@ -36,8 +36,12 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
-            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.SendToMainKifu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReplaceToMainKifu = new System.Windows.Forms.ToolStripMenuItem();
             this.listView1 = new MyShogi.View.Win2D.ListViewEx();
+            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
+            this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox1
@@ -137,6 +141,26 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SendToMainKifu,
+            this.ReplaceToMainKifu});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(305, 70);
+            // 
+            // SendToMainKifu
+            // 
+            this.SendToMainKifu.Name = "SendToMainKifu";
+            this.SendToMainKifu.Size = new System.Drawing.Size(304, 22);
+            this.SendToMainKifu.Text = "メイン棋譜にこの読み筋を分岐棋譜として送る(&S)";
+            // 
+            // ReplaceToMainKifu
+            // 
+            this.ReplaceToMainKifu.Name = "ReplaceToMainKifu";
+            this.ReplaceToMainKifu.Size = new System.Drawing.Size(304, 22);
+            this.ReplaceToMainKifu.Text = "メイン棋譜をこの読み筋で置き換える(&R)";
+            // 
             // listView1
             // 
             this.listView1.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -151,6 +175,7 @@
             this.listView1.ColumnWidthChanged += new System.Windows.Forms.ColumnWidthChangedEventHandler(this.listView1_ColumnWidthChanged);
             this.listView1.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listView1_ItemSelectionChanged);
             this.listView1.ClientSizeChanged += new System.EventHandler(this.listView1_ClientSizeChanged);
+            this.listView1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.listView1_MouseDown);
             // 
             // EngineConsiderationControl
             // 
@@ -168,6 +193,7 @@
             this.Name = "EngineConsiderationControl";
             this.Size = new System.Drawing.Size(762, 208);
             this.Resize += new System.EventHandler(this.EngineConsiderationControl_Resize);
+            this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -184,5 +210,8 @@
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Button button1;
         private MyShogi.View.Win2D.ToolTipEx toolTip1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem SendToMainKifu;
+        private System.Windows.Forms.ToolStripMenuItem ReplaceToMainKifu;
     }
 }

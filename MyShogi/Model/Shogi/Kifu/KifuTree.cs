@@ -54,9 +54,10 @@ namespace MyShogi.Model.Shogi.Kifu
             switch(kifu_version)
             {
                 case 0: kifFormatter = KifFormatter.Ki2CP; break;
-                case 1: kifFormatter = KifFormatter.KifCP; break;
-                case 2: kifFormatter = KifFormatter.CsaCP; break;
-                case 3: kifFormatter = KifFormatter.SfenCP; break;
+                case 1: kifFormatter = KifFormatter.Ki2CPDrop; break;
+                case 2: kifFormatter = KifFormatter.KifCP; break;
+                case 3: kifFormatter = KifFormatter.CsaCP; break;
+                case 4: kifFormatter = KifFormatter.SfenCP; break;
                 default: Debug.Assert(false);  break;
             }
         }

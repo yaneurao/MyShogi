@@ -517,9 +517,10 @@ namespace MyShogi.View.Win2D
             switch (kifu_version)
             {
                 case 0: kifFormatter = KifFormatter.Ki2CP; break;
-                case 1: kifFormatter = KifFormatter.KifCP; break;
-                case 2: kifFormatter = KifFormatter.CsaCP; break;
-                case 3: kifFormatter = KifFormatter.SfenCP; break;
+                case 1: kifFormatter = KifFormatter.Ki2CPDrop; break;
+                case 2: kifFormatter = KifFormatter.KifCP; break;
+                case 3: kifFormatter = KifFormatter.CsaCP; break;
+                case 4: kifFormatter = KifFormatter.SfenCP; break;
                 default: Debug.Assert(false); break;
             }
         }
@@ -697,5 +698,57 @@ namespace MyShogi.View.Win2D
             // スクロールバーが非表示から表示になったときに水平スクロールバーがでるのを抑制する。
             UpdatePvWidth();
         }
+
+        /// <summary>
+        /// 検討ウインドウでの右クリックメニュー
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void listView1_MouseDown(object sender, MouseEventArgs e)
+        {
+            var early_exit = true;
+            ListViewItem targetItem = null;
+
+            try
+            {
+
+                // 右クリックではないなら帰る
+                // TODO : 左クリックならこの読み筋、再度ミニ盤面に送るべきでは。
+                if (e.Button != MouseButtons.Right)
+                    return;
+
+                targetItem = listView1.GetItemAt(e.X, e.Y);
+                if (targetItem == null)
+                    return;
+
+                // これが読み筋のある有効なItemであるかを確認しないといけないが…。
+                // まあ、読み筋が書いてあればとりまOk(あとでよく考える)
+                // TODO : 元の読み筋をちゃんと保持しておかないといけないのでは…。
+                var pv = targetItem.SubItems[6].Text;
+                if (pv.Empty())
+                    return;
+
+                // 抜けないことが確定した
+                early_exit = false;
+            } finally
+            {
+                // なんか変なところをクリックしたので右クリックメニューを隠す
+                if (early_exit && contextMenuStrip1.Visible)
+                {
+                    selectedListViewItem = null;
+                    contextMenuStrip1.Hide();
+                }
+            }
+
+            // コンテキストメニューを表示する。
+            contextMenuStrip1.Show(Cursor.Position);
+            // このコンテキストメニューはどのItemに対して出しているのかを記録しておく。
+            selectedListViewItem = targetItem;
+        }
+
+        /// <summary>
+        /// 検討ウインドウで右クリックで選択されている項目
+        /// </summary>
+        ListViewItem selectedListViewItem;
     }
 }
