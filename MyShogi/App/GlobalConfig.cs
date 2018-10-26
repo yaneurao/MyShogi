@@ -92,6 +92,7 @@ namespace MyShogi.App
             KifuWindowPrevNextKey = 1;
             KifuWindowNextSpecialKey = 1;
             KifuWindowFirstLastKey = 1;
+            ConsiderationWindowPrevNextKey = 1;
 
             // -- 検討設定
 
@@ -772,6 +773,26 @@ namespace MyShogi.App
             get { return GetValue<int>("KifuWindowFirstLastKey"); }
             set { SetValue<int>("KifuWindowFirstLastKey", value); }
         }
+
+        /// <summary>
+        /// 検討ウインドウでのキー操作その1
+        ///
+        /// 選択行の上下移動
+        /// 0 : なし
+        /// 1 : Shift↑↓  : デフォルト
+        /// 2 : Shift←→
+        /// 3 : ，(カンマ)と ．(ピリオド)
+        /// 4 : ↑と↓ 
+        /// 5 : ←と→
+        /// 6 : PageUpとPageDown
+        /// </summary>
+        [DataMember]
+        public int ConsiderationWindowPrevNextKey
+        {
+            get { return GetValue<int>("ConsiderationWindowPrevNextKey"); }
+            set { SetValue<int>("ConsiderationWindowPrevNextKey", value); }
+        }
+
 
         #endregion
 

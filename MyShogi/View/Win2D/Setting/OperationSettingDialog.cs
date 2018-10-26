@@ -38,6 +38,10 @@ namespace MyShogi.View.Win2D.Setting
             richSelector3.Bind(config, "KifuWindowNextSpecialKey");
             richSelector4.Bind(config, "KifuWindowFirstLastKey");
 
+            // -- 「検討」のタブ
+
+            richSelector5.Bind(config, "ConsiderationWindowPrevNextKey");
+
         }
 
     }

@@ -26,9 +26,6 @@ namespace MyShogi.View.Win2D
             var fm = TheApp.app.Config.FontManager;
             FontUtility.ReplaceFont(toolStrip1 , fm.MainToolStrip);
 
-            // ToolStripのShortcutを設定する。
-            UpdateToolStripShortcut();
-
             // フォントの変更は即時反映にする。
             // メインウインドウが解体されるときは終了する時だから、このハンドラのRemoveはしてない。
             fm.AddPropertyChangedHandler("FontChanged", (args) =>
@@ -114,6 +111,10 @@ namespace MyShogi.View.Win2D
             engineConsiderationMainControl.ConsiderationInstance(0).ViewModel.AddPropertyChangedHandler("MultiPV", (h) => {
                 gameServer.ChangeMultiPvCommand((int)h.value);
             });
+
+            // ToolStripのShortcutを設定する。
+            // これは、engineConsiderationMainControlの初期化が終わっている必要がある。
+            UpdateToolStripShortcut();
         }
 
         #endregion

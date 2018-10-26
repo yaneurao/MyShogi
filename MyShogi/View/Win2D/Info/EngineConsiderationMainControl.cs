@@ -63,6 +63,26 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 検討時に選択行を1行下に移動する。
+        /// キーハンドラから呼び出される。
+        /// </summary>
+        public void PerformUp()
+        {
+            // 検討時用なら先手用に送っておけば十分。
+            ConsiderationInstance(0).PerformUp();
+        }
+
+        /// <summary>
+        /// 検討時に選択行を1行上に移動する。
+        /// キーハンドラから呼び出される。
+        /// </summary>
+        public void PerformDown()
+        {
+            // 検討時用なら先手用に送っておけば十分。
+            ConsiderationInstance(0).PerformDown();
+        }
+
+        /// <summary>
         /// 読み筋などのメッセージを受け取り、ququeに積む。
         ///
         /// OnIdle()が呼び出されたときにdispatchする。

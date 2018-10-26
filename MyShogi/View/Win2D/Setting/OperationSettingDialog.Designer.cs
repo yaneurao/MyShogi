@@ -30,20 +30,24 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.richSelector1 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.richSelector4 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector3 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector2 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.richSelector5 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -61,6 +65,17 @@
             this.tabPage1.Text = "駒";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // richSelector1
+            // 
+            this.richSelector1.GroupBoxTitle = "駒をマウスのドラッグでも移動できるようにするか";
+            this.richSelector1.Location = new System.Drawing.Point(6, 6);
+            this.richSelector1.Name = "richSelector1";
+            this.richSelector1.SelectionTexts = new string[] {
+        "しない,dragged_move_style_0.png,マウスドラッグでの駒の移動を許容しません。",
+        "する,dragged_move_style_1.png,マウスドラッグでの駒の移動を許容します。"};
+            this.richSelector1.Size = new System.Drawing.Size(772, 110);
+            this.richSelector1.TabIndex = 3;
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.richSelector4);
@@ -73,17 +88,6 @@
             this.tabPage2.Text = "棋譜";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // richSelector1
-            // 
-            this.richSelector1.GroupBoxTitle = "駒をマウスのドラッグでも移動できるようにするか";
-            this.richSelector1.Location = new System.Drawing.Point(6, 6);
-            this.richSelector1.Name = "richSelector1";
-            this.richSelector1.SelectionTexts = new string[] {
-        "しない,dragged_move_style_0.png,マウスドラッグでの駒の移動を許容しません。",
-        "する,dragged_move_style_1.png,マウスドラッグでの駒の移動を許容します。"};
-            this.richSelector1.Size = new System.Drawing.Size(772, 110);
-            this.richSelector1.TabIndex = 3;
-            // 
             // richSelector4
             // 
             this.richSelector4.GroupBoxTitle = "棋譜の最初進む/最後に進むに対応するキー";
@@ -91,8 +95,8 @@
             this.richSelector4.Name = "richSelector4";
             this.richSelector4.SelectionTexts = new string[] {
         "なし,kifu_firstlastkey_0.png,なし。",
-        "↑と↓,kifu_firstlastkey_1.png,↑と↓に割当てます。",
-        "←と→,kifu_firstlastkey_2.png,←と→に割当てます。",
+        "↑と↓,kifu_firstlastkey_1.png,カーソルキーの↑と↓に割当てます。棋譜の1手進む/戻るに対応するキーと重複している場合、無効になります。",
+        "←と→,kifu_firstlastkey_2.png,カーソルキーの←と→に割当てます。棋譜の1手進む/戻るに対応するキーと重複している場合、無効になります。",
         "Page,kifu_firstlastkey_3.png,PageUpとPageDownに割当てます。"};
             this.richSelector4.Size = new System.Drawing.Size(772, 110);
             this.richSelector4.TabIndex = 6;
@@ -121,6 +125,32 @@
             this.richSelector2.Size = new System.Drawing.Size(772, 110);
             this.richSelector2.TabIndex = 4;
             // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.richSelector5);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(782, 567);
+            this.tabPage3.TabIndex = 9;
+            this.tabPage3.Text = "検討";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // richSelector5
+            // 
+            this.richSelector5.GroupBoxTitle = "検討ウインドウで選択行の上下移動";
+            this.richSelector5.Location = new System.Drawing.Point(6, 6);
+            this.richSelector5.Name = "richSelector5";
+            this.richSelector5.SelectionTexts = new string[] {
+        "なし,cons_prevnextkey_0.png,なし",
+        "Shift↑↓,cons_prevnextkey_1.png,Shift+カーソルキーの上と下に割当てます。",
+        "Shift←→,cons_prevnextkey_2.png,Shift+カーソルキーの左と右に割当てます。",
+        "，と ．,cons_prevnextkey_3.png,  ，(カンマ)と ．(ピリオド)に割当てます。",
+        "↑と↓,cons_prevnextkey_4.png,カーソルキーの上と下に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "←と→,cons_prevnextkey_5.png,カーソルキーの左と右に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "Page,cons_prevnextkey_6.png,PageUpとPageDownに割当てます。棋譜操作のキーと重複している場合、無効化されます。"};
+            this.richSelector5.Size = new System.Drawing.Size(772, 110);
+            this.richSelector5.TabIndex = 4;
+            // 
             // OperationSettingDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -134,6 +164,7 @@
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -146,5 +177,7 @@
         private RichSelector richSelector2;
         private RichSelector richSelector3;
         private RichSelector richSelector4;
+        private System.Windows.Forms.TabPage tabPage3;
+        private RichSelector richSelector5;
     }
 }

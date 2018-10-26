@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Diagnostics;
+using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 
@@ -26,12 +27,12 @@ namespace MyShogi.View.Win2D
                 case 0: // なし
                     break;
                 case 1: // ←と→
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Left ) { toolStripButton9.PerformClick(); e.Handled = true; } });
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Right ) { toolStripButton10.PerformClick(); e.Handled = true; }});
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Left ) { toolStripButton9.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Right ) { toolStripButton10.PerformClick(); e.Handled = true; }});
                     break;
                 case 2: // ↑と↓
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Up) { toolStripButton9.PerformClick(); e.Handled = true; } });
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Down) { toolStripButton10.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Up) { toolStripButton9.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Down) { toolStripButton10.PerformClick(); e.Handled = true; } });
                     break;
 
             }
@@ -41,18 +42,18 @@ namespace MyShogi.View.Win2D
             switch (config.KifuWindowNextSpecialKey)
             {
                 case 0: // なし
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Space) { e.Handled = true; } });
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Enter) { e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Space) { e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Enter) { e.Handled = true; } });
                     break;
 
                 case 1: // スペースキー
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Space) { toolStripButton10.PerformClick(); e.Handled = true; } });
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Enter) { e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Space) { toolStripButton10.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Enter) { e.Handled = true; } });
                     break;
 
                 case 2: // Enterキー
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Space) { e.Handled = true; } });
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Enter) { toolStripButton10.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Space) { e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Enter) { toolStripButton10.PerformClick(); e.Handled = true; } });
                     break;
             }
 
@@ -63,18 +64,56 @@ namespace MyShogi.View.Win2D
                     break;
 
                 case 1: // ↑と↓
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Up) { toolStripButton12.PerformClick(); e.Handled = true; } });
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Down) { toolStripButton13.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Up) { toolStripButton12.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Down) { toolStripButton13.PerformClick(); e.Handled = true; } });
                     break;
 
                 case 2: // ←と→
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Left) { toolStripButton12.PerformClick(); e.Handled = true; } });
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.Right) { toolStripButton13.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Left) { toolStripButton12.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Right) { toolStripButton13.PerformClick(); e.Handled = true; } });
                     break;
 
                 case 3: // PageUpとPageDown
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.PageUp) { toolStripButton12.PerformClick(); e.Handled = true; } });
-                    shortcut.AddEvent2((sender, e) => { if (e.KeyCode == Keys.PageDown) { toolStripButton13.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageUp) { toolStripButton12.PerformClick(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageDown) { toolStripButton13.PerformClick(); e.Handled = true; } });
+                    break;
+            }
+
+            var cons = engineConsiderationMainControl;
+            Debug.Assert(cons != null);
+            switch (config.ConsiderationWindowPrevNextKey)
+            {
+                case 0: // なし
+                    break;
+
+                case 1: // Shift↑↓  : デフォルト
+                    shortcut.AddEvent2((sender, e) => { if (e.Shift && e.KeyCode == Keys.Up && e.Shift) { cons.PerformUp(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Shift && e.KeyCode == Keys.Down && e.Shift) { cons.PerformDown(); e.Handled = true; } });
+                    break;
+
+                case 2: // Shift←→
+                    shortcut.AddEvent2((sender, e) => { if (e.Shift && e.KeyCode == Keys.Left && e.Shift) { cons.PerformUp(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Shift && e.KeyCode == Keys.Right && e.Shift) { cons.PerformDown(); e.Handled = true; } });
+                    break;
+
+                case 3: // ，(カンマ)と ．(ピリオド)
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Oemcomma) { cons.PerformUp(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.OemPeriod) { cons.PerformDown(); e.Handled = true; } });
+                    break;
+
+                case 4: // ↑と↓ 
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Up) { cons.PerformUp(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Down) { cons.PerformDown(); e.Handled = true; } });
+                    break;
+
+                case 5: // ←と→
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Left) { cons.PerformUp(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Right) { cons.PerformDown(); e.Handled = true; } });
+                    break;
+
+                case 6: // PageUpとPageDown
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageUp) { cons.PerformUp(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageDown) { cons.PerformDown(); e.Handled = true; } });
                     break;
             }
 

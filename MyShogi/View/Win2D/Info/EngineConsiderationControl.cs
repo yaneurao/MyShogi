@@ -361,6 +361,64 @@ namespace MyShogi.View.Win2D
                 box.Font = font;
         }
 
+        /// <summary>
+        /// 検討時に選択行を1行上に移動する。
+        /// キーハンドラから呼び出される。
+        /// </summary>
+        public void PerformUp()
+        {
+            var index = GetListViewSelectedIndex();
+            if (index < 0)
+                index = 1; // 選択行がないなら、1番目が選択されて欲しいので…。
+
+            SelectListViewItem(index - 1);
+        }
+
+        /// <summary>
+        /// 検討時に選択行を1行下に移動する。
+        /// キーハンドラから呼び出される。
+        /// </summary>
+        public void PerformDown()
+        {
+            var index = GetListViewSelectedIndex();
+
+            // 選択行がなければ-1が返ってくるはずなので
+            // それに1加算して、0になるから、1番目の項目が(あれば)選択されるはず。
+
+            SelectListViewItem(index + 1);
+        }
+
+        /// <summary>
+        /// ListViewのindex番目の項目を選択する。(選択行にする)
+        ///
+        /// その項目がなければ選択行にしない。
+        /// </summary>
+        /// <param name="index"></param>
+        private void SelectListViewItem(int index)
+        {
+            if (0 <= index && index < listView1.Items.Count)
+            {
+                listView1.Items[index].Selected = true;
+                listView1.EnsureVisible(index);
+            }
+        }
+
+        /// <summary>
+        /// ListBoxのSelectedIndexのgetter相当のメソッド
+        /// 
+        /// 選択行がなければ-1が返る。
+        /// </summary>
+        /// <returns></returns>
+        private int GetListViewSelectedIndex()
+        {
+            var items = listView1.SelectedItems;
+            if (items.Count == 0)
+                return -1;
+
+            var index = items[0].Index;
+            return index;
+        }
+
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             // この現在選択されているところにある読み筋の指し手を復元して、イベントハンドラに移譲する。
