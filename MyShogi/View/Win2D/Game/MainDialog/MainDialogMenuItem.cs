@@ -90,7 +90,7 @@ namespace MyShogi.View.Win2D
                             item.Text = "棋譜を開く(&O)";
                             item.ShortcutKeys = Keys.Control | Keys.O;
                             // サブウインドウでのショートカットキーの処理
-                            shortcut.AddEvent1( (sender, e) => { if (e.Control && e.KeyCode == Keys.O) {item.PerformClick(); e.Handled = true; } });
+                            shortcut.AddEvent1( (sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.O) {item.PerformClick(); e.Handled = true; } });
                             item.Click += (sender, e) =>
                             {
                                 using (var fd = new OpenFileDialog())
@@ -124,7 +124,7 @@ namespace MyShogi.View.Win2D
                             item.Text = "棋譜の上書き保存(&S)";
                             item.ShortcutKeys = Keys.Control | Keys.S;
                             // サブウインドウでのショートカットキーの処理
-                            shortcut.AddEvent1((sender, e) => { if (e.Control && e.KeyCode == Keys.S) { item.PerformClick(); e.Handled = true; } });
+                            shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.S) { item.PerformClick(); e.Handled = true; } });
                             item.Enabled = ViewModel.LastFileName != null; // 棋譜を読み込んだ時などにしか有効ではない。
                             item.Click += (sender, e) =>
                             {
@@ -145,7 +145,7 @@ namespace MyShogi.View.Win2D
                             var item = new ToolStripMenuItem();
                             item.Text = "棋譜に名前をつけて保存(&N)";
                             item.ShortcutKeys = Keys.Control | Keys.S | Keys.Shift;
-                            shortcut.AddEvent1((sender, e) => { if (e.Control && e.KeyCode == Keys.S && e.Shift) { item.PerformClick(); e.Handled = true; }});
+                            shortcut.AddEvent1((sender, e) => { if (e.Modifiers == (Keys.Control | Keys.Shift) && e.KeyCode == Keys.S) { item.PerformClick(); e.Handled = true; }});
                             item.Click += (sender, e) =>
                             {
                                 using (var fd = new SaveFileDialog())
@@ -267,7 +267,7 @@ namespace MyShogi.View.Win2D
                             var itemk1 = new ToolStripMenuItem();
                             itemk1.Text = "棋譜KIF形式(&1)";
                             itemk1.ShortcutKeys = Keys.Control | Keys.C;
-                            shortcut.AddEvent1((sender, e) => { if (e.Control && e.KeyCode == Keys.C) { item.PerformClick(); e.Handled = true; } });
+                            shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.C) { item.PerformClick(); e.Handled = true; } });
 
                             // このショートカットキーを設定すると対局中などにも書き出せてしまうが、書き出しはまあ問題ない。
                             itemk1.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.KIF); };
@@ -334,7 +334,7 @@ namespace MyShogi.View.Win2D
                             // このショートカットキーを設定すると対局中などにも貼り付けが出来てしまうが、
                             // GameModeを見て、対局中などには処理しないようにしてある。
                             item.ShortcutKeys = Keys.Control | Keys.V;
-                            shortcut.AddEvent1((sender, e) => { if (e.Control && e.KeyCode == Keys.V) { item.PerformClick(); e.Handled = true; } });
+                            shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V) { item.PerformClick(); e.Handled = true; } });
                             item.Click += (sender, e) => { CopyFromClipboard(); };
                             item_file.DropDownItems.Add(item);
                         }
@@ -432,7 +432,7 @@ namespace MyShogi.View.Win2D
                             var item = new ToolStripMenuItem();
                             item.Text = "通常対局(&N)"; // NormalGame
                             item.ShortcutKeys = Keys.Control | Keys.N; // NewGameのN
-                            shortcut.AddEvent1((sender, e) => { if (e.Control && e.KeyCode == Keys.N) { item.PerformClick(); e.Handled = true; } });
+                            shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.N) { item.PerformClick(); e.Handled = true; } });
                             item.Click += (sender, e) =>
                             {
                                 using (var dialog = new GameSettingDialog(this))
@@ -587,7 +587,7 @@ namespace MyShogi.View.Win2D
                             var item = new ToolStripMenuItem();
                             item.Text = inTheBoardEdit ? "盤面編集の終了(&B)" : "盤面編集の開始(&B)"; // Board edit
                             item.ShortcutKeys = Keys.Control | Keys.E; // boardEdit
-                            shortcut.AddEvent1( (sender, e) => { if (e.Control && e.KeyCode == Keys.E) { item.PerformClick(); e.Handled = true; } });
+                            shortcut.AddEvent1( (sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.E) { item.PerformClick(); e.Handled = true; } });
                             item.Click += (sender, e) =>
                             {
                                 gameServer.ChangeGameModeCommand(
@@ -763,114 +763,6 @@ namespace MyShogi.View.Win2D
 
                     // -- 「ウインドウ」配下のメニュー
                     {
-                        { // ×ボタンで消していた検討ウィンドウの復活
-
-                            var item_ = new ToolStripMenuItem();
-                            item_.Text = "検討ウィンドウ(&C)"; // Consideration window
-                            item_window.DropDownItems.Add(item_);
-
-                            var dock = config.EngineConsiderationWindowDockManager;
-
-                            {
-                                var item = new ToolStripMenuItem();
-                                item.Text = dock.Visible ? "非表示(&V)" : "再表示(&V)"; // visible // 
-                                item.ShortcutKeys = Keys.Control | Keys.R; // EngineConsiderationWindowのR。Eが盤面編集のEditのEで使ってた…。
-                                shortcut.AddEvent1((sender, e) => { if (e.Control && e.KeyCode == Keys.R) { item.PerformClick(); e.Handled = true; }});
-                                item.Click += (sender, e) => { dock.Visible ^= true; dock.RaisePropertyChanged("DockState", dock.DockState); };
-                                item_.DropDownItems.Add(item);
-                            }
-
-
-                            { // フローティングの状態
-                                var item = new ToolStripMenuItem();
-                                item.Text = "表示位置(&F)"; // Floating window mode
-                                item_.DropDownItems.Add(item);
-
-                                {
-
-                                    var item1 = new ToolStripMenuItem();
-                                    item1.Text = "メインウインドウに埋め込む(&0)(EmbeddedMode)";
-                                    item1.Checked = dock.DockState == DockState.InTheMainWindow;
-                                    item1.Click += (sender, e) => { dock.DockState = DockState.InTheMainWindow; };
-                                    item.DropDownItems.Add(item1);
-
-                                    var item2 = new ToolStripMenuItem();
-                                    item2.Text = "メインウインドウから浮かせ、相対位置を常に保つ(&1)(FollowMode)";
-                                    item2.Checked = dock.DockState == DockState.FollowToMainWindow;
-                                    item2.Click += (sender, e) => { dock.DockState = DockState.FollowToMainWindow; };
-                                    item.DropDownItems.Add(item2);
-
-                                    var item3a = new ToolStripMenuItem();
-                                    item3a.Text = "メインウインドウから浮かせ、メインウインドウの上側に配置する(&2)(DockMode)";
-                                    item3a.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Top;
-                                    item3a.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Top); };
-                                    item.DropDownItems.Add(item3a);
-
-                                    var item3b = new ToolStripMenuItem();
-                                    item3b.Text = "メインウインドウから浮かせ、メインウインドウの左側に配置する(&3)(DockMode)";
-                                    item3b.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Left;
-                                    item3b.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Left); };
-                                    item.DropDownItems.Add(item3b);
-
-                                    var item3c = new ToolStripMenuItem();
-                                    item3c.Text = "メインウインドウから浮かせ、メインウインドウの右側に配置する(&4)(DockMode)";
-                                    item3c.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Right;
-                                    item3c.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Right); };
-                                    item.DropDownItems.Add(item3c);
-
-                                    var item3d = new ToolStripMenuItem();
-                                    item3d.Text = "メインウインドウから浮かせ、メインウインドウの下側に配置する(&5)(DockMode)";
-                                    item3d.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Bottom;
-                                    item3d.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Bottom); };
-                                    item.DropDownItems.Add(item3d);
-
-                                    var item4 = new ToolStripMenuItem();
-                                    item4.Text = "メインウインドウから浮かせ、自由に配置する(&6)(FloatingMode)";
-                                    item4.Checked = dock.DockState == DockState.FloatingMode;
-                                    item4.Click += (sender, e) => { dock.DockState = DockState.FloatingMode; };
-                                    item.DropDownItems.Add(item4);
-                                }
-                            }
-
-                            { // 縦幅
-                                var item = new ToolStripMenuItem();
-                                item.Text = "メインウインドウに埋め込み時の高さ(&H)"; // Height
-                                item_.DropDownItems.Add(item);
-
-                                {
-                                    var item1 = new ToolStripMenuItem();
-                                    item1.Text = "100%(通常)(&1)"; // None
-                                    item1.Checked = config.ConsiderationWindowHeightType == 0;
-                                    item1.Click += (sender, e) => { config.ConsiderationWindowHeightType = 0; };
-                                    item.DropDownItems.Add(item1);
-
-                                    var item2 = new ToolStripMenuItem();
-                                    item2.Text = "125%(&2)";
-                                    item2.Checked = config.ConsiderationWindowHeightType == 1;
-                                    item2.Click += (sender, e) => { config.ConsiderationWindowHeightType = 1; };
-                                    item.DropDownItems.Add(item2);
-
-                                    var item3 = new ToolStripMenuItem();
-                                    item3.Text = "150%(&3)";
-                                    item3.Checked = config.ConsiderationWindowHeightType == 2;
-                                    item3.Click += (sender, e) => { config.ConsiderationWindowHeightType = 2; };
-                                    item.DropDownItems.Add(item3);
-
-                                    var item4 = new ToolStripMenuItem();
-                                    item4.Text = "175%(&4)";
-                                    item4.Checked = config.ConsiderationWindowHeightType == 3;
-                                    item4.Click += (sender, e) => { config.ConsiderationWindowHeightType = 3; };
-                                    item.DropDownItems.Add(item4);
-
-                                    var item5 = new ToolStripMenuItem();
-                                    item5.Text = "200%(&5)";
-                                    item5.Checked = config.ConsiderationWindowHeightType == 4;
-                                    item5.Click += (sender, e) => { config.ConsiderationWindowHeightType = 4; };
-                                    item.DropDownItems.Add(item5);
-                                }
-                            }
-
-                        }
 
                         { // -- 棋譜ウィンドウ
 
@@ -885,7 +777,7 @@ namespace MyShogi.View.Win2D
                                 var item = new ToolStripMenuItem();
                                 item.Text = dock.Visible ? "非表示(&V)" : "再表示(&V)"; // visible // 
                                 item.ShortcutKeys = Keys.Control | Keys.K; // KifuWindow
-                                shortcut.AddEvent1((sender, e) => { if (e.Control && e.KeyCode == Keys.K) { item.PerformClick(); e.Handled = true; } });
+                                shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.K) { item.PerformClick(); e.Handled = true; } });
                                 item.Click += (sender, e) => { dock.Visible ^= true; dock.RaisePropertyChanged("DockState", dock.DockState); };
                                 item_.DropDownItems.Add(item);
                             }
@@ -982,6 +874,115 @@ namespace MyShogi.View.Win2D
 
                         }
 
+                        { // ×ボタンで消していた検討ウィンドウの復活
+
+                            var item_ = new ToolStripMenuItem();
+                            item_.Text = "検討ウィンドウ(&C)"; // Consideration window
+                            item_window.DropDownItems.Add(item_);
+
+                            var dock = config.EngineConsiderationWindowDockManager;
+
+                            {
+                                var item = new ToolStripMenuItem();
+                                item.Text = dock.Visible ? "非表示(&V)" : "再表示(&V)"; // visible // 
+                                item.ShortcutKeys = Keys.Control | Keys.R; // EngineConsiderationWindowのR。Eが盤面編集のEditのEで使ってた…。
+                                shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.R) { item.PerformClick(); e.Handled = true; } });
+                                item.Click += (sender, e) => { dock.Visible ^= true; dock.RaisePropertyChanged("DockState", dock.DockState); };
+                                item_.DropDownItems.Add(item);
+                            }
+
+
+                            { // フローティングの状態
+                                var item = new ToolStripMenuItem();
+                                item.Text = "表示位置(&F)"; // Floating window mode
+                                item_.DropDownItems.Add(item);
+
+                                {
+
+                                    var item1 = new ToolStripMenuItem();
+                                    item1.Text = "メインウインドウに埋め込む(&0)(EmbeddedMode)";
+                                    item1.Checked = dock.DockState == DockState.InTheMainWindow;
+                                    item1.Click += (sender, e) => { dock.DockState = DockState.InTheMainWindow; };
+                                    item.DropDownItems.Add(item1);
+
+                                    var item2 = new ToolStripMenuItem();
+                                    item2.Text = "メインウインドウから浮かせ、相対位置を常に保つ(&1)(FollowMode)";
+                                    item2.Checked = dock.DockState == DockState.FollowToMainWindow;
+                                    item2.Click += (sender, e) => { dock.DockState = DockState.FollowToMainWindow; };
+                                    item.DropDownItems.Add(item2);
+
+                                    var item3a = new ToolStripMenuItem();
+                                    item3a.Text = "メインウインドウから浮かせ、メインウインドウの上側に配置する(&2)(DockMode)";
+                                    item3a.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Top;
+                                    item3a.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Top); };
+                                    item.DropDownItems.Add(item3a);
+
+                                    var item3b = new ToolStripMenuItem();
+                                    item3b.Text = "メインウインドウから浮かせ、メインウインドウの左側に配置する(&3)(DockMode)";
+                                    item3b.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Left;
+                                    item3b.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Left); };
+                                    item.DropDownItems.Add(item3b);
+
+                                    var item3c = new ToolStripMenuItem();
+                                    item3c.Text = "メインウインドウから浮かせ、メインウインドウの右側に配置する(&4)(DockMode)";
+                                    item3c.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Right;
+                                    item3c.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Right); };
+                                    item.DropDownItems.Add(item3c);
+
+                                    var item3d = new ToolStripMenuItem();
+                                    item3d.Text = "メインウインドウから浮かせ、メインウインドウの下側に配置する(&5)(DockMode)";
+                                    item3d.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Bottom;
+                                    item3d.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Bottom); };
+                                    item.DropDownItems.Add(item3d);
+
+                                    var item4 = new ToolStripMenuItem();
+                                    item4.Text = "メインウインドウから浮かせ、自由に配置する(&6)(FloatingMode)";
+                                    item4.Checked = dock.DockState == DockState.FloatingMode;
+                                    item4.Click += (sender, e) => { dock.DockState = DockState.FloatingMode; };
+                                    item.DropDownItems.Add(item4);
+                                }
+                            }
+
+                            { // 縦幅
+                                var item = new ToolStripMenuItem();
+                                item.Text = "メインウインドウに埋め込み時の高さ(&H)"; // Height
+                                item_.DropDownItems.Add(item);
+
+                                {
+                                    var item1 = new ToolStripMenuItem();
+                                    item1.Text = "100%(通常)(&1)"; // None
+                                    item1.Checked = config.ConsiderationWindowHeightType == 0;
+                                    item1.Click += (sender, e) => { config.ConsiderationWindowHeightType = 0; };
+                                    item.DropDownItems.Add(item1);
+
+                                    var item2 = new ToolStripMenuItem();
+                                    item2.Text = "125%(&2)";
+                                    item2.Checked = config.ConsiderationWindowHeightType == 1;
+                                    item2.Click += (sender, e) => { config.ConsiderationWindowHeightType = 1; };
+                                    item.DropDownItems.Add(item2);
+
+                                    var item3 = new ToolStripMenuItem();
+                                    item3.Text = "150%(&3)";
+                                    item3.Checked = config.ConsiderationWindowHeightType == 2;
+                                    item3.Click += (sender, e) => { config.ConsiderationWindowHeightType = 2; };
+                                    item.DropDownItems.Add(item3);
+
+                                    var item4 = new ToolStripMenuItem();
+                                    item4.Text = "175%(&4)";
+                                    item4.Checked = config.ConsiderationWindowHeightType == 3;
+                                    item4.Click += (sender, e) => { config.ConsiderationWindowHeightType = 3; };
+                                    item.DropDownItems.Add(item4);
+
+                                    var item5 = new ToolStripMenuItem();
+                                    item5.Text = "200%(&5)";
+                                    item5.Checked = config.ConsiderationWindowHeightType == 4;
+                                    item5.Click += (sender, e) => { config.ConsiderationWindowHeightType = 4; };
+                                    item.DropDownItems.Add(item5);
+                                }
+                            }
+
+                        }
+
                         item_window.DropDownItems.Add(new ToolStripSeparator());
 
                         { // -- 対局結果一覧ウィンドウ
@@ -1050,7 +1051,7 @@ namespace MyShogi.View.Win2D
                                     var item1 = new ToolStripMenuItem();
                                     item1.Text = "デバッグウィンドウの表示(&D)"; // Debug Window
                                     item1.ShortcutKeys = Keys.Control | Keys.D;
-                                    shortcut.AddEvent1( (sender, e) => { if (e.Control && e.KeyCode == Keys.D) { item1.PerformClick(); e.Handled = true; } });
+                                    shortcut.AddEvent1( (sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.D) { item1.PerformClick(); e.Handled = true; } });
                                     item1.Click += (sender, e) =>
                                     {
                                         if (debugDialog != null)

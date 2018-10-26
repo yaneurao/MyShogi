@@ -87,13 +87,13 @@ namespace MyShogi.View.Win2D
                     break;
 
                 case 1: // Shift↑↓  : デフォルト
-                    shortcut.AddEvent2((sender, e) => { if (e.Shift && e.KeyCode == Keys.Up && e.Shift) { cons.PerformUp(); e.Handled = true; } });
-                    shortcut.AddEvent2((sender, e) => { if (e.Shift && e.KeyCode == Keys.Down && e.Shift) { cons.PerformDown(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Up && e.Shift) { cons.PerformUp(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Down && e.Shift) { cons.PerformDown(); e.Handled = true; } });
                     break;
 
                 case 2: // Shift←→
-                    shortcut.AddEvent2((sender, e) => { if (e.Shift && e.KeyCode == Keys.Left && e.Shift) { cons.PerformUp(); e.Handled = true; } });
-                    shortcut.AddEvent2((sender, e) => { if (e.Shift && e.KeyCode == Keys.Right && e.Shift) { cons.PerformDown(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Left && e.Shift) { cons.PerformUp(); e.Handled = true; } });
+                    shortcut.AddEvent2((sender, e) => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Right && e.Shift) { cons.PerformDown(); e.Handled = true; } });
                     break;
 
                 case 3: // ，(カンマ)と ．(ピリオド)
