@@ -159,6 +159,12 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("KifuWindowWidthType", mainDialog.ResizeKifuControl, mainDialog);
             Config.AddPropertyChangedHandler("ConsiderationWindowHeightType", mainDialog.ResizeConsiderationControl, mainDialog);
 
+            // 操作設定
+
+            Config.AddPropertyChangedHandler("KifuWindowPrevNextKey", mainDialog.UpdateToolStripShortcut);
+            Config.AddPropertyChangedHandler("KifuWindowNextSpecialKey", mainDialog.UpdateToolStripShortcut);
+            Config.AddPropertyChangedHandler("KifuWindowFirstLastKey", mainDialog.UpdateToolStripShortcut);
+
             // Window
 
             Config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);

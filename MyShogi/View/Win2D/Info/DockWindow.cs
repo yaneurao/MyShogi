@@ -181,7 +181,7 @@ namespace MyShogi.View.Win2D
             }
         }
 
-        private void DockWindow_KeyDown(object sender, KeyEventArgs e)
+        private void DockWindow_KeyDown(object sender , KeyEventArgs e)
         {
             // メインウインドウのメニューに登録されているキーボードショートカットをハンドルする。
             TheApp.app.KeyShortcut.KeyDown(sender, e);

@@ -90,10 +90,7 @@ namespace MyShogi.View.Win2D.Setting
             // 駒を掴んだ時の移動候補の升
             richSelector12.Bind(config, "PickedMoveToColorType");
 
-            // -- 「操作」のタブ
-
-            // マウスドラッグを許容するか
-            richSelector19.Bind(config, "EnableMouseDrag");
+            // -- 「ダイアログ」のタブ
 
             // 相手側の成り・不成のダイアログを反転させるか。
             richSelector24.Bind(config, "FlipWhitePromoteDialog");

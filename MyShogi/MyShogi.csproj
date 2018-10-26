@@ -258,6 +258,12 @@
     <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlViewModel.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="View\Win2D\Game\MainDialog\MainDialogMenuItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Game\MainDialog\MainDialogToolStripShortcut.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="View\Win2D\Info\AboutYaneuraOu.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -305,6 +311,12 @@
     </Compile>
     <Compile Include="View\Win2D\Setting\ConsiderationEngineSettingDialog.Designer.cs">
       <DependentUpon>ConsiderationEngineSettingDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\OperationSettingDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\OperationSettingDialog.Designer.cs">
+      <DependentUpon>OperationSettingDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\Setting\DisplaySettingDialog.cs">
       <SubType>Form</SubType>
@@ -402,10 +414,10 @@
     <Compile Include="View\Win2D\Common\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="View\Win2D\Game\MainDialog.cs">
+    <Compile Include="View\Win2D\Game\MainDialog\MainDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\Game\MainDialog.Designer.cs">
+    <Compile Include="View\Win2D\Game\MainDialog\MainDialog.Designer.cs">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\Game\MiniShogiBoard.cs">
@@ -491,6 +503,9 @@
     <EmbeddedResource Include="View\Win2D\Setting\ConsiderationEngineSettingDialog.resx">
       <DependentUpon>ConsiderationEngineSettingDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\OperationSettingDialog.resx">
+      <DependentUpon>OperationSettingDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\DisplaySettingDialog.resx">
       <DependentUpon>DisplaySettingDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -518,7 +533,7 @@
     <EmbeddedResource Include="View\Win2D\Info\KifuControl.resx">
       <DependentUpon>KifuControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\Game\MainDialog.resx">
+    <EmbeddedResource Include="View\Win2D\Game\MainDialog\MainDialog.resx">
       <DependentUpon>MainDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Game\MiniShogiBoard.resx">

@@ -706,6 +706,9 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void listView1_MouseDown(object sender, MouseEventArgs e)
         {
+
+            // 作りかけ。
+#if false
             var early_exit = true;
             ListViewItem targetItem = null;
 
@@ -744,11 +747,15 @@ namespace MyShogi.View.Win2D
             contextMenuStrip1.Show(Cursor.Position);
             // このコンテキストメニューはどのItemに対して出しているのかを記録しておく。
             selectedListViewItem = targetItem;
+#endif
         }
 
+#if false
         /// <summary>
         /// 検討ウインドウで右クリックで選択されている項目
         /// </summary>
         ListViewItem selectedListViewItem;
+#endif
+
     }
 }

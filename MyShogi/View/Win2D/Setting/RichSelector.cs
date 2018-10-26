@@ -34,14 +34,14 @@ namespace MyShogi.View.Win2D.Setting
                 // cf. カスタムコントロールから、デザイン時にプロジェクトのパスを取得する方法 : http://www.atmarkit.co.jp/bbs/phpBB/viewtopic.php?topic=47369&forum=7&start=16
 
                 // まあ、いいや。とりま、このControlを貼り付けたFormを編集したいなら、各自、この部分を自分の環境に合わせて一時的に書き換えるってことで(；ω；)
-                ImageFolder = @"C:\Users\yaneu\Documents\Visual Studio 2017\project\MyShogi\MyShogi\bin\Debug\image\display_setting\";
+                ImageFolder = @"C:\Users\yaneu\Documents\Visual Studio 2017\project\MyShogi\MyShogi\bin\Debug\image\setting_dialog\";
 
                 // レジストリとか環境変数とか使うのがスマートなのかな…。
                 // どちらもあまり使いたくないのだが…。
 
             } else
             {
-                ImageFolder = "image/display_setting/";
+                ImageFolder = "image/setting_dialog/";
             }
 
             InitViewModel();

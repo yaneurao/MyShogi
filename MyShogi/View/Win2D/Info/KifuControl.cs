@@ -624,6 +624,7 @@ namespace MyShogi.View.Win2D
                 return;
 
             ViewModel.SetValueAndRaisePropertyChanged("KifuListSelectedIndex", index);
+
             UpdateButtonState();
         }
 
@@ -795,5 +796,6 @@ namespace MyShogi.View.Win2D
             // 4列目(総消費時間)を残り幅いっぱいにする。
             UpdateListViewColumnWidth();
         }
+
     }
 }

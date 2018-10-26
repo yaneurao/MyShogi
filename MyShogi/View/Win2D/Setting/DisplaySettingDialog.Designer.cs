@@ -49,7 +49,6 @@
             this.richSelector9 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage5 = new System.Windows.Forms.TabPage();
             this.richSelector24 = new MyShogi.View.Win2D.Setting.RichSelector();
-            this.richSelector19 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.richSelector14 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector13 = new MyShogi.View.Win2D.Setting.RichSelector();
@@ -344,35 +343,23 @@
             // tabPage5
             // 
             this.tabPage5.Controls.Add(this.richSelector24);
-            this.tabPage5.Controls.Add(this.richSelector19);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Size = new System.Drawing.Size(782, 567);
             this.tabPage5.TabIndex = 7;
-            this.tabPage5.Text = "操作";
+            this.tabPage5.Text = "ダイアログ";
             this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // richSelector24
             // 
             this.richSelector24.GroupBoxTitle = "後手側(相手側)の成り・不成ダイアログを上下反転させるか";
-            this.richSelector24.Location = new System.Drawing.Point(6, 116);
+            this.richSelector24.Location = new System.Drawing.Point(6, 6);
             this.richSelector24.Name = "richSelector24";
             this.richSelector24.SelectionTexts = new string[] {
         "しない,promote_dialog_style_0.png,上下反転しません。",
         "する,promote_dialog_style_1.png,後手(相手側)は上下反転します。"};
             this.richSelector24.Size = new System.Drawing.Size(772, 110);
             this.richSelector24.TabIndex = 4;
-            // 
-            // richSelector19
-            // 
-            this.richSelector19.GroupBoxTitle = "駒をマウスのドラッグでも移動できるようにするか";
-            this.richSelector19.Location = new System.Drawing.Point(6, 6);
-            this.richSelector19.Name = "richSelector19";
-            this.richSelector19.SelectionTexts = new string[] {
-        "しない,dragged_move_style_0.png,マウスドラッグでの駒の移動を許容しません。",
-        "する,dragged_move_style_1.png,マウスドラッグでの駒の移動を許容します。"};
-            this.richSelector19.Size = new System.Drawing.Size(772, 110);
-            this.richSelector19.TabIndex = 3;
             // 
             // tabPage6
             // 
@@ -739,7 +726,6 @@
         private RichSelector richSelector17;
         private RichSelector richSelector18;
         private System.Windows.Forms.TabPage tabPage5;
-        private RichSelector richSelector19;
         private System.Windows.Forms.TabPage tabPage10;
         private FontSelectionConrol fontSelectionConrol1;
         private System.Windows.Forms.Label label1;

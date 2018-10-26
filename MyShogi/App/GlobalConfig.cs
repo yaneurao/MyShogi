@@ -60,7 +60,12 @@ namespace MyShogi.App
 
             KifuWindowDisplayTotalTime = 0;
 
-            // -- 評価値
+            // 対局エフェクト
+
+            EnableGameGreetingEffect = 1;
+            EnablePieceTossEffect = 1;
+
+            // 評価値
 
             DisplayEvalJudgement = 1;
 
@@ -68,13 +73,13 @@ namespace MyShogi.App
 
             EnableSound = 1;
 
-            // -- 駒音
+            // 駒音
 
             PieceSoundInTheGame = 1;
             PieceSoundOffTheGame = 1;
             //CrashPieceSoundInTheGame = 1;
 
-            // -- 読み上げ
+            // 読み上げ
 
             ReadOutKifu = 1;
             ReadOutGreeting = 1;
@@ -82,16 +87,18 @@ namespace MyShogi.App
             ReadOutCancelWhenGameEnd = 1;
             ReadOutByoyomi = 1;
 
-            // -- 対局エフェクト
+            // -- 操作設定
 
-            EnableGameGreetingEffect = 1;
-            EnablePieceTossEffect = 1;
+            KifuWindowPrevNextKey = 1;
+            KifuWindowNextSpecialKey = 1;
+            KifuWindowFirstLastKey = 1;
 
             // -- 検討設定
 
             //EngineConsiderationWindowEnableWhenVsHuman = true;
             //ConsiderationWindowFollowMainWindow = true;
             ConsiderationMultiPV = 5;
+
         }
 
         /// <summary>
@@ -473,16 +480,6 @@ namespace MyShogi.App
         }
 
         /// <summary>
-        /// 駒の移動にマウスドラッグを許容する。
-        /// </summary>
-        [DataMember]
-        public int EnableMouseDrag
-        {
-            get { return GetValue<int>("EnableMouseDrag"); }
-            set { SetValue<int>("EnableMouseDrag", value); }
-        }
-
-        /// <summary>
         /// 手番表示の有無
         /// 0 : なし
         /// 1 : 通常の手番マーク(デフォルト)
@@ -714,6 +711,66 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("ReadOutByoyomi"); }
             set { SetValue<int>("ReadOutByoyomi", value); }
+        }
+
+        #endregion
+
+        #region Operation Setting
+
+        /// <summary>
+        /// 駒の移動にマウスドラッグを許容する。
+        /// </summary>
+        [DataMember]
+        public int EnableMouseDrag
+        {
+            get { return GetValue<int>("EnableMouseDrag"); }
+            set { SetValue<int>("EnableMouseDrag", value); }
+        }
+
+        /// <summary>
+        /// 棋譜ウインドウでのキー操作その1
+        ///
+        /// 1手進む/戻るキー
+        /// 0 : なし
+        /// 1 : ←と→  :  デフォルト
+        /// 2 : ↑と↓
+        /// </summary>
+        [DataMember]
+        public int KifuWindowPrevNextKey
+        {
+            get { return GetValue<int>("KifuWindowPrevNextKey"); }
+            set { SetValue<int>("KifuWindowPrevNextKey", value); }
+        }
+
+        /// <summary>
+        /// 棋譜ウインドウでのキー操作その2
+        ///
+        /// 次の1手に移動する特殊キー
+        /// 0 : なし
+        /// 1 : スペースキー : デフォルト
+        /// 2 : Enterキー
+        /// </summary>
+        [DataMember]
+        public int KifuWindowNextSpecialKey
+        {
+            get { return GetValue<int>("KifuWindowNextSpecialKey"); }
+            set { SetValue<int>("KifuWindowNextSpecialKey", value); }
+        }
+
+        /// <summary>
+        /// 棋譜ウインドウでのキー操作その3
+        ///
+        /// 最初に戻る/最後に進むキー
+        /// 0 : なし
+        /// 1 : ↑と↓  :  デフォルト
+        /// 2 : ←と→
+        /// 3 : PageUpとPageDown
+        /// </summary>
+        [DataMember]
+        public int KifuWindowFirstLastKey
+        {
+            get { return GetValue<int>("KifuWindowFirstLastKey"); }
+            set { SetValue<int>("KifuWindowFirstLastKey", value); }
         }
 
         #endregion

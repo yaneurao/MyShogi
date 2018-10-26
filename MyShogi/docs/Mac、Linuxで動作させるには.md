@@ -64,6 +64,8 @@
 - その他、依存ライブラリ
   - 棋譜のクリップボードへのコピー、クリップボードからのペーストには、xclipが/usr/bin/xclipにインストールされている必要があります。
   - サウンド再生は、Mac用と同じく、libsoundioをwrapしたjnoryさんのライブラリ(実行ファイル)に依存します。
+    - https://github.com/jnory/MyShogiSoundPlayer/releases/tag/v0.1.2
+    - このバージョンでUbuntu18.04で正常に音声が再生されることを確認しました。
 
 - 詳細は上の「将棋神やねうら王をMacで」を参考にしてください。
 
