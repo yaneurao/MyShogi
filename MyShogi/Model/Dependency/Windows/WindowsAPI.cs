@@ -212,6 +212,17 @@ namespace MyShogi.Model.Resource.Sounds
     ///	 ・System.Windows.Freezableを利用するためのアセンブリ"WindowsBase.dll"アセンブリを参照に追加。
     ///	 
     /// 他の環境に移植する場合は、このクラスをその環境用に再実装すべし。
+    ///
+    /// 仕様)
+    /// 再生自体は、複数のwavファイルの同時再生できると仮定してる。
+    /// SoundLoaderの1つのインスタンスは、1つのwavファイルと結びついていて、
+    /// 複数インスタンスのそれぞれのPlay()を同時に呼び出せば同時に再生されるものとする。
+    /// 
+    /// 再生中かどうかはSoundLoader.IsPlay()によって、その紐づけられているwavファイルが再生中であるかを
+    /// 照会できるものとする。
+    /// 
+    /// また、棋譜読み上げは前のファイルの再生が終わるまで次のファイルの再生が保留されるが、
+    /// 駒音などはそのファイルが再生中であろうと問答無用で再生する。これによりの、読み上げと駒音は同時再生される。
     /// </summary>
     public class SoundLoader : IDisposable
     {
@@ -276,7 +287,7 @@ namespace MyShogi.Model.Resource.Sounds
         /// 棋譜読み上げのときは、IsPlaying()がfalseを返すまで次のPlay()は呼び出されないが、
         /// 駒音などは即座に再生する必要があるので、IsPlaying()は呼び出されず、Play()が呼び出される。
         /// この場合、現在のそのファイルの再生を中断して即座にそのファイルを再生しなおす必要がある。
-        /// </summary>
+        /// /// </summary>
         /// <returns></returns>
         public bool IsPlaying()
         {
