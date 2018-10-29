@@ -272,6 +272,10 @@ namespace MyShogi.Model.Resource.Sounds
 
         /// <summary>
         /// 再生中であるかを判定して返す。
+        ///
+        /// 棋譜読み上げのときは、IsPlaying()がfalseを返すまで次のPlay()は呼び出されないが、
+        /// 駒音などは即座に再生する必要があるので、IsPlaying()は呼び出されず、Play()が呼び出される。
+        /// この場合、現在のそのファイルの再生を中断して即座にそのファイルを再生しなおす必要がある。
         /// </summary>
         /// <returns></returns>
         public bool IsPlaying()

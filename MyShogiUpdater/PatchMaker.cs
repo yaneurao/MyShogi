@@ -79,6 +79,7 @@ namespace MyShogiUpdater
         /// <param name="target"></param>
         public static void FolderCopy(string sourcePath , string targetPath , string excludeFile , Action<string> progress_message)
         {
+            string target = null;
             try
             {
 
@@ -96,10 +97,9 @@ namespace MyShogiUpdater
                     if (relative_source_path == excludeFile)
                         continue;
 
-                    var target = Path.Combine(targetPath, relative_source_path);
+                    target = Path.Combine(targetPath, relative_source_path);
 
                     FileIO.CreateDirectory(target);
-
                     File.Copy(s, target, true);
 
                     progress_message(target); // コピーされたファイル。
@@ -115,7 +115,7 @@ namespace MyShogiUpdater
                     if (relative_source_path == excludeFile)
                         continue;
 
-                    var target = Path.Combine(targetPath, relative_source_path);
+                    target = Path.Combine(targetPath, relative_source_path);
 
                     try
                     {
@@ -144,6 +144,11 @@ namespace MyShogiUpdater
             } catch (Exception ex)
             {
                 progress_message($"アップデートに失敗しました。インストール先のフォルダの容量が不足しているか、セキュリティソフト等にファイルコピーがブロックされている可能性があります。\r\n{ ex.Message }\r\n{ ex.StackTrace }");
+
+                if (Path.GetFileName(target).ToLower() == "myshogi.exe")
+                {
+                    progress_message("『将棋神やねうら王』本体が実行中だからである可能性があります。『将棋神やねうら王』は終了させてから再度お試しください。");
+                }
             }
         }
 
