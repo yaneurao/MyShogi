@@ -78,7 +78,7 @@ namespace MyShogi.View.Win2D
                         item.Text = "棋譜を開く(&O)";
                         item.ShortcutKeys = Keys.Control | Keys.O;
                         // サブウインドウでのショートカットキーの処理
-                        shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.O) { item.PerformClick(); e.Handled = true; } });
+                        shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.O) { item.PerformClick(); e.Handled = true; } });
                         item.Click += (sender, e) =>
                         {
                             using (var fd = new OpenFileDialog())
@@ -112,7 +112,7 @@ namespace MyShogi.View.Win2D
                         item.Text = "棋譜の上書き保存(&S)";
                         item.ShortcutKeys = Keys.Control | Keys.S;
                         // サブウインドウでのショートカットキーの処理
-                        shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.S) { item.PerformClick(); e.Handled = true; } });
+                        shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.S) { item.PerformClick(); e.Handled = true; } });
                         item.Enabled = ViewModel.LastFileName != null; // 棋譜を読み込んだ時などにしか有効ではない。
                         item.Click += (sender, e) =>
                         {
@@ -133,7 +133,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Text = "棋譜に名前をつけて保存(&N)";
                         item.ShortcutKeys = Keys.Control | Keys.S | Keys.Shift;
-                        shortcut.AddEvent1((sender, e) => { if (e.Modifiers == (Keys.Control | Keys.Shift) && e.KeyCode == Keys.S) { item.PerformClick(); e.Handled = true; } });
+                        shortcut.AddEvent1( e => { if (e.Modifiers == (Keys.Control | Keys.Shift) && e.KeyCode == Keys.S) { item.PerformClick(); e.Handled = true; } });
                         item.Click += (sender, e) =>
                         {
                             using (var fd = new SaveFileDialog())
@@ -255,7 +255,7 @@ namespace MyShogi.View.Win2D
                         var itemk1 = new ToolStripMenuItem();
                         itemk1.Text = "棋譜KIF形式(&1)";
                         itemk1.ShortcutKeys = Keys.Control | Keys.C;
-                        shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.C) { item.PerformClick(); e.Handled = true; } });
+                        shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.C) { item.PerformClick(); e.Handled = true; } });
 
                         // このショートカットキーを設定すると対局中などにも書き出せてしまうが、書き出しはまあ問題ない。
                         itemk1.Click += (sender, e) => { gameServer.KifuWriteClipboardCommand(KifuFileType.KIF); };
@@ -322,7 +322,7 @@ namespace MyShogi.View.Win2D
                         // このショートカットキーを設定すると対局中などにも貼り付けが出来てしまうが、
                         // GameModeを見て、対局中などには処理しないようにしてある。
                         item.ShortcutKeys = Keys.Control | Keys.V;
-                        shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V) { item.PerformClick(); e.Handled = true; } });
+                        shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.V) { item.PerformClick(); e.Handled = true; } });
                         item.Click += (sender, e) => { CopyFromClipboard(); };
                         item_file.DropDownItems.Add(item);
                     }
@@ -420,7 +420,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Text = "通常対局(&N)"; // NormalGame
                         item.ShortcutKeys = Keys.Control | Keys.N; // NewGameのN
-                        shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.N) { item.PerformClick(); e.Handled = true; } });
+                        shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.N) { item.PerformClick(); e.Handled = true; } });
                         item.Click += (sender, e) =>
                         {
                             using (var dialog = new GameSettingDialog(this))
@@ -575,7 +575,7 @@ namespace MyShogi.View.Win2D
                         var item = new ToolStripMenuItem();
                         item.Text = inTheBoardEdit ? "盤面編集の終了(&B)" : "盤面編集の開始(&B)"; // Board edit
                         item.ShortcutKeys = Keys.Control | Keys.E; // boardEdit
-                        shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.E) { item.PerformClick(); e.Handled = true; } });
+                        shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.E) { item.PerformClick(); e.Handled = true; } });
                         item.Click += (sender, e) =>
                         {
                             gameServer.ChangeGameModeCommand(
@@ -765,7 +765,7 @@ namespace MyShogi.View.Win2D
                             var item = new ToolStripMenuItem();
                             item.Text = dock.Visible ? "非表示(&V)" : "再表示(&V)"; // visible // 
                             item.ShortcutKeys = Keys.Control | Keys.K; // KifuWindow
-                            shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.K) { item.PerformClick(); e.Handled = true; } });
+                            shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.K) { item.PerformClick(); e.Handled = true; } });
                             item.Click += (sender, e) => { dock.Visible ^= true; dock.RaisePropertyChanged("DockState", dock.DockState); };
                             item_.DropDownItems.Add(item);
                         }
@@ -874,7 +874,7 @@ namespace MyShogi.View.Win2D
                             var item = new ToolStripMenuItem();
                             item.Text = dock.Visible ? "非表示(&V)" : "再表示(&V)"; // visible // 
                             item.ShortcutKeys = Keys.Control | Keys.R; // EngineConsiderationWindowのR。Eが盤面編集のEditのEで使ってた…。
-                            shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.R) { item.PerformClick(); e.Handled = true; } });
+                            shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.R) { item.PerformClick(); e.Handled = true; } });
                             item.Click += (sender, e) => { dock.Visible ^= true; dock.RaisePropertyChanged("DockState", dock.DockState); };
                             item_.DropDownItems.Add(item);
                         }
@@ -1039,7 +1039,7 @@ namespace MyShogi.View.Win2D
                                 var item1 = new ToolStripMenuItem();
                                 item1.Text = "デバッグウィンドウの表示(&D)"; // Debug Window
                                 item1.ShortcutKeys = Keys.Control | Keys.D;
-                                shortcut.AddEvent1((sender, e) => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.D) { item1.PerformClick(); e.Handled = true; } });
+                                shortcut.AddEvent1( e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.D) { item1.PerformClick(); e.Handled = true; } });
                                 item1.Click += (sender, e) =>
                                 {
                                     if (debugDialog != null)

@@ -37,6 +37,7 @@
             this.richSelector2 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.richSelector5 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.richSelector6 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -127,6 +128,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.richSelector6);
             this.tabPage3.Controls.Add(this.richSelector5);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
@@ -150,6 +152,18 @@
         "Page,cons_prevnextkey_6.png,PageUpとPageDownに割当てます。棋譜操作のキーと重複している場合、無効化されます。"};
             this.richSelector5.Size = new System.Drawing.Size(772, 110);
             this.richSelector5.TabIndex = 4;
+            // 
+            // richSelector6
+            // 
+            this.richSelector6.GroupBoxTitle = "検討ウインドウで選択行をミニ盤面に反映させる";
+            this.richSelector6.Location = new System.Drawing.Point(6, 116);
+            this.richSelector6.Name = "richSelector6";
+            this.richSelector6.SelectionTexts = new string[] {
+        "なし,cons_sendpv_key_0.png,なし。",
+        "Enter,cons_sendpv_key_1.png,Enterキーに割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "スペース,cons_sendpv_key_2.png,スペースキーに割当てます。棋譜操作のキーと重複している場合、無効化されます。"};
+            this.richSelector6.Size = new System.Drawing.Size(772, 110);
+            this.richSelector6.TabIndex = 5;
             // 
             // OperationSettingDialog
             // 
@@ -179,5 +193,6 @@
         private RichSelector richSelector4;
         private System.Windows.Forms.TabPage tabPage3;
         private RichSelector richSelector5;
+        private RichSelector richSelector6;
     }
 }

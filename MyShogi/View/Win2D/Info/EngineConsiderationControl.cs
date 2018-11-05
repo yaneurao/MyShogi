@@ -375,6 +375,27 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 現在の選択行をMiniShogiBoardに送る。
+        /// </summary>
+        /// <returns></returns>
+        public void SendCurrentPvToMiniBoard()
+        {
+            // この現在選択されているところにある読み筋の指し手を復元して、イベントハンドラに移譲する。
+            var selected = listView1.SelectedIndices;
+            if (selected.Count == 0)
+                return;// 選択されていない…
+
+            // multi selectではないので1つしか選択されていないはず…。
+            int index = selected[0]; // first
+            if (index < list_item_moves.Count && list_item_moves[index] != null /* info stringなどだとnullがありうる。*/)
+                ViewModel.RaisePropertyChanged("PvClicked", new MiniShogiBoardData()
+                {
+                    rootSfen = root_sfen,
+                    moves = list_item_moves[index]
+                });
+        }
+
+        /// <summary>
         /// 検討時に選択行を1行下に移動する。
         /// キーハンドラから呼び出される。
         /// </summary>
@@ -421,19 +442,7 @@ namespace MyShogi.View.Win2D
 
         private void listView1_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
-            // この現在選択されているところにある読み筋の指し手を復元して、イベントハンドラに移譲する。
-            var selected = listView1.SelectedIndices;
-            if (selected.Count == 0)
-                return;// 選択されていない…
-
-            // multi selectではないので1つしか選択されていないはず…。
-            int index = selected[0]; // first
-            if (index < list_item_moves.Count && list_item_moves[index]!=null /* info stringなどだとnullがありうる。*/)
-                ViewModel.RaisePropertyChanged("PvClicked", new MiniShogiBoardData()
-                {
-                    rootSfen = root_sfen,
-                    moves = list_item_moves[index]
-                });
+            SendCurrentPvToMiniBoard();
         }
 
         private void EngineConsiderationControl_Resize(object sender, System.EventArgs e)

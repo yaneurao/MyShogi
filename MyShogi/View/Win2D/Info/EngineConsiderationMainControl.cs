@@ -431,10 +431,26 @@ namespace MyShogi.View.Win2D
                 ConsiderationInstance(i).ViewModel.AddPropertyChangedHandler( "PvClicked" , (h) =>
                 {
                     var data = h.value as MiniShogiBoardData;
-
-                    MiniBoardVisible = true;
-                    miniShogiBoard1.BoardData = data;
+                    SendPvToMiniboard(data);
                 });
+        }
+
+        /// <summary>
+        /// 現在の選択行のPVをMiniShogiBoardに送る
+        /// </summary>
+        public void SendCurrentPvToMiniBoard()
+        {
+            ConsiderationInstance(0).SendCurrentPvToMiniBoard();
+        }
+
+        /// <summary>
+        /// PV(最善応手列)をお抱えのMiniShogiBoardに反映させる。
+        /// </summary>
+        /// <param name="data"></param>
+        private void SendPvToMiniboard(MiniShogiBoardData data)
+        {
+            MiniBoardVisible = true;
+            miniShogiBoard1.BoardData = data;
         }
 
         /// <summary>

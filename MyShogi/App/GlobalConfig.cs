@@ -93,6 +93,7 @@ namespace MyShogi.App
             KifuWindowNextSpecialKey = 1;
             KifuWindowFirstLastKey = 1;
             ConsiderationWindowPrevNextKey = 1;
+            ConsiderationPvSendKey = 1;
 
             // -- 検討設定
 
@@ -793,6 +794,20 @@ namespace MyShogi.App
             set { SetValue<int>("ConsiderationWindowPrevNextKey", value); }
         }
 
+        /// <summary>
+        /// 検討ウインドウでのキー操作その2
+        ///
+        /// 選択行のミニ盤面へのPVの転送
+        /// 0 : なし
+        /// 1 : Enter : デフォルト
+        /// 2 : Space
+        /// </summary>
+        [DataMember]
+        public int ConsiderationPvSendKey
+        {
+            get { return GetValue<int>("ConsiderationPvSendKey"); }
+            set { SetValue<int>("ConsiderationPvSendKey", value); }
+        }
 
         #endregion
 
