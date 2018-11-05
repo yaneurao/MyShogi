@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using MyShogi.App;
@@ -583,6 +584,7 @@ namespace MyShogi.View.Win2D
 
         private bool first_tick = true;
 
+#if false
         /// <summary>
         /// メインウインドウには棋譜ウインドウしかないので、そのキーイベントを取得したい。
         /// PreviewKeyDownで取らないとSpaceキーが取れない。(ListViewに食われてしまう)
@@ -593,6 +595,22 @@ namespace MyShogi.View.Win2D
         {
             // メインウインドウのメニューに登録されているキーボードショートカットをハンドルする。
             TheApp.app.KeyShortcut.KeyDown(sender, e);
+        }
+#endif
+
+        /// <summary>
+        /// KeyDownではカーソルキーがControlなどに食われてしまって処理できない。
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // cf. https://stackoverflow.com/questions/1646998/up-down-left-and-right-arrow-keys-do-not-trigger-keydown-event
+            if (TheApp.app.KeyShortcut.ProcessCmdKey(ref msg, keyData))
+                return true; // 処理済みとして扱う。
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         /// <summary>
@@ -1111,9 +1129,9 @@ namespace MyShogi.View.Win2D
 #endif
         }
 
-        #endregion
+#endregion
 
-        #region update menu
+#region update menu
 
         /// <summary>
         /// 棋譜ファイルを読み込む。
@@ -1182,7 +1200,7 @@ namespace MyShogi.View.Win2D
             gameScreenControl1.ForceRedraw();
         }
 
-        #endregion
+#endregion
 
     }
 }

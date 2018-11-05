@@ -47,7 +47,7 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.toolTip1 = new ToolTipEx(this.components);
+            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();

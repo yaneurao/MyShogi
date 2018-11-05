@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EngineConsiderationMainControl));
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -105,6 +106,7 @@
             this.engineConsiderationControl1.Size = new System.Drawing.Size(571, 126);
             this.engineConsiderationControl1.SortRanking = false;
             this.engineConsiderationControl1.TabIndex = 0;
+            this.engineConsiderationControl1.TabStop = false;
             // 
             // engineConsiderationControl2
             // 
@@ -117,6 +119,7 @@
             this.engineConsiderationControl2.Size = new System.Drawing.Size(571, 107);
             this.engineConsiderationControl2.SortRanking = false;
             this.engineConsiderationControl2.TabIndex = 0;
+            this.engineConsiderationControl2.TabStop = false;
             // 
             // toolStrip1
             // 
@@ -133,6 +136,7 @@
             this.toolStrip1.Location = new System.Drawing.Point(0, 210);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Padding = new System.Windows.Forms.Padding(0);
+            this.toolStrip1.ShowItemToolTips = false;
             this.toolStrip1.Size = new System.Drawing.Size(190, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
@@ -211,6 +215,7 @@
             this.miniShogiBoard1.Name = "miniShogiBoard1";
             this.miniShogiBoard1.Size = new System.Drawing.Size(185, 202);
             this.miniShogiBoard1.TabIndex = 1;
+            this.miniShogiBoard1.TabStop = false;
             // 
             // EngineConsiderationMainControl
             // 

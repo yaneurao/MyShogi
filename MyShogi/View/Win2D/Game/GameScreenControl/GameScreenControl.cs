@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using MyShogi.App;
 
 namespace MyShogi.View.Win2D
 {
@@ -11,6 +12,5 @@ namespace MyShogi.View.Win2D
         {
             InitializeComponent();
         }
-
     }
 }

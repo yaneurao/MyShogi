@@ -5,9 +5,37 @@
   - 棋譜ウインドウと検討ウインドウは読み筋をちゃんとList<Move>として保持すべきなのでは…。
   - 棋譜の記法が即時反映でないのは設計が悪いからだと思う。リファクタリングすべき。
 
+- 検討ウインドウの列幅記憶のところエンバグしているの修正。(キメラさん)
+
+- "usi","isready"のあとのタイムアウトまでの秒数を設定できるように。
+  - keep aliveの処理をすべき
+
+- エンジン側に不成を生成するオプションを追加する。
+
+- Shogi960
+
+
+■  2018/11/05
+
+
+- 棋譜ウインドウをフロートさせているときにショートカットキーがときどき利かなくなる問題を修正。
+  - どうもメインウインドウをクリックしたときにGameScreenか何かにfocusを奪われて、KeyDownイベントが生起しないようだ。
+  - 棋譜ウインドウをフロートさせて、検討ウインドウをクリックしたあと、メインウインドウをクリックするとこの現象が起きる。なんぞこれ。
+  - ああ、DockWindowで処理しているから、検討ウインドウをメインウインドウに埋め込んでいるときはKeyDownの処理がなされないのか。そうか。
+  - mainWindow.KeyPreview = trueにしてるのにMainWindowにイベントこないのなんで…？(´ω｀)
+  - AddControl(engineConsiderationMainControl)してるのに…。これ.NETのバグくさいな…。
+  - いやー、EngineConsiderationMainControlでKeyDownでもキーイベント拾えない。何この現象。
+  - MainWindowでクリックするとKeyDownこなくなる。なんぞこれ…。
+  - 検討ウインドウをクリック→盤面をクリック→「←」キーを押すで、ここ以降キーが利かない。「→」キーなら問題ない。なんぞこれ。
+  - カーソルの受け取れない変なコントロールにfocusが移動するためではなかろうか。
+  - cf. https://stackoverflow.com/questions/1646998/up-down-left-and-right-arrow-keys-do-not-trigger-keydown-event
+  - 結論的にはProcessCmdKey()使えってことなのか…。
+- 検討ウインドウのreadonlyのテキストボックス、tab stopをオフにする。
+  - 変なところにtab stopがあるとややこしくなる。どうせカーソルキーでComboBoxの項目の選択ができるわけではないのだから(ショートカットキーに割当てている)、
+  tab stop全部オフにする。
+
 
 ■  2018/10/29
-
 
 
 - SoundLoader説明文、追加。

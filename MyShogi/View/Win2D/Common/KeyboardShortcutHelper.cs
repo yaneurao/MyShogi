@@ -22,28 +22,52 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         public void KeyDown(object sender, KeyEventArgs e)
         {
-            try
-            {
-                var list = new[] { OnKeyDown1, OnKeyDown2 };
-                foreach (var onKeyList in list)
-                    foreach (var onKey in onKeyList)
-                    {
-                        onKey.Invoke(sender, e);
+            KeyDownPrivate(sender, e);
 
-                        // キーイベントが処理されたなら、そこで終了
-                        if (e.Handled)
-                            return;
-                    }
+            // これをしておかないとキーがこのあとListViewなどによって処理されてしまう。
+            // 特にSpaceキーだとListViewはFocusのある場所(これは現在の選択行とは異なる)に移動してしまう。
+            // この動作をキャンセルさせる必要がある。
+            e.SuppressKeyPress = true;
 
-                // 上記以外のキーは処理しない。
-                e.Handled = true;
-            } finally
-            {
-                // これをしておかないとキーがこのあとListViewなどによって処理されてしまう。
-                // 特にSpaceキーだとListViewはFocusのある場所(これは現在の選択行とは異なる)に移動してしまう。
-                // この動作をキャンセルさせる必要がある。
-                e.SuppressKeyPress = true;
-            }
+            // ハンドルされなかった場合も、これ以上キーイベントを下位のControlでされると困るので
+            // 処理済みとして扱う。
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// KeyDown()の下請け
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void KeyDownPrivate(object sender, KeyEventArgs e)
+        {
+            var list = new[] { OnKeyDown1, OnKeyDown2 };
+            foreach (var onKeyList in list)
+                foreach (var onKey in onKeyList)
+                {
+                    onKey.Invoke(sender, e);
+
+                    // キーイベントが処理されたなら、そこで終了
+                    if (e.Handled)
+                        return;
+                }
+        }
+
+        /// <summary>
+        /// カーソルキー入力がControlに食われてしまうのでその回避策
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="keyData"></param>
+        /// <returns></returns>
+        public bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+//         if (msg.Msg == WM_KEYDOWN || msg.Msg == WM_SYSKEYDOWN) ...
+
+
+            var e = new KeyEventArgs(keyData);
+            KeyDownPrivate(null, e);
+
+            return e.Handled;
         }
 
         /// <summary>

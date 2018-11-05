@@ -5,13 +5,15 @@
 - MyShogi V1.32ではコードの修正なしにMonoでコンパイルでき、Mac/Linuxで動作するはずです。
 
 
-- 参考記事(MyShogiの少し古いバージョンの話なので参考程度にどうぞ)
+- 参考記事(古い記事も含まれています)
   - MyShogiをMac環境で動かす
     - jnoryさんのfork : https://github.com/jnory/MyShogi
-    - AI将棋ソフト『MyShogi』をMacBookProでビルド＆遊んでみた : http://amado.hatenablog.com/entry/20180927/1537975944
-    - Ubuntuで『将棋神　やねうら王』 : http://fxst24.blog.fc2.com/blog-entry-545.html
+    - AI将棋ソフト『MyShogi』をMacBookProでビルド＆遊んでみた             : https://amado.hatenablog.com/entry/20180927/1537975944
+    - AI将棋ソフト『MyShogi』をMacBookProでビルド＆遊んでみた２（本家版） : https://amado.hatenablog.com/entry/20181028/1540723499
+
   - MyShogiをLinux環境で動かす
     - やねうら王MyShogiをLinuxでビルドしてみた : http://hennohito.cocolog-nifty.com/blog/2018/06/myshogilinux-69.html
+    - Ubuntuで『将棋神　やねうら王』 : http://fxst24.blog.fc2.com/blog-entry-545.html
 
 
 ## ビルドする上で注意点
@@ -23,6 +25,7 @@
 
 
 ## 将棋神やねうら王をMacで
+
 
 - Monoのコンパイラが動くようにする。(上の「AI将棋ソフト『MyShogi』をMacBookProでビルド＆遊んでみた」を参考に)
 
@@ -38,13 +41,12 @@
 
 - (V1.30) 表示設定のフォント選択ダイアログがフリーズするらしいです。(Linuxだとこの問題は起きない) Mac用のMonoのバグではないかと…。
 - (V1.32) libsoundioを用いて音が鳴るようになりました。サウンド再生のために別途以下のライブラリが必要です。
-    https://github.com/jnory/MyShogiSoundPlayer/releases/tag/v0.1.1
+    https://github.com/jnory/MyShogiSoundPlayer/releases/
 - (V1.32) 棋譜ウインドウ、常に現在の局面が選択されている状態にしたいのですが、ListViewのOwnerDraw、Monoでバグるのでいまのところ実現できないです。
 - (V1.32) 棋譜ウインドウ、メインウインドウに埋め込み状態からフロート状態に変更したときに再描画されません。
     - DockStyleの変更によってresizeイベント起きないというMonoのbugです。回避が難しいので、
       そのあと棋譜ウインドウをリサイズして再描画を促すか、再起動するかしてください。
-  - 検討ウインドウ、メインウインドウに埋め込んでいると再描画されないようです。フロート状態で使ってみてください。
-
+    - 検討ウインドウ、メインウインドウに埋め込んでいると再描画されないことがあるようです。気になる人はフロート状態で使ってみてください。
 
 - すべての機能を動作確認できているわけではありません。
 
