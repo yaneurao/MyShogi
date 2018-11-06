@@ -122,6 +122,9 @@ namespace MyShogi.View.Win2D
             // 現在の局面から
             binder.Bind(setting.BoardSetting, "BoardTypeCurrent" , radioButton6);
 
+            // Shogi960
+            binder.Bind(setting.BoardSetting, "BoardTypeShogi960", radioButton7);
+
             // -- 詳細設定であるか
 
             var misc = setting.MiscSettings;

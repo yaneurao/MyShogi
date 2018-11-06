@@ -47,7 +47,6 @@
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.checkBox5 = new System.Windows.Forms.CheckBox();
             this.checkBox6 = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -56,6 +55,8 @@
             this.playerSettingControl1 = new MyShogi.View.Win2D.PlayerSettingControl();
             this.timeSettingControl2 = new MyShogi.View.Win2D.TimeSettingControl();
             this.timeSettingControl1 = new MyShogi.View.Win2D.TimeSettingControl();
+            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
+            this.radioButton7 = new System.Windows.Forms.RadioButton();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.groupBox6.SuspendLayout();
@@ -66,13 +67,14 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.comboBox2);
+            this.groupBox3.Controls.Add(this.radioButton7);
             this.groupBox3.Controls.Add(this.radioButton6);
             this.groupBox3.Controls.Add(this.radioButton5);
             this.groupBox3.Location = new System.Drawing.Point(6, 190);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(4);
-            this.groupBox3.Size = new System.Drawing.Size(374, 77);
+            this.groupBox3.Size = new System.Drawing.Size(374, 97);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "開始局面";
@@ -296,7 +298,7 @@
             // checkBox5
             // 
             this.checkBox5.AutoSize = true;
-            this.checkBox5.Location = new System.Drawing.Point(17, 276);
+            this.checkBox5.Location = new System.Drawing.Point(17, 299);
             this.checkBox5.Name = "checkBox5";
             this.checkBox5.Size = new System.Drawing.Size(202, 16);
             this.checkBox5.TabIndex = 39;
@@ -308,7 +310,7 @@
             // checkBox6
             // 
             this.checkBox6.AutoSize = true;
-            this.checkBox6.Location = new System.Drawing.Point(17, 301);
+            this.checkBox6.Location = new System.Drawing.Point(17, 324);
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.Size = new System.Drawing.Size(131, 16);
             this.checkBox6.TabIndex = 39;
@@ -319,7 +321,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(343, 277);
+            this.label4.Location = new System.Drawing.Point(343, 300);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(28, 12);
             this.label4.TabIndex = 38;
@@ -332,7 +334,7 @@
             0,
             0,
             0});
-            this.numericUpDown3.Location = new System.Drawing.Point(272, 274);
+            this.numericUpDown3.Location = new System.Drawing.Point(272, 297);
             this.numericUpDown3.Maximum = new decimal(new int[] {
             9999999,
             0,
@@ -378,6 +380,17 @@
             this.timeSettingControl1.Name = "timeSettingControl1";
             this.timeSettingControl1.Size = new System.Drawing.Size(381, 131);
             this.timeSettingControl1.TabIndex = 32;
+            // 
+            // radioButton7
+            // 
+            this.radioButton7.AutoSize = true;
+            this.radioButton7.Location = new System.Drawing.Point(13, 69);
+            this.radioButton7.Name = "radioButton7";
+            this.radioButton7.Size = new System.Drawing.Size(69, 16);
+            this.radioButton7.TabIndex = 8;
+            this.radioButton7.TabStop = true;
+            this.radioButton7.Text = "Shogi960";
+            this.radioButton7.UseVisualStyleBackColor = true;
             // 
             // GameSettingDialog
             // 
@@ -443,5 +456,6 @@
         private System.Windows.Forms.NumericUpDown numericUpDown3;
         private System.Windows.Forms.CheckBox checkBox5;
         private System.Windows.Forms.CheckBox checkBox6;
+        private System.Windows.Forms.RadioButton radioButton7;
     }
 }

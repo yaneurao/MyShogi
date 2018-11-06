@@ -109,6 +109,7 @@
     <Compile Include="Model\Dependency\Windows\WindowsAPI.cs" />
     <Compile Include="Model\Shogi\Converter\SvgUtility.cs" />
     <Compile Include="Model\Common\Utility\Swap.cs" />
+    <Compile Include="Model\Shogi\ExtendedGame\ExtendedGame.cs" />
     <Compile Include="Model\Shogi\Kifu\KifuListRow.cs" />
     <Compile Include="View\Win2D\Common\ClickAction.cs" />
     <Compile Include="View\Win2D\Common\DockUtility.cs" />

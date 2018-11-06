@@ -181,32 +181,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 }
             }
 
-            // 局面の設定
+            // 局面の初期化
+
             kifuManager.EnableKifuList = true;
-            if (gameSetting.BoardSetting.BoardTypeCurrent)
-            {
-                // 現在の局面からなので、いま以降の局面を削除する。
-                // ただし、いまの局面と棋譜ウィンドウとが同期しているとは限らない。
-                // まず現在局面以降の棋譜を削除しなくてはならない。
-
-                // 元nodeが、special moveであるなら、それを削除しておく。
-                if (kifuManager.Tree.IsSpecialNode())
-                    kifuManager.Tree.UndoMove();
-
-                kifuManager.Tree.ClearForward();
-
-                // 分岐棋譜かも知れないので、現在のものを本譜の手順にする。
-                kifuManager.Tree.MakeCurrentNodeMainBranch(); // View側の都合により選択行が移動してしまう可能性がある。
-
-                // 連続対局が設定されているなら、現在の局面を棋譜文字列として保存しておく。
-                if (continuousGame.IsContinuousGameSet())
-                    continuousGame.Kif = kifuManager.ToString(KifuFileType.KIF);
-            }
-            else // if (gameSetting.Board.BoardTypeEnable)
-            {
-                kifuManager.Init();
-                kifuManager.InitBoard(gameSetting.BoardSetting.BoardType);
-            }
+            InitBoard(gameSetting.BoardSetting, false);
 
             // 本譜の手順に変更したので現在局面と棋譜ウィンドウのカーソルとを同期させておく。
             UpdateKifuSelectedIndex(int.MaxValue /* 末尾に移動 */);
@@ -307,18 +285,10 @@ namespace MyShogi.Model.Shogi.LocalServer
                 engine_player.SendIsReady();
             }
 
-            // 局面の設定
+            // 局面の初期化
+
             kifuManager.EnableKifuList = true;
-            if (gameSetting.BoardSetting.BoardTypeCurrent)
-            {
-                // 「現在の局面」からのリスタート。KIF形式の文字列経由で復元する。
-                kifuManager.FromString(continuousGame.Kif);
-            }
-            else // if (gameSetting.Board.BoardTypeEnable)
-            {
-                kifuManager.Init();
-                kifuManager.InitBoard(gameSetting.BoardSetting.BoardType);
-            }
+            InitBoard(gameSetting.BoardSetting , true);
 
             // 本譜の手順に変更したので現在局面と棋譜ウィンドウのカーソルとを同期させておく。
             UpdateKifuSelectedIndex(int.MaxValue);
@@ -345,6 +315,61 @@ namespace MyShogi.Model.Shogi.LocalServer
             continuousGame.Swapped ^= true;
 
             GameSetting.SwapPlayer();
+        }
+
+        /// <summary>
+        /// 盤面を初期化する
+        /// </summary>
+        /// <param name="board"></param>
+        /// <param name="restart">GameRestart()時か？</param>
+        private void InitBoard(BoardSetting board , bool restart)
+        {
+
+            if (board.BoardTypeCurrent)
+            {
+                // 現在の局面から
+
+                if (restart)
+                {
+                    // 「現在の局面」からのリスタート。KIF形式の文字列経由で復元する。
+                    kifuManager.FromString(continuousGame.Kif);
+
+                } else {
+
+                    // 現在の局面からなので、いま以降の局面を削除する。
+                    // ただし、いまの局面と棋譜ウィンドウとが同期しているとは限らない。
+                    // まず現在局面以降の棋譜を削除しなくてはならない。
+
+                    // 元nodeが、special moveであるなら、それを削除しておく。
+                    if (kifuManager.Tree.IsSpecialNode())
+                        kifuManager.Tree.UndoMove();
+
+                    kifuManager.Tree.ClearForward();
+
+                    // 分岐棋譜かも知れないので、現在のものを本譜の手順にする。
+                    kifuManager.Tree.MakeCurrentNodeMainBranch(); // View側の都合により選択行が移動してしまう可能性がある。
+
+                    // 連続対局が設定されているなら、現在の局面を棋譜文字列として保存しておく。
+                    if (continuousGame.IsContinuousGameSet())
+                        continuousGame.Kif = kifuManager.ToString(KifuFileType.KIF);
+                }
+            }
+            else if (board.BoardTypeEnable)
+            {
+                // 典型的な初期局面が指定されている
+                kifuManager.Init();
+                kifuManager.InitBoard(board.BoardType);
+            }
+            else if (board.BoardTypeShogi960)
+            {
+                // Shogi960のルールにて開始
+                kifuManager.Init();
+                kifuManager.Tree.SetRootSfen(ExtendedGame.Shogi960());
+            }
+            else
+            {
+                Debug.Assert(false);
+            }
         }
 
         /// <summary>

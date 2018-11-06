@@ -45,6 +45,18 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue("BoardTypeCurrent", value); }
         }
 
+        /// <summary>
+        /// Shogi960から開始するのかのフラグ
+        ///
+        /// cf. Shogi960について考えてみた : http://yaneuraou.yaneu.com/2018/11/01/shogi960%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%E8%80%83%E3%81%88%E3%81%A6%E3%81%BF%E3%81%9F/
+        /// </summary>
+        [DataMember]
+        public bool BoardTypeShogi960
+        {
+            get { return GetValue<bool>("BoardTypeShogi960"); }
+            set { SetValue("BoardTypeShogi960", value); }
+        }
+
         // -- public methods
 
         public BoardSetting()
@@ -52,6 +64,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             BoardTypeEnable = true;
             BoardType = BoardType.NoHandicap;
             BoardTypeCurrent = false;
+            BoardTypeShogi960 = false;
         }
 
         public BoardSetting Clone()
