@@ -305,5 +305,6 @@ namespace MyShogi.View.Win2D
         public EngineSelectionDialog engineSelectionDialog;
 
         private ControlBinder binder = new ControlBinder();
+
     }
 }

@@ -45,7 +45,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.toolTip1 = new ToolTipEx(this.components);
+            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
@@ -60,7 +60,7 @@
             this.checkBox2.Location = new System.Drawing.Point(256, 122);
             this.checkBox2.Name = "checkBox2";
             this.checkBox2.Size = new System.Drawing.Size(84, 16);
-            this.checkBox2.TabIndex = 19;
+            this.checkBox2.TabIndex = 9;
             this.checkBox2.Text = "時間無制限";
             this.toolTip1.SetToolTip(this.checkBox2, "時間無制限に設定します。\r\nコンピューター対局でコンピューター側をこの設定にした場合、コンピューター側は1手5秒で指します。");
             this.checkBox2.UseVisualStyleBackColor = true;
@@ -100,7 +100,7 @@
             0});
             this.numericUpDown3.Name = "numericUpDown3";
             this.numericUpDown3.Size = new System.Drawing.Size(46, 19);
-            this.numericUpDown3.TabIndex = 12;
+            this.numericUpDown3.TabIndex = 5;
             this.numericUpDown3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label4
@@ -118,7 +118,7 @@
             this.checkBox1.Location = new System.Drawing.Point(13, 91);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(140, 16);
-            this.checkBox1.TabIndex = 17;
+            this.checkBox1.TabIndex = 8;
             this.checkBox1.Text = "時間切れを負けにしない";
             this.toolTip1.SetToolTip(this.checkBox1, "このチェックをオンにすると時間切れのあとも負けにならず、継続して指せます。");
             this.checkBox1.UseVisualStyleBackColor = true;
@@ -133,7 +133,7 @@
             0});
             this.numericUpDown2.Name = "numericUpDown2";
             this.numericUpDown2.Size = new System.Drawing.Size(46, 19);
-            this.numericUpDown2.TabIndex = 11;
+            this.numericUpDown2.TabIndex = 4;
             this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // numericUpDown5
@@ -146,7 +146,7 @@
             0});
             this.numericUpDown5.Name = "numericUpDown5";
             this.numericUpDown5.Size = new System.Drawing.Size(55, 19);
-            this.numericUpDown5.TabIndex = 16;
+            this.numericUpDown5.TabIndex = 7;
             this.numericUpDown5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // numericUpDown4
@@ -159,7 +159,7 @@
             0});
             this.numericUpDown4.Name = "numericUpDown4";
             this.numericUpDown4.Size = new System.Drawing.Size(55, 19);
-            this.numericUpDown4.TabIndex = 14;
+            this.numericUpDown4.TabIndex = 6;
             this.numericUpDown4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.numericUpDown4.Value = new decimal(new int[] {
             10,
@@ -177,7 +177,7 @@
             0});
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(55, 19);
-            this.numericUpDown1.TabIndex = 10;
+            this.numericUpDown1.TabIndex = 3;
             this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label6
@@ -232,7 +232,7 @@
             this.radioButton2.Location = new System.Drawing.Point(12, 66);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(92, 16);
-            this.radioButton2.TabIndex = 15;
+            this.radioButton2.TabIndex = 1;
             this.radioButton2.TabStop = true;
             this.radioButton2.Text = "1手ごとの加算";
             this.toolTip1.SetToolTip(this.radioButton2, "1手ごとにこの秒数だけ持ち時間が加算されます。\r\nチェスでよく採用されているフィッシャールールです。");
@@ -245,7 +245,7 @@
             this.radioButton1.Location = new System.Drawing.Point(12, 43);
             this.radioButton1.Name = "radioButton1";
             this.radioButton1.Size = new System.Drawing.Size(58, 16);
-            this.radioButton1.TabIndex = 13;
+            this.radioButton1.TabIndex = 0;
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "秒読み";
             this.toolTip1.SetToolTip(this.radioButton1, "持ち時間が0になったあとの、1手あたりの秒数です。");

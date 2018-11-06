@@ -427,7 +427,7 @@ namespace MyShogi.View.Win2D
                             {
                                 FormLocationUtility.CenteringToThisForm(dialog, this);
                                 dialog.ShowDialog(this); // Modal Dialogにしておく。
-                                }
+                            }
                         };
 
                         item_playgame.DropDownItems.Add(item);

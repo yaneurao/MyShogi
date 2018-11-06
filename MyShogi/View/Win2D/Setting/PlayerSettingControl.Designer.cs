@@ -40,7 +40,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.toolTip1 = new ToolTipEx(this.components);
+            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -74,6 +74,7 @@
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox2.Size = new System.Drawing.Size(360, 52);
             this.textBox2.TabIndex = 9;
+            this.textBox2.TabStop = false;
             // 
             // checkBox1
             // 
@@ -82,7 +83,7 @@
             this.checkBox1.Margin = new System.Windows.Forms.Padding(2);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(232, 16);
-            this.checkBox1.TabIndex = 8;
+            this.checkBox1.TabIndex = 5;
             this.checkBox1.Text = "コンピューターは、相手の手番でも思考する。";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -103,7 +104,7 @@
             this.button2.Location = new System.Drawing.Point(283, 70);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(84, 24);
-            this.button2.TabIndex = 6;
+            this.button2.TabIndex = 4;
             this.button2.Text = "詳細設定";
             this.toolTip1.SetToolTip(this.button2, "思考エンジンの細かい設定を変更できます。");
             this.button2.UseVisualStyleBackColor = true;
@@ -116,7 +117,7 @@
             this.comboBox1.Location = new System.Drawing.Point(283, 47);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(84, 20);
-            this.comboBox1.TabIndex = 5;
+            this.comboBox1.TabIndex = 3;
             this.toolTip1.SetToolTip(this.comboBox1, "コンピューターの棋力を選べます。");
             this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
@@ -143,7 +144,7 @@
             this.textBox1.Location = new System.Drawing.Point(164, 22);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(203, 19);
-            this.textBox1.TabIndex = 1;
+            this.textBox1.TabIndex = 2;
             this.textBox1.Text = "あなた";
             this.toolTip1.SetToolTip(this.textBox1, "プレイヤーの名前を変更できます。この名前が表示され、棋譜にも残ります。");
             // 
@@ -153,7 +154,8 @@
             this.radioButton2.Location = new System.Drawing.Point(13, 47);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(85, 16);
-            this.radioButton2.TabIndex = 0;
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.TabStop = true;
             this.radioButton2.Text = "コンピューター";
             this.toolTip1.SetToolTip(this.radioButton2, "こちらの手番のプレイヤーをコンピューターにしたい時にここを選びます。");
             this.radioButton2.UseVisualStyleBackColor = true;
