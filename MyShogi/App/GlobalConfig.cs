@@ -69,6 +69,7 @@ namespace MyShogi.App
 
             DisplayEvalJudgement = 1;
 
+
             // -- 音声設定
 
             EnableSound = 1;
@@ -87,14 +88,20 @@ namespace MyShogi.App
             ReadOutCancelWhenGameEnd = 1;
             ReadOutByoyomi = 1;
 
+
             // -- 操作設定
 
             KifuWindowPrevNextKey = 1;
+            KifuWindowFirstLastKey = 2;
             KifuWindowNextSpecialKey = 1;
-            KifuWindowFirstLastKey = 1;
+
             ConsiderationWindowPrevNextKey = 1;
             ConsiderationWindowHeadTailKey = 2;
-            ConsiderationPvSendKey = 1;
+            ConsiderationPvSendKey = 2;
+
+            MiniBoardPrevNextKey = 1;
+            MiniBoardHeadTailKey = 2;
+
 
             // -- 検討設定
 
@@ -765,8 +772,8 @@ namespace MyShogi.App
         ///
         /// 最初に戻る/最後に進むキー
         /// 0 : なし
-        /// 1 : ↑と↓  :  デフォルト
-        /// 2 : ←と→
+        /// 1 : ←と→
+        /// 2 : ↑と↓  :  デフォルト
         /// 3 : PageUpとPageDown
         /// </summary>
         [DataMember]
@@ -783,9 +790,9 @@ namespace MyShogi.App
         /// 0 : なし
         /// 1 : Shift←→  : デフォルト
         /// 2 : Shift↑↓
-        /// 3 : ，(カンマ)と ．(ピリオド)
+        /// 3 : ←と→
         /// 4 : ↑と↓ 
-        /// 5 : ←と→
+        /// 5 : ，(カンマ)と ．(ピリオド)
         /// 6 : PageUpとPageDown
         /// </summary>
         [DataMember]
@@ -798,13 +805,13 @@ namespace MyShogi.App
         /// <summary>
         /// 検討ウインドウでのキー操作その2
         ///
-        /// 選択行の上下移動
+        /// 選択行の先頭/末尾移動
         /// 0 : なし
-        /// 1 : Shift↑↓ 
-        /// 2 : Shift←→ : デフォルト
-        /// 3 : ，(カンマ)と ．(ピリオド)
+        /// 1 : Shift←→
+        /// 2 : Shift↑↓ : デフォルト 
+        /// 3 : ←と→
         /// 4 : ↑と↓ 
-        /// 5 : ←と→
+        /// 5 : ，(カンマ)と ．(ピリオド)
         /// 6 : PageUpとPageDown
         /// </summary>
         [DataMember]
@@ -814,7 +821,6 @@ namespace MyShogi.App
             set { SetValue<int>("ConsiderationWindowHeadTailKey", value); }
         }
         
-
         /// <summary>
         /// 検討ウインドウでのキー操作その3
         ///
@@ -829,6 +835,45 @@ namespace MyShogi.App
             get { return GetValue<int>("ConsiderationPvSendKey"); }
             set { SetValue<int>("ConsiderationPvSendKey", value); }
         }
+
+        /// <summary>
+        /// ミニ盤面のキー操作その1
+        ///
+        /// 選択行の上下移動
+        /// 0 : なし
+        /// 1 : Ctrl←→  : デフォルト
+        /// 2 : Ctrl↑↓
+        /// 3 : ←と→
+        /// 4 : ↑と↓ 
+        /// 5 : ，(カンマ)と ．(ピリオド)
+        /// 6 : PageUpとPageDown
+        /// </summary>
+        [DataMember]
+        public int MiniBoardPrevNextKey
+        {
+            get { return GetValue<int>("MiniBoardPrevNextKey"); }
+            set { SetValue<int>("MiniBoardPrevNextKey", value); }
+        }
+
+        /// <summary>
+        /// ミニ盤面のキー操作その2
+        ///
+        /// 選択行の上下移動
+        /// 0 : なし
+        /// 1 : Ctrl←→
+        /// 2 : Ctrl↑↓ : デフォルト 
+        /// 3 : ←と→
+        /// 4 : ↑と↓ 
+        /// 5 : ，(カンマ)と ．(ピリオド)
+        /// 6 : PageUpとPageDown
+        /// </summary>
+        [DataMember]
+        public int MiniBoardHeadTailKey
+        {
+            get { return GetValue<int>("MiniBoardHeadTailKey"); }
+            set { SetValue<int>("MiniBoardHeadTailKey", value); }
+        }
+
 
         #endregion
 

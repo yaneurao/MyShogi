@@ -51,16 +51,7 @@ namespace MyShogi.View.Win2D
 
         #endregion
 
-        #region UsiThinkReportMessage
-
-        /// <summary>
-        /// ミニ盤面の初期化
-        /// 必ず呼び出すべし。
-        /// </summary>
-        public void Init(bool boardReverse)
-        {
-            miniShogiBoard1.Init(boardReverse);
-        }
+        #region Perform // キーボードショートカット
 
         /// <summary>
         /// 検討時に選択行を1行下に移動する。
@@ -102,6 +93,50 @@ namespace MyShogi.View.Win2D
             ConsiderationInstance(0).PerformTail();
         }
 
+        /// <summary>
+        /// ミニ盤面、一手戻る
+        /// </summary>
+        public void MiniBoardPerformUp()
+        {
+            toolStripButton2_Click(null, null);
+        }
+
+        /// <summary>
+        /// ミニ盤面、一手進む
+        /// </summary>
+        public void MiniBoardPerformDown()
+        {
+            toolStripButton3_Click(null, null);
+        }
+
+        /// <summary>
+        /// ミニ盤面、先頭に戻る
+        /// </summary>
+        public void MiniBoardPerformHead()
+        {
+            toolStripButton1_Click(null, null);
+        }
+
+        /// <summary>
+        /// ミニ盤面、末尾に進む
+        /// </summary>
+        public void MiniBoardPerformTail()
+        {
+            toolStripButton4_Click(null, null);
+        }
+
+        #endregion
+
+        #region UsiThinkReportMessage
+
+        /// <summary>
+        /// ミニ盤面の初期化
+        /// 必ず呼び出すべし。
+        /// </summary>
+        public void Init(bool boardReverse)
+        {
+            miniShogiBoard1.Init(boardReverse);
+        }
 
         /// <summary>
         /// 読み筋などのメッセージを受け取り、ququeに積む。

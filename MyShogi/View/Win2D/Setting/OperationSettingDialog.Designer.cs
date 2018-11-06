@@ -39,10 +39,14 @@
             this.richSelector6 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector7 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.richSelector5 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.richSelector8 = new MyShogi.View.Win2D.Setting.RichSelector();
+            this.richSelector9 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -50,6 +54,7 @@
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -93,12 +98,12 @@
             // richSelector4
             // 
             this.richSelector4.GroupBoxTitle = "棋譜の最初進む/最後に進むに対応するキー";
-            this.richSelector4.Location = new System.Drawing.Point(6, 226);
+            this.richSelector4.Location = new System.Drawing.Point(6, 116);
             this.richSelector4.Name = "richSelector4";
             this.richSelector4.SelectionTexts = new string[] {
         "なし,kifu_firstlastkey_0.png,なし。",
-        "↑と↓,kifu_firstlastkey_1.png,カーソルキーの↑と↓に割当てます。棋譜の1手進む/戻るに対応するキーと重複している場合、無効になります。",
-        "←と→,kifu_firstlastkey_2.png,カーソルキーの←と→に割当てます。棋譜の1手進む/戻るに対応するキーと重複している場合、無効になります。",
+        "←と→,kifu_firstlastkey_1.png,カーソルキーの←と→に割当てます。棋譜の1手進む/戻るに対応するキーと重複している場合、無効になります。",
+        "↑と↓,kifu_firstlastkey_2.png,カーソルキーの↑と↓に割当てます。棋譜の1手進む/戻るに対応するキーと重複している場合、無効になります。",
         "Page,kifu_firstlastkey_3.png,PageUpとPageDownに割当てます。"};
             this.richSelector4.Size = new System.Drawing.Size(772, 110);
             this.richSelector4.TabIndex = 6;
@@ -106,7 +111,7 @@
             // richSelector3
             // 
             this.richSelector3.GroupBoxTitle = "棋譜の1手進むに対応する特殊キー";
-            this.richSelector3.Location = new System.Drawing.Point(6, 116);
+            this.richSelector3.Location = new System.Drawing.Point(6, 226);
             this.richSelector3.Name = "richSelector3";
             this.richSelector3.SelectionTexts = new string[] {
         "なし,kifu_next_specialkey_0.png,なし。",
@@ -146,8 +151,8 @@
             this.richSelector6.Name = "richSelector6";
             this.richSelector6.SelectionTexts = new string[] {
         "なし,cons_sendpv_key_0.png,なし。",
-        "Enter,cons_sendpv_key_1.png,Enterキーに割当てます。棋譜操作のキーと重複している場合、無効化されます。",
-        "スペース,cons_sendpv_key_2.png,スペースキーに割当てます。棋譜操作のキーと重複している場合、無効化されます。"};
+        "スペース,cons_sendpv_key_1.png,スペースキーに割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "Enter,cons_sendpv_key_2.png,Enterキーに割当てます。棋譜操作のキーと重複している場合、無効化されます。"};
             this.richSelector6.Size = new System.Drawing.Size(772, 110);
             this.richSelector6.TabIndex = 5;
             // 
@@ -160,9 +165,9 @@
         "なし,cons_headtailkey_0.png,なし",
         "Shift←→,cons_headtailkey_1.png,Shift+カーソルキーの左と右に割当てます。",
         "Shift↑↓,cons_headtailkey_2.png,Shift+カーソルキーの上と下に割当てます。",
-        "，と ．,cons_headtailkey_3.png,  ，(カンマ)と ．(ピリオド)に割当てます。",
+        "←と→,cons_headtailkey_3.png,カーソルキーの左と右に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
         "↑と↓,cons_headtailkey_4.png,カーソルキーの上と下に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
-        "←と→,cons_headtailkey_5.png,カーソルキーの左と右に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "，と ．,cons_headtailkey_5.png,  ，(カンマ)と ．(ピリオド)に割当てます。",
         "Page,cons_headtailkey_6.png,PageUpとPageDownに割当てます。棋譜操作のキーと重複している場合、無効化されます。"};
             this.richSelector7.Size = new System.Drawing.Size(772, 110);
             this.richSelector7.TabIndex = 4;
@@ -176,12 +181,56 @@
         "なし,cons_prevnextkey_0.png,なし",
         "Shift←→,cons_prevnextkey_1.png,Shift+カーソルキーの左と右に割当てます。",
         "Shift↑↓,cons_prevnextkey_2.png,Shift+カーソルキーの上と下に割当てます。",
-        "，と ．,cons_prevnextkey_3.png,  ，(カンマ)と ．(ピリオド)に割当てます。",
+        "←と→,cons_prevnextkey_3.png,カーソルキーの左と右に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
         "↑と↓,cons_prevnextkey_4.png,カーソルキーの上と下に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
-        "←と→,cons_prevnextkey_5.png,カーソルキーの左と右に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "，と ．,cons_prevnextkey_5.png,  ，(カンマ)と ．(ピリオド)に割当てます。",
         "Page,cons_prevnextkey_6.png,PageUpとPageDownに割当てます。棋譜操作のキーと重複している場合、無効化されます。"};
             this.richSelector5.Size = new System.Drawing.Size(772, 110);
             this.richSelector5.TabIndex = 4;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.richSelector8);
+            this.tabPage4.Controls.Add(this.richSelector9);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(782, 567);
+            this.tabPage4.TabIndex = 10;
+            this.tabPage4.Text = "ミニ盤面";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // richSelector8
+            // 
+            this.richSelector8.GroupBoxTitle = "ミニ盤面で先頭/末尾移動";
+            this.richSelector8.Location = new System.Drawing.Point(6, 116);
+            this.richSelector8.Name = "richSelector8";
+            this.richSelector8.SelectionTexts = new string[] {
+        "なし,mini_headtailkey_0.png,なし",
+        "Ctrl←→,mini_headtailkey_1.png,Ctrl+カーソルキーの左と右に割当てます。",
+        "Ctrl↑↓,mini_headtailkey_2.png,Ctrl+カーソルキーの上と下に割当てます。",
+        "←と→,mini_headtailkey_3.png,カーソルキーの左と右に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "↑と↓,mini_headtailkey_4.png,カーソルキーの上と下に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "，と ．,mini_headtailkey_5.png,  ，(カンマ)と ．(ピリオド)に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "Page,mini_headtailkey_6.png,PageUpとPageDownに割当てます。棋譜操作のキーと重複している場合、無効化されます。"};
+            this.richSelector8.Size = new System.Drawing.Size(772, 110);
+            this.richSelector8.TabIndex = 5;
+            // 
+            // richSelector9
+            // 
+            this.richSelector9.GroupBoxTitle = "ミニ盤面で一手戻る/進む";
+            this.richSelector9.Location = new System.Drawing.Point(6, 6);
+            this.richSelector9.Name = "richSelector9";
+            this.richSelector9.SelectionTexts = new string[] {
+        "なし,mini_prevnextkey_0.png,なし",
+        "Ctrl←→,mini_prevnextkey_1.png,Ctrl+カーソルキーの左と右に割当てます。",
+        "Ctrl↑↓,mini_prevnextkey_2.png,Ctrl+カーソルキーの上と下に割当てます。",
+        "←と→,mini_prevnextkey_3.png,カーソルキーの左と右に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "↑と↓,mini_prevnextkey_4.png,カーソルキーの上と下に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "，と ．,mini_prevnextkey_5.png,  ，(カンマ)と ．(ピリオド)に割当てます。棋譜操作のキーと重複している場合、無効化されます。",
+        "Page,cons_prevnextkey_6.png,PageUpとPageDownに割当てます。棋譜操作のキーと重複している場合、無効化されます。"};
+            this.richSelector9.Size = new System.Drawing.Size(772, 110);
+            this.richSelector9.TabIndex = 6;
             // 
             // OperationSettingDialog
             // 
@@ -197,6 +246,7 @@
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.tabPage4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -213,5 +263,8 @@
         private RichSelector richSelector5;
         private RichSelector richSelector6;
         private RichSelector richSelector7;
+        private System.Windows.Forms.TabPage tabPage4;
+        private RichSelector richSelector8;
+        private RichSelector richSelector9;
     }
 }

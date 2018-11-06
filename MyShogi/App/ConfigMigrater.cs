@@ -24,6 +24,16 @@ namespace MyShogi.App
                 if (ConsiderationWindowKifuVersion >= 1)
                     ++ConsiderationWindowKifuVersion;
             }
+            if (version < 1330)
+            {
+                // これ順番、気に要らなくて入れ替えた。
+                if (KifuWindowFirstLastKey == 1)
+                    KifuWindowFirstLastKey = 2;
+                else if (KifuWindowFirstLastKey == 2)
+                    KifuWindowFirstLastKey = 1;
+            }
+
+
 
             // 以下、if (version < XXX) { .. } をだらだら書いていく。
         }
