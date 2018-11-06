@@ -88,14 +88,14 @@ namespace MyShogi.View.Win2D
                 case 0: // なし
                     break;
 
-                case 1: // Shift↑↓  : デフォルト
-                    addEvent( e => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Up && e.Shift) { cons.PerformUp(); e.Handled = true; } });
-                    addEvent( e => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Down && e.Shift) { cons.PerformDown(); e.Handled = true; } });
-                    break;
-
-                case 2: // Shift←→
+                case 1: // Shift←→ : デフォルト
                     addEvent( e => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Left && e.Shift) { cons.PerformUp(); e.Handled = true; } });
                     addEvent( e => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Right && e.Shift) { cons.PerformDown(); e.Handled = true; } });
+                    break;
+
+                case 2: // Shift↑↓
+                    addEvent(e => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Up && e.Shift) { cons.PerformUp(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Down && e.Shift) { cons.PerformDown(); e.Handled = true; } });
                     break;
 
                 case 3: // ，(カンマ)と ．(ピリオド)
@@ -116,6 +116,43 @@ namespace MyShogi.View.Win2D
                 case 6: // PageUpとPageDown
                     addEvent( e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageUp) { cons.PerformUp(); e.Handled = true; } });
                     addEvent( e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageDown) { cons.PerformDown(); e.Handled = true; } });
+                    break;
+            }
+
+            // 選択行の先頭/末尾へ
+            switch (config.ConsiderationWindowHeadTailKey)
+            {
+                case 0: // なし
+                    break;
+
+                case 1: // Shift←→
+                    addEvent(e => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Left && e.Shift) { cons.PerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Right && e.Shift) { cons.PerformTail(); e.Handled = true; } });
+                    break;
+
+                case 2: // Shift↑↓ : デフォルト
+                    addEvent(e => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Up && e.Shift) { cons.PerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Shift && e.KeyCode == Keys.Down && e.Shift) { cons.PerformTail(); e.Handled = true; } });
+                    break;
+
+                case 3: // ，(カンマ)と ．(ピリオド)
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Oemcomma) { cons.PerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.OemPeriod) { cons.PerformTail(); e.Handled = true; } });
+                    break;
+
+                case 4: // ↑と↓ 
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Up) { cons.PerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Down) { cons.PerformTail(); e.Handled = true; } });
+                    break;
+
+                case 5: // ←と→
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Left) { cons.PerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Right) { cons.PerformTail(); e.Handled = true; } });
+                    break;
+
+                case 6: // PageUpとPageDown
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageUp) { cons.PerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageDown) { cons.PerformTail(); e.Handled = true; } });
                     break;
             }
 

@@ -1283,6 +1283,11 @@ namespace MyShogi.View.Win2D
         /// 前回のメニュー項目。
         /// </summary>
         private MenuStripEx old_menu { get; set; } = null;
+
+        /// <summary>
+        /// 前回にUpdateMenuItems()が呼び出された時のGameMode。
+        /// </summary>
+        private GameModeEnum lastGameMode = GameModeEnum.ConsiderationWithoutEngine;
     }
 }
 

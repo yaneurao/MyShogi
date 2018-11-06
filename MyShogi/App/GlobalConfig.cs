@@ -93,6 +93,7 @@ namespace MyShogi.App
             KifuWindowNextSpecialKey = 1;
             KifuWindowFirstLastKey = 1;
             ConsiderationWindowPrevNextKey = 1;
+            ConsiderationWindowHeadTailKey = 2;
             ConsiderationPvSendKey = 1;
 
             // -- 検討設定
@@ -780,8 +781,8 @@ namespace MyShogi.App
         ///
         /// 選択行の上下移動
         /// 0 : なし
-        /// 1 : Shift↑↓  : デフォルト
-        /// 2 : Shift←→
+        /// 1 : Shift←→  : デフォルト
+        /// 2 : Shift↑↓
         /// 3 : ，(カンマ)と ．(ピリオド)
         /// 4 : ↑と↓ 
         /// 5 : ←と→
@@ -796,6 +797,26 @@ namespace MyShogi.App
 
         /// <summary>
         /// 検討ウインドウでのキー操作その2
+        ///
+        /// 選択行の上下移動
+        /// 0 : なし
+        /// 1 : Shift↑↓ 
+        /// 2 : Shift←→ : デフォルト
+        /// 3 : ，(カンマ)と ．(ピリオド)
+        /// 4 : ↑と↓ 
+        /// 5 : ←と→
+        /// 6 : PageUpとPageDown
+        /// </summary>
+        [DataMember]
+        public int ConsiderationWindowHeadTailKey
+        {
+            get { return GetValue<int>("ConsiderationWindowHeadTailKey"); }
+            set { SetValue<int>("ConsiderationWindowHeadTailKey", value); }
+        }
+        
+
+        /// <summary>
+        /// 検討ウインドウでのキー操作その3
         ///
         /// 選択行のミニ盤面へのPVの転送
         /// 0 : なし

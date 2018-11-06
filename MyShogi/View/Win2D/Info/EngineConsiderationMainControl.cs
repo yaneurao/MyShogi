@@ -83,6 +83,27 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 検討時に選択行を先頭に移動する。
+        /// キーハンドラから呼び出される。
+        /// </summary>
+        public void PerformHead()
+        {
+            // 検討時用なら先手用に送っておけば十分。
+            ConsiderationInstance(0).PerformHead();
+        }
+
+        /// <summary>
+        /// 検討時に選択行を末尾に移動する。
+        /// キーハンドラから呼び出される。
+        /// </summary>
+        public void PerformTail()
+        {
+            // 検討時用なら先手用に送っておけば十分。
+            ConsiderationInstance(0).PerformTail();
+        }
+
+
+        /// <summary>
         /// 読み筋などのメッセージを受け取り、ququeに積む。
         ///
         /// OnIdle()が呼び出されたときにdispatchする。

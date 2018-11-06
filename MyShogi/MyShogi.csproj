@@ -258,7 +258,16 @@
     <Compile Include="View\Win2D\Game\GameScreenControl\GameScreenControlViewModel.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="View\Win2D\Game\MainDialog\MainDialogDockWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Game\MainDialog\MainDialogHandler.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="View\Win2D\Game\MainDialog\MainDialogMenuItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Game\MainDialog\MainDialogProperties.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\Win2D\Game\MainDialog\MainDialogToolStripShortcut.cs">

@@ -375,6 +375,38 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// 検討時に選択行を1行下に移動する。
+        /// キーハンドラから呼び出される。
+        /// </summary>
+        public void PerformDown()
+        {
+            var index = GetListViewSelectedIndex();
+
+            // 選択行がなければ-1が返ってくるはずなので
+            // それに1加算して、0になるから、1番目の項目が(あれば)選択されるはず。
+
+            SelectListViewItem(index + 1);
+        }
+
+        /// <summary>
+        /// 検討時に選択行を先頭に移動する。
+        /// キーハンドラから呼び出される。
+        /// </summary>
+        public void PerformHead()
+        {
+            SelectListViewItem(0);
+        }
+
+        /// <summary>
+        /// 検討時に選択行を末尾に移動する。
+        /// キーハンドラから呼び出される。
+        /// </summary>
+        public void PerformTail()
+        {
+            SelectListViewItem(listView1.Items.Count-1);
+        }
+
+        /// <summary>
         /// 現在の選択行をMiniShogiBoardに送る。
         /// </summary>
         /// <returns></returns>
@@ -393,20 +425,6 @@ namespace MyShogi.View.Win2D
                     rootSfen = root_sfen,
                     moves = list_item_moves[index]
                 });
-        }
-
-        /// <summary>
-        /// 検討時に選択行を1行下に移動する。
-        /// キーハンドラから呼び出される。
-        /// </summary>
-        public void PerformDown()
-        {
-            var index = GetListViewSelectedIndex();
-
-            // 選択行がなければ-1が返ってくるはずなので
-            // それに1加算して、0になるから、1番目の項目が(あれば)選択されるはず。
-
-            SelectListViewItem(index + 1);
         }
 
         /// <summary>
