@@ -17,9 +17,19 @@
         Connected,
 
         /// <summary>
+        /// "usi"を送信して"usiok"を待っている状態
+        /// </summary>
+        WaitUsiOk,
+
+        /// <summary>
         /// "usi"を送信して"usiok"がエンジンから送られて来た状態
         /// </summary>
         UsiOk,
+
+        /// <summary>
+        /// "isready"を送信して"readyok"を待っている状態。
+        /// </summary>
+        WaitReadyOk,
 
         /// <summary>
         /// "isready"を送信して"readyok"がエンジンから送られて来た状態
@@ -45,7 +55,8 @@
         ConnectionFailed,
 
         /// <summary>
-        /// Connectのあと"usi"を送信したが30秒経っても"usiok"が返ってこなかった。
+        /// Connectのあと"usi"を送信したが15秒経っても"usiok"が返ってこなかった。
+        /// "isready"送信から30秒経過のときもこのステータス。
         /// </summary>
         ConnectionTimeout ,
 

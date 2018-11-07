@@ -77,8 +77,17 @@ namespace MyShogi.Model.Shogi.Usi
             {
                 switch (State)
                 {
+                    // "usi"から15秒
                     case UsiEngineState.Connected:
-                        if (DateTime.Now - connected_time >= new TimeSpan(0, 0, 15))
+                        if (DateTime.Now - last_send_time >= new TimeSpan(0, 0, 15))
+                        {
+                            ChangeState(UsiEngineState.ConnectionTimeout);
+                        }
+                        break;
+
+                    // "isready"から30秒
+                    case UsiEngineState.UsiOk:
+                        if (DateTime.Now - last_send_time >= new TimeSpan(0, 0, 30))
                         {
                             ChangeState(UsiEngineState.ConnectionTimeout);
                         }
@@ -107,6 +116,18 @@ namespace MyShogi.Model.Shogi.Usi
         /// <param name="usiPositionString"></param>
         public void Think(string usiPositionString , UsiThinkLimit limit , Color sideToMove)
         {
+            if (State != UsiEngineState.InTheGame)
+            {
+                // ゲーム中以外でThinkを呼び出している。
+                // 駒を持ち上げて、その状態で検討ボタンを押すとNotifyTurnChanged()が呼び出されて、
+                // エンジン側が未初期化なのにこのメソッドが呼び出されるなど…。
+                // このあと、エンジンの初期化が終わったタイミングで再度、NotifyTurnChanged()から
+                // このメソッドが呼び出されるはずなので、今回は単に無視しておくだけで良い。
+
+                Log.Write(LogInfoType.UsiServer , "InTheGameではないのにThink()を呼び出している。");
+                return;
+            }
+
             if (IsMateSearch)
                 ThinkingBridge.Think($"position {usiPositionString}" , $"go mate {limit.ToUsiMateString(sideToMove)}");
             else
@@ -252,10 +273,11 @@ namespace MyShogi.Model.Shogi.Usi
         private UsiEngineThinkingBridge ThinkingBridge { get; set; }
 
         /// <summary>
-        /// "usi"コマンドを思考ンジンに送信した時刻。思考エンジンは起動時にすぐに応答するように作るべき。
-        /// 一応、タイムアウトを監視する。
+        /// "usi"コマンド,"isready"を思考ンジンに送信した時刻。思考エンジンは起動時にすぐに応答するように作るべき。
+        /// 一応、タイムアウトを監視する。ただし思考エンジンから改行など何らかのkeep alive的なメッセージが送られてきた場合、
+        /// これを延長する。
         /// </summary>
-        private DateTime connected_time;
+        private DateTime last_send_time;
 
         // -- private methods
 
@@ -270,9 +292,10 @@ namespace MyShogi.Model.Shogi.Usi
             {
                 case UsiEngineState.Connected:
                     // 接続されたので"usi"と送信
-                    // これ、応答タイムアウトがあるので現在時刻を保存。
-                    connected_time = DateTime.Now;
                     SendCommand("usi");
+                    State = UsiEngineState.WaitUsiOk;
+                    // これ、応答タイムアウトがある。15秒。
+                    last_send_time = DateTime.Now;
                     break;
 
                 case UsiEngineState.UsiOk:
@@ -285,8 +308,12 @@ namespace MyShogi.Model.Shogi.Usi
                         // このタイミングでoptionを先に送らないとEvalDirの変更などが間に合わない。
                         SendSetOptionList();
 
-                        // これ時間制限はなく、タイムアウトは監視しない。どこかでisreadyは完了するものとする。
                         SendCommand("isready");
+                        State = UsiEngineState.WaitReadyOk;
+
+                        // これもタイムアウトがある。30秒。
+                        // これを超えるなら定期的に改行などkeep alive的な何かをエンジン側から定期的に送信すべきである。
+                        last_send_time = DateTime.Now;
                     }
                     break;
 
@@ -311,11 +338,14 @@ namespace MyShogi.Model.Shogi.Usi
         {
             try
             {
+                // keep alive的な何かかも知れないので、思考エンジン側からメッセージが送られてきた以上、
+                // タイムアウト時間を延長してやる。
+                if (State == UsiEngineState.WaitUsiOk || State == UsiEngineState.WaitReadyOk)
+                    last_send_time = DateTime.Now;
 
+                // 空行なら解釈するまでもない。
                 if (string.IsNullOrWhiteSpace(command))
-                {
                     return;
-                }
 
                 // 前後の空白は削除しておきます。
                 var trimmedCommand = command.Trim();
@@ -361,6 +391,7 @@ namespace MyShogi.Model.Shogi.Usi
                         //Log.Error("unknown usi command: {0}", trimmedCommand);
                         break;
                 }
+
             } catch (Exception ex)
             {
                 // 例外をログに出力しておく。
@@ -373,7 +404,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private void HandleUsiOk()
         {
-            if (State != UsiEngineState.Connected)
+            if (State != UsiEngineState.WaitUsiOk)
             {
                 throw new UsiException(
                     "usiokコマンドを不正なタイミングで受信しました。");
@@ -449,7 +480,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private void HandleReadyOk()
         {
-            if (State != UsiEngineState.UsiOk)
+            if (State != UsiEngineState.WaitReadyOk)
             {
                 throw new UsiException(
                     "readyokコマンドが不正なタイミングで送られました。");
