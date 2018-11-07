@@ -67,8 +67,8 @@ namespace MyShogi.App
 
             // 評価値
 
+            NegateEvalWhenWhite = true;
             DisplayEvalJudgement = 1;
-
 
             // -- 音声設定
 
@@ -523,7 +523,7 @@ namespace MyShogi.App
 
         /// <summary>
         /// 検討ウィンドウで思考エンジンが後手番のときに評価値を反転させるか(先手から見た評価値にするか)のフラグ
-        /// デフォルト : false
+        /// デフォルト : true (V1.34から)
         /// </summary>
         [DataMember]
         public bool NegateEvalWhenWhite
