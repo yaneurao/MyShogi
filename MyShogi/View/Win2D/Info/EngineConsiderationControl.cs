@@ -118,6 +118,7 @@ namespace MyShogi.View.Win2D
                     position.SetSfen(value);
                 ClearItems();
                 ClearHeader(); // HASH使用率なども初期化されるべき
+                DisplayThinkStart(); // 思考がこのタイミングで開始されているはずなのでそれを視覚的に表現する。
             }
         }
 
@@ -159,6 +160,29 @@ namespace MyShogi.View.Win2D
         {
             listView1.Items.Clear();
             list_item_moves.Clear();
+        }
+
+        /// <summary>
+        /// 思考が開始されているはずなのでそれを視覚的に表現する。
+        /// </summary>
+        public void DisplayThinkStart()
+        {
+            // エンジン名のところの背景色を変更しておく。
+
+            // readonlyのTextBoxを変更するためのhack
+            // cf. How do you change the text color of a readonly TextBox? : https://stackoverflow.com/questions/20688408/how-do-you-change-the-text-color-of-a-readonly-textbox
+            textBox1.BackColor = SystemColors.Control;
+            textBox1.ForeColor = System.Drawing.Color.OrangeRed;
+        }
+
+        /// <summary>
+        /// 思考が終了したはずなのでそれを視覚的に表現する。
+        /// </summary>
+        public void DisplayThinkEnd()
+        {
+            // エンジン名のところの背景色を元に戻す。
+            textBox1.BackColor = SystemColors.Control;
+            textBox1.ForeColor = SystemColors.WindowText;
         }
 
         /// <summary>

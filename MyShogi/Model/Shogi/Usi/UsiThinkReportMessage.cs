@@ -49,6 +49,20 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         UsiThinkReport,
 
+        /// <summary>
+        /// "go"コマンドでの思考が開始された時に呼び出される。
+        /// エンジンが稼働中であることを何らか視覚的に表現すべき。
+        /// number = 出力するインスタンス番号
+        /// </summary>
+        //UsiThinkStart,
+        // →　SetRootSfenが来るから不要か。
+
+        /// <summary>
+        /// "bestmove"が来て、思考が終了した時に呼び出される。
+        /// エンジンが可動していないことを何らか視覚的に表現すべき。
+        /// number = 出力するインスタンス番号
+        /// </summary>
+        UsiThinkEnd,
     }
 
     /// <summary>

@@ -621,13 +621,25 @@ namespace MyShogi.Model.Shogi.LocalServer
                         {
                             var report = args.value as UsiThinkReport;
 
-                            // このクラスのpropertyのsetterを呼び出してメッセージを移譲してやる。
-                            ThinkReport = new UsiThinkReportMessage()
+                            if (report != null)
                             {
-                                type = UsiEngineReportMessageType.UsiThinkReport,
-                                number = num_, // is captrued
-                                data = report,
-                            };
+                                // このクラスのpropertyのsetterを呼び出してメッセージを移譲してやる。
+                                ThinkReport = new UsiThinkReportMessage()
+                                {
+                                    type = UsiEngineReportMessageType.UsiThinkReport,
+                                    number = num_, // is captrued
+                                    data = report,
+                                };
+                            } else if (args.value is UsiEngineReportMessageType)
+                            {
+                                // これ、このまま投げとく。
+                                ThinkReport = new UsiThinkReportMessage()
+                                {
+                                    type = (UsiEngineReportMessageType)args.value,
+                                    number = num_, // is captrued
+                                    data = null,
+                                };
+                            }
                         }
                     });
 

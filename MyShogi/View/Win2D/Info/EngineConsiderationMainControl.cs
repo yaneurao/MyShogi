@@ -290,6 +290,11 @@ namespace MyShogi.View.Win2D
                     }
                     break;
 
+                case UsiEngineReportMessageType.UsiThinkEnd:
+                    if (!message.skipDisplay)
+                        ConsiderationInstance(message.number).DisplayThinkEnd();
+                    break;
+                    
                 case UsiEngineReportMessageType.UsiThinkReport:
 
                     if (!message.skipDisplay)

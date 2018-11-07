@@ -140,7 +140,8 @@ namespace MyShogi.Model.Shogi.Usi
         /// <summary>
         /// "bestmove"を受信した時に呼び出されるハンドラ
         /// </summary>
-        public void BestMoveReceived(Move bestMove_,Move ponderMove_)
+        /// <returns>queueに次のが積まれておらず、これで受け取ったbestMoveが、this.bestMoveに反映されたならばtrueを返す。</returns>
+        public bool BestMoveReceived(Move bestMove_,Move ponderMove_)
         {
             Thinking = false;
 
@@ -150,11 +151,13 @@ namespace MyShogi.Model.Shogi.Usi
                 Think(nextPosition, nextGoCommand);
                 nextPosition = null;
                 nextGoCommand = null;
+                return false;
             } else
             {
                 bestMove = bestMove_;
                 ponderMove = ponderMove_;
                 StopSent = false;
+                return true;
             }
         }
 

@@ -181,6 +181,7 @@ namespace MyShogi.Model.Shogi.Usi
 
         public void Dispose()
         {
+            ThinkReport = UsiEngineReportMessageType.UsiThinkEnd;
             Disconnect();
         }
 
@@ -248,10 +249,10 @@ namespace MyShogi.Model.Shogi.Usi
         /// USIプロトコルの"info ..."をparseした内容が入る。
         /// 親では、このイベントを捕捉すれば良い。
         /// </summary>
-        public UsiThinkReport ThinkReport
+        public /*UsiThinkReport or UsiEngineReportMessageType*/object ThinkReport
         {
-            get { return GetValue<UsiThinkReport>("ThinkReport");}
-            set { SetValue<UsiThinkReport>("ThinkReport",value); }
+            get { return GetValue<object>("ThinkReport");}
+            set { SetValue<object>("ThinkReport",value); }
         }
 
         /// <summary>
@@ -593,7 +594,10 @@ namespace MyShogi.Model.Shogi.Usi
                 // 確定したので格納しておく。
                 // 消費時間、サーバー計測で格納しておいて、それを用いて時間の計算をすべきような気もする。
                 // (いまは、このbestmoveを取り出した時までの時間になっている)
-                ThinkingBridge.BestMoveReceived(move,ponder);
+                if (ThinkingBridge.BestMoveReceived(move,ponder))
+                    ThinkReport = UsiEngineReportMessageType.UsiThinkEnd;
+
+                Console.WriteLine("bestmove");
             }
             catch (UsiException ex)
             {
@@ -889,7 +893,8 @@ namespace MyShogi.Model.Shogi.Usi
             }
 
             // 確定したので格納しておく。
-            ThinkingBridge.BestMoveReceived(moves[0] , Move.NONE);
+            if (ThinkingBridge.BestMoveReceived(moves[0] , Move.NONE))
+                ThinkReport = UsiEngineReportMessageType.UsiThinkEnd;
         }
 
         /// <summary>
