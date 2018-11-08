@@ -122,6 +122,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// EngineType == 0 : 通常探索エンジン。(goコマンドが送れる)
         /// EngineType == 1 : 詰み将棋に対応しているか。(go mateコマンドが送れる)
         /// EngineType == 2 : 通常探索＋詰将棋対応のエンジン
+        ///
+        /// その他、王手将棋用など、特殊なエンジンについても将来的にはここに追加していく予定。
         /// </summary>
         [DataMember]
         public int EngineType { get; set; } = 0;
