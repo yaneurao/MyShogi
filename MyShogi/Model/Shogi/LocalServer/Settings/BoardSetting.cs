@@ -26,7 +26,7 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         /// <summary>
         /// BoardTypeの局面から開始するのかのフラグ
-        /// BoardTypeEnableかBoardCurrentのどちらかがtrueのはず。
+        /// BoardTypeEnableかBoardCurrent、BoardTypeShogi960のいずれかがtrueのはず。
         /// </summary>
         [DataMember]
         public bool BoardTypeEnable

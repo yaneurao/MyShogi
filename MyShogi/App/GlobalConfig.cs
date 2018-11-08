@@ -25,7 +25,7 @@ namespace MyShogi.App
         ///
         /// このバージョン文字列は、Serializer.VersionStringToInt()によって数値に変換できるものとする。
         /// </summary>
-        public static readonly string MYSHOGI_VERSION_STRING = "1.3.4";
+        public static readonly string MYSHOGI_VERSION_STRING = "1.3.5";
 
         /// <summary>
         /// このファイルがシリアライズされて保存された時のバージョン文字列

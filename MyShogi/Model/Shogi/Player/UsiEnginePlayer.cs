@@ -149,13 +149,19 @@ namespace MyShogi.Model.Shogi.Player
             var state = (UsiEngineState)args.value;
             switch(state)
             {
+                case UsiEngineState.WaitUsiOk:
+                case UsiEngineState.WaitReadyOk:
+                case UsiEngineState.GameOver:
+                    Initializing = true;
+                    break;
+
                 case UsiEngineState.UsiOk:
                     // エンジンの設定を取得したいだけの時はこのタイミングで初期化は終わっていると判定すべき。
                     if (Engine.EngineSetting)
                         Initializing = false;
                     break;
 
-                case UsiEngineState.ReadyOk:
+                //case UsiEngineState.ReadyOk:
                 case UsiEngineState.InTheGame:
                     Initializing = false; // 少なくとも初期化は終わっている。
                     break;

@@ -200,6 +200,9 @@ namespace MyShogi.Model.Shogi.Core
         /// </summary>
         public static string Pretty(this Move m)
         {
+            if (m.IsSpecial())
+                return SpecialMoveToKif(m);
+
             if (m.IsDrop())
                 return string.Format("{0}{1}打",m.To().Pretty() , m.DroppedPiece().Pretty2());
             else

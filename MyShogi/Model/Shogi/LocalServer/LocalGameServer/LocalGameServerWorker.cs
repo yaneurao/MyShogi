@@ -694,6 +694,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private void CheckPlayerMove()
         {
+            // エンジンの初期化が終わっていないと前のbestMoveなどが残ったままなので処理するとまずいことになる。
+            if (Initializing)
+                return;
+
             // 現状の局面の手番側
             var stm = Position.sideToMove;
             var stmPlayer = Player(stm);
@@ -837,7 +841,9 @@ namespace MyShogi.Model.Shogi.LocalServer
 
         ILLEGAL_MOVE:
 
-            // これ、棋譜に記録すべき
+            // TODO : これ、棋譜に記録すべき
+            //Console.WriteLine(bestMove.Pretty());
+
             Move m = Move.ILLEGAL_MOVE;
             kifuManager.Tree.AddNode(m, PlayTimers.GetKifuMoveTimes());
             kifuManager.Tree.AddNodeComment(m, stmPlayer.BestMove.ToUsi() /* String あとでなおす*/ /* 元のテキスト */);
@@ -985,7 +991,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 双方の残り時間表示の更新
             UpdateTimeString();
 
-            // 時間切れ判定(対局中かつ手番側のみ)
+            // 時間切れ判定(対局中かつ手番側のみ) エンジン初期化中は、時間切れにはしない。
             CheckTimeUp();
 
             // 秒の読み上げ処理

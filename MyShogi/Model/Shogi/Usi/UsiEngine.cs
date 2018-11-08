@@ -78,7 +78,7 @@ namespace MyShogi.Model.Shogi.Usi
                 switch (State)
                 {
                     // "usi"から15秒
-                    case UsiEngineState.Connected:
+                    case UsiEngineState.WaitUsiOk:
                         if (DateTime.Now - last_send_time >= new TimeSpan(0, 0, 15))
                         {
                             ChangeState(UsiEngineState.ConnectionTimeout);
@@ -86,7 +86,7 @@ namespace MyShogi.Model.Shogi.Usi
                         break;
 
                     // "isready"から30秒
-                    case UsiEngineState.UsiOk:
+                    case UsiEngineState.WaitReadyOk:
                         if (DateTime.Now - last_send_time >= new TimeSpan(0, 0, 30))
                         {
                             ChangeState(UsiEngineState.ConnectionTimeout);
@@ -473,6 +473,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public void SendIsReady()
         {
+            // "isready"は再度送信してやらないと駄目。"UsiOk"に状態を戻せば、再送されるはず。
             ChangeState(UsiEngineState.UsiOk);
         }
 
