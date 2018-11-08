@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System;
+using System.Runtime.Serialization;
 using MyShogi.Model.Common.ObjectModel;
 
 namespace MyShogi.Model.Shogi.LocalServer
@@ -14,6 +15,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         public ConsiderationEngineSetting()
         {
             Limitless = true;
+
+            // 他のデフォルト値も設定しておいてやる。
+            Second = 5;
+            Nodes = 10000000;
+            Depth = 20;
         }
 
         /// <summary>
@@ -66,7 +72,42 @@ namespace MyShogi.Model.Shogi.LocalServer
             set { SetValue("Second", value); }
         }
 
-        // その他、node制限なども入れるかも..
+        /// <summary>
+        /// Node制限ありか
+        /// </summary>
+        public bool NodesLimitEnable
+        {
+            get { return GetValue<bool>("NodesLimitEnable"); }
+            set { SetValue("NodesLimitEnable", value); }
+        }
+
+        /// <summary>
+        /// Node制限あり(NodesLimitEnable == true)のときに、その1局面のnode数。
+        /// エンジン側がint64_tになっているはずなので、UInt64にせんでもええやろ。
+        /// </summary>
+        public Int64 Nodes
+        {
+            get { return GetValue<Int64>("Nodes"); }
+            set { SetValue<Int64>("Nodes", value); }
+        }
+
+        /// <summary>
+        /// Depth制限ありか
+        /// </summary>
+        public bool DepthLimitEnable
+        {
+            get { return GetValue<bool>("DepthLimitEnable"); }
+            set { SetValue("DepthLimitEnable", value); }
+        }
+
+        /// <summary>
+        /// Depth制限あり(DepthLimitEnable == true)のときに、その1局面のdepth
+        /// </summary>
+        public int Depth
+        {
+            get { return GetValue<int>("Depth"); }
+            set { SetValue("Depth", value); }
+        }
 
     }
 }

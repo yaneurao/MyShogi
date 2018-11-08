@@ -858,6 +858,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         private void NotifyTurnChanged()
         {
+            var config = TheApp.app.Config;
             var stm = Position.sideToMove;
 
             // 検討モードでは、先手側のプレイヤーがエンジンに紐づけられている。
@@ -911,8 +912,8 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 通常対局モードのはずなので現在の持ち時間設定を渡してやる。
             // エンジン検討モードなら検討エンジン設定に従う
 
-            UsiThinkLimit limit = UsiThinkLimit.TimeLimitLess;
-
+            UsiThinkLimit limit;
+            
             switch(GameMode)
             {
                 case GameModeEnum.InTheGame:
@@ -920,23 +921,15 @@ namespace MyShogi.Model.Shogi.LocalServer
                     break;
 
                 case GameModeEnum.ConsiderationWithEngine:
-                    {
-                        var setting = TheApp.app.Config.ConsiderationEngineSetting;
-                        if (setting.Limitless)
-                            limit = UsiThinkLimit.TimeLimitLess;
-                        else // if (setting.TimeLimit)
-                            limit = UsiThinkLimit.FromSecond(setting.Second);
-                    }
+                    limit = UsiThinkLimit.FromConsiderationEngineSetting(config.ConsiderationEngineSetting);
                     break;
 
                 case GameModeEnum.ConsiderationWithMateEngine:
-                    {
-                        var setting = TheApp.app.Config.MateEngineSetting;
-                        if (setting.Limitless)
-                            limit = UsiThinkLimit.TimeLimitLess;
-                        else // if (setting.TimeLimit)
-                            limit = UsiThinkLimit.FromSecond(setting.Second);
-                    }
+                    limit = UsiThinkLimit.FromConsiderationEngineSetting(config.MateEngineSetting);
+                    break;
+
+                default: // ここに来ることはないはずだが？
+                    limit = UsiThinkLimit.TimeLimitLess;
                     break;
             }
 

@@ -130,6 +130,35 @@ namespace MyShogi.Model.Common.ObjectModel
             AddHandler<int>(notify, name, h1, control, h2);
         }
 
+        // Bind()のInt64とBindする版。
+        public void Bind64(NotifyObject notify, string name, NumericUpDown c, DataBindWay way = DataBindWay.TwoWay)
+        {
+            // 値が変更になった時にデータバインドしているほうに値を戻す。
+            var control = c; // copy for capture
+
+            var h1 = new PropertyChangedEventHandler((args) =>
+            {
+                // 値が範囲外なら補整してからセットする。
+                var v = (Int64)args.value;
+                if (c.Maximum < v)
+                    v = (Int64)c.Maximum;
+                if (c.Minimum > v)
+                    v = (Int64)c.Minimum;
+                control.Value = v;
+            });
+            notify.AddPropertyChangedHandler(name, h1);
+
+            EventHandler h2 = null;
+
+            if (way == DataBindWay.TwoWay)
+            {
+                h2 = new EventHandler((sender, args) => { notify.SetValue<Int64>(name, (Int64)control.Value); });
+                c.ValueChanged += h2;
+            }
+
+            AddHandler<Int64>(notify, name, h1, control, h2);
+        }
+
         public void Bind(NotifyObject notify, string name, TextBox c, Action<string> f = null, DataBindWay way = DataBindWay.TwoWay)
         {
             // 値が変更になった時にデータバインドしているほうに値を戻す。

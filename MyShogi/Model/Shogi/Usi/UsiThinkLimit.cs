@@ -116,6 +116,58 @@ namespace MyShogi.Model.Shogi.Usi
         }
 
         /// <summary>
+        /// Nodesだけ思考するUsiThinkLimitを生成して返す。
+        /// </summary>
+        /// <param name="nodes"></param>
+        /// <returns></returns>
+        public static UsiThinkLimit FromNodes(Int64 nodes)
+        {
+            var limit = new UsiThinkLimit();
+
+            limit.LimitType = UsiThinkLimitEnum.Node;
+            limit.Nodes = nodes;
+
+            return limit;
+        }
+
+        /// <summary>
+        /// Depthだけ思考するUsiThinkLimitを生成して返す。
+        /// </summary>
+        /// <param name="nodes"></param>
+        /// <returns></returns>
+        public static UsiThinkLimit FromDepth(int depth)
+        {
+            var limit = new UsiThinkLimit();
+
+            limit.LimitType = UsiThinkLimitEnum.Depth;
+            limit.Depth = depth;
+
+            return limit;
+        }
+
+        /// <summary>
+        /// ConsiderationEngineSettingから、UsiThinkLimitオブジェクトを構築して返すbuilder。
+        /// </summary>
+        /// <param name="setting"></param>
+        /// <returns></returns>
+        public static UsiThinkLimit FromConsiderationEngineSetting(ConsiderationEngineSetting setting)
+        {
+            UsiThinkLimit limit;
+            if (setting.Limitless)
+                limit = TimeLimitLess;
+            else if (setting.TimeLimitEnable)
+                limit = FromSecond(setting.Second);
+            else if (setting.NodesLimitEnable)
+                limit = FromNodes(setting.Nodes);
+            else if (setting.DepthLimitEnable)
+                limit = FromDepth(setting.Depth);
+            else
+                limit = null;
+
+            return limit;
+        }
+
+        /// <summary>
         /// この条件を元に、USIプロトコルで用いる"goコマンド"の"go","go ponder"以降の文字列を構築する。
         /// </summary>
         /// <returns></returns>
@@ -127,7 +179,7 @@ namespace MyShogi.Model.Shogi.Usi
                     return "infinite";
 
                 case UsiThinkLimitEnum.Node:
-                    return $"node {Nodes}";
+                    return $"nodes {Nodes}";
 
                 case UsiThinkLimitEnum.Depth:
                     return $"depth {Depth}";
@@ -286,6 +338,7 @@ namespace MyShogi.Model.Shogi.Usi
 
         /// <summary>
         /// 制限するノード数を取得または設定します。
+        /// エンジン側がint64_tになっているはずなので、UInt64にせんでもええやろ。
         /// </summary>
         public Int64 Nodes
         {

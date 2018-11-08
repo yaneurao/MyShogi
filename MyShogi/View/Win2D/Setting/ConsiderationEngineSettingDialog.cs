@@ -148,6 +148,10 @@ namespace MyShogi.View.Win2D.Setting
                        Text = "詰将棋エンジン設定";
                        label3.Text = "詰検討で使う思考エンジン：";
                        groupBox1.Enabled = true; // 詰将棋エンジン側、対応したので有効にしておく。
+
+                       // node指定とdepth指定、詰将棋エンジン側が対応していないのでとりあえず無効化しておく。
+                       radioButton3.Enabled = false;
+                       radioButton4.Enabled = false;
                        break;
                }
            });
@@ -235,9 +239,17 @@ namespace MyShogi.View.Win2D.Setting
             }
 
             binder.Bind(setting, "PlayerName" , textBox1);
+
             binder.Bind(setting, "Limitless"  , radioButton1);
+
             binder.Bind(setting, "TimeLimitEnable" , radioButton2);
             binder.Bind(setting, "Second", numericUpDown1 );
+
+            binder.Bind(setting, "NodesLimitEnable", radioButton3);
+            binder.Bind64(setting, "Nodes", numericUpDown2);
+
+            binder.Bind(setting, "DepthLimitEnable", radioButton4);
+            binder.Bind(setting, "Depth", numericUpDown3);
 
             ViewModel.EngineDefineFolderPath = setting.EngineDefineFolderPath;
         }
