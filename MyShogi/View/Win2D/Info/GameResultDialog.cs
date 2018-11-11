@@ -24,6 +24,8 @@ namespace MyShogi.View.Win2D
             InitListViewContents();
 
             FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
+
+            InitMyLayout();
         }
 
         public class GameResultDialogViewModel : NotifyObject
@@ -144,6 +146,18 @@ namespace MyShogi.View.Win2D
             // 逆順にする。
             items.Reverse();
             listView1.Items.AddRange(items.ToArray());
+        }
+
+        /// <summary>
+        /// ボタンサイズを基準にしてリサイズしたいのだが、
+        /// Form.Loadイベントだとメインウインドウに対してセンタリングするタイミングに間に合わない。
+        /// コンストラクタから呼び出すべき。
+        /// </summary>
+        private void InitMyLayout()
+        {
+            // ボタン基準でリサイズ
+            var w1 = button1.Width;
+            ClientSize = new Size(w1 * 6, w1 * 4);
         }
 
         /// <summary>
@@ -293,11 +307,5 @@ namespace MyShogi.View.Win2D
                 && listView1.Items[indices[0]].SubItems.Count >= 9;
         }
 
-        private void GameResultDialog_Load(object sender, EventArgs e)
-        {
-            // ボタン基準でリサイズ
-            var w1 = button1.Width;
-            ClientSize = new Size(w1 * 6, w1 * 4);
-        }
     }
 }

@@ -14,6 +14,11 @@ namespace MyShogi.View.Win2D
         public MiniShogiBoard()
         {
             InitializeComponent();
+
+            // フォントの変更。即時反映
+            var fontSetter = new FontSetter(this.toolStrip1, "SubToolStrip");
+            Disposed += (sender, args) => { fontSetter.Dispose(); };
+
         }
 
         /// <summary>

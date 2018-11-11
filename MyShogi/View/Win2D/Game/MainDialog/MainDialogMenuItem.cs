@@ -480,6 +480,57 @@ namespace MyShogi.View.Win2D
 
                         item_playgame.DropDownItems.Add(item);
                     }
+
+                    item_playgame.DropDownItems.Add(new ToolStripSeparator());
+
+                    { // -- 対局結果一覧
+
+                        var item_ = new ToolStripMenuItem();
+                        item_.Text = "対局結果一覧(&R)"; // game Result
+                        item_.Click += (sender, e) =>
+                        {
+                            using (var dialog = new GameResultDialog())
+                            {
+                                dialog.ViewModel.AddPropertyChangedHandler("KifuClicked", (args_) =>
+                                {
+                                    var filename = (string)args_.value;
+                                    // このファイルを読み込む。
+                                    var path = Path.Combine(TheApp.app.Config.GameResultSetting.KifuSaveFolder, filename);
+                                    try
+                                    {
+                                        ReadKifuFile(path);
+                                    }
+                                    catch
+                                    {
+                                        TheApp.app.MessageShow("棋譜ファイルが読み込めませんでした。", MessageShowType.Error);
+                                    }
+                                });
+
+                                FormLocationUtility.CenteringToThisForm(dialog, this);
+                                dialog.ShowDialog(this);
+                            }
+                        };
+
+                        item_playgame.DropDownItems.Add(item_);
+                    }
+
+
+                    { // -- 対局結果の保存設定
+
+                        var item_ = new ToolStripMenuItem();
+                        item_.Text = "対局結果の保存設定(&S)"; // アルファベット的にRの次
+                        item_.Click += (sender, e) =>
+                        {
+                            using (var dialog = new GameResultWindowSettingDialog())
+                            {
+                                FormLocationUtility.CenteringToThisForm(dialog, this);
+                                dialog.ShowDialog(this);
+                            }
+                        };
+
+                        item_playgame.DropDownItems.Add(item_);
+                    }
+
                 }
 
                 // 「設定」
@@ -1054,56 +1105,6 @@ namespace MyShogi.View.Win2D
                             }
                         }
 
-                    }
-
-
-                    item_window.DropDownItems.Add(new ToolStripSeparator());
-
-                    { // -- 対局結果一覧ウィンドウ
-
-                        var item_ = new ToolStripMenuItem();
-                        item_.Text = "対局結果一覧(&R)"; // game Result
-                        item_.Click += (sender, e) =>
-                        {
-                            using (var dialog = new GameResultDialog())
-                            {
-                                FormLocationUtility.CenteringToThisForm(dialog, this);
-                                dialog.ViewModel.AddPropertyChangedHandler("KifuClicked", (args_) =>
-                                {
-                                    var filename = (string)args_.value;
-                                        // このファイルを読み込む。
-                                        var path = Path.Combine(TheApp.app.Config.GameResultSetting.KifuSaveFolder, filename);
-                                    try
-                                    {
-                                        ReadKifuFile(path);
-                                    }
-                                    catch
-                                    {
-                                        TheApp.app.MessageShow("棋譜ファイルが読み込めませんでした。", MessageShowType.Error);
-                                    }
-                                });
-                                dialog.ShowDialog(this);
-                            }
-                        };
-
-                        item_window.DropDownItems.Add(item_);
-                    }
-
-
-                    { // -- 対局結果一覧ウィンドウ
-
-                        var item_ = new ToolStripMenuItem();
-                        item_.Text = "対局結果の保存設定(&S)"; // アルファベット的にRの次
-                        item_.Click += (sender, e) =>
-                        {
-                            using (var dialog = new GameResultWindowSettingDialog())
-                            {
-                                FormLocationUtility.CenteringToThisForm(dialog, this);
-                                dialog.ShowDialog(this);
-                            }
-                        };
-
-                        item_window.DropDownItems.Add(item_);
                     }
 
                     item_window.DropDownItems.Add(new ToolStripSeparator());

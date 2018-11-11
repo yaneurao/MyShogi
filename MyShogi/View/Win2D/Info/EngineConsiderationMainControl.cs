@@ -533,7 +533,7 @@ namespace MyShogi.View.Win2D
         {
             // フォントの変更。即時反映
             var fontSetter1 = new FontSetter(this, "ConsiderationWindow");
-            //var fontSetter2 = new FontSetter(this.toolStrip1, "SubToolStrip");
+            //var fontSetter2 = new FontSetter(this.toolStrip1, "SubToolStrip"); // → MiniShogiBoardに移動させた。
             Disposed += (sender, args) => { fontSetter1.Dispose(); /* fontSetter2.Dispose(); */ };
         }
 
