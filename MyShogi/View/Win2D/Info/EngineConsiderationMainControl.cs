@@ -337,7 +337,7 @@ namespace MyShogi.View.Win2D
 
         /// <summary>
         /// ミニ盤面のinstanceを返す。
-        /// RemoveMiniShogiBoard()しているときも有効。
+        /// RemoveMiniShogiBoard()しているときも有効。(nullにはならない)
         /// </summary>
         public MiniShogiBoard MiniShogiBoard { get { return miniShogiBoard1; } }
 
@@ -347,10 +347,11 @@ namespace MyShogi.View.Win2D
         public void RemoveMiniShogiBoard()
         {
             MiniShogiBoardVisible = false;
-            if (!splitContainer2.Panel2.Contains(miniShogiBoard1))
+            var mother = splitContainer2.Panel2;
+            if (!mother.Contains(miniShogiBoard1))
                 return; // 追加されてませんけど？
 
-            Controls.Remove(miniShogiBoard1);
+            mother.Controls.Remove(miniShogiBoard1);
         }
 
         /// <summary>
@@ -360,10 +361,11 @@ namespace MyShogi.View.Win2D
         public void AddMiniShogiBoard()
         {
             MiniShogiBoardVisible = true;
-            if (splitContainer2.Panel2.Contains(miniShogiBoard1))
+            var mother = splitContainer2.Panel2;
+            if (mother.Contains(miniShogiBoard1))
                 return; // 追加されてますけど？
 
-            Controls.Add(miniShogiBoard1);
+            mother.Controls.Add(miniShogiBoard1);
         }
 
         /// <summary>
