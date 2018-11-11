@@ -69,6 +69,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "EngineSelectionDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "エンジン選択ダイアログ";
             this.ResumeLayout(false);
 

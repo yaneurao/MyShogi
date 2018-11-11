@@ -100,6 +100,7 @@
             this.Controls.Add(this.listView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "GameResultDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "対局結果一覧";
             this.Load += new System.EventHandler(this.GameResultDialog_Load);
             this.Resize += new System.EventHandler(this.GameResultDialog_Resize);

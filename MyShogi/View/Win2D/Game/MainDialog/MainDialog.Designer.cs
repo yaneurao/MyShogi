@@ -246,6 +246,7 @@
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(185, 55);
             this.Name = "MainDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "MyShogi";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainDialog_FormClosing);
             this.Load += new System.EventHandler(this.MainDialog_Load);

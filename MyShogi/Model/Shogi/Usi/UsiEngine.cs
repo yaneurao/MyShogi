@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using MyShogi.App;
 using MyShogi.Model.Common.Collections;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Process;
@@ -274,14 +275,20 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private void ResetTimeOutTime()
         {
+            var config = TheApp.app.Config;
             switch (State)
             {
+                // "usi"→"usiok"まで15秒。ただし延長あり。
                 case UsiEngineState.WaitUsiOk:
-                    timeoutTime = DateTime.Now + new TimeSpan(0,0,15); // "usi"→"usiok"まで15秒。ただし延長あり。
+                    // 0が設定されていれば無制限にしておく。
+                    var t1 = config.UsiOkTimeOut == 0 ? int.MaxValue : config.UsiOkTimeOut;
+                    timeoutTime = DateTime.Now + new TimeSpan(0,0,t1);
                     break;
 
+                // "isready"→"readyok"まで30秒。ただし延長あり。
                 case UsiEngineState.WaitReadyOk:
-                    timeoutTime = DateTime.Now + new TimeSpan(0,0,30); // "isready"→"readyok"まで30秒。ただし延長あり。
+                    var t2 = config.ReadyOkTimeOut == 0 ? int.MaxValue : config.ReadyOkTimeOut;
+                    timeoutTime = DateTime.Now + new TimeSpan(0,0,t2);
                     // 評価関数ファイルの読み込みでDMA転送とかで、単coreのCPUだとCPU時間自体がもらえない可能性も…。
                     // 設定で変更できたほうが良いのか…。うーむ..。
                     break;
@@ -340,11 +347,14 @@ namespace MyShogi.Model.Shogi.Usi
                 // -- time out
 
                 case UsiEngineState.ConnectionTimeout:
-                    throw new Exception("エンジンからの応答がtimeoutになりました。エンジンのusiコマンドに対する応答が遅すぎます。");
-                case UsiEngineState.IsReadyTimeout:
-                    throw new Exception("エンジンからの応答がtimeoutになりました。エンジンのisreadyコマンドに対する応答が遅すぎます。");
+                    throw new Exception("エンジンからの応答がtimeoutになりました。エンジンのusiコマンドに対する応答が遅すぎます。" +
+                        "毎回タイムアウトになるなら、設定→エンジン補助設定でusiコマンドに対するタイムアウトまでの時間を増やしてください。");
 
-                    // これ以外の変化に対する応答は必要ない。
+                case UsiEngineState.IsReadyTimeout:
+                    throw new Exception("エンジンからの応答がtimeoutになりました。エンジンのisreadyコマンドに対する応答が遅すぎます。" +
+                        "毎回タイムアウトになるなら、設定→エンジン補助設定でisreadyコマンドに対するタイムアウトまでの時間を増やしてください。");
+
+                // これ以外の変化に対する応答は必要ない。
             }
         }
 

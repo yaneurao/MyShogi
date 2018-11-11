@@ -8,9 +8,9 @@ using MyShogi.Model.Dependency;
 
 namespace MyShogi.View.Win2D
 {
-    public partial class SystemInfo : Form
+    public partial class SystemInfoDialog : Form
     {
-        public SystemInfo()
+        public SystemInfoDialog()
         {
             InitializeComponent();
 

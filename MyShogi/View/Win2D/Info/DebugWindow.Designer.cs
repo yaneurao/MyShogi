@@ -33,7 +33,7 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.toolTip1 = new ToolTipEx(this.components);
+            this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.SuspendLayout();
             // 
             // listBox1
@@ -86,6 +86,7 @@
             this.Controls.Add(this.listBox1);
             this.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.Name = "DebugWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "デバッグウィンドウ";
             this.Load += new System.EventHandler(this.DebugWindow_ClientSizeChanged);
             this.ClientSizeChanged += new System.EventHandler(this.DebugWindow_ClientSizeChanged);

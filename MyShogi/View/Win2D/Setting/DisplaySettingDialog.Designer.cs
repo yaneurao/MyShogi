@@ -682,6 +682,7 @@
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "DisplaySettingDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "表示設定ダイアログ";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);

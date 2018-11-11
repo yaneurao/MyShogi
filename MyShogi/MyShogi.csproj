@@ -322,6 +322,12 @@
     <Compile Include="View\Win2D\Setting\ConsiderationEngineSettingDialog.Designer.cs">
       <DependentUpon>ConsiderationEngineSettingDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\Setting\EngineSubSettingDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\EngineSubSettingDialog.Designer.cs">
+      <DependentUpon>EngineSubSettingDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\Setting\OperationSettingDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -436,11 +442,11 @@
     <Compile Include="View\Win2D\Game\MiniShogiBoard.Designer.cs">
       <DependentUpon>MiniShogiBoard.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Win2D\Info\SystemInfo.cs">
+    <Compile Include="View\Win2D\Info\SystemInfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\Win2D\Info\SystemInfo.Designer.cs">
-      <DependentUpon>SystemInfo.cs</DependentUpon>
+    <Compile Include="View\Win2D\Info\SystemInfoDialog.Designer.cs">
+      <DependentUpon>SystemInfoDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Win2D\Game\GameScreenControl\MainDialogToolStripButtonEnum.cs" />
     <Compile Include="View\Win2D\Setting\PlayerSettingControl.cs">
@@ -513,6 +519,9 @@
     <EmbeddedResource Include="View\Win2D\Setting\ConsiderationEngineSettingDialog.resx">
       <DependentUpon>ConsiderationEngineSettingDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\EngineSubSettingDialog.resx">
+      <DependentUpon>EngineSubSettingDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\OperationSettingDialog.resx">
       <DependentUpon>OperationSettingDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -549,8 +558,8 @@
     <EmbeddedResource Include="View\Win2D\Game\MiniShogiBoard.resx">
       <DependentUpon>MiniShogiBoard.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\Win2D\Info\SystemInfo.resx">
-      <DependentUpon>SystemInfo.cs</DependentUpon>
+    <EmbeddedResource Include="View\Win2D\Info\SystemInfoDialog.resx">
+      <DependentUpon>SystemInfoDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\PlayerSettingControl.resx">
       <DependentUpon>PlayerSettingControl.cs</DependentUpon>

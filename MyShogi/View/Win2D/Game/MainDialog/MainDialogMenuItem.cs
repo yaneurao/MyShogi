@@ -529,6 +529,20 @@ namespace MyShogi.View.Win2D
                     item_settings.DropDownItems.Add(item);
                 }
 
+                {
+                    var item = new ToolStripMenuItem();
+                    item.Text = "エンジン補助設定 (&E)"; // Engine Subsetting
+                    item.Click += (sender, e) =>
+                    {
+                        using (var dialog = new EngineSubSettingDialog())
+                        {
+                            FormLocationUtility.CenteringToThisForm(dialog, this);
+                            dialog.ShowDialog(this);
+                        }
+                    };
+                    item_settings.DropDownItems.Add(item);
+                }
+
                 item_settings.DropDownItems.Add(new ToolStripSeparator());
 
                 // -- 設定の初期化
@@ -539,7 +553,7 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "各エンジン設定の初期化";
+                        item.Text = "各エンジン設定の初期化(&E)";
                         item.Click += (sender, e) =>
                         {
                             if (TheApp.app.MessageShow("すべてのエンジン設定を初期化しますか？「OK」を押すと初期化され、次回起動時に反映されます。", MessageShowType.ConfirmationOkCancel) == DialogResult.OK)
@@ -552,7 +566,7 @@ namespace MyShogi.View.Win2D
 
                     {
                         var item = new ToolStripMenuItem();
-                        item.Text = "各表示設定などの初期化";
+                        item.Text = "各表示設定などの初期化(&D)";
                         item.Click += (sender, e) =>
                         {
                             if (TheApp.app.MessageShow("すべての表示設定・音声設定を初期化しますか？「OK」を押すと初期化され、次回起動時に反映されます。", MessageShowType.ConfirmationOkCancel) == DialogResult.OK)
@@ -1158,7 +1172,7 @@ namespace MyShogi.View.Win2D
                         item1.Text = "システム情報(&S)"; // System Infomation
                         item1.Click += (sender, e) =>
                         {
-                            using (var dialog = new SystemInfo())
+                            using (var dialog = new SystemInfoDialog())
                             {
                                 FormLocationUtility.CenteringToThisForm(dialog, this);
                                 dialog.ShowDialog(this);

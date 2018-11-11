@@ -109,6 +109,11 @@ namespace MyShogi.App
             //ConsiderationWindowFollowMainWindow = true;
             ConsiderationMultiPV = 5;
 
+            // -- エンジン補助設定
+
+            UsiOkTimeOut = 15;
+            ReadyOkTimeOut = 30;
+
         }
 
         /// <summary>
@@ -874,7 +879,6 @@ namespace MyShogi.App
             set { SetValue<int>("MiniBoardHeadTailKey", value); }
         }
 
-
         #endregion
 
         #region Debug Setting
@@ -941,6 +945,32 @@ namespace MyShogi.App
         /// </summary>
         [DataMember]
         public int ConsiderationMultiPV { get; set; }
+
+        #endregion
+
+        #region エンジン補助設定
+
+        /// <summary>
+        /// "usi"に対する"usiok"までのtime out時間。(デフォルト15秒)
+        /// 0 が設定されていれば無制限。
+        /// </summary>
+        [DataMember]
+        public int UsiOkTimeOut
+        {
+            get { return GetValue<int>("UsiOkTimeOut"); }
+            set { SetValue<int>("UsiOkTimeOut", value); }
+        }
+
+        /// <summary>
+        /// "isready"に対する"readyok"までのtime out時間。(デフォルト30秒)
+        /// 0 が設定されていれば無制限。
+        /// </summary>
+        [DataMember]
+        public int ReadyOkTimeOut
+        {
+            get { return GetValue<int>("ReadyOkTimeOut"); }
+            set { SetValue<int>("ReadyOkTimeOut", value); }
+        }
 
         #endregion
 

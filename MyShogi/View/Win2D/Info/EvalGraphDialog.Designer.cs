@@ -88,6 +88,7 @@
             // 
             this.evalGraphControl.AutoScroll = true;
             this.evalGraphControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.evalGraphControl.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.evalGraphControl.Location = new System.Drawing.Point(0, 30);
             this.evalGraphControl.Margin = new System.Windows.Forms.Padding(0);
             this.evalGraphControl.Name = "evalGraphControl";
@@ -105,6 +106,7 @@
             this.MainMenuStrip = this.menuStrip;
             this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "EvalGraphDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "形勢グラフ";
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();

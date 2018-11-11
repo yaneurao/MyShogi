@@ -37,6 +37,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "DockWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "DockWindow";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DockWindow_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.DockWindow_KeyDown);

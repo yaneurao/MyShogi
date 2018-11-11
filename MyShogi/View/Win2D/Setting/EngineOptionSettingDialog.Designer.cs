@@ -30,8 +30,8 @@
         {
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.engineOptionSettingControl1 = new MyShogi.View.Win2D.EngineOptionSettingControl();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.engineOptionSettingControl2 = new MyShogi.View.Win2D.EngineOptionSettingControl();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -62,6 +62,15 @@
             this.tabPage1.Text = "共通設定";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // engineOptionSettingControl1
+            // 
+            this.engineOptionSettingControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.engineOptionSettingControl1.Location = new System.Drawing.Point(1, 1);
+            this.engineOptionSettingControl1.Margin = new System.Windows.Forms.Padding(1);
+            this.engineOptionSettingControl1.Name = "engineOptionSettingControl1";
+            this.engineOptionSettingControl1.Size = new System.Drawing.Size(754, 640);
+            this.engineOptionSettingControl1.TabIndex = 0;
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.engineOptionSettingControl2);
@@ -73,15 +82,6 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "個別設定";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // engineOptionSettingControl1
-            // 
-            this.engineOptionSettingControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.engineOptionSettingControl1.Location = new System.Drawing.Point(1, 1);
-            this.engineOptionSettingControl1.Margin = new System.Windows.Forms.Padding(1);
-            this.engineOptionSettingControl1.Name = "engineOptionSettingControl1";
-            this.engineOptionSettingControl1.Size = new System.Drawing.Size(754, 640);
-            this.engineOptionSettingControl1.TabIndex = 0;
             // 
             // engineOptionSettingControl2
             // 
@@ -104,6 +104,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "EngineOptionSettingDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "エンジンオプション設定";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);

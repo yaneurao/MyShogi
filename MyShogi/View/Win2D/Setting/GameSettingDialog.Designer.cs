@@ -415,6 +415,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "GameSettingDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Load += new System.EventHandler(this.GameSettingDialog_Load);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();

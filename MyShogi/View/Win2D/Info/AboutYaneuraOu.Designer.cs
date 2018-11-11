@@ -77,6 +77,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "AboutYaneuraOu";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "AboutYaneuraOu";
             this.TopMost = true;
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

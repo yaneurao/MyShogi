@@ -1,6 +1,6 @@
 ﻿namespace MyShogi.View.Win2D
 {
-    partial class SystemInfo
+    partial class SystemInfoDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -51,6 +51,7 @@
             this.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "SystemInfo";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "SystemInfo";
             this.ResumeLayout(false);
             this.PerformLayout();

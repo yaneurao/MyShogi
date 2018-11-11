@@ -241,6 +241,7 @@
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "OperationSettingDialog";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "操作設定ダイアログ";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
