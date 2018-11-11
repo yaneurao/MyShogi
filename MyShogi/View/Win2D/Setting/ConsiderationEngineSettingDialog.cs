@@ -152,7 +152,12 @@ namespace MyShogi.View.Win2D.Setting
                        // node指定とdepth指定、詰将棋エンジン側が対応していないのでとりあえず無効化しておく。
                        radioButton3.Enabled = false;
                        radioButton4.Enabled = false;
+
                        // USIプロトコルではgo mateのあと時間[ms]を指定するようになっている。
+                       // 現状、プロトコル的に対応不可能であるな。
+                       // go mate "nodes"
+                       // go mate "depth"
+                       // のような拡張を受け付けるようにするか？
 
                        break;
                }

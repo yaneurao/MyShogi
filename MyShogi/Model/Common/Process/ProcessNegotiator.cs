@@ -227,6 +227,7 @@ namespace MyShogi.Model.Common.Process
             lock (readLockObject)
                 read_lines.Add(e.Data);
         }
+
         /// <summary>
         /// 受信した行を保存しておくバッファ。Read()で放出。
         /// </summary>

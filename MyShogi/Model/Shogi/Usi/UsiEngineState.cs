@@ -59,6 +59,7 @@
         /// "isready"送信から30秒経過のときもこのステータス。
         /// </summary>
         ConnectionTimeout ,
+        IsReadyTimeout,
 
     }
 
@@ -75,6 +76,7 @@
                 case UsiEngineState.InTheGame:         return "InTheGame";
                 case UsiEngineState.ConnectionFailed:  return "ConnectionFailed";
                 case UsiEngineState.ConnectionTimeout: return "ConnectionTimeout";
+                case UsiEngineState.IsReadyTimeout:    return "IsReadyTimeout";
                 default: return "";
             }
         }

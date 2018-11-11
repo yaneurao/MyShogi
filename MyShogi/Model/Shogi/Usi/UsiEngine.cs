@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using MyShogi.Model.Common.Collections;
@@ -75,28 +76,16 @@ namespace MyShogi.Model.Shogi.Usi
 
             try
             {
-                switch (State)
-                {
-                    // "usi"から15秒
-                    case UsiEngineState.WaitUsiOk:
-                        if (DateTime.Now - last_send_time >= new TimeSpan(0, 0, 15))
-                        {
-                            ChangeState(UsiEngineState.ConnectionTimeout);
-                        }
-                        break;
-
-                    // "isready"から30秒
-                    case UsiEngineState.WaitReadyOk:
-                        if (DateTime.Now - last_send_time >= new TimeSpan(0, 0, 30))
-                        {
-                            ChangeState(UsiEngineState.ConnectionTimeout);
-                        }
-                        break;
-                }
-
                 negotiator.Read();
 
-            } catch (Exception ex)
+                // "usi"から15秒、"readyok"から30秒。ただし延長あり。
+                if (State == UsiEngineState.WaitUsiOk && DateTime.Now >= timeoutTime)
+                    ChangeState(UsiEngineState.ConnectionTimeout);
+                else if (State == UsiEngineState.WaitReadyOk && DateTime.Now >= timeoutTime)
+                    ChangeState(UsiEngineState.IsReadyTimeout);
+
+            }
+            catch (Exception ex)
             {
                 //Exception = new Exception("思考エンジンとの通信で例外が発生しました。\r\n" + ex.Pretty());
                 // →　例外のなかに例外があって読みづらいメッセージ。
@@ -278,7 +267,30 @@ namespace MyShogi.Model.Shogi.Usi
         /// 一応、タイムアウトを監視する。ただし思考エンジンから改行など何らかのkeep alive的なメッセージが送られてきた場合、
         /// これを延長する。
         /// </summary>
-        private DateTime last_send_time;
+        private DateTime timeoutTime;
+
+        /// <summary>
+        /// timeoutTimeを初期化する。
+        /// </summary>
+        private void ResetTimeOutTime()
+        {
+            switch (State)
+            {
+                case UsiEngineState.WaitUsiOk:
+                    timeoutTime = DateTime.Now + new TimeSpan(0,0,15); // "usi"→"usiok"まで15秒。ただし延長あり。
+                    break;
+
+                case UsiEngineState.WaitReadyOk:
+                    timeoutTime = DateTime.Now + new TimeSpan(0,0,30); // "isready"→"readyok"まで30秒。ただし延長あり。
+                    // 評価関数ファイルの読み込みでDMA転送とかで、単coreのCPUだとCPU時間自体がもらえない可能性も…。
+                    // 設定で変更できたほうが良いのか…。うーむ..。
+                    break;
+
+                default:
+                    Debug.Assert(false);
+                    break;
+            }
+        }
 
         // -- private methods
 
@@ -295,8 +307,10 @@ namespace MyShogi.Model.Shogi.Usi
                     // 接続されたので"usi"と送信
                     SendCommand("usi");
                     State = UsiEngineState.WaitUsiOk;
+
                     // これ、応答タイムアウトがある。15秒。
-                    last_send_time = DateTime.Now;
+                    // これを超えるなら定期的に改行などkeep alive的な何かをエンジン側から定期的に送信すべきである。
+                    ResetTimeOutTime();
                     break;
 
                 case UsiEngineState.UsiOk:
@@ -314,7 +328,7 @@ namespace MyShogi.Model.Shogi.Usi
 
                         // これもタイムアウトがある。30秒。
                         // これを超えるなら定期的に改行などkeep alive的な何かをエンジン側から定期的に送信すべきである。
-                        last_send_time = DateTime.Now;
+                        ResetTimeOutTime();
                     }
                     break;
 
@@ -323,8 +337,12 @@ namespace MyShogi.Model.Shogi.Usi
                     SendCommand("usinewgame");
                     break;
 
+                // -- time out
+
                 case UsiEngineState.ConnectionTimeout:
                     throw new Exception("エンジンからの応答がtimeoutになりました。エンジンのusiコマンドに対する応答が遅すぎます。");
+                case UsiEngineState.IsReadyTimeout:
+                    throw new Exception("エンジンからの応答がtimeoutになりました。エンジンのisreadyコマンドに対する応答が遅すぎます。");
 
                     // これ以外の変化に対する応答は必要ない。
             }
@@ -342,7 +360,7 @@ namespace MyShogi.Model.Shogi.Usi
                 // keep alive的な何かかも知れないので、思考エンジン側からメッセージが送られてきた以上、
                 // タイムアウト時間を延長してやる。
                 if (State == UsiEngineState.WaitUsiOk || State == UsiEngineState.WaitReadyOk)
-                    last_send_time = DateTime.Now;
+                    ResetTimeOutTime();
 
                 // 空行なら解釈するまでもない。
                 if (string.IsNullOrWhiteSpace(command))
