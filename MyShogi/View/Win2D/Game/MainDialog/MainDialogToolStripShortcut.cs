@@ -172,7 +172,9 @@ namespace MyShogi.View.Win2D
             }
 
             // --- ミニ盤面
-            
+
+            var miniBoard = cons.MiniShogiBoard;
+
             // 選択行の上下
             switch (config.MiniBoardPrevNextKey)
             {
@@ -180,33 +182,33 @@ namespace MyShogi.View.Win2D
                     break;
 
                 case 1: // Ctrl←→ : デフォルト
-                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Left) { cons.MiniBoardPerformUp(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Right  ) { cons.MiniBoardPerformDown(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Left) { miniBoard.MiniBoardPerformUp(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Right  ) { miniBoard.MiniBoardPerformDown(); e.Handled = true; } });
                     break;
 
                 case 2: // Ctrl↑↓
-                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Up   ) { cons.MiniBoardPerformUp(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Down ) { cons.MiniBoardPerformDown(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Up   ) { miniBoard.MiniBoardPerformUp(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Down ) { miniBoard.MiniBoardPerformDown(); e.Handled = true; } });
                     break;
 
                 case 3: // ←と→
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Left) { cons.MiniBoardPerformUp(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Right) { cons.MiniBoardPerformDown(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Left) { miniBoard.MiniBoardPerformUp(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Right) { miniBoard.MiniBoardPerformDown(); e.Handled = true; } });
                     break;
 
                 case 4: // ↑と↓ 
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Up) { cons.MiniBoardPerformUp(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Down) { cons.MiniBoardPerformDown(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Up) { miniBoard.MiniBoardPerformUp(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Down) { miniBoard.MiniBoardPerformDown(); e.Handled = true; } });
                     break;
 
                 case 5: // ，(カンマ)と ．(ピリオド)
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Oemcomma) { cons.MiniBoardPerformUp(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.OemPeriod) { cons.MiniBoardPerformDown(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Oemcomma) { miniBoard.MiniBoardPerformUp(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.OemPeriod) { miniBoard.MiniBoardPerformDown(); e.Handled = true; } });
                     break;
 
                 case 6: // PageUpとPageDown
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageUp) { cons.MiniBoardPerformUp(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageDown) { cons.MiniBoardPerformDown(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageUp) { miniBoard.MiniBoardPerformUp(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageDown) { miniBoard.MiniBoardPerformDown(); e.Handled = true; } });
                     break;
             }
 
@@ -217,33 +219,33 @@ namespace MyShogi.View.Win2D
                     break;
 
                 case 1: // Ctrl←→
-                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Left ) { cons.MiniBoardPerformHead(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Right) { cons.MiniBoardPerformTail(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Left ) { miniBoard.MiniBoardPerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Right) { miniBoard.MiniBoardPerformTail(); e.Handled = true; } });
                     break;
 
                 case 2: // Ctrl↑↓ : デフォルト
-                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Up   ) { cons.MiniBoardPerformHead(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Down ) { cons.MiniBoardPerformTail(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Up   ) { miniBoard.MiniBoardPerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.Down ) { miniBoard.MiniBoardPerformTail(); e.Handled = true; } });
                     break;
 
                 case 3: // ←と→
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Left) { cons.MiniBoardPerformHead(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Right) { cons.MiniBoardPerformTail(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Left) { miniBoard.MiniBoardPerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Right) { miniBoard.MiniBoardPerformTail(); e.Handled = true; } });
                     break;
 
                 case 4: // ↑と↓ 
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Up) { cons.MiniBoardPerformHead(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Down) { cons.MiniBoardPerformTail(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Up) { miniBoard.MiniBoardPerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Down) { miniBoard.MiniBoardPerformTail(); e.Handled = true; } });
                     break;
 
                 case 5: // ，(カンマ)と ．(ピリオド)
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Oemcomma) { cons.MiniBoardPerformHead(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.OemPeriod) { cons.MiniBoardPerformTail(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.Oemcomma) { miniBoard.MiniBoardPerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.OemPeriod) { miniBoard.MiniBoardPerformTail(); e.Handled = true; } });
                     break;
 
                 case 6: // PageUpとPageDown
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageUp) { cons.MiniBoardPerformHead(); e.Handled = true; } });
-                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageDown) { cons.MiniBoardPerformTail(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageUp) { miniBoard.MiniBoardPerformHead(); e.Handled = true; } });
+                    addEvent(e => { if (e.Modifiers == Keys.None && e.KeyCode == Keys.PageDown) { miniBoard.MiniBoardPerformTail(); e.Handled = true; } });
                     break;
             }
 

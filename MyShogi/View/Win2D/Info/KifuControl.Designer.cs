@@ -142,6 +142,7 @@
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
+            this.DoubleBuffered = true;
             this.Margin = new System.Windows.Forms.Padding(1, 2, 1, 2);
             this.Name = "KifuControl";
             this.Size = new System.Drawing.Size(299, 141);

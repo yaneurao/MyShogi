@@ -43,9 +43,17 @@ namespace MyShogi.View.Win2D
         public LocalGameServer gameServer { get; set; }
 
         /// <summary>
-        /// ネームプレートの描画をします。(デフォルト true)
+        /// ネームプレートに対局者名の描画をします。(デフォルト true)
+        ///
+        /// ※　普通の駒台のときのネームプレート自体描画したくないのだが、Bitmap合成後のため、それはできないのであった…。
+        /// ※　細長い駒台のときはネームプレートの描画自体を抑制している。
         /// </summary>
         public bool NamePlateVisible { get; set; }
 
+        /// <summary>
+        /// 棋譜ウインドウのDockStateを無視します。(デフォルト false)
+        /// これをtrueにすると、常に棋譜ウインドウがこのControlに埋まっている形になります。
+        /// </summary>
+        public bool IgnoreKifuDockState { get; set; }
     }
 }

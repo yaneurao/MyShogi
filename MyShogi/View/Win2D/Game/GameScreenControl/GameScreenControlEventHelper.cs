@@ -146,6 +146,14 @@ namespace MyShogi.View.Win2D
         {
             if (kifuControl != null)
             {
+                if (Setting != null && Setting.IgnoreKifuDockState)
+                {
+                    // DockState関係なく、普通の駒台モードならつねに表示
+                    kifuControl.Visible = PieceTableVersion == 0 /* 通常の駒台でなければ(細長い駒台の時は)非表示 */
+                        ;
+                    return;
+                }
+
                 // メインウインドウの埋め込まれているときしかkifuControlのvisiblityを操作しない。
                 if (TheApp.app.Config.KifuWindowDockManager.DockState != DockState.InTheMainWindow)
                     return;

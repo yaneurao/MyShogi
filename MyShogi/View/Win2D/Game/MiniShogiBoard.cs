@@ -1,4 +1,6 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.LocalServer;
 
@@ -23,9 +25,10 @@ namespace MyShogi.View.Win2D
             gameScreenControl1.Setting = new GameScreenControlSetting()
             {
                 SetButton = null,
-                gameServer = new LocalGameServer() { NoThread = true  , EnableUserMove = false , BoardReverse = boardReverse },
+                gameServer = new LocalGameServer() { NoThread = true, EnableUserMove = false, BoardReverse = boardReverse },
                 UpdateMenuItems = null,
                 NamePlateVisible = false,
+                IgnoreKifuDockState = true,
             };
             gameScreenControl1.Init();
             gameServer.Start(); // スレッドを別で作らないのでこの時点で開始させて問題ない。
@@ -99,6 +102,104 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        // -- ボタンのハンドラを外部クラスから呼び出すためのinterface
+
+        /// <summary>
+        /// ミニ盤面、一手戻る
+        /// </summary>
+        public void MiniBoardPerformUp()
+        {
+            toolStripButton2_Click(null,null);
+        }
+
+        /// <summary>
+        /// ミニ盤面、一手進む
+        /// </summary>
+        public void MiniBoardPerformDown()
+        {
+            toolStripButton3_Click(null, null);
+        }
+
+        /// <summary>
+        /// ミニ盤面、先頭に戻る
+        /// </summary>
+        public void MiniBoardPerformHead()
+        {
+            toolStripButton1_Click(null, null);
+        }
+
+        /// <summary>
+        /// ミニ盤面、末尾に進む
+        /// </summary>
+        public void MiniBoardPerformTail()
+        {
+            toolStripButton4_Click(null, null);
+        }
+
+        // -- handlers
+
+        // 以下 ミニ盤面用のボタン
+
+        /// <summary>
+        /// 巻き戻しボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            var kifu = kifuControl;
+            kifu.ViewModel.KifuListSelectedIndex = 1;
+        }
+
+        /// <summary>
+        /// 1手戻しボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            // 1手目より巻き戻さない。
+            var kifu = kifuControl;
+            kifu.ViewModel.KifuListSelectedIndex = Math.Max(kifu.ViewModel.KifuListSelectedIndex - 1, 1);
+        }
+
+        /// <summary>
+        /// 1手進めボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            BoardForward();
+        }
+
+        /// <summary>
+        /// 早送りボタン
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            BoardGotoLeaf();
+        }
+
+        /// <summary>
+        /// 盤面反転
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            if (gameServer != null)
+                gameServer.BoardReverse ^= true;
+        }
+
+        private void MiniShogiBoard_Resize(object sender, EventArgs e)
+        {
+            gameScreenControl1.Location = new Point(0, toolStrip1.Height);
+            gameScreenControl1.Size = new Size(ClientSize.Width, ClientSize.Height - toolStrip1.Height);
+        }
+
         // -- privates
 
         /// <summary>
@@ -112,5 +213,6 @@ namespace MyShogi.View.Win2D
         }
 
         private MiniShogiBoardData boardData;
+
     }
 }

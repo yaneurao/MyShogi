@@ -93,38 +93,6 @@ namespace MyShogi.View.Win2D
             ConsiderationInstance(0).PerformTail();
         }
 
-        /// <summary>
-        /// ミニ盤面、一手戻る
-        /// </summary>
-        public void MiniBoardPerformUp()
-        {
-            toolStripButton2_Click(null, null);
-        }
-
-        /// <summary>
-        /// ミニ盤面、一手進む
-        /// </summary>
-        public void MiniBoardPerformDown()
-        {
-            toolStripButton3_Click(null, null);
-        }
-
-        /// <summary>
-        /// ミニ盤面、先頭に戻る
-        /// </summary>
-        public void MiniBoardPerformHead()
-        {
-            toolStripButton1_Click(null, null);
-        }
-
-        /// <summary>
-        /// ミニ盤面、末尾に進む
-        /// </summary>
-        public void MiniBoardPerformTail()
-        {
-            toolStripButton4_Click(null, null);
-        }
-
         #endregion
 
         #region UsiThinkReportMessage
@@ -431,76 +399,6 @@ namespace MyShogi.View.Win2D
             InitSpliter2Position();
         }
 
-        // 以下 ミニ盤面用のボタン
-
-        /// <summary>
-        /// 巻き戻しボタン
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            var kifu = miniShogiBoard1.kifuControl;
-            kifu.ViewModel.KifuListSelectedIndex = 1;
-        }
-
-        /// <summary>
-        /// 1手戻しボタン
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void toolStripButton2_Click(object sender, EventArgs e)
-        {
-            // 1手目より巻き戻さない。
-            var kifu = miniShogiBoard1.kifuControl;
-            kifu.ViewModel.KifuListSelectedIndex = Math.Max(kifu.ViewModel.KifuListSelectedIndex - 1, 1);
-        }
-
-        /// <summary>
-        /// 1手進めボタン
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void toolStripButton3_Click(object sender, EventArgs e)
-        {
-            miniShogiBoard1.BoardForward();
-        }
-
-        /// <summary>
-        /// 早送りボタン
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void toolStripButton4_Click(object sender, EventArgs e)
-        {
-            miniShogiBoard1.BoardGotoLeaf();
-        }
-
-        /// <summary>
-        /// 閉じるボタン
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void toolStripButton5_Click(object sender, EventArgs e)
-        {
-            MiniShogiBoardVisible = false;
-
-            //AddInfoTest();
-            //BoardSetTest();
-        }
-
-        /// <summary>
-        /// 盤面反転
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void toolStripButton6_Click(object sender, EventArgs e)
-        {
-            var gameServer = miniShogiBoard1.gameServer;
-            if (gameServer != null)
-                gameServer.BoardReverse ^= true;
-        }
-
         // -- design adjustment
 
         /// <summary>
@@ -566,7 +464,8 @@ namespace MyShogi.View.Win2D
             if (ClientSize.IsEmpty)
                 return;
 
-            var board_height = Math.Max(ClientSize.Height - toolStrip1.Height, 1);
+            var board_height = Math.Max(ClientSize.Height /* - toolStrip1.Height */ , 1);
+            // →　toolStrip1をMiniShogiBoardに移動させた。
 
             // 継ぎ盤があるなら、その領域は最大でも横幅の1/4まで。
             var board_width = Math.Max((int)(board_height * aspect_ratio), 1);
@@ -592,7 +491,7 @@ namespace MyShogi.View.Win2D
         private void UpdateBoardHeight(bool splitterAdjest)
         {
             var board_width = Math.Max(ClientSize.Width - splitContainer2.SplitterWidth - splitContainer2.SplitterDistance, 1);
-            var max_board_height = Math.Max(ClientSize.Height - toolStrip1.Height, 1);
+            var max_board_height = Math.Max(ClientSize.Height /*- toolStrip1.Height */, 1);
             var board_height = Math.Max((int)(board_width / aspect_ratio), 1);
 
             if (board_height > max_board_height)
@@ -617,7 +516,7 @@ namespace MyShogi.View.Win2D
         private void DockMiniBoard(int board_width, int board_height)
         {
             // miniShogiBoardをToolStripのすぐ上に配置する。
-            int y = ClientSize.Height - board_height - toolStrip1.Height;
+            int y = ClientSize.Height - board_height /* - toolStrip1.Height*/;
             miniShogiBoard1.Size = new Size(board_width, board_height);
             miniShogiBoard1.Location = new Point(0, y);
         }
@@ -634,8 +533,8 @@ namespace MyShogi.View.Win2D
         {
             // フォントの変更。即時反映
             var fontSetter1 = new FontSetter(this, "ConsiderationWindow");
-            var fontSetter2 = new FontSetter(this.toolStrip1, "SubToolStrip");
-            Disposed += (sender, args) => { fontSetter1.Dispose(); fontSetter2.Dispose(); };
+            //var fontSetter2 = new FontSetter(this.toolStrip1, "SubToolStrip");
+            Disposed += (sender, args) => { fontSetter1.Dispose(); /* fontSetter2.Dispose(); */ };
         }
 
         // -- test code
