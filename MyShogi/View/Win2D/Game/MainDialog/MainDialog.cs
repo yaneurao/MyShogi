@@ -90,24 +90,8 @@ namespace MyShogi.View.Win2D
 
             // -- それ以外のハンドラの設定
 
-            var config = TheApp.app.Config;
-
-            config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", UpdateKifuWindowDockState );
-            config.KifuWindowDockManager.AddPropertyChangedHandler("DockPosition", UpdateKifuWindowDockState);
-
-            config.EngineConsiderationWindowDockManager.AddPropertyChangedHandler("DockState", UpdateEngineConsiderationWindowDockState);
-            config.EngineConsiderationWindowDockManager.AddPropertyChangedHandler("DockPosition", UpdateEngineConsiderationWindowDockState);
-
-            // 棋譜ウインドウのfloating状態を起動時に復元する。
-            //config.RaisePropertyChanged("KifuWindowFloating", config.KifuWindowFloating);
-            // →　このタイミングで行うと、メインウインドウより先に棋譜ウインドウが出て気分が悪い。first_tickの処理で行うようにする。
-
-            // 検討ウインドウ(に埋め込んでいる内部Control)の初期化
-            engineConsiderationMainControl = new EngineConsiderationMainControl();
-            engineConsiderationMainControl.Init(gameServer.BoardReverse /* これ引き継ぐ。以降は知らん。*/);
-            engineConsiderationMainControl.ConsiderationInstance(0).ViewModel.AddPropertyChangedHandler("MultiPV", (h) => {
-                gameServer.ChangeMultiPvCommand((int)h.value);
-            });
+            // DockWindow関係の初期化
+            InitDocks();
 
             // ToolStripのShortcutを設定する。
             // これは、engineConsiderationMainControlの初期化が終わっている必要がある。

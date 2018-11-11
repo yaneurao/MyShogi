@@ -320,9 +320,10 @@ namespace MyShogi.View.Win2D
         // -- properties
 
         /// <summary>
-        /// MiniBoardの表示、非表示を切り替えます。
+        /// MiniShogiBoardの表示、非表示を切り替えます。
+        /// (MiniShogiBoardの乗っかっているSplitConainerの幅をゼロにする。MiniShogiBoard自体は手を加えない。)
         /// </summary>
-        public bool MiniBoardVisible
+        public bool MiniShogiBoardVisible
         {
             set {
                 splitContainer2.Panel2.Visible = value;
@@ -332,6 +333,37 @@ namespace MyShogi.View.Win2D
                 // MiniBoard、スレッドが回っているわけでもないし、
                 // 画面が消えていれば更新通知等、来ないのでは？
             }
+        }
+
+        /// <summary>
+        /// ミニ盤面のinstanceを返す。
+        /// RemoveMiniShogiBoard()しているときも有効。
+        /// </summary>
+        public MiniShogiBoard MiniShogiBoard { get { return miniShogiBoard1; } }
+
+        /// <summary>
+        /// ミニ盤面をこのControlから除外する。
+        /// </summary>
+        public void RemoveMiniShogiBoard()
+        {
+            MiniShogiBoardVisible = false;
+            if (!splitContainer2.Panel2.Contains(miniShogiBoard1))
+                return; // 追加されてませんけど？
+
+            Controls.Remove(miniShogiBoard1);
+        }
+
+        /// <summary>
+        /// ミニ盤面をこのControlに戻す。
+        /// RemoveMiniShogiBoard()で除外していたものを元に戻す。
+        /// </summary>
+        public void AddMiniShogiBoard()
+        {
+            MiniShogiBoardVisible = true;
+            if (splitContainer2.Panel2.Contains(miniShogiBoard1))
+                return; // 追加されてますけど？
+
+            Controls.Add(miniShogiBoard1);
         }
 
         /// <summary>
@@ -449,7 +481,7 @@ namespace MyShogi.View.Win2D
         /// <param name="e"></param>
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
-            MiniBoardVisible = false;
+            MiniShogiBoardVisible = false;
 
             //AddInfoTest();
             //BoardSetTest();
@@ -510,7 +542,10 @@ namespace MyShogi.View.Win2D
         /// <param name="data"></param>
         private void SendPvToMiniboard(MiniShogiBoardData data)
         {
-            MiniBoardVisible = true;
+            // 自分がminiShogiBoardを抱えているなら、強制表示。
+            if (Controls.Contains(miniShogiBoard1))
+                MiniShogiBoardVisible = true;
+
             miniShogiBoard1.BoardData = data;
         }
 

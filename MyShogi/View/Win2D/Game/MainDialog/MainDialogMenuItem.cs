@@ -985,6 +985,78 @@ namespace MyShogi.View.Win2D
 
                     }
 
+                    { // ×ボタンで消していた検討ウィンドウの復活
+
+                        var item_ = new ToolStripMenuItem();
+                        item_.Text = "ミニ盤面(&M)"; // Mini shogi board
+                        item_window.DropDownItems.Add(item_);
+
+                        var dock = config.MiniShogiBoardDockManager;
+
+                        {
+                            var item = new ToolStripMenuItem();
+                            item.Text = dock.Visible ? "非表示(&V)" : "再表示(&V)"; // visible // 
+                            item.ShortcutKeys = Keys.Control | Keys.M; // Mini shogi boardのM。
+                            shortcut.AddEvent1(e => { if (e.Modifiers == Keys.Control && e.KeyCode == Keys.M) { item.PerformClick(); e.Handled = true; } });
+                            item.Click += (sender, e) => { dock.Visible ^= true; dock.RaisePropertyChanged("DockState", dock.DockState); };
+                            item_.DropDownItems.Add(item);
+                        }
+
+
+                        { // フローティングの状態
+                            var item = new ToolStripMenuItem();
+                            item.Text = "表示位置(&F)"; // Floating window mode
+                            item_.DropDownItems.Add(item);
+
+                            {
+
+                                var item1 = new ToolStripMenuItem();
+                                item1.Text = "検討ウインドウに埋め込む(&0)(EmbeddedMode)";
+                                item1.Checked = dock.DockState == DockState.InTheMainWindow;
+                                item1.Click += (sender, e) => { dock.DockState = DockState.InTheMainWindow; };
+                                item.DropDownItems.Add(item1);
+
+                                var item2 = new ToolStripMenuItem();
+                                item2.Text = "検討ウインドウから浮かせ、相対位置を常に保つ(&1)(FollowMode)";
+                                item2.Checked = dock.DockState == DockState.FollowToMainWindow;
+                                item2.Click += (sender, e) => { dock.DockState = DockState.FollowToMainWindow; };
+                                item.DropDownItems.Add(item2);
+
+                                var item3a = new ToolStripMenuItem();
+                                item3a.Text = "検討ウインドウから浮かせ、メインウインドウの上側に配置する(&2)(DockMode)";
+                                item3a.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Top;
+                                item3a.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Top); };
+                                item.DropDownItems.Add(item3a);
+
+                                var item3b = new ToolStripMenuItem();
+                                item3b.Text = "メインウインドウから浮かせ、メインウインドウの左側に配置する(&3)(DockMode)";
+                                item3b.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Left;
+                                item3b.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Left); };
+                                item.DropDownItems.Add(item3b);
+
+                                var item3c = new ToolStripMenuItem();
+                                item3c.Text = "検討ウインドウから浮かせ、メインウインドウの右側に配置する(&4)(DockMode)";
+                                item3c.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Right;
+                                item3c.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Right); };
+                                item.DropDownItems.Add(item3c);
+
+                                var item3d = new ToolStripMenuItem();
+                                item3d.Text = "検討ウインドウから浮かせ、メインウインドウの下側に配置する(&5)(DockMode)";
+                                item3d.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Bottom;
+                                item3d.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Bottom); };
+                                item.DropDownItems.Add(item3d);
+
+                                var item4 = new ToolStripMenuItem();
+                                item4.Text = "検討ウインドウから浮かせ、自由に配置する(&6)(FloatingMode)";
+                                item4.Checked = dock.DockState == DockState.FloatingMode;
+                                item4.Click += (sender, e) => { dock.DockState = DockState.FloatingMode; };
+                                item.DropDownItems.Add(item4);
+                            }
+                        }
+
+                    }
+
+
                     item_window.DropDownItems.Add(new ToolStripSeparator());
 
                     { // -- 対局結果一覧ウィンドウ

@@ -913,16 +913,6 @@ namespace MyShogi.App
         [DataMember]
         public Point? DesktopLocation { get; set; }
 
-
-        [DataMember]
-        public DockManager EngineConsiderationWindowDockManager = new DockManager();
-
-        /// <summary>
-        /// 棋譜ウインドウはフローティングモードであるのかなどを管理する構造体。
-        /// </summary>
-        [DataMember]
-        public DockManager KifuWindowDockManager = new DockManager();
-
         /// <summary>
         /// 棋譜ウィンドウの各Columnの幅 将来的な拡張を考慮して6個用意しとく
         /// </summary>
@@ -934,6 +924,26 @@ namespace MyShogi.App
         /// </summary>
         [DataMember]
         public NotifyCollection<int> ConsiderationColumnWidth { get; set; } = new NotifyCollection<int>(6);
+
+        // -- DockWindow
+
+        /// <summary>
+        /// 棋譜ウインドウはフローティングモードであるのかなどを管理する構造体。
+        /// </summary>
+        [DataMember]
+        public DockManager KifuWindowDockManager = new DockManager();
+
+        /// <summary>
+        /// 検討ウインドウをフローティングモードであるのかなどを管理する構造体。
+        /// </summary>
+        [DataMember]
+        public DockManager EngineConsiderationWindowDockManager = new DockManager();
+
+        /// <summary>
+        /// ミニ盤面をフローティングモードであるのかなどを管理する構造体。
+        /// </summary>
+        [DataMember]
+        public DockManager MiniShogiBoardDockManager = new DockManager();
 
         #endregion
 

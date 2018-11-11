@@ -16,6 +16,34 @@ namespace MyShogi.View.Win2D
     public partial class MainDialog : Form
     {
         /// <summary>
+        /// DockWindow関係の初期化
+        /// </summary>
+        private void InitDocks()
+        {
+            var config = TheApp.app.Config;
+
+            config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", UpdateKifuWindowDockState);
+            config.KifuWindowDockManager.AddPropertyChangedHandler("DockPosition", UpdateKifuWindowDockState);
+
+            config.EngineConsiderationWindowDockManager.AddPropertyChangedHandler("DockState", UpdateEngineConsiderationWindowDockState);
+            config.EngineConsiderationWindowDockManager.AddPropertyChangedHandler("DockPosition", UpdateEngineConsiderationWindowDockState);
+
+            // 棋譜ウインドウのfloating状態を起動時に復元する。
+            //config.RaisePropertyChanged("KifuWindowFloating", config.KifuWindowFloating);
+            // →　このタイミングで行うと、メインウインドウより先に棋譜ウインドウが出て気分が悪い。first_tickの処理で行うようにする。
+
+            // 検討ウインドウ(に埋め込んでいる内部Control)の初期化
+            engineConsiderationMainControl = new EngineConsiderationMainControl();
+            engineConsiderationMainControl.Init(gameServer.BoardReverse /* これ引き継ぐ。以降は知らん。*/);
+            engineConsiderationMainControl.ConsiderationInstance(0).ViewModel.AddPropertyChangedHandler("MultiPV", (h) => {
+                gameServer.ChangeMultiPvCommand((int)h.value);
+            });
+
+            config.MiniShogiBoardDockManager.AddPropertyChangedHandler("DockState", UpdateMiniShogiBoardDockState);
+            config.MiniShogiBoardDockManager.AddPropertyChangedHandler("DockPosition", UpdateMiniShogiBoardDockState);
+        }
+
+        /// <summary>
         /// エンジンによる検討を開始する。
         /// </summary>
         private void ToggleConsideration()
@@ -299,5 +327,71 @@ namespace MyShogi.View.Win2D
                 }
             }
         }
+
+        /// <summary>
+        /// UpdateKifuWindowDockState()のミニ盤面用。
+        /// だいたい同じ感じの処理。
+        /// </summary>
+        private void UpdateMiniShogiBoardDockState(PropertyChangedEventArgs args)
+        {
+            var dockState = (DockState)args.value;
+
+            var dockManager = TheApp.app.Config.MiniShogiBoardDockManager;
+            dockManager.DockState = dockState; // 次回起動時のためにここに保存しておく。
+
+            if (miniShogiBoardDockWindow != null)
+            {
+                miniShogiBoardDockWindow.RemoveControl();
+                miniShogiBoardDockWindow.Dispose();
+                miniShogiBoardDockWindow = null;
+            }
+            engineConsiderationMainControl.RemoveMiniShogiBoard();
+
+            // dockManager.Visibleは反映させないと駄目。
+            if (!dockManager.Visible)
+            {
+                // フォーカス移動されてると困るので戻す。
+                this.Focus();
+                return;
+            }
+
+            if (dockState == DockState.InTheMainWindow)
+            {
+                engineConsiderationMainControl.AddMiniShogiBoard();
+            }
+            else
+            {
+                miniShogiBoardDockWindow = new DockWindow();
+                miniShogiBoardDockWindow.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
+                miniShogiBoardDockWindow.Owner = this;
+
+                miniShogiBoardDockWindow.ViewModel.Caption = "ミニ盤面";
+
+                // デフォルト位置とサイズにする。
+                if (dockManager.Size.IsEmpty)
+                {
+                    // デフォルトでは、このウインドウサイズに従う
+                    dockManager.Size = new Size(Width/4 , Height / 4);
+
+                    //var pos = miniShogi.CalcKifuWindowLocation();
+                    //// これクライアント座標なので、スクリーン座標にいったん変換する。
+                    //pos = gameScreenControl1.PointToScreen(pos);
+
+                    var pos = new Point(0, 0);
+                    dockManager.LocationOnDocked = new Point(pos.X - this.Location.X, pos.Y - this.Location.Y);
+                    dockManager.LocationOnFloating = pos;
+                }
+
+                // Showで表示とサイズが確定してからdockManagerを設定しないと、
+                // Showのときの位置とサイズがdockManagerに記録されてしまう。
+                miniShogiBoardDockWindow.Visible = true;
+
+                miniShogiBoardDockWindow.AddControl(miniShogiBoard, this, dockManager);
+                dockManager.InitDockWindowLocation(this, miniShogiBoardDockWindow);
+
+                miniShogiBoardDockWindow.Show();
+            }
+        }
+
     }
 }

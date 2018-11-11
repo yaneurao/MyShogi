@@ -17,6 +17,10 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public LocalGameServer gameServer { get { return gameScreenControl1.gameServer; } }
 
+        // -- DockWindow
+
+        // 棋譜Control
+
         /// <summary>
         /// activeなGameScreenControlに関連付けられているKifuControlのインスタンスを返す。
         /// 現状、GameScreenControlは一つしかインスタンスを生成していないので、それがactiveである。
@@ -28,36 +32,16 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public DockWindow kifuDockWindow { get; set; }
 
-        // -- メニューが生成しうるダイアログ
 
-        /// modal dialogとして表示するするものはコメントアウトした。
-
-        /// <summary>
-        /// 「やねうら王について」のダイアログ
-        /// </summary>
-        //public Form aboutDialog;
+        // 検討Control
 
         /// <summary>
-        /// 「通常対局」の設定ダイアログ
+        /// これが検討ウインドウ本体。
+        /// この生成はMainDialogが行う。
+        /// 
+        /// これを↓のに埋めて使う。
         /// </summary>
-        //public Form gameSettingDialog;
-
-        /// <summary>
-        /// CPU infoを表示するダイアログ
-        /// </summary>
-        //public Form cpuInfoDialog;
-
-        /// <summary>
-        /// デバッグウィンドウ
-        /// </summary>
-        public Form debugDialog;
-
-        /// <summary>
-        /// ・検討エンジン設定ダイアログ
-        /// ・詰将棋エンジン設定ダイアログ
-        /// 共通。
-        /// </summary>
-        //public Form ConsiderationEngineSettingDialog;
+        public EngineConsiderationMainControl engineConsiderationMainControl;
 
         /// <summary>
         /// 検討ウインドウを埋めて使うための入れ物。
@@ -65,10 +49,20 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public DockWindow engineConsiderationDockWindow;
 
+
+        // ミニ盤面
+
         /// <summary>
-        /// これが検討ウインドウ本体。これを↑のに埋めて使う。
+        /// 検討ウインドウに埋まっているミニ盤面のControl。
+        /// 検討ウインドウから外して、Dockして使うときもこのinstanceは有効。
         /// </summary>
-        public EngineConsiderationMainControl engineConsiderationMainControl;
+        public MiniShogiBoard miniShogiBoard { get { return engineConsiderationMainControl.MiniShogiBoard; } }
+
+        /// <summary>
+        /// ミニ盤面を埋めて使うための入れ物。
+        /// </summary>
+        public DockWindow miniShogiBoardDockWindow;
+
 
 #if false
         /// <summary>
@@ -76,6 +70,13 @@ namespace MyShogi.View.Win2D
         /// </summary>
         public Info.EvalGraphDialog evalGraphDialog;
 #endif
+
+        // -- 単独ウインドウ
+
+        /// <summary>
+        /// デバッグウィンドウ
+        /// </summary>
+        public Form debugDialog;
 
     }
 }

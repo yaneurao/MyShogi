@@ -166,11 +166,12 @@ namespace MyShogi.App
             Config.AddPropertyChangedHandler("KifuWindowFirstLastKey", mainDialog.UpdateToolStripShortcut);
             Config.AddPropertyChangedHandler("ConsiderationWindowPrevNextKey", mainDialog.UpdateToolStripShortcut);
             
-            // Window
+            // DockWindow
 
             Config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
             Config.EngineConsiderationWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
-            
+            Config.MiniShogiBoardDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
+
             // -- ロギング用のハンドラをセット
 
             // メモリ上でのロギング

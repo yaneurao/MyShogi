@@ -51,6 +51,7 @@ namespace MyShogi.View.Win2D
                 var config = TheApp.app.Config;
                 config.KifuWindowDockManager.RaisePropertyChanged("DockState", config.KifuWindowDockManager.DockState);
                 config.EngineConsiderationWindowDockManager.RaisePropertyChanged("DockState", config.EngineConsiderationWindowDockManager.DockState);
+                config.MiniShogiBoardDockManager.RaisePropertyChanged("DockState", config.MiniShogiBoardDockManager.DockState);
 
                 // メインウインドウが表示されるまで、棋譜ウインドウの座標設定などを抑制していたのでここでメインウインドウ相対で移動させてやる。
                 UpdateDockedWindowLocation();
@@ -148,6 +149,15 @@ namespace MyShogi.View.Win2D
             if (first_tick)
                 return;
 
+            // 棋譜ウインドウ
+            {
+                if (kifuDockWindow != null)
+                {
+                    var dockManager = TheApp.app.Config.KifuWindowDockManager;
+                    dockManager.UpdateDockWindowLocation(this, kifuDockWindow);
+                }
+            }
+
             // 検討ウインドウ
             {
                 if (engineConsiderationDockWindow != null)
@@ -157,12 +167,12 @@ namespace MyShogi.View.Win2D
                 }
             }
 
-            // 棋譜ウインドウも。
+            // ミニ盤面
             {
-                if (kifuDockWindow != null)
+                if (miniShogiBoardDockWindow != null)
                 {
-                    var dockManager = TheApp.app.Config.KifuWindowDockManager;
-                    dockManager.UpdateDockWindowLocation(this, kifuDockWindow);
+                    var dockManager = TheApp.app.Config.MiniShogiBoardDockManager;
+                    dockManager.UpdateDockWindowLocation(this, miniShogiBoardDockWindow);
                 }
             }
 
@@ -603,23 +613,6 @@ namespace MyShogi.View.Win2D
             if (size.Width >= 100 && size.Height >= 100)
                 config.MainDialogClientSize = size;
 
-            // 検討ウインドウのdockのためのリファクタリング中
-#if false
-            // 検討ウィンドウの位置と大きさの保存
-            if (engineConsiderationDialog != null && engineConsiderationDialog.Width >= 100 && engineConsiderationDialog.Height >= 100)
-            {
-                var c_location = /* minimized ? engineConsiderationDialog.RestoreBounds.Location : */ engineConsiderationDialog.Location;
-                var c_size = /* minimized ? engineConsiderationDialog.RestoreBounds.Size : */ engineConsiderationDialog.ClientSize;
-
-                config.ConsiderationDialogClientSize = c_size;
-                // 検討ウィンドウの位置はメインウィンドウ相対で記録
-                config.ConsiderationDialogClientLocation =
-                    new Point(
-                        c_location.X - location.X,
-                        c_location.Y - location.Y
-                    );
-            }
-#endif
         }
 
     }
