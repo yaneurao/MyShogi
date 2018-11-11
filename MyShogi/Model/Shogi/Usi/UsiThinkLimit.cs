@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text;
 using MyShogi.Model.Shogi.Core;
 using MyShogi.Model.Shogi.Kifu;
@@ -247,12 +248,31 @@ namespace MyShogi.Model.Shogi.Usi
         /// <returns></returns>
         public string ToUsiMateString(Color sideToMove)
         {
-            if (LimitType == UsiThinkLimitEnum.Infinite)
-                return "infinite";
+            // nodes , depthの指定があるなら、"mate"より先にそれを出力しないと…。
 
-            // 手番側の秒読み
-            var byoyomiTime = sideToMove == Color.BLACK ? ByoyomiTimeBlack : ByoyomiTimeWhite;
-            return byoyomiTime == null ? "1000" /* 0の指定はありえないような..*/ : byoyomiTime.TotalMilliseconds.ToString();
+            switch(LimitType)
+            {
+                case UsiThinkLimitEnum.Infinite:
+                    return "mate infinite";
+
+                case UsiThinkLimitEnum.Node:
+                    // node制限があるときは時間無制限とする。(両方を指定したいことはないはずなので)
+                    return $"nodes {Nodes} mate infinite";
+
+                case UsiThinkLimitEnum.Depth:
+                    // 深さ制限があるときは時間無制限とする。(両方を指定したいことはないはずなので)
+                    return $"depth {Depth} mate infinite";
+
+                case UsiThinkLimitEnum.Time:
+                    // 手番側の秒読み
+                    var byoyomiTime = sideToMove == Color.BLACK ? ByoyomiTimeBlack : ByoyomiTimeWhite;
+                    var timeString = byoyomiTime == null ? "1000" /* 0の指定はありえないような..*/ : byoyomiTime.TotalMilliseconds.ToString();
+                    return $"mate {timeString}";
+
+                default:
+                    Debug.Assert(false);
+                    return null;
+            }
         }
 
         /// <summary>

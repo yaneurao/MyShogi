@@ -32,5 +32,15 @@
         /// 同じエンジンを2つ起動する時にHASH用のメモリが半分になる。
         /// </summary>
         HasEvalShareOption,
+
+        /// <summary>
+        /// 詰将棋エンジンが "go mate nodes XXX"で探索ノード数の制限に対応しているか。
+        /// </summary>
+        GoMateNodesExtension,
+
+        /// <summary>
+        /// 詰将棋エンジンが "go mate depth XXX"で探索深さの制限に対応しているか。
+        /// </summary>
+        GoMateDepthExtension,
     }
 }

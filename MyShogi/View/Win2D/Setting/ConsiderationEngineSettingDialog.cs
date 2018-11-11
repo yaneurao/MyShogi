@@ -127,6 +127,31 @@ namespace MyShogi.View.Win2D.Setting
                     }
 
                     pictureBox1.Image = banner_mini.image;
+
+                    // 詰将棋エンジンなら、nodes , depthを指定できるかは、USI2.0拡張で拡張されていない限りむりぽ。
+
+                    if (ViewModel.DialogType == ConsiderationEngineSettingDialogType.MateSetting)
+                    {
+                        // USIプロトコルではgo mateのあと時間[ms]を指定するようになっている。
+                        // 現状、プロトコル的に対応不可能であるな。
+                        // go mate "nodes"
+                        // go mate "depth"
+                        // のような拡張を受け付けるようにする。
+
+                        var nodes_enable = engine_define.SupportedExtendedProtocol.Contains(ExtendedProtocol.GoMateNodesExtension);
+                        var depth_enable = engine_define.SupportedExtendedProtocol.Contains(ExtendedProtocol.GoMateDepthExtension);
+
+                        radioButton3.Enabled = nodes_enable;
+                        radioButton4.Enabled = depth_enable;
+
+                        // 上で無効化したRadioButtonが選択されている可能性がある。
+                        // その場合、radioButton1を選択しなおす。
+
+                        if ((!radioButton3.Enabled && radioButton3.Checked) ||
+                            (!radioButton4.Enabled && radioButton4.Checked))
+                            radioButton1.Checked = true;
+                    }
+
                 }
             });
 
@@ -148,17 +173,6 @@ namespace MyShogi.View.Win2D.Setting
                        Text = "詰将棋エンジン設定";
                        label3.Text = "詰検討で使う思考エンジン：";
                        groupBox1.Enabled = true; // 詰将棋エンジン側、対応したので有効にしておく。
-
-                       // node指定とdepth指定、詰将棋エンジン側が対応していないのでとりあえず無効化しておく。
-                       radioButton3.Enabled = false;
-                       radioButton4.Enabled = false;
-
-                       // USIプロトコルではgo mateのあと時間[ms]を指定するようになっている。
-                       // 現状、プロトコル的に対応不可能であるな。
-                       // go mate "nodes"
-                       // go mate "depth"
-                       // のような拡張を受け付けるようにするか？
-
                        break;
                }
            });

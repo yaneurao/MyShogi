@@ -4,8 +4,43 @@
   - 棋譜の記法が即時反映でないのは設計が悪いからだと思う。リファクタリングすべき。
 
 
+
 ■  2018/11/12
 
+
+- 詰検討ダイアログで探索ノード数を制限できるように。
+  - tanuki-詰将棋エンジンをノード制限に対応
+  - USI2.0プロトコルとしてnodesを有効に。
+
+    isready
+    position startpos
+    go nodes 10000 mate infinite
+
+  - あれ？一回落ちた。メモリ確保失敗なのか？あれあれ？
+    - わからん。落ちない。メモリ確保失敗でエンジン落ちるのかな…。callocだからか。
+    - オプション指定間違えたほうのスレッドが残っていたのかな…。うむむ…。
+
+usi
+setoption name Threads value 2
+setoption name Hash value 128
+setoption name WriteDebugLog value false
+setoption name NetworkDelay value 350
+setoption name NetworkDelay2 value 550
+setoption name MinimumThinkingTime value 2000
+setoption name SlowMover value 100
+setoption name MaxMovesToDraw value 0
+setoption name DepthLimit value 0
+setoption name NodesLimit value 0
+setoption name Contempt value 2
+setoption name ContemptFromBlack value false
+setoption name EvalDir value eval
+setoption name MorePreciseMatePv value true
+isready
+usinewgame
+position startpos
+go nodes 10000 mate infinite
+
+quit
 
 - ミニ盤面のフロート処理その4
 - MiniShogiBoardのfont設定忘れていたの修正。

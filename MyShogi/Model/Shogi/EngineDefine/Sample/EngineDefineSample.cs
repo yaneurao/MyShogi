@@ -695,6 +695,10 @@ namespace MyShogi.Model.Shogi.EngineDefine
                     descriptions.Insert(index , d);
                 }
 
+                // tanuki-詰将棋エンジンに "go mate nodes XXX"拡張を追加した。[2018/11/12]
+                var mate_extend = new List<ExtendedProtocol>(default_extend);
+                mate_extend.Add(ExtendedProtocol.GoMateNodesExtension);
+
                 var engine_define = new EngineDefine()
                 {
                     DisplayName = "tanuki-詰将棋エンジン",
@@ -709,7 +713,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "詰手順が最短手数であることは保証されません。\r\n" +
                         "複数スレッドでの探索には対応していません。",
                     DisplayOrder = 10006,
-                    SupportedExtendedProtocol = default_extend,
+                    SupportedExtendedProtocol = mate_extend,
                     EngineOptionDescriptions = descriptions,
                     EngineType = 1, // go mateコマンドに対応している。通常探索には使えない。
                 };

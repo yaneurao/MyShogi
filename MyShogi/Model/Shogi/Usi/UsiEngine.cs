@@ -119,7 +119,7 @@ namespace MyShogi.Model.Shogi.Usi
             }
 
             if (IsMateSearch)
-                ThinkingBridge.Think($"position {usiPositionString}" , $"go mate {limit.ToUsiMateString(sideToMove)}");
+                ThinkingBridge.Think($"position {usiPositionString}" , $"go {limit.ToUsiMateString(sideToMove)}");
             else
                 ThinkingBridge.Think($"position {usiPositionString}" , $"go {limit.ToUsiString(sideToMove)}");
         }
