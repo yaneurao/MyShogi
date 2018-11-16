@@ -579,15 +579,11 @@ namespace MyShogi.Model.Shogi.LocalServer
             {
                 Debug.Assert(data != null);
 
-                var sfen = (data.moves == null || data.moves.Count == 0) ?
-                    data.rootSfen :
-                    $"sfen {data.rootSfen} moves { Core.Util.MovesToUsiString(data.moves) }";
-
                 // 対局中ではないので、EnableKifuList == falseになっているが、
                 // 一時的にこれをtrueにしないと、読み込んだ棋譜に対して、Tree.KifuListが同期しない。
                 // ゆえに、読み込みの瞬間だけtrueにして、そのあとfalseに戻す。
                 kifuManager.EnableKifuList = true;
-                var error = kifuManager.FromString(sfen);
+                var error = kifuManager.FromString(Core.Util.RootSfenAndMovesToUsiString(data.rootSfen , data.moves));
                 kifuManager.EnableKifuList = false;
 
                 if (error != null)

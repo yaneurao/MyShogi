@@ -435,5 +435,24 @@ namespace MyShogi.Model.Shogi.Kifu
             public int select;
             public Node(int ply_, int select_) { ply = ply_; select = select_; }
         };
+
+        /// <summary>
+        /// rootSfen(開始局面のsfen)とmoves(手順)を指定して、棋譜形式の文字列を得る。
+        /// </summary>
+        /// <param name="rootSfen"></param>
+        /// <param name="moves"></param>
+        /// <returns></returns>
+        public static string ToStringFromRootSfenAndMoves(KifuFileType type, string rootSfen , List<Move> moves)
+        {
+            // 一度、sfenから生成するのがお手軽か？
+            var kifuManager = new KifuManager();
+            var sfen = Core.Util.RootSfenAndMovesToUsiString(rootSfen, moves);
+//            var error = 
+            kifuManager.FromString(sfen);
+            // まあ、エラーのハンドリングはええやろ…。
+
+            return kifuManager.ToString(type);
+        }
+
     }
 }

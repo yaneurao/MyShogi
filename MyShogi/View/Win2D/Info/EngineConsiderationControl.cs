@@ -13,6 +13,8 @@ using MyShogi.Model.Shogi.Usi;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Collections;
+using MyShogi.Model.Dependency;
+using MyShogi.Model.Shogi.Kifu;
 
 namespace MyShogi.View.Win2D
 {
@@ -808,6 +810,8 @@ namespace MyShogi.View.Win2D
             UpdatePvWidth();
         }
 
+        #region context menu
+
         /// <summary>
         /// 検討ウインドウでの右クリックメニュー
         /// </summary>
@@ -816,8 +820,6 @@ namespace MyShogi.View.Win2D
         private void listView1_MouseDown(object sender, MouseEventArgs e)
         {
 
-            // 作りかけ。
-#if false
             var early_exit = true;
             ListViewItem targetItem = null;
 
@@ -856,15 +858,70 @@ namespace MyShogi.View.Win2D
             contextMenuStrip1.Show(Cursor.Position);
             // このコンテキストメニューはどのItemに対して出しているのかを記録しておく。
             selectedListViewItem = targetItem;
-#endif
+
         }
 
-#if false
         /// <summary>
         /// 検討ウインドウで右クリックで選択されている項目
         /// </summary>
         ListViewItem selectedListViewItem;
-#endif
+
+        /// <summary>
+        /// 右クリックメニュー「読み筋を表示のままの文字列でクリップボードに貼り付ける(&P)」
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PastePvToClipboard_Click(object sender, EventArgs e)
+        {
+            // 右クリックされた以上、nullではないはずなのだが…。
+            if (selectedListViewItem == null)
+                return;
+
+            // ここの文字列そのまま取得
+            var items = selectedListViewItem.SubItems;
+            if (items.Count < 6)
+                return;
+
+            var pv = items[6];
+            if (pv == null || pv.Text == null)
+                return;
+
+            ClipboardEx.SetText(pv.Text);
+        }
+
+        /// <summary>
+        /// 右クリックメニュー「読み筋をKIF形式でクリップボードに貼り付ける(&K)」
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PasteKifToClipboard_Click(object sender, EventArgs e)
+        {
+            // rootsfenから。
+
+            // 右クリックされた以上、nullではないはずなのだが…。
+            if (selectedListViewItem == null)
+                return;
+
+            // ここの文字列そのまま取得
+            var index = selectedListViewItem.Index;
+            if (!(0 <= index && index < list_item_moves.Count))
+                return;
+
+            var rootSfen = root_sfen;
+            var moves = list_item_moves[index];
+            if (rootSfen == null)
+                return;
+
+            // これでrootの局面と手順はできた。これをKIF形式にする。
+
+            var kifu = KifuManager.ToStringFromRootSfenAndMoves(KifuFileType.KIF, rootSfen, moves);
+            if (kifu == null)
+                return;
+
+            ClipboardEx.SetText(kifu);
+        }
+
+        #endregion // context menu
 
     }
 }

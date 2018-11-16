@@ -482,6 +482,24 @@ namespace MyShogi.Model.Shogi.Core
         }
 
         /// <summary>
+        /// USIのpositionで使うのと同等の文字列を生成する。
+        /// "sfen ... moves ..."みたいなの。
+        ///
+        /// このあとKifuManager.FromString()にそのまま渡せる。
+        /// </summary>
+        /// <param name="rootSfen"></param>
+        /// <param name="moves"></param>
+        /// <returns></returns>
+        public static string RootSfenAndMovesToUsiString(string rootSfen,List<Move> moves)
+        {
+            var sfen = (moves == null || moves.Count == 0) ?
+                rootSfen :
+                $"sfen {rootSfen} moves { MovesToUsiString(moves) }";
+
+            return sfen;
+        }
+
+        /// <summary>
         /// 通常の指し手ならUSIの指し手文字列に変換する。
         /// special moveなら、enum値を文字列化して返す。
         /// </summary>

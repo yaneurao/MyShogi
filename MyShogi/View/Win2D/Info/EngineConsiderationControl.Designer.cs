@@ -39,6 +39,8 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SendToMainKifu = new System.Windows.Forms.ToolStripMenuItem();
             this.ReplaceToMainKifu = new System.Windows.Forms.ToolStripMenuItem();
+            this.PastePvToClipboard = new System.Windows.Forms.ToolStripMenuItem();
+            this.PasteKifToClipboard = new System.Windows.Forms.ToolStripMenuItem();
             this.listView1 = new MyShogi.View.Win2D.ListViewEx();
             this.toolTip1 = new MyShogi.View.Win2D.ToolTipEx(this.components);
             this.contextMenuStrip1.SuspendLayout();
@@ -151,21 +153,37 @@
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SendToMainKifu,
-            this.ReplaceToMainKifu});
+            this.ReplaceToMainKifu,
+            this.PastePvToClipboard,
+            this.PasteKifToClipboard});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(305, 48);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(361, 114);
             // 
             // SendToMainKifu
             // 
             this.SendToMainKifu.Name = "SendToMainKifu";
-            this.SendToMainKifu.Size = new System.Drawing.Size(304, 22);
+            this.SendToMainKifu.Size = new System.Drawing.Size(335, 22);
             this.SendToMainKifu.Text = "メイン棋譜にこの読み筋を分岐棋譜として送る(&S)";
             // 
             // ReplaceToMainKifu
             // 
             this.ReplaceToMainKifu.Name = "ReplaceToMainKifu";
-            this.ReplaceToMainKifu.Size = new System.Drawing.Size(304, 22);
+            this.ReplaceToMainKifu.Size = new System.Drawing.Size(335, 22);
             this.ReplaceToMainKifu.Text = "メイン棋譜をこの読み筋で置き換える(&R)";
+            // 
+            // PastePvToClipboard
+            // 
+            this.PastePvToClipboard.Name = "PastePvToClipboard";
+            this.PastePvToClipboard.Size = new System.Drawing.Size(360, 22);
+            this.PastePvToClipboard.Text = "読み筋を表示のままの文字列でクリップボードに貼り付ける(&P)";
+            this.PastePvToClipboard.Click += new System.EventHandler(this.PastePvToClipboard_Click);
+            // 
+            // PasteKifToClipboard
+            // 
+            this.PasteKifToClipboard.Name = "PasteKifToClipboard";
+            this.PasteKifToClipboard.Size = new System.Drawing.Size(360, 22);
+            this.PasteKifToClipboard.Text = "読み筋をKIF形式でクリップボードに貼り付ける(&K)";
+            this.PasteKifToClipboard.Click += new System.EventHandler(this.PasteKifToClipboard_Click);
             // 
             // listView1
             // 
@@ -220,5 +238,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem SendToMainKifu;
         private System.Windows.Forms.ToolStripMenuItem ReplaceToMainKifu;
+        private System.Windows.Forms.ToolStripMenuItem PastePvToClipboard;
+        private System.Windows.Forms.ToolStripMenuItem PasteKifToClipboard;
     }
 }

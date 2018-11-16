@@ -294,9 +294,10 @@ namespace MyShogi.View.Win2D
 
 #if MONO
             // Linux環境だと、これ入れないとハングする。
-            // たぶんX11のメッセージングが、Monoが想定しているのと異なるためだと思うけども…。
-            // 棋譜ウインドウをAddControl()したあと、DoEvents()的な何かをしないといけないということだと思う。
             // cf. https://twitter.com/hnakada123/status/1062564183512776704
+            //
+            // たぶんX11のメッセージングが、Monoが想定しているのと異なるためだと思うけども…。
+            // 棋譜ウインドウをControls.Add()したあと、DoEvents()的な何かをしないといけないということだと思う。
 
             await System.Threading.Tasks.Task.Delay(0);
 #endif
