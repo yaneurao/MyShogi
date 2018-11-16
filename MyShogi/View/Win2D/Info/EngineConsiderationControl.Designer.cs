@@ -38,7 +38,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SendToMainKifu = new System.Windows.Forms.ToolStripMenuItem();
-            this.ReplaceToMainKifu = new System.Windows.Forms.ToolStripMenuItem();
+            this.ReplaceMainKifu = new System.Windows.Forms.ToolStripMenuItem();
             this.PastePvToClipboard = new System.Windows.Forms.ToolStripMenuItem();
             this.PasteKifToClipboard = new System.Windows.Forms.ToolStripMenuItem();
             this.listView1 = new MyShogi.View.Win2D.ListViewEx();
@@ -153,7 +153,7 @@
             // 
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.SendToMainKifu,
-            this.ReplaceToMainKifu,
+            this.ReplaceMainKifu,
             this.PastePvToClipboard,
             this.PasteKifToClipboard});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
@@ -162,14 +162,16 @@
             // SendToMainKifu
             // 
             this.SendToMainKifu.Name = "SendToMainKifu";
-            this.SendToMainKifu.Size = new System.Drawing.Size(335, 22);
+            this.SendToMainKifu.Size = new System.Drawing.Size(360, 22);
             this.SendToMainKifu.Text = "メイン棋譜にこの読み筋を分岐棋譜として送る(&S)";
+            this.SendToMainKifu.Click += new System.EventHandler(this.SendToMainKifu_Click);
             // 
-            // ReplaceToMainKifu
+            // ReplaceMainKifu
             // 
-            this.ReplaceToMainKifu.Name = "ReplaceToMainKifu";
-            this.ReplaceToMainKifu.Size = new System.Drawing.Size(335, 22);
-            this.ReplaceToMainKifu.Text = "メイン棋譜をこの読み筋で置き換える(&R)";
+            this.ReplaceMainKifu.Name = "ReplaceMainKifu";
+            this.ReplaceMainKifu.Size = new System.Drawing.Size(360, 22);
+            this.ReplaceMainKifu.Text = "メイン棋譜をこの読み筋で置き換える(&R)";
+            this.ReplaceMainKifu.Click += new System.EventHandler(this.ReplaceMainKifu_Click);
             // 
             // PastePvToClipboard
             // 
@@ -237,7 +239,7 @@
         private MyShogi.View.Win2D.ToolTipEx toolTip1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem SendToMainKifu;
-        private System.Windows.Forms.ToolStripMenuItem ReplaceToMainKifu;
+        private System.Windows.Forms.ToolStripMenuItem ReplaceMainKifu;
         private System.Windows.Forms.ToolStripMenuItem PastePvToClipboard;
         private System.Windows.Forms.ToolStripMenuItem PasteKifToClipboard;
     }

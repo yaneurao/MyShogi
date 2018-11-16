@@ -114,6 +114,9 @@ namespace MyShogi.View.Win2D
         /// <param name="fontDataName_">FontManager上の変数名</param>
         public FontSetter(Control control_ , string fontDataName_)
         {
+            if (TheApp.app.DesignMode)
+                return;
+
             control = control_;
             fontDataName = fontDataName_;
 

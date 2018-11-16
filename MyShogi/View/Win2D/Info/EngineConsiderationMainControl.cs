@@ -45,6 +45,27 @@ namespace MyShogi.View.Win2D
                 get { return GetValue<object>("CloseButtonClicked"); }
                 set { SetValue<object>("CloseButtonClicked", value); }
             }
+
+            /// <summary>
+            /// 右クリックメニュー「メイン棋譜にこの読み筋を分岐棋譜として送る(&S)」
+            /// がクリックされた時に発生するイベント。
+            /// </summary>
+            public MiniShogiBoardData SendToMainKifu
+            {
+                get { return GetValue<MiniShogiBoardData>("SendToMainKifu"); }
+                set { SetValue<MiniShogiBoardData>("SendToMainKifu", value); }
+            }
+
+            /// <summary>
+            /// 右クリックメニュー「メイン棋譜をこの読み筋で置き換える(&R)」
+            /// がクリックされた時に発生するイベント。
+            /// </summary>
+            public MiniShogiBoardData RepalceMainKifu
+            {
+                get { return GetValue<MiniShogiBoardData>("RepalceMainKifu"); }
+                set { SetValue<MiniShogiBoardData>("RepalceMainKifu", value); }
+            }
+
         }
 
         public EngineConsiderationDialogViewModel ViewModel = new EngineConsiderationDialogViewModel();
@@ -421,11 +442,19 @@ namespace MyShogi.View.Win2D
             SetEngineInstanceNumber(1);
 
             foreach (var i in All.Int(2))
-                ConsiderationInstance(i).ViewModel.AddPropertyChangedHandler( "PvClicked" , (h) =>
-                {
-                    var data = h.value as MiniShogiBoardData;
-                    SendPvToMiniboard(data);
-                });
+            {
+                var instance = ConsiderationInstance(i);
+
+                instance.ViewModel.AddPropertyChangedHandler("PvClicked", (h) =>
+                  {
+                      var data = h.value as MiniShogiBoardData;
+                      SendPvToMiniboard(data);
+                  });
+
+                // 検討Controlから来た右クリックメニューのメッセージをそのままこのクラスのViewModelに通知。
+                instance.ViewModel.Bind("SendToMainKifu", ViewModel, DataBindWay.OneWay);
+                instance.ViewModel.Bind("RepalceMainKifu", ViewModel, DataBindWay.OneWay);
+            }
         }
 
         /// <summary>

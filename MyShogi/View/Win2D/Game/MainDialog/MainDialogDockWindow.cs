@@ -3,6 +3,9 @@ using System.Windows.Forms;
 using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Tool;
+using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Data;
+using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.View.Win2D.Setting;
 
@@ -38,6 +41,11 @@ namespace MyShogi.View.Win2D
             engineConsiderationMainControl.ConsiderationInstance(0).ViewModel.AddPropertyChangedHandler("MultiPV", (h) => {
                 gameServer.ChangeMultiPvCommand((int)h.value);
             });
+
+            engineConsiderationMainControl.ViewModel.AddPropertyChangedHandler("SendToMainKifu",
+                args =>  { SendToMainKifu((MiniShogiBoardData)args.value); });
+            engineConsiderationMainControl.ViewModel.AddPropertyChangedHandler("RepalceMainKifu",
+                args => { RepalceMainKifu((MiniShogiBoardData)args.value); });
 
             config.MiniShogiBoardDockManager.AddPropertyChangedHandler("DockState", UpdateMiniShogiBoardDockState);
             config.MiniShogiBoardDockManager.AddPropertyChangedHandler("DockPosition", UpdateMiniShogiBoardDockState);
@@ -393,5 +401,45 @@ namespace MyShogi.View.Win2D
             }
         }
 
+        /// <summary>
+        /// 検討ウインドウでの右クリックメニュー「メイン棋譜にこの読み筋を分岐棋譜として送る(&S)」
+        /// </summary>
+        /// <param name="board"></param>
+        private void SendToMainKifu(MiniShogiBoardData board)
+        {
+            if (gameScreenControl1.gameServer.KifuDirty)
+            {
+                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当にメイン棋譜に分岐棋譜として取り込みますか？", MessageShowType.WarningOkCancel)
+                    != DialogResult.OK)
+                    return;
+            }
+
+            var sfen = Model.Shogi.Core.Util.RootSfenAndMovesToUsiString(board.rootSfen, board.moves);
+            gameServer.KifuReadCommand(sfen , /* merge = */ true);
+
+            // ファイルから読み込んだわけではないので棋譜は汚れたという扱いにしておく。
+            gameScreenControl1.gameServer.KifuDirty = true;
+        }
+
+        /// <summary>
+        /// 右クリックメニュー「メイン棋譜をこの読み筋で置き換える(&R)」
+        /// </summary>
+        /// <param name="board"></param>
+        private void RepalceMainKifu(MiniShogiBoardData board)
+        {
+            if (gameScreenControl1.gameServer.KifuDirty)
+            {
+                if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当にメイン棋譜を置き換えますか？", MessageShowType.WarningOkCancel)
+                    != DialogResult.OK)
+                    return;
+            }
+
+            var sfen = Model.Shogi.Core.Util.RootSfenAndMovesToUsiString(board.rootSfen, board.moves);
+            gameServer.KifuReadCommand(sfen);
+
+            // ファイルから読み込んだわけではないので棋譜は汚れたという扱いにしておく。
+            gameScreenControl1.gameServer.KifuDirty = true;
+        }
+        
     }
 }

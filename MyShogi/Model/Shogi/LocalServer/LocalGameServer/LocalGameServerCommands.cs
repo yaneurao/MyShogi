@@ -263,9 +263,11 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// <summary>
         /// 棋譜(string型)の読み込みコマンド
         /// ファイルから読み込むには、MainMenu.ReadKifuFile()のようなメソッドを用いること。
+        ///
+        /// merge == trueなら、棋譜を分岐棋譜としてマージする。
         /// </summary>
         /// <param name="kifuText"></param>
-        public void KifuReadCommand(string kifuText)
+        public void KifuReadCommand(string kifuText , bool merge = false)
         {
             AddCommand(
             () =>
@@ -276,7 +278,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // 一時的にこれをtrueにしないと、読み込んだ棋譜に対して、Tree.KifuListが同期しない。
                     // ゆえに、読み込みの瞬間だけtrueにして、そのあとfalseに戻す。
                     kifuManager.EnableKifuList = true;
-                    var error = kifuManager.FromString(kifuText);
+
+                    var error = merge ? kifuManager.MergeFromString(kifuText) : kifuManager.FromString(kifuText);
                     kifuManager.EnableKifuList = false;
 
                     if (error != null)

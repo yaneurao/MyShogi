@@ -286,6 +286,26 @@ namespace MyShogi.Model.Shogi.Kifu
         }
 
         /// <summary>
+        /// contentの棋譜を分岐棋譜としてマージする。
+        /// </summary>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        public string MergeFromString(string content)
+        {
+            var kifuManager = new KifuManager();
+            var error = kifuManager.FromString(content);
+            if (error != null)
+                return error;
+
+            // thisとkifuManagerの棋譜のマージを行う。
+
+            // Tree上の同じnodeを探さないといけなくて、もしかして、これとても難しいのでは…。
+            //Tree.Merge(kifuManager.Tree);
+
+            return null;
+        }
+
+        /// <summary>
         /// 読み込み形式手動指定、とりあえず各形式のルーチンを直接テストするため。
         /// </summary>
         /// <param name="content"></param>
@@ -438,6 +458,8 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// rootSfen(開始局面のsfen)とmoves(手順)を指定して、棋譜形式の文字列を得る。
+        ///
+        /// エラーがあればnullが返る。
         /// </summary>
         /// <param name="rootSfen"></param>
         /// <param name="moves"></param>
@@ -447,11 +469,9 @@ namespace MyShogi.Model.Shogi.Kifu
             // 一度、sfenから生成するのがお手軽か？
             var kifuManager = new KifuManager();
             var sfen = Core.Util.RootSfenAndMovesToUsiString(rootSfen, moves);
-//            var error = 
-            kifuManager.FromString(sfen);
-            // まあ、エラーのハンドリングはええやろ…。
+            var error = kifuManager.FromString(sfen);
 
-            return kifuManager.ToString(type);
+            return error == null ? kifuManager.ToString(type) : null;
         }
 
     }
