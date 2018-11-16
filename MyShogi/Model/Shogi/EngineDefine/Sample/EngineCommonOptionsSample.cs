@@ -13,6 +13,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
     {
         /// <summary>
         /// エンジン検討モード、詰み検討モード用のエンジン共通設定を返すためのもの。
+        /// (通常対局モードならば、このクラスを使わない。)
         /// </summary>
         /// <returns></returns>
         public static EngineCommonOptionsSampleOptions InstanceForConsideration()
@@ -21,6 +22,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
             {
                 EnableConsiderationMode = true, // 検討モードなのでこれがtrueになっているほうが綺麗な読み筋出力になるのではないかと…。
                 DisableOutputFailLHPV = true,   // OutputFailLHPVこれもfalseにしておいたほうが、fail low/highの読み筋が出力されなくて綺麗な読み筋だと思う。
+                GenerateAllLegalMoves = true,   // 不成も生成するオプション。検討モードなら不成も生成して良いと思う。
             };
         }
 
@@ -36,6 +38,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// </summary>
         public bool EnableConsiderationMode;
         public bool DisableOutputFailLHPV;
+        public bool GenerateAllLegalMoves;
 
         // 他、何か追加するかも。
 
@@ -49,7 +52,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
             return
                 UseEvalDir == rhs.UseEvalDir &&
                 EnableConsiderationMode == rhs.EnableConsiderationMode &&
-                DisableOutputFailLHPV == rhs.DisableOutputFailLHPV;
+                DisableOutputFailLHPV == rhs.DisableOutputFailLHPV &&
+                GenerateAllLegalMoves == rhs.GenerateAllLegalMoves;
         }
     }
 
@@ -606,13 +610,17 @@ namespace MyShogi.Model.Shogi.EngineDefine
             if (!options.UseEvalDir)
                 setting.Descriptions.RemoveAll(x => x.Name == "EvalDir");
 
-            // 検討モード、詰検討モードの共通設定では、デフォルトでConsiderationMode == true , OutputFailLHPV = falseに。
+            // 検討モード、詰検討モードの共通設定では、
+            // デフォルトでConsiderationMode == true , OutputFailLHPV = false , GenerateAllLegalMoves = trueに。
             if (options.EnableConsiderationMode)
                 setting.Descriptions.Find(x => x.Name == "ConsiderationMode")
                     .UsiBuildString = "option name ConsiderationMode type check default true"; // これ、値だけ書き換えたいんだけどなぁ…。
             if (options.DisableOutputFailLHPV)
                 setting.Descriptions.Find(x => x.Name == "OutputFailLHPV")
                     .UsiBuildString = "option name OutputFailLHPV type check default false";
+            if (options.GenerateAllLegalMoves)
+                setting.Descriptions.Find(x => x.Name == "GenerateAllLegalMoves")
+                    .UsiBuildString = "option name GenerateAllLegalMoves type check default true";
 
             return setting;
         }

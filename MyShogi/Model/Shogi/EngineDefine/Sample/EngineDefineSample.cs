@@ -26,6 +26,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         ,new EngineOption[] {
                             // スレッドはエンジンの詳細設定に従う
                             new EngineOption("NodesLimit","0"),
+                            new EngineOption("SkillLevel","20"),
                             new EngineOption("DepthLimit","0"),
                             new EngineOption("MultiPV","1"),
 
