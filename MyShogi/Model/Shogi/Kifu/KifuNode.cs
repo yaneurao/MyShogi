@@ -28,7 +28,8 @@ namespace MyShogi.Model.Shogi.Kifu
         public List<KifuMove> moves = new List<KifuMove>();
 
         /// <summary>
-        /// 一手前のnode
+        /// 一手前のnode。これはコンストラクタで渡される。
+        /// 枝を付け替えるときなどにはこれを正しく設定しなおす必要がある。
         /// </summary>
         public KifuNode prevNode;
 

@@ -279,17 +279,22 @@ namespace MyShogi.Model.Shogi.LocalServer
                     // ゆえに、読み込みの瞬間だけtrueにして、そのあとfalseに戻す。
                     kifuManager.EnableKifuList = true;
 
+                    var oldSelectedIndex = kifuManager.Tree.pliesFromRoot;
+
                     var error = merge ? kifuManager.MergeFromString(kifuText) : kifuManager.FromString(kifuText);
+                    // マージした場合、その棋譜の末尾に行って欲しい気もするが…。
+
                     kifuManager.EnableKifuList = false;
 
                     if (error != null)
                     {
-                        TheApp.app.MessageShow("棋譜の読み込みに失敗しました。\n" + error,  MessageShowType.Error);
+                        TheApp.app.MessageShow((merge ? "棋譜のマージに失敗しました。\n" : "棋譜の読み込みに失敗しました。\n") + error,  MessageShowType.Error);
 
                         kifuManager.Init(); // 不正な局面のままになるとまずいので初期化。
 
                     } else
                     {
+
                         // 読み込みが完了すれば自動的に末尾の局面に行っているはずだが、
                         // 棋譜ウィンドウを更新した結果、分岐局面などに戻ってしまうといけない。
 
@@ -299,7 +304,11 @@ namespace MyShogi.Model.Shogi.LocalServer
                         UpdateTimeString();
 
                         // 末尾の局面に移動するコマンドを叩いておく。
-                        UpdateKifuSelectedIndex(int.MaxValue);
+                        // マージ時は、マージ起点に移動してやる。たぶん現在の選択していた行がそれ。
+                        if (!merge)
+                            UpdateKifuSelectedIndex(int.MaxValue);
+                        else
+                            UpdateKifuSelectedIndex(oldSelectedIndex+1);
 
                         // -- 棋譜上の名前を表示名に反映させる。
 

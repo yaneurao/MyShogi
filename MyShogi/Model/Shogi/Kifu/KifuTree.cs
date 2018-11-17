@@ -419,6 +419,9 @@ namespace MyShogi.Model.Shogi.Kifu
         /// </summary>
         public void UndoMove()
         {
+            // rootNode以上に遡ることはできない。
+            Debug.Assert(currentNode != rootNode);
+
             // speical moveでこの局面に来たのであればPosition.UndoMove()は呼び出さない。
             if (!IsSpecialNode())
             {
@@ -430,6 +433,9 @@ namespace MyShogi.Model.Shogi.Kifu
             }
 
             --pliesFromRoot;
+
+            // ここに引っかかるならcurrentNode.prevNodeの設定忘れ。
+            Debug.Assert(currentNode.prevNode != null);
 
             currentNode = currentNode.prevNode;
 
@@ -458,7 +464,7 @@ namespace MyShogi.Model.Shogi.Kifu
             {
                 // -- 見つからなかったので次のnodeを追加してやる
 
-                KifuNode nextNode = new KifuNode(currentNode);
+                var nextNode = new KifuNode(currentNode);
                 currentNode.moves.Add(new KifuMove(move, nextNode, kifuMoveTimes));
             }
         }
@@ -1097,6 +1103,140 @@ namespace MyShogi.Model.Shogi.Kifu
             RaisePropertyChanged("Position", position.Clone());
         }
 
+        #region Merge
+
+        /// <summary>
+        /// 別のKifuTreeをマージする。
+        ///
+        /// マージされた棋譜の本譜の末尾の局面を指していて欲しい気もするが…。
+        /// せめて、マージされた開始局面を指すようにするか。
+        ///
+        /// エラーがあればその内容を文字列として返す。
+        /// </summary>
+        /// <param name="tree"></param>
+        public string Merge(KifuTree tree)
+        {
+            // このsfenの局面にマージする。
+            var sfen = tree.rootSfen;
+
+            // このnodeを探す
+            var node = SearchNode(sfen);
+            if (node == null)
+                return "メイン棋譜にマージするための開始局面がありませんでした。";
+
+            // このnodeにマージしていく。
+            tree.RewindToRoot();
+
+            MergeSub(tree);
+
+            return null;
+        }
+
+        /// <summary>
+        /// sfenを指定して、それに合致するnodeを返す。
+        /// また、currentNodeがそのnodeになっていることを保証する。
+        /// 
+        /// なければnullが返る。
+        /// </summary>
+        /// <param name="sfen"></param>
+        /// <returns></returns>
+        public KifuNode SearchNode(string sfen)
+        {
+            // sfenからgamePlyを得る。書いていなければ0として扱う考え。
+            int gamePly_ = 0;
+            {
+                // 末尾に手数が書いてあるはず…。
+                var split = sfen.Split(new char[] { ' ' });
+                int.TryParse(split[split.Length - 1], out gamePly_);
+            }
+
+            RewindToRoot();
+
+            // rootからすべての枝をたどってsfenが合致するnodeを探す。
+            return SearchNodeSub(sfen , gamePly_);
+        }
+
+        /// <summary>
+        /// SearchNodeから呼び出される下請け関数
+        ///
+        /// RewindToRoot()でrootの局面になっていることを前提とする。
+        /// sfenが合致する局面を見つけたら、そこのKifuNodeを返す。
+        /// (また、currentNodeがその局面になっていることを保証する)
+        /// 
+        /// 見つからなければnullが返る。(このときcurrentNode == rootNode)
+        /// </summary>
+        /// <returns></returns>
+        private KifuNode SearchNodeSub(string sfen , int gamePly_)
+        {
+            // 手数が合致して、かつsfenが同一であれば。
+            // 手数は0が指定されていればsfen文字列の解析失敗なのですべてと比較する必要がある。
+            if ((gamePly == 0 || position.gamePly == gamePly_)
+                && position.ToSfen() == sfen)
+                return currentNode;
+
+            // それぞれの指し手で進めて再帰的に自分自身を呼び出す。
+            var moves = currentNode.moves;
+            foreach (var move in moves)
+            {
+                DoMove(move);
+
+                var node = SearchNodeSub(sfen,gamePly_);
+                // 見つけたのでUndoMove()せずにこのまま帰る。
+                if (node != null)
+                    return node;
+
+                UndoMove();
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// マージするための下請け。
+        ///
+        /// currentNodeのsfen == tree.currentNodeのsfen
+        /// であることは保証されている。
+        ///
+        /// ここにマージしていく。
+        /// </summary>
+        /// <param name="tree"></param>
+        private void MergeSub(KifuTree tree)
+        {
+            //Debug.Assert(position.ToSfen() == tree.position.ToSfen());
+            // →　このAssert書きたいが、重くなるので省略。
+
+            // それぞれの指し手で進めて再帰的に自分自身を呼び出す。
+            var moves = tree.currentNode.moves;
+            foreach (var move in moves)
+            {
+                // すでに同じ指し手の分岐を持っているか？
+                var move2 = currentNode.moves.Find(kifuMove => kifuMove.nextMove == move.nextMove);
+                if (move2 != null)
+                {
+                    // 見つかったのでこの枝を辿って再帰的に子nodeを追加。
+
+                    DoMove(move2);
+                    tree.DoMove(move);
+
+                    MergeSub(tree);
+
+                    tree.UndoMove();
+                    UndoMove();
+                }
+                else
+                {
+                    // ただしprevNodeは異なるので、この指し手で進めたときのprevNodeを書き換えてやる必要はある。
+                    move.nextNode.prevNode = currentNode;
+
+                    // 見つからなかったのでこの枝をまるごと追加。
+                    currentNode.moves.Add(move);
+                }
+            }
+
+        }
+
+        #endregion // Merge
+
         // -- 以下 private members
 
         /// <summary>
@@ -1226,7 +1366,7 @@ namespace MyShogi.Model.Shogi.Kifu
 
             }
 
-                if (EnableUsiMoveList)
+            if (EnableUsiMoveList)
             {
                 // special moveは、USIとしては規定されていない指し手になるのでここでは出力しない。
                 // ("position"コマンドで送信してしまいかねないので)

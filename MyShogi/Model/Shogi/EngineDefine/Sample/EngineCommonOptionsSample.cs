@@ -22,7 +22,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
             {
                 EnableConsiderationMode = true, // 検討モードなのでこれがtrueになっているほうが綺麗な読み筋出力になるのではないかと…。
                 DisableOutputFailLHPV = true,   // OutputFailLHPVこれもfalseにしておいたほうが、fail low/highの読み筋が出力されなくて綺麗な読み筋だと思う。
-                GenerateAllLegalMoves = true,   // 不成も生成するオプション。検討モードなら不成も生成して良いと思う。
+                GenerateAllLegalMoves = false,  // 不成も生成するオプション。検討モードなら不成も生成して良いと思う。
+                // → 77角不成とかが1位に出てくるのうざいなｗ　やっぱまずいわ、これ。
             };
         }
 
@@ -611,16 +612,20 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 setting.Descriptions.RemoveAll(x => x.Name == "EvalDir");
 
             // 検討モード、詰検討モードの共通設定では、
-            // デフォルトでConsiderationMode == true , OutputFailLHPV = false , GenerateAllLegalMoves = trueに。
+            // デフォルトでConsiderationMode == true , OutputFailLHPV = false に。
             if (options.EnableConsiderationMode)
                 setting.Descriptions.Find(x => x.Name == "ConsiderationMode")
                     .UsiBuildString = "option name ConsiderationMode type check default true"; // これ、値だけ書き換えたいんだけどなぁ…。
             if (options.DisableOutputFailLHPV)
                 setting.Descriptions.Find(x => x.Name == "OutputFailLHPV")
                     .UsiBuildString = "option name OutputFailLHPV type check default false";
+#if false
             if (options.GenerateAllLegalMoves)
                 setting.Descriptions.Find(x => x.Name == "GenerateAllLegalMoves")
                     .UsiBuildString = "option name GenerateAllLegalMoves type check default true";
+
+            // →　検討モードで77角不成とか1位に出てくるのうざかったのでデフォルトでオンはやりすぎだ。
+#endif
 
             return setting;
         }

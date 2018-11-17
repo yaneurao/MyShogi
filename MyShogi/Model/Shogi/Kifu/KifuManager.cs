@@ -287,20 +287,80 @@ namespace MyShogi.Model.Shogi.Kifu
 
         /// <summary>
         /// contentの棋譜を分岐棋譜としてマージする。
+        /// マージした棋譜の本譜の末尾のnodeを表示している状態になる。
+        /// この動作が気に要らなければ、呼び出し側で分岐の起点に移動するなどすべき。
+        /// 
+        /// LocalGameServerから呼び出される用。
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
         public string MergeFromString(string content)
         {
-            var kifuManager = new KifuManager();
-            var error = kifuManager.FromString(content);
-            if (error != null)
-                return error;
+            // イベントの一時抑制
+            var e = Tree.PropertyChangedEventEnable;
+            Tree.PropertyChangedEventEnable = false;
 
-            // thisとkifuManagerの棋譜のマージを行う。
+            // マージする棋譜の本譜の末尾のsfen
+            string leafSfen = null;
 
-            // Tree上の同じnodeを探さないといけなくて、もしかして、これとても難しいのでは…。
-            //Tree.Merge(kifuManager.Tree);
+            try
+            {
+                var kifuManager = new KifuManager();
+                var error = kifuManager.FromString(content);
+                if (error != null)
+                    return error;
+
+                // 末尾の局面に移動しているはずなので、それをsfen化しておく。(あとでその局面に移動したい考え)
+                leafSfen = kifuManager.Tree.position.ToSfen();
+                int pliesFromRoot = kifuManager.Tree.pliesFromRoot;
+
+                Debug.Assert(kifuManager.Tree.currentNode.prevNode != null);
+
+                // thisとkifuManagerの棋譜のマージを行う。
+                error = Tree.Merge(kifuManager.Tree);
+                if (error != null)
+                    return error;
+
+                // -- マージは完了した。
+
+                // このタイミングで棋譜Listを同期させる必要がある。
+                // (検討モードだと、現在の選択行の後方に棋譜行が存在している状態で呼び出されているため)
+                Tree.RewindToRoot();
+                Tree.ClearKifuForward();
+
+                // マージする棋譜の末尾の局面に移動する。
+                error = FastForwardSfen(leafSfen);
+                if (error != null)
+                    return error;
+
+            }
+            finally
+            {
+                // イベントの一時抑制を解除して、更新通知を送る。
+                Tree.PropertyChangedEventEnable = true;
+
+                Tree.RaisePropertyChanged("KifuList", new List<KifuListRow>(Tree.KifuList));
+                Tree.RaisePropertyChanged("Position", Tree.position.Clone());
+            }
+
+#if false
+            var kif = ToString(KifuFileType.KIF);
+            Console.WriteLine(kif);
+#endif
+
+            return null;
+        }
+
+        /// <summary>
+        /// sfenで指定した局面に移動する。
+        /// エラーがあった場合はそれを文字列として返す。
+        /// </summary>
+        /// <param name="sfen"></param>
+        public string FastForwardSfen(string sfen)
+        {
+            var node = Tree.SearchNode(sfen);
+            if (node == null)
+                return "棋譜のマージに失敗しました。SearchNode()の失敗。";
 
             return null;
         }
@@ -455,6 +515,8 @@ namespace MyShogi.Model.Shogi.Kifu
             public int select;
             public Node(int ply_, int select_) { ply = ply_; select = select_; }
         };
+
+        // -- static method
 
         /// <summary>
         /// rootSfen(開始局面のsfen)とmoves(手順)を指定して、棋譜形式の文字列を得る。
