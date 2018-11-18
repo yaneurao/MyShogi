@@ -174,15 +174,17 @@ namespace MyShogi.Model.Shogi.Usi
 
             // auto hash分を残り物理メモリから割り当てる。
             if (numOfAutoHash > 0)
-                foreach(var c in All.IntColors())
+            {
+                // 余る予定のメモリ量をエンジンの数で割って、それをAutoHashによって割り当てる。
+                // こうすることによって、片側のエンジンがAutoHashで(空き物理メモリの)70%、もう片側がAutoHashで30%を
+                // 要求するようなケースにおいてもうまく35%,15%のように按分される。
+                var rest = (physicalMemory - min_total) / numOfAutoHash;
+
+                foreach (var c in All.IntColors())
                 {
                     if (autoHash[c])
                     {
-                        // 余る予定のメモリ量をエンジンの数で割って、それをAutoHashによって割り当てる。
-                        // こうすることによって、片側のエンジンがAutoHashで(空き物理メモリの)70%、もう片側がAutoHashで30%を
-                        // 要求するようなケースにおいてもうまく35%,15%のように按分される。
-                        var rest = (physicalMemory - min_total) / numOfAutoHash;
-                        
+
                         // エンジンの要求する最低メモリを割ることは出来ない。
                         var hash = Math.Max(rest * autoHashPercentage[c] / 100, engine_min_hash[c]);
 
@@ -190,6 +192,7 @@ namespace MyShogi.Model.Shogi.Usi
                         min_total += hash;
                     }
                 }
+            }
 
             // エンジン要求する最小要求hash量を満たしているか。
             foreach (var c in All.IntColors())
