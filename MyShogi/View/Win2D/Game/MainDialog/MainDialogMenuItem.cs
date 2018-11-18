@@ -329,30 +329,6 @@ namespace MyShogi.View.Win2D
 
                     item_file.DropDownItems.Add(new ToolStripSeparator());
 
-                    // -- 「棋譜編集」
-
-                    var kifu_edit = new ToolStripMenuItem();
-                    kifu_edit.Text = "棋譜編集(&K)"; // Kifu edit
-                    kifu_edit.Enabled = !inTheGame;
-                    item_file.DropDownItems.Add(kifu_edit);
-
-                    // -- 「棋譜編集」配下のメニュー
-                    {
-                        var item = new ToolStripMenuItem();
-                        item.Text = "本譜以外の分岐をクリアする(&C)"; // Clear
-                        item.Click += (sender, e) =>
-                        {
-                            if (TheApp.app.MessageShow("この操作により現在の棋譜上の本譜以外の分岐は削除されます。",
-                                MessageShowType.WarningOkCancel) == DialogResult.OK)
-                            {
-                                gameServer.ClearSubKifuTreeCommand();
-                            }
-                        };
-                        kifu_edit.DropDownItems.Add(item);
-                    }
-
-                    item_file.DropDownItems.Add(new ToolStripSeparator());
-
                     {
                         var item = new ToolStripMenuItem();
                         item.Text = "終了(&X)";
@@ -806,6 +782,28 @@ namespace MyShogi.View.Win2D
                         item.Click += (sender, e) => { gameScreenControl1.SetSfenCommand(BoardType.Mate3.ToSfen()); };
                         item_boardedit.DropDownItems.Add(item);
                     }
+                }
+
+                // -- 「棋譜編集」
+
+                var kifu_edit = new ToolStripMenuItem();
+                kifu_edit.Text = "棋譜編集(&K)"; // Kifu edit
+                kifu_edit.Enabled = !inTheGame;
+                menu.Items.Add(kifu_edit);
+
+                // -- 「棋譜編集」配下のメニュー
+                {
+                    var item = new ToolStripMenuItem();
+                    item.Text = "本譜以外の分岐をクリアする(&C)"; // Clear
+                    item.Click += (sender, e) =>
+                    {
+                        if (TheApp.app.MessageShow("この操作により現在の棋譜上の本譜以外の分岐は削除されます。",
+                            MessageShowType.WarningOkCancel) == DialogResult.OK)
+                        {
+                            gameServer.ClearSubKifuTreeCommand();
+                        }
+                    };
+                    kifu_edit.DropDownItems.Add(item);
                 }
 
                 // -- 「ウインドウ」

@@ -407,18 +407,18 @@ namespace MyShogi.View.Win2D
         /// <param name="board"></param>
         private void SendToMainKifu(MiniShogiBoardData board)
         {
+#if false
             if (gameScreenControl1.gameServer.KifuDirty)
             {
                 if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当にメイン棋譜に分岐棋譜として取り込みますか？", MessageShowType.WarningOkCancel)
                     != DialogResult.OK)
                     return;
             }
+#endif
+            // 分岐棋譜として加わるだけだから破壊的変更とも言えないのでこの警告はオフにする。
 
             var sfen = Model.Shogi.Core.Util.RootSfenAndMovesToUsiString(board.rootSfen, board.moves);
-            gameServer.KifuReadCommand(sfen , /* merge = */ true);
-
-            // ファイルから読み込んだわけではないので棋譜は汚れたという扱いにしておく。
-            gameScreenControl1.gameServer.KifuDirty = true;
+            gameServer.KifuReadCommand(sfen , /* merge = */ true , true);
         }
 
         /// <summary>
@@ -427,7 +427,8 @@ namespace MyShogi.View.Win2D
         /// <param name="board"></param>
         private void RepalceMainKifu(MiniShogiBoardData board)
         {
-            if (gameScreenControl1.gameServer.KifuDirty)
+            // 棋譜が開始局面だけのときは、破壊的変更とは言えないのでその場合は警告を出さないことにする。
+            if (gameScreenControl1.gameServer.KifuDirty && gameServer.KifuList.Count > 1)
             {
                 if (TheApp.app.MessageShow("未保存の棋譜が残っていますが、本当にメイン棋譜を置き換えますか？", MessageShowType.WarningOkCancel)
                     != DialogResult.OK)
@@ -435,10 +436,7 @@ namespace MyShogi.View.Win2D
             }
 
             var sfen = Model.Shogi.Core.Util.RootSfenAndMovesToUsiString(board.rootSfen, board.moves);
-            gameServer.KifuReadCommand(sfen);
-
-            // ファイルから読み込んだわけではないので棋譜は汚れたという扱いにしておく。
-            gameScreenControl1.gameServer.KifuDirty = true;
+            gameServer.KifuReadCommand(sfen , false , true);
         }
         
     }

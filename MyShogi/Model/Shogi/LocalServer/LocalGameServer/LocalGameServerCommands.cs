@@ -265,9 +265,10 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// ファイルから読み込むには、MainMenu.ReadKifuFile()のようなメソッドを用いること。
         ///
         /// merge == trueなら、棋譜を分岐棋譜としてマージする。
+        /// dirtyは、このあと、KifuDirty(棋譜が汚れているかのフラグ)に設定される値。
         /// </summary>
         /// <param name="kifuText"></param>
-        public void KifuReadCommand(string kifuText , bool merge = false)
+        public void KifuReadCommand(string kifuText , bool merge = false , bool dirty = false)
         {
             AddCommand(
             () =>
@@ -320,7 +321,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     }
 
                     // 棋譜が綺麗になった扱いにする。(この棋譜はファイルなどに丸ごと保存されているはずであるから)
-                    KifuDirty = false;
+                    // ただし、mergeのときは汚れたという扱いにする。(ファイルに残っていないので)
+                    KifuDirty = dirty;
 
                     // 駒を持ち上げていたりしたらそれをリセットする必要があるので。
                     RaisePropertyChanged("TurnChanged");
