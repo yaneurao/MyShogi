@@ -625,8 +625,6 @@ namespace MyShogi.Model.Shogi.Usi
                 // (いまは、このbestmoveを取り出した時までの時間になっている)
                 if (ThinkingBridge.BestMoveReceived(move,ponder))
                     ThinkReport = UsiEngineReportMessageType.UsiThinkEnd;
-
-                Console.WriteLine("bestmove");
             }
             catch (UsiException ex)
             {
