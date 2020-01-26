@@ -511,9 +511,19 @@ namespace MyShogi.View.Win2D
 
         private void EngineConsiderationControl_Resize(object sender, System.EventArgs e)
         {
-            int h = textBox1.Height + 3;
-            listView1.Location = new Point(0, h);
-            listView1.Size = new Size(ClientSize.Width, ClientSize.Height - h);
+            // --- listView1(読み筋表示用のリストビュー)の位置決めを行う。
+
+            // テキストボックスの下部からMarginを考慮した分だけ下にlistView1を持ってくる。
+            // button1(「着順」ボタン)が表示されているなら、その下つらに合わせる。
+
+            int h = textBox1.Location.Y + textBox1.Height + textBox1.Margin.Bottom;
+            if (button1.Visible)
+                h = Math.Max(h, button1.Location.Y + button1.Height + button1.Margin.Bottom);
+
+            // listView1を配置する。各種マージンはきちんと考慮してやる。(べき)
+
+            listView1.Location = new Point(listView1.Margin.Left, h);
+            listView1.Size = new Size(ClientSize.Width - (listView1.Margin.Left + listView1.Margin.Right), ClientSize.Height - h - Margin.Bottom);
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -773,18 +783,26 @@ namespace MyShogi.View.Win2D
             comboBox1.Visible = enable;
 
             // x座標は、一番左端にあるやつを基準とする。
+            // また、y座標、上下に対してセンタリングしたいので、一番高さのあるやつを取得しておく。
             int x = int.MaxValue;
-            foreach(var e in list)
+            int h = int.MinValue;
+            foreach (var e in list)
+            {
                 x = Math.Min(x, e.Location.X);
+                h = Math.Max(h, e.Height);
+            }
 
             // y座標は共通なのでtextBox1のあった位置で良い。
             int y = textBox1.Location.Y;
 
             foreach(var e in list)
             {
-                // コントロールの種類により座標の補正
-                var offset = (e is Button || e is ComboBox) ? -2 : 0;
-                e.Location = new Point(x, y + offset);
+                // コントロールを上下に対してセンタリングして表示させてやる。
+                // 本当はMarginも考慮すべきだが、すべて(2,2,2,2)になっているはずで…。
+
+                var h2 = (h - e.Height) / 2;
+
+                e.Location = new Point(x, y + h2);
                 x += e.Size.Width + 4;
             }
 

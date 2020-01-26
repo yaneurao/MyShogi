@@ -142,7 +142,7 @@
             this.button1.Location = new System.Drawing.Point(103, 26);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(55, 23);
+            this.button1.Size = new System.Drawing.Size(55, 20);
             this.button1.TabIndex = 4;
             this.button1.Text = "着順";
             this.toolTip1.SetToolTip(this.button1, "「着順」だとエンジンから送られてきた順に読みを表示します。\r\n「R順」だと良い指し手から順番に表示されます。");
@@ -157,7 +157,7 @@
             this.PastePvToClipboard,
             this.PasteKifToClipboard});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(361, 114);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(361, 92);
             // 
             // SendToMainKifu
             // 
@@ -189,7 +189,6 @@
             // 
             // listView1
             // 
-            this.listView1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(0, 92);
             this.listView1.Margin = new System.Windows.Forms.Padding(2);
@@ -208,6 +207,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.AutoSize = true;
             this.Controls.Add(this.button1);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.textBox5);
@@ -218,7 +218,7 @@
             this.Controls.Add(this.listView1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "EngineConsiderationControl";
-            this.Size = new System.Drawing.Size(762, 208);
+            this.Size = new System.Drawing.Size(764, 210);
             this.Resize += new System.EventHandler(this.EngineConsiderationControl_Resize);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
