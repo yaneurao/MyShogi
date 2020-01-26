@@ -118,7 +118,8 @@
             // 
             // EvalControlTestForm
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(764, 497);
             this.Controls.Add(this.evalGraphControl);
             this.Controls.Add(this.menuStrip1);

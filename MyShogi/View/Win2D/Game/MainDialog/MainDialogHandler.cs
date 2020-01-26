@@ -213,7 +213,10 @@ namespace MyShogi.View.Win2D
             if (size.IsEmpty)
             {
                 // ディスプレイに収まるサイズのスクリーンにする必要がある。
-                // プライマリスクリーンを基準にして良いのかどうかはわからん…。
+
+                // プライマリスクリーンを基準にして良いのかどうかはわからんが、
+                // 初回起動なのでとりあえずプライマリスクリーンに表示させるしかないので、そこを基準に考える。
+
                 int w = Screen.PrimaryScreen.Bounds.Width;
                 int h = Screen.PrimaryScreen.Bounds.Height - menu_height;
 
@@ -259,7 +262,7 @@ namespace MyShogi.View.Win2D
                 // これが現在のいずれかの画面上であることを保証しなくてはならない。
                 foreach (var s in Screen.AllScreens)
                     if (s.Bounds.Left <= desktopLocation.Value.X && desktopLocation.Value.X < s.Bounds.Right &&
-                        s.Bounds.Top <= desktopLocation.Value.Y && desktopLocation.Value.Y < s.Bounds.Bottom)
+                        s.Bounds.Top  <= desktopLocation.Value.Y && desktopLocation.Value.Y < s.Bounds.Bottom)
                         goto Ok;
                 reset = true;
             }
