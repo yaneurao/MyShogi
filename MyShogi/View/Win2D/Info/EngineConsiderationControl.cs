@@ -516,9 +516,8 @@ namespace MyShogi.View.Win2D
             // テキストボックスの下部からMarginを考慮した分だけ下にlistView1を持ってくる。
             // button1(「着順」ボタン)が表示されているなら、その下つらに合わせる。
 
-            int h = textBox1.Location.Y + textBox1.Height + textBox1.Margin.Bottom;
-            if (button1.Visible)
-                h = Math.Max(h, button1.Location.Y + button1.Height + button1.Margin.Bottom);
+            // 各種ボタンの再配置
+            var h = UpdateTextBoxLayout();
 
             // listView1を配置する。各種マージンはきちんと考慮してやる。(べき)
 
@@ -774,13 +773,34 @@ namespace MyShogi.View.Win2D
         /// <param name="enable"></param>
         private void UpdateMultiPVComboBox(bool enable)
         {
+            comboBox1.Visible = enable;
+
+            // テキストボックスなどの再配置
+            UpdateTextBoxLayout();
+
+            // disableからenableに変化したなら、デフォルト値をMultiPVの設定値にしておいてやる。
+            if (enable)
+            {
+                comboBox1.SelectedIndex = ViewModel.MultiPV - 1;
+            }
+        }
+
+        /// <summary>
+        /// [UI Thread] : 各種テキストボックス、ボタンを再配置する。
+        ///
+        /// 配置されたテキストボックス、ボタンの一番下つら(Margin.Bottomを含めて)のY座標を返す。
+        /// 
+        /// </summary>
+        private int UpdateTextBoxLayout()
+        {
+            var comboBoxIsEnable = comboBox1.Visible;
+
             // この順番で左上から右方向に並べる
             var list =
-                enable ?
+                 comboBoxIsEnable ?
                  new Control[] { button1 , comboBox1, textBox1, textBox2, textBox3, textBox4, textBox5 } :
                  new Control[] { button1 , textBox1, textBox2, textBox3, textBox4, textBox5 };
 
-            comboBox1.Visible = enable;
 
             // x座標は、一番左端にあるやつを基準とする。
             // また、y座標、上下に対してセンタリングしたいので、一番高さのあるやつを取得しておく。
@@ -789,11 +809,12 @@ namespace MyShogi.View.Win2D
             foreach (var e in list)
             {
                 x = Math.Min(x, e.Location.X);
-                h = Math.Max(h, e.Height);
+                h = Math.Max(h, e.Height + e.Margin.Top + e.Margin.Bottom);
             }
 
             // y座標は共通なのでtextBox1のあった位置で良い。
-            int y = textBox1.Location.Y;
+            // int y = textBox1.Location.Y; ←これ変更するのでこのコードだとまずい
+            int y = textBox1.Margin.Top;
 
             foreach(var e in list)
             {
@@ -806,10 +827,7 @@ namespace MyShogi.View.Win2D
                 x += e.Size.Width + 4;
             }
 
-            if (enable)
-            {
-                comboBox1.SelectedIndex = ViewModel.MultiPV -1;
-            }
+            return h;
         }
 
         /// <summary>
