@@ -175,6 +175,7 @@ namespace MyShogi.App
             Config.KifuWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
             Config.EngineConsiderationWindowDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
             Config.MiniShogiBoardDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
+            Config.EvalGraphDockManager.AddPropertyChangedHandler("DockState", mainDialog.UpdateMenuItems, mainDialog);
 
             // -- ロギング用のハンドラをセット
 

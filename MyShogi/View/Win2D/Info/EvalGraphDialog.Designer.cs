@@ -1,4 +1,4 @@
-﻿namespace MyShogi.View.Win2D.Info
+namespace MyShogi.View.Win2D.Info
 {
     partial class EvalGraphDialog
     {
@@ -33,7 +33,7 @@
             this.NonlinearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.WinrateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ReverseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.evalGraphControl = new MyShogi.View.Win2D.EvalGraphControl();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -84,23 +84,23 @@
             this.ReverseToolStripMenuItem.Text = "反転";
             this.ReverseToolStripMenuItem.Click += new System.EventHandler(this.ReverseToolStripMenuItem_Click);
             // 
-            // evalGraphControl
+            // panel1
             // 
-            this.evalGraphControl.AutoScroll = true;
-            this.evalGraphControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.evalGraphControl.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.evalGraphControl.Location = new System.Drawing.Point(0, 30);
-            this.evalGraphControl.Margin = new System.Windows.Forms.Padding(0);
-            this.evalGraphControl.Name = "evalGraphControl";
-            this.evalGraphControl.Size = new System.Drawing.Size(604, 347);
-            this.evalGraphControl.TabIndex = 0;
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Location = new System.Drawing.Point(3, 28);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(600, 343);
+            this.panel1.TabIndex = 2;
             // 
             // EvalGraphDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(604, 377);
-            this.Controls.Add(this.evalGraphControl);
+            this.ControlBox = false;
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MainMenuStrip = this.menuStrip;
@@ -108,6 +108,8 @@
             this.Name = "EvalGraphDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "形勢グラフ";
+            this.Move += new System.EventHandler(this.EvalGraphDialog_Move);
+            this.Resize += new System.EventHandler(this.EvalGraphDialog_Resize);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
@@ -116,12 +118,11 @@
         }
 
         #endregion
-
-        private EvalGraphControl evalGraphControl;
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem LinearToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem NonlinearToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem WinrateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ReverseToolStripMenuItem;
+        private System.Windows.Forms.Panel panel1;
     }
 }

@@ -945,6 +945,11 @@ namespace MyShogi.App
         [DataMember]
         public DockManager MiniShogiBoardDockManager = new DockManager();
 
+        /// <summary>
+        /// 評価値グラフを管理する構造体。
+        /// </summary>
+        [DataMember]
+        public DockManager EvalGraphDockManager = new DockManager();
         #endregion
 
         #region Consideration Setting

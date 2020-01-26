@@ -1,4 +1,4 @@
-﻿namespace MyShogi.View.Win2D
+namespace MyShogi.View.Win2D
 {
     partial class EngineConsiderationMainControl
     {
@@ -32,7 +32,11 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.engineConsiderationControl1 = new MyShogi.View.Win2D.EngineConsiderationControl();
             this.engineConsiderationControl2 = new MyShogi.View.Win2D.EngineConsiderationControl();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.miniShogiBoard1 = new MyShogi.View.Win2D.MiniShogiBoard();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.evalGraphControl1 = new MyShogi.View.Win2D.EvalGraphControl();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -41,6 +45,9 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer2
@@ -56,7 +63,7 @@
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.miniShogiBoard1);
+            this.splitContainer2.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer2.Size = new System.Drawing.Size(763, 235);
             this.splitContainer2.SplitterDistance = 571;
             this.splitContainer2.SplitterWidth = 2;
@@ -110,15 +117,57 @@
             this.engineConsiderationControl2.TabIndex = 0;
             this.engineConsiderationControl2.TabStop = false;
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Font = new System.Drawing.Font("MS UI Gothic", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.tabControl1.Location = new System.Drawing.Point(2, 6);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(187, 226);
+            this.tabControl1.TabIndex = 1;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.miniShogiBoard1);
+            this.tabPage1.Location = new System.Drawing.Point(4, 21);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Size = new System.Drawing.Size(179, 201);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "ミニ盤面";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
             // miniShogiBoard1
             // 
             this.miniShogiBoard1.BoardData = null;
-            this.miniShogiBoard1.Location = new System.Drawing.Point(2, 10);
+            this.miniShogiBoard1.Location = new System.Drawing.Point(1, -3);
             this.miniShogiBoard1.Margin = new System.Windows.Forms.Padding(1);
             this.miniShogiBoard1.Name = "miniShogiBoard1";
             this.miniShogiBoard1.Size = new System.Drawing.Size(185, 202);
             this.miniShogiBoard1.TabIndex = 1;
             this.miniShogiBoard1.TabStop = false;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.evalGraphControl1);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Size = new System.Drawing.Size(179, 200);
+            this.tabPage2.TabIndex = 0;
+            this.tabPage2.Text = "形勢グラフ";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // evalGraphControl1
+            // 
+            this.evalGraphControl1.AutoScroll = true;
+            this.evalGraphControl1.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.evalGraphControl1.Location = new System.Drawing.Point(0, 0);
+            this.evalGraphControl1.Margin = new System.Windows.Forms.Padding(0);
+            this.evalGraphControl1.Name = "evalGraphControl1";
+            this.evalGraphControl1.Size = new System.Drawing.Size(179, 200);
+            this.evalGraphControl1.TabIndex = 0;
             // 
             // EngineConsiderationMainControl
             // 
@@ -135,6 +184,9 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -145,5 +197,9 @@
         private MyShogi.View.Win2D.EngineConsiderationControl engineConsiderationControl1;
         private MyShogi.View.Win2D.EngineConsiderationControl engineConsiderationControl2;
         private MyShogi.View.Win2D.MiniShogiBoard miniShogiBoard1;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private EvalGraphControl evalGraphControl1;
     }
 }

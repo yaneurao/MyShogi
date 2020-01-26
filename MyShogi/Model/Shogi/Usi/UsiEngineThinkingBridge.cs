@@ -82,7 +82,7 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         /// <param name="position"></param>
         /// <param name="goCommand"></param>
-        public void Think(string position,string goCommand)
+        public void Think(Kifu.KifuNode node, string position, string goCommand)
         {
             // 思考中であれば、いまのを停止させて、queueに積む
             if (Thinking)
@@ -90,6 +90,7 @@ namespace MyShogi.Model.Shogi.Usi
                 Stop();
                 nextPosition = position;
                 nextGoCommand = goCommand;
+                nextNode = node;
             } else
             {
                 if (nextMultiPv != 0)
@@ -105,6 +106,7 @@ namespace MyShogi.Model.Shogi.Usi
                 StopSent = false;
                 bestMove = Move.NONE;
                 ponderMove = Move.NONE;
+                CurrentNode = node;
 
                 // Stopwatchも回しておく。
                 think_timer.Reset();
@@ -144,13 +146,15 @@ namespace MyShogi.Model.Shogi.Usi
         public bool BestMoveReceived(Move bestMove_,Move ponderMove_)
         {
             Thinking = false;
+            CurrentNode = null;
 
             // queueに積まれているのでそのThinkコマンドを叩いてやる。
             if (nextPosition != null)
             {
-                Think(nextPosition, nextGoCommand);
+                Think(nextNode, nextPosition, nextGoCommand);
                 nextPosition = null;
                 nextGoCommand = null;
+                nextNode = null;
                 return false;
             } else
             {
@@ -173,9 +177,11 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         private string nextPosition = null;
         private string nextGoCommand = null;
+        private Kifu.KifuNode nextNode = null;
 
         private Move bestMove;
         private Move ponderMove;
+        public Kifu.KifuNode CurrentNode { get; private set; }
 
         private Stopwatch think_timer = new Stopwatch();
     }

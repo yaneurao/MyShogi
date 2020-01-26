@@ -641,20 +641,22 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// </summary>
         public void ThinkReportChangedCommand(Usi.UsiThinkReportMessage message)
         {
-            // ToDo: タイミングによっては思考した局面と異なる局面に評価値を記録してしまうかも。どう同期させる？
-            var currentNode = kifuManager.Tree.currentNode;
-            if (currentNode.thinkmsgs == null)
-                currentNode.thinkmsgs = new System.Collections.Generic.List<Usi.UsiThinkReportMessage>();
-            currentNode.thinkmsgs.Add(message);
-
             if (message.type != Usi.UsiEngineReportMessageType.UsiThinkReport) return;
-            // ToDo: 場合によっては GameMode が InTheGame から外れてから対局中の思考を受信する場合があるので、numberの振り分け方を再考する
-            var number = message.number + (GameMode != GameModeEnum.InTheGame ? 2 : 0);
 
             var thinkReport = message.data as Usi.UsiThinkReport;
             if (thinkReport.Moves == null && thinkReport.InfoString == null) return;
             if (thinkReport.MultiPvString != null && thinkReport.MultiPvString != "1") return;
             if (thinkReport.Eval == null || thinkReport.Eval.Eval == EvalValue.NoValue) return;
+
+            var currentNode = thinkReport.KifuNode;
+            if (currentNode.thinkmsgs == null)
+                currentNode.thinkmsgs = new System.Collections.Generic.List<Usi.UsiThinkReportMessage>();
+            currentNode.thinkmsgs.Add(message);
+
+            
+            // ToDo: 場合によっては GameMode が InTheGame から外れてから対局中の思考を受信する場合があるので、numberの振り分け方を再考する
+            var number = message.number + (GameMode != GameModeEnum.InTheGame ? 2 : 0);
+
             while (currentNode.evalList.Count <= number) currentNode.evalList.Add(new EvalValueEx(EvalValue.NoValue, ScoreBound.Exact));
             switch (number)
             {
@@ -683,7 +685,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             var ply = kifuManager.Tree.gamePly - 1;
             var n = kifuManager.Tree.currentNode;
             var endIndex = -1;
-            while (true)
+            while (ply >= 0)
             {
                 if (n.evalList != null)
                 {

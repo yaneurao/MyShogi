@@ -72,8 +72,7 @@ namespace MyShogi.Model.Shogi.Player
         /// PonderMoveに指し手を返すのは、UsiEnginePlayerのときのみ。
         /// HumanPlayerのときは、usiPositionを生成するコストがもったいないのでnullが渡ってくることになっている。
         /// </summary>
-        /// <param name="usiPosition"></param>
-        void Think(string usiPosition , UsiThinkLimit limit , Color sideToMove);
+        void Think(Kifu.KifuNode node , string usiPosition , UsiThinkLimit limit , Color sideToMove);
 
         void Dispose();
     }

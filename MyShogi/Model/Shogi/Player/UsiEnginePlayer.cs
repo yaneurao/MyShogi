@@ -99,9 +99,9 @@ namespace MyShogi.Model.Shogi.Player
             Engine.OnIdle();
         }
 
-        public void Think(string usiPosition, UsiThinkLimit limit , Color sideToMove)
+        public void Think(Kifu.KifuNode node, string usiPosition, UsiThinkLimit limit , Color sideToMove)
         {
-            Engine.Think(usiPosition,limit,sideToMove);
+            Engine.Think(node, usiPosition,limit,sideToMove);
         }
 
         public void Dispose()

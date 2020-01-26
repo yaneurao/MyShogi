@@ -97,5 +97,10 @@ namespace MyShogi.Model.Shogi.Usi
         /// </summary>
         public string ThreadNumString;
         public int ThreadNum { set { ThreadNumString = value.ToString(); } }
+
+        /// <summary>
+        /// このレポートに対応するKifuNode
+        /// </summary>
+        public Kifu.KifuNode KifuNode;
     }
 }

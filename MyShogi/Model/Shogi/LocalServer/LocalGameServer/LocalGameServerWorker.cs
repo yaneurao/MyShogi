@@ -933,7 +933,8 @@ namespace MyShogi.Model.Shogi.LocalServer
                     break;
             }
 
-            stmPlayer.Think(usiPosition , limit , stm);
+            var currentNode = kifuManager.Tree.currentNode;
+            stmPlayer.Think(currentNode, usiPosition , limit , stm);
 
             // -- 検討ウィンドウに対して、ここをrootSfenとして設定
             if (ThinkReportEnable && isUsiEngine)

@@ -7,6 +7,7 @@ using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Data;
 using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
+using MyShogi.View.Win2D.Info;
 using MyShogi.View.Win2D.Setting;
 
 namespace MyShogi.View.Win2D
@@ -49,6 +50,9 @@ namespace MyShogi.View.Win2D
 
             config.MiniShogiBoardDockManager.AddPropertyChangedHandler("DockState", UpdateMiniShogiBoardDockState);
             config.MiniShogiBoardDockManager.AddPropertyChangedHandler("DockPosition", UpdateMiniShogiBoardDockState);
+
+            config.EvalGraphDockManager.AddPropertyChangedHandler("DockState", UpdateEvalGraphState);
+            config.EvalGraphDockManager.AddPropertyChangedHandler("DockPosition", UpdateEvalGraphState);
         }
 
         /// <summary>
@@ -323,7 +327,7 @@ namespace MyShogi.View.Win2D
                     float height_rate = 1 + 0.25f * config.ConsiderationWindowHeightType;
 
                     // 検討ウインドウの縦幅
-                    var ch = (int)(height_rate * h / 5);
+                    var ch = (int)(height_rate * h / 4);
 
                     DockUtility.Change(gameScreenControl1, DockStyle.None, new Size(w, h - ch), null /*いまの場所*/ );
                     DockUtility.Change(engineConsiderationMainControl, DockStyle.None, new Size(w, ch), new Point(0, ClientSize.Height - ch));
@@ -402,6 +406,68 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// UpdateKifuWindowDockState()の評価値グラフ用。
+        /// </summary>
+        private void UpdateEvalGraphState(PropertyChangedEventArgs args)
+        {
+            var dockState = (DockState)args.value;
+
+            var dockManager = TheApp.app.Config.EvalGraphDockManager;
+            dockManager.DockState = dockState; // 次回起動時のためにここに保存しておく。
+
+            if (evalGraphDialog != null)
+            {
+                evalGraphDialog.RemoveControl();
+                evalGraphDialog.Dispose();
+                evalGraphDialog = null;
+            }
+            engineConsiderationMainControl.RemoveEvalGraph();
+
+            // dockManager.Visibleは反映させないと駄目。
+            if (!dockManager.Visible)
+            {
+                // フォーカス移動されてると困るので戻す。
+                this.Focus();
+                return;
+            }
+
+            if (dockState == DockState.InTheMainWindow)
+            {
+                engineConsiderationMainControl.AddEvalGraph();
+            }
+            else
+            {
+                evalGraphDialog = new EvalGraphDialog();
+                evalGraphDialog.ViewModel.AddPropertyChangedHandler("MenuUpdated", _ => UpdateMenuItems());
+                evalGraphDialog.Owner = this;
+
+                // デフォルト位置とサイズにする。
+                if (dockManager.Size.IsEmpty)
+                {
+                    // デフォルトでは、このウインドウサイズに従う
+                    dockManager.Size = new Size(Width / 4, Height / 4);
+
+                    //var pos = miniShogi.CalcKifuWindowLocation();
+                    //// これクライアント座標なので、スクリーン座標にいったん変換する。
+                    //pos = gameScreenControl1.PointToScreen(pos);
+
+                    var pos = new Point(0, 0);
+                    dockManager.LocationOnDocked = new Point(this.Location.X, this.Location.Y);
+                    dockManager.LocationOnFloating = pos;
+                }
+
+                // Showで表示とサイズが確定してからdockManagerを設定しないと、
+                // Showのときの位置とサイズがdockManagerに記録されてしまう。
+                evalGraphDialog.Visible = true;
+
+                evalGraphDialog.AddControl(evalGraphControl, this, dockManager);
+                dockManager.InitDockWindowLocation(this, evalGraphDialog);
+
+                evalGraphDialog.Show();
+            }
+        }
+
+        /// <summary>
         /// 検討ウインドウでの右クリックメニュー「メイン棋譜にこの読み筋を分岐棋譜として送る(&S)」
         /// </summary>
         /// <param name="board"></param>
@@ -438,6 +504,6 @@ namespace MyShogi.View.Win2D
             var sfen = Model.Shogi.Core.Util.RootSfenAndMovesToUsiString(board.rootSfen, board.moves);
             gameServer.KifuReadCommand(sfen , false , true);
         }
-        
+
     }
 }
