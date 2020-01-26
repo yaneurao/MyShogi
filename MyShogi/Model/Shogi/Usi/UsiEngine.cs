@@ -287,10 +287,13 @@ namespace MyShogi.Model.Shogi.Usi
 
                 // "isready"→"readyok"まで30秒。ただし延長あり。
                 case UsiEngineState.WaitReadyOk:
-                    var t2 = config.ReadyOkTimeOut == 0 ? int.MaxValue : config.ReadyOkTimeOut;
-                    timeoutTime = DateTime.Now + new TimeSpan(0,0,t2);
+                    //var t2 = config.ReadyOkTimeOut == 0 ? int.MaxValue : config.ReadyOkTimeOut;
+                    //timeoutTime = DateTime.Now + new TimeSpan(0,0,t2);
                     // 評価関数ファイルの読み込みでDMA転送とかで、単coreのCPUだとCPU時間自体がもらえない可能性も…。
-                    // 設定で変更できたほうが良いのか…。うーむ..。
+                    // →　よくないアイデアであった。[2020/01/27]
+
+                    timeoutTime = DateTime.MaxValue; // time-out無効化。
+
                     break;
 
                 default:

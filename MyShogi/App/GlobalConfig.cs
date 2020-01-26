@@ -112,7 +112,6 @@ namespace MyShogi.App
             // -- エンジン補助設定
 
             UsiOkTimeOut = 15;
-            ReadyOkTimeOut = 30;
 
         }
 
@@ -974,17 +973,6 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("UsiOkTimeOut"); }
             set { SetValue<int>("UsiOkTimeOut", value); }
-        }
-
-        /// <summary>
-        /// "isready"に対する"readyok"までのtime out時間。(デフォルト30秒)
-        /// 0 が設定されていれば無制限。
-        /// </summary>
-        [DataMember]
-        public int ReadyOkTimeOut
-        {
-            get { return GetValue<int>("ReadyOkTimeOut"); }
-            set { SetValue<int>("ReadyOkTimeOut", value); }
         }
 
         #endregion
