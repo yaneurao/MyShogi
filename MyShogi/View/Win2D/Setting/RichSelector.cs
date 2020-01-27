@@ -34,7 +34,7 @@ namespace MyShogi.View.Win2D.Setting
                 // cf. カスタムコントロールから、デザイン時にプロジェクトのパスを取得する方法 : http://www.atmarkit.co.jp/bbs/phpBB/viewtopic.php?topic=47369&forum=7&start=16
 
                 // まあ、いいや。とりま、このControlを貼り付けたFormを編集したいなら、各自、この部分を自分の環境に合わせて一時的に書き換えるってことで(；ω；)
-                ImageFolder = @"C:\Users\yaneu\Documents\Visual Studio 2017\project\MyShogi\MyShogi\bin\Debug\image\setting_dialog\";
+                ImageFolder = @"C:\Users\yaneen\Documents\VisualStudio2017\project\MyShogi\MyShogi\bin\Debug\image\setting_dialog\";
 
                 // レジストリとか環境変数とか使うのがスマートなのかな…。
                 // どちらもあまり使いたくないのだが…。
@@ -191,15 +191,24 @@ namespace MyShogi.View.Win2D.Setting
                 if (texts.Length < 2)
                     continue;
 
-                var r = new RadioButton();
-                var x = (pictureBox1.Width + groupBox1.Margin.Left*2) * i + Margin.Left*5;
-                var rx = x  /* + radioButton1.Location.X */;
-                r.Location = new Point(rx , radioButton1.Location.Y);
-                r.Text = texts[0];
+                var x = (pictureBox1.Width + groupBox1.Margin.Left * 2) * i;
+                var radio = new RadioButton()
+                {
+                    // 座標
+                    Location = new Point(x + radioButton1.Location.X, radioButton1.Location.Y),
+
+                    // マージン値などは引き継ぐ
+                    Margin = radioButton1.Margin,
+
+                    // 文字フォントが変更された時に自動的に領域が大きくなってもらわないと困る。
+                    AutoSize = radioButton1.AutoSize, // == true,
+
+                    Text = texts[0],
+                };
 
                 var j = i; // copy for lambda's capture
-                r.CheckedChanged += (sender, args) => {
-                    if (r.Checked)
+                radio.CheckedChanged += (sender, args) => {
+                    if (radio.Checked)
                     {
                         // 再起動するように警告表示
                         if (ViewModel.WarningRestart && ViewModel.Selection != j)
@@ -212,34 +221,43 @@ namespace MyShogi.View.Win2D.Setting
                 // 先にCheckを変更しないと、このあとのCheckedChangedのイベントハンドラが呼び出されてしまう。
                 // →　先に変更しても無駄だった。そうか…。上のハンドラのなかに
                 // " && ViewModel.Selection = j "を追加する。
-                r.Checked = i == ViewModel.Selection;
+                radio.Checked = i == ViewModel.Selection;
 
-                radioButtons[i] = r;
-                groupBox1.Controls.Add(r);
+                radioButtons[i] = radio;
+                groupBox1.Controls.Add(radio);
 
-                var p = new PictureBox();
-                // 引き伸ばしておく。
-                p.SizeMode = PictureBoxSizeMode.StretchImage;
-                var x2 = x;
-                p.Location = new Point(x2 , pictureBox1.Location.Y);
-                p.Size = pictureBox1.Size; // サイズは固定しておいたほうが扱いやすい
-                p.Click += (sender,args) => { r.Checked = true; /* RadioButtonがクリックされたのと同等の扱いをしてやる*/ };
-                p.BorderStyle = BorderStyle.FixedSingle;
-                pictureBoxes[i] = p;
-                groupBox1.Controls.Add(p);
+                var picture = new PictureBox()
+                {
+                    // 引き伸ばしておく。
+                    SizeMode = PictureBoxSizeMode.StretchImage,
+
+                    // 座標
+                    Location = new Point(x + pictureBox1.Location.X, pictureBox1.Location.Y),
+
+                    // マージン値などは引き継ぐ
+                    Margin = pictureBox1.Margin,
+                    Size = pictureBox1.Size,
+
+                    // 境界線をつけておく
+                    BorderStyle = pictureBox1.BorderStyle // BorderStyle.FixedSingle,
+                };
+
+                picture.Click += (sender,args) => { radio.Checked = true; /* RadioButtonがクリックされたのと同等の扱いをしてやる*/ };
+                pictureBoxes[i] = picture;
+                groupBox1.Controls.Add(picture);
 
                 var img = new ImageLoader();
                 var path = Path.Combine(ImageFolder, texts[1]);
                 img.Load(path);
                 images[i] = img;
-                p.Image = images[i].image;
+                picture.Image = images[i].image;
                 
                 // ToolTipの追加。
                 if (texts.Length >= 3)
                 {
                     var tips = texts[2];
-                    toolTip1.SetToolTip(r, tips);
-                    toolTip1.SetToolTip(p, tips);
+                    toolTip1.SetToolTip(radio, tips);
+                    toolTip1.SetToolTip(picture, tips);
                 }
             }
 
@@ -254,9 +272,10 @@ namespace MyShogi.View.Win2D.Setting
         private Control[] radioButtons;
         private Control[] pictureBoxes;
         private ImageLoader[] images;
-#endregion
 
-#region handlers
+        #endregion
+
+        #region handlers
         private void RichSelector_SizeChanged(object sender, System.EventArgs e)
         {
             // サイズが変更されたら、それに合わせたGroupBoxのサイズに変更する。
@@ -268,7 +287,6 @@ namespace MyShogi.View.Win2D.Setting
                 return;
 
             ResizeRadioButtons(n);
-
         }
 
         private void OnDispose(object sneder , EventArgs e)
@@ -277,6 +295,6 @@ namespace MyShogi.View.Win2D.Setting
                 foreach (var img in images)
                     img?.Dispose();
         }
-#endregion
+        #endregion
     }
 }

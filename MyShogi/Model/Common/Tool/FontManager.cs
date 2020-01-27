@@ -15,14 +15,14 @@ namespace MyShogi.Model.Common.Tool
             // 選ばれるような仕組みのほうがいいのかも…。
             // →　しかしその仕組みでMac/Linux対応するのは筋が良くない気がするのでやめとく。
 
-            SettingDialog       = new FontData(FontList.SettingDialog , 11f);
+            SettingDialog       = new FontData(FontList.SettingDialog ,  9f);
             MenuStrip           = new FontData(FontList.MenuStrip     ,  9f);
             MainToolStrip       = new FontData(FontList.MainToolStrip , 13f);
-            SubToolStrip        = new FontData(FontList.SubToolStrip  , 13f);
+            SubToolStrip        = new FontData(FontList.SubToolStrip  ,  9f);
             MessageDialog       = new FontData(FontList.MessageDialog , 11f);
             MainWindow          = new FontData(FontList.MainWindow    ,  9f);
-            KifuWindow          = new FontData(FontList.KifuWindow    , 11f);
-            ConsiderationWindow = new FontData(FontList.ConsiderationWindow , 11f);
+            KifuWindow          = new FontData(FontList.KifuWindow    ,  7f);
+            ConsiderationWindow = new FontData(FontList.ConsiderationWindow , 9f);
             ToolTip             = new FontData(FontList.ToolTip       , 11f);
             DebugWindow         = new FontData(FontList.DebugWindow   ,  9f);
         }
