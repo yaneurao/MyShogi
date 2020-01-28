@@ -584,6 +584,7 @@ namespace MyShogi.View.Win2D
                 }
             }
 
+            // 生成されたすべての合法手に対して移動元の升が合致する指し手の移動先の升を、移動できる升の候補として表示する。
             viewState.picked_piece_legalmovesto = bb;
             viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
@@ -605,9 +606,8 @@ namespace MyShogi.View.Win2D
             viewState.picked_to = SquareHand.NB;
             viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
-            // 生成されたすべての合法手に対して移動元の升が合致する指し手の移動先の升を
+            // 移動先の候補表示は必要ない(自由編集なので)
             viewState.picked_piece_legalmovesto = Bitboard.ZeroBB();
-            viewState.state = GameScreenControlViewStateEnum.PiecePickedUp;
 
             // この値が変わったことで画面の状態が変わるので、次回、OnDraw()が呼び出されなくてはならない。
             Dirty = true;
@@ -758,8 +758,8 @@ namespace MyShogi.View.Win2D
                 // このケースを除外しておかないと、toの駒を手駒に移動させる処理などで
                 // from == toだと手駒が増えることになる。
 
-                // しかし、駒を掴んでいる状態が変化するのでこのときだけ再描画は必要。
-                Dirty = true;
+                // 駒を掴んでいる状態が変化するのでこのときだけ再描画は必要。
+                StateReset();
             }
             else if (to.IsBoardPiece())
             {
@@ -821,6 +821,11 @@ namespace MyShogi.View.Win2D
                 {
                     // -- 駒箱の駒を盤面に
                     // toにあった駒は駒箱に戻ってくるが、これは仕方がない。
+
+                    // from_pcは先手の駒だが、盤面反転させている時は、後手の駒になってくれないと
+                    // 駒を置いた瞬間に180度回転したように見えて不自然なので後手の駒化する。
+                    if (gameServer.BoardReverse)
+                        from_pc |= Piece.WHITE;
 
                     BoardEditCommand(raw => raw.board[(int)to] = from_pc);
                 }

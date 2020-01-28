@@ -224,7 +224,10 @@ namespace MyShogi.View.Win2D
                                 // 移動元の升に適用されるエフェクトを描画する。
                                 DrawSprite(dest, SPRITE.PieceMove(PieceMoveEffect.PickedFrom), ratio);
 
-                                picked_sprite = new SpriteEx(sprite, dest + new Size(-5, -20), ratio);
+                                // マウスカーソルに追随させる(or 少し持ち上げた風にする)
+                                // これ配置した時に先手の駒になるが、盤面反転させているなら、後手の駒になって欲しい気はする。
+                                // →　Dropの処理の時になんとかする。
+                                DrawPickedSprite(sprite, dest);
                             }
                             else
                             {
