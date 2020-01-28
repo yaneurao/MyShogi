@@ -191,7 +191,7 @@ namespace MyShogi.View.Win2D.Setting
                 if (texts.Length < 2)
                     continue;
 
-                var x = (pictureBox1.Width + groupBox1.Margin.Left * 2) * i;
+                var x = (pictureBox1.Width + pictureBox1.Margin.Left + pictureBox1.Margin.Right) * i;
                 var radio = new RadioButton()
                 {
                     // 座標
@@ -279,8 +279,9 @@ namespace MyShogi.View.Win2D.Setting
         private void RichSelector_SizeChanged(object sender, System.EventArgs e)
         {
             // サイズが変更されたら、それに合わせたGroupBoxのサイズに変更する。
+            // ※　ここで設定しているのでデザイナでは変更できない。
 
-            groupBox1.Size = new Size(Width - Margin.Size.Width*2 , Height - Margin.Size.Height*2);
+            groupBox1.Size = new Size(Width - (groupBox1.Location.X + Margin.Right) , Height - (groupBox1.Location.Y + Margin.Bottom));
 
             var n = SelectionTexts == null ? 0 : SelectionTexts.Length;
             if (n == 0)

@@ -76,6 +76,7 @@
             // 
             this.richSelector1.GroupBoxTitle = "駒をマウスのドラッグでも移動できるようにするか";
             this.richSelector1.Location = new System.Drawing.Point(6, 6);
+            this.richSelector1.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector1.Name = "richSelector1";
             this.richSelector1.SelectionTexts = new string[] {
         "しない,dragged_move_style_0.png,マウスドラッグでの駒の移動を許容しません。",
@@ -99,6 +100,7 @@
             // 
             this.richSelector4.GroupBoxTitle = "棋譜の最初進む/最後に進むに対応するキー";
             this.richSelector4.Location = new System.Drawing.Point(6, 116);
+            this.richSelector4.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector4.Name = "richSelector4";
             this.richSelector4.SelectionTexts = new string[] {
         "なし,kifu_firstlastkey_0.png,なし。",
@@ -112,6 +114,7 @@
             // 
             this.richSelector3.GroupBoxTitle = "棋譜の1手進むに対応する特殊キー";
             this.richSelector3.Location = new System.Drawing.Point(6, 226);
+            this.richSelector3.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector3.Name = "richSelector3";
             this.richSelector3.SelectionTexts = new string[] {
         "なし,kifu_next_specialkey_0.png,なし。",
@@ -124,6 +127,7 @@
             // 
             this.richSelector2.GroupBoxTitle = "棋譜の1手進む/戻るに対応するキー";
             this.richSelector2.Location = new System.Drawing.Point(6, 6);
+            this.richSelector2.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector2.Name = "richSelector2";
             this.richSelector2.SelectionTexts = new string[] {
         "なし,kifu_prevnextkey_0.png,なし",
@@ -148,6 +152,7 @@
             // 
             this.richSelector6.GroupBoxTitle = "検討ウインドウで選択行をミニ盤面に反映させる";
             this.richSelector6.Location = new System.Drawing.Point(6, 226);
+            this.richSelector6.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector6.Name = "richSelector6";
             this.richSelector6.SelectionTexts = new string[] {
         "なし,cons_sendpv_key_0.png,なし。",
@@ -160,6 +165,7 @@
             // 
             this.richSelector7.GroupBoxTitle = "検討ウインドウで選択行の先頭/末尾移動";
             this.richSelector7.Location = new System.Drawing.Point(6, 116);
+            this.richSelector7.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector7.Name = "richSelector7";
             this.richSelector7.SelectionTexts = new string[] {
         "なし,cons_headtailkey_0.png,なし",
@@ -176,6 +182,7 @@
             // 
             this.richSelector5.GroupBoxTitle = "検討ウインドウで選択行の上下移動";
             this.richSelector5.Location = new System.Drawing.Point(6, 6);
+            this.richSelector5.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector5.Name = "richSelector5";
             this.richSelector5.SelectionTexts = new string[] {
         "なし,cons_prevnextkey_0.png,なし",
@@ -204,6 +211,7 @@
             // 
             this.richSelector8.GroupBoxTitle = "ミニ盤面で先頭/末尾移動";
             this.richSelector8.Location = new System.Drawing.Point(6, 116);
+            this.richSelector8.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector8.Name = "richSelector8";
             this.richSelector8.SelectionTexts = new string[] {
         "なし,mini_headtailkey_0.png,なし",
@@ -220,6 +228,7 @@
             // 
             this.richSelector9.GroupBoxTitle = "ミニ盤面で一手戻る/進む";
             this.richSelector9.Location = new System.Drawing.Point(6, 6);
+            this.richSelector9.Margin = new System.Windows.Forms.Padding(0);
             this.richSelector9.Name = "richSelector9";
             this.richSelector9.SelectionTexts = new string[] {
         "なし,mini_prevnextkey_0.png,なし",
@@ -240,6 +249,8 @@
             this.Controls.Add(this.tabControl1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "OperationSettingDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "操作設定ダイアログ";

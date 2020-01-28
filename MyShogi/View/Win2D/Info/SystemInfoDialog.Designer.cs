@@ -42,7 +42,7 @@
             this.textBox1.Size = new System.Drawing.Size(387, 487);
             this.textBox1.TabIndex = 0;
             // 
-            // SystemInfo
+            // SystemInfoDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -50,7 +50,9 @@
             this.Controls.Add(this.textBox1);
             this.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.Name = "SystemInfo";
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "SystemInfoDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "SystemInfo";
             this.ResumeLayout(false);

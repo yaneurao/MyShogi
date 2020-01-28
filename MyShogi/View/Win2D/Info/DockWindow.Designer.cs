@@ -37,6 +37,8 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "DockWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "DockWindow";

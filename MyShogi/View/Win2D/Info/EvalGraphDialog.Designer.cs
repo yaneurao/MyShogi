@@ -105,6 +105,8 @@ namespace MyShogi.View.Win2D.Info
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MainMenuStrip = this.menuStrip;
             this.Margin = new System.Windows.Forms.Padding(5);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "EvalGraphDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "形勢グラフ";

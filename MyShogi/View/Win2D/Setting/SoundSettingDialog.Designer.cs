@@ -157,6 +157,8 @@
             this.Controls.Add(this.groupBox1);
             this.Font = new System.Drawing.Font("MS UI Gothic", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "SoundSettingDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "音声設定ダイアログ";

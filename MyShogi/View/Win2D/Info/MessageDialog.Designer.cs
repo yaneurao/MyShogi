@@ -124,6 +124,8 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(485, 200);
             this.Name = "MessageDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;

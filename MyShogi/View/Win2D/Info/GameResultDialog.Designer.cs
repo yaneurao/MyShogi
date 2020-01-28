@@ -99,6 +99,8 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.listView1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "GameResultDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "対局結果一覧";
