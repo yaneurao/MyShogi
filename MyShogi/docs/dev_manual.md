@@ -24,10 +24,7 @@
 - デバッグウインドウ上で複数行を選択して、Ctrl+Cでクリップボードにコピーすることが出来ます。
 
 - MyShogi自体のデバッグを行う時に、デバッグウインドウに出力したいのであれば、
-  ```
-      using MyShogi.Model.Common.Tool;
-      Log.log1.Write(LogInfoType.SystemError, "こんにちは!!", 0);
-  ```
+  > TheApp.WriteLong("こんにちは")
   のような感じで出力できます。
 
 

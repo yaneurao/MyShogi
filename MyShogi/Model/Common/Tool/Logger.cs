@@ -14,6 +14,7 @@ namespace MyShogi.Model.Common.Tool
         UsiServer,                // USIのコマンドを受理している側のメッセージ
         UsiParseError,            // USIのコマンドの解析エラー
         SystemError,              // システムエラー
+        DebugMessage,             // デバッグ用のメッセージ出力。TheApp.WriteLog()で出力できる。
     }
 
     /// <summary>
@@ -75,6 +76,10 @@ namespace MyShogi.Model.Common.Tool
 
                 case LogInfoType.UsiServer:
                     log = $"{date} {time}'{ms} USI Server : {log}";
+                    break;
+
+                case LogInfoType.DebugMessage:
+                    log = $"{date} {time}'{ms} DEBUG : {log}";
                     break;
             }
             return log;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
@@ -318,6 +319,24 @@ namespace MyShogi.App
         /// singletonなinstance。それぞれのViewModelなどにアクセスしたければ、これ経由でアクセスする。
         /// </summary>
         public static TheApp app = new TheApp();
+
+        #endregion
+
+        #region public members
+
+        /// <summary>
+        /// デバッグ用に、デバッグウインドウにメッセージを出力する。
+        ///
+        /// MainDialogの初期化が終わってからでないと呼び出してはならない。
+        /// </summary>
+        /// <param name="message"></param>
+        public static void WriteLog(string message)
+        {
+            // ここに引っかかったとしたら、Log.log1の初期化前だから。
+            Debug.Assert(Log.log1 != null);
+
+            Log.log1.Write(LogInfoType.DebugMessage, message);
+        }
 
         #endregion
 
