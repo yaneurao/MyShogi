@@ -10,7 +10,7 @@ using MyShogi.Model.Common.Tool;
 
 namespace MyShogi.View.Win2D
 {
-    public partial class DebugWindow : Form
+    public partial class DebugWindow : Form , IFontUpdate
     {
         /// <summary>
         /// デバッグ用に思考エンジンとやりとりしているログを画面上に表示するためのダイアログ。
@@ -65,6 +65,15 @@ namespace MyShogi.View.Win2D
         }
 
         /// <summary>
+        /// IFontUpdateのmember
+        /// </summary>
+        public void UpdateFont()
+        {
+            // フォントサイズが変わった時にボタンの再配置が必要になるので、ハンドルする。
+            UpdateControlsPosition();
+        }
+
+        /// <summary>
         /// [UI thread] : Controlの再配置を行う。
         /// </summary>
         private void UpdateControlsPosition()
@@ -80,23 +89,34 @@ namespace MyShogi.View.Win2D
             // -- textBox1
 
             // TextBoxの高さは変更しない。横幅をボタンにつかない範囲でいっぱいにして縦方向は下にくっつける。
-            var t_loc = textBox1.Location;
-            var t_height = textBox1.Size.Height;
-            var b_size = button1.Size;
+            // textBox1.Height <= button1.Heightは保証されているはずなのでbutton1.Heightを基準に上下に対してセンタリングしてやる。
+            // TextBoxのサイズはフォントサイズから自動的に決まる。
+            // (が、ボタンはいったん大きくなったものは小さくならないのでAutoSize = trueに設定しておき、
+            // 小さいサイズを設定することで自動的に拡大されることを利用する)
+            button1.Size = new Size(0, 0);
+            // →　しかしAutoSizeの処理が行われるのはこのタイミングではないようで、即時反映しない…。
+            // これはWinFormsの仕様くさいので、目をつぶることにする。
+            // デバッグウインドウ、リサイズすればなおるし、デバッグウインドウ開いたままフォント変更しないでしょ、普通。
 
-            textBox1.Location = new Point(t_loc.X, h - t_height - 3);
-            textBox1.Size = new Size(w - t_loc.X - 3 - b_size.Width , t_height);
+            this.SuspendLayout(); // これしとかないと画面の描画していないところにゴミ残りうる。(WinForms×高dpiのバグくさい気はする)
 
-            button1.Location = new Point(w - b_size.Width, h - t_height - 3);
+            var max_h = button1.Height;
+
+            textBox1.Location = new Point(textBox1.Location.X, h - (max_h + button1.Margin.Bottom) + (max_h - textBox1.Height) /2);
+            textBox1.Size = new Size(w - (textBox1.Location.X + button1.Width + button1.Margin.Left + button1.Margin.Right) , textBox1.Height);
+
+            button1.Location = new Point(w - (button1.Width + button1.Margin.Left), h - (max_h + button1.Margin.Bottom));
 
             // -- label1
 
-            var l_loc = label1.Location;
-            label1.Location = new Point(l_loc.X, h - t_height - 3 + 2);
+            label1.Location = new Point(label1.Margin.Left, h - (max_h + button1.Margin.Bottom) + (max_h - label1.Height)/2);
 
             // -- listBox1
 
-            listBox1.Size = new Size(w - 3, h - t_height - 8);
+            listBox1.Location = new Point(listBox1.Margin.Left, listBox1.Margin.Top);
+            listBox1.Size = new Size(w - (listBox1.Margin.Left + listBox1.Margin.Right), h - (listBox1.Margin.Top + max_h + button1.Margin.Bottom /* + button1.Margin.Top */));
+
+            this.ResumeLayout();
         }
 
         /// <summary>

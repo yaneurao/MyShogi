@@ -23,6 +23,13 @@
 
 - デバッグウインドウ上で複数行を選択して、Ctrl+Cでクリップボードにコピーすることが出来ます。
 
+- MyShogi自体のデバッグを行う時に、デバッグウインドウに出力したいのであれば、
+  ```
+      using MyShogi.Model.Common.Tool;
+      Log.log1.Write(LogInfoType.SystemError, "こんにちは!!", 0);
+  ```
+  のような感じで出力できます。
+
 
 ## エンジン定義ファイルの書き方
 
@@ -50,4 +57,3 @@
 MyShogiはWindows向けに開発されていますが、機種依存するコードは最小限となっているので、他の環境でも頑張れば動くようです。
 
 - [Mac、Linuxで動作させるには](MyShogi/docs/Mac、Linuxで動作させるには.md)
-
