@@ -139,14 +139,15 @@ namespace MyShogi.View.Win2D.Setting
             var font = TheApp.app.Config.FontManager;
             fontSelectionConrol1.Bind(font.MenuStrip            , "MenuStrip");
             fontSelectionConrol2.Bind(font.MainToolStrip        , "MainToolStrip");
-            fontSelectionConrol3.Bind(font.SubToolStrip         , "SubToolStrip");
-            fontSelectionConrol4.Bind(font.MainWindow           , "MainWindow");
-            fontSelectionConrol5.Bind(font.SettingDialog        , "SettingDialog");
-            fontSelectionConrol6.Bind(font.MessageDialog        , "MessageDialog");
-            fontSelectionConrol7.Bind(font.KifuWindow           , "KifuWindow");
-            fontSelectionConrol8.Bind(font.ConsiderationWindow  , "ConsiderationWindow");
-            fontSelectionConrol9.Bind(font.ToolTip              , "ToolTip");
-            fontSelectionConrol10.Bind(font.DebugWindow         , "DebugWindow");
+            fontSelectionConrol3.Bind(font.MiniBoardTab         , "MiniBoardTab");
+            fontSelectionConrol4.Bind(font.SubToolStrip         , "SubToolStrip");
+            fontSelectionConrol5.Bind(font.MainWindow           , "MainWindow");
+            fontSelectionConrol6.Bind(font.SettingDialog        , "SettingDialog");
+            fontSelectionConrol7.Bind(font.MessageDialog        , "MessageDialog");
+            fontSelectionConrol8.Bind(font.KifuWindow           , "KifuWindow");
+            fontSelectionConrol9.Bind(font.ConsiderationWindow  , "ConsiderationWindow");
+            fontSelectionConrol10.Bind(font.ToolTip             , "ToolTip");
+            fontSelectionConrol11.Bind(font.DebugWindow         , "DebugWindow");
 
         }
 

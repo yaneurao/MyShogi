@@ -596,10 +596,19 @@ namespace MyShogi.View.Win2D
         /// </summary>
         private void InitFont()
         {
-            // フォントの変更。即時反映
+            // --- フォントの変更。即時反映
+
+            // 検討ウインドウの文字フォント
             var fontSetter1 = new FontSetter(this, "ConsiderationWindow");
             //var fontSetter2 = new FontSetter(this.toolStrip1, "SubToolStrip"); // → MiniShogiBoardに移動させた。
-            Disposed += (sender, args) => { fontSetter1.Dispose(); /* fontSetter2.Dispose(); */ };
+
+            // ミニ盤面の上のタブの文字フォント
+            var fontSetter2 = new FontSetter(this.tabControl1, "MiniBoardTab");
+
+            Disposed += (sender, args) => {
+                fontSetter1.Dispose();
+                fontSetter2.Dispose();
+            };
         }
 
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)

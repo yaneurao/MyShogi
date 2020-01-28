@@ -23,6 +23,7 @@ namespace MyShogi.Model.Common.Tool
             MainWindow          = new FontData(FontList.MainWindow    ,  9f);
             KifuWindow          = new FontData(FontList.KifuWindow    ,  7f);
             ConsiderationWindow = new FontData(FontList.ConsiderationWindow , 9f);
+            MiniBoardTab        = new FontData(FontList.MiniBoardTab  , 9f);
             ToolTip             = new FontData(FontList.ToolTip       , 11f);
             DebugWindow         = new FontData(FontList.DebugWindow   ,  9f);
         }
@@ -115,6 +116,16 @@ namespace MyShogi.Model.Common.Tool
         {
             get { return GetValue<FontData>("ConsiderationWindow"); }
             set { SetValue("ConsiderationWindow", value); }
+        }
+
+        /// <summary>
+        /// ミニ盤面の上のタブの文字列
+        /// </summary>
+        [DataMember]
+        public FontData MiniBoardTab
+        {
+            get { return GetValue<FontData>("MiniBoardTab"); }
+            set { SetValue("MiniBoardTab", value); }
         }
 
         /// <summary>

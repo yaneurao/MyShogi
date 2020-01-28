@@ -1,14 +1,13 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
-using MyShogi.App;
+﻿using MyShogi.App;
 using MyShogi.Model.Common.ObjectModel;
 using MyShogi.Model.Common.Tool;
 using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Shogi.Data;
-using MyShogi.Model.Shogi.Kifu;
 using MyShogi.Model.Shogi.LocalServer;
 using MyShogi.View.Win2D.Info;
 using MyShogi.View.Win2D.Setting;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D
 {

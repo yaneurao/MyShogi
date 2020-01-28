@@ -400,6 +400,7 @@ namespace MyShogi.View.Win2D
             // テキストボックス、LabelはFontSizeの変更を反映させない。(はみ出てしまう..)
             var fontname = this.Font.FontFamily;
             var fontStyle = this.Font.Style;
+            //var fontSize = this.Font.Size;
             var font = new Font(fontname, 9 /* 9pt固定 */, fontStyle);
 
             var boxes = new Control[] { textBox1 , textBox2, textBox3 , textBox4, textBox5 , button1 , comboBox1 };

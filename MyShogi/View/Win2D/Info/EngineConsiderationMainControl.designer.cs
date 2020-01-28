@@ -93,6 +93,7 @@ namespace MyShogi.View.Win2D
             // 
             // engineConsiderationControl1
             // 
+            this.engineConsiderationControl1.AutoSize = true;
             this.engineConsiderationControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.engineConsiderationControl1.EngineName = "";
             this.engineConsiderationControl1.Location = new System.Drawing.Point(0, 0);
@@ -106,6 +107,7 @@ namespace MyShogi.View.Win2D
             // 
             // engineConsiderationControl2
             // 
+            this.engineConsiderationControl2.AutoSize = true;
             this.engineConsiderationControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.engineConsiderationControl2.EngineName = "";
             this.engineConsiderationControl2.Location = new System.Drawing.Point(0, 0);
@@ -121,7 +123,6 @@ namespace MyShogi.View.Win2D
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Font = new System.Drawing.Font("MS UI Gothic", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.tabControl1.Location = new System.Drawing.Point(2, 6);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -132,9 +133,9 @@ namespace MyShogi.View.Win2D
             // tabPage1
             // 
             this.tabPage1.Controls.Add(this.miniShogiBoard1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 21);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Size = new System.Drawing.Size(179, 201);
+            this.tabPage1.Size = new System.Drawing.Size(179, 200);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "ミニ盤面";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -181,7 +182,9 @@ namespace MyShogi.View.Win2D
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
