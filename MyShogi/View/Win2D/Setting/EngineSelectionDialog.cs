@@ -46,6 +46,8 @@ namespace MyShogi.View.Win2D
 
         public EngineSelectionViewModel ViewModel = new EngineSelectionViewModel();
 
+        // 各エンジンの定義
+        // engineDefines.Countの数だけエンジンが登録されているものとみなす。
         private List<EngineDefineEx> engineDefines;
 
         /// <summary>
@@ -192,7 +194,7 @@ namespace MyShogi.View.Win2D
             SelectionControlTopIndex += 5;
 
             // 押せないようにしといたはずなんだけど(´ω｀)
-            if (SelectionControlTopIndex > SelectionControls.Length)
+            if (SelectionControlTopIndex >= engineDefines.Count)
                 SelectionControlTopIndex -= 5;
 
             UpdateSelectionControls();
