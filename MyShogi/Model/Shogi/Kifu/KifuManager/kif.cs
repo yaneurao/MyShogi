@@ -29,17 +29,23 @@ namespace MyShogi.Model.Shogi.Kifu
 
             try
             {
-
                 // ヘッダ検出用正規表現
-                var rHead = new Regex(@"^([^：]+)：(.*)");
+                // "："の前後のスペースに関しては許容する。(将棋DBというサイトでの駒落ちが以前そういう出力になっていたそうなので..)
+                // 末尾スペースに関しては、1行取り出すときにtrimしている。
+                var rHead = new Regex(@"^([^：]+?)\s*：\s*(.*)");
+
                 // 変化手数用正規表現
                 var rHenka = new Regex(@"^([0-9]+)手?");
+
                 // KIF指し手検出用正規表現
                 var rKif = new Regex(@"^\s*([0-9]+)\s*(?:((?:[1-9１-９][1-9１-９一二三四五六七八九]|同\s?)成?[歩香桂銀金角飛と杏圭全馬竜龍玉王][打不成左直右上寄引]*(?:\([1-9][1-9]\))?)|(\S+))\s*(\(\s*([0-9]+):([0-9]+(?:\.[0-9]+)?)\s*\/\s*([0-9]+):([0-9]+):([0-9]+(?:\.[0-9]+)?)\))?");
+
                 // KI2指し手検出用正規表現
                 var rKi2 = new Regex(@"[-+▲△▼▽☗☖⛊⛉](?:[1-9１-９][1-9１-９一二三四五六七八九]|同\s?)成?[歩香桂銀金角飛と杏圭全馬竜龍玉王][打不成左直右上寄引]*");
+
                 // 終局検出用正規表現
                 var rSpecial = new Regex(@"^まで([0-9]+)手(.+)");
+
                 // 持ち時間/秒読み検出用正規表現
                 var rTime = new Regex(@"^各?(\d+)(時間|分|秒)");
 
@@ -153,7 +159,8 @@ namespace MyShogi.Model.Shogi.Kifu
                 // ブロック分割走査
                 for (; lineNo <= lines.Length; ++lineNo)
                 {
-                    var line = lines[lineNo - 1].Trim('\r', '\n');
+                    // 改行コード、スペース、タブもtrimする。
+                    var line = lines[lineNo - 1].Trim(char_spaces);
                     // 空文
                     if (string.IsNullOrWhiteSpace(line)) continue;
 
@@ -503,7 +510,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     sb.AppendLine("手合割：十枚落ち");
                     break;
                 default:
-                    sb.AppendLine(Tree.position.ToBod().TrimEnd('\r', '\n'));
+                    sb.AppendLine(Tree.position.ToBod().TrimEnd(char_spaces));
                     break;
             }
 
@@ -782,7 +789,7 @@ namespace MyShogi.Model.Shogi.Kifu
                     sb.AppendLine("手合割：十枚落ち");
                     break;
                 default:
-                    sb.AppendLine(Tree.position.ToBod().TrimEnd('\r', '\n'));
+                    sb.AppendLine(Tree.position.ToBod().TrimEnd(char_spaces));
                     break;
             }
 
@@ -980,7 +987,7 @@ namespace MyShogi.Model.Shogi.Kifu
             }
 
             // 局面出力
-            sb.AppendLine(Tree.position.ToBod().TrimEnd('\r', '\n'));
+            sb.AppendLine(Tree.position.ToBod().TrimEnd(char_spaces));
 
             // 先手対局者名
             if (KifuHeader.header_dic.ContainsKey("先手"))
@@ -1033,6 +1040,12 @@ namespace MyShogi.Model.Shogi.Kifu
 
             return sb.ToString();
         }
+
+
+        // スペースに相当する文字列
+        // (半角スペース、全角スペース、タブ、改行コード)
+        // string.Trim()やstring.TrimEnd()に渡すために使う。
+        private readonly char[] char_spaces = { ' ', '　', '\t','\r', '\n' };
 
     }
 }
