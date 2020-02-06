@@ -659,6 +659,165 @@ namespace MyShogi.Model.Shogi.EngineDefine
 #endif
 
             {
+                // --- 駒得大好きくん2020
+
+                // エンジンプリセット
+                // cf. Mizarさんの計測結果 : https://github.com/mizar/MyShogi/commit/772fe2cb3c2216fdd7dd90771679847e59fd0e4f
+
+                var koma_preset = new List<EnginePreset>()
+                {
+                    // -- 棋力制限なし
+                    new EnginePreset("将棋神",
+                        "棋力制限一切なしで強さは設定された持ち時間、PCスペックに依存します。\r\n" +
+                        "CPU負荷率が気になる方は、詳細設定の「スレッド数」のところで調整してください。"
+                            , new EngineOption[] {
+                                // スレッドはエンジンの詳細設定に従う
+                                new EngineOption("NodesLimit","0"),
+                                new EngineOption("SkillLevel","20"),
+                                new EngineOption("DepthLimit","0"),
+                                new EngineOption("MultiPV","1"),
+
+                            // 他、棋力に関わる部分は設定すべき…。
+                    }) ,
+                    new EnginePreset("四段", "将棋倶楽部24で四段(R2200)相当です。", new EngineOption[] {
+//                        new EngineOption("AutoThread_","false"),
+//                        new EngineOption("Threads","2"),
+                        new EngineOption("NodesLimit","4000000"),
+                        new EngineOption("SkillLevel","20"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                    new EnginePreset("三段", "将棋倶楽部24で三段(R2000)相当です。", new EngineOption[] {
+//                        new EngineOption("AutoThread_","false"),
+//                        new EngineOption("Threads","2"),
+                        new EngineOption("NodesLimit","2000000"),
+                        new EngineOption("SkillLevel","20"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                    new EnginePreset("二段","将棋倶楽部24で二段(R1800)相当です。", new EngineOption[] {
+//                        new EngineOption("AutoThread_","false"),
+//                        new EngineOption("Threads","2"),
+                        new EngineOption("NodesLimit","1000000"),
+                        new EngineOption("SkillLevel","20"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                    new EnginePreset("初段","将棋倶楽部24で初段(R1600)相当です。", new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","1"),
+                        new EngineOption("NodesLimit","250000"),
+                        new EngineOption("SkillLevel","20"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                    new EnginePreset("２級", "将棋倶楽部24で２級(R1400)相当です。", new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","1"),
+                        new EngineOption("NodesLimit","250000"),
+                        new EngineOption("SkillLevel","19"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                    new EnginePreset("４級",  "将棋倶楽部24で４級(R1200)相当です。",new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","1"),
+                        new EngineOption("NodesLimit","120000"),
+                        new EngineOption("SkillLevel","17"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                    new EnginePreset("６級", "将棋倶楽部24で６級(R1000)相当です。", new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","1"),
+                        new EngineOption("NodesLimit","100000"),
+                        new EngineOption("SkillLevel","15"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                    new EnginePreset("８級",  "将棋倶楽部24で８級(R800)相当です。",new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","1"),
+                        new EngineOption("NodesLimit","80000"),
+                        new EngineOption("SkillLevel","14"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                    new EnginePreset("10級",  "将棋倶楽部24で10級(R600)相当です。",new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","1"),
+                        new EngineOption("NodesLimit","40000"),
+                        new EngineOption("SkillLevel","13"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                    new EnginePreset("にわとり級", "将棋倶楽部24だと20級相当ぐらい。初心者向けです。" , new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","1"),
+                        new EngineOption("NodesLimit","40000"),
+                        new EngineOption("SkillLevel","10"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                    new EnginePreset("ひよこ級", "将棋のルールを覚えたての人向けです。",new EngineOption[] {
+                        new EngineOption("AutoThread_","false"),
+                        new EngineOption("Threads","1"),
+                        new EngineOption("NodesLimit","10000"),
+                        new EngineOption("SkillLevel","5"),
+                        new EngineOption("DepthLimit","0"),
+                        new EngineOption("MultiPV","1"),
+                    }),
+                };
+
+                /*
+                  駒得(14M_L20) vs やねうら王(五段) 35-0-65 (21.2% E-228.4 ~ 50.9% R+6.0)
+                  駒得(7.9M_L20) vs やねうら王(五段) 29-0-71 (16.3% E-284.7 ~ 44.6% R-37.7)
+                  駒得(4.0M_L20) vs やねうら王(四段) 55-0-45 (39.2% R-76.1 ~ 70.1% R+148.1)
+                  駒得(2.0M_L20) vs やねうら王(三段) 50-0-50 (34.5% R-111.5 ~ 65.5% R+111.5)
+                  駒得(1.0M_L20) vs やねうら王(二段) 58-0-42 (42.1% R-55.2 ~ 72.8% R+170.9)
+                  駒得(500k_L20) vs やねうら王(初段) 62-0-38 (46.1% R-27.2 ~ 76.3% R+202.9)
+                  駒得(400k_L20) vs やねうら王(初段) 55-0-45 (39.2% R-76.1 ~ 70.1% R+148.1)
+                  駒得(250k_L20) vs やねうら王(初段) 50-0-50 (34.5% R-111.5 ~ 65.5% R+111.5)
+                  駒得(250k_L19) vs やねうら王(２級) 51-0-49 (35.4% R-104.4 ~ 66.4% R+118.7)
+                  駒得(150k_L17) vs やねうら王(４級) 58-0-42 (42.1% R-55.2 ~ 72.8% R+170.9)
+                  駒得(120k_L17) vs やねうら王(４級) 51-0-49 (35.4% R-104.4 ~ 66.4% R+118.7)
+                  駒得(100k_L15) vs やねうら王(６級) 59-0-41 (43.1% R-48.2 ~ 73.7% R+178.7)
+                  駒得(80k_L14) vs やねうら王(８級) 48-0-52 (32.6% R-126.0 ~ 63.6% R+97.3)
+                  駒得(40k_L13) vs やねうら王(10級) 48-0-52 (32.6% R-126.0 ~ 63.6% R+97.3)
+                  駒得(40k_L12) vs やねうら王(20級+Lv10) 52-0-48 (36.4% R-97.3 ~ 67.4% R+126.0)
+                  駒得(40k_L11) vs やねうら王(20級+Lv8) 56-0-43 (40.6% R-65.8 ~ 71.6% R+160.5)
+                  駒得(40k_L10) vs やねうら王(20級+Lv6) 58-0-42 (42.1% R-55.2 ~ 72.8% R+170.9)
+                  駒得(40k_L10) vs やねうら王(20級+Lv5) 65-0-35 (49.1% R-6.0 ~ 78.8% R+228.4)
+                  駒得(40k_L9) vs やねうら王(20級+Lv5) 54-0-46 (38.3% R-83.2 ~ 69.2% R+140.6)
+                  駒得(20k_L13) vs やねうら王(20級+Lv5) 49-1-50 (33.9% R-115.7 ~ 65.1% R+108.5)
+                  駒得(10k_L11) vs やねうら王(20級+Lv1) 50-0-50 (34.5% R-111.5 ~ 65.5% R+111.5)
+                  駒得(10k_L10) vs やねうら王(20級+Lv1) 40-0-60 (25.5% R-186.7 ~ 55.9% R+41.2)
+                  駒得(10k_L10) vs やねうら王(20級+Lv0) 43-0-57 (28.1% R-163.2 ~ 58.8% R+62.2)
+                  駒得(10k_L5) vs やねうら王(20級+Lv0) 23-0-77 (11.6% R-352.2 ~ 38.0% R+84.7)
+                  駒得(10k_L0) vs やねうら王(20級+Lv0) 0-0-100 (0.0% R-∞ ~ 6.7% R-458.2)
+                */
+
+                var engine_define = new EngineDefine()
+                {
+                    DisplayName = "koma-daisuki",
+                    EngineExeName = "YaneuraOu2018KOMA",
+                    SupportedCpus = default_cpus,
+                    EvalMemory = 0, // 評価関数ないもの
+                    WorkingMemory = 200,
+                    StackPerThread = 40, // clangでコンパイルの時にstack size = 25[MB]に設定している。ここに加えてheapがスレッド当たり15MBと見積もっている。
+                    Presets = koma_preset,
+                    DescriptionSimple = "駒得大好きくん 2020年版",
+                    Description = "駒得しか考えていない駒得大好きな評価関数を搭載した思考エンジン。" +
+                        "駒得しか考えていないのに、わりと終盤は強いのが不思議。「将棋って駒得しか考えなくてもたくさん読めば強くなるんだ」というのが体感できます。",
+                    DisplayOrder = 9000,
+                    SupportedExtendedProtocol = default_extend,
+                    EngineOptionDescriptions = default_descriptions_nnue, // EvalShareを持っていないのでremoveしたOptions
+                };
+                EngineDefineUtility.WriteFile("engine/komadoku2020/engine_define.xml", engine_define);
+            }
+
+
+            {
                 // -- 詰将棋エンジン
 
                 // このnamesにあるもの以外、descriptionから削除してしまう。
