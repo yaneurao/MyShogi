@@ -25,7 +25,7 @@ namespace MyShogi.App
         ///
         /// このバージョン文字列は、Serializer.VersionStringToInt()によって数値に変換できるものとする。
         /// </summary>
-        public static readonly string MYSHOGI_VERSION_STRING = "1.3.7";
+        public static readonly string MYSHOGI_VERSION_STRING = "1.4.0";
 
         /// <summary>
         /// このファイルがシリアライズされて保存された時のバージョン文字列
@@ -59,6 +59,7 @@ namespace MyShogi.App
             // 棋譜
 
             KifuWindowDisplayTotalTime = 0;
+            MovesWhenKifuOpen = 1;
 
             // 対局エフェクト
 
@@ -378,6 +379,19 @@ namespace MyShogi.App
         {
             get { return GetValue<int>("KifuWindowDisplayTotalTime"); }
             set { SetValue<int>("KifuWindowDisplayTotalTime", value); }
+        }
+
+        /// <summary>
+        /// 棋譜を開いた時の手数
+        ///
+        /// 0 : 開始局面
+        /// 1 : 終局図
+        /// </summary>
+        [DataMember]
+        public int MovesWhenKifuOpen
+        {
+            get { return GetValue<int>("MovesWhenKifuOpen"); }
+            set { SetValue<int>("MovesWhenKifuOpen", value); }
         }
 
         /// <summary>

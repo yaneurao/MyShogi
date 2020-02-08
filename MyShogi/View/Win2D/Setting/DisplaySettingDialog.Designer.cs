@@ -79,6 +79,7 @@
             this.fontSelectionConrol3 = new MyShogi.View.Win2D.Setting.FontSelectionConrol();
             this.fontSelectionConrol2 = new MyShogi.View.Win2D.Setting.FontSelectionConrol();
             this.fontSelectionConrol1 = new MyShogi.View.Win2D.Setting.FontSelectionConrol();
+            this.richSelector19 = new MyShogi.View.Win2D.Setting.RichSelector();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -416,6 +417,7 @@
             // 
             // tabPage7
             // 
+            this.tabPage7.Controls.Add(this.richSelector19);
             this.tabPage7.Controls.Add(this.richSelector25);
             this.tabPage7.Controls.Add(this.richSelector3);
             this.tabPage7.Controls.Add(this.richSelector2);
@@ -706,6 +708,18 @@
             this.fontSelectionConrol1.Size = new System.Drawing.Size(770, 26);
             this.fontSelectionConrol1.TabIndex = 0;
             // 
+            // richSelector19
+            // 
+            this.richSelector19.GroupBoxTitle = "棋譜を開いた時に何手目にするか";
+            this.richSelector19.Location = new System.Drawing.Point(6, 336);
+            this.richSelector19.Margin = new System.Windows.Forms.Padding(0);
+            this.richSelector19.Name = "richSelector19";
+            this.richSelector19.SelectionTexts = new string[] {
+        "開始局面,kifu_open_moves_0.png,棋譜の開始局面にします。",
+        "終局図,kifu_open_moves_1.png,棋譜の最終手の局面にします。"};
+            this.richSelector19.Size = new System.Drawing.Size(772, 110);
+            this.richSelector19.TabIndex = 3;
+            // 
             // DisplaySettingDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -787,5 +801,6 @@
         private RichSelector richSelector25;
         private FontSelectionConrol fontSelectionConrol10;
         private FontSelectionConrol fontSelectionConrol9;
+        private RichSelector richSelector19;
     }
 }

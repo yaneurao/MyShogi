@@ -117,6 +117,9 @@ namespace MyShogi.View.Win2D.Setting
             richSelector25.ViewModel.WarningRestart = true;
             richSelector25.Bind(config, "KifuWindowDisplayTotalTime");
 
+            // 棋譜を開いた時に何手目の局面にするか
+            richSelector19.Bind(config, "MovesWhenKifuOpen");
+
             // -- 「エフェクト」のタブ
 
             // 対局開始・終了エフェクト

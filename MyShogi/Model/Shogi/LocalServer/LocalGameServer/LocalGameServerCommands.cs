@@ -307,9 +307,23 @@ namespace MyShogi.Model.Shogi.LocalServer
                         // 末尾の局面に移動するコマンドを叩いておく。
                         // マージ時は、マージ起点に移動してやる。たぶん現在の選択していた行がそれ。
                         if (!merge)
-                            UpdateKifuSelectedIndex(int.MaxValue);
+                        {
+                            // 通常の棋譜のオープンであるなら、
+                            // config.MovesWhenKifuOpenの値を反映させる。
+                            // これが0なら開始局面、1なら終局図
+                            switch (TheApp.app.Config.MovesWhenKifuOpen)
+                            {
+                                case 0:
+                                    UpdateKifuSelectedIndex(0);
+                                    break;
+
+                                case 1:
+                                    UpdateKifuSelectedIndex(int.MaxValue);
+                                    break;
+                            }
+                        }
                         else
-                            UpdateKifuSelectedIndex(oldSelectedIndex+1);
+                            UpdateKifuSelectedIndex(oldSelectedIndex + 1);
 
                         // -- 棋譜上の名前を表示名に反映させる。
 
