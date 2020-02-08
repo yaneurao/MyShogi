@@ -556,6 +556,8 @@ namespace MyShogi.View.Win2D
                     item_settings.DropDownItems.Add(item);
                 }
 
+#if false 
+                // これ、使わない。一般ユーザー向けのソフトとしてわかりにくくなる。               
                 {
                     var item = new ToolStripMenuItem();
                     item.Text = "エンジン補助設定 (&E)"; // Engine Subsetting
@@ -569,8 +571,25 @@ namespace MyShogi.View.Win2D
                     };
                     item_settings.DropDownItems.Add(item);
                 }
+#endif
 
                 item_settings.DropDownItems.Add(new ToolStripSeparator());
+
+                // -- 外部思考エンジンの追加(engine_define.xmlの編集)
+                {
+                    var item_edit_engine_define = new ToolStripMenuItem();
+                    item_edit_engine_define.Text = "外部思考エンジンの追加(&E)";
+                    item_edit_engine_define.Click += (sender, e) =>
+                    {
+                        using (var dialog = new EngineDefineEditDialog())
+                        {
+                            FormLocationUtility.CenteringToThisForm(dialog, this);
+                            dialog.ShowDialog(this);
+                        }
+                    };
+                    item_settings.DropDownItems.Add(item_edit_engine_define);
+                }
+
 
                 // -- 設定の初期化
                 {
@@ -604,6 +623,7 @@ namespace MyShogi.View.Win2D
                         item_init.DropDownItems.Add(item);
                     }
                 }
+
 
                 var item_boardedit = new ToolStripMenuItem();
                 item_boardedit.Text = "盤面編集(&E)"; // board Edit

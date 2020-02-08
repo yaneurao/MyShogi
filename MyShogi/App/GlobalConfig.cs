@@ -112,7 +112,7 @@ namespace MyShogi.App
 
             // -- エンジン補助設定
 
-            UsiOkTimeOut = 15;
+            // UsiOkTimeOut = 15;
 
         }
 
@@ -978,6 +978,10 @@ namespace MyShogi.App
 
         #region エンジン補助設定
 
+        // これ、一般ユーザー向けのソフトとしてわかりにくくなる。
+
+#if false
+
         /// <summary>
         /// "usi"に対する"usiok"までのtime out時間。(デフォルト15秒)
         /// 0 が設定されていれば無制限。
@@ -988,6 +992,7 @@ namespace MyShogi.App
             get { return GetValue<int>("UsiOkTimeOut"); }
             set { SetValue<int>("UsiOkTimeOut", value); }
         }
+#endif
 
         #endregion
 
@@ -999,11 +1004,11 @@ namespace MyShogi.App
         [DataMember]
         public MostRecentUsedFiles MRUF { get; set; } = new MostRecentUsedFiles();
 
-        #endregion
+#endregion
 
         /// ← 細かい設定は、ここに追加していく
 
-        #region Misc Settings
+#region Misc Settings
 
         /// <summary>
         /// 対局設定。
@@ -1033,9 +1038,9 @@ namespace MyShogi.App
         [DataMember]
         public GameResultSetting GameResultSetting { get; set; } = new GameResultSetting();
 
-        #endregion
+#endregion
 
-        #region FontSetting
+#region FontSetting
 
         /// <summary>
         /// 各Dialogなどのフォント設定
@@ -1043,6 +1048,6 @@ namespace MyShogi.App
         [DataMember]
         public FontManager FontManager { get; set; } = new FontManager();
 
-        #endregion
+#endregion
     }
 }

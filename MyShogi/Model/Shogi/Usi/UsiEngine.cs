@@ -281,8 +281,12 @@ namespace MyShogi.Model.Shogi.Usi
                 // "usi"→"usiok"まで15秒。ただし延長あり。
                 case UsiEngineState.WaitUsiOk:
                     // 0が設定されていれば無制限にしておく。
-                    var t1 = config.UsiOkTimeOut == 0 ? int.MaxValue : config.UsiOkTimeOut;
-                    timeoutTime = DateTime.Now + new TimeSpan(0,0,t1);
+                    // →　一般ユーザー向けのソフトとしてわかりにくい。
+                    // var t1 = config.UsiOkTimeOut == 0 ? int.MaxValue : config.UsiOkTimeOut;
+                    // timeoutTime = DateTime.Now + new TimeSpan(0,0,t1);
+
+                    timeoutTime = DateTime.MaxValue; // time-out無効化。
+
                     break;
 
                 // "isready"→"readyok"まで30秒。ただし延長あり。
