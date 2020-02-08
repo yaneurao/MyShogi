@@ -1078,7 +1078,7 @@ namespace MyShogi.View.Win2D
                                 item.DropDownItems.Add(item3a);
 
                                 var item3b = new ToolStripMenuItem();
-                                item3b.Text = "メインウインドウから浮かせ、メインウインドウの左側に配置する(&3)(DockMode)";
+                                item3b.Text = "検討ウインドウから浮かせ、メインウインドウの左側に配置する(&3)(DockMode)";
                                 item3b.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Left;
                                 item3b.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Left); };
                                 item.DropDownItems.Add(item3b);
@@ -1149,7 +1149,7 @@ namespace MyShogi.View.Win2D
                                 item.DropDownItems.Add(item3a);
 
                                 var item3b = new ToolStripMenuItem();
-                                item3b.Text = "メインウインドウから浮かせ、メインウインドウの左側に配置する(&3)(DockMode)";
+                                item3b.Text = "検討ウインドウから浮かせ、メインウインドウの左側に配置する(&3)(DockMode)";
                                 item3b.Checked = dock.DockState == DockState.DockedToMainWindow && dock.DockPosition == DockPosition.Left;
                                 item3b.Click += (sender, e) => { dock.SetState(DockState.DockedToMainWindow, DockPosition.Left); };
                                 item.DropDownItems.Add(item3b);
