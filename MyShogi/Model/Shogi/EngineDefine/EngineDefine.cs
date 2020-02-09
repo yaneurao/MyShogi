@@ -88,7 +88,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
         /// <summary>
         /// 評価関数用のメモリ。単位は[MB]
-        /// (メモリ共有する場合は、2つ目のエンジンはこの分だけ減算される。)
+        /// (EvalShareをオンにしてメモリ共有をする場合は、2つ目のエンジンはこの分だけ減算される。)
         /// </summary>
         [DataMember]
         public Int64 EvalMemory { get; set; } = 470;

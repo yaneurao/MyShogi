@@ -71,7 +71,7 @@ namespace MyShogi.View.Win2D
 
             InitSelectionControls();
 
-            // フォント変更。コンストラクタのタイミング゛は子Controlが生成されておらず、間に合わなかったので
+            // フォント変更。コンストラクタのタイミングは子Controlが生成されておらず、間に合わなかったので
             // このタイミングで初期化を行う。
             FontUtility.ReplaceFont(this, TheApp.app.Config.FontManager.SettingDialog);
         }
