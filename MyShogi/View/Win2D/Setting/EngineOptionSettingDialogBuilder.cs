@@ -5,6 +5,7 @@ using MyShogi.App;
 using MyShogi.Model.Shogi.EngineDefine;
 using MyShogi.Model.Shogi.Player;
 using MyShogi.Model.Common.Utility;
+using MyShogi.Model.Shogi.Usi;
 
 namespace MyShogi.View.Win2D
 {
@@ -75,12 +76,13 @@ namespace MyShogi.View.Win2D
 
             // エンジンからUsiOption文字列を取得
 
-            var useHashCommand = engineDefine.IsSupported(ExtendedProtocol.UseHashCommandExtension);
-
             var ind_options = new List<EngineOptionForSetting>();
 
-            // "Hash"は一つでいいので、２つ目を追加しないようにするために1度目のカウントであるかをフラグを持っておく。
-            bool first_hash = true;
+
+            // "USI_Hash","Hash"の見つけたほうのコマンドを記録しておく。両方なければ"USI_Hash"にする。
+
+            UsiOption USI_Hash_Option = null;
+            UsiOption Hash_Option = null;
 
             foreach (var option in engine.Engine.OptionList)
             {
@@ -90,34 +92,47 @@ namespace MyShogi.View.Win2D
                 if (option.Name == "USI_Ponder")
                     continue;
 
-                // "USI_Hash","Hash"は統合する。
+                // "USI_Hash","Hash"は統合する。このループが抜けた直後に追加するので、ここでは無視で。
                 else if (option.Name == "USI_Hash")
                 {
-                    // USI_Hash使わないエンジンなので無視する。
-                    if (useHashCommand)
-                        continue;
-
-                    if (!first_hash)
-                        continue;
-
-                    option.SetName("Hash_"); // これにしておけばあとで置換される。
-                    first_hash = false;
+                    USI_Hash_Option = option;
+                    continue;
                 }
                 else if (option.Name == "Hash")
                 {
-                    //Debug.Assert(useHashCommand);
-
-                    if (!first_hash)
-                        continue;
-
-                    option.SetName("Hash_"); // これにしておけばあとで置換される。
-                    first_hash = false;
+                    Hash_Option = option;
+                    continue;
                 }
 
                 var opt = new EngineOptionForSetting(option.Name, option.CreateOptionCommandString());
                 opt.Value = option.GetDefault();
                 ind_options.Add(opt);
             }
+
+            // "USI_Hash","Hash"の両方が見つかるケース　→　"USI_Hash"を採用
+            // 両方が見つからないケース →　勝手に"USI_Hash"を生成しとく。
+            // 片側だけ見つかるケース　→　それを採用。
+            // ※　このオプションのデフォルト値を取得してこないとダイアログに表示できないため、
+            // このような慎重な処理になっている。
+
+            if (USI_Hash_Option!=null)
+            {
+                var opt = new EngineOptionForSetting("Hash_", USI_Hash_Option.CreateOptionCommandString());
+                opt.Value = USI_Hash_Option.GetDefault();
+                ind_options.Add(opt);
+            } else if (Hash_Option !=null)
+            {
+                var opt = new EngineOptionForSetting("Hash_", Hash_Option.CreateOptionCommandString());
+                opt.Value = Hash_Option.GetDefault();
+                ind_options.Add(opt);
+            } else
+            {
+                var option = UsiOption.Parse("Hash_ type spin default 1024 min 1 max 1048576");
+                var opt = new EngineOptionForSetting(option.Name, option.CreateOptionCommandString());
+                opt.Value = option.GetDefault();
+                ind_options.Add(opt);
+            }
+
 
             var ind_descriptions = engineDefine.EngineOptionDescriptions; // nullありうる
             if (ind_descriptions == null)

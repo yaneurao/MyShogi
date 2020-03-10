@@ -487,9 +487,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
             var default_cpus = new List<CpuType>(new[] { CpuType.NO_SSE, CpuType.SSE2, CpuType.SSE41, CpuType.SSE42, CpuType.AVX2 });
 
-            var default_extend = new List<ExtendedProtocol>( new[] { ExtendedProtocol.UseHashCommandExtension , ExtendedProtocol.HasEvalShareOption } );
-            var default_nnue_extend = new List<ExtendedProtocol>(new[] { ExtendedProtocol.UseHashCommandExtension });
-            var gps_extend = new List<ExtendedProtocol>( new[] { ExtendedProtocol.UseHashCommandExtension } );
+            var default_extend = new List<ExtendedProtocol>( new[] { ExtendedProtocol.HasEvalShareOption } );
+            var default_nnue_extend = new List<ExtendedProtocol>();
+            var gps_extend = new List<ExtendedProtocol>();
 
             // EngineOptionDescriptionsは、エンジンオプション共通設定に使っているDescriptionsと共用。
             var common_setting = EngineCommonOptionsSample.CreateEngineCommonOptions(new EngineCommonOptionsSampleOptions() {

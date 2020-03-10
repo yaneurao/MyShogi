@@ -24,7 +24,10 @@
         /// この拡張を有効にすると、GUI側は、思考エンジンに対して
         /// "USI_Hash"の代わりに"Hash"を送信する。
         /// </summary>
-        UseHashCommandExtension,
+        // UseHashCommandExtension,
+        // →　このオプション、廃止。[2020/03/10]
+        // "usi"を送信してエンジン側から返ってきた"USI_Hash","Hash"の、存在するほうを送信すれば解決。
+        // 両方返ってきた場合、"USI_Hash"を優先。両方返ってこなかった場合も"USI_Hash"。
 
         /// <summary>
         /// "EvalShare"の機能を持っているのか。
