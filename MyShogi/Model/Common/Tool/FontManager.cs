@@ -26,6 +26,7 @@ namespace MyShogi.Model.Common.Tool
             MiniBoardTab        = new FontData(FontList.MiniBoardTab  , 9f);
             ToolTip             = new FontData(FontList.ToolTip       , 11f);
             DebugWindow         = new FontData(FontList.DebugWindow   ,  9f);
+            EvalGraphControl    = new FontData(FontList.EvalGraphControl, 12f);
         }
 
         /// <summary>
@@ -146,6 +147,16 @@ namespace MyShogi.Model.Common.Tool
         {
             get { return GetValue<FontData>("DebugWindow"); }
             set { SetValue("DebugWindow", value); }
+        }
+
+        /// <summary>
+        /// 形勢グラフコントロール用
+        /// </summary>
+        [DataMember]
+        public FontData EvalGraphControl
+        {
+            get { return GetValue<FontData>("EvalGraphControl"); }
+            set { SetValue("EvalGraphControl", value); }
         }
 
         /// <summary>

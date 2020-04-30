@@ -151,6 +151,7 @@ namespace MyShogi.View.Win2D.Setting
             fontSelectionConrol9.Bind(font.ConsiderationWindow  , "ConsiderationWindow");
             fontSelectionConrol10.Bind(font.ToolTip             , "ToolTip");
             fontSelectionConrol11.Bind(font.DebugWindow         , "DebugWindow");
+            fontSelectionConrol12.Bind(font.EvalGraphControl    , "EvalGraphControl");
 
         }
 

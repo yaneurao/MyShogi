@@ -103,7 +103,7 @@ namespace MyShogi.Model.Dependency
 
     /// <summary>
     /// MonoやUbuntuではClipboardの仕組みが異なるので、標準のClipboardクラスをwrapしておく。
-    /// 
+    ///
     /// cf.Mono, Ubuntu and Clipboard : https://www.medo64.com/2011/01/mono-ubuntu-and-clipboard/
     /// </summary>
     public static class ClipboardEx
@@ -166,7 +166,7 @@ namespace MyShogi.Model.Common.Tool
         /// ミニ盤面下のToolStrip(ボタン)のフォント
         /// </summary>
         public static readonly string SubToolStrip = DefaultFont3;
-        
+
         /// <summary>
         /// メッセージダイアログのフォント
         /// </summary>
@@ -202,6 +202,11 @@ namespace MyShogi.Model.Common.Tool
         /// デバッグウインドウ
         /// </summary>
         public static readonly string DebugWindow = DefaultFont1;
+
+        /// <summary>
+        /// 形勢グラフコントロール
+        /// </summary>
+        public static readonly string EvalGraphControl = DefaultFont1;
     }
 }
 
@@ -211,21 +216,21 @@ namespace MyShogi.Model.Resource.Sounds
 {
     /// <summary>
     /// wavファイル一つのwrapper。
-    /// 
+    ///
     /// ※ MediaPlayerを使った実装に変更した。
     ///  ・System.Windows.Media.MediaPlayerを利用するためのアセンブリ"PresentationCore.dll"アセンブリを参照に追加。
     ///	 ・System.Windows.Freezableを利用するためのアセンブリ"WindowsBase.dll"アセンブリを参照に追加。
-    ///	 
+    ///
     /// 他の環境に移植する場合は、このクラスをその環境用に再実装すべし。
     ///
     /// 仕様)
     /// 再生自体は、複数のwavファイルの同時再生できると仮定してる。
     /// SoundLoaderの1つのインスタンスは、1つのwavファイルと結びついていて、
     /// 複数インスタンスのそれぞれのPlay()を同時に呼び出せば同時に再生されるものとする。
-    /// 
+    ///
     /// 再生中かどうかはSoundLoader.IsPlay()によって、その紐づけられているwavファイルが再生中であるかを
     /// 照会できるものとする。
-    /// 
+    ///
     /// また、棋譜読み上げは前のファイルの再生が終わるまで次のファイルの再生が保留されるが、
     /// 駒音などはそのファイルが再生中であろうと問答無用で再生する。これによりの、読み上げと駒音は同時再生される。
     /// </summary>

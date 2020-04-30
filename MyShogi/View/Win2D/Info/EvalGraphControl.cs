@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using MyShogi.Model.Common.ObjectModel;
@@ -14,7 +15,6 @@ namespace MyShogi.View.Win2D
     {
         EvaluationGraphData evaldata;
         DColor[] playerColor;
-        string fontFamilyName;
         bool scrollCheck;
         ViewGeo geo;
         public EvalGraphControl()
@@ -42,19 +42,6 @@ namespace MyShogi.View.Win2D
                 DColor.Orange,
                 DColor.YellowGreen,
             };
-
-            {
-                FontFamily[] ff = FontFamily.Families;
-                fontFamilyName = FontFamily.GenericMonospace.Name;
-                foreach (var n in new[] { "Consolas", "Inconsolata" })
-                foreach (var f in ff)
-                if (f.Name == n)
-                {
-                    fontFamilyName = f.Name;
-                    goto fontLoopOut;
-                }
-                fontLoopOut:;
-            }
 
             InitializeComponent();
 
@@ -112,6 +99,8 @@ namespace MyShogi.View.Win2D
             public int plyMax;
             public int hScrollValue;
             public float scoreFontSize;
+            public float scoreFontSizeXmul;
+            public float parFontSize;
             public float scaleLineLen;
             public float scaleTextPad;
             public float lPad;
@@ -134,34 +123,40 @@ namespace MyShogi.View.Win2D
                 plyMax = Math.Max((Math.Max(con.evaldata.maxIndex, con.evaldata.selectedIndex) + 9) / 10 * 10, 50);
                 var plyMaxLen = $"{plyMax}".Length;
                 hScrollValue = con.HorizontalScroll.Value;
-                scoreFontSize = Math.Max(Math.Min(con.Width / 16f, con.Height / 16f), 1f);
+                scoreFontSize = Math.Max(Math.Min(con.Width, con.Height) / 16f, 1f);
+                parFontSize = Math.Max(Math.Min(con.Width, con.Height) / 20f, 1f);
+                // 評価値の文字縦長度
+                scoreFontSizeXmul = con.Font.Size / 16f;
                 lineWidthMul = Math.Max(Math.Min(con.Width, con.Height) / 512f, 1f);
-                scaleLineLen = 6 * lineWidthMul;
-                scaleTextPad = 8 * lineWidthMul;
+                scaleLineLen = 4 * lineWidthMul;
+                scaleTextPad = 5 * lineWidthMul;
                 RectangleF bounds;
-                using (var path = new System.Drawing.Drawing2D.GraphicsPath())
+                using (var path = new GraphicsPath())
                 {
-                    using (var font = new FontFamily(con.fontFamilyName))
                     path.AddString(
                         "+9999",
-                        font,
-                        (int)FontStyle.Regular,
+                        con.Font.FontFamily,
+                        (int)con.Font.Style,
                         scoreFontSize,
                         new PointF(0f, 0f),
                         new StringFormat() { Alignment = StringAlignment.Far, LineAlignment = StringAlignment.Near }
                         );
+                    using (var matrix = new Matrix(scoreFontSizeXmul, 0f, 0f, 1f, 0f, 0f))
+                    path.Transform(matrix);
                     bounds = path.GetBounds();
-                    lPad = 4 + (int)(-1.0f * bounds.Left + scaleTextPad);
-                    rPad = 4 + (int)(-0.1f * plyMaxLen * bounds.Left);
+                    lPad = 4 + (-1.0f * bounds.Left + scaleTextPad);
+                    rPad = 4 + (con.evaldata.type == EvaluationGraphType.TrigonometricSigmoid ?
+                        (-0.8f * bounds.Left * parFontSize / scoreFontSize + scaleTextPad) :
+                        (-0.1f * bounds.Left * plyMaxLen));
+                    graphBodyWidth = con.Width - lPad - rPad;
+                    plyWidth = Math.Max(graphBodyWidth / plyMax, 4f);
+                    plyFontSize = Math.Max(Math.Min(plyWidth * -80f / (plyMaxLen * bounds.Left), 1f) * scoreFontSize, 1f);
                     uPad = 4 + (int)(+0.5f * bounds.Bottom);
-                    bPad = 4 + (int)(+1.0f * bounds.Bottom + scaleTextPad);
+                    bPad = 4 + (int)(+1.0f * bounds.Bottom * plyFontSize / scoreFontSize + scaleTextPad);
                 }
                 xlen = con.evalGraphPictureBox.Width - lPad - rPad;
                 ymul = (con.evalGraphPictureBox.Height - uPad - bPad) * 0.5f;
                 yadd = uPad + ymul;
-                graphBodyWidth = con.Width - lPad - rPad;
-                plyWidth = Math.Max(graphBodyWidth / plyMax, 4f);
-                plyFontSize = Math.Max(Math.Min(scoreFontSize * plyWidth * -80f / (plyMaxLen * bounds.Left), scoreFontSize), 1f);
                 scoreRound = Math.Max(Math.Min(con.Height * 0.01f, plyWidth * 0.5f), 3f);
                 scoreLineWidth = Math.Max(scoreRound * 0.5f, 1f);
                 boxWidth = Math.Max((int)(lPad + rPad + plyMax * plyWidth), con.Width);
@@ -175,8 +170,13 @@ namespace MyShogi.View.Win2D
         {
             // ToDo: MainDialogで局面が変更された時（ToolStrip, KifuControlの操作など）にEvalGraphの更新をトリガする
 
+            // フォントの変更。即時反映
+            var fontSetter = new FontSetter(this, "EvalGraphControl");
+            Disposed += (_sender, args) => fontSetter.Dispose();
+
             Graphics g = e.Graphics;
             g.PageUnit = GraphicsUnit.Pixel;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
             geo = new ViewGeo(this);
 
             float graphPlyHPad = Math.Min(10f * geo.plyWidth, 0.5f * geo.graphBodyWidth);
@@ -208,7 +208,7 @@ namespace MyShogi.View.Win2D
 
             using (var brush = new SolidBrush(DColor.White))
             {
-                g.FillRectangle(brush, new Rectangle(0, 0, evalGraphPictureBox.Width, evalGraphPictureBox.Height));
+                g.FillRectangle(brush, new Rectangle(0, 0, geo.boxWidth, evalGraphPictureBox.Height));
             }
 
             var vertFunc = evaldata.eval2VertFunc;
@@ -218,6 +218,11 @@ namespace MyShogi.View.Win2D
                 Alignment = StringAlignment.Far,
                 LineAlignment = StringAlignment.Center,
             };
+            var strformatPar = new StringFormat()
+            {
+                Alignment = StringAlignment.Near,
+                LineAlignment = StringAlignment.Center,
+            };
             var strformatPly = new StringFormat()
             {
                 Alignment = StringAlignment.Center,
@@ -225,7 +230,6 @@ namespace MyShogi.View.Win2D
             };
 
             // 手数目盛りの描画
-            using (var font = new Font(fontFamilyName, geo.plyFontSize, GraphicsUnit.Pixel))
             using (var bpen = new Pen(DColor.Black, 2f * geo.lineWidthMul))
             using (var bbrush = new SolidBrush(DColor.Black))
             for (var i = 0; ; i += 10)
@@ -233,15 +237,27 @@ namespace MyShogi.View.Win2D
             {
                 float x = geo.lPad + geo.plyWidth * i;
                 if (x < geo.lPad + geo.hScrollValue) continue;
-                if (x + geo.rPad > evalGraphPictureBox.Width) break;
+                if (x > geo.lPad + geo.graphBodyWidth + geo.hScrollValue) break;
                 g.DrawLine(pen, x, geo.yadd - geo.ymul, x, geo.yadd + geo.ymul);
                 if (i % 20 != 0) continue;
                 g.DrawLine(bpen, x, geo.yadd + geo.ymul, x, geo.yadd + geo.ymul + geo.scaleLineLen);
-                g.DrawString(i.ToString(), font, bbrush, x, geo.yadd + geo.ymul + geo.scaleTextPad, strformatPly);
+                using (var path = new GraphicsPath())
+                {
+                    path.AddString(
+                        i.ToString(),
+                        Font.FontFamily,
+                        (int)Font.Style,
+                        geo.plyFontSize,
+                        new PointF(0f, 0f),
+                        strformatPly
+                    );
+                    using (var matrix = new Matrix(geo.scoreFontSizeXmul, 0f, 0f, 1f, x, geo.yadd + geo.ymul + geo.scaleTextPad))
+                        path.Transform(matrix);
+                    g.FillPath(bbrush, path);
+                }
             }
 
             // 評価値目盛りの描画
-            using (var font = new Font(fontFamilyName, geo.scoreFontSize, GraphicsUnit.Pixel))
             switch (evaldata.type)
             {
                 case EvaluationGraphType.Normal:
@@ -297,9 +313,9 @@ namespace MyShogi.View.Win2D
                         var y1 = +vert * geo.ymul + geo.yadd;
                         using (var pen = new Pen(color, ent.width * geo.lineWidthMul))
                         {
-                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y0, geo.lPad + geo.xlen, y0);
+                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y0, geo.lPad + geo.hScrollValue + geo.graphBodyWidth, y0);
                             if (ent.score != 0)
-                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y1, geo.lPad + geo.xlen, y1);
+                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y1, geo.lPad + geo.hScrollValue + geo.graphBodyWidth, y1);
                         }
                     }
                     foreach (var ent in new[]
@@ -324,8 +340,21 @@ namespace MyShogi.View.Win2D
                         var y = -vert * geo.ymul + geo.yadd;
                         using (var pen = new Pen(color, 2f * geo.lineWidthMul))
                             g.DrawLine(pen, geo.lPad + geo.hScrollValue - geo.scaleLineLen, y, geo.lPad + geo.hScrollValue, y);
-                        using (var brush = new SolidBrush(color))
-                            g.DrawString(ent.text, font, brush, geo.lPad + geo.hScrollValue - geo.scaleTextPad, y, strformatScore);
+                        using (var path = new GraphicsPath())
+                        {
+                            path.AddString(
+                                ent.text,
+                                Font.FontFamily,
+                                (int)Font.Style,
+                                geo.scoreFontSize,
+                                new PointF(0f, 0f),
+                                strformatScore
+                            );
+                            using (var matrix = new Matrix(geo.scoreFontSizeXmul, 0f, 0f, 1f, geo.lPad + geo.hScrollValue - geo.scaleTextPad, y))
+                                path.Transform(matrix);
+                            using (var brush = new SolidBrush(color))
+                                g.FillPath(brush, path);
+                        }
                     }
                     break;
                 case EvaluationGraphType.TrigonometricSigmoid:
@@ -360,7 +389,7 @@ namespace MyShogi.View.Win2D
                         new { score = 200, width = 1 },
                         new { score = 500, width = 1 },
                         new { score = 1000, width = 2 },
-                        new { score = 2000, width = 1 },
+                        new { score = 2500, width = 1 },
                         new { score = 9999, width = 2 },
                         new { score = 99999, width = 1 },
                     })
@@ -371,9 +400,9 @@ namespace MyShogi.View.Win2D
                         var y1 = +vert * geo.ymul + geo.yadd;
                         using (var pen = new Pen(color, ent.width * geo.lineWidthMul))
                         {
-                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y0, geo.lPad + geo.xlen, y0);
+                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y0, geo.lPad + geo.hScrollValue + geo.graphBodyWidth, y0);
                             if (ent.score != 0)
-                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y1, geo.lPad + geo.xlen, y1);
+                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y1, geo.lPad + geo.hScrollValue + geo.graphBodyWidth, y1);
                         }
                     }
                     foreach (var ent in new[]
@@ -382,13 +411,13 @@ namespace MyShogi.View.Win2D
                         new { text = "+200", score = +200 },
                         new { text = "+500", score = +500 },
                         new { text = "+1000", score = +1000 },
-                        new { text = "+2000", score = +2000 },
+                        new { text = "+2500", score = +2500 },
                         new { text = "+9999", score = +9999 },
                         new { text = "+∞", score = (int)EvalValue.MatePlus },
                         new { text = "-200", score = -200 },
                         new { text = "-500", score = -500 },
                         new { text = "-1000", score = -1000 },
-                        new { text = "-2000", score = -2000 },
+                        new { text = "-2500", score = -2500 },
                         new { text = "-9999", score = -9999 },
                         new { text = "-∞", score = (int)EvalValue.MatedMinus },
                     })
@@ -398,8 +427,59 @@ namespace MyShogi.View.Win2D
                         var y = -vert * geo.ymul + geo.yadd;
                         using (var pen = new Pen(color, 2f * geo.lineWidthMul))
                             g.DrawLine(pen, geo.lPad + geo.hScrollValue - geo.scaleLineLen, y, geo.lPad + geo.hScrollValue, y);
-                        using (var brush = new SolidBrush(color))
-                            g.DrawString(ent.text, font, brush, geo.lPad + geo.hScrollValue - geo.scaleTextPad, y, strformatScore);
+                        using (var path = new GraphicsPath())
+                        {
+                            path.AddString(
+                                ent.text,
+                                Font.FontFamily,
+                                (int)Font.Style,
+                                geo.scoreFontSize,
+                                new PointF(0f, 0f),
+                                strformatScore
+                            );
+                            using (var matrix = new Matrix(geo.scoreFontSizeXmul, 0f, 0f, 1f, geo.lPad + geo.hScrollValue - geo.scaleTextPad, y))
+                                path.Transform(matrix);
+                            using (var brush = new SolidBrush(color))
+                                g.FillPath(brush, path);
+                        }
+                    }
+                    foreach (var ent in new[]
+                    {
+                        new { text = "100%", score = (int)EvalValue.MatePlus },
+                        new { text = "99%", score = (int)(600f * Math.Log(0.99f / 0.01f)) },
+                        new { text = "90%", score = (int)(600f * Math.Log(0.9f / 0.1f)) },
+                        new { text = "80%", score = (int)(600f * Math.Log(0.8f / 0.2f)) },
+                        new { text = "70%", score = (int)(600f * Math.Log(0.7f / 0.3f)) },
+                        new { text = "60%", score = (int)(600f * Math.Log(0.6f / 0.4f)) },
+                        new { text = "50%", score = (int)(600f * Math.Log(0.5f / 0.5f)) },
+                        new { text = "40%", score = (int)(600f * Math.Log(0.4f / 0.6f)) },
+                        new { text = "30%", score = (int)(600f * Math.Log(0.3f / 0.7f)) },
+                        new { text = "20%", score = (int)(600f * Math.Log(0.2f / 0.8f)) },
+                        new { text = "10%", score = (int)(600f * Math.Log(0.1f / 0.9f)) },
+                        new { text = "1%", score = (int)(600f * Math.Log(0.01f / 0.99f)) },
+                        new { text = "0%", score = (int)EvalValue.MatedMinus },
+                    })
+                    {
+                        var vert = vertFunc((EvalValue)ent.score);
+                        var color = Vert2Color(vert, evaldata.reverse);
+                        var y = -vert * geo.ymul + geo.yadd;
+                        using (var pen = new Pen(color, 2f * geo.lineWidthMul))
+                            g.DrawLine(pen, geo.hScrollValue + geo.lPad + geo.graphBodyWidth, y, geo.hScrollValue + geo.lPad + geo.graphBodyWidth + geo.scaleLineLen, y);
+                        using (var path = new GraphicsPath())
+                        {
+                            path.AddString(
+                                ent.text,
+                                Font.FontFamily,
+                                (int)Font.Style,
+                                geo.parFontSize,
+                                new PointF(0f, 0f),
+                                strformatPar
+                            );
+                            using (var matrix = new Matrix(geo.scoreFontSizeXmul, 0f, 0f, 1f, geo.hScrollValue + geo.lPad + geo.graphBodyWidth + geo.scaleTextPad, y))
+                                path.Transform(matrix);
+                            using (var brush = new SolidBrush(color))
+                                g.FillPath(brush, path);
+                        }
                     }
                     break;
                 case EvaluationGraphType.WinningRate:
@@ -434,9 +514,9 @@ namespace MyShogi.View.Win2D
                         var y1 = +vert * geo.ymul + geo.yadd;
                         using (var pen = new Pen(color, ent.width * geo.lineWidthMul))
                         {
-                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y0, geo.lPad + geo.xlen, y0);
+                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y0, geo.lPad + geo.hScrollValue + geo.graphBodyWidth, y0);
                             if (ent.vert != 0)
-                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y1, geo.lPad + geo.xlen, y1);
+                            g.DrawLine(pen, geo.lPad + geo.hScrollValue, y1, geo.lPad + geo.hScrollValue + geo.graphBodyWidth, y1);
                         }
                     }
                     foreach (var ent in new[]
@@ -459,8 +539,21 @@ namespace MyShogi.View.Win2D
                         var y = -vert * geo.ymul + geo.yadd;
                         using (var pen = new Pen(color, 2f * geo.lineWidthMul))
                             g.DrawLine(pen, geo.lPad + geo.hScrollValue - geo.scaleLineLen, y, geo.lPad + geo.hScrollValue, y);
-                        using (var brush = new SolidBrush(color))
-                            g.DrawString(ent.text, font, brush, geo.lPad + geo.hScrollValue - geo.scaleTextPad, y, strformatScore);
+                        using (var path = new GraphicsPath())
+                        {
+                            path.AddString(
+                                ent.text,
+                                Font.FontFamily,
+                                (int)Font.Style,
+                                geo.scoreFontSize,
+                                new PointF(0f, 0f),
+                                strformatScore
+                            );
+                            using (var matrix = new Matrix(geo.scoreFontSizeXmul, 0f, 0f, 1f, geo.lPad + geo.hScrollValue - geo.scaleTextPad, y))
+                                path.Transform(matrix);
+                            using (var brush = new SolidBrush(color))
+                                g.FillPath(brush, path);
+                        }
                     }
                     break;
             }
@@ -468,7 +561,7 @@ namespace MyShogi.View.Win2D
             // 外枠線の描画
             using (var pen = new Pen(DColor.Silver, 3f * geo.lineWidthMul))
             {
-                g.DrawRectangle(pen, geo.lPad + geo.hScrollValue, geo.yadd - geo.ymul, geo.xlen - geo.hScrollValue, geo.ymul + geo.ymul);
+                g.DrawRectangle(pen, geo.lPad + geo.hScrollValue, geo.yadd - geo.ymul, geo.graphBodyWidth, geo.ymul + geo.ymul);
             }
 
             // 評価値推移線の描画
@@ -491,12 +584,13 @@ namespace MyShogi.View.Win2D
                     else
                         continue;
                     if (ip * geo.plyWidth < geo.hScrollValue) continue;
+                    if (i * geo.plyWidth > geo.hScrollValue + geo.graphBodyWidth) break;
                     var yp = vertFunc(data.values[ip]);
                     g.DrawLine(pen, ip * geo.plyWidth + geo.lPad, -yp * geo.ymul + geo.yadd, i * geo.plyWidth + geo.lPad, -y * geo.ymul + geo.yadd);
                 }
             }
 
-            if (evaldata.selectedIndex * geo.plyWidth >= geo.hScrollValue)
+            if (evaldata.selectedIndex * geo.plyWidth >= geo.hScrollValue && evaldata.selectedIndex * geo.plyWidth <= geo.hScrollValue + geo.graphBodyWidth)
             {
                 var x = evaldata.selectedIndex * geo.plyWidth + geo.lPad;
                 using (var pen = new Pen(DColor.DarkTurquoise, 3f))
@@ -509,6 +603,7 @@ namespace MyShogi.View.Win2D
             for (var i = 0; i < evaldata.maxIndex; ++i)
             {
                 if (i * geo.plyWidth < geo.hScrollValue) continue;
+                if (i * geo.plyWidth > geo.hScrollValue + geo.graphBodyWidth) break;
                 // 逆順に描画して番号の若い方を表になるようにする
                 for (var p = evaldata.data_array.Count() - 1; p >= 0; --p)
                 {

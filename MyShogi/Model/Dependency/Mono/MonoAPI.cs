@@ -436,6 +436,11 @@ namespace MyShogi.Model.Common.Tool
         /// デバッグウインドウ
         /// </summary>
         public static readonly string DebugWindow = DefaultFont1;
+
+        /// <summary>
+        /// 形勢グラフコントロール
+        /// </summary>
+        public static readonly string EvalGraphControl = DefaultFont1;
     }
 }
 
