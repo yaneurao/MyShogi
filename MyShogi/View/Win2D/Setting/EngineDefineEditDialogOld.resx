@@ -1,0 +1,289 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="label16.ToolTip" xml:space="preserve">
+    <value>・エンジン種別(EngineType)
+
+「通常対局用」 (EngineType == 0) : 通常探索エンジン。(goコマンドが送れる)
+「詰将棋用」    (EngineType == 1) : 詰み将棋に対応しているか。(go mateコマンドが送れる)
+「通常対局＋詰将棋用)」(EngineType == 2) : 通常探索＋詰将棋対応のエンジン
+
+その他、王手将棋用など、特殊なエンジンについても将来的にはここに追加していく予定。</value>
+  </data>
+  <data name="label7.ToolTip" xml:space="preserve">
+    <value>・対象CPU(SupportedCpus)
+
+動作対象のCPUです。
+
+NoSSE : 32bit版(OSが32bit環境で動作させるのに使います)
+SSE2  : 64bit版SSE2対応(OSが64bit環境でSSE2対応のCPUで使います)
+SSE4.1: 64bit版SSE2対応(OSが64bit環境でSSE4.1対応のCPUで使います)
+SSE4.2: 64bit版SSE2対応(OSが64bit環境でSSE4.2対応のCPUで使います)
+AVX2  : 64bit版SSE2対応(OSが64bit環境でAVX2対応のCPUで使います)
+
+例えば、動作環境がSSE4.2までしか対応していない場合、SSE4.2用の実行ファイルを実行します。
+しかし、「対象CPU」の「SSE4.2」のチェックボックスにチェックが入っていない場合、
+SSE4.2用の実行ファイルは用意されていないということなので、それより下位のCPUである
+SSE4.1用の実行ファイルを実行します。
+(以下同様に、SSE4.1のチェックボックスにチェックが入っていない場合、SSE2を実行します。
+SSE2のチェックボックスにチェックが入っていない場合、NoSSEを実行します。)</value>
+  </data>
+  <data name="label6.ToolTip" xml:space="preserve">
+    <value>・エンジン実行ファイル名(EngineExeName)
+
+思考エンジンの実行ファイル名です。
+
+例えばこの値を"engine"とした場合、実行環境のCPUに合わせて以下のファイル名の実行ファイルが起動されます。
+     "engine_nosse.exe"  : 32bit版
+     "engine_sse2.exe"   : 64bit版sse2対応
+     "engine_sse41.exe"  : 64bit版sse4.1対応
+     "engine_sse42.exe"  : 64bit版sse4.2対応
+     "engine_avx2.exe"   : 64bit版avx2対応</value>
+  </data>
+  <data name="textBox1.Text" xml:space="preserve">
+    <value>このダイアログは外部の思考エンジンを本ソフトで利用するために必要な
+「エンジン設定ファイル」(engine_define.xml)を作成/編集するためのものです。
+(わかる人向けのおまけ機能なのでオフィシャルなサポートは致しません。ご注意ください。)
+
+■　外部思考エンジンを本ソフト(『将棋神やねうら王』/MyShogi)で用いるための方法
+
+1. 外部思考エンジンはUSIプロトコル対応でなければなりません。
+2. 外部思考エンジンの設定について理解している人向けです。
+
+将棋ソフト『技巧』、『Apery』などが正常に動作することを確認済です。
+
+■　手順
+
+本ソフトのインストール先のフォルダに存在するengineフォルダのなかにフォルダを作成します。
+(インストール先はProgramFilesなどである場合、Windowsの管理者権限がないと
+フォルダを作成できないかも知れません。)
+
+例) engine/gikou
+
+そのフォルダのなかに、今回で作成したエンジン定義ファイル(engine_define.xml)と、
+思考エンジン本体などを配置します。
+
+また、そのフォルダ内にバナー画像としてbanner.pngを横512px × 縦160px で用意してあると
+エンジン選択時にそれが表示されます。
+
+■　エンジン定義ファイルの各設定項目の説明
+
+
+■　エンジン定義ファイルの各設定項目の説明
+
+・エンジンの簡単な説明(DescriptionSimple)
+
+エンジンの簡単な説明を1行で書きましょう。
+エンジン選択時に表示されます。
+
+・エンジンの詳細な説明(Description)
+
+エンジンの詳細な説明を3行程度で書きましょう。
+エンジン選択時に表示されます。
+
+・バナーファイル名(BannerFileName)
+
+エンジン選択時に表示されるバナー画像のファイル名を設定します。
+
+バナーは、横512px × 縦160pxで用意して、
+エンジン定義ファイル(engine_define.xml)と同じフォルダに配置します。
+
+例) banner.png
+
+・エンジン表示名(DisplayName)
+
+エンジンの表示名です。思考エンジンの名前として画面に表示されます。
+
+例) YaneuraOu2020
+
+・エンジン実行ファイル名(EngineExeName)
+
+思考エンジンの実行ファイル名です。
+
+例えばこの値を"engine"とした場合、実行環境のCPUに合わせて以下のファイル名の実行ファイルが起動されます。
+     "engine_nosse.exe"  : 32bit版
+     "engine_sse2.exe"   : 64bit版sse2対応
+     "engine_sse41.exe"  : 64bit版sse4.1対応
+     "engine_sse42.exe"  : 64bit版sse4.2対応
+     "engine_avx2.exe"   : 64bit版avx2対応
+
+・対象CPU(SupportedCpus)
+
+動作対象のCPUです。
+
+NoSSE : 32bit版(OSが32bit環境で動作させるのに使います)
+SSE2  : 64bit版SSE2対応(OSが64bit環境でSSE2対応のCPUで使います)
+SSE4.1: 64bit版SSE2対応(OSが64bit環境でSSE4.1対応のCPUで使います)
+SSE4.2: 64bit版SSE2対応(OSが64bit環境でSSE4.2対応のCPUで使います)
+AVX2  : 64bit版SSE2対応(OSが64bit環境でAVX2対応のCPUで使います)
+
+例えば、動作環境がSSE4.2までしか対応していない場合、SSE4.2用の実行ファイルを実行します。
+しかし、「対象CPU」の「SSE4.2」のチェックボックスにチェックが入っていない場合、
+SSE4.2用の実行ファイルは用意されていないということなので、それより下位のCPUである
+SSE4.1用の実行ファイルを実行します。
+(以下同様に、SSE4.1のチェックボックスにチェックが入っていない場合、SSE2を実行します。
+SSE2のチェックボックスにチェックが入っていない場合、NoSSEを実行します。)
+
+・使用するメモリ(WorkingMemory)
+
+探索で使用するメモリ(USI_Hashは除く)単位は[MB]
+例) EvalHash(128MB) + USI待受スレッド用(25MB)+定跡丸読み(50MB程度) ≒ 200MB。
+定跡ファイルが大きいとこれよりメモリがたくさん必要になります。
+少し余裕を持った値にしたほうが良いです。
+
+・スレッドごとのメモリ(StackPerThread)
+
+スレッドごとの使用メモリサイズ。単位は[MB]
+Threadsで設定した数×この値分だけ余分に物理メモリを消費するものとします。
+
+・評価関数用のメモリ(EvalMemory)
+
+評価関数用のメモリ。単位は[MB]
+EvalShareをオンにしてメモリ共有をする場合は、2つ目のエンジンはこの分だけ減算されるものとします。
+
+・最小USI_Hashメモリ(MinimumHashMemory)
+
+置換表(USI_Hash)用の最小メモリ。これくらいはないとまともに動かないというライン。単位は[MB]
+
+※　GUI側では、RequiredMemory + MinimumHashMemoryの分だけ空き物理メモリがないとエンジン選択時に警告を出します。
+
+・表示順序(DisplayOrder)
+
+エンジン選択画面での表示順。これが大きい順に表示することになっている。
+デフォルト0。(一番最後に表示される)
+
+// 商用版のために10000～19999を予約。
+// 『将棋神やねうら王』(2018)は10000～10099を使用。
+
+・エンジン種別(EngineType)
+
+「通常対局用」         (EngineType == 0) : 通常探索エンジン。(goコマンドが送れる)
+「詰将棋用」           (EngineType == 1) : 詰み将棋に対応しているか。(go mateコマンドが送れる)
+「通常対局＋詰将棋用)」(EngineType == 2) : 通常探索＋詰将棋対応のエンジン
+
+その他、王手将棋用など、特殊なエンジンについても将来的にはここに追加していく予定。
+</value>
+  </data>
+  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+</root>

@@ -328,6 +328,12 @@
     <Compile Include="View\Win2D\Setting\EngineDefineEditDialog.Designer.cs">
       <DependentUpon>EngineDefineEditDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Win2D\Setting\EngineDefineEditDialogOld.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Win2D\Setting\EngineDefineEditDialogOld.Designer.cs">
+      <DependentUpon>EngineDefineEditDialogOld.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Win2D\Setting\EngineSubSettingDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -527,6 +533,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\EngineDefineEditDialog.resx">
       <DependentUpon>EngineDefineEditDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Win2D\Setting\EngineDefineEditDialogOld.resx">
+      <DependentUpon>EngineDefineEditDialogOld.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Win2D\Setting\EngineSubSettingDialog.resx">
       <DependentUpon>EngineSubSettingDialog.cs</DependentUpon>

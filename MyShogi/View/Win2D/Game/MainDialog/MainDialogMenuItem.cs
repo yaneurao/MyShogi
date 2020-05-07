@@ -578,7 +578,7 @@ namespace MyShogi.View.Win2D
                 // -- 外部思考エンジンの追加(engine_define.xmlの編集)
                 {
                     var item_edit_engine_define = new ToolStripMenuItem();
-                    item_edit_engine_define.Text = "外部思考エンジンの追加(&E)";
+                    item_edit_engine_define.Text = "外部思考エンジンの利用(&U)";
                     item_edit_engine_define.Click += (sender, e) =>
                     {
                         using (var dialog = new EngineDefineEditDialog())

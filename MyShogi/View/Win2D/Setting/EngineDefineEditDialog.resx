@@ -117,170 +117,36 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="textBox1.Text" xml:space="preserve">
-    <value>このダイアログは外部の思考エンジンを本ソフトで利用するために必要な
-「エンジン設定ファイル」(engine_define.xml)を作成/編集するためのものです。(わかる人向け)
+  <data name="textBox4.Text" xml:space="preserve">
+    <value>Step 3.で書き出されたエンジン定義ファイルを思考エンジン本体があるフォルダに移動させます。このファイル名は"engine_define.txt"固定です。変更しないでください。
 
-■　外部思考エンジンを本ソフト(『将棋神やねうら王』/MyShogi)で用いるための方法
+思考エンジン本体があるフォルダをドキュメントフォルダに
+myshogi-engines/
+というフォルダを作成し、そのなかに配置します。
 
-1. 外部思考エンジンはUSIプロトコル対応でなければなりません。
-2. 外部思考エンジンの設定について理解している人向けです。
+※　ドキュメントフォルダは、Windows 10では、普通は、"C:\Users\ユーザー名\Documents"です。
 
-将棋ソフト『技巧』、『Apery』などが正常に動作することを確認済です。
+Aperyの例で言うと、以下のように配置します。
+myshogi-enginesフォルダの配下に"apery"というフォルダを作成して、そのなかに各CPU向けの実行ファイルを配置します。
 
-■　手順
+myshogi-engines/apery/apery_avx2.exe
+myshogi-engines/apery/apery_sse4_2.exe
+myshogi-engines/apery/apery_sse4_1.exe
+myshogi-engines/apery/apery_sse2.exe
+myshogi-engines/apery/apery_no_sse.exe
 
-本ソフトのインストール先のフォルダに存在するengineフォルダのなかにフォルダを作成します。
-(インストール先はProgramFilesなどである場合、Windowsの管理者権限がないと
-フォルダを作成できないかも知れません。)
+Step 3.で書き出したファイルも同じフォルダのなかにあるはずですね。
+myshogi-engines/apery/engine_define.xml
 
-例) engine/gikou
+あと、必要であれば、バナー画像も用意してあげると、思考エンジンを選択するときにそれが表示されます。(なければ"NO BANNER"と表示されるだけです。なくても動作には問題ありません。)
 
-そのフォルダのなかに、今回で作成したエンジン定義ファイル(engine_define.xml)と、
-思考エンジン本体などを配置します。
+バナー画像のファイル名は"banner.png"固定です。
+画像サイズは、横512px × 縦160pxで用意します。
+myshogi-engines/apery/banner.png
 
-また、そのフォルダ内にバナー画像としてbanner.pngを横512px × 縦160px で用意してあると
-エンジン選択時にそれが表示されます。
+思考エンジンが用いる評価関数は、その思考エンジンが読み込めるように配置します。例えば、Aperyであれば、同じフォルダのなかに"eval"というフォルダを作成してそこに配置するはずです。(各思考エンジンに合わせた配置の仕方をしてください。)
+myshogi-engines/apery/eval/…
 
-■　エンジン定義ファイルの各設定項目の説明
-
-
-■　エンジン定義ファイルの各設定項目の説明
-
-・エンジンの簡単な説明(DescriptionSimple)
-
-エンジンの簡単な説明を1行で書きましょう。
-エンジン選択時に表示されます。
-
-・エンジンの詳細な説明(Description)
-
-エンジンの詳細な説明を3行程度で書きましょう。
-エンジン選択時に表示されます。
-
-・バナーファイル名(BannerFileName)
-
-エンジン選択時に表示されるバナー画像のファイル名を設定します。
-
-バナーは、横512px × 縦160pxで用意して、
-エンジン定義ファイル(engine_define.xml)と同じフォルダに配置します。
-
-例) banner.png
-
-・エンジン表示名(DisplayName)
-
-エンジンの表示名です。思考エンジンの名前として画面に表示されます。
-
-例) YaneuraOu2020
-
-・エンジン実行ファイル名(EngineExeName)
-
-思考エンジンの実行ファイル名です。
-
-例えばこの値を"engine"とした場合、実行環境のCPUに合わせて以下のファイル名の実行ファイルが起動されます。
-     "engine_nosse.exe"  : 32bit版
-     "engine_sse2.exe"   : 64bit版sse2対応
-     "engine_sse41.exe"  : 64bit版sse4.1対応
-     "engine_sse42.exe"  : 64bit版sse4.2対応
-     "engine_avx2.exe"   : 64bit版avx2対応
-
-・対象CPU(SupportedCpus)
-
-動作対象のCPUです。
-
-NoSSE : 32bit版(OSが32bit環境で動作させるのに使います)
-SSE2  : 64bit版SSE2対応(OSが64bit環境でSSE2対応のCPUで使います)
-SSE4.1: 64bit版SSE2対応(OSが64bit環境でSSE4.1対応のCPUで使います)
-SSE4.2: 64bit版SSE2対応(OSが64bit環境でSSE4.2対応のCPUで使います)
-AVX2  : 64bit版SSE2対応(OSが64bit環境でAVX2対応のCPUで使います)
-
-例えば、動作環境がSSE4.2までしか対応していない場合、SSE4.2用の実行ファイルを実行します。
-しかし、「対象CPU」の「SSE4.2」のチェックボックスにチェックが入っていない場合、
-SSE4.2用の実行ファイルは用意されていないということなので、それより下位のCPUである
-SSE4.1用の実行ファイルを実行します。
-(以下同様に、SSE4.1のチェックボックスにチェックが入っていない場合、SSE2を実行します。
-SSE2のチェックボックスにチェックが入っていない場合、NoSSEを実行します。)
-
-・使用するメモリ(WorkingMemory)
-
-探索で使用するメモリ(HASHは除く)単位は[MB]
-例) EvalHash(130MB) + USI待受スレッド用(25MB)+定跡丸読み(50MB程度) ≒ 200MB。
-定跡ファイルが大きいとこれよりメモリがたくさん必要になります。
-少し余裕を持った値にしたほうが良いです。
-
-・スレッドごとのメモリ(StackPerThread)
-
-スレッドごとの使用メモリサイズ。単位は[MB]
-Threadsで設定した数×この値分だけ余分に物理メモリを消費するものとします。
-
-・評価関数用のメモリ(EvalMemory)
-
-評価関数用のメモリ。単位は[MB]
-EvalShareをオンにしてメモリ共有をする場合は、2つ目のエンジンはこの分だけ減算されるものとします。
-
-・最小HASHメモリ(MinimumHashMemory)
-
-置換表(HASH)用の最小メモリ。これくらいはないとまともに動かないというライン。単位は[MB]
-
-※　GUI側では、RequiredMemory + MinimumHashMemoryの分だけ空き物理メモリがないとエンジン選択時に警告を出します。
-
-・表示順序(DisplayOrder)
-
-エンジン選択画面での表示順。これが大きい順に表示することになっている。
-デフォルト0。(一番最後に表示される)
-
-// 商用版のために10000～19999を予約。
-// 『将棋神やねうら王』(2018)は10000～10099を使用。
-
-・エンジン種別(EngineType)
-
-「通常対局用」         (EngineType == 0) : 通常探索エンジン。(goコマンドが送れる)
-「詰将棋用」           (EngineType == 1) : 詰み将棋に対応しているか。(go mateコマンドが送れる)
-「通常対局＋詰将棋用)」(EngineType == 2) : 通常探索＋詰将棋対応のエンジン
-
-その他、王手将棋用など、特殊なエンジンについても将来的にはここに追加していく予定。
-
-</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="label16.ToolTip" xml:space="preserve">
-    <value>・エンジン種別(EngineType)
-
-「通常対局用」 (EngineType == 0) : 通常探索エンジン。(goコマンドが送れる)
-「詰将棋用」    (EngineType == 1) : 詰み将棋に対応しているか。(go mateコマンドが送れる)
-「通常対局＋詰将棋用)」(EngineType == 2) : 通常探索＋詰将棋対応のエンジン
-
-その他、王手将棋用など、特殊なエンジンについても将来的にはここに追加していく予定。</value>
-  </data>
-  <data name="label7.ToolTip" xml:space="preserve">
-    <value>・対象CPU(SupportedCpus)
-
-動作対象のCPUです。
-
-NoSSE : 32bit版(OSが32bit環境で動作させるのに使います)
-SSE2  : 64bit版SSE2対応(OSが64bit環境でSSE2対応のCPUで使います)
-SSE4.1: 64bit版SSE2対応(OSが64bit環境でSSE4.1対応のCPUで使います)
-SSE4.2: 64bit版SSE2対応(OSが64bit環境でSSE4.2対応のCPUで使います)
-AVX2  : 64bit版SSE2対応(OSが64bit環境でAVX2対応のCPUで使います)
-
-例えば、動作環境がSSE4.2までしか対応していない場合、SSE4.2用の実行ファイルを実行します。
-しかし、「対象CPU」の「SSE4.2」のチェックボックスにチェックが入っていない場合、
-SSE4.2用の実行ファイルは用意されていないということなので、それより下位のCPUである
-SSE4.1用の実行ファイルを実行します。
-(以下同様に、SSE4.1のチェックボックスにチェックが入っていない場合、SSE2を実行します。
-SSE2のチェックボックスにチェックが入っていない場合、NoSSEを実行します。)</value>
-  </data>
-  <data name="label6.ToolTip" xml:space="preserve">
-    <value>・エンジン実行ファイル名(EngineExeName)
-
-思考エンジンの実行ファイル名です。
-
-例えばこの値を"engine"とした場合、実行環境のCPUに合わせて以下のファイル名の実行ファイルが起動されます。
-     "engine_nosse.exe"  : 32bit版
-     "engine_sse2.exe"   : 64bit版sse2対応
-     "engine_sse41.exe"  : 64bit版sse4.1対応
-     "engine_sse42.exe"  : 64bit版sse4.2対応
-     "engine_avx2.exe"   : 64bit版avx2対応</value>
+将棋神やねうら王/MyShogiでは、起動時にこのmyshogi-enginesというフォルダ配下のengine_define.xmlを探して、このファイルがあれば、そのフォルダを思考エンジンが格納されているフォルダとみなします。</value>
   </data>
 </root>
