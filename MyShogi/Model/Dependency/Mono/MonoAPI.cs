@@ -428,6 +428,11 @@ namespace MyShogi.Model.Common.Tool
         public static readonly string ConsiderationWindow = DefaultFont2;
 
         /// <summary>
+        /// ミニ盤面の上のタブの文字列
+        /// </summary>
+        public static readonly string MiniBoardTab = DefaultFont1;
+
+        /// <summary>
         /// ToolTip
         /// </summary>
         public static readonly string ToolTip = DefaultFont1;
