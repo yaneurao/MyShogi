@@ -221,6 +221,21 @@ namespace MyShogi.Model.Dependency
                 return freeMemory;
             }
         }
+
+        // htmlファイルをブラウザで開く
+        // (htmlが拡張子関連付けされているアプリで開く)
+        // ※　この実装でLinux環境で動くのかは未確認。[2020/05/10]
+        // 外部エンジン読み込み用の説明ファイル(html)を開くのに用いている。
+        public static void OpenWithBrowser(string htmlPath)
+        {
+            var current = Path.GetDirectoryName(Application.ExecutablePath);
+            var filePath = Path.Combine(current, htmlPath);
+
+            var p = new Process();
+            p.StartInfo.FileName = "file:///" + filePath;
+            p.StartInfo.UseShellExecute = true;
+            p.Start();
+        }
     }
 
     /// <summary>

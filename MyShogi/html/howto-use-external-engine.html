@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>howto-use-external-engine.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<p><a id="markdown-外部エンジンを将棋神やねうら王myshogiで使う方法" name="外部エンジンを将棋神やねうら王myshogiで使う方法"></a></p>
+<h1 id="%E5%A4%96%E9%83%A8%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%82%92%E5%B0%86%E6%A3%8B%E7%A5%9E%E3%82%84%E3%81%AD%E3%81%86%E3%82%89%E7%8E%8Bmyshogi%E3%81%A7%E4%BD%BF%E3%81%86%E6%96%B9%E6%B3%95">外部エンジンを将棋神やねうら王/MyShogiで使う方法</h1>
+<!-- TOC -->
+<ol>
+<li><a href="#%E5%A4%96%E9%83%A8%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%82%92%E5%B0%86%E6%A3%8B%E7%A5%9E%E3%82%84%E3%81%AD%E3%81%86%E3%82%89%E7%8E%8Bmyshogi%E3%81%A7%E4%BD%BF%E3%81%86%E6%96%B9%E6%B3%95">外部エンジンを将棋神やねうら王/MyShogiで使う方法</a>
+<ol>
+<li><a href="#step-1-%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF%E3%81%9F%E3%81%84%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%81%AB%E4%B8%80%E7%95%AA%E8%BF%91%E3%81%84%E6%80%9D%E8%80%83%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%82%92%E9%81%B8%E3%81%B3%E3%81%BE%E3%81%99">Step 1. 読み込みたいエンジンに一番近い思考エンジンを選びます。</a>
+<ol>
+<li><a href="#%E9%80%9A%E5%B8%B8%E5%AF%BE%E5%B1%80%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%81%AE%E5%A0%B4%E5%90%88">通常対局エンジンの場合</a>
+<ol>
+<li><a href="#%E9%80%9A%E5%B8%B8%E5%AF%BE%E5%B1%80%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E3%82%84%E3%81%AD%E3%81%86%E3%82%89%E7%8E%8B%E7%B3%BB">通常対局エンジン - やねうら王系</a></li>
+<li><a href="#%E9%80%9A%E5%B8%B8%E5%AF%BE%E5%B1%80%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---apery%E7%B3%BB">通常対局エンジン - Apery系</a></li>
+<li><a href="#%E9%80%9A%E5%B8%B8%E5%AF%BE%E5%B1%80%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E6%8A%80%E5%B7%A7%E7%B3%BB">通常対局エンジン - 技巧系</a></li>
+<li><a href="#%E9%80%9A%E5%B8%B8%E5%AF%BE%E5%B1%80%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E3%81%9D%E3%82%8C%E4%BB%A5%E5%A4%96">通常対局エンジン - それ以外</a></li>
+</ol>
+</li>
+<li><a href="#%E8%A9%B0%E5%B0%86%E6%A3%8B%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%81%AE%E5%A0%B4%E5%90%88">詰将棋エンジンの場合</a>
+<ol>
+<li><a href="#%E8%A9%B0%E5%B0%86%E6%A3%8B%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E3%82%84%E3%81%AD%E3%81%86%E3%82%89%E7%8E%8B%E7%B3%BB">詰将棋エンジン - やねうら王系</a></li>
+<li><a href="#%E8%A9%B0%E5%B0%86%E6%A3%8B%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E8%84%8A%E5%B0%BE%E8%A9%B0">詰将棋エンジン - 脊尾詰</a></li>
+<li><a href="#%E8%A9%B0%E5%B0%86%E6%A3%8B%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E3%81%AA%E3%81%AE%E3%81%AF%E8%A9%B0%E3%82%81">詰将棋エンジン - なのは詰め</a></li>
+<li><a href="#%E8%A9%B0%E5%B0%86%E6%A3%8B%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E3%81%9D%E3%81%AE%E4%BB%96%E3%81%AE%E8%A9%B0%E5%B0%86%E6%A3%8B%E7%94%A8%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3">詰将棋エンジン - その他の詰将棋用エンジン</a></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><a href="#step-2-%E5%85%A5%E5%8A%9B%E6%AC%84%E3%82%92%E9%81%A9%E5%AE%9C%E6%9B%B8%E3%81%8D%E6%8F%9B%E3%81%88%E3%81%BE%E3%81%99">Step 2. 入力欄を適宜、書き換えます。</a>
+<ol>
+<li><a href="#step-2%E3%81%AE%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%90%8D">Step 2.の「エンジンファイル名」</a></li>
+</ol>
+</li>
+<li><a href="#step-3-%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E5%AE%9A%E7%BE%A9%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E6%9B%B8%E3%81%8D%E5%87%BA%E3%81%97%E3%82%92%E8%A1%8C%E3%81%84%E3%81%BE%E3%81%99">Step 3. 「エンジン定義ファイルの書き出し」を行います。</a></li>
+<li><a href="#step-4-%E6%80%9D%E8%80%83%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%81%AE%E5%85%A5%E3%81%A3%E3%81%9F%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%82%92%E9%85%8D%E7%BD%AE%E3%81%97%E3%81%BE%E3%81%99">Step 4. 思考エンジンの入ったフォルダを配置します。</a>
+<ol>
+<li><a href="#%E6%80%9D%E8%80%83%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%81%AE%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AE%E9%85%8D%E7%BD%AE%E5%85%88%E3%81%AE%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80">思考エンジンのフォルダの配置先のフォルダ</a></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<!-- /TOC -->
+<p><a id="markdown-step-1-読み込みたいエンジンに一番近い思考エンジンを選びます" name="step-1-読み込みたいエンジンに一番近い思考エンジンを選びます"></a></p>
+<h2 id="step-1-%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%81%BF%E3%81%9F%E3%81%84%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%81%AB%E4%B8%80%E7%95%AA%E8%BF%91%E3%81%84%E6%80%9D%E8%80%83%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%82%92%E9%81%B8%E3%81%B3%E3%81%BE%E3%81%99">Step 1. 読み込みたいエンジンに一番近い思考エンジンを選びます。</h2>
+<p>読み込みたいエンジンに一番近いと思われる思考エンジンを選びます。
+思考エンジンには、通常対局用と詰将棋エンジンとの二種類が存在します。(両方を兼ねているものもありえますが、本ソフトではそれらは別個のものとして扱います。)</p>
+<p><a id="markdown-通常対局エンジンの場合" name="通常対局エンジンの場合"></a></p>
+<h3 id="%E9%80%9A%E5%B8%B8%E5%AF%BE%E5%B1%80%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%81%AE%E5%A0%B4%E5%90%88">通常対局エンジンの場合</h3>
+<p><a id="markdown-通常対局エンジン---やねうら王系" name="通常対局エンジン---やねうら王系"></a></p>
+<h4 id="%E9%80%9A%E5%B8%B8%E5%AF%BE%E5%B1%80%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E3%82%84%E3%81%AD%E3%81%86%E3%82%89%E7%8E%8B%E7%B3%BB">通常対局エンジン - やねうら王系</h4>
+<p>やねうら王を改造して作られているものは、Step 1.で「やねうら系」を選びましょう。</p>
+<p>やねうら王系の代表的なバリエーションとして以下の思考エンジンがあります。</p>
+<ul>
+<li><a href="https://mk-takizawa.github.io/elmo/howtouse_elmo.html">elmo</a> : WCSC27優勝</li>
+<li><a href="https://github.com/Tama4649/Kristallweizen/">Kristallweizen</a> : WCSC28優勝 , WCSC29準優勝</li>
+<li><a href="https://github.com/nodchip/tanuki-">tanuki-</a> : WCSC29 3位</li>
+<li><a href="https://twitter.com/_illqha">dolphin</a> : 草の根で人気</li>
+<li><a href="https://twitter.com/tayayan_ts/status/1258188718759768065">水匠</a> : WOCSC30優勝</li>
+<li><a href="https://github.com/qhapaq-49/qhapaq-bin/releases">Qhapaq</a> : WCSC29 5位</li>
+</ul>
+<p><a id="markdown-通常対局エンジン---apery系" name="通常対局エンジン---apery系"></a></p>
+<h4 id="%E9%80%9A%E5%B8%B8%E5%AF%BE%E5%B1%80%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---apery%E7%B3%BB">通常対局エンジン - Apery系</h4>
+<p>『Apery』か、『Apery』を改造して作られているものは、Step 1.で「Apery系」を選びましょう。</p>
+<ul>
+<li><a href="https://hiraokatakuya.github.io/apery/">Apery</a> : WCSC28 3位</li>
+</ul>
+<p><a id="markdown-通常対局エンジン---技巧系" name="通常対局エンジン---技巧系"></a></p>
+<h4 id="%E9%80%9A%E5%B8%B8%E5%AF%BE%E5%B1%80%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E6%8A%80%E5%B7%A7%E7%B3%BB">通常対局エンジン - 技巧系</h4>
+<p>『技巧』か、『技巧』を改造して作られているものは、Step 1.で「技巧系」を選びましょう。</p>
+<ul>
+<li><a href="https://github.com/gikou-official/Gikou/">技巧</a> : WCSC26 2位 , WCSC27 3位</li>
+</ul>
+<p><a id="markdown-通常対局エンジン---それ以外" name="通常対局エンジン---それ以外"></a></p>
+<h4 id="%E9%80%9A%E5%B8%B8%E5%AF%BE%E5%B1%80%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E3%81%9D%E3%82%8C%E4%BB%A5%E5%A4%96">通常対局エンジン - それ以外</h4>
+<p>上記以外の通常対局エンジンの場合、Step 1.で「その他の通常対局用エンジン」を選びましょう。</p>
+<p>本ソフトから用いる思考エンジンは、USIプロトコルに対応している必要があります。
+(有志が作って公開している将棋の思考エンジンはたいていUSIプロトコルに対応しています)</p>
+<p>有名なところでは、以下のような通常対局用エンジンがあります。</p>
+<ul>
+<li><a href="https://gps.tanaka.ecc.u-tokyo.ac.jp/gpsshogi/">GPSshogi</a> : WCSC22 優勝</li>
+</ul>
+<p><a id="markdown-詰将棋エンジンの場合" name="詰将棋エンジンの場合"></a></p>
+<h3 id="%E8%A9%B0%E5%B0%86%E6%A3%8B%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%81%AE%E5%A0%B4%E5%90%88">詰将棋エンジンの場合</h3>
+<p><a id="markdown-詰将棋エンジン---やねうら王系" name="詰将棋エンジン---やねうら王系"></a></p>
+<h4 id="%E8%A9%B0%E5%B0%86%E6%A3%8B%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E3%82%84%E3%81%AD%E3%81%86%E3%82%89%E7%8E%8B%E7%B3%BB">詰将棋エンジン - やねうら王系</h4>
+<p>やねうら王系の詰将棋エンジンの場合は、Step 1.で「やねうら王詰め」を選びましょう。
+例えば、『tanuki-詰将棋エンジン』もやねうら王系の詰将棋エンジンで、やねうら王のGitHubからダウンロードできます。</p>
+<ul>
+<li><a href="https://github.com/yaneurao/YaneuraOu">やねうら王</a></li>
+</ul>
+<p><a id="markdown-詰将棋エンジン---脊尾詰" name="詰将棋エンジン---脊尾詰"></a></p>
+<h4 id="%E8%A9%B0%E5%B0%86%E6%A3%8B%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E8%84%8A%E5%B0%BE%E8%A9%B0">詰将棋エンジン - 脊尾詰</h4>
+<p>詰将棋エンジンとして昔から有名なのは『脊尾詰』でしょう。以下のところからダウンロードできます。
+『脊尾詰』を使う場合は、Step 1.で「脊尾詰」を選びましょう。</p>
+<ul>
+<li><a href="http://panashogi.web.fc2.com/seotsume.html">脊尾詰</a></li>
+</ul>
+<p><a id="markdown-詰将棋エンジン---なのは詰め" name="詰将棋エンジン---なのは詰め"></a></p>
+<h4 id="%E8%A9%B0%E5%B0%86%E6%A3%8B%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E3%81%AA%E3%81%AE%E3%81%AF%E8%A9%B0%E3%82%81">詰将棋エンジン - なのは詰め</h4>
+<p>長手数の詰将棋が解ける詰将棋エンジンとしては、『なのは詰め』も有名でしょう。『なのは詰め』を使う場合は、Step 1.で「脊尾詰」を選びましょう。</p>
+<ul>
+<li><a href="http://vivio.blog.shinobi.jp/%E3%82%B3%E3%83%B3%E3%83%94%E3%83%A5%E3%83%BC%E3%82%BF%E5%B0%86%E6%A3%8B/%E3%81%AA%E3%81%AE%E3%81%AF%E8%A9%B0%E3%82%8164bit%E7%89%88">なのは詰め</a></li>
+</ul>
+<p><a id="markdown-詰将棋エンジン---その他の詰将棋用エンジン" name="詰将棋エンジン---その他の詰将棋用エンジン"></a></p>
+<h4 id="%E8%A9%B0%E5%B0%86%E6%A3%8B%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3---%E3%81%9D%E3%81%AE%E4%BB%96%E3%81%AE%E8%A9%B0%E5%B0%86%E6%A3%8B%E7%94%A8%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3">詰将棋エンジン - その他の詰将棋用エンジン</h4>
+<p>その他の詰将棋エンジンの場合、Step 1.で「その他の詰将棋用エンジン」を選びましょう。</p>
+<p><a id="markdown-step-2-入力欄を適宜書き換えます" name="step-2-入力欄を適宜書き換えます"></a></p>
+<h2 id="step-2-%E5%85%A5%E5%8A%9B%E6%AC%84%E3%82%92%E9%81%A9%E5%AE%9C%E6%9B%B8%E3%81%8D%E6%8F%9B%E3%81%88%E3%81%BE%E3%81%99">Step 2. 入力欄を適宜、書き換えます。</h2>
+<p>Step 1.で近い思考エンジンを選択すれば、Step 2.の空欄(テキストボックスなど)に自動的に記入されます。これを適宜書き換えます。</p>
+<p><a id="markdown-step-2のエンジンファイル名" name="step-2のエンジンファイル名"></a></p>
+<h3 id="step-2%E3%81%AE%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%90%8D">Step 2.の「エンジンファイル名」</h3>
+<p>「エンジンファイル名」のところには、エンジンのファイル名を書きます。
+ただし、</p>
+<ul>
+<li>拡張子は書きません。</li>
+<li>各CPU用のファイル名は
+でなければなりません。</li>
+</ul>
+<p><a id="markdown-step-3-エンジン定義ファイルの書き出しを行います" name="step-3-エンジン定義ファイルの書き出しを行います"></a></p>
+<h2 id="step-3-%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E5%AE%9A%E7%BE%A9%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AE%E6%9B%B8%E3%81%8D%E5%87%BA%E3%81%97%E3%82%92%E8%A1%8C%E3%81%84%E3%81%BE%E3%81%99">Step 3. 「エンジン定義ファイルの書き出し」を行います。</h2>
+<p>「エンジン定義ファイルの書き出し」のボタンを押して、エンジン定義ファイルを書き出します。
+エンジン定義ファイルは、&quot;engine_define.xml&quot;というファイル名固定です。このファイル名を変更しないでください。</p>
+<p>ここで書き出されたファイルは、思考エンジンの入っているフォルダに配置します。</p>
+<p><a id="markdown-step-4-思考エンジンの入ったフォルダを配置します" name="step-4-思考エンジンの入ったフォルダを配置します"></a></p>
+<h2 id="step-4-%E6%80%9D%E8%80%83%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%81%AE%E5%85%A5%E3%81%A3%E3%81%9F%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%82%92%E9%85%8D%E7%BD%AE%E3%81%97%E3%81%BE%E3%81%99">Step 4. 思考エンジンの入ったフォルダを配置します。</h2>
+<p>思考エンジン本体は、ドキュメントフォルダに
+myshogi-engines/
+というフォルダを作成し、そこにさらに思考エンジン名でフォルダを作成します。</p>
+<p><a id="markdown-思考エンジンのフォルダの配置先のフォルダ" name="思考エンジンのフォルダの配置先のフォルダ"></a></p>
+<h3 id="%E6%80%9D%E8%80%83%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3%E3%81%AE%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80%E3%81%AE%E9%85%8D%E7%BD%AE%E5%85%88%E3%81%AE%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80">思考エンジンのフォルダの配置先のフォルダ</h3>
+<p>&quot;Document/myshogi-engines&quot;の配下に思考エンジンのフォルダを配置します</p>
+<p>Step 3.で書き出されたエンジン定義ファイルを思考エンジン本体があるフォルダに移動させます。このファイル名は&quot;engine_define.txt&quot;固定です。変更しないでください。</p>
+<p>例えば、Aperyであるなら、
+myshogi-engines/Apery/
+のようにフォルダを作成します。</p>
+<p>※　ドキュメントフォルダは、Windows 10では、普通は、&quot;C:\Users\ユーザー名\Documents&quot;です。</p>
+<p>そのフォルダのなかに各CPU向けの実行ファイルを配置します。
+配置するときにファイル名をどのCPUに対応しているかをつけた名前に適宜変更します。</p>
+<p>以下に代表的なソフトでどのように名前を変更すれば良いか書いておきます。</p>
+<p>例) やねうら王系の場合。例として、ilqhaというソフトだとします。最初から以下のようなファイル名で配布されていることが多いです。その場合は、ファイル名の変更は必要なく、Step 2.のエンジンファイル名のところを書き換えるだけで良いです。
+myshogi-engines/ilqha/ilqha_avx2.exe       ← 64bit版 AVX2以上用
+myshogi-engines/ilqha/ilqha_sse4_2.exe    ← 64bit版 SSE4.2以上用
+myshogi-engines/ilqha/ilqha_sse4_1.exe    ← 64bit版 SSE4.1以上用
+myshogi-engines/ilqha/ilqha_sse2.exe        ← 64bit版 SSE2以上用
+myshogi-engines/ilqha/ilqha_no_sse.exe    ← 32bit版</p>
+<p>例) Aperyの場合
+myshogi-engines/apery/apery_avx2.exe       ← 64bit版 AVX2以上用
+myshogi-engines/apery/apery_sse4_2.exe    ← 64bit版 SSE4.2以上用
+myshogi-engines/apery/apery_sse4_1.exe    ← 64bit版 SSE4.1以上用
+myshogi-engines/apery/apery_sse2.exe        ← 64bit版 SSE2以上用
+myshogi-engines/apery/apery_no_sse.exe    ← 32bit版</p>
+<p>例) 技巧２の場合
+myshogi-engines/gikou2/gikou2_sse4_2.exe ← 64bit版 SSE4.2以上用 : 技巧２は、SSE4.2以上用しか配布されていないので、この名前に変更すると良いです。</p>
+<p>例) 脊尾詰めの場合
+myshogi-engines/seotsume/seotsume_nosse.exe ← 32bit版 : 脊尾詰めは、32bit版しか配布されていないのでこの名前に変更すると良いです。</p>
+<p>例) なのは詰めの場合
+myshogi-engines/NanohaTsume/NanohaTsumeUSI_sse4_1.exe ← 64bit版SSE4.1以上用 : なのは詰め、64bit版(元ファイル名 &quot;NanohaTsumeUSIx64_popcnt.exe&quot;)
+myshogi-engines/NanohaTsume/NanohaTsumeUSI_sse2.exe ← 64bit版SSE2以上用 : なのは詰め、64bit版(元ファイル名 &quot;NanohaTsumeUSIx64.exe&quot;)
+myshogi-engines/NanohaTsume/NanohaTsumeUSI_nosse.exe ← 32bit版 : なのは詰め、32bit版(元ファイル名 &quot;NanohaTsumeUSI.exe&quot;)</p>
+<p>例) それ以外の場合、例えば、64bit版のSSE4.1用の実行ファイルしか配布されていない場合
+myshogi-engines/usi_engine/usi_engine_sse4_1.exe ← 64bit版SSE4.1以上用 : このように、ファイル名の末尾に「sse4_1」とつけて、かつ、Step 2.のチェックボックスでSSE4.2にだけチェックを入れてください。
+なお、この実行ファイルは、SSE4.2命令をサポートしたCPUでしか動作しません。</p>
+<p>集合の関係で言うと、以下のようになっており、例えば、AVX2命令をサポートしているCPUは、SSE2, SSE4.1, SSE4.2の命令もサポートしています。
+　　no_sse ⊂ SSE2 ⊂ SSE4.1 ⊂ SSE4.2 ⊂ AVX2 ⊂ AVX512</p>
+<p>Step 3.で書き出したファイルも同じフォルダに配置します。
+myshogi-engines/apery/engine_define.xml</p>
+<p>あと、バナー画像も用意してあげると、思考エンジンを選択するときにそれが表示されます。(なければ&quot;NO BANNER&quot;と表示されるだけです。なくても動作には問題ありません。)</p>
+<p>バナー画像のファイル名は&quot;banner.png&quot;固定です。画像サイズは、横512px × 縦160pxでPNG形式で用意します。
+myshogi-engines/apery/banner.png</p>
+<p>思考エンジンが用いる評価関数は、その思考エンジンが読み込めるように配置します。例えば、Aperyであれば、同じフォルダのなかに&quot;eval&quot;というフォルダを作成してそこに配置するはずです。(各思考エンジンに合わせた配置の仕方をしてください。)
+myshogi-engines/apery/eval/…</p>
+<p>将棋神やねうら王/MyShogiでは、起動時にこのmyshogi-enginesというフォルダ配下のengine_define.xmlを探して、このファイルがあれば、そのフォルダを思考エンジンが格納されているフォルダとみなします。
+なので、以上のように配置し、将棋神やねうら王を起動すれば思考エンジン選択の画面に表示されるはずです。</p>
+
+</body>
+</html>

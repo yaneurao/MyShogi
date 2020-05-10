@@ -117,36 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="textBox4.Text" xml:space="preserve">
-    <value>Step 3.で書き出されたエンジン定義ファイルを思考エンジン本体があるフォルダに移動させます。このファイル名は"engine_define.txt"固定です。変更しないでください。
-
-思考エンジン本体があるフォルダをドキュメントフォルダに
-myshogi-engines/
-というフォルダを作成し、そのなかに配置します。
-
-※　ドキュメントフォルダは、Windows 10では、普通は、"C:\Users\ユーザー名\Documents"です。
-
-Aperyの例で言うと、以下のように配置します。
-myshogi-enginesフォルダの配下に"apery"というフォルダを作成して、そのなかに各CPU向けの実行ファイルを配置します。
-
-myshogi-engines/apery/apery_avx2.exe
-myshogi-engines/apery/apery_sse4_2.exe
-myshogi-engines/apery/apery_sse4_1.exe
-myshogi-engines/apery/apery_sse2.exe
-myshogi-engines/apery/apery_no_sse.exe
-
-Step 3.で書き出したファイルも同じフォルダのなかにあるはずですね。
-myshogi-engines/apery/engine_define.xml
-
-あと、必要であれば、バナー画像も用意してあげると、思考エンジンを選択するときにそれが表示されます。(なければ"NO BANNER"と表示されるだけです。なくても動作には問題ありません。)
-
-バナー画像のファイル名は"banner.png"固定です。
-画像サイズは、横512px × 縦160pxで用意します。
-myshogi-engines/apery/banner.png
-
-思考エンジンが用いる評価関数は、その思考エンジンが読み込めるように配置します。例えば、Aperyであれば、同じフォルダのなかに"eval"というフォルダを作成してそこに配置するはずです。(各思考エンジンに合わせた配置の仕方をしてください。)
-myshogi-engines/apery/eval/…
-
-将棋神やねうら王/MyShogiでは、起動時にこのmyshogi-enginesというフォルダ配下のengine_define.xmlを探して、このファイルがあれば、そのフォルダを思考エンジンが格納されているフォルダとみなします。</value>
-  </data>
 </root>
