@@ -246,5 +246,17 @@ namespace MyShogi.Model.Common.Collections
             }
             return sb.ToString();
         }
+
+        /// <summary>
+        /// 文字列を整数化する。ただし、整数化に失敗した場合は、引数で指定されているdefaultValueの値を返す。
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        public static int ToInt(this string s , int defaultValue)
+        {
+            int result;
+            return int.TryParse(s, out result) ? result : defaultValue;
+        }
     }
 }

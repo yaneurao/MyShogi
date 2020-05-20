@@ -108,6 +108,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
         /// 
         /// 商用版のために10000～19999を予約。
         /// 商用版(2018)は10000～10099を使用。
+        /// 駒得大好き君が9000を使用。
+        /// 商用版(2018)のユーザーが追加したエンジンは8000を使用。(末尾に追加されて欲しいので)
         /// </summary>
         [DataMember]
         public int DisplayOrder { get; set; } = 0;
@@ -120,7 +122,7 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
         /// <summary>
         /// EngineType == 0 : 通常探索エンジン。(goコマンドが送れる)
-        /// EngineType == 1 : 詰み将棋に対応しているか。(go mateコマンドが送れる)
+        /// EngineType == 1 : 詰将棋に対応しているか。(go mateコマンドが送れる)
         /// EngineType == 2 : 通常探索＋詰将棋対応のエンジン
         ///
         /// その他、王手将棋用など、特殊なエンジンについても将来的にはここに追加していく予定。

@@ -159,6 +159,10 @@ namespace MyShogi.View.Win2D
 
         private void button1_Click(object sender, EventArgs e)
         {
+            // エンジンが存在しない場所のバーをクリックしたのか？
+            if (ViewModel.EngineDefine == null)
+                return;
+
             // メモリ足りないならこの時点で警告ダイアログを出す。
 
             var free_memory = ViewModel.FreePhysicalMemory;

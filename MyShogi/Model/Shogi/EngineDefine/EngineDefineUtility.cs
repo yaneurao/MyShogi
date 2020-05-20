@@ -186,6 +186,8 @@ namespace MyShogi.Model.Shogi.EngineDefine
             // 個別設定
             var indSetting = config.IndivisualEnginesOptions.Find(x => x.FolderPath == folderPath);
 
+            bool set_hash = false;
+
             foreach (var option in optionList)
             {
                 var value = config.GetOptionValue(option.Name , commonSetting , indSetting , preset);
@@ -195,9 +197,11 @@ namespace MyShogi.Model.Shogi.EngineDefine
                 // Hashサイズの自動マネージメント
                 if (option.Name == "USI_Hash" || option.Name == "Hash")
                 {
-                    // "USI_Hash","Hash"のうち、エンジン側が持っているほうのオプション名に対して設定すれば良い。
+                    // "USI_Hash","Hash"のうち、エンジン側が持っているほうのオプション名に対して設定すれば良い
+                    // どちらも持っていない場合は、"USI_Hash"オプションを強制的に生成しなければならない。
                     if (hashSize != 0)
                         value = hashSize.ToString();
+                    set_hash = true;
                 }
                 // Threadsの自動マネージメント
                 else if (option.Name == "Threads")
@@ -212,6 +216,15 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                 if (value != null)
                     option.SetDefault(value);
+            }
+
+            if (!set_hash)
+            {
+                // hashの設定がなかったので"USI_Hash"を強制追加。
+
+                var option = UsiOption.USI_Hash.Clone();
+                option.SetDefault(hashSize.ToString());
+                optionList.Add(option);
             }
 
             // スレッド数の自動マネージメントについて..

@@ -66,17 +66,14 @@ namespace MyShogi.Model.Shogi.EngineDefine
     /// </summary>
     public static class EngineCommonOptionsSample
     {
+
         /// <summary>
-        /// エンジンオプションの個別設定に表示すべき、最小限のオブジェクトを生成する。
-        /// これは、EngineDefineが提供されていないような外部エンジンを使用するときに用いられる。
+        /// Hashに関する設定だけ取得する。
         /// </summary>
         /// <returns></returns>
-        public static EngineOptionsForSetting CreateEngineMinimumOptions()
+        public static List<EngineOptionDescription> GetHashDescription()
         {
-            var setting = new EngineOptionsForSetting()
-            {
-
-                Descriptions = new List<EngineOptionDescription>()
+            var Descriptions = new List<EngineOptionDescription>()
                 {
                     // -- これは仮想optionで、実際にエンジンはこのoption名を持っていることはありえない。
                     // 内部的な設定に用いる。
@@ -125,7 +122,31 @@ namespace MyShogi.Model.Shogi.EngineDefine
                         "物理メモリが足りなくなる場合には、ここを少なめに設定してみてください。\r\n"+
                         "※　ハッシュメモリについての詳しい説明は『ハッシュメモリ管理』のところにマウスをホバーさせてください。",
                         "option name Hash_ type spin default 4096 min 0 max 1048576"),
+            };
+            return Descriptions;
+        }
 
+
+        /// <summary>
+        /// エンジンオプションの個別設定に表示すべき、最小限のオブジェクトを生成する。
+        /// これは、EngineDefineが提供されていないような外部エンジンを使用するときに用いられる。
+        /// </summary>
+        /// <returns></returns>
+        public static EngineOptionsForSetting CreateEngineMinimumOptions()
+        {
+            var setting = new EngineOptionsForSetting()
+            {
+
+                Descriptions = new List<EngineOptionDescription>()
+                {
+                    // -- これは仮想optionで、実際にエンジンはこのoption名を持っていることはありえない。
+                    // 内部的な設定に用いる。
+
+                    // nameがnullなら、これは見出し表示になる。
+
+                    // -- ハッシュ設定
+                    // GetHashDescription()
+                    // あとで結合する
 
                     // -- スレッド設定
 
@@ -188,6 +209,9 @@ namespace MyShogi.Model.Shogi.EngineDefine
 
                 }
             };
+
+            // Hashの説明を前方に挿入する。
+            setting.Descriptions.InsertRange(0, GetHashDescription());
 
             return setting;
         }

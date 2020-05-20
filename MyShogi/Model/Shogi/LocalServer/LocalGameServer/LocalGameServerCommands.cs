@@ -61,7 +61,7 @@ namespace MyShogi.Model.Shogi.LocalServer
         /// ユーザーがマウス操作によってmの指し手を入力した。
         /// ユーザーはこれを合法手だと思っているが、これが受理されるかどうかは別の話。
         /// (時間切れなどがあるので)
-        /// 
+        ///
         /// 注意)
         /// GameScreenControlを用いる場合は、このメソッドを使わずに
         /// GameScreenControlの同名のメソッドを用いること。
@@ -89,7 +89,7 @@ namespace MyShogi.Model.Shogi.LocalServer
             // 内部状態変更をCompleteイベントで行うのは気持ち悪いので(前の状態のままなので別の操作などを
             // 受け付けてしまう可能性がある)、surpressDraw = trueにして、更新が終わるまで画面描画を行わない。
             // CompleteイベントでsurpressDraw = falseにすべきである。
-            
+
             AddCommand(
             () =>
             {
@@ -663,11 +663,14 @@ namespace MyShogi.Model.Shogi.LocalServer
             if (thinkReport.Eval == null || thinkReport.Eval.Eval == EvalValue.NoValue) return;
 
             var currentNode = thinkReport.KifuNode;
+            if (currentNode == null)
+                return; // わからん。詰将棋とかで思考情報がないのでは..ToDo:あとでなおす[2020/05/21]
+
             if (currentNode.thinkmsgs == null)
                 currentNode.thinkmsgs = new System.Collections.Generic.List<Usi.UsiThinkReportMessage>();
             currentNode.thinkmsgs.Add(message);
 
-            
+
             // ToDo: 場合によっては GameMode が InTheGame から外れてから対局中の思考を受信する場合があるので、numberの振り分け方を再考する
             var number = message.number + (GameMode != GameModeEnum.InTheGame ? 2 : 0);
 
@@ -767,4 +770,3 @@ namespace MyShogi.Model.Shogi.LocalServer
 #endregion
     }
 }
-

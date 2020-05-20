@@ -89,7 +89,6 @@ h3:before {
         7. [「EvalMemory」に評価関数を読み込むのに必要なメモリサイズを設定します。](#evalmemoryに評価関数を読み込むのに必要なメモリサイズを設定します)
     3. [Step 3. 「エンジン定義ファイルの書き出し」を行います。](#step-3-エンジン定義ファイルの書き出しを行います)
     4. [Step 4. 思考エンジンの入ったフォルダを配置します。](#step-4-思考エンジンの入ったフォルダを配置します)
-        1. [思考エンジンのフォルダの配置先のフォルダ](#思考エンジンのフォルダの配置先のフォルダ)
             1. [代表的な思考エンジンの実行ファイル名](#代表的な思考エンジンの実行ファイル名)
             2. [バナー画像について](#バナー画像について)
     5. [Step 5. お疲れさまでした](#step-5-お疲れさまでした)
@@ -323,29 +322,16 @@ CPU名については、次の説明をご覧ください。
 <a id="markdown-step-4-思考エンジンの入ったフォルダを配置します" name="step-4-思考エンジンの入ったフォルダを配置します"></a>
 ## Step 4. 思考エンジンの入ったフォルダを配置します。
 
-思考エンジン本体は、ドキュメントフォルダに
-myshogi-engines/
-というフォルダを作成し、そこにさらに思考エンジン名でフォルダを作成します。
+思考エンジン本体は、『将棋神やねうら王』(MyShogi)のインストール先のフォルダのなかにある engine フォルダのなかに配置します。
+engine/
+ここに思考エンジン名でフォルダを作成します。例えば、Aperyであるなら、
 
-<a id="markdown-思考エンジンのフォルダの配置先のフォルダ" name="思考エンジンのフォルダの配置先のフォルダ"></a>
-### 思考エンジンのフォルダの配置先のフォルダ
-
-ドキュメントフォルダのなかに"myshogi-engines"というフォルダを作成します。
-
-- "myshogi-engines"と末尾に複数形の"s"がつくので注意してください。
-- ドキュメントフォルダは、Windows 10では、エクスプローラーで見たときに"ドキュメント"と書かれているフォルダです。
-- ドキュメントフォルダは、Windows 10では、普通は、"C:\Users\ユーザー名\Documents"です。
-- 以下では、ドキュメントフォルダのことを"Documents"と書きます。
-
-いま、"Documents"フォルダのなかに"myshogi-engines"というフォルダを作成するので、このフォルダのことを"Documents/myshogi-engines"と表記します。("/"はその配下のフォルダを表わす記号です。)
-
-次に、"Documents/myshogi-engines"の配下に思考エンジンのフォルダを配置します。
-
-例えば、Aperyであるなら、
-
-- Documents/myshogi-engines/apery/
+- engine/apery/
 
 のようにフォルダを作成します。(このフォルダ名は任意のもので構いません)
+
+※　"/"は、フォルダの階層を意味します。
+※　インストール先が、"C:\Program Files"などの場合、フォルダを作成したり、ファイルをここにコピーしたりするために管理者権限が必要になることがあります。
 
 このなかにAperyの実行ファイルを入れます。配置するときにファイル名をどのCPUに対応しているかをつけた名前に適宜変更します。
 
@@ -353,13 +339,13 @@ myshogi-engines/
 
 | 実行ファイルの配置フォルダとファイル名 | 内容 |
 | ---- | ---- |
-| Documents/myshogi-engines/apery/apery_nosse.exe | 32bit版 |
-| Documents/myshogi-engines/apery/apery_sse2.exe  | 64bit版 SSE2以上用 |
-| Documents/myshogi-engines/apery/apery_sse41.exe | 64bit版 SSE4.1以上用 |
-| Documents/myshogi-engines/apery/apery_sse42.exe | 64bit版 SSE4.2以上用 |
-| Documents/myshogi-engines/apery/apery_avx2.exe | 64bit版 AVX2以上用 |
-| Documents/myshogi-engines/Apery/engine_define.xml | エンジン定義ファイル |
-| Documents/myshogi-engines/Apery/banner.png | バナー画像(任意) |
+| engine/apery/apery_nosse.exe | 32bit版 |
+| engine/apery/apery_sse2.exe  | 64bit版 SSE2以上用 |
+| engine/apery/apery_sse41.exe | 64bit版 SSE4.1以上用 |
+| engine/apery/apery_sse42.exe | 64bit版 SSE4.2以上用 |
+| engine/apery/apery_avx2.exe | 64bit版 AVX2以上用 |
+| engine/Apery/engine_define.xml | エンジン定義ファイル |
+| engine/Apery/banner.png | バナー画像(任意) |
 
 そのあと、Step 3.で書き出されたエンジン定義ファイルを思考エンジン本体があるフォルダに移動させます。
 
@@ -375,25 +361,25 @@ myshogi-engines/
 
 | 実行ファイルの配置フォルダとファイル名 | 内容 | 説明 |
 | ---- | ---- | ---- |
-| Documents/myshogi-engines/gikou2/gikou2_sse42.exe | 64bit版 SSE4.2以上用 | 技巧２は、SSE4.2以上用しか配布されていないので、この名前に変更すると良いです。|
+| engine/gikou2/gikou2_sse42.exe | 64bit版 SSE4.2以上用 | 技巧２は、SSE4.2以上用しか配布されていないので、この名前に変更すると良いです。|
 
 例) 脊尾詰めの場合
 | 実行ファイルの配置フォルダとファイル名 | 内容 | 説明 |
 | ---- | ---- | ---- |
-| myshogi-engines/seotsume/seotsume_nosse.exe | 32bit版 | 脊尾詰めは、32bit版しか配布されていないのでこの名前に変更すると良いです。|
+| engine/seotsume/seotsume_nosse.exe | 32bit版 | 脊尾詰めは、32bit版しか配布されていないのでこの名前に変更すると良いです。|
 
 例) なのは詰めの場合
 | 実行ファイルの配置フォルダとファイル名 | 内容 | 説明 |
 | ---- | ---- | ---- |
-| Documents/myshogi-engines/NanohaTsume/NanohaTsumeUSI_sse41.exe | 64bit版SSE4.1以上用 | なのは詰め、64bit版(元ファイル名 "NanohaTsumeUSIx64_popcnt.exe") |
-| Documents/myshogi-engines/NanohaTsume/NanohaTsumeUSI_sse2.exe | 64bit版SSE2以上用 | なのは詰め、64bit版(元ファイル名 "NanohaTsumeUSIx64.exe") |
-| Documents/myshogi-engines/NanohaTsume/NanohaTsumeUSI_nosse.exe | 32bit版 | なのは詰め、32bit版(元ファイル名 "NanohaTsumeUSI.exe") |
+| engine/NanohaTsume/NanohaTsumeUSI_sse41.exe | 64bit版SSE4.1以上用 | なのは詰め、64bit版(元ファイル名 "NanohaTsumeUSIx64_popcnt.exe") |
+| engine/NanohaTsume/NanohaTsumeUSI_sse2.exe | 64bit版SSE2以上用 | なのは詰め、64bit版(元ファイル名 "NanohaTsumeUSIx64.exe") |
+| engine/NanohaTsume/NanohaTsumeUSI_nosse.exe | 32bit版 | なのは詰め、32bit版(元ファイル名 "NanohaTsumeUSI.exe") |
 
 例) それ以外の場合、例えば、64bit版のSSE4.1用の実行ファイルしか配布されていない場合
 
 | 実行ファイルの配置フォルダとファイル名 | 内容 | 説明 |
 | ---- | ---- | ---- |
-| Documents/myshogi-engines/usi_engine/usi_engine_sse41.exe | 64bit版SSE4.1以上用 | このように、ファイル名の末尾に「sse4_1」とつけて、かつ、Step 2.のチェックボックスでSSE4.2にだけチェックを入れてください。なお、この実行ファイルは、SSE4.2命令をサポートしたCPUでしか動作しません。|
+| engine/usi_engine/usi_engine_sse41.exe | 64bit版SSE4.1以上用 | このように、ファイル名の末尾に「sse4_1」とつけて、かつ、Step 2.のチェックボックスでSSE4.2にだけチェックを入れてください。なお、この実行ファイルは、SSE4.2命令をサポートしたCPUでしか動作しません。|
 
 <a id="markdown-バナー画像について" name="バナー画像について"></a>
 #### バナー画像について
@@ -402,11 +388,11 @@ myshogi-engines/
 
 バナー画像のファイル名は"banner.png"固定です。画像サイズは、横512px × 縦160pxでPNG形式で用意します。例えばAperyの場合であれば、さきほどの例のようにフォルダを作成していたなら、次の場所に配置することになります。
 
-- Documents/myshogi-engines/apery/banner.png
+- engine/apery/banner.png
 
 思考エンジンが用いる評価関数は、その思考エンジンが読み込めるように配置します。例えば、Aperyであれば、同じフォルダのなかに"eval"というフォルダを作成してそこに配置するはずです。(各思考エンジンに合わせた配置の仕方をしてください。)
 
-- Documents/myshogi-engines/apery/eval/…
+- engine/apery/eval/…
 
 <a id="markdown-step-5-お疲れさまでした" name="step-5-お疲れさまでした"></a>
 ## Step 5. お疲れさまでした
@@ -434,7 +420,8 @@ myshogi-engines/
 
 - "engine_define.xml"上のこの値を直接編集してください。
 - 『将棋神やねうら王』では、10000～10099番を使用しています。
+    - 「駒得大好きエンジン」は9000番を使用しています。
 - 『将棋神やねうら王２』では、20000～20099番を使用しています。
-- このダイアログで書き出した"engine_define.xml"は、99999番固定になります。好きな値に調整してください。99999番になるので、思考エンジンの選択画面では、一番末尾に表示されるはずです。
+- このダイアログで書き出した"engine_define.xml"は、8000番固定になります。好きな値に調整してください。8000番になるので、思考エンジンの選択画面では、一番末尾に表示されるはずです。
 
 以上

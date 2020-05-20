@@ -1,5 +1,9 @@
 ﻿using MyShogi.App;
+using MyShogi.Model.Common.Collections;
+using MyShogi.Model.Common.Utility;
 using MyShogi.Model.Dependency;
+using MyShogi.Model.Shogi.EngineDefine;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace MyShogi.View.Win2D.Setting
@@ -136,6 +140,96 @@ namespace MyShogi.View.Win2D.Setting
         /// <param name="e"></param>
         private void button9_Click(object sender, System.EventArgs e)
         {
+            // やねうら王系であるか
+            bool isYaneuraOu = radioButton1.Checked;
+
+            // 詰将棋エンジンなのか
+            bool isMateEngine = false;
+            var mate_radio_buttons = new[] { radioButton5, radioButton6, radioButton7, radioButton8 };
+            foreach (RadioButton r in mate_radio_buttons)
+                if (r.Checked)
+                {
+                    isMateEngine = true;
+                    break;
+                }
+
+            // エンジン種別
+            // 0 : 通常思考エンジン , 1 : 詰将棋用エンジン
+            int engine_type = isMateEngine ? 1 : 0;
+            
+            // 文字列型の設定項目
+            var engine_file_name = textBox1.Text;
+            var engine_display_name = textBox2.Text;
+            var engine_descriptions_simple = textBox3.Text;
+            var engine_descriptions = textBox4.Text;
+            var engine_rate = textBox5.Text;
+            var engine_eval_memory = textBox6.Text;
+
+            // 対応CPU
+
+            var check_boxs = new[] { checkBox1, checkBox2, checkBox3, checkBox4, checkBox5 };
+            var cpus = new[] { CpuType.NO_SSE, CpuType.SSE2, CpuType.SSE41, CpuType.SSE42, CpuType.AVX2 };
+            var supported_cpus = new List<CpuType>();
+            for (int i = 0; i < 5; ++i)
+                if (check_boxs[i].Checked)
+                    supported_cpus.Add(cpus[i]);
+
+            // 対応しているUSI拡張プロトコル
+            var default_extend = new List<ExtendedProtocol>();
+            // 1. やねうら王系の探索エンジンならEvalShareついてると思うけども、NNUEとかついてないので、安全を見て、これつけないでおこう…。
+
+
+            // 2. 詰将棋エンジンである場合、これを書く。
+            //if (isMateEngine)
+            //    default_extend.Add(ExtendedProtocol.GoMateNodesExtension);
+
+            // エンジンオプションのそれぞれの説明
+            // やねうら王系なら、設定項目は既知なのだが、今後変更するかも知れないし、安全を見てつけないでおこう…。
+            // ただし、Hashに関する説明だけは必須なのでつけておく。
+            var default_descriptions = EngineCommonOptionsSample.GetHashDescription();
+
+            // エンジンプリセット(段級に対応する設定)
+            var default_preset = new List<EnginePreset>();
+
+            // エンジン定義
+            var engine_define = new EngineDefine()
+            {
+                DisplayName = engine_display_name,
+                EngineExeName = engine_file_name,
+                SupportedCpus = supported_cpus,
+                EvalMemory = engine_eval_memory.ToInt(1024), // 数値化に失敗したら1024[MB]を指定しておく。
+                WorkingMemory = 150,
+                StackPerThread = 40, // clangでコンパイルの時にstack size = 25[MB]に設定している。ここに加えてheapがスレッド当たり15MBと見積もっている。
+                Presets = default_preset,
+                DescriptionSimple = engine_descriptions_simple,
+                Description = engine_descriptions,
+                DisplayOrder = 8000, // user_engine
+                SupportedExtendedProtocol = default_extend,
+                EngineOptionDescriptions = default_descriptions,
+                EngineType = engine_type,
+            };
+
+            // ダイアログを出してそこに書き出す。
+            using (var fd = new SaveFileDialog())
+            {
+
+                // [ファイルの種類]に表示される選択肢を指定する
+                // 指定しないとすべてのファイルが表示される
+                fd.FileName = $"engine_define.xml";
+
+                // ダイアログを表示する
+                if (fd.ShowDialog() == DialogResult.OK)
+                {
+                    try {
+                        var path = fd.FileName;
+                        EngineDefineUtility.WriteFile(path, engine_define);
+                    }
+                    catch
+                    {
+                        TheApp.app.MessageShow("ファイル書き出しエラー", MessageShowType.Error);
+                    }
+                }
+            }
 
         }
     }

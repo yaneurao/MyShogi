@@ -127,7 +127,7 @@ namespace MyShogi.View.Win2D
                 ind_options.Add(opt);
             } else
             {
-                var option = UsiOption.Parse("Hash_ type spin default 1024 min 1 max 1048576");
+                var option = UsiOption.Parse("option name Hash_ type spin default 1024 min 1 max 1048576");
                 var opt = new EngineOptionForSetting(option.Name, option.CreateOptionCommandString());
                 opt.Value = option.GetDefault();
                 ind_options.Add(opt);
